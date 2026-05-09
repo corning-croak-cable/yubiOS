@@ -1,95 +1,116 @@
-# yubios Onboarding Guide
+<div align="center">
 
-This guide walks you from a blank YubiKey to a fully enrolled yubios system.
-Each section can be done independently if you are integrating into an existing system.
+<img src="https://raw.githubusercontent.com/corning-croak-cable/yubios/main/assets/logo.png" alt="yubios" width="140"/>
+
+## yubios Onboarding Guide
+
+*From blank YubiKey to fully enrolled system — four steps.*
+
+</div>
+
+---
 
 ## Prerequisites
 
-- YubiKey 5 series (firmware >= 5.2.3 for ed25519-sk)
-- yubios installed to disk via `bootc install to-disk` or `mkosi`
-- `ykman` installed: `dnf install yubikey-manager` (Fedora) / `apt install yubikey-manager` (Debian)
+| | |
+|---|---|
+| YubiKey 5 series | firmware ≥ 5.2.3 |
+| systemd | ≥ 248 |
+| OpenSSH | ≥ 8.2 |
+| pam-u2f | **≥ 1.3.1** (CVE-2025-23013) |
 
-## Step 0: Verify YubiKey is detected
+Install packages if not already present:
 
-    fido2-token -L         # should show /dev/hidraw* device
-    ykman info             # should show firmware version and enabled interfaces
+```sh
+# Fedora
+dnf install yubikey-manager libfido2 pam-u2f opensc yubico-piv-tool fido2-tools
 
-    # Enable required interfaces if needed:
-    ykman config usb --enable FIDO --enable CCID
+# Debian/Ubuntu
+apt install yubikey-manager libfido2-1 libpam-u2f opensc yubico-piv-tool fido2-tools
+```
 
-## Step 1: Set FIDO2 PIN (required for all operations)
+## Step 0: Verify YubiKey
 
-    ykman fido access change-pin
+```sh
+fido2-token -L         # /dev/hidrawN should appear
+ykman info             # shows firmware version + enabled interfaces
 
-    # Also set the PIV PIN and PUK (for Secure Boot signing):
-    ykman piv access change-pin   # default: 123456
-    ykman piv access change-puk   # default: 12345678
+# Enable required interfaces:
+ykman config usb --enable FIDO --enable CCID
+```
 
-## Step 2: Secure Boot signing (YubiKey PIV)
+## Step 1: Set PINs
 
-    sudo yubios-enroll-sb
+```sh
+ykman fido access change-pin    # FIDO2 PIN (used for disk unlock + SSH + PAM)
+ykman piv access change-pin     # PIV PIN (used for Secure Boot signing)
+ykman piv access change-puk     # PIV PUK (recovery for PIV PIN lockout)
+```
 
-    # What this does:
-    # 1. Generates an ECC signing key in PIV slot 9c (key never leaves YubiKey)
-    # 2. Self-signs a Secure Boot db certificate
-    # 3. Signs all UKIs in /efi/EFI/Linux/ using sbsign + PKCS#11
-    # 4. Exports the db cert for enrollment in UEFI Secure Boot
-    # 5. Optionally runs sbctl enroll-keys if in UEFI Setup Mode
+## Step 2: Secure Boot signing
 
-## Step 3: Disk encryption (FIDO2 via hidraw)
+```sh
+sudo yubios-enroll-sb
+```
 
-    sudo yubios-enroll-luks
+Generates ECC key in PIV slot 9c (key never leaves YubiKey). Signs UKIs in `/efi/EFI/Linux/`.
+Exports `yubios-sb.cer` for UEFI enrollment.
 
-    # What this does:
-    # 1. Detects LUKS2 root partition
-    # 2. Enrolls YubiKey FIDO2 (touch + PIN required at every boot)
-    # 3. Updates /etc/crypttab with fido2-device=auto
-    # 4. Rebuilds initramfs with fido2 dracut module
-    # 5. OPTIONALLY removes passphrase slot (irreversible — keep backup!)
+**UEFI enrollment:**
+1. Copy `yubios-sb.cer` to USB or `/efi/`
+2. Volume Up + Power → Surface UEFI
+3. Security → Secure Boot → Reset to Setup Mode
+4. Enroll Platform Key from file → `yubios-sb.cer`
+5. Re-enable Secure Boot
 
-    # If removing passphrase, save a recovery key first:
-    sudo systemd-cryptenroll --recovery-key /dev/nvme0n1p3
-    # Save the recovery key somewhere secure (offline paper backup)
+## Step 3: Disk encryption (FIDO2)
 
-## Step 4: SSH keys (ed25519-sk, resident)
+```sh
+# Save a recovery key first — print it and keep it offline
+sudo systemd-cryptenroll --recovery-key /dev/nvme0n1p3
 
-    yubios-enroll-ssh
+# Enroll YubiKey (touch + PIN required at every boot)
+sudo yubios-enroll-luks
+```
 
-    # What this does:
-    # 1. Generates ed25519-sk resident key on YubiKey FIDO2 storage
-    # 2. Saves public key stub to ~/.ssh/id_ed25519_sk
-    # 3. Prints the public key for adding to remote authorized_keys
-    # 4. On a new machine: ssh-keygen -K to recover stub from YubiKey
+On next boot: touch YubiKey when the LED flashes, enter FIDO2 PIN.
 
-## Step 5: PAM U2F (sudo + login)
+## Step 4: SSH keys (ed25519-sk)
 
-    sudo yubios-enroll-pam
+```sh
+yubios-enroll-ssh
+```
 
-    # What this does:
-    # 1. Runs pamu2fcfg to generate a U2F credential for your user
-    # 2. Appends to /etc/yubico/u2f_keys
-    # 3. PAM U2F is already wired in /etc/pam.d/sudo
-    # 4. From this point, sudo requires YubiKey touch + optional PIN
+Generates a resident `ed25519-sk` key. Private key stays on YubiKey.
 
-## Step 6: TOTP (optional, for app 2FA)
+```sh
+# Add to GitHub / remote hosts:
+cat ~/.ssh/id_ed25519_sk.pub
 
-    # Add TOTP accounts via Yubico Authenticator or ykman:
-    ykman oath accounts add --touch <issuer> <secret>
-    ykman oath accounts code <issuer>
+# On a new machine, recover stub from YubiKey:
+ssh-keygen -K
+```
 
-## Recovery: Lost YubiKey
+## Step 5: sudo / login (pam-u2f)
 
-1. Boot with recovery key (Step 3 backup) or live USB
-2. Add `rd.break` to kernel cmdline in UEFI boot menu
-3. In emergency shell: `mount -o remount,rw /sysroot`
-4. Edit `/sysroot/etc/pam.d/sudo` — comment out `pam_u2f.so` line
-5. Reboot, gain sudo, enroll new YubiKey via the enroll scripts
+```sh
+sudo yubios-enroll-pam
 
-## Enrolling a backup YubiKey
+# Test in a new terminal BEFORE closing this session:
+sudo whoami     # should prompt for YubiKey touch
+```
 
-    # Run each enroll script a second time with the backup YubiKey plugged in.
-    # LUKS2 and pam-u2f support multiple enrolled keys.
-    sudo yubios-enroll-luks   # second YubiKey
-    sudo yubios-enroll-pam    # second YubiKey (appends to u2f_keys)
-    # For Secure Boot: sign UKIs with backup key too
-    sudo yubios-enroll-sb --additional
+---
+
+## Recovery: lost YubiKey
+
+1. Boot with recovery key (saved in Step 3)
+2. Add `rd.break` in UEFI boot menu kernel cmdline
+3. `mount -o remount,rw /sysroot`
+4. Comment out `pam_u2f.so` line in `/sysroot/etc/pam.d/sudo`
+5. Reboot, gain sudo, enroll new YubiKey
+
+## Backup YubiKey
+
+Run each script a second time with the backup key plugged in.
+LUKS2 and pam-u2f support multiple enrolled keys natively.
