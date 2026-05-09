@@ -1,0 +1,10 @@
+# yubios persistent kernel arguments
+# Applied on install and preserved across bootc upgrades.
+
+kargs = [
+  # Ensure hidraw devices are available; no module parameters needed,
+  # hidraw is built-in or auto-loaded by udev.
+  # fido2-device=auto is set in /etc/crypttab by yubios-enroll-luks,
+  # not as a global karg, to avoid affecting non-encrypted partitions.
+  "audit=0",
+]
