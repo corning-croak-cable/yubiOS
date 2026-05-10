@@ -2,3 +2,4 @@
 enable pcscd.service          # PIV/CCID for Secure Boot signing
 enable pcscd.socket           # socket-activated alternative
 enable yubiOS-enroll.service  # firstboot enrollment wizard trigger
+enable systemd-homed.service  # portable LUKS2 home directories (YubiKey FIDO2 unlock)
