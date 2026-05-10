@@ -16,7 +16,8 @@ CERT_PEM="$KEYDIR/sb-cert.pem"
 [[ -f "$CERT_PEM" ]] || yubiOS_die "No certificate at $CERT_PEM."
 
 TMP_KEY="$(mktemp /dev/shm/yubiOS-sb-XXXXXX.pem)"
-trap "shred -u '$TMP_KEY' 2>/dev/null || rm -f '$TMP_KEY'" EXIT
+# SC2064: use single quotes so $TMP_KEY expands at signal time, not at trap registration
+trap 'shred -u "$TMP_KEY" 2>/dev/null || rm -f "$TMP_KEY"' EXIT
 
 yubiOS_log "Decrypting signing key (touch YubiKey)..."
 age -d -o "$TMP_KEY" "$ENC_KEY"
