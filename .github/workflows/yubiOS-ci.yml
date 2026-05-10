@@ -23,8 +23,7 @@ jobs:
 
       - name: hadolint (Containerfile lint)
         run: |
-          apt-get install -y -qq hadolint
-          hadolint --ignore DL3041 Containerfile
+          docker run -it ghcr.io/hadolint/hadolint:v2.14.0-debian@sha256:bb143dee5ef4a59958be7d6315c15ce2a239c7fd6c362f66888aabca123a8059 --ignore DL3041 Containerfile
 
   unit-tests:
     runs-on: ubuntu-latest
