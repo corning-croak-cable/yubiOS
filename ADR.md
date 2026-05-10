@@ -120,3 +120,27 @@ mount rootfs, comment out pam_u2f line in /etc/pam.d/sudo.
 
 **mkosi produces:** signed UKI `.efi`, dm-verity root, composefs image
 **bootc produces:** OCI image deployable via `bootc install to-disk`
+
+---
+
+## ADR-007: composefs + dm-verity for immutable root
+
+**Status:** Accepted
+
+**Decision:** Use composefs over a dm-verity-checked erofs partition for the
+read-only root filesystem, following the particleos pattern.
+
+**Rationale:**
+- composefs provides a cryptographically-verified directory tree via fs-verity
+- erofs backing store is signed by systemd-repart's verity support
+- Roothash is embedded in the UKI kernel cmdline at build time — tampering is
+  detected before any userspace runs
+- Fully compatible with bootc day-2 upgrades: each new OCI layer produces a
+  new erofs+verity pair; old layers are garbage-collected
+
+**Implementation:**
+- dracut: `add_dracutmodules+=" composefs dm-verity"` in 51-yubiOS-composefs.conf
+- repart: `Type=root` + `Verity=data` + matching `Type=root-verity` in 50-yubiOS-root.conf
+- mkosi: `Verity=signed` already set in mkosi.conf
+
+**Source:** https://github.com/containers/composefs
