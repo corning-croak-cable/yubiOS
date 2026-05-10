@@ -1,4 +1,4 @@
-# yubios bootc install configuration
+# yubiOS bootc install configuration
 # Applied during: bootc install to-disk
 # Schema verified from: https://github.com/bootc-dev/bootc/blob/main/crates/lib/src/install/config.rs
 
@@ -10,7 +10,7 @@ bootloader = "systemd"
 # Verified: use_discoverable_partitions() defaults true for systemd-boot.
 discoverable-partitions = true
 
-# direct only: FIDO2 enrollment happens post-install via yubios-enroll-luks.
+# direct only: FIDO2 enrollment happens post-install via yubiOS-enroll-luks.
 # tpm2-luks excluded: we replace TPM with YubiKey FIDO2. Using tpm2-luks would
 # create a TPM dependency that defeats the TPM-free design goal.
 block = ["direct"]

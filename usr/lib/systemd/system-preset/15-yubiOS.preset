@@ -1,4 +1,4 @@
-# Enable yubios services on first-boot preset
+# Enable yubiOS services on first-boot preset
 enable pcscd.service          # PIV/CCID for Secure Boot signing
 enable pcscd.socket           # socket-activated alternative
-enable yubios-enroll.service  # firstboot enrollment wizard trigger
+enable yubiOS-enroll.service  # firstboot enrollment wizard trigger
