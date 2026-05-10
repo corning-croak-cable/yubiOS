@@ -1,6 +1,6 @@
 #!/bin/bash
 # SPDX-License-Identifier: LGPL-2.1-or-later
-# yubios PAM U2F enrollment for sudo and login
+# yubiOS PAM U2F enrollment for sudo and login
 #
 # Protocol: FIDO2/U2F via /dev/hidraw* (libfido2)
 # pam-u2f >= 1.3.1 required (CVE-2025-23013 partial auth bypass)
@@ -12,15 +12,15 @@
 # Source: https://github.com/Yubico/pam-u2f (pam-u2f 1.4.0 docs)
 
 set -euo pipefail
-source /usr/lib/yubios/lib.sh
+source /usr/lib/yubiOS/lib.sh
 
 # Verify pam-u2f is >= 1.3.1
 check_pam_u2f_version
 
 TARGET_USER="${SUDO_USER:-${1:-$(logname 2>/dev/null || id -un)}}"
 
-yubios_log "Enrolling U2F for user: $TARGET_USER"
-yubios_log "Touch YubiKey when the LED flashes..."
+yubiOS_log "Enrolling U2F for user: $TARGET_USER"
+yubiOS_log "Touch YubiKey when the LED flashes..."
 
 mkdir -p /etc/yubico && touch /etc/yubico/u2f_keys && chmod 600 /etc/yubico/u2f_keys
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 # SPDX-License-Identifier: LGPL-2.1-or-later
-# yubios SSH key enrollment via FIDO2 ed25519-sk (resident key)
+# yubiOS SSH key enrollment via FIDO2 ed25519-sk (resident key)
 #
 # Protocol: FIDO2 via /dev/hidraw* (libfido2)
 # ed25519-sk: private key stays on YubiKey; stub + pubkey stored on disk.
@@ -12,19 +12,19 @@
 # Requires: OpenSSH >= 8.2, YubiKey firmware >= 5.2.3, libfido2 >= 1.10
 
 set -euo pipefail
-source /usr/lib/yubios/lib.sh
+source /usr/lib/yubiOS/lib.sh
 
 SSH_DIR="${HOME}/.ssh"
 KEY_FILE="${SSH_DIR}/id_ed25519_sk"
 mkdir -p "$SSH_DIR" && chmod 700 "$SSH_DIR"
 
 if [[ -f "$KEY_FILE" ]]; then
-  yubios_warn "Existing key at $KEY_FILE. Skipping. Delete it first to re-enroll."
+  yubiOS_warn "Existing key at $KEY_FILE. Skipping. Delete it first to re-enroll."
   exit 0
 fi
 
-yubios_log "Generating ed25519-sk resident key (touch YubiKey twice when prompted)..."
-yubios_log "First touch: create credential. Second touch: verify."
+yubiOS_log "Generating ed25519-sk resident key (touch YubiKey twice when prompted)..."
+yubiOS_log "First touch: create credential. Second touch: verify."
 
 # -O resident: store discoverable credential on YubiKey (limited slots)
 # -O verify-required: require FIDO2 PIN on every use (not just touch)
@@ -33,9 +33,9 @@ yubios_log "First touch: create credential. Second touch: verify."
 ssh-keygen -t ed25519-sk \
   -O resident \
   -O verify-required \
-  -O application=ssh:yubios \
+  -O application=ssh:yubiOS \
   -f "$KEY_FILE" \
-  -C "yubios@$(hostname --fqdn 2>/dev/null || hostname)"
+  -C "yubiOS@$(hostname --fqdn 2>/dev/null || hostname)"
 
 chmod 600 "${KEY_FILE}" "${KEY_FILE}.pub"
 
