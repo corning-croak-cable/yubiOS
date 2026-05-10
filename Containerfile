@@ -1,5 +1,5 @@
-# yubios — FIDO2-first immutable OS image (Fedora base)
-# Build: podman build -t yubios .
+# yubiOS — FIDO2-first immutable OS image (Fedora base)
+# Build: podman build -t yubiOS .
 # Source: bootc design https://github.com/bootc-dev/bootc
 # Source: particleos ethos https://github.com/systemd/particleos
 
@@ -35,11 +35,11 @@ RUN dnf install -y \
       fido2-tools && \
     dnf clean all
 
-# ── Overlay yubios config tree ───────────────────────────────────────────
+# ── Overlay yubiOS config tree ───────────────────────────────────────────
 COPY usr/ /usr/
 
 # ── Permissions for enrollment scripts ───────────────────────────────────
-RUN chmod +x /usr/lib/yubios/*.sh /usr/bin/yubios-enroll*
+RUN chmod +x /usr/lib/yubiOS/*.sh /usr/bin/yubiOS-enroll*
 
 # ── Apply systemd presets ─────────────────────────────────────────────────
 RUN systemctl preset-all
