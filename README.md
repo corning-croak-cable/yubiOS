@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/corning-croak-cable/yubios/main/assets/logo.png" alt="yubios logo" width="220" style="border-radius:16px;"/>
+<img src="https://raw.githubusercontent.com/corning-croak-cable/yubiOS/main/assets/logo.png" alt="yubiOS logo" width="220" style="border-radius:16px;"/>
 
-# yubios
+# yubiOS
 
 **FIDO2-first immutable OS — YubiKey is the root of trust**
 
@@ -19,7 +19,7 @@
 
 ## What it is
 
-yubios fuses three lineages:
+yubiOS fuses three lineages:
 
 | Layer | Inspiration | What it gives us |
 |---|---|---|
@@ -48,21 +48,21 @@ yubios fuses three lineages:
 
 ```sh
 # Build the OCI image
-podman build -t yubios .
+podman build -t yubiOS .
 
 # Install to disk (disable Secure Boot in UEFI first)
 podman run --rm --privileged --pid=host \
   -v /dev:/dev -v /var/lib/containers:/var/lib/containers \
-  yubios bootc install to-disk /dev/nvme0n1
+  yubiOS bootc install to-disk /dev/nvme0n1
 
 # First boot: the enrollment wizard runs automatically
 # Or launch it manually:
-yubios-enroll
+yubiOS-enroll
 ```
 
 ## Enrollment wizard
 
-On first boot `yubios-enroll.service` fires on tty1 and walks through:
+On first boot `yubiOS-enroll.service` fires on tty1 and walks through:
 
 ```
  ─── Step 1/4: Secure Boot Signing ───
@@ -76,7 +76,7 @@ Each step is skippable. Each script is independently re-runnable. See [ONBOARDIN
 ## Repo layout
 
 ```
-yubios/
+yubiOS/
 ├── Containerfile              # OCI image (bootc, Fedora base)
 ├── mkosi.conf                 # mkosi build (particleos-style UKI + verity)
 ├── assets/logo.png            # you're looking at it
@@ -87,7 +87,7 @@ yubios/
 │   ├── udev/rules.d/            # YubiKey hidraw + CCID uaccess rules
 │   ├── pam.d/                   # PAM U2F sudo config template
 │   ├── systemd/system/          # enrollment service + presets
-│   └── yubios/                  # enrollment scripts
+│   └── yubiOS/                  # enrollment scripts
 ├── ADR.md                     # architecture decision records
 ├── ONBOARDING.md              # step-by-step onboarding guide
 └── TODO.md                    # known gaps + future work
