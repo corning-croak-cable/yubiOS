@@ -1,0 +1,8 @@
+{
+  "blockdevices": [
+    {"name":"sda","fstype":null,"mountpoint":null,"children":[
+      {"name":"sda1","fstype":"vfat","mountpoint":"/boot/efi","children":[]},
+      {"name":"sda2","fstype":"crypto_LUKS","mountpoint":null,"children":[]}
+    ]}
+  ]
+}

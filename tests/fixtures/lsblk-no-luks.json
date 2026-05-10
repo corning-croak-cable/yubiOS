@@ -1,0 +1,7 @@
+{
+  "blockdevices": [
+    {"name":"sda","fstype":null,"mountpoint":null,"children":[
+      {"name":"sda1","fstype":"ext4","mountpoint":"/","children":[]}
+    ]}
+  ]
+}
