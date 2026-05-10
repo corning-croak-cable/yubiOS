@@ -15,11 +15,12 @@ URI="${2:-}"
 
 if [[ -z "$ACCOUNT" || -z "$URI" ]]; then
   echo "Usage: yubiOS-enroll-totp <account-name> <otpauth-uri>"
-  echo "  e.g: yubiOS-enroll-totp GitHub "otpauth://totp/GitHub:user@example.com?secret=BASE32...""
+  echo "  e.g: yubiOS-enroll-totp \"GitHub\" \"otpauth://totp/GitHub:user@example.com?secret=BASE32...\""
   exit 1
 fi
 
 yubiOS_log "Adding TOTP account: $ACCOUNT"
 ykman oath accounts uri "$URI"
 yubiOS_log "Done. List accounts: ykman oath accounts list"
-yubiOS_log "Get code:            ykman oath accounts code "$ACCOUNT""
+# SC2027/SC2086: escape inner quotes so $ACCOUNT is properly quoted
+yubiOS_log "Get code:            ykman oath accounts code \"$ACCOUNT\""
