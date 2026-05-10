@@ -30,15 +30,15 @@ yubiOS fuses three lineages:
 ## Trust chain
 
 ```
-┌────────────────────────────────────────────────────┐
-│             YubiKey 5                    │
-├────────────────────────────────────────────────────┤
-│ PIV slot 9c (CCID)   Secure Boot signing │
+┌───────────────────────────────────────────┐
+│                 YubiKey 5                 │
+├───────────────────────────────────────────┤
+│ PIV slot 9c (CCID)   Secure Boot signing  │
 │ FIDO2 HMAC-secret    Disk unlock (hidraw) │
 │ FIDO2 ed25519-sk     SSH keys    (hidraw) │
 │ FIDO2 U2F            sudo/login  (hidraw) │
 │ OATH TOTP            App 2FA     (hidraw) │
-└────────────────────────────────────────────────────┘
+└───────────────────────────────────────────┘
 ```
 
 > **ADR-002 note:** Secure Boot signing uses PIV/CCID, not hidraw.
@@ -103,6 +103,29 @@ yubiOS/
 | pam-u2f | **1.3.1** (CVE-2025-23013 fix) |
 
 ## Design decisions
+
+```
+mkosi --profile yubios build
+          ↓
+    OCI image (yubios:latest)
+          ↓
+bcvk native-to-disk yubios:latest /dev/sdb
+          ↓
+    first boot → yubios-enroll.service → YubiKey tap
+                                              │
+                                              ▼ 
+                                              ─────► YubiKey (PIV slot 9c)
+                                                         │
+                                                         ▼ sbsign via PKCS11
+                                                    mkosi fork ──────────► OCI container image (yubiOS)
+                                                         │                         │
+                                                         │                         ▼ bootc install/upgrade
+                                                         │                   bare metal / VM disk
+                                                         │
+                                                         └─────► bcvk fork ──────► ephemeral VM (test)
+                                                                      │                  ▲
+                                                                      └── USB passthrough YubiKey hidraw
+```
 
 All decisions are recorded in [ADR.md](ADR.md) with sources.
 The short version: TPM replaced by YubiKey everywhere it can be.
