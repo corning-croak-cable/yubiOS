@@ -62,3 +62,28 @@ def find(devs):
 find(d["blockdevices"])
 "
 }
+
+# Enforce CTAP 2.1 minimum PIN length (CTAP 2.1 minPinLength extension)
+# YubiKey 5.4+ supports minPinLength; enforced locally as a policy gate.
+# Source: CTAP 2.1 spec s7.2.3, https://fidoalliance.org/specs/fido-v2.1-ps-20210615/
+check_fido2_pin_length() {
+  local min_len="${1:-8}"
+  local device
+  device=$(detect_fido2_device)
+  local info
+  info=$(fido2-token -I "$device" 2>/dev/null || echo "")
+  local current_len
+  current_len=$(echo "$info" | awk '/minPinLength/{print $2}' | head -1)
+  if [[ -n "$current_len" && "$current_len" -lt "$min_len" ]]; then
+    yubiOS_die "FIDO2 PIN too short ($current_len < $min_len). Set a longer PIN: ykman fido access change-pin"
+  fi
+}
+
+# Multi-user PAM enrollment: add another user to /etc/yubico/u2f_keys
+enroll_pam_user() {
+  local target_user="${1:-}"
+  [[ -z "$target_user" ]] && yubiOS_die "Usage: enroll_pam_user <username>"
+  yubiOS_log "Enrolling PAM U2F for $target_user (touch YubiKey twice)..."
+  pamu2fcfg -u "$target_user" -N >> /etc/yubico/u2f_keys
+  yubiOS_log "Done. Test: sudo -u $target_user whoami"
+}
