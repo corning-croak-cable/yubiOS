@@ -1,9 +1,9 @@
-# yubios — TODO / Future Work
+# yubiOS — TODO / Future Work
 
 ## High priority
 
-- [ ] Wire yubios-sudo PAM config into /etc/pam.d/sudo via Containerfile
-- [ ] Add /usr/bin/ symlinks for yubios-enroll-* commands via Containerfile
+- [ ] Wire yubiOS-sudo PAM config into /etc/pam.d/sudo via Containerfile
+- [ ] Add /usr/bin/ symlinks for yubiOS-enroll-* commands via Containerfile
 - [ ] mkosi profiles: desktop (GNOME), minimal, surface-x86, surface-arm64
 - [ ] Test LUKS2 FIDO2 unlock end-to-end in a VM with YubiKey passthrough
 - [ ] Validate sbsign + libykcs11 PKCS#11 URI for ECC slot 9c

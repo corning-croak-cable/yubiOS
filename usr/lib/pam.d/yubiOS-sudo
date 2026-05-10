@@ -1,4 +1,4 @@
-# yubios PAM config for sudo — copy to /etc/pam.d/sudo
+# yubiOS PAM config for sudo — copy to /etc/pam.d/sudo
 #
 # pam_u2f.so: "required" (not "sufficient") — YubiKey touch is ALWAYS needed.
 # This is intentional. To skip, boot to recovery shell (see ONBOARDING.md).
