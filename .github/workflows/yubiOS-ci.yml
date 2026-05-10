@@ -18,11 +18,9 @@ jobs:
 
       - name: shellcheck
         run: |
-          apt-get install -y -qq shellcheck
+          apt-get update && apt-get install -y -qq shellcheck
           find usr/lib/yubiOS -name '*.sh' | xargs shellcheck
 
-      # hadolint/hadolint-action@v3.1.0 is not in the AGENTS.md allowed-refs list.
-      # Use the apt package instead (available in debian trixie).
       - name: hadolint (Containerfile lint)
         run: |
           apt-get install -y -qq hadolint
@@ -41,7 +39,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Install bats
-        run: apt-get install -y -qq bats
+        run: apt-get update && apt-get install -y -qq bats
 
       - name: Run unit tests
         run: bats tests/unit/
