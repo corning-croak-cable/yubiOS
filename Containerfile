@@ -14,7 +14,6 @@ FROM quay.io/fedora/fedora-bootc:latest
 #                  Source: https://www.yubico.com/support/security-advisories/ysa-2025-01/
 # pcsc-lite:       PC/SC daemon; needed for PIV/CCID interface
 # sbsigntool:      sbsign for Secure Boot UKI signing via PKCS#11
-# tpm2-tools:      kept for compatibility; not used as trust anchor
 RUN dnf install -y \
       libfido2 \
       libfido2-devel \
@@ -39,10 +38,25 @@ RUN dnf install -y \
 COPY usr/ /usr/
 
 # ── Permissions for enrollment scripts ───────────────────────────────────
-RUN chmod +x /usr/lib/yubiOS/*.sh /usr/bin/yubiOS-enroll*
+RUN chmod +x /usr/lib/yubiOS/*.sh
+
+# ── /usr/bin symlinks for enrollment commands ────────────────────────────
+# Wrapper scripts in /usr/lib/yubiOS/ exec the real scripts.
+# Symlinks here make commands available as: yubiOS-enroll-sb, -luks, -pam, -ssh
+RUN ln -sf /usr/lib/yubiOS/enroll-sb-wrapper.sh   /usr/bin/yubiOS-enroll-sb   && \
+    ln -sf /usr/lib/yubiOS/enroll-luks-wrapper.sh /usr/bin/yubiOS-enroll-luks && \
+    ln -sf /usr/lib/yubiOS/enroll-pam-wrapper.sh  /usr/bin/yubiOS-enroll-pam  && \
+    ln -sf /usr/lib/yubiOS/enroll-ssh-wrapper.sh  /usr/bin/yubiOS-enroll-ssh
+
+# ── Wire PAM: yubiOS-sudo config → /etc/pam.d/sudo ──────────────────────
+# Replaces Fedora's stock sudo PAM with yubiOS policy:
+#   auth required pam_u2f.so  (YubiKey touch ALWAYS needed, not optional)
+# Recovery if locked out: boot with rd.break, remount rw, comment out pam_u2f
+# Source: https://github.com/Yubico/pam-u2f
+RUN cp /usr/lib/pam.d/yubiOS-sudo /etc/pam.d/sudo
 
 # ── Apply systemd presets ─────────────────────────────────────────────────
 RUN systemctl preset-all
 
-# ── PAM: create u2f_keys directory ───────────────────────────────────────
+# ── PAM: initialise u2f_keys file (populated by yubiOS-enroll-pam) ───────
 RUN mkdir -p /etc/yubico && touch /etc/yubico/u2f_keys && chmod 600 /etc/yubico/u2f_keys
