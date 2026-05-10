@@ -1,4 +1,4 @@
-# Architecture Decision Records — yubios
+# Architecture Decision Records — yubiOS
 
 ## ADR-001: YubiKey as TPM replacement
 
@@ -63,11 +63,11 @@ No TPM slot is enrolled.
 - Source: https://www.freedesktop.org/software/systemd/man/latest/systemd-cryptenroll.html
 - Source: https://0pointer.net/blog/unlocking-luks2-volumes-with-fido2-security-tokens.html
 
-**PIN policy:** `--fido2-with-client-pin=yes` is the default in yubios.
+**PIN policy:** `--fido2-with-client-pin=yes` is the default in yubiOS.
 Requires FIDO2 PIN + touch at boot. Strongest available option without biometrics.
 
 **Dracut:** The `fido2` dracut module must be enabled for FIDO2 unlock at boot.
-This ships in `usr/lib/dracut.conf.d/50-yubios-fido2.conf`.
+This ships in `usr/lib/dracut.conf.d/50-yubiOS-fido2.conf`.
 
 ---
 
@@ -139,8 +139,8 @@ read-only root filesystem, following the particleos pattern.
   new erofs+verity pair; old layers are garbage-collected
 
 **Implementation:**
-- dracut: `add_dracutmodules+=" composefs dm-verity"` in 51-yubios-composefs.conf
-- repart: `Type=root` + `Verity=data` + matching `Type=root-verity` in 50-yubios-root.conf
+- dracut: `add_dracutmodules+=" composefs dm-verity"` in 51-yubiOS-composefs.conf
+- repart: `Type=root` + `Verity=data` + matching `Type=root-verity` in 50-yubiOS-root.conf
 - mkosi: `Verity=signed` already set in mkosi.conf
 
 **Source:** https://github.com/containers/composefs
