@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/corning-croak-cable/yubios/main/assets/logo.png" alt="yubios" width="140"/>
+<img src="https://raw.githubusercontent.com/corning-croak-cable/yubiOS/main/assets/logo.png" alt="yubiOS" width="140"/>
 
-## yubios Onboarding Guide
+## yubiOS Onboarding Guide
 
 *From blank YubiKey to fully enrolled system — four steps.*
 
@@ -50,17 +50,17 @@ ykman piv access change-puk     # PIV PUK (recovery for PIV PIN lockout)
 ## Step 2: Secure Boot signing
 
 ```sh
-sudo yubios-enroll-sb
+sudo yubiOS-enroll-sb
 ```
 
 Generates ECC key in PIV slot 9c (key never leaves YubiKey). Signs UKIs in `/efi/EFI/Linux/`.
-Exports `yubios-sb.cer` for UEFI enrollment.
+Exports `yubiOS-sb.cer` for UEFI enrollment.
 
 **UEFI enrollment:**
-1. Copy `yubios-sb.cer` to USB or `/efi/`
+1. Copy `yubiOS-sb.cer` to USB or `/efi/`
 2. Volume Up + Power → Surface UEFI
 3. Security → Secure Boot → Reset to Setup Mode
-4. Enroll Platform Key from file → `yubios-sb.cer`
+4. Enroll Platform Key from file → `yubiOS-sb.cer`
 5. Re-enable Secure Boot
 
 ## Step 3: Disk encryption (FIDO2)
@@ -70,7 +70,7 @@ Exports `yubios-sb.cer` for UEFI enrollment.
 sudo systemd-cryptenroll --recovery-key /dev/nvme0n1p3
 
 # Enroll YubiKey (touch + PIN required at every boot)
-sudo yubios-enroll-luks
+sudo yubiOS-enroll-luks
 ```
 
 On next boot: touch YubiKey when the LED flashes, enter FIDO2 PIN.
@@ -78,7 +78,7 @@ On next boot: touch YubiKey when the LED flashes, enter FIDO2 PIN.
 ## Step 4: SSH keys (ed25519-sk)
 
 ```sh
-yubios-enroll-ssh
+yubiOS-enroll-ssh
 ```
 
 Generates a resident `ed25519-sk` key. Private key stays on YubiKey.
@@ -94,7 +94,7 @@ ssh-keygen -K
 ## Step 5: sudo / login (pam-u2f)
 
 ```sh
-sudo yubios-enroll-pam
+sudo yubiOS-enroll-pam
 
 # Test in a new terminal BEFORE closing this session:
 sudo whoami     # should prompt for YubiKey touch
