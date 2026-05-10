@@ -1,0 +1,44 @@
+name: yubiOS CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: shellcheck
+        run: |
+          sudo apt-get install -y shellcheck
+          find usr/lib/yubiOS -name '*.sh' | xargs shellcheck
+          - name: Install modules
+            run: yarn
+          - name: hadolint
+              uses: hadolint/hadolint-action@v3.1.0
+              with:
+                dockerfile: Containerfile
+                ignore: DL3041
+  unit-tests:
+    runs-on: ubuntu-24.04
+    needs: lint
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install bats
+        run: sudo apt-get install -y bats
+      - name: Run unit tests
+        run: bats tests/unit/
+  build:
+    runs-on: ubuntu-24.04
+    needs: lint
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build OCI image
+        run: podman build --pull=newer -t yubiOS:ci .
+      - name: Verify symlinks and scripts
+        run: |
+          podman run --rm yubiOS:ci sh -c \
+            'ls -la /usr/lib/yubiOS/ && ls -la /usr/bin/yubiOS-*'
+      - name: Verify PAM wiring
+        run: |
+          podman run --rm yubiOS:ci grep -q pam_u2f /etc/pam.d/sudo && echo "PAM OK"
