@@ -1,22 +1,22 @@
 #!/bin/bash
 # End-to-end LUKS2 FIDO2 unlock test using bcvk native-to-disk + YubiKey passthrough.
 # Requires: bcvk, a physical YubiKey, and a spare block device (USB or loop).
-# Usage: sudo ./tests/vm/test-luks-fido2.sh /dev/sdX [yubios-image:tag]
+# Usage: sudo ./tests/vm/test-luks-fido2.sh /dev/sdX [yubiOS-image:tag]
 set -euo pipefail
 
 DEVICE="${1:-}"
-IMAGE="${2:-ghcr.io/corning-croak-cable/yubios:latest}"
+IMAGE="${2:-ghcr.io/corning-croak-cable/yubiOS:latest}"
 PASS="testpassphrase123"
 
 [[ -z "$DEVICE" ]] && { echo "Usage: $0 <block-device> [image]"; exit 1; }
 [[ "$EUID" -ne 0 ]]  && { echo "Run as root (sudo)."; exit 1; }
 
-echo "=== yubios LUKS2 FIDO2 end-to-end test ==="
+echo "=== yubiOS LUKS2 FIDO2 end-to-end test ==="
 echo "  Device : $DEVICE"
 echo "  Image  : $IMAGE"
 echo ""
 
-# Step 1: Flash yubios to device
+# Step 1: Flash yubiOS to device
 echo "1/5 Flashing $IMAGE -> $DEVICE"
 bcvk native-to-disk --yes "$IMAGE" "$DEVICE"
 
@@ -38,9 +38,9 @@ echo -n "$PASS" | cryptsetup luksAddKey "$LUKS_PART" - --batch-mode
 
 # Step 4: Verify passphrase unlocks
 echo "4/5 Verifying passphrase unlock"
-echo -n "$PASS" | cryptsetup open "$LUKS_PART" yubios-test --batch-mode
-cryptsetup status yubios-test
-cryptsetup close yubios-test
+echo -n "$PASS" | cryptsetup open "$LUKS_PART" yubiOS-test --batch-mode
+cryptsetup status yubiOS-test
+cryptsetup close yubiOS-test
 
 # Step 5: Enroll FIDO2 (interactive — requires YubiKey touch)
 echo "5/5 Enrolling FIDO2 (insert YubiKey and touch when prompted)"

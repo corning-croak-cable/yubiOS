@@ -1,14 +1,14 @@
 #!/bin/bash
 # Validates sbsign + libykcs11 PKCS#11 URI for ECC slot 9c.
-# Run with YubiKey inserted after running yubios-enroll-sb.
+# Run with YubiKey inserted after running yubiOS-enroll-sb.
 # Verifies: key accessible, cert matches, test sign succeeds.
 set -euo pipefail
 
 PKCS11_LIB="${PKCS11_LIB:-/usr/lib64/libykcs11.so}"
-CERT_PEM="${CERT_PEM:-/var/lib/yubios/yubios-sb.pem}"
+CERT_PEM="${CERT_PEM:-/var/lib/yubiOS/yubiOS-sb.pem}"
 TEST_EFI="${1:-/usr/lib/systemd/boot/efi/systemd-bootx64.efi}"
 
-echo "=== PKCS#11 URI validation for yubios Secure Boot ==="
+echo "=== PKCS#11 URI validation for yubiOS Secure Boot ==="
 
 # 1. Verify the module loads
 echo -n "1/5 Loading PKCS11 module... "
@@ -23,10 +23,10 @@ pkcs11-tool --module "$PKCS11_LIB" --list-objects --type privkey 2>/dev/null \
 # 3. Verify cert exported
 echo -n "3/5 Certificate at $CERT_PEM... "
 [[ -f "$CERT_PEM" ]] && openssl x509 -in "$CERT_PEM" -noout 2>/dev/null \
-  && echo "OK" || { echo "FAIL (run yubios-enroll-sb first)"; exit 1; }
+  && echo "OK" || { echo "FAIL (run yubiOS-enroll-sb first)"; exit 1; }
 
 # 4. Test sign a file
-TMP_SIGNED="$(mktemp /tmp/yubios-test-signed.XXXXXX.efi)"
+TMP_SIGNED="$(mktemp /tmp/yubiOS-test-signed.XXXXXX.efi)"
 trap "rm -f $TMP_SIGNED" EXIT
 echo -n "4/5 Test signing $TEST_EFI (touch YubiKey)... "
 PKCS11_MODULE_PATH="$PKCS11_LIB" sbsign \

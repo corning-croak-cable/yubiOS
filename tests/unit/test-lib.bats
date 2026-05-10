@@ -1,5 +1,5 @@
 #!/usr/bin/env bats
-# Unit tests for usr/lib/yubios/lib.sh
+# Unit tests for usr/lib/yubiOS/lib.sh
 # Run: bats tests/unit/test-lib.bats
 # Mocks all hardware; no YubiKey required.
 
@@ -13,7 +13,7 @@ setup() {
   touch "$YUBIOS_U2F_KEYS"
   # Source lib with mocked commands
   # shellcheck source=/dev/null
-  source usr/lib/yubios/lib.sh 2>/dev/null || source /usr/lib/yubios/lib.sh
+  source usr/lib/yubiOS/lib.sh 2>/dev/null || source /usr/lib/yubiOS/lib.sh
 }
 
 teardown() {
@@ -122,15 +122,15 @@ teardown() {
 
 # ── logging helpers ───────────────────────────────────────────────────────
 
-@test "yubios_log outputs to stdout with prefix" {
-  run yubios_log "hello test"
+@test "yubiOS_log outputs to stdout with prefix" {
+  run yubiOS_log "hello test"
   [ "$status" -eq 0 ]
-  [[ "$output" == *"[yubios]"* ]]
+  [[ "$output" == *"[yubiOS]"* ]]
   [[ "$output" == *"hello test"* ]]
 }
 
-@test "yubios_die exits non-zero" {
-  run yubios_die "something broke"
+@test "yubiOS_die exits non-zero" {
+  run yubiOS_die "something broke"
   [ "$status" -ne 0 ]
   [[ "$output" == *"ERROR"* ]]
 }

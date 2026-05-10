@@ -7,7 +7,7 @@ setup() {
   ssh-keygen() {
     touch "${4:-$HOME/.ssh/id_ed25519_sk}"
     touch "${4:-$HOME/.ssh/id_ed25519_sk}.pub"
-    echo "sk-ed25519@openssh.com AAAA... yubios@test"
+    echo "sk-ed25519@openssh.com AAAA... yubiOS@test"
   }
   hostname() { echo "testhost"; }
   export -f ssh-keygen hostname
