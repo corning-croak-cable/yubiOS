@@ -1,4 +1,4 @@
-# udev rules for YubiKey FIDO2 (hidraw) and PIV (CCID) access in yubios
+# udev rules for YubiKey FIDO2 (hidraw) and PIV (CCID) access in yubiOS
 #
 # TAG+="uaccess" grants the logged-in seat user read/write without sudo.
 # This is the modern approach (replaces group-based access).
@@ -19,4 +19,4 @@ SUBSYSTEM=="input", ATTRS{idVendor}=="1050", TAG+="uaccess"
 
 # Wake on YubiKey insert/remove for enrollment service trigger
 ACTION=="add", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1050", \
-  TAG+="systemd", ENV{SYSTEMD_WANTS}+="yubios-enroll.service"
+  TAG+="systemd", ENV{SYSTEMD_WANTS}+="yubiOS-enroll.service"

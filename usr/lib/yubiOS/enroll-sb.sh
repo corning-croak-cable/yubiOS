@@ -1,6 +1,6 @@
 #!/bin/bash
 # SPDX-License-Identifier: LGPL-2.1-or-later
-# yubios Secure Boot enrollment via YubiKey PIV (slot 9c)
+# yubiOS Secure Boot enrollment via YubiKey PIV (slot 9c)
 #
 # Protocol: PIV/PKCS#11 via CCID interface (not hidraw)
 # See ADR-002 for why PIV is used instead of FIDO2 HMAC-secret for signing.
@@ -11,14 +11,14 @@
 #   PKCS#11 URI format: https://www.rfc-editor.org/rfc/rfc7512
 
 set -euo pipefail
-source /usr/lib/yubios/lib.sh
+source /usr/lib/yubiOS/lib.sh
 
-CERT_OUT=/var/lib/yubios/yubios-sb.cer
-CERT_PEM=/var/lib/yubios/yubios-sb.pem
-mkdir -p /var/lib/yubios
+CERT_OUT=/var/lib/yubiOS/yubiOS-sb.cer
+CERT_PEM=/var/lib/yubiOS/yubiOS-sb.pem
+mkdir -p /var/lib/yubiOS
 
-yubios_log "Generating ECC key in YubiKey PIV slot 9c (Digital Signature)..."
-yubios_log "Key material never leaves the YubiKey."
+yubiOS_log "Generating ECC key in YubiKey PIV slot 9c (Digital Signature)..."
+yubiOS_log "Key material never leaves the YubiKey."
 yubicos_log "PIV PIN will be prompted by ykman."
 
 # Generate key on device, export self-signed cert
@@ -27,29 +27,29 @@ ykman piv keys generate \
   --algorithm ECCP384 \
   --pin-policy ALWAYS \
   --touch-policy ALWAYS \
-  9c /tmp/yubios-sb-pubkey.pem
+  9c /tmp/yubiOS-sb-pubkey.pem
 
 # Self-sign a Secure Boot db certificate
 ykman piv certificates generate \
-  --subject "CN=yubios Secure Boot,O=yubios" \
+  --subject "CN=yubiOS Secure Boot,O=yubiOS" \
   --valid-days 3650 \
-  9c /tmp/yubios-sb-pubkey.pem
+  9c /tmp/yubiOS-sb-pubkey.pem
 
 # Export cert in PEM and DER form
 ykman piv certificates export 9c "$CERT_PEM"
 openssl x509 -in "$CERT_PEM" -outform DER -out "$CERT_OUT"
 
-yubios_log "Cert exported to $CERT_OUT"
+yubiOS_log "Cert exported to $CERT_OUT"
 
 # Build PKCS#11 URI for sbsign
 # Slot 9c on YubiKey = slot ID 0x9c = 156 decimal
 # URI format: pkcs11:token=YubiKey%20PIV;id=%9c;type=private
 PKCS11_KEY_URI="pkcs11:manufacturer=piv_II;id=%9c;type=private"
 
-yubios_log "Signing UKIs with YubiKey PIV (touch required)..."
+yubiOS_log "Signing UKIs with YubiKey PIV (touch required)..."
 for uki in /efi/EFI/Linux/*.efi /boot/EFI/Linux/*.efi; do
   [ -f "$uki" ] || continue
-  yubios_log "Signing: $uki"
+  yubiOS_log "Signing: $uki"
   PKCS11_MODULE_PATH="$YUBIOS_PKCS11_LIB" \
     sbsign \
       --engine pkcs11 \
@@ -65,7 +65,7 @@ echo "To enable Secure Boot, enroll the Platform Key in your UEFI:"
 echo "  1. Copy $CERT_OUT to a USB drive or /efi/"
 echo "  2. Enter UEFI (power + volume up on Surface)"
 echo "  3. Security -> Secure Boot -> Reset to Setup Mode"
-echo "  4. Enroll Platform Key from file -> yubios-sb.cer"
+echo "  4. Enroll Platform Key from file -> yubiOS-sb.cer"
 echo ""
 echo "Or with sbctl (if UEFI is in Setup Mode):"
 echo "  sbctl enroll-keys --microsoft"
