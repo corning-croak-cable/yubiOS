@@ -1,0 +1,80 @@
+# yubiOS Docker Build Policy
+# Applied via: docker buildx build --policy reset=true,strict=true,filename=yubiOS.rego .
+#
+# Enforces supply chain rules on all build inputs before any layer executes.
+# Violations fail the build immediately — nothing is pulled or built.
+#
+# Sources:
+#   https://docs.docker.com/build/policies/
+#   AGENTS.md — approved registries and build policy pattern
+
+package docker
+
+import future.keywords.if
+import future.keywords.in
+
+# ── Default deny ─────────────────────────────────────────────────────────────
+default allow := false
+
+# ── Approved base registries ──────────────────────────────────────────────────
+# quay.io/fedora/  — official Fedora bootc images (yubiOS base)
+# dhi.io/          — internal pinned build tooling (AGENTS.md default image)
+approved_registry(ref) if startswith(ref, "quay.io/fedora/")
+approved_registry(ref) if startswith(ref, "dhi.io/")
+
+# ── Rule 1: local context (no FROM pull) ─────────────────────────────────────
+# Pure local builds (e.g. COPY-only layers) always pass.
+allow if input.local
+
+# ── Rule 2: approved + digest-pinned ─────────────────────────────────────────
+# FROM must be from an approved registry AND pinned to an immutable digest.
+# Mutable tags (:latest, :42) are rejected — tag reassignment is a supply chain
+# attack vector. Pin to @sha256:... to guarantee bit-for-bit reproducibility.
+#
+# To pin quay.io/fedora/fedora-bootc:
+#   skopeo inspect --format '{{.Digest}}' docker://quay.io/fedora/fedora-bootc:latest
+#   → sha256:<hash>
+#   Then in Containerfile: FROM quay.io/fedora/fedora-bootc@sha256:<hash>
+allow if {
+    approved_registry(input.image.ref)
+    input.image.isCanonical
+}
+
+# ── Rule 3: provenance attestation (preferred, not yet required) ──────────────
+# Uncomment to require SLSA provenance on all base images.
+# Leave commented until quay.io/fedora/fedora-bootc ships provenance.
+#
+# allow if {
+#     approved_registry(input.image.ref)
+#     input.image.isCanonical
+#     input.image.hasProvenance
+# }
+
+# ── Decision object (required by buildx policy evaluator) ────────────────────
+decision := {
+    "allow": allow,
+    # Surface a human-readable reason on deny so the build log is actionable.
+    "reason": reason,
+}
+
+# ── Deny reasons ─────────────────────────────────────────────────────────────
+reason := msg if {
+    not input.local
+    not approved_registry(input.image.ref)
+    msg := sprintf(
+        "Image '%v' is not from an approved registry. Allowed: quay.io/fedora/, dhi.io/",
+        [input.image.ref],
+    )
+}
+
+reason := msg if {
+    not input.local
+    approved_registry(input.image.ref)
+    not input.image.isCanonical
+    msg := sprintf(
+        "Image '%v' uses a mutable tag. Pin to a digest: FROM %v@sha256:<hash>",
+        [input.image.ref, input.image.ref],
+    )
+}
+
+reason := "Build allowed." if allow
