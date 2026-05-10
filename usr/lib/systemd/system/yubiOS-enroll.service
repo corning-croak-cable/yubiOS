@@ -1,0 +1,25 @@
+# yubiOS first-boot enrollment wizard
+# Waits for a YubiKey to be detected, then prompts the user to enroll.
+# Runs once (ConditionFirstBoot=yes) and marks itself complete.
+
+[Unit]
+Description=yubiOS YubiKey Enrollment Wizard (First Boot)
+After=local-fs.target systemd-logind.service
+Wants=pcscd.service
+After=pcscd.service
+ConditionFirstBoot=yes
+ConditionPathExists=!/var/lib/yubiOS/.enrolled
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+TTYPath=/dev/tty1
+StandardInput=tty
+StandardOutput=tty
+StandardError=tty
+ExecStart=/usr/lib/yubiOS/enroll.sh
+ExecStartPost=/bin/mkdir -p /var/lib/yubiOS
+ExecStartPost=/bin/touch /var/lib/yubiOS/.enrolled
+
+[Install]
+WantedBy=first-boot-complete.target
