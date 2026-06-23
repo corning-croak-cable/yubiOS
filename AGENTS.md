@@ -11,7 +11,7 @@ Always start by importing any previously unseen sessions/SESSION_*.zip, unzippin
 
 Rescan and organize all knowledge files and skills looking for crossover and changes, always update working directorys with INDEX.md and OVERVIEW.md files.
 
-Then incorporate the rest of the skills from this file, org, and repo; as well as absorb any references and docs.
+Then incorporate the rest of the skills from this file, org, and repo; as well as absorb any references and docs. Look for and fill in knowledge gaps.
 
 Consider this [AGENTS.md](https://github.com/yubi-OS/yubiOS/raw/refs/heads/main/AGENTS.md) as primary and to always combine together with the constantly updated skills/knowledge referenced from [AGENTS.md](https://github.com/yubi-OS/agent-skills/raw/refs/heads/main/AGENTS.md)
 
