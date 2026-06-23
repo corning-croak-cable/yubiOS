@@ -86,7 +86,7 @@ Finally go ahead and do some deep research on the following links section.
 - <https://www.man7.org/linux/man-pages/man5/systemd.service.5.html>
 - <https://man7.org/linux/man-pages/man7/systemd.directives.7.html>
 - <https://0pointer.net/blog/fitting-everything-together.html>
-- <https://0pointer.net/blog/> # Build 0pointer SKILL - Mastery and big picture
+- <https://0pointer.net/blog/> # Build or update 0pointer SKILL - Mastery and big picture
 - <https://docs.docker.com/build/policies/intro/>
 - <https://docs.docker.com/build/policies/intro/examples/>
 - <https://docs.docker.com/build/policies/intro/intro/>
