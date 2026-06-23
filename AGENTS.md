@@ -9,13 +9,15 @@ Warning: Rate limit your api calls to github to avoid lockout, allow cooldowns. 
 
 Always start by importing any previously unseen sessions/SESSION_*.zip, unzipping, and ingesting the files into your skills, cache, history, profiles, knowledge, and general files.
 
-Rescan and organize all knowledge files and skills looking for crossover and changes, always update working directorys with INDEX.md and OVERVIEW.md files.
+Rescan and organize all knowledge files and skills looking for crossover and changes, always update working directorys in knowledge with INDEX.md and OVERVIEW.md files.
 
-Then incorporate the rest of the skills from this file, org, and repo; as well as absorb any references and docs. Look for and fill in knowledge gaps.
+Then incorporate the rest of the skills from this file, org, and repo; as well as absorb any references and docs. Look for and fill in knowledge gaps and any changes in repos and files and keep it in the top level INDEX.md knowledge file.
 
 Consider this [AGENTS.md](https://github.com/yubi-OS/yubiOS/raw/refs/heads/main/AGENTS.md) as primary and to always combine together with the constantly updated skills/knowledge referenced from [AGENTS.md](https://github.com/yubi-OS/agent-skills/raw/refs/heads/main/AGENTS.md)
 
 Always check for and update stale skills and knowledge that have upstream changes or during AGENTS.md ingestion; ie. a Refresh skills SKILL.
+
+Finally reassess and update the TODO.md in this branch with relevant next steps.
 
 ## Repository Overview - https://github.com/yubi-OS/yubiOS
 
