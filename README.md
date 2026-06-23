@@ -6,6 +6,8 @@
 
 **FIDO2-first immutable OS — YubiKey is the root of trust**
 
+### 🦾 🚧 Work In Progress 🚧 Work In Progress 🚧 Work In Progress 🚧
+
 [![License: LGPL-2.1](https://img.shields.io/badge/license-LGPL--2.1-magenta?style=flat-square)](LICENSE)
 [![Status: Groundwork](https://img.shields.io/badge/status-groundwork-blueviolet?style=flat-square)](TODO.md)
 [![YubiKey 5](https://img.shields.io/badge/YubiKey-5%20series-ff1493?style=flat-square)](https://www.yubico.com)
