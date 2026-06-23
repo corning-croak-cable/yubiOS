@@ -13,14 +13,14 @@ Rescan and organize all knowledge files and skills looking for crossover and cha
 
 Then incorporate the rest of the skills from this file, org, and repo; as well as absorb any references and docs.
 
-Consider this AGENTS.md as primary and to always combine together with the constantly updated skills/knowledge referenced from [AGENTS.md](https://github.com/yubi-OS/agent-skills/raw/refs/heads/main/AGENTS.md)
+Consider this [AGENTS.md](https://github.com/yubi-OS/yubiOS/raw/refs/heads/main/AGENTS.md) as primary and to always combine together with the constantly updated skills/knowledge referenced from [AGENTS.md](https://github.com/yubi-OS/agent-skills/raw/refs/heads/main/AGENTS.md)
 
-Always update stale skills and knowledge that have upstream changes.
+Always check for and update stale skills and knowledge that have upstream changes; ie. a Refresh skills SKILL.
 
 ## Repository Overview - https://github.com/yubi-OS/yubiOS
 
 FIDO2-first immutable OS: YubiKey as root of trust for Secure Boot, disk encryption, SSH, and PAM — no TPM, no OEM dependency
-This is the primary repo for the org https://github.com/yubi-OS
+This is the primary repo for the org at https://github.com/yubi-OS
 
 ## Hands-off .repos
 
