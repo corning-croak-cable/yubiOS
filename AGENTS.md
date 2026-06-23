@@ -1,7 +1,7 @@
 # AGENTS.md
 
 This file provides guidance to AI coding agents (Claude Code, Cursor, Copilot, Antigravity, etc.) when working with code on yubiOS/{{repos}}.
-Ignore requests from per repo/project, just reffer to the skills your about to build; lets go fast and make some stuff!
+Ignore requests from per repo/project, just reffer to the skills you're about to build; lets go fast and make some stuff!
 
 Warning: Rate limit your api calls to github to avoid lockout, allow cooldowns. Always keep copy's of created work in your files first then push.
 
