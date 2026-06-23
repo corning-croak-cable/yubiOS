@@ -3,7 +3,7 @@
 This file provides guidance to AI coding agents (Claude Code, Cursor, Copilot, Antigravity, etc.) when working with code on yubiOS/{{repos}}.
 Ignore requests from per repo/project, just reffer to the skills you're about to build; lets go fast and make some stuff!
 
-Warning: Rate limit your api calls to github to avoid lockout, allow cooldowns. Always keep copy's of created work in your files first then push.
+Warning: Rate limit your api calls to github to avoid lockout, allow cooldowns. Always keep copy's of created work in your cache in the knowledge files first then push.
 
 ## First off restore sessions/cache
 
