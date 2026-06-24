@@ -495,3 +495,53 @@ and automated tooling handles the operational overhead.
 
 **Source:** https://quay.io/repository/fedora/fedora-bootc
 **Source:** https://github.com/containers/bootc (fedora-bootc upstream)
+
+---
+
+## ADR-014: Rootless Docker (Docker Buildx) over rootless Podman
+
+**Status:** Accepted
+
+**Context:** The build pipeline requires a rootless container build tool. Both Podman and Docker Buildx can build OCI images without root. The project already depends on Docker Buildx for Build Policies enforcement (`--policy strict=true`, OPA/Rego). Carrying two separate container runtimes adds redundant tooling and an extra attack surface in the trust chain.
+
+**Decision:** Use rootless Docker Buildx (`docker buildx build`) as the sole container build runtime. Remove Podman from the build dependency chain entirely.
+
+**Rationale:**
+- **One dependency, not two.** Every tool that touches the image before signing is an attack surface. Collapsing to a single runtime means a single audit target.
+- **Build Policies require Buildx.** OPA/Rego `--policy` enforcement is a Docker Buildx / BuildKit feature only. `yubiOS.rego` runs on every `docker buildx build` without exception; there is no equivalent Podman path.
+- **Native SLSA provenance.** `--attest type=provenance,mode=max` and `--attest type=sbom` are Buildx flags. Podman equivalents require separate cosign/syft tooling.
+- **Uniform toolchain.** The install path (`docker run --rm --privileged ... bootc install to-disk`) is already Docker CLI. Build and run on the same tool removes Podman as a distinct end-user requirement.
+- **Daemonless trade-off accepted.** Docker requires `dockerd`. The dhi.io CI base image ships Docker; developer machines use Docker Desktop or rootless `dockerd`.
+
+**Migration:** Replace `podman build` with `docker buildx build` and `podman run` with `docker run`. Containerfile syntax is identical; no content changes required.
+
+**Source:** https://docs.docker.com/build/policies/intro/ (Build Policies, Buildx-only feature)
+**Source:** https://docs.docker.com/build/attestations/ (provenance + SBOM attestations)
+
+---
+
+## ADR-015: fedora-bootc:45 as pinned-digest base image
+
+**Status:** Accepted
+
+**Context:** The Containerfile previously used `quay.io/fedora/fedora-bootc:latest` — a mutable tag that silently pulls different content on each build. This violates `yubiOS.rego` (which requires `input.image.isCanonical`) and produces non-reproducible images where systemd/pam-u2f versions cannot be guaranteed.
+
+**Decision:** Pin the base image to:
+
+    FROM quay.io/fedora/fedora-bootc:45@sha256:5799803704a3f5894c6abf96fa5994991c9ef45931e4f66e79cf93d4caba88aa
+
+**Rationale:**
+- **Reproducibility.** A SHA256 digest is content-addressed and immutable — same bits on every build, everywhere, forever. `:latest` silently changes kernel, systemd, and RPM set between builds.
+- **Self-consistency.** Brings the Containerfile into compliance with its own `yubiOS.rego` gate (`isCanonical` check). The image now passes the supply-chain policy it enforces.
+- **Systemd version guarantee.** Fedora 45 ships systemd >= 257, satisfying ADR-008 (systemd-sbsign). A mutable tag could silently regress this.
+- **Right base image.** `fedora-bootc` is purpose-built for bootc: /usr-merged, composefs pre-configured, systemd-boot-ready, correct /etc layout for hermetic first-boot. Not equivalent to a generic `quay.io/fedora/fedora` container image.
+
+**Digest update policy:**
+- Updates via tooling (Renovate, Dependabot, or bootc-base-imagectl); commit message must state the new digest and Fedora 45.x point-release version.
+- Before bumping: verify systemd >= 257 and pam-u2f >= 1.3.1 are present.
+- Never revert to a mutable tag. Fedora 46 bump requires a separate ADR amendment.
+
+**Trade-off:** Every base image security patch requires an explicit digest-bump commit. Intentional — all base changes are auditable, automated tooling handles the overhead.
+
+**Source:** https://quay.io/repository/fedora/fedora-bootc
+**Source:** https://github.com/containers/bootc
