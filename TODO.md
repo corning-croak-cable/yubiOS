@@ -23,7 +23,7 @@ _Last updated: June 24, 2026_
 - [ ] Remove sbsigntool package from Containerfile once systemd-sbsign migration done
 - [ ] Deploy CI workflows to .github/workflows/ in yubiOS, bcvk, mkosi (manual — token lacks workflow scope)
 - [ ] Set up Renovate/Dependabot for fedora-bootc:45 digest tracking (ADR-015)
-- [ ] Bump fedora-bootc:45 digest to post-June-19 point release to get systemd 261 (ADR-016)
+- [ ] Bump fedora-bootc:45 digest to post-June-19 point release for systemd 261 (ADR-016)
 - [ ] Add ConditionSecurity=measured-os to yubiOS-enroll.service (ADR-016)
 - [ ] Enable systemd-tpm2-swtpm.service in bcvk CI VMs for TPM2 code path coverage (ADR-016)
 
