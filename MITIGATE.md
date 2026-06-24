@@ -43,7 +43,8 @@ yubiOS is built on the principle that *every component must be cryptographically
 |---|---|---|
 | UKI as single signed binary | Kernel + initrd + cmdline bundled into one UEFI PE signed by yubiOS PIV slot 9c. Any evil-twin lacking this signature is rejected. | **Block** |
 | `usrhash=` in signed cmdline | dm-verity root hash of /usr baked into the UKI cmdline at build time. Any substitute /usr fails the kernel hash check. | **Block** |
-| x86-64 platform | yubiOS targets x86-64. CNTVOFF_EL2 is ARMv8-only — not applicable to current platform. | **N/A** |
+| x86-64 (primary): platform scope | CNTVOFF_EL2 is ARMv8-only — no attack surface on x86-64. | **N/A** |
+| arm64 (in dev): kernel arch_timer erratum workarounds | Linux `arch_timer` driver applies per-CPU erratum workarounds at boot. Virtual offset manipulation at EL1/EL0 is corrected at the kernel level before userspace runs. UKI/PCR trust chain unchanged on ARM64. | **Mitigated (kernel)** |
 | PCR 11 measurement | All UKI components measured into PCR 11. Evil-twin produces different values, detectable via attestation. | **Detect** |
 
 ---
@@ -73,6 +74,7 @@ yubiOS is built on the principle that *every component must be cryptographically
 | Kernel lockdown (SecureBoot) | When UEFI SecureBoot is active, Linux enters lockdown mode. Unsigned kernel modules are rejected by the kernel itself. | **Block** |
 | IMA measurement | All kernel modules measured by IMA before loading. | **Detect** |
 | `ConditionSecurity=measured-os` | PCR 11 state check. Module injection that alters measurements breaks this condition. | **Gate** |
+| arm64 (in dev): kernel lockdown disables CoreSight | When UEFI SecureBoot is active, Linux enters lockdown mode (`CONFIG_LOCK_DOWN_KERNEL_FORCE_CONFIDENTIALITY`). CoreSight trace interfaces are explicitly disabled — no ARM64 trace exfiltration channel. | **Block** |
 
 ---
 
@@ -86,7 +88,8 @@ yubiOS is built on the principle that *every component must be cryptographically
 |---|---|---|
 | **dm-verity on /usr (on every IO)** | Every dlopen() and read from /usr — including `libselinux.so.1` — is validated against the Merkle tree. A modified library produces a hash mismatch → IO error. The poisoned library is never served to any process. | **Block — hard** |
 | Immutable /usr mount | /usr is mounted read-only via dm-verity. Cannot be bind-mounted over using modified libmount. | **Block** |
-| No qcom,dload path | yubiOS runs on x86-64. The `qcom,dload` firmware sideload mechanism is Qualcomm-specific and does not exist on x86-64 UEFI. | **N/A** |
+| x86-64 (primary): no qcom,dload path | `qcom,dload` is Qualcomm-specific — does not exist on x86-64 UEFI. | **N/A** |
+| arm64 (in dev): dm-verity blocks library substitution | Even if sideload runs on Qualcomm ARM64 hardware, every `dlopen()` from /usr traverses the dm-verity Merkle tree. Modified library → hash mismatch → IO error. Sideload without a dm-verity bypass changes nothing. Preferred non-Qualcomm ARM64 targets avoid this entirely. | **Block (dm-verity)** |
 | `usrhash=` in signed cmdline | Kernel refuses to mount any /usr whose root hash doesn’t match the signed cmdline. | **Block** |
 
 ---
@@ -153,13 +156,13 @@ yubiOS is built on the principle that *every component must be cryptographically
 |---|---|---|---|
 | OEM power manager firmware | 1-A | PCR 4 + chipsec + ConditionSecurity=measured-os | 🟡 Detect |
 | Stacked UEFI / evil-twin EDK2 | 1-B | Signed UKI + SecureBoot + PCR 11 | 🟢 Block |
-| Virtual timer CNTVOFF_EL2 | 1-B | x86-64 platform (ARM-only vuln) | ✅ N/A |
+| Virtual timer CNTVOFF_EL2 | 1-B | x86-64: N/A (ARM-only vuln). arm64: kernel arch_timer erratum workarounds | ✅ N/A (x86-64) / 🟢 Mitigated (arm64) |
 | Page-cache CVE (dirtyfrag) | 1-C | Fedora 45 patch cadence + dm-verity | 🟡 Reduce |
 | Hidden GPT partitions (91 GPT) | 1-C | DPS UUID-only automount | 🟢 Ignore |
 | BPF filesystem restriction | 1-C | RestrictFileSystemAccess= (v261) | 🟢 Counter |
 | Obfuscated kernel modules | 2-A | Kernel lockdown + IMA + signed initrd | 🟢 Block |
-| ARM CoreSight debug | 2-A | x86-64 platform | ✅ N/A |
-| qcom,dload firmware sideload | 2-B | x86-64 platform | ✅ N/A |
+| ARM CoreSight debug | 2-A | arm64: kernel lockdown (SecureBoot) disables CoreSight trace interfaces | 🟢 Block (arm64) |
+| qcom,dload firmware sideload | 2-B | x86-64: N/A. arm64: dm-verity blocks substitution; prefer non-Qualcomm hardware | ✅ N/A (x86-64) / 🟢 Block (arm64) |
 | Modified libselinux/libapparmor | 2-B | **dm-verity /usr on every IO** | 🟢 Block |
 | /usr bind-mount poison | 2-B | Immutable dm-verity + usrhash= | 🟢 Block |
 | Poisoned systemd generators | 2-C | **dm-verity /usr on every IO** | 🟢 Block |
@@ -185,7 +188,7 @@ yubiOS is built on the principle that *every component must be cryptographically
 | OEM ROM Absolute Persistence (Computrace) | Firmware in UEFI ROM runs before SecureBoot chain starts | Reflash firmware + custom SecureBoot key enrollment. chipsec at first boot (TODO #15). |
 | Hardware radio ignoring OS power commands | Hardware-wired TX/RX below the OS layer | Hardware selection: open-firmware devices (e.g. Intel AX210 without backdoored microcode) |
 | Novel kernel CVEs (dirtyfrag-class) | Requires upstream kernel patch | Automated fedora-bootc:45 digest bumps (Renovate, ADR-015) |
-| CNTVOFF_EL2 timer attacks | ARM-specific | Re-evaluate if yubiOS ships an ARM64 profile |
+| qcom,dload on Qualcomm ARM64 hardware | dm-verity blocks library substitution, but Qualcomm firmware sideload runs below the Merkle tree check. Risk is present on Qualcomm-based ARM64 boards. | Prefer non-Qualcomm ARM64 hardware (Ampere, RPi 5, Juno). Board matrix in ADR-017. |
 | UEFI firmware supply chain root | If UEFI itself is malicious from the factory, the chain starts compromised | chipsec surfaces anomalies. Hardware RoT (Titan/verified-boot firmware) is beyond OS scope. |
 
 ---
