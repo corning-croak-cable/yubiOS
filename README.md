@@ -117,6 +117,7 @@ yubiOS/
 | systemd | 257 (systemd-sbsign, systemd-cryptenroll FIDO2) |
 | OpenSSH | 8.2 (FIDO2 key types) |
 | pam-u2f | **1.3.1** (CVE-2025-23013 fix) |
+| Platform | **x86-64** (primary); **arm64/aarch64** (in development — see ADR-017) |
 
 ## Design decisions
 
