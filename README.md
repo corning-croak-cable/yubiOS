@@ -32,8 +32,7 @@ yubiOS fuses four lineages:
 
 ### Ecosystem alignment
 
-In January 2026 the core systemd team — Lennart Poettering (Chief Engineer), Christian Brauner (CTO),
-Chris Kühl (CEO), David Strauss (CPO), and the engineers behind systemd, composefs, runc, Flatcar,
+In January 2026 the core systemd team and the engineers behind, composefs, runc, Flatcar,
 ParticleOS, and Ubuntu Core — founded [Amutable](https://amutable.com) with the mission:
 
 > *“Deliver determinism and verifiable integrity to Linux workloads everywhere.”*
