@@ -576,3 +576,37 @@ verify `systemd --version` returns 261. Then add `ConditionSecurity=measured-os`
 
 ---
 
+## ADR-017: ARM64 Multi-Architecture Profile
+
+**Date:** 2026-06-24  
+**Status:** Accepted  
+**Context:** yubiOS is designed around FIDO2 hardware trust, immutable /usr, and UKI-based boot — none of which are x86-64-specific. ARM64/aarch64 is the dominant architecture in embedded, server, and mobile-adjacent hardware, and is a natural second target.
+
+**Decision:** Ship yubiOS as a multi-arch project: x86-64 as the primary, supported production platform; arm64/aarch64 as a secondary, in-development platform. The trust chain (YubiKey FIDO2, systemd-sbsign PIV, UKI + dm-verity) is architecturally identical on both platforms.
+
+**Build changes:**
+- docker buildx build --platform linux/amd64,linux/arm64 via QEMU emulation on amd64 runners (docker/setup-qemu-action in CI).
+- The fedora-bootc:45 base image is multi-arch. The existing Containerfile requires no platform-specific changes beyond the --platform flag.
+- bcvk native-to-disk works on ARM64 target hardware without modification (Rust cross-compilation via --target aarch64-unknown-linux-gnu).
+
+**ARM64-specific mitigations (see MITIGATE.md for full analysis):**
+
+| Attack | ARM64 mitigation |
+|---|---|
+| CNTVOFF_EL2 virtual timer offset | Kernel arch_timer erratum workarounds applied at boot. UKI/PCR trust chain unchanged. |
+| ARM CoreSight debug/trace exfiltration | Kernel lockdown (SecureBoot active) disables CoreSight trace interfaces via CONFIG_LOCK_DOWN_KERNEL_FORCE_CONFIDENTIALITY. |
+| qcom,dload Qualcomm firmware sideload | dm-verity blocks library substitution regardless of sideload path. Preferred hardware: non-Qualcomm ARM64 (Ampere, RPi 5, ARM Juno). |
+
+**Preferred ARM64 hardware targets:**
+- Raspberry Pi 5 (BCM2712, open firmware, no Qualcomm sideload)
+- Ampere Altra / AmpereOne (server)
+- ARM Juno development board
+- Avoid: Qualcomm Snapdragon-based ARM64 (qcom,dload sideload risk; firmware opacity)
+
+**Consequences:**
+- CI must add docker/setup-qemu-action for cross-platform builds.
+- ARM64 hardware testing is separate from x86-64 VM CI (bcvk native-to-disk to physical ARM64 hardware).
+- MITIGATE.md updated: CNTVOFF_EL2, CoreSight, and qcom,dload entries revised from "N/A (x86-64 only)" to active mitigations.
+- ARCHITECTURE.md and README.md updated to document the multi-arch profile.
+
+**Source:** ADR-008 (systemd-sbsign is PIV-based, not arch-specific), ADR-014 (Docker Buildx multi-platform), ADR-015 (fedora-bootc:45 is multi-arch), [MITIGATE.md](MITIGATE.md)
