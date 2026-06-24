@@ -24,7 +24,8 @@ This project builds the whole ARM64 secure-world stack ourselves:
 - **OP-TEE** — our secure-world OS as BL32, replacing the vendor TEE.
 - **Microsoft `ms-tpm-20-ref` fTPM** — a TPM 2.0 we run as an OP-TEE Trusted Application, so the
   PCRs and the sealing root are ours, not a vendor's.
-- **U-Boot** — our non-secure bootloader (BL33) that measures the OS and talks to our fTPM.
+- **U-Boot** — our BL33 bootloader, which also *provides the UEFI environment* so the same
+  systemd-boot + UKI chain runs on ARM64, measures the OS, and talks to our fTPM.
 
 End state: an ARM64 board where every layer from the boot ROM key onward is signed by keys we hold,
 the TPM is software we audit, and the YubiKey stays the user-facing root of trust. The fTPM guards
@@ -32,29 +33,62 @@ the *device fabric*; the YubiKey guards the *user identity*. They are complement
 
 ---
 
-## The trust chain we are building
+## The trust chain — two provisioning paths
+
+The chain is the same five TF-A stages on both paths. What differs is the **root**: whether we can
+burn our ROTPK hash into the SoC's one-time-programmable fuses. That single fact decides whether the
+chain *enforces* (refuses bad code before it runs) or only *measures* (records it for attestation).
+
+### Path A — fuses available and burnable (enforcing)
+
+Full hardware-anchored Trusted Board Boot. Our ROTPK hash is burned into SoC OTP/eFuse; BL1 refuses
+any image that doesn't chain to it. This is the strong path: bad code never executes.
 
 ```
-ROTPK (our key hash in SoC OTP/fuses)
+ROTPK hash  ──burned──►  SoC OTP / eFuse   (immutable, one-time)
    │
-  BL1  (boot ROM / first-stage)        ── measures ──┐
-   │                                                  │
-  BL2  (Trusted Boot stage)            ── measures ──┤   TCG2 event log
-   │   verifies every image vs FIP certs (TBB)       │   (carried forward
-   ├─► BL31  EL3 Secure Monitor (PSCI, SMC routing)  │    in memory)
-   ├─► BL32  OP-TEE OS  ──► fTPM TA (ms-tpm-20-ref) ─┤
-   └─► BL33  U-Boot                                   │
-        │   replays event log → TPM2_PCR_Extend ──────┘
-        │   measures kernel + DTB + initramfs (PCR 8/9)
-        │   hands log to Linux via DTB chosen node
-        ▼
-      Linux  (tpm_ftpm_tee driver, IMA, /dev/tpm0)
-        │
-        └─► LUKS2 root: unlocked by YubiKey FIDO2 hmac-secret (unchanged)
-            sealing/attestation: bound to fTPM PCR 0/1/7
+  BL1  verifies BL2 vs ROTPK ......................... reject on mismatch
+  BL2  verifies BL31/BL32/BL33 vs FIP certs (TBB) .... reject on mismatch
+   ├─► BL31  EL3 Secure Monitor (PSCI, SMC routing)
+   ├─► BL32  OP-TEE OS ──► fTPM TA (ms-tpm-20-ref)
+   └─► BL33  U-Boot  ── provides UEFI (see below) ──► systemd-boot → UKI
+        every stage measured into PCRs (enforced AND attested)
 ```
 
-Two roots of trust, two jobs:
+Targets: RPi 5 (ROM counter-signs boot + OTP key hash), Pi 4 (testable before the OTP lock), and
+server-class ARM64 (Ampere) with vendor-documented fuse provisioning.
+
+### Path B — no fuses, vendor-locked, or deliberately not burned (measured + attested)
+
+When OTP is unavailable, vendor-locked, or we choose not to take the irreversible/bricking risk
+(dev boards, early bring-up), there is **no hardware-enforced rejection**. We layer two softer
+anchors instead:
+
+```
+(no immutable hardware key)
+   │
+  Vendor/board firmware loads our U-Boot   (trust starts in writable firmware)
+   │
+  U-Boot FIT verified boot ── public key in U-Boot control DTB ──► verify next images
+   │   (software RoT: only as trustworthy as the firmware holding the key)
+   └─► BL33 U-Boot ── UEFI ──► systemd-boot → UKI
+        every stage MEASURED into fTPM PCRs + TCG2 event log
+        ▼
+   Local/remote ATTESTATION decides trust AFTER boot:
+   fTPM unseals secrets / YubiKey gates access only if PCRs match a golden value
+```
+
+The honest framing: Path B records what ran and lets the fTPM + YubiKey withhold secrets when the
+measurements are wrong, but a compromised stage still *executes* long enough to measure itself. It
+is evidence-and-sealing, not boot-time rejection. Good for attestation, fleet identity, and
+key-sealing; not a substitute for Path A's enforcement.
+
+**At BL33, U-Boot provides the UEFI environment** (its `EFI_LOADER` subsystem): boot + runtime
+services, the UEFI system table, `Boot####`/`BootOrder` variables, and PE/COFF loading. So
+**yubiOS's existing x86-64 boot chain — systemd-boot + UKI + UEFI Secure Boot — runs unmodified on
+ARM64**, with U-Boot speaking UEFI in place of vendor EDK2. Detail in component 4.
+
+### Two roots of trust, two jobs (both paths)
 
 | | fTPM (in OP-TEE) | YubiKey 5 |
 |---|---|---|
@@ -65,8 +99,8 @@ Two roots of trust, two jobs:
 | **yubiOS stance** | We **own** it (our OP-TEE build, our keys) | Primary RoT, unchanged from x86-64 design |
 
 The YubiKey still unlocks the disk (FIDO2 hmac-secret, ADR-003). The fTPM does **not** replace that.
-The fTPM gives us measured-boot PCRs and a local attestation root on ARM64 that no vendor controls,
-and a place to bind `ConditionSecurity=measured-os` (ADR-016) on hardware that otherwise has no TPM.
+On Path A it gives enforced measured-boot PCRs; on Path B those same PCRs are the attestation anchor.
+Either way it is where `ConditionSecurity=measured-os` (ADR-016) binds on hardware with no real TPM.
 
 ---
 
@@ -108,18 +142,44 @@ and a place to bind `ConditionSecurity=measured-os` (ADR-016) on hardware that o
   on RPMB access (OP-TEE issue #5766). Mitigation: run `tee-supplicant` from initramfs and/or defer
   persistent writes. This is the single biggest integration risk; prototype it first.
 
-### 4. U-Boot (BL33, non-secure bootloader)
+### 4. U-Boot (BL33) — bootloader AND UEFI firmware
 
+Two roles. **As the fTPM client:**
 - Kconfig: `CONFIG_TEE=y`, `CONFIG_OPTEE=y`, `CONFIG_TPM=y`, `CONFIG_TPM_V2=y`,
   `CONFIG_TPM2_FTPM_TEE=y` (driver `tpm2_ftpm_tee.c`), `CONFIG_MEASURED_BOOT=y`,
   `CONFIG_TPM2_EVENT_LOG_SIZE=0x10000`.
 - Device tree node: `tpm { compatible = "microsoft,ftpm"; };`
-- `tpm2` command suite (`tpm2 init`, `tpm2 startup`) drives the fTPM; U-Boot replays the firmware
-  event log into PCRs and measures kernel/DTB/initramfs.
-- Hands the log to Linux by writing **`linux,sml-base`** and **`linux,sml-size`** into the kernel's
-  `/chosen` DTB node.
+- `tpm2` command suite drives the fTPM; U-Boot replays the firmware event log into PCRs, measures
+  kernel/DTB/initramfs, then hands the log to Linux via `linux,sml-base` / `linux,sml-size` in the
+  kernel `/chosen` DTB node.
 
-### 5. Linux (normal-world consumer)
+**As the UEFI firmware (`EFI_LOADER`) — the architectural unlock:**
+- `CONFIG_EFI_LOADER=y` + `CONFIG_CMD_BOOTEFI=y` give a real UEFI environment: boot services,
+  runtime services, the UEFI system table, `Boot####`/`BootOrder`, and PE/COFF EFI binary loading.
+  **systemd-boot, a UKI, shim, or GRUB load unmodified** — the same artifacts yubiOS already signs
+  for x86-64 UEFI Secure Boot. ARM64 stops being a special boot path.
+- `CONFIG_EFI_TCG2_PROTOCOL=y` (with `TPM_V2`) exposes the TCG2 protocol, so the UEFI/UKI stage
+  measures into the fTPM exactly as it would on a physical-TPM box; the OS verifies PCRs against the
+  final event log.
+- `CONFIG_EFI_CAPSULE_*` — capsule-on-disk firmware updates (Firmware Management Protocol) for
+  U-Boot, FIP, and OP-TEE images. Fold into the A/B + Renovate update story (ADR-013/015) post-bring-up.
+
+### 5. UEFI Secure Boot + protected variable store (OP-TEE StandaloneMM)
+
+Real UEFI Secure Boot needs PK/KEK/db/dbx to be persistent **and** protected from the normal world.
+The upstream pattern: run EDK2's **StandaloneMM** variable service as an **OP-TEE** module, backing
+the variables in **RPMB**.
+
+- U-Boot: `CONFIG_EFI_SECURE_BOOT=y` (needs `EFI_LOADER` + `FIT_SIGNATURE`),
+  `CONFIG_EFI_MM_COMM_TEE=y`, `CONFIG_OPTEE=y`, `CONFIG_CMD_OPTEE_RPMB=y`. U-Boot authenticates
+  PE/COFF EFI binaries (UKIs included) against db/dbx and talks to the secure-world variable service
+  over the MM communication protocol.
+- OP-TEE: build EDK2 `StandAloneMM` (`BL32_AP_MM.fd`) and point OP-TEE at it with `CFG_STMM_PATH=`,
+  plus `CFG_RPMB_FS=y`, `CFG_RPMB_WRITE_KEY=y`, `CFG_CORE_DYN_SHM=y`.
+- Result: tamper-resistant PK/KEK/db/dbx on RPMB instead of writable normal-world flash — the ARM64
+  equivalent of Secure Boot variables in protected NVRAM, sharing the same RPMB that backs the fTPM.
+
+### 6. Linux (normal-world consumer)
 
 - Kconfig: `CONFIG_TCG_TPM=y`, `CONFIG_TCG_FTPM_TEE=m`, `CONFIG_TEE=y`, `CONFIG_OPTEE=y`.
 - `tpm_ftpm_tee.ko` reads `linux,sml-base`/`-size`, exposes `/dev/tpm0` + `/dev/tpmrm0`.
@@ -173,6 +233,14 @@ Pin TF-A, OP-TEE, optee_ftpm, ms-tpm-20-ref commits. Add to Renovate digest trac
   attests; the YubiKey still authorizes. The fTPM must never become the sole unlock path, or we have
   reintroduced exactly the on-device, vendor-shaped trust anchor yubiOS set out to remove.
 - **Apple Silicon (Asahi)** — interesting but no TF-A/OP-TEE path; out of scope for now.
+- **Path A vs Path B is a per-board decision** — enforcement vs attestation depends on the target.
+  RPi 5 forces an OTP burn before secure boot works at all; dev boards stay on Path B. Document which
+  path each supported board is on.
+- **Path B firmware is writable** — U-Boot FIT verified boot is only as trustworthy as the storage
+  holding U-Boot and its embedded key. Without an upstream immutable stage, an attacker who can
+  rewrite firmware swaps verifier and key together. Path B is attestation, not a hardware RoT.
+- **UEFI variable store provisioning** — StandaloneMM + RPMB needs the RPMB key written
+  (`CFG_RPMB_WRITE_KEY=y`) once per device; another irreversible-ish step to fold into provisioning.
 
 ---
 
@@ -188,6 +256,9 @@ Pin TF-A, OP-TEE, optee_ftpm, ms-tpm-20-ref commits. Add to Renovate digest trac
 | Linux fTPM driver | `drivers/char/tpm/tpm_ftpm_tee.c` |
 | fTPM over OP-TEE (worked example) | NVIDIA BlueField DPU BSP docs |
 | U-Boot SPL measured boot | Raymond Mao, "TPM 2.0 Event Log for U-Boot SPL on ARMv8" |
+| U-Boot UEFI (`EFI_LOADER`) + Secure Boot + measured boot | `docs.u-boot.org` — uefi.html, measured_boot.rst, EFI variables via OP-TEE |
+| EDK2 StandaloneMM variable service | OP-TEE `CFG_STMM_PATH` + U-Boot `CONFIG_EFI_MM_COMM_TEE` (StandAloneMM on RPMB) |
+| RPi secure boot / OTP | Raspberry Pi `usbboot` secure-boot docs (Pi 4 testable; Pi 5 OTP-first) |
 
 Internal: [ARCHITECTURE.md](ARCHITECTURE.md) · [ADR.md](ADR.md) (ADR-016 v261, ADR-017 ARM64) ·
 [MITIGATE.md](MITIGATE.md) (vendor supply-chain attack surface this project closes).
