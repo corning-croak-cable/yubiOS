@@ -37,3 +37,7 @@ _Last updated: June 24, 2026_
 - [ ] chipsec first-boot validation (portable service or sysext, per ADR-010 DPS)
 - [ ] Post-quantum TLS for yubiOS services (X25519MLKEM768 / OpenSSL 3.5+)
 - [ ] bcvk CI — software FIDO2 emulator for enrollment tests without physical YubiKey
+
+## Post-launch (see FUTURE.md)
+
+- [ ] ARM64-owned root of trust: TF-A + OP-TEE + ms-tpm-20-ref fTPM + U-Boot measured boot — gives ARM64 a yubiOS-owned TPM 2.0; YubiKey stays primary RoT. Full plan in FUTURE.md. Skills: arm-trusted-firmware-optee, ftpm-optee-tpm.
