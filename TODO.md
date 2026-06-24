@@ -11,7 +11,6 @@ _Last updated: June 24, 2026_
 - [x] ARM64 multi-arch profile documented — ADR-017, MITIGATE.md, README.md, ARCHITECTURE.md updated (June 24)
 - [ ] Test LUKS2 FIDO2 unlock end-to-end in a VM with YubiKey passthrough
 - [ ] Validate systemd-sbsign + libykcs11 PKCS#11 URI for ECC slot 9c (ADR-008)
-- [ ] Merge bcvk native-to-disk PR #1 (rebased June 24 — 0 behind / 2 ahead main — awaiting merge)
 
 ## Medium priority
 
