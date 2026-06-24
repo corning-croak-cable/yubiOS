@@ -1,0 +1,75 @@
+name: yubiOS CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    container:
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:9415967aa0ed8adea8b5c048994259d1982026dca143d0303c7bbe0e11ed67d3 # v2026.03.14 trixie-debian13-dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: shellcheck
+        run: |
+          apt-get install -y -qq shellcheck
+          find usr/lib/yubiOS -name '*.sh' | xargs shellcheck
+
+      # hadolint/hadolint-action@v3.1.0 is not in the AGENTS.md allowed-refs list.
+      # Use the apt package instead (available in debian trixie).
+      - name: hadolint (Containerfile lint)
+        run: |
+          apt-get install -y -qq hadolint
+          hadolint --ignore DL3041 Containerfile
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    needs: lint
+    container:
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:9415967aa0ed8adea8b5c048994259d1982026dca143d0303c7bbe0e11ed67d3 # v2026.03.14 trixie-debian13-dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Install bats
+        run: apt-get install -y -qq bats
+
+      - name: Run unit tests
+        run: bats tests/unit/
+
+  build:
+    runs-on: ubuntu-latest
+    needs: lint
+    container:
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:9415967aa0ed8adea8b5c048994259d1982026dca143d0303c7bbe0e11ed67d3 # v2026.03.14 trixie-debian13-dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      # docker socket is forwarded from the GHA host runner into the container.
+      # TODO: add yubiOS.rego + --policy reset=true,strict=true once policy file
+      # is committed (ref: AGENTS.md build policy pattern).
+      - name: Build OCI image
+        run: docker build -t yubiOS:ci .
+
+      - name: Verify symlinks and scripts
+        run: |
+          docker run --rm yubiOS:ci sh -c \
+            'ls -la /usr/lib/yubiOS/ && ls -la /usr/bin/yubiOS-*'
+
+      - name: Verify PAM wiring
+        run: |
+          docker run --rm yubiOS:ci grep -q pam_u2f /etc/pam.d/sudo && echo "PAM OK"

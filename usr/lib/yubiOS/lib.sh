@@ -2,10 +2,11 @@
 # SPDX-License-Identifier: LGPL-2.1-or-later
 # yubiOS shared library: detection, logging, gating functions
 
-YUBIOS_STATE_DIR=/var/lib/yubiOS
-YUBICOS_U2F_KEYS=/etc/yubico/u2f_keys
-YUBIOS_PIV_SLOT=9c   # Digital Signature slot for Secure Boot
-YUBIOS_PKCS11_LIB=/usr/lib64/libykcs11.so
+# SC2034: export so sourcing scripts can use these constants
+export YUBIOS_STATE_DIR=/var/lib/yubiOS
+export YUBICOS_U2F_KEYS=/etc/yubico/u2f_keys
+export YUBIOS_PIV_SLOT=9c   # Digital Signature slot for Secure Boot
+export YUBIOS_PKCS11_LIB=/usr/lib64/libykcs11.so
 
 yubiOS_log() { echo "[yubiOS] $*"; }
 yubiOS_warn() { echo "[yubiOS WARN] $*" >&2; }
@@ -48,9 +49,10 @@ check_pam_u2f_version() {
 }
 
 # Detect root LUKS2 partition
+# SC2140/SC1078: use single-quoted -c to prevent shellcheck parsing Python as shell
 detect_luks2_partition() {
   lsblk -J -o NAME,FSTYPE,MOUNTPOINT 2>/dev/null | \
-    python3 -c "
+    python3 -c '
 import sys,json
 d=json.load(sys.stdin)
 def find(devs):
@@ -60,7 +62,7 @@ def find(devs):
             return
         find(b.get("children", []))
 find(d["blockdevices"])
-"
+'
 }
 
 # Enforce CTAP 2.1 minimum PIN length (CTAP 2.1 minPinLength extension)

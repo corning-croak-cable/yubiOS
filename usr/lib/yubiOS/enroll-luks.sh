@@ -26,7 +26,7 @@ echo "  systemd-cryptenroll --recovery-key $LUKS_PART"
 echo "Store the recovery key offline (printed paper, not on this machine)."
 echo ""
 read -rp "Continue with FIDO2 enrollment? [Y/n]: " confirm
-[[ "${confirm:-Y}" =~ ^[Nn] ]] && exit 0
+[[  "${confirm:-Y}" =~ ^[Nn] ]] && exit 0
 
 yubiOS_log "Enrolling FIDO2 (touch YubiKey when prompted)..."
 # --fido2-with-client-pin=yes: requires FIDO2 PIN at every boot unlock
@@ -39,7 +39,8 @@ systemd-cryptenroll \
   "$LUKS_PART"
 
 # Update /etc/crypttab for boot-time FIDO2 unlock
-LUKS_NAME=$(cryptsetup status 2>/dev/null | awk '/^  type:/{p=1} p && /cipher/{print FILENAME; exit}' /proc/self/mountinfo || lsblk -no NAME "$LUKS_PART" | tail -1)
+# SC2034: LUKS_NAME used below as the device-mapper name in crypttab
+LUKS_NAME=$(lsblk -no NAME "$LUKS_PART" | tail -1)
 LUKS_UUID=$(cryptsetup luksUUID "$LUKS_PART")
 
 if ! grep -q "fido2-device=auto" /etc/crypttab 2>/dev/null; then
@@ -48,7 +49,7 @@ if ! grep -q "fido2-device=auto" /etc/crypttab 2>/dev/null; then
   if grep -q "UUID=$LUKS_UUID" /etc/crypttab 2>/dev/null; then
     sed -i "s|UUID=$LUKS_UUID.*|UUID=$LUKS_UUID none luks,fido2-device=auto,fido2-with-client-pin=1|" /etc/crypttab
   else
-    echo "luks0 UUID=$LUKS_UUID none luks,fido2-device=auto,fido2-with-client-pin=1" >> /etc/crypttab
+    echo "$LUKS_NAME UUID=$LUKS_UUID none luks,fido2-device=auto,fido2-with-client-pin=1" >> /etc/crypttab
   fi
 fi
 

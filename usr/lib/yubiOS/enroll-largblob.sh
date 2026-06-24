@@ -31,7 +31,8 @@ if [[ -f "$SSH_PUB" ]]; then
 fi
 
 TMPBLOB="$(mktemp)"
-trap "rm -f '$TMPBLOB'" EXIT
+# SC2064: use single quotes so $TMPBLOB expands at signal time, not at trap registration
+trap 'rm -f "$TMPBLOB"' EXIT
 echo "$BLOB_DATA" > "$TMPBLOB"
 
 yubiOS_log "Writing Large Blob (touch YubiKey)..."
