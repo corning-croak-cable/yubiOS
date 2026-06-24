@@ -131,10 +131,10 @@ bcvk native-to-disk yubios:latest /dev/sdb
                                               |
                                               | 
                                               └─────► YubiKey (PIV slot 9c)
-quay.io/fedora (pinned OCI)                       │
+quay.io/fedora (pinned OCI)                                      │
         │                                             ▼ systemd-sbsign via PKCS11
         ▼ Containerfile                          mkosi fork ──────────────► OCI container image (yubiOS)
-  rootless docker buildx build                               │                         │
+  rootless docker buildx build                        │                                   │
         │                                             │                         ▼ bootc install/upgrade
         ▼ OCI image → dhi.io/yubi-OS/yubiOS           │                   bare metal / VM disk
         │                                             │
@@ -155,5 +155,5 @@ quay.io/fedora (pinned OCI)                       │
 ```
 All decisions are recorded in [ADR.md](ADR.md) with sources.
 The short version: TPM replaced by YubiKey everywhere it can be.
-Where FIDO2/hidraw can't reach (Secure Boot signing), PIV/CCID is used and documented honestly.
+Where FIDO2/hidraw can't reach (Secure Boot signing), PIV/CCID is used and documented.
 ```
