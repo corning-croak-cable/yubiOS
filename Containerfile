@@ -1,9 +1,9 @@
 # yubiOS — FIDO2-first immutable OS image (Fedora base)
-# Build: podman build -t yubiOS .
+# Build: docker buildx build --policy reset=true,strict=true,filename=yubiOS.rego -t yubiOS .
 # Source: bootc design https://github.com/bootc-dev/bootc
 # Source: particleos ethos https://github.com/systemd/particleos
 
-FROM quay.io/fedora/fedora-bootc:latest
+FROM quay.io/fedora/fedora-bootc:45@sha256:5799803704a3f5894c6abf96fa5994991c9ef45931e4f66e79cf93d4caba88aa
 
 # ── YubiKey and FIDO2 stack ──────────────────────────────────────────────
 # libfido2:       FIDO2/CTAP2 library; used by systemd-cryptenroll, OpenSSH, pam-u2f
