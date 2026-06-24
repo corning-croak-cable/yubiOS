@@ -445,3 +445,53 @@ mutable tag that silently pulls different content on each build. This creates tw
 **Trade-off:** Digest pinning means security patches in the base image require an
 explicit digest bump (a commit). This is intentional — every base change is auditable,
 and automated tooling handles the operational overhead.
+
+---
+
+## ADR-014: Rootless Docker (Docker Buildx) over rootless Podman
+
+**Status:** Accepted
+
+**Context:** The build pipeline needs a rootless container build tool. Both Podman and Docker Buildx can build OCI images without root. The project already depends on Docker Buildx for Build Policies enforcement (OPA/Rego, `--policy strict=true`). Carrying two separate container runtimes adds redundant tooling and an extra surface in the trust chain.
+
+**Decision:** Use rootless Docker Buildx (`docker buildx build`) as the sole container build runtime. Remove Podman from the build dependency chain.
+
+**Rationale:**
+- One dependency, not two. Every tool that processes the image before signing is an attack surface. Single runtime = single audit target.
+- Build Policies require Buildx. OPA/Rego `--policy` is a Docker Buildx / BuildKit feature only. `yubiOS.rego` runs on every `docker buildx build` without exception; there is no Podman equivalent.
+- Native SLSA provenance. `--attest type=provenance,mode=max --attest type=sbom` are Buildx flags. Equivalent Podman paths require separate cosign/syft invocations.
+- Uniform toolchain. The install command (`docker run --rm --privileged ... bootc install to-disk`) is already Docker CLI. Build and run on the same tool removes podman as a distinct end-user requirement.
+- Daemonless trade-off accepted: Docker requires dockerd. The dhi.io CI base image ships Docker; on developer machines Docker Desktop or rootless dockerd provides it.
+
+**Migration:** Replace `podman build` with `docker buildx build` and `podman run` with `docker run`. Containerfile syntax is identical.
+
+**Source:** https://docs.docker.com/build/policies/intro/ (Build Policies, Buildx-only)
+**Source:** https://docs.docker.com/build/attestations/ (provenance + SBOM attestations)
+
+---
+
+## ADR-015: fedora-bootc:45 as pinned-digest base image
+
+**Status:** Accepted
+
+**Context:** The Containerfile previously used `quay.io/fedora/fedora-bootc:latest` — a mutable tag that silently pulls different content on each build, producing non-reproducible images and failing the `yubiOS.rego` supply-chain gate (which requires `input.image.isCanonical`, i.e. digest-pinned refs).
+
+**Decision:** Pin the base image to:
+
+    FROM quay.io/fedora/fedora-bootc:45@sha256:5799803704a3f5894c6abf96fa5994991c9ef45931e4f66e79cf93d4caba88aa
+
+**Rationale:**
+- Reproducibility: a digest is content-addressed and immutable; same bits on every build, everywhere.
+- Self-consistency: brings the Containerfile into compliance with `yubiOS.rego` isCanonical requirement. The image now passes its own policy gate.
+- Systemd version guarantee: Fedora 45 ships systemd >= 257, satisfying ADR-008 (systemd-sbsign). A mutable tag could silently regress this.
+- Right base image: `fedora-bootc` is purpose-built for bootc — /usr-merged, composefs pre-configured, systemd-boot-ready, no package-manager cruft in deployed image. Not the same as a generic `quay.io/fedora/fedora` container.
+
+**Digest update policy:**
+- Updates MUST use tooling (Renovate, Dependabot, or bootc-base-imagectl); commit message must state the new digest and Fedora 45.x version.
+- Before bumping: verify systemd >= 257 and pam-u2f >= 1.3.1 are still present.
+- Never revert to a mutable tag. When Fedora 46 is production-ready, open a separate ADR amendment.
+
+**Trade-off:** Every base image security patch requires an explicit digest bump commit. This is intentional — all base changes are auditable, automated tooling handles the operational overhead.
+
+**Source:** https://quay.io/repository/fedora/fedora-bootc
+**Source:** https://github.com/containers/bootc (fedora-bootc upstream)
