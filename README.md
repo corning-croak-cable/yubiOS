@@ -63,11 +63,11 @@ A/B sysupdate, systemd-homed per-user encryption, and UKI + dm-verity trust chai
 ## Quick start
 
 ```sh
-# Build the OCI image
-podman build -t yubiOS .
+# Build the OCI image (per ADR-014: Docker Buildx, not Podman)
+docker buildx build --policy reset=true,strict=true,filename=yubiOS.rego -t yubiOS .
 
 # Install to disk (disable Secure Boot in UEFI first)
-podman run --rm --privileged --pid=host \
+docker run --rm --privileged --pid=host \
   -v /dev:/dev -v /var/lib/containers:/var/lib/containers \
   yubiOS bootc install to-disk /dev/nvme0n1
 
@@ -134,7 +134,7 @@ bcvk native-to-disk yubios:latest /dev/sdb
 dhi.io/debian-base (pinned OCI)                       │
         │                                             ▼ systemd-sbsign via PKCS11
         ▼ Containerfile                          mkosi fork ──────────────► OCI container image (yubiOS)
-  rootless podman build                               │                         │
+  rootless docker buildx build                               │                         │
         │                                             │                         ▼ bootc install/upgrade
         ▼ OCI image → dhi.io/yubi-OS/yubiOS           │                   bare metal / VM disk
         │                                             │
