@@ -6,7 +6,7 @@
 
 **FIDO2-first immutable OS — YubiKey is the root of trust**
 
-### 🦾 🚧 Work In Progress 🚧 Work In Progress 🚧 Work In Progress 🚧
+### 🦴 🚧 Work In Progress 🚧 Work In Progress 🚧 Work In Progress 🚧
 
 [![License: LGPL-2.1](https://img.shields.io/badge/license-LGPL--2.1-magenta?style=flat-square)](LICENSE)
 [![Status: Groundwork](https://img.shields.io/badge/status-groundwork-blueviolet?style=flat-square)](TODO.md)
@@ -21,13 +21,28 @@
 
 ## What it is
 
-yubiOS fuses three lineages:
+yubiOS fuses four lineages:
 
 | Layer | Inspiration | What it gives us |
 |---|---|---|
 | **particleos ethos** | [systemd/particleos](https://github.com/systemd/particleos) | Immutable rootfs, UKI, dm-verity, composefs, systemd-boot |
 | **bootc design** | [bootc-dev/bootc](https://github.com/bootc-dev/bootc) | OCI image as OS delivery unit, day-2 upgrades via registry pull |
 | **YubiKey root of trust** | FIDO2 / PIV / OATH | Hardware-bound trust replacing TPM at every boundary |
+| **Amutable vision** | [Lennart Poettering + systemd team](https://amutable.com) | "Integrity should be built into every critical infrastructure project" — image-based OS, verifiable integrity, determinism as a default |
+
+### Ecosystem alignment
+
+In January 2026 the core systemd team — Lennart Poettering (Chief Engineer), Christian Brauner (CTO),
+Chris Kühl (CEO), David Strauss (CPO), and the engineers behind systemd, composefs, runc, Flatcar,
+ParticleOS, and Ubuntu Core — founded [Amutable](https://amutable.com) with the mission:
+
+> *“Deliver determinism and verifiable integrity to Linux workloads everywhere.”*
+
+yubiOS is independently building toward the same architecture, with one additional constraint:
+the YubiKey replaces the TPM as the hardware root of trust at every layer. The "Fitting Everything
+Together" essay at [0pointer.net](https://0pointer.net/blog/fitting-everything-together.html) is the
+primary design reference for yubiOS — hermetic /usr, DPS partitions, systemd-repart first-boot,
+A/B sysupdate, systemd-homed per-user encryption, and UKI + dm-verity trust chain.
 
 ## Trust chain
 
@@ -43,8 +58,8 @@ yubiOS fuses three lineages:
 └───────────────────────────────────────────┘
 ```
 
-> **ADR-002 note:** Secure Boot signing uses PIV/CCID, not hidraw.
-> All other operations run on FIDO2 via `/dev/hidraw*`. Full rationale: [ADR.md](ADR.md)
+> **ADR-002 note:** Secure Boot signing uses PIV/CCID (via `systemd-sbsign` + PKCS#11),
+> not hidraw. All other operations run on FIDO2 via `/dev/hidraw*`. Full rationale: [ADR.md](ADR.md)
 
 ## Quick start
 
@@ -100,7 +115,7 @@ yubiOS/
 | | Minimum |
 |---|---|
 | YubiKey firmware | 5.2.3 (ed25519-sk) |
-| systemd | 248 (systemd-cryptenroll FIDO2) |
+| systemd | 257 (systemd-sbsign, systemd-cryptenroll FIDO2) |
 | OpenSSH | 8.2 (FIDO2 key types) |
 | pam-u2f | **1.3.1** (CVE-2025-23013 fix) |
 
@@ -118,23 +133,23 @@ bcvk native-to-disk yubios:latest /dev/sdb
                                               | 
                                               └─────► YubiKey (PIV slot 9c)
 dhi.io/debian-base (pinned OCI)                       │
-        │                                             ▼ sbsign via PKCS11
-        ▼ Containerfile                          mkosi fork ──────────► OCI container image (yubiOS)
+        │                                             ▼ systemd-sbsign via PKCS11
+        ▼ Containerfile                          mkosi fork ──────────────► OCI container image (yubiOS)
   rootless podman build                               │                         │
         │                                             │                         ▼ bootc install/upgrade
         ▼ OCI image → dhi.io/yubi-OS/yubiOS           │                   bare metal / VM disk
         │                                             │
-        ├─▶ bootc install to-disk (bare metal)        └─────► bcvk fork ──────► ephemeral VM (test)
-        │           ↑                                              │                  ▲
+        ├─► bootc install to-disk (bare metal)        └─────► bcvk fork ──────► ephemeral VM (test)
+        │           ↑                                              │                  ↑
         │       bcvk native-to-disk                                └── USB passthrough YubiKey hidraw
         │
-        ├─▶ bcvk ephemeral run (dev loop)        systemd-homed
+        ├─► bcvk ephemeral run (dev loop)        systemd-homed
         │           ↑                                  |
         │       QEMU + virtiofsd + u2f-passthru        └── LUKS protected /home/ (No plaintext pass)
         │                                                    |
-        └─▶ bcvk to-disk (disk image for CI)                 ├─▶ SLOT 0 ─────► U2f protected unlock
+        └─► bcvk to-disk (disk image for CI)                 ├─► SLOT 0 ─────► U2f protected unlock
                     ↑                                        |
-                bootc install to-disk (in ephemeral VM)      └─▶ SLOT 1 ─────► U2f recovery key
+                bootc install to-disk (in ephemeral VM)      └─► SLOT 1 ─────► U2f recovery key
 ```
 
 
@@ -142,3 +157,4 @@ dhi.io/debian-base (pinned OCI)                       │
 All decisions are recorded in [ADR.md](ADR.md) with sources.
 The short version: TPM replaced by YubiKey everywhere it can be.
 Where FIDO2/hidraw can't reach (Secure Boot signing), PIV/CCID is used and documented honestly.
+```
