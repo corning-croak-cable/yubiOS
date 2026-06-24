@@ -747,3 +747,106 @@ verify `systemd --version` returns 261. Then add `ConditionSecurity=measured-os`
 `yubiOS-enroll.service` (highest-value, lowest-risk change).
 
 **Source:** https://github.com/systemd/systemd/releases/tag/v261
+
+---
+
+## ADR-016: systemd v261 adoption and yubiOS impact
+
+**Status:** Accepted
+
+**Context:** systemd v261 shipped June 19–21, 2026. Five features directly affect yubiOS
+architecture or CI: a software TPM service for VM test coverage, a new measured-boot
+condition, a BPF LSM filesystem restriction primitive, a native OS installer, and
+live-update/kexec state handover. This ADR tracks adoption decisions for each.
+
+---
+
+### Feature 1: `systemd-tpm2-swtpm.service` — software TPM for VMs
+
+**What:** New service that starts IBM’s `swtpm` (software TPM 2.0 emulator) and exposes it
+to the system. Enables TPM2-based measured-boot features on VMs and hardware without a
+physical TPM chip.
+
+**yubiOS action (CI):**
+- Enable in bcvk ephemeral VMs to exercise TPM2 code paths (PCR measurements,
+  LUKS PCR binding) in CI without physical hardware.
+- yubiOS production trust anchor is still YubiKey FIDO2 (ADR-003 unchanged) — swtpm
+  covers CI test paths only.
+- Add `swtpm` package to bcvk test image; configure `ci/vm-swtpm.conf` drop-in.
+
+---
+
+### Feature 2: `ConditionSecurity=measured-os`
+
+**What:** Unit condition that evaluates true only when the running OS has full measured-boot
+semantics — every component from firmware through userspace is cryptographically measured
+and the system passes attestation checks.
+
+**yubiOS action (immediate, high value):**
+- Add to `yubiOS-enroll.service` and any security-critical unit that should refuse to
+  run on a non-measured system (SecureBoot disabled, unsigned initrd, etc.).
+- Closes the gap where the enrollment wizard could silently enroll a YubiKey into an
+  untrustworthy boot chain.
+
+```ini
+[Unit]
+ConditionSecurity=measured-os
+```
+
+File: `usr/lib/systemd/system/yubiOS-enroll.service`
+
+---
+
+### Feature 3: `RestrictFileSystemAccess=` (BPF LSM)
+
+**What:** New `systemd.exec(5)` directive using BPF LSM to restrict which filesystem
+types a service may access. Complements `ProtectSystem=`, `PrivateDevices=`, and
+`RestrictNamespaces=`.
+
+**yubiOS action:**
+- Evaluate for enrollment scripts and YubiKey auth services.
+  Candidate: `RestrictFileSystemAccess=tmpfs proc sysfs devtmpfs`
+- Requires `CONFIG_BPF_LSM=y` in the kernel (verify in fedora-bootc:45 config before deploying).
+- Queue for next `systemd-hardening` skill audit cycle.
+
+---
+
+### Feature 4: `systemd-sysinstall` — native OS installer
+
+**What:** New native installer orchestrating `systemd-repart`, `bootctl`, and
+`systemd-creds` via Varlink. Replaces distribution-specific installation scripts.
+
+**yubiOS context:**
+- Confirms the ADR-012 design (systemd-repart first-boot, no traditional installer).
+  Upstream converged on the same architecture.
+- yubiOS does not adopt `systemd-sysinstall` now — the single-image first-boot repart
+  path is simpler and already in place. Track for future guided multi-boot installs.
+
+---
+
+### Feature 5: Live Update / Kexec Handover (LUO/KHO)
+
+**What:** PID1 supports Linux Live Update Orchestration (LUO) and Kexec Handover (KHO),
+carrying FD store state and credentials across a kexec reboot for near-zero-downtime
+kernel updates. `FileDescriptorStorePreserve=yes` new unit option.
+
+**yubiOS context:**
+- ADR-013 A/B reboot model is correct for desktop/laptop. LUO/KHO is a future path for
+  server/appliance deployments where reboot latency is unacceptable. Track, no action now.
+
+---
+
+**Minimum systemd version for v261 features:** 261
+
+Fedora 45 ships systemd 261 in point releases after June 19, 2026.
+The digest pinned in ADR-015 predates v261. **Bump required** to a post-June-19
+Fedora 45 digest to get these features in the base image.
+
+**Immediate actions (ordered):**
+1. Bump `fedora-bootc:45` digest to post-June-19 point release; verify
+   `systemd --version` returns 261 (per ADR-015 update policy)
+2. Add `ConditionSecurity=measured-os` to `yubiOS-enroll.service`
+3. Enable `swtpm` in bcvk CI VMs for TPM2 code path coverage
+4. Evaluate `RestrictFileSystemAccess=` for enrollment service units
+
+**Source:** https://github.com/systemd/systemd/releases/tag/v261
