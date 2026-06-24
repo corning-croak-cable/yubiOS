@@ -40,4 +40,4 @@ _Last updated: June 24, 2026_
 
 ## Post-launch (see FUTURE.md)
 
-- [ ] ARM64-owned root of trust: TF-A + OP-TEE + ms-tpm-20-ref fTPM + U-Boot measured boot — gives ARM64 a yubiOS-owned TPM 2.0; YubiKey stays primary RoT. Full plan in FUTURE.md. Skills: arm-trusted-firmware-optee, ftpm-optee-tpm.
+- [ ] ARM64-owned root of trust: TF-A + OP-TEE + ms-tpm-20-ref fTPM + U-Boot measured boot — gives ARM64 a yubiOS-owned TPM 2.0; YubiKey stays primary RoT. Decisions: **ADR-018** (owned secure-world stack), **ADR-019** (dual provisioning paths: fuse-enforcing vs measured/attested), **ADR-020** (U-Boot as UEFI firmware + StandaloneMM variable store). Full plan in FUTURE.md; diagrams in ARCHITECTURE.md §7. Skills: arm-trusted-firmware-optee, ftpm-optee-tpm.
