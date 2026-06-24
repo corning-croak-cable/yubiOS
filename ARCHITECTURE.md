@@ -188,6 +188,67 @@ legacy packages| NS["systemd-nspawn\n\nExamples: Debian dev container\nRPM compa
 
 ---
 
+## 7. ARM64 Secure-World Stack (Post-Launch — ADR-018/019/020)
+
+> Post-launch ARM64 root of trust. yubiOS owns TF-A, OP-TEE, the fTPM, and U-Boot.
+> The YubiKey stays the primary RoT; the fTPM is the platform-integrity root. Full plan: [FUTURE.md](FUTURE.md).
+
+### 7a. ARM64 boot trust chain (TF-A → OP-TEE/fTPM → U-Boot UEFI)
+
+```mermaid
+graph TD
+    ROTPK["🔑 ROTPK hash\nSoC OTP / eFuse\n(Path A only)"]
+    BL1["BL1 boot ROM"]
+    BL2["BL2 Trusted Boot\nverifies BL31/32/33 vs FIP certs"]
+    BL31["BL31 EL3 Secure Monitor\nPSCI + SMC routing"]
+    BL32["BL32 OP-TEE OS\nSecure-EL1"]
+    FTPM["fTPM TA (ms-tpm-20-ref)\nSecure-EL0\nUUID bc50d971..."]
+    STMM["StandaloneMM TA\nUEFI vars PK/KEK/db/dbx\non RPMB"]
+    UBOOT["BL33 U-Boot\nEFI_LOADER = UEFI firmware"]
+    SDB["systemd-boot → UKI\nsame artifacts as x86-64"]
+    LINUX["Linux\ntpm_ftpm_tee + IMA"]
+    YK["🔑 YubiKey 5\nFIDO2 LUKS2 unlock"]
+
+    ROTPK -.->|Path A anchors| BL1
+    BL1 -->|measures| BL2
+    BL2 --> BL31 --> BL32
+    BL32 --> FTPM
+    BL32 --> STMM
+    BL2 --> UBOOT
+    UBOOT -->|EFI_TCG2 measures into| FTPM
+    UBOOT -->|reads vars from| STMM
+    UBOOT --> SDB --> LINUX
+    LINUX -->|/dev/tpm0| FTPM
+    LINUX --> YK
+
+    style FTPM fill:#0d6e0d,color:#fff
+    style YK fill:#ff1493,color:#fff
+    style BL32 fill:#8b4513,color:#fff
+    style ROTPK fill:#1a1a2e,color:#fff
+```
+
+### 7b. Two provisioning paths (root of trust)
+
+```mermaid
+graph TD
+    Q{Can we burn\nROTPK to OTP/eFuse?}
+
+    Q -->|Yes — Path A| A["ENFORCING\nfull Trusted Board Boot\nROTPK in fuses\nBL1 rejects unsigned images\nbad code never runs"]
+    Q -->|No / locked / dev board — Path B| B["MEASURED + ATTESTED\nU-Boot FIT verified boot\nkey in control DTB\nmeasure into fTPM PCRs\ntrust decided AFTER boot"]
+
+    A --> AT["Targets: RPi 5, Pi 4,\nAmpere (documented fuses)"]
+    B --> BT["Targets: dev boards,\nearly bring-up"]
+
+    A --> SEAL["fTPM PCRs + YubiKey\nrelease secrets / gate access"]
+    B --> SEAL
+
+    style A fill:#0d6e0d,color:#fff
+    style B fill:#8b4513,color:#fff
+    style SEAL fill:#ff1493,color:#fff
+```
+
+---
+
 ## Key Version Requirements
 
 | Component | Minimum | Reason |
