@@ -8,9 +8,10 @@ _Last updated: June 24, 2026_
 - [x] mkosi profiles: desktop (GNOME), minimal, surface-x86, surface-arm64 (PR #2)
 - [x] Merge PR #12 — shellcheck clean + OPA/Rego build policy (yubiOS.rego) — merged June 24
 - [x] Merge PR #13 — systemd-homed LUKS2+FIDO2 home encryption (ADR-009) — merged June 24
+- [x] ARM64 multi-arch profile documented — ADR-017, MITIGATE.md, README.md, ARCHITECTURE.md updated (June 24)
 - [ ] Test LUKS2 FIDO2 unlock end-to-end in a VM with YubiKey passthrough
 - [ ] Validate systemd-sbsign + libykcs11 PKCS#11 URI for ECC slot 9c (ADR-008)
-- [ ] Rebase bcvk native-to-disk PR #1 (16 commits behind main) and merge
+- [ ] Merge bcvk native-to-disk PR #1 (rebased June 24 — 0 behind / 2 ahead main — awaiting merge)
 
 ## Medium priority
 
