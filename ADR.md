@@ -610,3 +610,61 @@ verify `systemd --version` returns 261. Then add `ConditionSecurity=measured-os`
 - ARCHITECTURE.md and README.md updated to document the multi-arch profile.
 
 **Source:** ADR-008 (systemd-sbsign is PIV-based, not arch-specific), ADR-014 (Docker Buildx multi-platform), ADR-015 (fedora-bootc:45 is multi-arch), [MITIGATE.md](MITIGATE.md)
+
+---
+
+## ADR-018: yubiOS-Owned ARM64 Secure-World Stack (TF-A + OP-TEE + fTPM)
+
+**Date:** 2026-06-24  
+**Status:** Proposed — post-launch (see [FUTURE.md](FUTURE.md))  
+**Context:** On most ARM64 hardware there is no discrete TPM and no firmware TPM we control — the SoC vendor owns the secure world (their TF-A, their TrustZone payload, their boot ROM key, their fTPM if any). Measured boot still needs a TPM-shaped thing to hold PCRs and seal secrets. Inheriting the vendor's secure world reintroduces exactly the OEM/vendor supply-chain trust anchor yubiOS exists to remove (see [MITIGATE.md](MITIGATE.md)).
+
+**Decision:** Post-launch, build the whole ARM64 secure-world stack ourselves: **ARM Trusted Firmware (TF-A)** as our EL3 monitor and Trusted Board Boot chain; **OP-TEE** as BL32, our secure-world OS; the **Microsoft `ms-tpm-20-ref` fTPM** run as an OP-TEE Trusted Application so the PCRs and sealing root are ours; **U-Boot** as BL33. Pin `OP-TEE/optee_ftpm` + `microsoft/ms-tpm-20-ref@98b60a44aba79b15fcce1c0d1e46cf5918400f6a`; fTPM TA UUID `bc50d971-d4c9-42c4-82cb-343fb7f37896`; build as an Early TA (`CFG_EARLY_TA=y`) with NV in RPMB (`CFG_RPMB_FS=y`).
+
+**fTPM vs YubiKey — complementary, not redundant:** the fTPM is the *platform-integrity* root (PCR measurement, attestation, optional seal); the YubiKey stays the *user-identity* root and the primary disk-unlock path (FIDO2 hmac-secret, ADR-003). The fTPM must never become the sole disk-unlock gate — doing so would re-create an on-device, vendor-shaped trust anchor. It is where `ConditionSecurity=measured-os` (ADR-016) binds on hardware with no real TPM.
+
+**Alternatives considered:**
+- *Vendor fTPM / TrustZone as-is* — rejected: trust anchor we did not choose; defeats the thesis.
+- *No TPM on ARM64, YubiKey only* — rejected: leaves no PCR set or local attestation root for measured boot.
+- *Discrete TPM chip* — rejected: most target ARM64 boards have no TPM header; adds a part we don't control.
+
+**Consequences:** Per-SoC TF-A bring-up is significant; pick one board and go deep first. The fTPM is software (an `ms-tpm-20-ref`/OP-TEE bug is a TPM bug) — track CVEs, pin commits, fold into Renovate (ADR-015). Highest risk: the Early-TA RPMB bootstrap before `tee-supplicant` (OP-TEE issue #5766) — prove on QEMU `virt` first.
+
+**Source:** [FUTURE.md](FUTURE.md), `knowledge/arm64-ftpm-stack.md`, skills `arm-trusted-firmware-optee` + `ftpm-optee-tpm`, ADR-016 (measured-os), ADR-017 (ARM64).
+
+---
+
+## ADR-019: Dual Root-of-Trust Provisioning Paths (Fuse-Enforcing vs Measured/Attested)
+
+**Date:** 2026-06-24  
+**Status:** Proposed — post-launch (see [FUTURE.md](FUTURE.md))  
+**Context:** TF-A Trusted Board Boot anchors the chain in a ROTPK hash burned into SoC OTP/eFuse. Burning fuses is irreversible and can brick boards; some SoCs lock or hide the fuses; dev boards often can't or shouldn't be burned. We need a coherent stance for boards where we cannot (or choose not to) anchor a hardware root of trust.
+
+**Decision:** Support two provisioning paths. The five TF-A stages are identical on both; only the *root* differs.
+- **Path A — fuses burnable (enforcing):** ROTPK hash in OTP/eFuse, full TBB, BL1 rejects any image that doesn't chain to it. Bad code never executes. The production path. Targets: RPi 5 (OTP key hash + counter-signed boot), Pi 4 (testable pre-lock), Ampere with documented fuse provisioning.
+- **Path B — no/locked/unburned fuses (measured + attested):** no hardware-enforced rejection. Software root of trust via U-Boot FIT verified boot (public key in the U-Boot control DTB) plus measured boot into the fTPM; trust is decided *after* boot by local/remote attestation and fTPM/YubiKey secret release. For dev boards and early bring-up.
+
+**Honest framing:** Path B records what ran and can withhold secrets when measurements are wrong, but a compromised stage still executes long enough to measure itself. It is evidence-and-sealing, not boot-time rejection, and its anchor lives in writable firmware (only as strong as the storage holding U-Boot and its key). Path A is strictly stronger; Path B is a deliberate, documented fallback, not a substitute.
+
+**Consequences:** Each supported board is tagged Path A or Path B and documented. Path A provisioning (ROTPK burn) is treated like a production-secret operation, rehearsed on a sacrificial board. The RPMB key write (`CFG_RPMB_WRITE_KEY=y`) for the variable store / fTPM NV is another effectively-irreversible per-device step folded into provisioning.
+
+**Source:** [FUTURE.md](FUTURE.md) (two-path trust chain), TF-A TBB docs, U-Boot `FIT_SIGNATURE` verified boot, Raspberry Pi secure-boot docs.
+
+---
+
+## ADR-020: U-Boot as the ARM64 UEFI Firmware + Authenticated Variable Store (OP-TEE StandaloneMM)
+
+**Date:** 2026-06-24  
+**Status:** Proposed — post-launch (see [FUTURE.md](FUTURE.md))  
+**Context:** yubiOS's x86-64 boot chain is systemd-boot + UKI + UEFI Secure Boot. We do not want a divergent, bespoke ARM64 boot path. U-Boot's `EFI_LOADER` subsystem is a real UEFI environment (boot + runtime services, system table, `Boot####`/`BootOrder`, PE/COFF loading), so the same signed artifacts can run on ARM64 with U-Boot speaking UEFI in place of vendor EDK2.
+
+**Decision:** On ARM64, U-Boot (BL33) provides the UEFI environment and chainloads the **same systemd-boot + UKI** that x86-64 uses, unmodified. Enable `CONFIG_EFI_LOADER`, `CONFIG_EFI_SECURE_BOOT` (PK/KEK/db/dbx authentication of PE/COFF binaries, incl. UKIs), and `CONFIG_EFI_TCG2_PROTOCOL` (UKI-stage measurement into the fTPM, per ADR-018). Store the Secure Boot variables (PK/KEK/db/dbx) in **EDK2 StandaloneMM** run as an **OP-TEE** module, backed by **RPMB** (`CFG_STMM_PATH=`, `CONFIG_EFI_MM_COMM_TEE=y`, `CONFIG_CMD_OPTEE_RPMB=y`), so they are tamper-resistant rather than living in writable normal-world flash. Use `CONFIG_EFI_CAPSULE_*` (capsule-on-disk, FMP) for U-Boot/FIP/OP-TEE firmware updates.
+
+**Consequences:** ARM64 stops being a special boot path — one UKI signing flow, one set of Secure Boot keys, one systemd-boot, across both architectures. The variable store shares the same RPMB that backs the fTPM. Capsule-on-disk folds firmware updates into the A/B + Renovate story (ADR-013/015). U-Boot's UEFI is a subset of the spec; verify each needed protocol on the target board during bring-up.
+
+**Alternatives considered:**
+- *Vendor EDK2 / TianoCore firmware* — rejected: vendor-owned trust anchor; same objection as ADR-018.
+- *Boot the kernel directly from U-Boot (no UEFI)* — rejected: diverges from the x86-64 UKI/systemd-boot chain and loses UEFI Secure Boot semantics.
+- *Variables in normal-world flash* — rejected: writable by a compromised normal world; defeats Secure Boot.
+
+**Source:** [FUTURE.md](FUTURE.md) (components 4–5), U-Boot UEFI + measured-boot docs (v2026.01), EDK2 StandaloneMM on OP-TEE, ADR-018, ADR-002 (UKI/SecureBoot lineage).
