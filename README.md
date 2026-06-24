@@ -131,7 +131,7 @@ bcvk native-to-disk yubios:latest /dev/sdb
                                               |
                                               | 
                                               └─────► YubiKey (PIV slot 9c)
-dhi.io/debian-base (pinned OCI)                       │
+quay.io/fedora (pinned OCI)                       │
         │                                             ▼ systemd-sbsign via PKCS11
         ▼ Containerfile                          mkosi fork ──────────────► OCI container image (yubiOS)
   rootless docker buildx build                               │                         │
@@ -141,7 +141,7 @@ dhi.io/debian-base (pinned OCI)                       │
         ├─► bootc install to-disk (bare metal)        └─────► bcvk fork ──────► ephemeral VM (test)
         │           ↑                                              │                  ↑
         │       bcvk native-to-disk                                └── USB passthrough YubiKey hidraw
-        │
+        │                                              
         ├─► bcvk ephemeral run (dev loop)        systemd-homed
         │           ↑                                  |
         │       QEMU + virtiofsd + u2f-passthru        └── LUKS protected /home/ (No plaintext pass)
