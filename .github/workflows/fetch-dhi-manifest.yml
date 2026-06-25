@@ -1,0 +1,16 @@
+name: fetch-dhi-manifest
+on:
+  workflow_dispatch:
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to dhi.io
+        run: |
+          echo $DOCKER_PASS | docker login dhi.io -u 0mniteck42 --password-stdin
+        env:
+          DOCKER_PASS: ${{ secrets.DOCKER }}
+      - name: Fetch latest manifest digest
+        run: |
+          docker pull dhi.io/debian-base:latest 2>&1 | grep -i digest
+          docker inspect --format "{{index .RepoDigests 0}}" dhi.io/debian-base:latest
