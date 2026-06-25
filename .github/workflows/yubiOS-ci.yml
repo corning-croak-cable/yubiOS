@@ -67,7 +67,7 @@ jobs:
       # TODO: add yubiOS.rego + --policy reset=true,strict=true once policy file
       # is committed (ref: AGENTS.md build policy pattern).
       - name: Build OCI image
-        run: docker build -t yubios:ci .
+        run: docker build -f Containerfile -t yubios:ci .
 
       - name: Verify symlinks and scripts
         run: |
