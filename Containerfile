@@ -13,7 +13,6 @@ FROM quay.io/fedora/fedora-bootc:45@sha256:6a60ff82da9d2f73aad315233fbffe2ed880a
 # pam-u2f:         PAM module for FIDO2/U2F; requires >= 1.3.1 (CVE-2025-23013)
 #                  Source: https://www.yubico.com/support/security-advisories/ysa-2025-01/
 # pcsc-lite:       PC/SC daemon; needed for PIV/CCID interface
-# sbsigntool:      sbsign for Secure Boot UKI signing via PKCS#11
 RUN dnf install -y \
       libfido2 \
       libfido2-devel \
@@ -21,10 +20,8 @@ RUN dnf install -y \
       yubico-piv-tool \
       opensc \
       pam-u2f \
-      systemd-homed \
       pcsc-lite \
       pcsc-lite-ccid \
-      sbsigntool \
       sbctl \
       tpm2-tools \
       tpm2-tss \
