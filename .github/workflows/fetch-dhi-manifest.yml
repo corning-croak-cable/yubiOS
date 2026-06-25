@@ -5,10 +5,9 @@ jobs:
   fetch:
     runs-on: ubuntu-latest
     steps:
-      - name: List dhi.io tags and get latest digest
+      - name: Get trixie-debian13-dev digest
         run: |
-          TOKEN=$(curl -sf -u "0mniteck42:$DOCKER_PASS" 'https://dhi.io/token?service=registry.docker.io&scope=repository:debian-base:pull' | python3 -c 'import sys,json; print(json.load(sys.stdin)["token"]) ')
-          echo "=== TAGS ==="
-          curl -sf -H "Authorization: Bearer $TOKEN" https://dhi.io/v2/debian-base/tags/list
+          TOKEN=$(curl -sf -u "0mniteck42:$DOCKER_PASS" 'https://dhi.io/token?service=registry.docker.io&scope=repository:debian-base:pull' | python3 -c 'import sys,json; print(json.load(sys.stdin)["token"])' )
+          curl -sI -H "Authorization: Bearer $TOKEN" -H "Accept: application/vnd.oci.image.manifest.v1+json" https://dhi.io/v2/debian-base/manifests/trixie-debian13-dev | grep -i docker-content-digest
         env:
           DOCKER_PASS: ${{ secrets.DOCKER }}
