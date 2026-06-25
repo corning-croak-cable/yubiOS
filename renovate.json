@@ -1,0 +1,36 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "docker": {
+    "enabled": true,
+    "pinDigests": true
+  },
+  "packageRules": [
+    {
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "quay.io/fedora/fedora-bootc"
+      ],
+      "enabled": true,
+      "pinDigests": true,
+      "automerge": false,
+      "reviewers": [
+        "corning-croak-cable"
+      ],
+      "labels": [
+        "adr",
+        "build",
+        "phase-0"
+      ],
+      "commitMessagePrefix": "chore(base-image):",
+      "prBodyNotes": [
+        "**Before merging (ADR-015/016):** verify `systemd --version >= 261` and `pam-u2f >= 1.3.1` in the updated image.",
+        "Build: `docker buildx build --policy reset=true,strict=true,filename=yubiOS.rego .`"
+      ]
+    }
+  ]
+}
