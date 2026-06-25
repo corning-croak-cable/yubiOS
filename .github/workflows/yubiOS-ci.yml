@@ -65,14 +65,19 @@ jobs:
 
   mkosi:
     runs-on: ubuntu-latest
+    container:
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:62bc0610151db7155b7225f1a03c299bf109ab0b884da6777d1f808c7834d4ea # trixie-debian13-dev (fetched 2026-06-25)
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Install mkosi (from yubi-OS fork, v26~devel required)
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq python3 python3-pip python3-pexpect
+          apt-get update -qq
+          apt-get install -y -qq python3 python3-pip python3-pexpect
           pip install --break-system-packages git+https://github.com/yubi-OS/mkosi.git@feature/yubiOS-profile
 
       - name: Validate mkosi config
@@ -80,6 +85,11 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    container:
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:62bc0610151db7155b7225f1a03c299bf109ab0b884da6777d1f808c7834d4ea # trixie-debian13-dev (fetched 2026-06-25)
     needs: [shellcheck, hadolint]
     steps:
       - name: Checkout
