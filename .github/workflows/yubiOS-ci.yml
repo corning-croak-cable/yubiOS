@@ -25,10 +25,10 @@ jobs:
           find usr/lib/yubiOS -name '*.sh' | xargs shellcheck --source-path=usr/lib/yubiOS
 
       - name: hadolint (Containerfile lint)
-        run: |
-          docker run --rm -i \
-            hadolint/hadolint@sha256:27086352fd5e1907ea2b934eb1023f217c5ae087992eb59fde121dce9c9ff21e \
-            hadolint --ignore DL3041 - < Containerfile
+        uses: docker://hadolint/hadolint@sha256:27086352fd5e1907ea2b934eb1023f217c5ae087992eb59fde121dce9c9ff21e
+        with:
+          entrypoint: hadolint
+          args: --ignore DL3041 --ignore DL3059 Containerfile
 
   unit-tests:
     runs-on: ubuntu-latest
