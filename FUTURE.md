@@ -55,14 +55,21 @@ ROTPK hash  ──burned──►  SoC OTP / eFuse   (immutable, one-time)
         every stage measured into PCRs (enforced AND attested)
 ```
 
-Targets: RPi 5 (ROM counter-signs boot + OTP key hash), Pi 4 (testable before the OTP lock), and
-server-class ARM64 (Ampere) with vendor-documented fuse provisioning.
+Targets: **RK3588** (primary Path A — no vendor key in chain, FIREWALL_DDR hardware TrustZone isolation, RSA/ECDSA OTP, SRK revocation; boards: Orange Pi 5, Rock 5B, NanoPC-T6), **RK3399** (stepping stone — same TF-A/OP-TEE lineage, blobless DDR init, dry-run testable; boards: RockPro64, Pinebook Pro),
+Ampere with documented fuse provisioning. **RPi 5 is Path B only** (see below).
 
-### Path B — no fuses, vendor-locked, or deliberately not burned (measured + attested)
+### Path B — no fuses, vendor-locked, deliberately not burned, or closed-source vendor stage (measured + attested)
 
 When OTP is unavailable, vendor-locked, or we choose not to take the irreversible/bricking risk
 (dev boards, early bring-up), there is **no hardware-enforced rejection**. We layer two softer
 anchors instead:
+
+Note: **RPi 5 (BCM2712) is Path B**, not Path A. The Broadcom VideoCore VII firmware
+runs before ARM cores execute, holds a Broadcom key permanently in the chain, and is
+closed-source. Customer OTP adds a second signature layer but cannot remove the Broadcom
+key. RPi 5 is excellent for toolchain validation and Qualcomm-attack-surface testing, but
+the yubiOS requirement that every trust anchor be owner-controlled rules it out for Path A.
+Use Pi 4 (dry-run before OTP burn) to validate the signing toolchain, then move to RK3588.
 
 ```
 (no immutable hardware key)
