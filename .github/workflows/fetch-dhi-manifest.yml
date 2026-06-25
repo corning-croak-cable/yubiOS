@@ -5,12 +5,10 @@ jobs:
   fetch:
     runs-on: ubuntu-latest
     steps:
-      - name: Login to dhi.io
-        run: echo $DOCKER_PASS | docker login dhi.io -u 0mniteck42 --password-stdin
+      - name: Login and list tags
+        run: |
+          TOKEN=$(curl -sf -u "0mniteck42:$DOCKER_PASS" 'https://dhi.io/token?service=registry.docker.io&scope=repository:debian-base:pull' | python3 -c 'import sys,json; d=json.load(sys.stdin); print(d["token"])' )
+          echo "=== TAGS ==="
+          curl -sf -H "Authorization: Bearer $TOKEN" https://dhi.io/v2/debian-base/tags/list
         env:
           DOCKER_PASS: ${{ secrets.DOCKER }}
-      - name: Pull and inspect latest digest
-        run: |
-          docker pull dhi.io/debian-base:latest
-          echo "DIGEST:"
-          docker inspect --format '{{index .RepoDigests 0}}' dhi.io/debian-base:latest
