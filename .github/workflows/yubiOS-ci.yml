@@ -17,7 +17,7 @@ jobs:
       credentials:
         username: 0mniteck42
         password: ${{ secrets.DOCKER }}
-      image: docker://dhi.io/debian-base@sha256:9415967aa0ed8adea8b5c048994259d1982026dca143d0303c7bbe0e11ed67d3 # v2026.03.14 trixie-debian13-dev
+      image: docker://dhi.io/debian-base@sha256:62bc0610151db7155b7225f1a03c299bf109ab0b884da6777d1f808c7834d4ea # trixie-debian13-dev (fetched 2026-06-25)
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -47,7 +47,7 @@ jobs:
       credentials:
         username: 0mniteck42
         password: ${{ secrets.DOCKER }}
-      image: docker://dhi.io/debian-base@sha256:9415967aa0ed8adea8b5c048994259d1982026dca143d0303c7bbe0e11ed67d3 # v2026.03.14 trixie-debian13-dev
+      image: docker://dhi.io/debian-base@sha256:62bc0610151db7155b7225f1a03c299bf109ab0b884da6777d1f808c7834d4ea # trixie-debian13-dev (fetched 2026-06-25)
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
