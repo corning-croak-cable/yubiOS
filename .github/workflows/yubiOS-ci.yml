@@ -88,28 +88,30 @@ jobs:
         password: ${{ secrets.DOCKER }}
       image: docker://dhi.io/debian-base@sha256:62bc0610151db7155b7225f1a03c299bf109ab0b884da6777d1f808c7834d4ea # trixie-debian13-dev (fetched 2026-06-25)
     needs: [shellcheck, hadolint]
-    env:
-      DOCKER_HOST: unix://var/run/ducker.sock
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Install docker-engine and docker-buildx
+        env:
+          DOCKER_HOST: unix://var/run/ducker.sock
         run: |
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends git wget
           # uidmap dbus-user-session slirp4netns
           wget https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz
-          wget https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-arm64
+          wget https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64
           # wget https://download.docker.com/linux/static/stable/x86_64/docker-rootless-extras-29.6.0.tgz
           tar xzvf docker-29.6.0.tgz
           mkdir -p /usr/libexec/docker/cli-plugins/
           cp docker/* /usr/bin/
-          cp buildx-v0.35.0.linux-arm64 /usr/libexec/docker/cli-plugins/docker-buildx
+          cp buildx-v0.35.0.linux-amd64 /usr/libexec/docker/cli-plugins/docker-buildx
           chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
           dockerd &
 
       - name: Log in to Docker Hub
+        env:
+          DOCKER_HOST: unix://var/run/ducker.sock
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
         run: echo "${{ secrets.DOCKER }}" | docker login -u 0mniteck42 --password-stdin
 
@@ -119,6 +121,8 @@ jobs:
       #   uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4.1.0
 
       - name: Build OCI image
+        env:
+          DOCKER_HOST: unix://var/run/ducker.sock
         run: |
           docker info
           docker buildx build -f Containerfile \
@@ -129,15 +133,21 @@ jobs:
             .
 
       - name: Verify symlinks and scripts
+        env:
+          DOCKER_HOST: unix://var/run/ducker.sock
         run: |
           docker run --rm yubios:ci sh -c \
             'ls -la /usr/lib/yubiOS/ && ls -la /usr/bin/yubiOS-*'
 
       - name: Verify PAM wiring
+        env:
+          DOCKER_HOST: unix://var/run/ducker.sock
         run: |
           docker run --rm yubios:ci grep -q pam_u2f /etc/pam.d/sudo && echo "PAM OK"
 
       - name: Push to Docker Hub
+        env:
+          DOCKER_HOST: unix://var/run/ducker.sock
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
         run: |
           docker push 0mniteck/yubios:latest
