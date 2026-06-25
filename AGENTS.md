@@ -113,3 +113,14 @@ Finally go ahead and do some deep research on the following links section.
 - <https://docs.github.com/en/rest/repos/forks> # Forks API: fork repos into org
 - <https://docs.github.com/en/rest/orgs/repos> # Org repos: list org repos
 - <https://docs.github.com/en/rest/commits/commits> # Commits: history per file
+
+# GitHub API docs — Build or update github-api SKILL
+- <https://docs.github.com/en/rest>
+- <https://docs.github.com/en/rest/git> # Git Data API: blobs, trees, commits, refs
+- <https://docs.github.com/en/rest/repos/contents> # Contents API: read/write files
+- <https://docs.github.com/en/rest/issues> # Issues API
+- <https://docs.github.com/en/rest/pulls> # Pull Requests API
+- <https://docs.github.com/en/rest/issues/labels> # Labels API
+- <https://docs.github.com/en/rest/repos/forks> # Forks API
+- <https://docs.github.com/en/rest/orgs/repos> # Org repos
+- <https://docs.github.com/en/rest/commits/commits> # Commit history per file
