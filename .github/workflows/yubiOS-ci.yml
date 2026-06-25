@@ -93,8 +93,6 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Install docker-engine and docker-buildx
-        env:
-          DOCKER_HOST: unix://var/run/ducker.sock
         run: |
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends git wget
@@ -107,13 +105,11 @@ jobs:
           cp docker/* /usr/bin/
           cp buildx-v0.35.0.linux-amd64 /usr/libexec/docker/cli-plugins/docker-buildx
           chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
-          dockerd &
+          dockerd -H unix://var/run/ducker.sock &
 
       - name: Log in to Docker Hub
-        env:
-          DOCKER_HOST: unix://var/run/ducker.sock
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
-        run: echo "${{ secrets.DOCKER }}" | docker login -u 0mniteck42 --password-stdin
+        run: echo "${{ secrets.DOCKER }}" | docker -H unix://var/run/ducker.sock login -u 0mniteck42 --password-stdin
 
       # TODO: add yubiOS.rego + --policy reset=true,strict=true once policy file
       # is committed (ref: AGENTS.md build policy pattern).
@@ -121,11 +117,9 @@ jobs:
       #   uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4.1.0
 
       - name: Build OCI image
-        env:
-          DOCKER_HOST: unix://var/run/ducker.sock
         run: |
-          docker info
-          docker buildx build -f Containerfile \
+          docker -H unix://var/run/ducker.sock info
+          docker -H unix://var/run/ducker.sock buildx build -f Containerfile \
             --load \
             -t yubios:ci \
             -t 0mniteck/yubios:latest \
@@ -133,22 +127,16 @@ jobs:
             .
 
       - name: Verify symlinks and scripts
-        env:
-          DOCKER_HOST: unix://var/run/ducker.sock
         run: |
-          docker run --rm yubios:ci sh -c \
+          docker -H unix://var/run/ducker.sock run --rm yubios:ci sh -c \
             'ls -la /usr/lib/yubiOS/ && ls -la /usr/bin/yubiOS-*'
 
       - name: Verify PAM wiring
-        env:
-          DOCKER_HOST: unix://var/run/ducker.sock
         run: |
-          docker run --rm yubios:ci grep -q pam_u2f /etc/pam.d/sudo && echo "PAM OK"
+          docker -H unix://var/run/ducker.sock run --rm yubios:ci grep -q pam_u2f /etc/pam.d/sudo && echo "PAM OK"
 
       - name: Push to Docker Hub
-        env:
-          DOCKER_HOST: unix://var/run/ducker.sock
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
         run: |
-          docker push 0mniteck/yubios:latest
-          docker push "0mniteck/yubios:${{ github.sha }}"
+          docker -H unix://var/run/ducker.sock push 0mniteck/yubios:latest
+          docker -H unix://var/run/ducker.sock push "0mniteck/yubios:${{ github.sha }}"
