@@ -34,7 +34,7 @@ certificate that can be enrolled in the UEFI Secure Boot `db`.
 **Decision:** Use YubiKey PIV slot 9c (Digital Signature) via PKCS#11 for
 Secure Boot key material. Interface: CCID (USB smartcard), not hidraw.
 
-**Signing toolchain:** Use `systemd-sbsign` (systemd v257+) via `--key pkcs11:…`.
+**Signing toolchain:** Use `systemd-sbsign` (systemd v257+; yubiOS base is now pinned to v261+, see ADR-015 and ADR-016) via `--key pkcs11:…`.
 This replaces legacy `sbsigntools` (`sbsign --engine pkcs11`). Both speak PKCS#11;
 systemd-sbsign integrates tighter with the UKI pipeline and is now the upstream default.
 
@@ -66,6 +66,8 @@ No TPM slot is enrolled.
 - FIDO2 enrollment does NOT bind to PCR hash values, so OS updates never require
   re-enrollment (unlike TPM2 PCR-hash policies which break on every kernel/initrd change)
 - Source: https://www.freedesktop.org/software/systemd/man/latest/systemd-cryptenroll.html
+
+**v261 (June 19, 2026):** No regressions for this ADR. `systemd-cryptenroll --fido2-device=auto` and `--fido2-with-client-pin=yes` are unchanged. New v261 features tracked in ADR-016 (`ConditionSecurity=measured-os`, `RestrictFileSystems=`, `systemd-tpm2-swtpm.service`) do not affect the disk-unlock path.
 
 **PIN policy:** `--fido2-with-client-pin=yes` is the default in yubiOS.
 Requires FIDO2 PIN + touch at boot. Strongest available option without biometrics.
@@ -181,7 +183,7 @@ read-only root filesystem, following the particleos pattern.
 **Migration:** Replace any `sbsign --engine pkcs11 --key …` invocations in
 FinalizeScripts and CI with `systemd-sbsign --key pkcs11:… --certificate cert.pem`.
 
-**Consequence:** Requires systemd >= 257. Debian Trixie ships systemd 257.x.
+**Consequence:** Requires systemd >= 257. yubiOS base is now pinned to v261 (ADR-015/ADR-016); Debian Trixie ships systemd 257.x.
 
 ---
 
@@ -417,7 +419,7 @@ mutable tag that silently pulls different content on each build. This creates tw
 
 **Decision:** Pin the base image to:
 
-    FROM quay.io/fedora/fedora-bootc:45@sha256:5799803704a3f5894c6abf96fa5994991c9ef45931e4f66e79cf93d4caba88aa
+    FROM quay.io/fedora/fedora-bootc:45@sha256:b7b34d8720b2e0ccaba980fd92347e7820051496ca0e639704172c6f3fb8877d
 
 **Rationale:**
 - **Reproducibility.** A SHA256 digest is content-addressed and immutable; the same
