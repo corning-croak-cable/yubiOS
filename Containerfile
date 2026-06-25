@@ -21,7 +21,6 @@ RUN dnf install -y \
       yubico-piv-tool \
       opensc \
       pam-u2f \
-      pam-u2f-devel \
       systemd-homed \
       pcsc-lite \
       pcsc-lite-ccid \
