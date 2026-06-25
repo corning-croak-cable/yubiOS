@@ -67,13 +67,13 @@ jobs:
       # TODO: add yubiOS.rego + --policy reset=true,strict=true once policy file
       # is committed (ref: AGENTS.md build policy pattern).
       - name: Build OCI image
-        run: docker build -t yubiOS:ci .
+        run: docker build -t yubios:ci .
 
       - name: Verify symlinks and scripts
         run: |
-          docker run --rm yubiOS:ci sh -c \
+          docker run --rm yubios:ci sh -c \
             'ls -la /usr/lib/yubiOS/ && ls -la /usr/bin/yubiOS-*'
 
       - name: Verify PAM wiring
         run: |
-          docker run --rm yubiOS:ci grep -q pam_u2f /etc/pam.d/sudo && echo "PAM OK"
+          docker run --rm yubios:ci grep -q pam_u2f /etc/pam.d/sudo && echo "PAM OK"
