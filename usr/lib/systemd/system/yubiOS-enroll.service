@@ -22,6 +22,15 @@ StandardError=tty
 ExecStart=/usr/lib/yubiOS/enroll.sh
 ExecStartPost=/bin/mkdir -p /var/lib/yubiOS
 ExecStartPost=/bin/touch /var/lib/yubiOS/.enrolled
+# ADR-016 / systemd.exec(5): deny network filesystems for the enrollment service.
+# RestrictFileSystems= (added systemd v250) is enforced via the LSM eBPF hook.
+# Deny-list form: local block/API filesystems (btrfs, ext4, tmpfs, proc, sysfs)
+# stay accessible; only @network types (NFS, CIFS, ...) are blocked.
+# Prerequisite VERIFIED 2026-06-25 (BLOCKER-007 cleared, PAIR-28A):
+# CONFIG_BPF_LSM=y is set AND in the active CONFIG_LSM stack on the v261 base
+# quay.io/fedora/fedora-bootc:45@sha256:b7b34d8720b2e0ccaba980fd92347e7820051496ca0e639704172c6f3fb8877d
+# so this directive is enforced, not silently ignored.
+RestrictFileSystems=~@network
 
 [Install]
 WantedBy=first-boot-complete.target
