@@ -31,9 +31,6 @@ jobs:
   hadolint:
     runs-on: ubuntu-latest
     container:
-      credentials:
-        username: 0mniteck42
-        password: ${{ secrets.DOCKER }}
       image: docker://ghcr.io/hadolint/hadolint:v2.14.0-debian@sha256:158cd0184dcaa18bd8ec20b61f4c1cabdf8b32a592d062f57bdcb8e4c1d312e2
     steps:
       - name: Checkout
