@@ -21,7 +21,7 @@ jobs:
       - name: shellcheck
         run: |
           apt-get install -y -qq shellcheck
-          find usr/lib/yubiOS -name '*.sh' | xargs shellcheck
+          find usr/lib/yubiOS -name '*.sh' | xargs shellcheck -x
 
       # hadolint/hadolint-action@v3.1.0 is not in the AGENTS.md allowed-refs list.
       # Use the apt package instead (available in debian trixie).
