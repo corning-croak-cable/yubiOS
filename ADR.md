@@ -502,16 +502,16 @@ ConditionSecurity=measured-os
 
 ---
 
-### v261 Feature 3: `RestrictFileSystemAccess=` (BPF LSM)
+### v261 Feature 3: `RestrictFileSystems=` (BPF LSM)
 
 **What it is:** A new `systemd.exec(5)` sandboxing directive that uses BPF LSM to
 restrict which filesystems a service may access by type. Complements existing
 `ProtectSystem=`, `PrivateDevices=`, and `RestrictNamespaces=`.
 
 **yubiOS action:**
-- Evaluate adding `RestrictFileSystemAccess=` to the enrollment scripts and
+- Evaluate adding `RestrictFileSystems=` to the enrollment scripts and
   YubiKey auth services to limit filesystem surface. Candidate:
-  `RestrictFileSystemAccess=tmpfs proc sysfs devtmpfs`
+  `RestrictFileSystems=tmpfs proc sysfs devtmpfs`
 - Requires systemd >= 261 and a kernel with BPF LSM enabled (`CONFIG_BPF_LSM=y`).
   Verify this is set in the fedora-bootc:45 kernel config before deploying.
 - Add to next `systemd-hardening` skill audit cycle.
@@ -560,7 +560,7 @@ across a `kexec` reboot — enabling kernel updates with near-zero downtime.
 |---|---|
 | `systemd-tpm2-swtpm.service` | 261 |
 | `ConditionSecurity=measured-os` | 261 |
-| `RestrictFileSystemAccess=` | 261 |
+| `RestrictFileSystems=` | 261 |
 | `systemd-sysinstall` | 261 |
 | `FileDescriptorStorePreserve=yes` | 261 |
 
