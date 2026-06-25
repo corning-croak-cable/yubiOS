@@ -74,7 +74,7 @@ jobs:
       - name: Install mkosi (from yubi-OS fork, v26~devel required)
         run: |
           apt-get update -qq
-          apt-get install -y -qq python3 python3-pip python3-pexpect
+          apt-get install -y -qq python3 python3-pip python3-pexpect git
           pip install --break-system-packages git+https://github.com/yubi-OS/mkosi.git@feature/yubiOS-profile
 
       - name: Validate mkosi config
@@ -92,10 +92,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
-      - name: Install docker and docker-buildx
+      - name: Install docker-engine and docker-buildx
         run: |
           apt-get update -qq
-          apt-get install -y -qq docker docker-buildx
+          apt-get install -y -qq git # uidmap dbus-user-session slirp4netns
+          wget https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz
+          wget https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-arm64
+          # wget https://download.docker.com/linux/static/stable/x86_64/docker-rootless-extras-29.6.0.tgz
+          tar xzvf docker-29.6.0.tgz
+          mkdir -p /usr/libexec/docker/cli-plugins/
+          cp docker/* /usr/bin/
+          cp buildx-v0.35.0.linux-arm64 /usr/libexec/docker/cli-plugins/docker-buildx
+          dockerd &
 
       - name: Log in to Docker Hub
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
