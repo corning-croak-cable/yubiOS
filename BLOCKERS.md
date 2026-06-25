@@ -11,7 +11,7 @@ _Last updated: 2026-06-24. Maintained alongside TODO.md and ADR.md._
 
 #14 (v261 digest bump)
   ↳ #15 (ConditionSecurity=measured-os)        [needs systemd 261]
-  ↳ #18 (RestrictFileSystemAccess=)            [needs systemd 261 + CONFIG_BPF_LSM]
+  ↳ #18 (RestrictFileSystems=)            [needs systemd 261 + CONFIG_BPF_LSM]
 
 #22 (CI deploy)                                [manual — token scope]
 #19 (Renovate)                                 [manual — app install]
@@ -37,7 +37,7 @@ _Last updated: 2026-06-24. Maintained alongside TODO.md and ADR.md._
 
 ### BLOCKER-002: #14 (v261 digest bump) must land before #15 and #18
 
-- **Blocks:** #15 (PR #27 `ConditionSecurity=measured-os`), #18 (PR #28 `RestrictFileSystemAccess=`)
+- **Blocks:** #15 (PR #27 `ConditionSecurity=measured-os`), #18 (PR #28 `RestrictFileSystems=`)
 - **Why:** Both directives are systemd 261 features. Current base image predates the
   June 2026 Fedora 45 point release.
 - **Resolution:** Merge PR #31 (`feat/v261-base-image`) first. Verify before merging:
@@ -89,10 +89,10 @@ _Last updated: 2026-06-24. Maintained alongside TODO.md and ADR.md._
 - **Resolution:** Open a parallel issue in `yubi-OS/bcvk`. PR #34 here tracks the yubiOS
   CI workflow integration side only.
 
-### BLOCKER-007: CONFIG_BPF_LSM=y not yet verified for #18
+### BLOCKER-007: CONFIG_BPF_LSM=y not yet verified for #18 (`RestrictFileSystems=`)
 
 - **Blocks:** PR #28 (`feat/v261-restrict-filesystem`) being merge-ready
-- **Why:** `RestrictFileSystemAccess=` is silently ignored if `CONFIG_BPF_LSM=y` is not
+- **Why:** `RestrictFileSystems=` is silently ignored if `CONFIG_BPF_LSM=y` is not
   set in the kernel.
 - **Verification (run after #14 merges):**
   ```sh
