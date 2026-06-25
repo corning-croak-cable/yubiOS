@@ -15,14 +15,12 @@ FROM quay.io/fedora/fedora-bootc:45@sha256:6a60ff82da9d2f73aad315233fbffe2ed880a
 # pcsc-lite:       PC/SC daemon; needed for PIV/CCID interface
 RUN dnf install -y \
       libfido2 \
-      libfido2-devel \
       yubikey-manager \
       yubico-piv-tool \
       opensc \
       pam-u2f \
       pcsc-lite \
       pcsc-lite-ccid \
-      sbctl \
       tpm2-tools \
       tpm2-tss \
       cryptsetup \
