@@ -105,7 +105,7 @@ jobs:
           cp docker/* /usr/bin/
           cp buildx-v0.35.0.linux-amd64 /usr/libexec/docker/cli-plugins/docker-buildx
           chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
-          dockerd -H unix:///var/run/ducker.sock &
+          dockerd --ip6tables=false --iptables=false -H unix:///var/run/ducker.sock &
 
       - name: Log in to Docker Hub
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
