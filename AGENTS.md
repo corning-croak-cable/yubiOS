@@ -35,9 +35,18 @@ Do NOT use or modify any repo that contains a decimal or period anywhere in the 
 │ yubi-OS/ # Org-level\
 ├───────────────────── yubiOS/ # Main Project\
 ├───────────────────── bootc/ # Bootable OCI images (fork)\
-├───────────────────── bcvk/ # Bootc virtualization kit for our Ci - test VM and image installer/upgrader (fork)\
-├───────────────────── mkosi/ # Builder for the OS contaimer images (fork)\
-├───────────────────── particleos/ # A good referrence implementation (fork)\
+├───────────────────── bcvk/ # Bootc virtualization kit — CI test VM + image installer/upgrader (fork)\
+├───────────────────── mkosi/ # OS container image builder (fork)\
+├───────────────────── particleos/ # Reference implementation (fork)\
+│\
+│ ARM64 fTPM stack (post-launch, ADR-018/019/020/021):\
+├───────────────────── arm-trusted-firmware/ # TF-A BL31 — PLAT=rk3588, ROTPK, FIP, TBB (fork)\
+├───────────────────── optee_os/ # BL32 secure-world OS — PLATFORM=rockchip, RPMB, Early TA (fork)\
+├───────────────────── optee_ftpm/ # fTPM TA — ms-tpm-20-ref integration, UUID bc50d971 (fork)\
+├───────────────────── u-boot/ # BL33 + UEFI — EFI_LOADER, TPM2_FTPM_TEE, measured boot (fork, ADR-021)\
+├───────────────────── ms-tpm-20-ref/ # TPM 2.0 reference — pinned 98b60a44 (fork)\
+├───────────────────── edk2/ # EDK2 StandaloneMM variable service for UEFI Secure Boot vars on RPMB (fork)\
+├───────────────────── edk2-rk3588/ # EDK2 UEFI for RK3588 boards — reference only, not active path (fork, ADR-021)\
 │\
 DO NOT USE ───── yubi-OS/\
 ├───────────────────── .example/ # HANDS OFF\
