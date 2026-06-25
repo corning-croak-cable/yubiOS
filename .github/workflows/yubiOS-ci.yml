@@ -88,8 +88,8 @@ jobs:
         run: |
           docker build -f Containerfile \
             -t yubios:ci \
-            -t 0mniteck42/yubios:latest \
-            -t "0mniteck42/yubios:${{ github.sha }}" \
+            -t 0mniteck/yubios:latest \
+            -t "0mniteck/yubios:${{ github.sha }}" \
             .
 
       - name: Verify symlinks and scripts
@@ -104,5 +104,5 @@ jobs:
       - name: Push to Docker Hub
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-          docker push 0mniteck42/yubios:latest
-          docker push "0mniteck42/yubios:${{ github.sha }}"
+          docker push 0mniteck/yubios:latest
+          docker push "0mniteck/yubios:${{ github.sha }}"
