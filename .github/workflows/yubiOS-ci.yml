@@ -106,7 +106,10 @@ jobs:
           cp buildx-v0.35.0.linux-amd64 /usr/libexec/docker/cli-plugins/docker-buildx
           chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
           dockerd --bridge=none --ip6tables=false --iptables=false -H unix:///var/run/ducker.sock &
-
+          docker -H unix:///var/run/ducker.sock buildx create --name hardened \
+            --driver docker-container \
+            --driver-opt env.BUILDKIT_ROOT=/data/buildkit \
+            --use
       - name: Log in to Docker Hub
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
         run: echo "${{ secrets.DOCKER }}" | docker -H unix:///var/run/ducker.sock login -u 0mniteck42 --password-stdin
