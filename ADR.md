@@ -670,3 +670,61 @@ verify `systemd --version` returns 261. Then add `ConditionSecurity=measured-os`
 - *Variables in normal-world flash* — rejected: writable by a compromised normal world; defeats Secure Boot.
 
 **Source:** [FUTURE.md](FUTURE.md) (components 4–5), U-Boot UEFI + measured-boot docs (v2026.01), EDK2 StandaloneMM on OP-TEE, ADR-018, ADR-002 (UKI/SecureBoot lineage).
+
+---
+
+## ADR-021: U-Boot as the Sole ARM64 Bootloader and UEFI Firmware Provider
+
+**Date:** 2026-06-24  
+**Status:** Accepted — post-launch (see [FUTURE.md](FUTURE.md))  
+**Supersedes:** The alternative-UEFI option mentioned in ADR-020 (edk2-rk3588 as a parallel UEFI path is rejected here).
+
+**Context:** The ARM64 secure-world stack (ADR-018/019/020) needs a BL33 stage that both completes the TF-A boot chain and provides the UEFI environment yubiOS's existing systemd-boot + UKI toolchain requires. Two candidates exist:
+
+- **U-Boot** (`yubi-OS/u-boot` fork of `u-boot/u-boot`): the non-secure BL33 bootloader. Provides a real UEFI environment via its `EFI_LOADER` subsystem. Mainline defconfigs exist for all three primary target boards.
+- **edk2-rk3588** (`edk2-porting/edk2-rk3588`): a community EDK2 port for RK3588 that replaces U-Boot as BL33 with a full TianoCore firmware stack. Designed primarily for running Windows and standard ACPI-first OSes.
+
+**Decision:** U-Boot is the sole UEFI firmware provider on ARM64. edk2-rk3588 as a BL33 replacement is rejected.
+
+**Why U-Boot wins:**
+
+1. **All three target boards have mainline U-Boot defconfigs** (confirmed in `yubi-OS/u-boot` fork):
+   - Orange Pi 5 (RK3588S): `orangepi-5-rk3588s_defconfig`
+   - Rock 5B (RK3588): `rock5b-rk3588_defconfig`
+   - NanoPC-T6 (RK3588): `nanopc-t6-rk3588_defconfig`
+
+2. **U-Boot EFI_LOADER is a real UEFI environment.** Boot services, runtime services, the UEFI system table, `Boot####`/`BootOrder` variables, and PE/COFF loading (`CONFIG_EFI_LOADER=y`). systemd-boot + UKI + UEFI Secure Boot run unmodified, identical to x86-64 (ADR-020).
+
+3. **Direct integration with TF-A + OP-TEE.** U-Boot slots cleanly into the TF-A BL33 position. edk2-rk3588 bundles its own TF-A integration, which we cannot audit or override without forking the entire firmware stack.
+
+4. **Full fTPM integration.** U-Boot has first-class `CONFIG_TPM2_FTPM_TEE=y` (talking to the ms-tpm-20-ref fTPM via the OP-TEE TEE driver), `CONFIG_MEASURED_BOOT=y`, and `CONFIG_EFI_TCG2_PROTOCOL=y` in the same binary. edk2-rk3588 would require separate TPM integration work.
+
+5. **StandaloneMM is independent.** The EDK2 StandaloneMM UEFI variable service (needed for tamper-resistant PK/KEK/db/dbx storage on RPMB, per ADR-020) is built from upstream `tianocore/edk2` as a standalone OP-TEE module (`BL32_AP_MM.fd`, `CFG_STMM_PATH=`). It does not require edk2-rk3588 and works identically with U-Boot as the UEFI consumer.
+
+6. **Scope alignment.** edk2-rk3588 targets Windows 11 / ACPI-first workflows on RK3588. yubiOS is a security-hardened Linux OS. Device Tree mode (Linux-first) is fully supported by U-Boot EFI_LOADER and is the correct boot path for our stack.
+
+**Disposition of `yubi-OS/edk2-rk3588` fork:**  
+Retained in the org for reference (community UEFI firmware art for RK3588 boards) but **not an active build dependency**. The StandaloneMM variable service is sourced from `tianocore/edk2` directly, not from this fork. If StandaloneMM build tooling needs an EDK2 fork in the future, fork `tianocore/edk2` at that point.
+
+**U-Boot kconfig for ARM64 (target config per board + yubiOS overlays):**
+```
+CONFIG_TEE=y
+CONFIG_OPTEE=y
+CONFIG_TPM=y
+CONFIG_TPM_V2=y
+CONFIG_TPM2_FTPM_TEE=y        # fTPM via OP-TEE TEE driver (ADR-018)
+CONFIG_MEASURED_BOOT=y
+CONFIG_TPM2_EVENT_LOG_SIZE=0x10000
+CONFIG_EFI_LOADER=y
+CONFIG_EFI_SECURE_BOOT=y       # PK/KEK/db/dbx PE/COFF authentication (ADR-020)
+CONFIG_EFI_TCG2_PROTOCOL=y     # TCG2 measured boot to fTPM
+CONFIG_EFI_MM_COMM_TEE=y       # StandaloneMM variable service via OP-TEE (ADR-020)
+CONFIG_CMD_OPTEE_RPMB=y
+CONFIG_EFI_CAPSULE_AUTHENTICATE=y  # Firmware update authentication
+```
+
+**Alternatives considered:**
+- *edk2-rk3588 as BL33 UEFI firmware* — rejected: bundled TF-A integration bypasses our chain; ACPI-first design diverges from yubiOS Linux/Device-Tree stack; no first-class fTPM/OP-TEE integration; adds a separate, opaque build dependency for a capability U-Boot already provides.
+- *Direct kernel boot from U-Boot (no UEFI)* — rejected (same as ADR-020): loses UEFI Secure Boot semantics and diverges from the x86-64 UKI/systemd-boot chain.
+
+**Source:** `yubi-OS/u-boot` defconfig inventory (2026-06-24), U-Boot EFI docs (v2026.01), ADR-018 (secure-world stack), ADR-019 (RK3588 as primary Path A target), ADR-020 (UEFI + StandaloneMM), [FUTURE.md](FUTURE.md).
