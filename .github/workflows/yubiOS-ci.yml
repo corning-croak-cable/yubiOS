@@ -105,11 +105,11 @@ jobs:
           cp docker/* /usr/bin/
           cp buildx-v0.35.0.linux-amd64 /usr/libexec/docker/cli-plugins/docker-buildx
           chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
-          dockerd -H unix://var/run/ducker.sock &
+          dockerd -H unix:///var/run/ducker.sock &
 
       - name: Log in to Docker Hub
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
-        run: echo "${{ secrets.DOCKER }}" | docker -H unix://var/run/ducker.sock login -u 0mniteck42 --password-stdin
+        run: echo "${{ secrets.DOCKER }}" | docker -H unix:///var/run/ducker.sock login -u 0mniteck42 --password-stdin
 
       # TODO: add yubiOS.rego + --policy reset=true,strict=true once policy file
       # is committed (ref: AGENTS.md build policy pattern).
@@ -118,8 +118,8 @@ jobs:
 
       - name: Build OCI image
         run: |
-          docker -H unix://var/run/ducker.sock info
-          docker -H unix://var/run/ducker.sock buildx build -f Containerfile \
+          docker -H unix:///var/run/ducker.sock info
+          docker -H unix:///var/run/ducker.sock buildx build -f Containerfile \
             --load \
             -t yubios:ci \
             -t 0mniteck/yubios:latest \
@@ -128,15 +128,15 @@ jobs:
 
       - name: Verify symlinks and scripts
         run: |
-          docker -H unix://var/run/ducker.sock run --rm yubios:ci sh -c \
+          docker -H unix:///var/run/ducker.sock run --rm yubios:ci sh -c \
             'ls -la /usr/lib/yubiOS/ && ls -la /usr/bin/yubiOS-*'
 
       - name: Verify PAM wiring
         run: |
-          docker -H unix://var/run/ducker.sock run --rm yubios:ci grep -q pam_u2f /etc/pam.d/sudo && echo "PAM OK"
+          docker -H unix:///var/run/ducker.sock run --rm yubios:ci grep -q pam_u2f /etc/pam.d/sudo && echo "PAM OK"
 
       - name: Push to Docker Hub
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
         run: |
-          docker -H unix://var/run/ducker.sock push 0mniteck/yubios:latest
-          docker -H unix://var/run/ducker.sock push "0mniteck/yubios:${{ github.sha }}"
+          docker -H unix:///var/run/ducker.sock push 0mniteck/yubios:latest
+          docker -H unix:///var/run/ducker.sock push "0mniteck/yubios:${{ github.sha }}"
