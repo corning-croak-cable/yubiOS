@@ -3,6 +3,12 @@ name: yubiOS CI
 on:
   pull_request:
   workflow_dispatch:
+    inputs:
+      Docker_push:
+        default: false
+        type: boolean
+        required: true
+        description: Push to docker hub?
 
 jobs:
   shellcheck:
@@ -100,7 +106,7 @@ jobs:
           docker run --rm yubios:ci grep -q pam_u2f /etc/pam.d/sudo && echo "PAM OK"
 
       - name: Push to Docker Hub
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
         run: |
           docker push 0mniteck/yubios:latest
           docker push "0mniteck/yubios:${{ github.sha }}"
