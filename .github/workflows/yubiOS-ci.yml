@@ -48,10 +48,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Install bats
+      - name: Install test dependencies
         run: |
           apt-get update -qq
-          apt-get install -y -qq bats
+          apt-get install -y -qq bats python3 util-linux
 
       - name: Run unit tests
         run: bats tests/unit/
@@ -59,16 +59,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     needs: [shellcheck, hadolint]
-    container:
-      credentials:
-        username: 0mniteck42
-        password: ${{ secrets.DOCKER }}
-      image: docker://dhi.io/debian-base@sha256:9415967aa0ed8adea8b5c048994259d1982026dca143d0303c7bbe0e11ed67d3 # v2026.03.14 trixie-debian13-dev
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      # docker socket is forwarded from the GHA host runner into the container.
+      # Build runs on the host runner where docker is available.
       # TODO: add yubiOS.rego + --policy reset=true,strict=true once policy file
       # is committed (ref: AGENTS.md build policy pattern).
       - name: Build OCI image
