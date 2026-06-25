@@ -110,6 +110,7 @@ jobs:
           docker -H unix:///var/run/ducker.sock buildx create --name hardened \
             --driver docker-container \
             --driver-opt env.BUILDKIT_ROOT=/data/buildkit \
+            --driver-opt network=host \
             --use
       - name: Log in to Docker Hub
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
