@@ -24,13 +24,11 @@ jobs:
           apt-get install -y -qq shellcheck
           find usr/lib/yubiOS -name '*.sh' | xargs shellcheck --source-path=usr/lib/yubiOS
 
-      # hadolint/hadolint-action@v3.1.0 is not in the AGENTS.md allowed-refs list.
-      # Use the apt package instead (available in debian trixie).
       - name: hadolint (Containerfile lint)
         run: |
-          curl -sSL https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64 -o /usr/local/bin/hadolint
-          chmod +x /usr/local/bin/hadolint
-          hadolint --ignore DL3041 Containerfile
+          docker run --rm -i \
+            hadolint/hadolint@sha256:27086352fd5e1907ea2b934eb1023f217c5ae087992eb59fde121dce9c9ff21e \
+            hadolint --ignore DL3041 - < Containerfile
 
   unit-tests:
     runs-on: ubuntu-latest
@@ -45,7 +43,8 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Install bats
-        run: apt-get update -qq
+        run: |
+          apt-get update -qq
           apt-get install -y -qq bats
 
       - name: Run unit tests
