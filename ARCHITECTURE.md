@@ -236,8 +236,8 @@ graph TD
     Q -->|Yes — Path A| A["ENFORCING\nfull Trusted Board Boot\nROTPK in fuses\nBL1 rejects unsigned images\nbad code never runs"]
     Q -->|No / locked / dev board — Path B| B["MEASURED + ATTESTED\nU-Boot FIT verified boot\nkey in control DTB\nmeasure into fTPM PCRs\ntrust decided AFTER boot"]
 
-    A --> AT["Targets: RPi 5, Pi 4,\nAmpere (documented fuses)"]
-    B --> BT["Targets: dev boards,\nearly bring-up"]
+    A --> AT["Targets: RK3588 (Orange Pi 5, Rock 5B),\nRK3399 (RockPro64), Ampere"]
+    B --> BT["Targets: dev boards, early bring-up,\nRPi 5 (VideoCore closes owner RoT)"]
 
     A --> SEAL["fTPM PCRs + YubiKey\nrelease secrets / gate access"]
     B --> SEAL
