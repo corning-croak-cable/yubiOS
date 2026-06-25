@@ -14,6 +14,7 @@
 # Source: https://systemd.io/HOME_DIRECTORY
 
 set -euo pipefail
+# shellcheck source=lib.sh
 source /usr/lib/yubiOS/lib.sh
 
 USERNAME="${1:-}"

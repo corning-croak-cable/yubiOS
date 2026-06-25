@@ -3,6 +3,7 @@
 # Sign a UKI using the FIDO2-wrapped Secure Boot key.
 # Usage: sign-uki-fido2.sh <image.efi>
 set -euo pipefail
+# shellcheck source=lib.sh
 source /usr/lib/yubiOS/lib.sh
 
 EFI="${1:-}"

@@ -18,6 +18,7 @@
 #
 # Status: EXPERIMENTAL — see ADR-002 for production recommendation (PIV).
 set -euo pipefail
+# shellcheck source=lib.sh
 source /usr/lib/yubiOS/lib.sh
 
 command -v age >/dev/null            || yubiOS_die "age not installed: dnf install age"

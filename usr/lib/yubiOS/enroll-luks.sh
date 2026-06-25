@@ -10,6 +10,7 @@
 # Source: https://0pointer.net/blog/unlocking-luks2-volumes-with-fido2-security-tokens.html
 
 set -euo pipefail
+# shellcheck source=lib.sh
 source /usr/lib/yubiOS/lib.sh
 
 FIDO2_DEV=$(detect_fido2_device)

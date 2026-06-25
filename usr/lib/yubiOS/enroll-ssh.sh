@@ -12,6 +12,7 @@
 # Requires: OpenSSH >= 8.2, YubiKey firmware >= 5.2.3, libfido2 >= 1.10
 
 set -euo pipefail
+# shellcheck source=lib.sh
 source /usr/lib/yubiOS/lib.sh
 
 SSH_DIR="${HOME}/.ssh"

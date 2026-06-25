@@ -4,6 +4,7 @@
 # Guides user through: Secure Boot → Disk Encryption → SSH → PAM
 
 set -euo pipefail
+# shellcheck source=lib.sh
 source /usr/lib/yubiOS/lib.sh
 
 clear
@@ -30,7 +31,7 @@ wait_for_yubikey
 
 echo ""
 echo "YubiKey detected. Confirm FIDO2 PIN is set before continuing."
-echo "  If not: run "ykman fido access change-pin" in another terminal."
+echo "  If not: run \"ykman fido access change-pin\" in another terminal."
 read -rp "Press Enter when ready, or Ctrl-C to abort..."
 
 echo ""

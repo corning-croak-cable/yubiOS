@@ -11,6 +11,7 @@
 #   PKCS#11 URI format: https://www.rfc-editor.org/rfc/rfc7512
 
 set -euo pipefail
+# shellcheck source=lib.sh
 source /usr/lib/yubiOS/lib.sh
 
 CERT_OUT=/var/lib/yubiOS/yubiOS-sb.cer
@@ -19,7 +20,7 @@ mkdir -p /var/lib/yubiOS
 
 yubiOS_log "Generating ECC key in YubiKey PIV slot 9c (Digital Signature)..."
 yubiOS_log "Key material never leaves the YubiKey."
-yubicos_log "PIV PIN will be prompted by ykman."
+yubiOS_log "PIV PIN will be prompted by ykman."
 
 # Generate key on device, export self-signed cert
 # -a ECCP384 for ECC; YubiKey 5 supports EC P-256 and P-384
