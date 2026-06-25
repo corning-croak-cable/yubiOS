@@ -135,3 +135,14 @@ Finally go ahead and do some deep research on the following links section.
 - <https://docs.github.com/en/rest/repos/forks> # Forks API
 - <https://docs.github.com/en/rest/orgs/repos> # Org repos
 - <https://docs.github.com/en/rest/commits/commits> # Commit history per file
+
+# GitHub API docs — Build or update github-api SKILL
+- <https://docs.github.com/en/rest>
+- <https://docs.github.com/en/rest/git>
+- <https://docs.github.com/en/rest/repos/contents>
+- <https://docs.github.com/en/rest/issues>
+- <https://docs.github.com/en/rest/pulls>
+- <https://docs.github.com/en/rest/issues/labels>
+- <https://docs.github.com/en/rest/repos/forks>
+- <https://docs.github.com/en/rest/orgs/repos>
+- <https://docs.github.com/en/rest/commits/commits>
