@@ -20,6 +20,10 @@ StandardError=tty
 ExecStart=/usr/lib/yubiOS/enroll.sh
 ExecStartPost=/bin/mkdir -p /var/lib/yubiOS
 ExecStartPost=/bin/touch /var/lib/yubiOS/.enrolled
+# ADR-016: restrict filesystem access to enrollment service (BPF LSM, systemd >= 261)
+# Pre-requisite: verify CONFIG_BPF_LSM=y in fedora-bootc:45 kernel before enabling
+#   zcat /proc/config.gz | grep CONFIG_BPF_LSM
+RestrictFileSystemAccess=tmpfs proc sysfs devtmpfs
 
 [Install]
 WantedBy=first-boot-complete.target
