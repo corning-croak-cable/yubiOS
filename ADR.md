@@ -597,11 +597,11 @@ verify `systemd --version` returns 261. Then add `ConditionSecurity=measured-os`
 | ARM CoreSight debug/trace exfiltration | Kernel lockdown (SecureBoot active) disables CoreSight trace interfaces via CONFIG_LOCK_DOWN_KERNEL_FORCE_CONFIDENTIALITY. |
 | qcom,dload Qualcomm firmware sideload | dm-verity blocks library substitution regardless of sideload path. Preferred hardware: non-Qualcomm ARM64 (Ampere, RPi 5, ARM Juno). |
 
-**Preferred ARM64 hardware targets:**
-- Raspberry Pi 5 (BCM2712, open firmware, no Qualcomm sideload)
-- Ampere Altra / AmpereOne (server)
-- ARM Juno development board
-- Avoid: Qualcomm Snapdragon-based ARM64 (qcom,dload sideload risk; firmware opacity)
+**Preferred ARM64 hardware targets (for qcom,dload attack surface — ADR-017 scope):**
+- Raspberry Pi 5 (BCM2712, no Qualcomm sideload) — **Path B only for yubiOS-owned RoT** (VideoCore VII firmware runs before ARM cores; Broadcom key permanently in chain; see ADR-019)
+- **RK3588** (Rockchip — no vendor key in chain, FIREWALL_DDR hardware TrustZone isolation; **primary Path A target**; boards: Orange Pi 5, Rock 5B, NanoPC-T6)
+- **RK3399** (Rockchip — same TF-A/OP-TEE lineage, blobless DDR init, dry-run testable; **Path A stepping stone**; boards: RockPro64, Pinebook Pro)
+- Ampere Altra / AmpereOne (server, documented fuse provisioning)
 
 **Consequences:**
 - CI must add docker/setup-qemu-action for cross-platform builds.
@@ -641,14 +641,16 @@ verify `systemd --version` returns 261. Then add `ConditionSecurity=measured-os`
 **Context:** TF-A Trusted Board Boot anchors the chain in a ROTPK hash burned into SoC OTP/eFuse. Burning fuses is irreversible and can brick boards; some SoCs lock or hide the fuses; dev boards often can't or shouldn't be burned. We need a coherent stance for boards where we cannot (or choose not to) anchor a hardware root of trust.
 
 **Decision:** Support two provisioning paths. The five TF-A stages are identical on both; only the *root* differs.
-- **Path A — fuses burnable (enforcing):** ROTPK hash in OTP/eFuse, full TBB, BL1 rejects any image that doesn't chain to it. Bad code never executes. The production path. Targets: RPi 5 (OTP key hash + counter-signed boot), Pi 4 (testable pre-lock), Ampere with documented fuse provisioning.
+- **Path A — fuses burnable (enforcing):** ROTPK hash in OTP/eFuse, full TBB, BL1 rejects any image that doesn't chain to it. Bad code never executes. The production path. Targets: **RK3588** (primary — no vendor key in chain, FIREWALL_DDR hardware TrustZone isolation, RSA/ECDSA OTP, SRK revocation table, dry-run testable; boards: Orange Pi 5, Rock 5B, NanoPC-T6), **RK3399** (stepping stone — same TF-A/OP-TEE lineage, blobless DDR init, dry-run via `rkdeveloptool db`; boards: RockPro64, Pinebook Pro), Ampere with documented fuse provisioning. **RPi 5 is Path B only** — see note below.
 - **Path B — no/locked/unburned fuses (measured + attested):** no hardware-enforced rejection. Software root of trust via U-Boot FIT verified boot (public key in the U-Boot control DTB) plus measured boot into the fTPM; trust is decided *after* boot by local/remote attestation and fTPM/YubiKey secret release. For dev boards and early bring-up.
+
+> **RPi 5 (BCM2712) Path B classification:** The Broadcom VideoCore VII closed-source firmware executes before the ARM cores start and holds a Broadcom key permanently in the boot chain. Counter-signing the EEPROM with a customer key adds an OTP-burned layer, but cannot remove the Broadcom key or replace the closed VideoCore stage. This violates the yubiOS requirement that every trust anchor be owner-controlled and auditable. RPi 5 is valuable for toolchain validation (Pi 4 dry-run; Pi 5 requires OTP burn first), Qualcomm-attack-surface analysis (no qcom,dload), and measured/attested deployments (Path B), but cannot serve as a production Path A target for a yubiOS-owned root of trust.
 
 **Honest framing:** Path B records what ran and can withhold secrets when measurements are wrong, but a compromised stage still executes long enough to measure itself. It is evidence-and-sealing, not boot-time rejection, and its anchor lives in writable firmware (only as strong as the storage holding U-Boot and its key). Path A is strictly stronger; Path B is a deliberate, documented fallback, not a substitute.
 
 **Consequences:** Each supported board is tagged Path A or Path B and documented. Path A provisioning (ROTPK burn) is treated like a production-secret operation, rehearsed on a sacrificial board. The RPMB key write (`CFG_RPMB_WRITE_KEY=y`) for the variable store / fTPM NV is another effectively-irreversible per-device step folded into provisioning.
 
-**Source:** [FUTURE.md](FUTURE.md) (two-path trust chain), TF-A TBB docs, U-Boot `FIT_SIGNATURE` verified boot, Raspberry Pi secure-boot docs.
+**Source:** [FUTURE.md](FUTURE.md) (two-path trust chain), `knowledge/rockchip-otp-secure-boot.md`, `knowledge/rpi5-otp-secure-boot.md`, TF-A TBB docs, U-Boot `FIT_SIGNATURE` verified boot.
 
 ---
 
