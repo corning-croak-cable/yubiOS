@@ -56,27 +56,6 @@ jobs:
       - name: Run unit tests
         run: bats tests/unit/
 
-  build:
-    runs-on: ubuntu-latest
-    needs: [shellcheck, hadolint]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      # Build runs on the host runner where docker is available.
-      # TODO: add yubiOS.rego + --policy reset=true,strict=true once policy file
-      # is committed (ref: AGENTS.md build policy pattern).
-      - name: Build OCI image
-        run: docker build -f Containerfile -t yubios:ci .
-
-      - name: Verify symlinks and scripts
-        run: |
-          docker run --rm yubios:ci sh -c \
-            'ls -la /usr/lib/yubiOS/ && ls -la /usr/bin/yubiOS-*'
-
-      - name: Verify PAM wiring
-        run: |
-          docker run --rm yubios:ci grep -q pam_u2f /etc/pam.d/sudo && echo "PAM OK"
   mkosi:
     runs-on: ubuntu-latest
     steps:
@@ -91,3 +70,39 @@ jobs:
 
       - name: Validate mkosi config
         run: mkosi summary
+
+  build:
+    runs-on: ubuntu-latest
+    needs: [shellcheck, hadolint]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Log in to Docker Hub
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: echo "${{ secrets.DOCKER }}" | docker login -u 0mniteck --password-stdin
+
+      # TODO: add yubiOS.rego + --policy reset=true,strict=true once policy file
+      # is committed (ref: AGENTS.md build policy pattern).
+      - name: Build OCI image
+        run: |
+          docker build -f Containerfile \
+            -t yubios:ci \
+            -t 0mniteck/yubios:latest \
+            -t "0mniteck/yubios:${{ github.sha }}" \
+            .
+
+      - name: Verify symlinks and scripts
+        run: |
+          docker run --rm yubios:ci sh -c \
+            'ls -la /usr/lib/yubiOS/ && ls -la /usr/bin/yubiOS-*'
+
+      - name: Verify PAM wiring
+        run: |
+          docker run --rm yubios:ci grep -q pam_u2f /etc/pam.d/sudo && echo "PAM OK"
+
+      - name: Push to Docker Hub
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          docker push 0mniteck/yubios:latest
+          docker push "0mniteck/yubios:${{ github.sha }}"
