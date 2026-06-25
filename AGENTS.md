@@ -102,3 +102,14 @@ Finally go ahead and do some deep research on the following links section.
 - <https://docs.docker.com/build/policies/intro/intro/>
 - <https://docs.docker.com/build/policies/intro/usage/>
 - <https://pq.cloudflareresearch.com/>
+
+# GitHub API docs — Build or update github-api SKILL
+- <https://docs.github.com/en/rest> # GitHub REST API overview
+- <https://docs.github.com/en/rest/git> # Git Data API: blobs, trees, commits, refs (commit-without-clone pattern)
+- <https://docs.github.com/en/rest/repos/contents> # Contents API: read/write files via base64
+- <https://docs.github.com/en/rest/issues> # Issues API: create, comment, list
+- <https://docs.github.com/en/rest/pulls> # Pull Requests API: create draft PRs, list
+- <https://docs.github.com/en/rest/issues/labels> # Labels API: create labels
+- <https://docs.github.com/en/rest/repos/forks> # Forks API: fork repos into org
+- <https://docs.github.com/en/rest/orgs/repos> # Org repos: list org repos
+- <https://docs.github.com/en/rest/commits/commits> # Commits: history per file
