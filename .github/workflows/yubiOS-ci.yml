@@ -28,8 +28,8 @@ jobs:
       # Use the apt package instead (available in debian trixie).
       - name: hadolint (Containerfile lint)
         run: |
-          apt-get update -qq
-          apt-get install -y -qq hadolint
+          curl -sSL https://github.com/hadolint/hadolint/releases/latest/download/hadolint-Linux-x86_64 -o /usr/local/bin/hadolint
+          chmod +x /usr/local/bin/hadolint
           hadolint --ignore DL3041 Containerfile
 
   unit-tests:
