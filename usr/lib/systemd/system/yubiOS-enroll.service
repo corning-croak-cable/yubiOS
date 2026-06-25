@@ -9,6 +9,8 @@ Wants=pcscd.service
 After=pcscd.service
 ConditionFirstBoot=yes
 ConditionPathExists=!/var/lib/yubiOS/.enrolled
+# ADR-016: gate enrollment on full measured-boot (systemd >= 261 required)
+ConditionSecurity=measured-os
 
 [Service]
 Type=oneshot
