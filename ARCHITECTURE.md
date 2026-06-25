@@ -3,9 +3,8 @@
 > *No TPM. No OEM. No trust anchors you don't control.*
 
 YubiKey replaces the TPM at every trust boundary: Secure Boot signing, disk encryption,
-home directory encryption, SSH, and PAM authentication. yubiOS targets x86-64 as the
-primary platform, with arm64/aarch64 support in development (ADR-017). yubiOS targets x86-64 as the
-primary platform, with arm64/aarch64 support in development (ADR-017).
+home directory encryption, SSH, and PAM authentication. yubiOS targets arm64/x86-64 as the
+primary platforms.
 
 ---
 
