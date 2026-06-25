@@ -58,7 +58,7 @@ yubiOS is built on the principle that *every component must be cryptographically
 | dm-verity on /usr | Every /usr read validated against the Merkle tree in real time. Poisoned page-cache produces IO errors, not transparent substitution. | **Block (reads)** |
 | DPS UUID-only mount | systemd-gpt-auto-generator ignores partitions without recognised DPS type UUIDs. Hidden attacker partitions are never automounted. | **Ignore** |
 | Kernel CVE patching | Fedora 45 upstream kernel patches. Base image digest policy (ADR-015) ensures they land. | **Reduce** |
-| `RestrictFileSystemAccess=` (v261) | BPF LSM restricts which filesystem types services can access. Attacker-controlled filesystems not propagated. | **Contain** |
+| `RestrictFileSystems=` (v261) | BPF LSM restricts which filesystem types services can access. Attacker-controlled filesystems not propagated. | **Contain** |
 
 ---
 
@@ -144,7 +144,7 @@ yubiOS is built on the principle that *every component must be cryptographically
 |---|---|---|
 | dm-verity on service units | All service units in `/usr/lib/systemd/system/` are dm-verity protected. Foreign service cannot be injected without breaking Merkle tree. | **Block** |
 | `DynamicUser=` + `ProtectProc=invisible` | Service processes cannot see other PIDs’ /proc entries. Scrubbing service cannot enumerate or attach to other processes. | **Contain** |
-| `RestrictFileSystemAccess=` (v261) | BPF LSM restricts which filesystem types are accessible per service. Rogue services cannot open arbitrary /proc or /sys paths. | **Contain** |
+| `RestrictFileSystems=` (v261) | BPF LSM restricts which filesystem types are accessible per service. Rogue services cannot open arbitrary /proc or /sys paths. | **Contain** |
 | `NoNewPrivileges=yes` | Enrollment and auth services cannot escalate to inject code into systemd parent PID. | **Contain** |
 | Journal forward-secure sealing | HMAC-based sealing detects journal tampering via `journalctl --verify`. | **Detect** |
 
@@ -159,7 +159,7 @@ yubiOS is built on the principle that *every component must be cryptographically
 | Virtual timer CNTVOFF_EL2 | 1-B | x86-64: N/A (ARM-only vuln). arm64: kernel arch_timer erratum workarounds | ✅ N/A (x86-64) / 🟢 Mitigated (arm64) |
 | Page-cache CVE (dirtyfrag) | 1-C | Fedora 45 patch cadence + dm-verity | 🟡 Reduce |
 | Hidden GPT partitions (91 GPT) | 1-C | DPS UUID-only automount | 🟢 Ignore |
-| BPF filesystem restriction | 1-C | RestrictFileSystemAccess= (v261) | 🟢 Counter |
+| BPF filesystem restriction | 1-C | RestrictFileSystems= (v261) | 🟢 Counter |
 | Obfuscated kernel modules | 2-A | Kernel lockdown + IMA + signed initrd | 🟢 Block |
 | ARM CoreSight debug | 2-A | arm64: kernel lockdown (SecureBoot) disables CoreSight trace interfaces | 🟢 Block (arm64) |
 | qcom,dload firmware sideload | 2-B | x86-64: N/A. arm64: dm-verity blocks substitution; prefer non-Qualcomm hardware | ✅ N/A (x86-64) / 🟢 Block (arm64) |
