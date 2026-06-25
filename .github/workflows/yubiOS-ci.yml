@@ -95,14 +95,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
+      - name: Install docker and docker-buildx
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq docker docker-buildx
+
       - name: Log in to Docker Hub
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
         run: echo "${{ secrets.DOCKER }}" | docker login -u 0mniteck42 --password-stdin
 
       # TODO: add yubiOS.rego + --policy reset=true,strict=true once policy file
       # is committed (ref: AGENTS.md build policy pattern).
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4.1.0
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4.1.0
 
       - name: Build OCI image
         run: |
