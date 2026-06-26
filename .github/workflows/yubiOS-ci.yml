@@ -157,8 +157,8 @@ jobs:
       - name: Build OCI image (${{ matrix.arch }})
         run: |
           docker -H unix:///var/run/ducker.sock info
-          docker buildx policy test . Containerfile
-          docker buildx policy eval --print --file Containerfile .
+          docker buildx policy test ./yubiOS.rego Containerfile &
+          docker buildx policy eval --print --file yubiOS.rego ./Containerfile
           docker -H unix:///var/run/ducker.sock buildx build -f Containerfile \
             --policy reset=true,strict=true,filename=yubiOS.rego \
             --platform linux/${{ matrix.arch }} \
