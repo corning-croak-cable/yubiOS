@@ -28,7 +28,7 @@ Owned ARM64 fTPM trust-chain CI (ADR-018/019/020). Each component fork now has a
 - [x] R1 — `yubiOS.rego` build policy live + passing on the main CI build job
 - [x] V1 — `tests/vm/*.sh` wired into `ci_test-vm.yml` (`3f46cf0`), honest skips where HW/CTAP2-gated
 - [x] edk2-platforms forked into the org — supplies `PlatformStandaloneMmRpmb.dsc` → `BL32_AP_MM.fd` (C6 fork ships StMM core only)
-- [ ] **INT** — integration CI (`ci_test-int.yml`) stitching edk2 StMM → optee_os devkit → optee_ftpm → optee_os(final, `CFG_STMM_PATH`+`EARLY_TA`) → TF-A FIP (`SPD=opteed`) → u-boot BL33 → QEMU verify. **Embedded model**: single BL32 = OP-TEE with StMM folded in, plain `fiptool` (no separate SP image). Decomposed across 4 lanes: `ci_int_stmm.yml` (F1), `ci_int_optee_fip.yml` (F2), `ci_int_qemu.yml` (F4 — GREEN), `ci_test-int.yml` orchestrator (F3). In flight.
+- [ ] **INT** integration CI (`ci_test-int.yml`): **Stage 1** (BL32_AP_MM.fd) + **Stage 2** (OP-TEE fold `CFG_STMM_PATH`+EARLY_TA → TF-A FIP `SPD=opteed`) consistently GREEN both arches. **Stage 3** (QEMU e2e) iterating. Bugs fixed: `-no-reboot` PSCI exit (`52f2f49`), `ipxe-qemu` missing → `efi-virtio.rom` 404 (`0f25c5e`), greps needed `nw.log`+`optee.log` (`5beb49c`). QEMU now runs full 180s — TF-A BL1→BL2 confirmed in `optee.log` (UART1). fTPM Early TA messages not yet found. Current diagnostic commit `2edb529` — targeted OP-TEE/fTPM grep to determine if OP-TEE is loading the fTPM TA or hanging on StMM init. Standalone `ci_int_qemu.yml` (F4) remains GREEN. 4 lanes: `ci_int_stmm.yml` (F1 GREEN), `ci_int_optee_fip.yml` (F2 GREEN), `ci_int_qemu.yml` (F4 GREEN), `ci_test-int.yml` orchestrator (F3 iterating).
 
 ## Medium priority
 
