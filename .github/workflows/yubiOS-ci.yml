@@ -154,12 +154,11 @@ jobs:
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
         run: echo "${{ secrets.DOCKER }}" | docker -H unix:///var/run/ducker.sock login -u 0mniteck42 --password-stdin
 
-      # TODO: add --policy reset=true,strict=true,filename=yubiOS.rego once the
-      # policy file lands (ref: AGENTS.md build policy pattern).
       - name: Build OCI image (${{ matrix.arch }})
         run: |
           docker -H unix:///var/run/ducker.sock info
           docker -H unix:///var/run/ducker.sock buildx build -f Containerfile \
+            --policy reset=true,strict=true,filename=yubiOS.rego
             --platform linux/${{ matrix.arch }} \
             --load \
             -t "yubios:ci-${{ matrix.arch }}" \
@@ -209,14 +208,23 @@ jobs:
           cp docker/* /usr/bin/
           cp buildx-v0.35.0.linux-amd64 /usr/libexec/docker/cli-plugins/docker-buildx
           chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
+          mkdir -p /mnt/docker
+          dockerd --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
+          for i in $(seq 1 30); do docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
+          docker -H unix:///var/run/ducker.sock buildx create --name hardened \
+            --driver docker-container \
+            --use
+
       - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER }}" | docker login -u 0mniteck42 --password-stdin
+        run: echo "${{ secrets.DOCKER }}" | docker -H unix:///var/run/ducker.sock login -u 0mniteck42 --password-stdin
+
       - name: Create + push multi-arch manifest
         run: |
-          docker buildx imagetools create \
+          docker -H unix:///var/run/ducker.sock buildx imagetools create \
             -t "0mniteck/yubios:${{ github.sha }}" \
             -t "0mniteck/yubios:latest" \
             "0mniteck/yubios:${{ github.sha }}-amd64" \
             "0mniteck/yubios:${{ github.sha }}-arm64"
+
       - name: Verify manifest list
-        run: docker buildx imagetools inspect "0mniteck/yubios:${{ github.sha }}"
+        run: docker -H unix:///var/run/ducker.sock buildx imagetools inspect "0mniteck/yubios:${{ github.sha }}"
