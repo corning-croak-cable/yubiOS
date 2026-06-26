@@ -144,6 +144,13 @@ jobs:
           export WORKSPACE="$GITHUB_WORKSPACE"
           export PACKAGES_PATH="$GITHUB_WORKSPACE/edk2:$GITHUB_WORKSPACE/edk2-platforms"
           export EDK_TOOLS_PATH="$GITHUB_WORKSPACE/edk2/BaseTools"
+          # Disable LTO for this build: edk2's bundled mbedtls constant_time.c uses an
+          # inline-asm constant-time barrier that GCC-13's lto-wrapper rejects
+          # ("invalid 'asm': invalid operand" -> lto-wrapper failed) when CryptoPkg is
+          # compiled at -flto. -fno-lto (appended last, so it wins over the toolchain's
+          # -flto) yields plain objects and links cleanly. Fine for a build-verify CI.
+          dsc=edk2-platforms/Platform/StandaloneMm/PlatformStandaloneMmPkg/PlatformStandaloneMmRpmb.dsc
+          printf '\n[BuildOptions]\n  GCC:*_*_*_CC_FLAGS = -fno-lto\n  GCC:*_*_*_DLINK_FLAGS = -fno-lto\n' >> "$dsc"
           make -C edk2/BaseTools -j"$(nproc)"
           set +u
           . edk2/edksetup.sh BaseTools
