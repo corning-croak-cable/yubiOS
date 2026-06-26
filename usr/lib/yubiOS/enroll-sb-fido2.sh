@@ -10,15 +10,14 @@
 #   2. Derive a 32-byte wrapping key via FIDO2 HMAC-secret extension
 #   3. Encrypt the private key with age + age-plugin-fido2-hmac
 #   4. Delete the plaintext key — only the encrypted blob remains on disk
-#   5. At sign time: FIDO2 HMAC-secret decrypts the key, sbsign runs, key wiped
+#   5. At sign time: FIDO2 HMAC-secret decrypts the key, systemd-sbsign runs, key wiped
 #
-# Dependencies: age, age-plugin-fido2-hmac, openssl, sbsign
+# Dependencies: age, age-plugin-fido2-hmac, openssl, systemd-sbsign (systemd >= 257, ADR-008)
 # Source: https://github.com/nicowillis/age-plugin-fido2-hmac
 # Source: FIDO2 HMAC-secret extension — CTAP 2.0 s6.3.2
 #
 # Status: EXPERIMENTAL — see ADR-002 for production recommendation (PIV).
 set -euo pipefail
-# shellcheck source=lib.sh
 source /usr/lib/yubiOS/lib.sh
 
 command -v age >/dev/null            || yubiOS_die "age not installed: dnf install age"
