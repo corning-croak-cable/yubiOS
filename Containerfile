@@ -9,7 +9,7 @@ FROM quay.io/fedora/fedora-bootc:45@sha256:b7b34d8720b2e0ccaba980fd92347e7820051
 # libfido2:       FIDO2/CTAP2 library; used by systemd-cryptenroll, OpenSSH, pam-u2f
 # yubikey-manager: ykman CLI for PIV, FIDO2, OATH management
 # yubico-piv-tool: PIV operations for Secure Boot signing (slot 9c)
-# opensc:          PKCS#11 middleware; sbsign uses this to talk to YubiKey PIV
+# opensc:          PKCS#11 middleware; systemd-sbsign uses this to talk to YubiKey PIV
 # pam-u2f:         PAM module for FIDO2/U2F; requires >= 1.3.1 (CVE-2025-23013)
 #                  Source: https://www.yubico.com/support/security-advisories/ysa-2025-01/
 # pcsc-lite:       PC/SC daemon; needed for PIV/CCID interface
