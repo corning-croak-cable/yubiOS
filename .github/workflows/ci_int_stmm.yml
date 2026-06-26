@@ -1,0 +1,141 @@
+name: ci_int_stmm
+
+# yubiOS INT lane I-A (#35 ARM64 fTPM stack): build the EDK2 StandaloneMM RPMB
+# platform FV -> BL32_AP_MM.fd, the secure-variable-storage image OP-TEE later
+# folds in via CFG_STMM_PATH. This is the first stage of the integration build
+# order (edk2 StMM -> optee_os devkit -> optee_ftpm -> optee_os final -> TF-A
+# FIP -> u-boot). It produces a NAMED artifact (BL32_AP_MM.fd) the orchestrator
+# (ci_test-int.yml, F3) consumes.
+#
+# GROUNDING (truth-or-silence, see knowledge/arm64-ftpm-build-graph.md +
+# GET_TO_WORK/research/F1-edk2-standalonemm.md):
+# - BL32_AP_MM.fd does NOT come from the edk2 fork alone. The platform DSC
+#   `Platform/StandaloneMm/PlatformStandaloneMmPkg/PlatformStandaloneMmRpmb.dsc`
+#   lives in edk2-platforms (now a live yubi-OS fork). PACKAGES_PATH must span
+#   BOTH edk2 (BaseTools + core packages) and edk2-platforms (the platform DSC).
+# - Toolchain tag: current tianocore/edk2 consolidated GCC48/49/5 into a single
+#   `GCC` tag (build.py rejects GCC5 as 'not defined' — same lesson as C6). We
+#   resolve the tag at build time: prefer GCC5 if tools_def defines it, else GCC.
+#   Cross prefix env follows the chosen tag (GCC5_AARCH64_PREFIX / GCC_AARCH64_PREFIX).
+# - StMM runs as an OP-TEE secure partition (CFG_STMM_PATH), NOT via TF-A SPM_MM
+#   (SPD=opteed and SPM_MM are mutually exclusive). This job only PRODUCES the FV;
+#   the OP-TEE fold is the next INT lane (F2 / ci_int_optee_fip.yml).
+#
+# BARE runner (no dhi container): EDK2 BaseTools (C) + the AARCH64 cross toolchain
+# need a full host libc/crt*.o that the hardened dhi base intentionally omits
+# (same lesson as the bcvk Rust CI and the edk2 C6 CI). Action refs pinned per PINNED.md.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/ci_int_stmm.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/ci_int_stmm.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  EDK2_REPO: https://github.com/yubi-OS/edk2.git
+  EDK2_PLATFORMS_REPO: https://github.com/yubi-OS/edk2-platforms.git
+  ACTIVE_PLATFORM: Platform/StandaloneMm/PlatformStandaloneMmPkg/PlatformStandaloneMmRpmb.dsc
+
+jobs:
+  build-bl32-ap-mm:
+    name: BL32_AP_MM.fd (StandaloneMM RPMB, AARCH64) ${{ matrix.arch }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    concurrency:
+      group: ${{ github.workflow }}-stmm-${{ matrix.arch }}-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Install EDK2 build deps
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq \
+            build-essential uuid-dev iasl nasm \
+            python3 python3-venv python3-pip \
+            bison flex libssl-dev \
+            gcc-aarch64-linux-gnu git
+
+      - name: Clone edk2 + edk2-platforms (yubi-OS forks)
+        run: |
+          set -eux
+          ws="$GITHUB_WORKSPACE/uefi"
+          mkdir -p "$ws"
+          git clone --filter=tree:0 "$EDK2_REPO" "$ws/edk2"
+          git clone --filter=tree:0 "$EDK2_PLATFORMS_REPO" "$ws/edk2-platforms"
+          ( cd "$ws/edk2" && git submodule update --init --recursive )
+          echo "edk2 HEAD:           $(cd "$ws/edk2" && git rev-parse HEAD)"
+          echo "edk2-platforms HEAD: $(cd "$ws/edk2-platforms" && git rev-parse HEAD)"
+          # Prove the platform DSC + FDF are present before building.
+          test -f "$ws/edk2-platforms/$ACTIVE_PLATFORM"
+          test -f "$ws/edk2-platforms/${ACTIVE_PLATFORM%.dsc}.fdf"
+
+      - name: Resolve AARCH64 cross prefix
+        id: tc
+        run: |
+          # amd64 runner cross-compiles; native arm64 runner has aarch64 host gcc.
+          if [ "${{ matrix.arch }}" = "arm64" ]; then
+            echo "prefix=" >> "$GITHUB_OUTPUT"
+          else
+            echo "prefix=aarch64-linux-gnu-" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build BaseTools
+        run: make -C "$GITHUB_WORKSPACE/uefi/edk2/BaseTools" -j"$(nproc)"
+
+      - name: Build StandaloneMM RPMB platform (BL32_AP_MM.fd)
+        id: build
+        run: |
+          set -eux
+          ws="$GITHUB_WORKSPACE/uefi"
+          export WORKSPACE="$ws"
+          export PACKAGES_PATH="$ws/edk2:$ws/edk2-platforms"
+          cd "$ws/edk2"
+          . ./edksetup.sh
+          # Resolve toolchain tag: prefer GCC5 if defined, else the consolidated GCC.
+          if grep -q '^DEFINE GCC5_AARCH64_PREFIX' Conf/tools_def.txt 2>/dev/null \
+             || grep -q 'GCC5_AARCH64' Conf/tools_def.txt 2>/dev/null; then
+            TAG=GCC5
+          else
+            TAG=GCC
+          fi
+          export ${TAG}_AARCH64_PREFIX="${{ steps.tc.outputs.prefix }}"
+          echo "Using toolchain tag: $TAG"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          build -a AARCH64 -t "$TAG" -b RELEASE \
+            -p "$ACTIVE_PLATFORM" \
+            -n "$(nproc)"
+
+      - name: Locate + stage BL32_AP_MM.fd
+        id: stage
+        run: |
+          set -eux
+          ws="$GITHUB_WORKSPACE/uefi"
+          fd="$(find "$ws/edk2/Build" -name 'BL32_AP_MM.fd' | head -n1)"
+          test -n "$fd"
+          ls -l "$fd"
+          file "$fd"
+          out="$GITHUB_WORKSPACE/artifacts"
+          mkdir -p "$out"
+          cp "$fd" "$out/BL32_AP_MM.fd"
+          sha256sum "$out/BL32_AP_MM.fd"
+
+      - name: Upload BL32_AP_MM.fd
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
+        with:
+          name: BL32_AP_MM-${{ matrix.arch }}
+          path: artifacts/BL32_AP_MM.fd
+          if-no-files-found: error
