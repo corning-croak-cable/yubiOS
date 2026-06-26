@@ -1,7 +1,7 @@
 #!/bin/bash
-# Validates sbsign + libykcs11 PKCS#11 URI for ECC slot 9c.
+# Validates systemd-sbsign + libykcs11 PKCS#11 URI for ECC slot 9c (ADR-008).
 # Run with YubiKey inserted after running yubiOS-enroll-sb.
-# Verifies: key accessible, cert matches, test sign succeeds.
+# Verifies: module loads, key accessible, cert matches, test sign succeeds.
 set -euo pipefail
 
 PKCS11_LIB="${PKCS11_LIB:-/usr/lib64/libykcs11.so}"
@@ -25,22 +25,34 @@ echo -n "3/5 Certificate at $CERT_PEM... "
 [[ -f "$CERT_PEM" ]] && openssl x509 -in "$CERT_PEM" -noout 2>/dev/null \
   && echo "OK" || { echo "FAIL (run yubiOS-enroll-sb first)"; exit 1; }
 
-# 4. Test sign a file
+# 4. Test sign a file (THE gate: proves the PKCS#11 URI works with systemd-sbsign)
+# ADR-008: systemd-sbsign via OpenSSL pkcs11 engine. It cannot sign in place, so
+# write to a separate output file.
 TMP_SIGNED="$(mktemp /tmp/yubiOS-test-signed.XXXXXX.efi)"
-trap "rm -f $TMP_SIGNED" EXIT
-echo -n "4/5 Test signing $TEST_EFI (touch YubiKey)... "
-PKCS11_MODULE_PATH="$PKCS11_LIB" sbsign \
-  --engine pkcs11 \
-  --key "pkcs11:manufacturer=piv_II;id=%9c;type=private" \
-  --cert "$CERT_PEM" \
+trap 'rm -f "$TMP_SIGNED"' EXIT
+echo -n "4/5 Test signing $TEST_EFI with systemd-sbsign (touch YubiKey)... "
+PKCS11_MODULE_PATH="$PKCS11_LIB" systemd-sbsign sign \
+  --private-key "pkcs11:manufacturer=piv_II;id=%9c;type=private" \
+  --private-key-source "engine:pkcs11" \
+  --certificate "$CERT_PEM" \
+  --certificate-source file \
   --output "$TMP_SIGNED" \
   "$TEST_EFI" 2>/dev/null && echo "OK" || { echo "FAIL"; exit 1; }
 
-# 5. Verify the signature
+# 5. Verify the signature.
+# sbverify (sbsigntool) is gone per ADR-008; systemd-sbsign has no verify verb.
+# osslsigncode is the Authenticode verifier that checks against a specific cert.
+# Best-effort: signing in step 4 already proves the URI works; this corroborates.
 echo -n "5/5 Verifying signature... "
-sbverify --cert "$CERT_PEM" "$TMP_SIGNED" 2>/dev/null && echo "OK" || { echo "FAIL"; exit 1; }
+if command -v osslsigncode >/dev/null 2>&1; then
+  osslsigncode verify -in "$TMP_SIGNED" -CAfile "$CERT_PEM" >/dev/null 2>&1 \
+    && echo "OK" || { echo "FAIL"; exit 1; }
+else
+  echo "SKIP (install osslsigncode to verify; signing in step 4 already passed)"
+fi
 
 echo ""
-echo "=== PASS: PKCS#11 URI valid, sbsign works with libykcs11 ==="
-echo "Use this URI in mkosi SecureBootKey=:"
-echo "  pkcs11:manufacturer=piv_II;id=%9c;type=private"
+echo "=== PASS: PKCS#11 URI valid, systemd-sbsign works with libykcs11 ==="
+echo "Use this URI in mkosi:"
+echo "  SecureBootKey=pkcs11:manufacturer=piv_II;id=%9c;type=private"
+echo "  SecureBootKeySource=engine:pkcs11"
