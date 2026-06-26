@@ -1,6 +1,6 @@
 # BLOCKERS.md — yubiOS Open Issue Dependency Map
 
-_Last updated: 2026-06-26 (L-PRUNE: orphan `feat/bcvk-swtpm-ci` deleted; `feat/fido2-secure-boot` retained pending content diff. BLOCKER-009 resolved; BLOCKER-008 still open: CI red). Maintained alongside TODO.md and ADR.md._
+_Last updated: 2026-06-26 (L-CI: BLOCKER-008 real fix PUSHED — build job dockerd switched native→overlayfs snapshotter, commit `e74dadf`, dispatch run `28230464416` verifying. BLOCKER-009 resolved. L-PRUNE: orphan `feat/bcvk-swtpm-ci` deleted; `feat/fido2-secure-boot` retained pending content diff). Maintained alongside TODO.md and ADR.md._
 
 ---
 
@@ -104,7 +104,7 @@ _Last updated: 2026-06-26 (L-PRUNE: orphan `feat/bcvk-swtpm-ci` deleted; `feat/f
   ```
 - **Depends on:** BLOCKER-002 (#14) landing first.
 
-### BLOCKER-008: yubiOS CI `build` job runs out of disk (STILL OPEN — partial fix only, 2026-06-26)
+### BLOCKER-008: yubiOS CI `build` job runs out of disk (FIX IN FLIGHT — overlayfs snapshotter pushed, 2026-06-26)
 
 - **Was blocking:** all `yubiOS CI` runs red — only the `build` job failed,
   at `Build OCI image` (Containerfile:60) with
@@ -122,9 +122,14 @@ _Last updated: 2026-06-26 (L-PRUNE: orphan `feat/bcvk-swtpm-ci` deleted; `feat/f
   `no space left on device` on `/mnt/docker/...native/snapshots`. Root cause
   unchanged: the native snapshotter full-copies the ostree rootfs and the verify
   step re-extracts it, doubling the footprint on `/mnt`.
-- **Real fix (queued — deliberate pass, not pushed):** switch the build to the
-  overlayfs snapshotter OR fold the verify into the Containerfile so there is no
-  second extraction. Held this poll (cooldown + in-flight runs). **CI remains RED.**
+- **Real fix (PUSHED this pass — `e74dadf` on `main`):** swapped the build job's
+  nested `dockerd` from `--storage-driver=native` to `--storage-driver=overlayfs`.
+  The native containerd snapshotter full-copies every fedora-bootc rootfs layer
+  (once on `buildx --load`, again when `docker run` re-extracts at `Verify symlinks`),
+  doubling `/mnt/docker`; overlayfs is copy-on-write, so layers are not duplicated.
+  Smallest root-cause change — one flag, no workflow reshape (kept `--data-root=/mnt/docker`
+  from `819d427`). Dispatched run `28230464416` on `e74dadf` (09:47Z) to verify; logs to
+  be read on a following pass. **CI status: fix in flight, awaiting green.**
 
 ### BLOCKER-009: bcvk `feat/swtpm-ci` HEAD does not compile — swu2f two-impl divergence — RESOLVED (2026-06-26) — RESOLVED (2026-06-26)
 
