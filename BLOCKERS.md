@@ -1,6 +1,6 @@
 # BLOCKERS.md — yubiOS Open Issue Dependency Map
 
-_Last updated: 2026-06-26 (L-CI: BLOCKER-008 RESOLVED — build job dockerd native→overlayfs snapshotter (commit `e74dadf`); dispatch run `28230464416` completed GREEN (all 5 jobs success). BLOCKER-009 resolved. L-PRUNE: orphan branches `feat/bcvk-swtpm-ci` AND `feat/fido2-secure-boot` both deleted — fully superseded by merged main). Maintained alongside TODO.md and ADR.md._
+_Last updated: 2026-06-26 (PR-CI: #33+#38 pull_request CI GREEN, swu2f Layer 2 shipped as PR #40; L-CI: BLOCKER-008 RESOLVED — build job dockerd native→overlayfs snapshotter (commit `e74dadf`); dispatch run `28230464416` completed GREEN (all 5 jobs success). BLOCKER-009 resolved. L-PRUNE: orphan branches `feat/bcvk-swtpm-ci` AND `feat/fido2-secure-boot` both deleted — fully superseded by merged main). Maintained alongside TODO.md and ADR.md._
 
 ---
 
@@ -140,7 +140,7 @@ _Last updated: 2026-06-26 (L-CI: BLOCKER-008 RESOLVED — build job dockerd nati
 - **Why:** Two sibling commits chose conflicting swu2f designs. `crates/kit/src/run_ephemeral.rs:1420` calls `bcvk_qemu::swu2f::push_uhid_kargs(...)` (in-guest /dev/uhid route, commit `66fbf130`), but HEAD `be5f3858` rewrote `crates/bcvk-qemu/src/swu2f.rs` to the host-QEMU `u2f-emulated` route (`qemu_u2f_args`/`Swu2fConfig`) and dropped `push_uhid_kargs` — a dangling symbol, guaranteed build failure (not merely "untested").
 - **Engineering call:** keep the IN-GUEST /dev/uhid CTAP2 route. QEMU `u2f-emulated` (libu2f-emu) is CTAP1/U2F-only with no `hmac-secret`, so it cannot drive `systemd-cryptenroll --fido2` for the LUKS2 unlock test; a uhid CTAP2 authenticator can. The wired `--swu2f` flag help text already says "expose /dev/uhid".
 - **Resolution (landed):** the in-guest `/dev/uhid` CTAP2 route was restored on `feat/swtpm-ci` — `push_uhid_kargs` + uhid `Swu2fConfig` re-added in `crates/bcvk-qemu/src/swu2f.rs` (commit `2afd8778`, plus a redundant near-no-op follow-up `0440dd94` from a parallel run; HEAD = `0440dd94`). `run_ephemeral.rs` now resolves the symbol; both swu2f layers documented in `docs/swu2f.md`. bcvk stays a branch — NO merge.
-- **Outstanding:** source-level fix only — NOT compile-verified in-sandbox (no `cargo`/KVM). Needs human `cargo check -p bcvk-qemu -p kit` + `nextest` + Signed-off-by before the branch is trusted. The CTAP2 enrollment legs of the LUKS2 e2e test (#33/T4) stay gated until the in-guest CTAP2 authenticator ships in the guest image (`docs/swu2f.md` Layer 2).
+- **Outstanding:** source-level fix only — NOT compile-verified in-sandbox (no `cargo`/KVM). Needs human `cargo check -p bcvk-qemu -p kit` + `nextest` + Signed-off-by before the branch is trusted. **Layer 2 in-guest CTAP2 authenticator now shipped** — yubiOS PR #40 (`feat/swu2f-layer2-ctap2-fixture` @ `ab37a34`) adds `passless` (pando85/passless v0.11.2, soft-fido2 hmac-secret) in a TEST-only mkosi profile and un-gates the #33 CTAP2 cryptenroll/homed legs; PR #40 is draft (leader merges once green + human cargo build). Both #33 (`4450fd4`) and #38 (`43c2728`) pull_request CI are now GREEN (5/5 jobs).
 - **Verified:** live against `yubi-OS/bcvk` @ `0440dd94` — `swu2f.rs` now defines `push_uhid_kargs` (in-guest uhid route restored); dangling-symbol build break cleared.
 
 ---
