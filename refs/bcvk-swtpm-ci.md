@@ -16,7 +16,7 @@ CI integration drop-in. See cross-repo issue for bcvk implementation scope.
 
 ## yubiOS side (this branch)
 
-### ci/vm-swtpm.conf
+### assets/ci/vm-swtpm.conf
 
 Systemd drop-in placed at `/usr/lib/systemd/system/systemd-tpm2-swtpm.service.d/ci-vm-swtpm.conf`
 in the bcvk test image. Conditions on `ConditionVirtualization=vm` so it
