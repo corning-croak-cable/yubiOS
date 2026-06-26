@@ -18,6 +18,7 @@ here; do not duplicate the digest list elsewhere.
 | `actions/checkout` | `9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0` |
 | `actions/configure-pages` | `45bfe0192ca1faeb007ade9deae92b16b8254a0d` |
 | `actions/deploy-pages` | `cd2ce8fcbc39b97be8ca5fce6e763baed58fa128` |
+| `actions/download-artifact` | `37930b1c2abaa49bbe596cd826c3c89aef350131` |
 | `actions/upload-artifact` | `bbbca2ddaa5d8feaa63e36b76fdaad77386f024f` |
 | `actions/upload-pages-artifact` | `fc324d3547104276b827a68afc52ff2a11cc49c9` |
 | `docker/setup-buildx-action` | `d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5` |
