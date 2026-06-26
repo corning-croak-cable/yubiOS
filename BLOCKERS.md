@@ -119,6 +119,14 @@ _Last updated: 2026-06-26. Maintained alongside TODO.md and ADR.md._
   Commit `819d427` on `main`. Verified: dispatch run 28228309907 cleared the
   prior failure point (build ran well past the ~4-min mark where it died).
 
+### BLOCKER-009: bcvk `feat/swtpm-ci` HEAD does not compile — swu2f two-impl divergence
+
+- **Blocks:** #20/#33 (LUKS2 FIDO2 e2e test, T4) — the e2e test references this bcvk branch via `bcvk ephemeral run --swtpm --swu2f`.
+- **Why:** Two sibling commits chose conflicting swu2f designs. `crates/kit/src/run_ephemeral.rs:1420` calls `bcvk_qemu::swu2f::push_uhid_kargs(...)` (in-guest /dev/uhid route, commit `66fbf130`), but HEAD `be5f3858` rewrote `crates/bcvk-qemu/src/swu2f.rs` to the host-QEMU `u2f-emulated` route (`qemu_u2f_args`/`Swu2fConfig`) and dropped `push_uhid_kargs` — a dangling symbol, guaranteed build failure (not merely "untested").
+- **Engineering call:** keep the IN-GUEST /dev/uhid CTAP2 route. QEMU `u2f-emulated` (libu2f-emu) is CTAP1/U2F-only with no `hmac-secret`, so it cannot drive `systemd-cryptenroll --fido2` for the LUKS2 unlock test; a uhid CTAP2 authenticator can. The wired `--swu2f` flag help text already says "expose /dev/uhid".
+- **Resolution:** restore `push_uhid_kargs` + a uhid `Swu2fConfig` on `feat/swtpm-ci` so `cargo check -p bcvk-qemu -p kit` resolves; keep both layers documented in `docs/swu2f.md`. Assigned to a follower 2026-06-26. bcvk stays a branch — NO merge.
+- **Verified:** live against `yubi-OS/bcvk` @ `be5f3858` (run_ephemeral.rs:1420 ref present; swu2f.rs exports only qemu_u2f_args/Swu2fConfig).
+
 ---
 
 ## Post-launch deferrals
