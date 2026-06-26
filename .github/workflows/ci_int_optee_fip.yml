@@ -301,6 +301,9 @@ jobs:
           fip=$(find arm-trusted-firmware/build -name fip.bin -print -quit)
           test -n "$fip"
           echo "FIP_BIN=$GITHUB_WORKSPACE/$fip" >> "$GITHUB_ENV"
+          bl1=$(find arm-trusted-firmware/build -name bl1.bin -print -quit || true)
+          if [ -n "$bl1" ]; then echo "BL1_BIN=$GITHUB_WORKSPACE/$bl1" >> "$GITHUB_ENV"; cp "$bl1" "$GITHUB_WORKSPACE/bl1.bin"; fi
+          cp "$fip" "$GITHUB_WORKSPACE/fip.bin"
           # flash.bin (BL1 + FIP concatenation) for the QEMU boot lane (C-INT / F4).
           flash=$(find arm-trusted-firmware/build -name flash.bin -print -quit || true)
           if [ -n "$flash" ]; then echo "FLASH_BIN=$GITHUB_WORKSPACE/$flash" >> "$GITHUB_ENV"; fi
@@ -320,11 +323,14 @@ jobs:
         if: always()
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v4 — see PINNED.md
         with:
-          name: yubios-int-optee-fip-${{ matrix.arch }}
+          name: fip-flash-${{ matrix.arch }}
           path: |
+            bl1.bin
+            fip.bin
             BL32_AP_MM.fd
             optee_os/out/**/tee-*_v2.bin
             u-boot/u-boot.bin
+            arm-trusted-firmware/build/**/bl1.bin
             arm-trusted-firmware/build/**/fip.bin
             arm-trusted-firmware/build/**/flash.bin
             fip-info.txt
