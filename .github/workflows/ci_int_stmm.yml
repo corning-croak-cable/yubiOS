@@ -106,19 +106,20 @@ jobs:
           export PYTHON_COMMAND=python3
           cd "$ws/edk2"
           . ./edksetup.sh
-          # Two host-GCC-14 toolchain fixups, both build-proof-local (no repo source
-          # is modified; we patch the freshly generated Conf and the cloned DSC):
+          # Two host-GCC-14 toolchain fixups, both build-proof-local (we patch only the
+          # freshly generated Conf and the cloned mbedTLS config; no repo commit):
           #  1. Strip -Werror (+ -flto): newer GCC promotes warnings upstream edk2
           #     trips, e.g. ArmStandaloneMmCoreEntryPoint maybe-uninitialized.
-          #  2. mbedTLS constant_time.c aarch64 inline-asm barrier ('ldr %w0,[%1]')
-          #     is rejected as 'invalid asm operand' under -mgeneral-regs-only on
-          #     GCC-13/14. mbedTLS 3.6 ships the CFG switch MBEDTLS_CT_NO_ASM exactly
-          #     for this; inject it via the platform DSC [BuildOptions] so the
-          #     CryptoPkg/MbedTlsLib that the RPMB variable service pulls in builds.
+          #  2. mbedTLS constant_time.c aarch64 inline-asm barrier ('ldr %w0,[%1]', gated
+          #     by MBEDTLS_CT_AARCH64_ASM <- MBEDTLS_HAVE_ASM + __aarch64__) is rejected
+          #     as 'invalid asm operand' under -mgeneral-regs-only on GCC-13/14. This
+          #     mbedTLS rev (0bebf8b) has no MBEDTLS_CT_NO_ASM gate, so disable the asm
+          #     at the source: unset MBEDTLS_HAVE_ASM in EDK2's mbedtls_config.h. mbedTLS
+          #     falls back to its portable C path (functionally identical, build-proof).
           sed -i 's/ -flto//g; s/ -Werror//g' Conf/tools_def.txt
-          dsc="$ws/edk2-platforms/$ACTIVE_PLATFORM"
-          printf '\n[BuildOptions]\n  GCC:*_*_*_CC_FLAGS = -DMBEDTLS_CT_NO_ASM\n' >> "$dsc"
-          echo "appended [BuildOptions] MBEDTLS_CT_NO_ASM to $dsc"
+          mbcfg="$ws/edk2/CryptoPkg/Library/MbedTlsLib/Include/mbedtls/mbedtls_config.h"
+          sed -i 's@^#define MBEDTLS_HAVE_ASM@//yubiOS CI: disabled (aarch64 CT asm rejected by host GCC-14): #define MBEDTLS_HAVE_ASM@' "$mbcfg"
+          grep -n 'MBEDTLS_HAVE_ASM' "$mbcfg" | head
           # Resolve toolchain tag: prefer GCC5 if defined, else the consolidated GCC.
           if grep -q '^DEFINE GCC5_AARCH64_PREFIX' Conf/tools_def.txt 2>/dev/null \
              || grep -q 'GCC5_AARCH64' Conf/tools_def.txt 2>/dev/null; then
