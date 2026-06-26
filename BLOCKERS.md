@@ -1,6 +1,6 @@
 # BLOCKERS.md — yubiOS Open Issue Dependency Map
 
-_Last updated: 2026-06-26 (BLOCKER-008 reopened: CI still red). Maintained alongside TODO.md and ADR.md._
+_Last updated: 2026-06-26 (BLOCKER-009 resolved: swu2f build break fixed; BLOCKER-008 still open: CI red). Maintained alongside TODO.md and ADR.md._
 
 ---
 
@@ -126,12 +126,13 @@ _Last updated: 2026-06-26 (BLOCKER-008 reopened: CI still red). Maintained along
   overlayfs snapshotter OR fold the verify into the Containerfile so there is no
   second extraction. Held this poll (cooldown + in-flight runs). **CI remains RED.**
 
-### BLOCKER-009: bcvk `feat/swtpm-ci` HEAD does not compile — swu2f two-impl divergence
+### BLOCKER-009: bcvk `feat/swtpm-ci` HEAD does not compile — swu2f two-impl divergence — RESOLVED (2026-06-26)
 
 - **Blocks:** #20/#33 (LUKS2 FIDO2 e2e test, T4) — the e2e test references this bcvk branch via `bcvk ephemeral run --swtpm --swu2f`.
 - **Why:** Two sibling commits chose conflicting swu2f designs. `crates/kit/src/run_ephemeral.rs:1420` calls `bcvk_qemu::swu2f::push_uhid_kargs(...)` (in-guest /dev/uhid route, commit `66fbf130`), but HEAD `be5f3858` rewrote `crates/bcvk-qemu/src/swu2f.rs` to the host-QEMU `u2f-emulated` route (`qemu_u2f_args`/`Swu2fConfig`) and dropped `push_uhid_kargs` — a dangling symbol, guaranteed build failure (not merely "untested").
 - **Engineering call:** keep the IN-GUEST /dev/uhid CTAP2 route. QEMU `u2f-emulated` (libu2f-emu) is CTAP1/U2F-only with no `hmac-secret`, so it cannot drive `systemd-cryptenroll --fido2` for the LUKS2 unlock test; a uhid CTAP2 authenticator can. The wired `--swu2f` flag help text already says "expose /dev/uhid".
-- **Resolution:** restore `push_uhid_kargs` + a uhid `Swu2fConfig` on `feat/swtpm-ci` so `cargo check -p bcvk-qemu -p kit` resolves; keep both layers documented in `docs/swu2f.md`. Assigned to a follower 2026-06-26. bcvk stays a branch — NO merge.
+- **Resolution (landed):** the in-guest `/dev/uhid` CTAP2 route was restored on `feat/swtpm-ci` — `push_uhid_kargs` + uhid `Swu2fConfig` re-added in `crates/bcvk-qemu/src/swu2f.rs` (commit `2afd8778`, plus a redundant near-no-op follow-up `0440dd94` from a parallel run; HEAD = `0440dd94`). `run_ephemeral.rs` now resolves the symbol; both swu2f layers documented in `docs/swu2f.md`. bcvk stays a branch — NO merge.
+- **Outstanding:** source-level fix only — NOT compile-verified in-sandbox (no `cargo`/KVM). Needs human `cargo check -p bcvk-qemu -p kit` + `nextest` + Signed-off-by before the branch is trusted. The CTAP2 enrollment legs of the LUKS2 e2e test (#33/T4) stay gated until the in-guest CTAP2 authenticator ships in the guest image (`docs/swu2f.md` Layer 2).
 - **Verified:** live against `yubi-OS/bcvk` @ `be5f3858` (run_ephemeral.rs:1420 ref present; swu2f.rs exports only qemu_u2f_args/Swu2fConfig).
 
 ---
