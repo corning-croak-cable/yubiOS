@@ -134,18 +134,25 @@ jobs:
           git clone --no-tags https://github.com/yubi-OS/edk2-platforms edk2-platforms
           git -C edk2-platforms checkout "$EDK2_PLATFORMS_REF"
           export GCC_AARCH64_PREFIX="${AARCH64_PREFIX}"
+          # Canonical edk2-platforms layout: WORKSPACE is the PARENT holding both
+          # trees, and each is a PACKAGES_PATH entry. A prior attempt set
+          # WORKSPACE=edk2 with edk2-platforms as an out-of-tree sibling; EDK2 then
+          # built the OpTeeRpmbFv module under AARCH64/edk2-platforms/Drivers/... but
+          # generated the FV expecting AARCH64/Drivers/... — a path mismatch that
+          # aborts FV assembly. Parenting both under WORKSPACE keeps the module's
+          # package-relative path consistent across compile + FV generation.
+          export WORKSPACE="$GITHUB_WORKSPACE"
           export PACKAGES_PATH="$GITHUB_WORKSPACE/edk2:$GITHUB_WORKSPACE/edk2-platforms"
+          export EDK_TOOLS_PATH="$GITHUB_WORKSPACE/edk2/BaseTools"
           make -C edk2/BaseTools -j"$(nproc)"
-          cd edk2
           set +u
-          . ./edksetup.sh
+          . edk2/edksetup.sh BaseTools
           set -u
           build -a AARCH64 -t GCC -b RELEASE -n "$(nproc)" \
             -p Platform/StandaloneMm/PlatformStandaloneMmPkg/PlatformStandaloneMmRpmb.dsc
-          cd "$GITHUB_WORKSPACE"
-          fd=$(find edk2/Build -path '*MmStandaloneRpmb*' -name '*.fd' -print -quit 2>/dev/null || true)
+          fd=$(find "$WORKSPACE/Build" -path '*MmStandaloneRpmb*' -name '*.fd' -print -quit 2>/dev/null || true)
           if [ -z "$fd" ]; then
-            echo "::error::no StandaloneMM RPMB .fd produced"; find edk2/Build -name '*.fd' -o -name '*.efi' | head -50; exit 1
+            echo "::error::no StandaloneMM RPMB .fd produced"; find "$WORKSPACE/Build" -name '*.fd' -o -name '*.efi' | head -50; exit 1
           fi
           cp "$fd" "$GITHUB_WORKSPACE/BL32_AP_MM.fd"
           echo "STMM_FD=$GITHUB_WORKSPACE/BL32_AP_MM.fd" >> "$GITHUB_ENV"
