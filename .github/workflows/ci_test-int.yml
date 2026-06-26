@@ -155,7 +155,7 @@ jobs:
           set +u
           . edk2/edksetup.sh BaseTools
           set -u
-          build -a AARCH64 -t GCC -b RELEASE -n "$(nproc)" \
+          build -a AARCH64 -t GCC -b DEBUG -n "$(nproc)" \
             -p Platform/StandaloneMm/PlatformStandaloneMmPkg/PlatformStandaloneMmRpmb.dsc
           fd=$(find "$WORKSPACE/Build" -path '*MmStandaloneRpmb*' -name '*.fd' -print -quit 2>/dev/null || true)
           if [ -z "$fd" ]; then
