@@ -124,7 +124,12 @@ jobs:
           # so flip the master switch off -> portable constant-time C fallback.
           cfg=CryptoPkg/Library/MbedTlsLib/Include/mbedtls/mbedtls_config.h
           sed -i 's@^#define MBEDTLS_HAVE_ASM@/* yubiOS CI: aarch64 inline-asm rejected by cross gcc */ \/\/ #define MBEDTLS_HAVE_ASM@' "$cfg"
-          grep -n 'MBEDTLS_HAVE_ASM' "$cfg" | head
+          # aes.c calls mbedtls_aesce_* (ARM AES crypto-extension) under MBEDTLS_AESCE_C,
+          # but aesce.c's bodies need NEON/crypto intrinsics that -mgeneral-regs-only
+          # (StandaloneMM) forbids, so they compile out -> undefined refs at link. Disable
+          # the AESCE accel path too; portable C AES is correct for this build-proof FV.
+          sed -i 's@^#define MBEDTLS_AESCE_C@/* yubiOS CI: ARM AES-CE needs intrinsics forbidden under -mgeneral-regs-only */ \/\/ #define MBEDTLS_AESCE_C@' "$cfg"
+          grep -nE 'MBEDTLS_HAVE_ASM|MBEDTLS_AESCE_C' "$cfg" | head
           # --- Root-cause fix 2: LTO -------------------------------------------
           # Use the GCCNOLTO tag (FAMILY=GCC) instead of GCC: no -flto and none of
           # the GccLto -plugin-opt link flags, so neither the LTO miscompile nor the
