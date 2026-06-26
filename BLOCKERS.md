@@ -1,6 +1,6 @@
 # BLOCKERS.md — yubiOS Open Issue Dependency Map
 
-_Last updated: 2026-06-26 (BLOCKER-009 resolved: swu2f build break fixed; BLOCKER-008 still open: CI red). Maintained alongside TODO.md and ADR.md._
+_Last updated: 2026-06-26 (L-PRUNE: orphan `feat/bcvk-swtpm-ci` deleted; `feat/fido2-secure-boot` retained pending content diff. BLOCKER-009 resolved; BLOCKER-008 still open: CI red). Maintained alongside TODO.md and ADR.md._
 
 ---
 
@@ -134,6 +134,15 @@ _Last updated: 2026-06-26 (BLOCKER-009 resolved: swu2f build break fixed; BLOCKE
 - **Resolution (landed):** the in-guest `/dev/uhid` CTAP2 route was restored on `feat/swtpm-ci` — `push_uhid_kargs` + uhid `Swu2fConfig` re-added in `crates/bcvk-qemu/src/swu2f.rs` (commit `2afd8778`, plus a redundant near-no-op follow-up `0440dd94` from a parallel run; HEAD = `0440dd94`). `run_ephemeral.rs` now resolves the symbol; both swu2f layers documented in `docs/swu2f.md`. bcvk stays a branch — NO merge.
 - **Outstanding:** source-level fix only — NOT compile-verified in-sandbox (no `cargo`/KVM). Needs human `cargo check -p bcvk-qemu -p kit` + `nextest` + Signed-off-by before the branch is trusted. The CTAP2 enrollment legs of the LUKS2 e2e test (#33/T4) stay gated until the in-guest CTAP2 authenticator ships in the guest image (`docs/swu2f.md` Layer 2).
 - **Verified:** live against `yubi-OS/bcvk` @ `0440dd94` — `swu2f.rs` now defines `push_uhid_kargs` (in-guest uhid route restored); dangling-symbol build break cleared.
+
+---
+
+## Branch reconciliation (L-PRUNE, 2026-06-26)
+
+Two yubiOS branches had no open PR. Reconciled against live `main`:
+
+- **`feat/bcvk-swtpm-ci` — DELETED.** `compare/main...feat/bcvk-swtpm-ci` = 0 ahead / 124 behind (`behind`): zero unique commits, tip is an ancestor of `main`. Fully merged. Deleted via refs API (HTTP 204, confirmed 404). Last tip recorded for recovery: `ae8d4d0e220934b09cf504b902df3b65788dc05f`.
+- **`feat/fido2-secure-boot` — RETAINED (not deleted).** `compare/main...feat/fido2-secure-boot` = 5 ahead / 214 behind (`diverged`). The 5 commits are the `usr/lib/yubios/` -> `usr/lib/yubiOS/` case-rename plus FIDO2 Secure Boot scripts (`enroll-sb-fido2.sh`, `sign-uki-fido2.sh`, the `enroll-*-wrapper.sh` set). All those files are now PRESENT on `main` (HTTP 200) and the old lowercase path is GONE (404), so the work appears superseded by merged main — but a byte-level content diff was NOT confirmed (branch is 214 behind). Per "verify everything," not deleting blindly. Tip recorded: `c5a84a0fad5ef1edc2e60056d45027fd5d3a99d5`. Gate before deletion: confirm the 5 commits add no unique unmerged content; if confirmed superseded, delete; else open a rebase PR.
 
 ---
 
