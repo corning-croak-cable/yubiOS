@@ -1,6 +1,6 @@
 # BLOCKERS.md — yubiOS Open Issue Dependency Map
 
-_Last updated: 2026-06-26 (L-CI: BLOCKER-008 RESOLVED — build job dockerd native→overlayfs snapshotter (commit `e74dadf`); dispatch run `28230464416` completed GREEN (all 5 jobs success). BLOCKER-009 resolved. L-PRUNE: orphan `feat/bcvk-swtpm-ci` deleted; `feat/fido2-secure-boot` retained pending content diff). Maintained alongside TODO.md and ADR.md._
+_Last updated: 2026-06-26 (L-CI: BLOCKER-008 RESOLVED — build job dockerd native→overlayfs snapshotter (commit `e74dadf`); dispatch run `28230464416` completed GREEN (all 5 jobs success). BLOCKER-009 resolved. L-PRUNE: orphan branches `feat/bcvk-swtpm-ci` AND `feat/fido2-secure-boot` both deleted — fully superseded by merged main). Maintained alongside TODO.md and ADR.md._
 
 ---
 
@@ -150,7 +150,7 @@ _Last updated: 2026-06-26 (L-CI: BLOCKER-008 RESOLVED — build job dockerd nati
 Two yubiOS branches had no open PR. Reconciled against live `main`:
 
 - **`feat/bcvk-swtpm-ci` — DELETED.** `compare/main...feat/bcvk-swtpm-ci` = 0 ahead / 124 behind (`behind`): zero unique commits, tip is an ancestor of `main`. Fully merged. Deleted via refs API (HTTP 204, confirmed 404). Last tip recorded for recovery: `ae8d4d0e220934b09cf504b902df3b65788dc05f`.
-- **`feat/fido2-secure-boot` — RETAINED (not deleted).** `compare/main...feat/fido2-secure-boot` = 5 ahead / 214 behind (`diverged`). The 5 commits are the `usr/lib/yubios/` -> `usr/lib/yubiOS/` case-rename plus FIDO2 Secure Boot scripts (`enroll-sb-fido2.sh`, `sign-uki-fido2.sh`, the `enroll-*-wrapper.sh` set). All those files are now PRESENT on `main` (HTTP 200) and the old lowercase path is GONE (404), so the work appears superseded by merged main — but a byte-level content diff was NOT confirmed (branch is 214 behind). Per "verify everything," not deleting blindly. Tip recorded: `c5a84a0fad5ef1edc2e60056d45027fd5d3a99d5`. Gate before deletion: confirm the 5 commits add no unique unmerged content; if confirmed superseded, delete; else open a rebase PR.
+- **`feat/fido2-secure-boot` — DELETED.** `compare/main...feat/fido2-secure-boot` = 5 ahead / 218 behind (`diverged`). Byte-level diff confirmed FULLY SUPERSEDED by merged main: identical-by-blob-SHA = the `enroll-*-wrapper.sh` set, bootc tomls, dracut conf, pam `yubiOS-sudo`, hidraw udev rules; the "different" files are all main being a STRICT SUPERSET (legacy `sbsign`->`systemd-sbsign` per ADR-008 in `enroll-sb-fido2.sh`/`sign-uki-fido2.sh`/`enroll-sb.sh`; `lib.sh` fixed the `yubicos_log`->`yubiOS_log` typo and ADDED `check_fido2_pin_length`+`enroll_pam_user`; `enroll.sh` shellcheck quoting fix). Nothing on the branch was absent from main; the branch held the older/buggier variant. Deleted via refs API (HTTP 204, confirmed 404). Tip recorded for recovery: `c5a84a0fad5ef1edc2e60056d45027fd5d3a99d5`. No PR / no BLOCKERS gap.
 
 ---
 
