@@ -29,6 +29,7 @@ _Last updated: June 26, 2026_
 - [x] Evaluate + add RestrictFileSystems= (BPF LSM) to enrollment units (ADR-016) (#18, PR #28) — merged June 26; CONFIG_BPF_LSM=y verified active on live base (BLOCKER-007 cleared)
 - [ ] Deploy CI workflows to .github/workflows/ in yubiOS, bcvk, mkosi (manual — token lacks workflow scope) (#22) — drafts staged in `2026/` and `documents/.../ci-workflows/`
 - [ ] Add `osslsigncode` to image (mkosi.conf + Containerfile) so the PKCS#11 verify step in tests/validate-pkcs11-uri.sh is live
+- [ ] v261 test coverage scaffolding — systemd-sbsign UKI verify (osslsigncode vs PIV cert), ConditionSecurity=measured-os + RestrictFileSystems= enroll-unit gates, pam-u2f stack — draft PR #38 (`test/v261-coverage-T5`, commit `56b05b5`); no merge, pending CI
 
 ## Low priority / Research
 
@@ -38,10 +39,10 @@ _Last updated: June 26, 2026_
 - [x] CTAP 2.1 minimum PIN length enforcement — check_fido2_pin_length() in lib.sh (PR #3)
 - [ ] chipsec first-boot validation (portable service or sysext, per ADR-010 DPS) (#24)
 - [ ] Post-quantum TLS for yubiOS services (X25519MLKEM768 / OpenSSL 3.5+) (#26)
-- [ ] bcvk CI — software FIDO2 emulator for enrollment tests without physical YubiKey (#25)
+- [ ] bcvk CI — software FIDO2 emulator (swu2f) for enrollment tests without physical YubiKey (#25) — sermon task; bcvk feature-branch addition, gated on bcvk swtpm branch (#3); referenced, never merged
 - [ ] One-time hardware smoke test of the systemd-sbsign PKCS#11 path (slot 9c) before first production signing
 
 ## Post-launch (see FUTURE.md)
 
-- [ ] ARM64-owned root of trust: TF-A + OP-TEE + ms-tpm-20-ref fTPM + U-Boot measured boot — gives ARM64 a yubiOS-owned TPM 2.0; YubiKey stays primary RoT. Decisions: **ADR-018** (owned secure-world stack), **ADR-019** (dual provisioning paths: fuse-enforcing vs measured/attested), **ADR-020** (U-Boot as UEFI firmware + StandaloneMM variable store). Full plan in FUTURE.md; diagrams in ARCHITECTURE.md §7. Skills: arm-trusted-firmware-optee, ftpm-optee-tpm. (#23, PR #35)
+- [ ] ARM64-owned root of trust: TF-A + OP-TEE + ms-tpm-20-ref fTPM + U-Boot measured boot — gives ARM64 a yubiOS-owned TPM 2.0; YubiKey stays primary RoT. Decisions: **ADR-018** (owned secure-world stack), **ADR-019** (dual provisioning paths: fuse-enforcing vs measured/attested), **ADR-020** (U-Boot as UEFI firmware + StandaloneMM variable store). Full plan in FUTURE.md; diagrams in ARCHITECTURE.md §7. Skills: arm-trusted-firmware-optee, ftpm-optee-tpm. (#23, PR #35) — **Phase F0 active:** reproducible QEMU `virt` build recipe (TF-A `PLAT=qemu` + OP-TEE `vexpress-qemu_armv8a` + ms-tpm-20-ref `@98b60a44` fTPM + U-Boot/UEFI) + `/dev/tpm0` PCR-extend verifier pushed to `feat/arm64-ftpm-phase-f0` (draft PR #35, commit `d01075f`); live boot verification human-gated
 - [ ] Easter egg: "Konami enrollment" — see FUTURE.md § Easter Egg
