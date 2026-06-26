@@ -535,9 +535,9 @@ jobs:
         run: |
           set -euxo pipefail
           timeout "${BOOT_TIMEOUT}" qemu-system-aarch64 \
-            -M virt,secure=on,gic-version=3 -cpu max -smp 4 -m 4096 \
+            -M virt,secure=on -cpu max -m 2048 \
             -bios "${{ steps.image.outputs.flash }}" \
-            -nographic -no-reboot -d guest_errors,unimp \
+            -nographic -d guest_errors \
             -serial file:nw.log -serial file:optee.log || true
           fail=0; touch optee.log nw.log
           grep -Eiq "early_ta_init.*${FTPM_UUID}|Early TA ${FTPM_UUID}" optee.log \
