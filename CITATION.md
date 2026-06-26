@@ -5,7 +5,7 @@ where relevant, the primary sources below that ground its design.
 
 ## Cite this project
 
-> Latuu, J. (2026). *yubiOS: A FIDO2-first immutable operating system with a hardware
+> Tchatalbachian, S. (2026). *yubiOS: A FIDO2-first immutable operating system with a hardware
 > security key as the sole root of trust.* yubi-OS. https://github.com/yubi-OS/yubiOS
 
 ```bibtex
