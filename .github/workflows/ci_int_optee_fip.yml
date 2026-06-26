@@ -1,0 +1,314 @@
+name: ci_int_optee_fip
+
+# yubiOS ARM64 fTPM INT lane I-B (#35, task T211 — F2).
+#
+# This is ONE of four INT lanes (leader decomposition 2026-06-26T15:09:22Z), each
+# its own greenable workflow file:
+#   I-A  ci_int_stmm.yml      (F1) -> BL32_AP_MM.fd
+#   I-B  ci_int_optee_fip.yml (F2, THIS FILE) -> fip.bin   <-- the OP-TEE fold + TF-A FIP stage
+#   I-C  ci_int_qemu.yml      (F4) -> QEMU secure boot + fTPM
+#   ci_test-int.yml           (F3) -> orchestrator chaining all three
+#
+# WHAT THIS LANE PROVES (research/F2-tfa-fip-spmc.md EMBEDDED model):
+#   OP-TEE is the single BL32. StandaloneMM is folded INTO OP-TEE via
+#   CFG_STMM_PATH=BL32_AP_MM.fd (auto CFG_WITH_STMM_SP=y), and the fTPM rides the
+#   same OP-TEE as an Early TA (EARLY_TA_PATHS=<uuid>.stripped.elf). TF-A never
+#   sees StMM as a separate image, so the FIP is the plain SPD=opteed layout:
+#     --soc-fw bl31  --tos-fw tee-header_v2  --tos-fw-extra1 tee-pager_v2
+#     --tos-fw-extra2 tee-pageable_v2  --nt-fw u-boot   (no --blob / SP package)
+#   SPD=opteed and SPM_MM are mutually exclusive (OP-TEE 42471ec) — we never set
+#   SPM_MM=1. This is the only topology that works on QEMU vexpress-qemu_armv8a
+#   without ARMv8.4 Secure-EL2.
+#
+# StMM input (BL32_AP_MM.fd): F1's ci_int_stmm.yml owns that build. This lane is
+# self-sufficient: it first tries to CONSUME the artifact from F1's latest GREEN
+# ci_int_stmm.yml run; if none exists yet it REBUILDS BL32_AP_MM.fd inline from
+# yubi-OS/edk2 + yubi-OS/edk2-platforms (proven recipe with the FV-path +
+# -fno-lto fixes). Either way StMM is folded — truth-or-silence on which path ran.
+#
+# Build order (deps honoured; FIP needs final BL32 + BL33 already built):
+#   0. u-boot                      -> u-boot.bin                    (BL33, C5 recipe)
+#   S. edk2 + edk2-platforms       -> BL32_AP_MM.fd   (download-from-F1 OR rebuild)
+#   1. optee_os pass 1             -> export-ta_arm64 (TA dev kit, C2 recipe)
+#   2. optee_ftpm vs devkit+ms-tpm -> bc50d971-….stripped.elf       (fTPM Early TA, C3 recipe)
+#   3. optee_os pass 2             -> tee-{header,pager,pageable}_v2 (EARLY_TA=fTPM, CFG_STMM_PATH=StMM)
+#   4. TF-A FIP                    -> fip.bin / flash.bin           (BL31 SPD=opteed + BL32 + BL33, TBB)
+#
+# BARE runner: the full multi-toolchain cross build (aarch64-linux-gnu, the 32-bit
+# arm dev-kit compiler, EDK2 BaseTools, mbed TLS) needs a complete host libc/crt*.o
+# that the hardened dhi base intentionally omits — same lesson as every component CI.
+# Native multi-arch matrix kept for parity (fail-fast:false). Action refs pinned per
+# PINNED.md (actions/checkout@9c091bb…, actions/upload-artifact@bbbca2dd…).
+#
+# Component forks cloned at the exact commits whose isolated CIs went green:
+#   optee_os cc18472 · optee_ftpm 28abbe7 · TF-A f9e1064 · u-boot ef2ab32 ·
+#   edk2 9f13e2a · edk2-platforms 4e1e7a4 · ms-tpm-20-ref 98b60a44.
+# No code is merged; this lands the integration workflow only.
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/ci_int_optee_fip.yml']
+  pull_request:
+    branches: [main]
+    paths: ['.github/workflows/ci_int_optee_fip.yml']
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Why are you running this manually?'
+        required: false
+        default: 'manual'
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  TFA_REF: f9e106415eb569ff9b19404e2c3f64167af08d21
+  OPTEE_OS_REF: cc1847276821220facbffec13812c1888b44e6cb
+  OPTEE_FTPM_REF: 28abbe7f33a96302cccf07b86b9ea46cf3dc278f
+  UBOOT_REF: ef2ab32418943c161d0889af24375a52b14e10f9
+  EDK2_REF: 9f13e2a137c97a2825f874b4321c3963ca87c747
+  EDK2_PLATFORMS_REF: 4e1e7a4e64470ef7eefeaa1021c86763ab28beee
+  MS_TPM_REF: 98b60a44aba79b15fcce1c0d1e46cf5918400f6a
+  MBEDTLS_REF: mbedtls-3.6.6
+  FTPM_UUID: bc50d971-d4c9-42c4-82cb-343fb7f37896
+  OPTEE_PLATFORM: vexpress-qemu_armv8a
+
+jobs:
+  optee-fip:
+    name: OP-TEE fold (StMM+fTPM) + TF-A FIP (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    concurrency:
+      group: ${{ github.workflow }}-fip-${{ matrix.arch }}-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout yubiOS (workflow context)
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # see PINNED.md
+
+      - name: Install full ARM64 firmware toolchain + build deps
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf \
+            python3 python3-venv python3-dev \
+            python3-pyelftools python3-cryptography python3-setuptools \
+            device-tree-compiler \
+            openssl libssl-dev libgnutls28-dev \
+            bison flex bc \
+            uuid-dev iasl nasm swig \
+            git ca-certificates
+          # AArch64 host prefix: cross on amd64, native (empty) on the arm64 runner.
+          if [ "$(uname -m)" = "x86_64" ]; then
+            echo "AARCH64_PREFIX=aarch64-linux-gnu-" >> "$GITHUB_ENV"
+          else
+            echo "AARCH64_PREFIX=" >> "$GITHUB_ENV"
+          fi
+
+      # ---- Stage 0: U-Boot BL33 (C5 recipe) --------------------------------
+      - name: Stage 0 — clone + build U-Boot BL33
+        run: |
+          set -euxo pipefail
+          git clone --no-tags https://github.com/yubi-OS/u-boot u-boot
+          git -C u-boot checkout "$UBOOT_REF"
+          cat > u-boot/yubios_ftpm.config <<'EOF'
+          CONFIG_TEE=y
+          CONFIG_OPTEE=y
+          CONFIG_TPM=y
+          CONFIG_TPM_V2=y
+          CONFIG_TPM2_FTPM_TEE=y
+          CONFIG_EFI_LOADER=y
+          CONFIG_EFI_MM_COMM_TEE=y
+          CONFIG_EFI_TCG2_PROTOCOL=y
+          CONFIG_HASH=y
+          CONFIG_MEASURED_BOOT=y
+          # CONFIG_UNIT_TEST is not set
+          EOF
+          make -C u-boot CROSS_COMPILE="${AARCH64_PREFIX}" ARCH=arm qemu_arm64_defconfig
+          ./u-boot/scripts/kconfig/merge_config.sh -m -O u-boot u-boot/.config u-boot/yubios_ftpm.config
+          make -C u-boot CROSS_COMPILE="${AARCH64_PREFIX}" ARCH=arm olddefconfig
+          make -C u-boot -j"$(nproc)" CROSS_COMPILE="${AARCH64_PREFIX}" ARCH=arm
+          test -f u-boot/u-boot.bin
+          echo "BL33_BIN=$GITHUB_WORKSPACE/u-boot/u-boot.bin" >> "$GITHUB_ENV"
+          ls -l u-boot/u-boot.bin
+
+      # ---- Stage S: BL32_AP_MM.fd — consume F1's artifact, else rebuild ----
+      - name: Stage S — obtain BL32_AP_MM.fd (download from F1 ci_int_stmm.yml, else rebuild)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          fd_dst="$GITHUB_WORKSPACE/BL32_AP_MM.fd"
+          got=""
+          # 1) Prefer the artifact from F1's latest GREEN ci_int_stmm.yml run (same repo).
+          rid=$(gh run list -R "$GITHUB_REPOSITORY" --workflow ci_int_stmm.yml \
+                  --status success -L 1 --json databaseId -q '.[0].databaseId' 2>/dev/null || true)
+          if [ -n "${rid:-}" ]; then
+            echo "Found F1 ci_int_stmm.yml GREEN run: $rid — downloading BL32_AP_MM.fd"
+            mkdir -p _stmm_dl
+            if gh run download "$rid" -R "$GITHUB_REPOSITORY" -D _stmm_dl 2>/dev/null; then
+              cand=$(find _stmm_dl -name 'BL32_AP_MM.fd' -print -quit 2>/dev/null || true)
+              if [ -n "$cand" ]; then cp "$cand" "$fd_dst"; got="download(run $rid)"; fi
+            fi
+          fi
+          # 2) Fallback: rebuild BL32_AP_MM.fd inline from edk2 + edk2-platforms.
+          if [ -z "$got" ]; then
+            echo "::notice::No F1 ci_int_stmm.yml artifact available — rebuilding BL32_AP_MM.fd inline"
+            set -x
+            sudo apt-get install -y --no-install-recommends iasl nasm uuid-dev || true
+            git clone --no-tags https://github.com/yubi-OS/edk2 edk2
+            git -C edk2 checkout "$EDK2_REF"
+            git -C edk2 submodule update --init --recursive
+            git clone --no-tags https://github.com/yubi-OS/edk2-platforms edk2-platforms
+            git -C edk2-platforms checkout "$EDK2_PLATFORMS_REF"
+            export GCC_AARCH64_PREFIX="${AARCH64_PREFIX}"
+            # Canonical edk2-platforms layout: WORKSPACE is the PARENT holding both
+            # trees, each a PACKAGES_PATH entry. Setting WORKSPACE=edk2 with
+            # edk2-platforms out-of-tree builds OpTeeRpmbFv under
+            # AARCH64/edk2-platforms/Drivers/... but generates the FV expecting
+            # AARCH64/Drivers/... — a path mismatch that aborts FV assembly.
+            export WORKSPACE="$GITHUB_WORKSPACE"
+            export PACKAGES_PATH="$GITHUB_WORKSPACE/edk2:$GITHUB_WORKSPACE/edk2-platforms"
+            export EDK_TOOLS_PATH="$GITHUB_WORKSPACE/edk2/BaseTools"
+            # Disable LTO: edk2's bundled mbedtls constant_time.c uses an inline-asm
+            # constant-time barrier GCC-13 lto-wrapper rejects at -flto. -fno-lto
+            # (appended last) wins over the toolchain -flto and links cleanly.
+            dsc=edk2-platforms/Platform/StandaloneMm/PlatformStandaloneMmPkg/PlatformStandaloneMmRpmb.dsc
+            printf '\n[BuildOptions]\n  GCC:*_*_*_CC_FLAGS = -fno-lto\n  GCC:*_*_*_DLINK_FLAGS = -fno-lto\n' >> "$dsc"
+            make -C edk2/BaseTools -j"$(nproc)"
+            set +u
+            . edk2/edksetup.sh BaseTools
+            set -u
+            build -a AARCH64 -t GCC -b DEBUG -n "$(nproc)" \
+              -p Platform/StandaloneMm/PlatformStandaloneMmPkg/PlatformStandaloneMmRpmb.dsc
+            fd=$(find "$WORKSPACE/Build" -path '*MmStandaloneRpmb*' -name '*.fd' -print -quit 2>/dev/null || true)
+            if [ -z "$fd" ]; then
+              echo "::error::no StandaloneMM RPMB .fd produced"; find "$WORKSPACE/Build" -name '*.fd' -o -name '*.efi' | head -50; exit 1
+            fi
+            cp "$fd" "$fd_dst"; got="rebuild(edk2-platforms $EDK2_PLATFORMS_REF)"
+          fi
+          test -f "$fd_dst"
+          echo "STMM_FD=$fd_dst" >> "$GITHUB_ENV"
+          echo "STMM_SOURCE=$got" >> "$GITHUB_ENV"
+          echo "::notice::BL32_AP_MM.fd via $got"
+          ls -l "$fd_dst"
+
+      # ---- Stage 1: OP-TEE pass 1 — TA dev kit (C2 recipe) -----------------
+      - name: Stage 1 — clone + build OP-TEE TA dev kit (pass 1)
+        run: |
+          set -euxo pipefail
+          git clone --no-tags https://github.com/yubi-OS/optee_os optee_os
+          git -C optee_os checkout "$OPTEE_OS_REF"
+          make -C optee_os -j"$(nproc)" \
+            PLATFORM="$OPTEE_PLATFORM" \
+            CROSS_COMPILE64=aarch64-linux-gnu- \
+            CROSS_COMPILE=arm-linux-gnueabihf- \
+            CFG_RPMB_FS=y CFG_REE_FS=n CFG_EARLY_TA=y \
+            ta_dev_kit
+          devkit=$(find "$GITHUB_WORKSPACE/optee_os/out" -type d -name 'export-ta_arm64' -print -quit)
+          test -f "$devkit/mk/ta_dev_kit.mk"
+          echo "TA_DEV_KIT_DIR=$devkit" >> "$GITHUB_ENV"
+          echo "OK devkit -> $devkit"
+
+      # ---- Stage 2: fTPM Early TA (C3 recipe) ------------------------------
+      - name: Stage 2 — build fTPM TA vs devkit + ms-tpm-20-ref
+        run: |
+          set -euxo pipefail
+          git clone --no-tags https://github.com/yubi-OS/optee_ftpm optee_ftpm
+          git -C optee_ftpm checkout "$OPTEE_FTPM_REF"
+          git clone --no-tags https://github.com/yubi-OS/ms-tpm-20-ref ms-tpm-20-ref
+          git -C ms-tpm-20-ref checkout "$MS_TPM_REF"
+          make -C optee_ftpm -j"$(nproc)" \
+            TA_DEV_KIT_DIR="$TA_DEV_KIT_DIR" \
+            CFG_MS_TPM_20_REF="$GITHUB_WORKSPACE/ms-tpm-20-ref" \
+            CROSS_COMPILE_ta_arm64=aarch64-linux-gnu- \
+            CFG_ARM64_ta_arm64=y
+          stripped=$(find optee_ftpm -name "${FTPM_UUID}.stripped.elf" -print -quit)
+          test -n "$stripped"
+          echo "FTPM_TA=$GITHUB_WORKSPACE/$stripped" >> "$GITHUB_ENV"
+          echo "OK fTPM TA -> $stripped"
+
+      # ---- Stage 3: OP-TEE pass 2 — final BL32 (EARLY_TA=fTPM + CFG_STMM_PATH)
+      - name: Stage 3 — rebuild OP-TEE BL32 folding fTPM Early TA + StMM
+        run: |
+          set -euxo pipefail
+          make -C optee_os -j"$(nproc)" \
+            PLATFORM="$OPTEE_PLATFORM" \
+            CROSS_COMPILE64=aarch64-linux-gnu- \
+            CROSS_COMPILE=arm-linux-gnueabihf- \
+            CFG_RPMB_FS=y CFG_REE_FS=n \
+            CFG_EARLY_TA=y EARLY_TA_PATHS="$FTPM_TA" \
+            CFG_CORE_DYN_SHM=y \
+            CFG_STMM_PATH="$STMM_FD" \
+            all
+          h=$(find optee_os/out -name tee-header_v2.bin -print -quit)
+          p=$(find optee_os/out -name tee-pager_v2.bin -print -quit)
+          x=$(find optee_os/out -name tee-pageable_v2.bin -print -quit)
+          test -n "$h" && test -n "$p" && test -n "$x"
+          echo "BL32_HDR=$GITHUB_WORKSPACE/$h"   >> "$GITHUB_ENV"
+          echo "BL32_PAGER=$GITHUB_WORKSPACE/$p" >> "$GITHUB_ENV"
+          echo "BL32_PAGEABLE=$GITHUB_WORKSPACE/$x" >> "$GITHUB_ENV"
+          ls -l "$h" "$p" "$x"
+
+      # ---- Stage 4: TF-A FIP — BL31 + BL32(OP-TEE) + BL33(u-boot) ----------
+      - name: Stage 4 — clone TF-A + mbedTLS, build TBB FIP (SPD=opteed)
+        run: |
+          set -euxo pipefail
+          git clone --no-tags https://github.com/yubi-OS/arm-trusted-firmware arm-trusted-firmware
+          git -C arm-trusted-firmware checkout "$TFA_REF"
+          git clone --no-tags --branch "$MBEDTLS_REF" https://github.com/Mbed-TLS/mbedtls mbedtls
+          CROSS=""
+          [ "$(uname -m)" = "x86_64" ] && CROSS="aarch64-linux-gnu-"
+          make -C arm-trusted-firmware -j"$(nproc)" \
+            CROSS_COMPILE="${CROSS}" \
+            PLAT=qemu ARCH=aarch64 \
+            SPD=opteed \
+            BL32="$BL32_HDR" BL32_EXTRA1="$BL32_PAGER" BL32_EXTRA2="$BL32_PAGEABLE" \
+            BL32_RAM_LOCATION=tdram \
+            BL33="$BL33_BIN" \
+            TRUSTED_BOARD_BOOT=1 GENERATE_COT=1 CREATE_KEYS=1 \
+            MBEDTLS_DIR="$GITHUB_WORKSPACE/mbedtls" \
+            DEBUG=1 \
+            all fip
+          fip=$(find arm-trusted-firmware/build -name fip.bin -print -quit)
+          test -n "$fip"
+          echo "FIP_BIN=$GITHUB_WORKSPACE/$fip" >> "$GITHUB_ENV"
+          # flash.bin (BL1 + FIP concatenation) for the QEMU boot lane (C-INT / F4).
+          flash=$(find arm-trusted-firmware/build -name flash.bin -print -quit || true)
+          if [ -n "$flash" ]; then echo "FLASH_BIN=$GITHUB_WORKSPACE/$flash" >> "$GITHUB_ENV"; fi
+          ls -l "$fip" ${flash:+"$flash"}
+
+      - name: Verify packaged FIP carries OP-TEE BL32 + U-Boot BL33
+        run: |
+          set -euxo pipefail
+          ft=arm-trusted-firmware/tools/fiptool/fiptool
+          test -x "$ft" || make -C arm-trusted-firmware fiptool
+          "$ft" info "$FIP_BIN" | tee fip-info.txt
+          grep -qi 'Secure Payload BL32 (Trusted OS)\|tos-fw\|Trusted OS' fip-info.txt
+          grep -qi 'Non-Trusted Firmware BL33\|nt-fw\|Non-Trusted' fip-info.txt
+          echo "INT lane I-B OK: fip.bin bundles fTPM+StMM-folded OP-TEE BL32 + U-Boot BL33 (StMM via $STMM_SOURCE)"
+
+      - name: Upload OP-TEE fold + FIP artifacts
+        if: always()
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v4 — see PINNED.md
+        with:
+          name: yubios-int-optee-fip-${{ matrix.arch }}
+          path: |
+            BL32_AP_MM.fd
+            optee_os/out/**/tee-*_v2.bin
+            u-boot/u-boot.bin
+            arm-trusted-firmware/build/**/fip.bin
+            arm-trusted-firmware/build/**/flash.bin
+            fip-info.txt
+          if-no-files-found: warn
+          retention-days: 7
