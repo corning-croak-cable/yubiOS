@@ -61,6 +61,10 @@ decision := {
     "reason": reason,
 }
 
+# ── Default reason (keeps `decision` total so buildx's capability probe,
+#    which evaluates with empty input, never gets a "zero result"). ──
+default reason := "Build evaluated."
+
 # ── Deny reasons ─────────────────────────────────────────────────────────────
 reason := msg if {
     not input.local
