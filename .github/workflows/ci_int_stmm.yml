@@ -149,7 +149,8 @@ jobs:
         run: |
           set -ex
           ws="$GITHUB_WORKSPACE/uefi"
-          fd="$(find "$ws/edk2/Build" -name 'BL32_AP_MM.fd' | head -n1)"
+          # EDK2 writes to $WORKSPACE/Build (WORKSPACE=$ws here), not $ws/edk2/Build.
+          fd="$(find "$ws/Build" -name 'BL32_AP_MM.fd' | head -n1)"
           test -n "$fd"
           ls -l "$fd"
           file "$fd"
