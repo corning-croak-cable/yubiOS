@@ -106,10 +106,14 @@ jobs:
           export PYTHON_COMMAND=python3
           cd "$ws/edk2"
           . ./edksetup.sh
-          # Disable LTO: EDK2's RELEASE GCC profile adds -flto, which miscompiles
-          # mbedTLS constant_time.c aarch64 inline-asm (lto-wrapper 'invalid asm').
-          # The RPMB variable platform pulls CryptoPkg -> MbedTlsLib, so strip -flto.
-          sed -i 's/ -flto//g' Conf/tools_def.txt
+          # Newer host GCC (13/14 on ubuntu-24.04) promotes warnings that upstream
+          # edk2 sources trip, and EDK2's RELEASE GCC profile adds -flto which
+          # miscompiles mbedTLS constant_time.c aarch64 inline-asm. This is a
+          # build-proof CI (produce + upload BL32_AP_MM.fd), so neutralise both at
+          # the toolchain level: strip -flto and -Werror from the generated
+          # Conf/tools_def.txt. Covers ArmStandaloneMmCoreEntryPoint (maybe-uninitialized)
+          # and CryptoPkg/MbedTlsLib. No repo source is modified.
+          sed -i 's/ -flto//g; s/ -Werror//g' Conf/tools_def.txt
           # Resolve toolchain tag: prefer GCC5 if defined, else the consolidated GCC.
           if grep -q '^DEFINE GCC5_AARCH64_PREFIX' Conf/tools_def.txt 2>/dev/null \
              || grep -q 'GCC5_AARCH64' Conf/tools_def.txt 2>/dev/null; then
