@@ -271,3 +271,56 @@ Internal: [ARCHITECTURE.md](ARCHITECTURE.md) · [ADR.md](ADR.md) (ADR-016 v261, 
 [MITIGATE.md](MITIGATE.md) (vendor supply-chain attack surface this project closes).
 
 Skills: `arm-trusted-firmware-optee`, `ftpm-optee-tpm` (github-yubios space).
+
+---
+
+## Easter Egg — "The Konami Tap" (cosmetic, zero trust impact)
+
+> Status: **Planning / fun**. Post-launch, low priority. Strictly cosmetic + diagnostic.
+> Hard rule: this MUST NOT touch, weaken, or branch any trust boundary. It runs only
+> after the user is already authenticated inside `yubiOS-enroll`, changes no keys, no
+> signatures, no LUKS slots, no PAM policy. If it ever needs a security exception, it
+> gets cut.
+
+### Concept
+
+yubiOS asks for a YubiKey touch at every boundary. So the egg speaks the only language
+the hardware already has: **touch**. During the enrollment wizard, if the operator taps
+the key in the classic Konami rhythm, yubiOS winks back.
+
+The YubiKey only emits "user-presence" events (one tap = one event), so we encode the
+code as a **timed tap sequence** read from `/dev/hidraw*` presence events, decoded like
+Morse: long-hold = "direction change", short-tap = "press". Canonical sequence:
+
+```
+↑ ↑ ↓ ↓ ← → ← → B A
+hold hold tap tap hold-L hold-R hold-L hold-R tap tap   (10 presence events, < 6s window)
+```
+
+### What it unlocks (all harmless)
+
+1. **A boot splash** — a one-time plymouth/ASCII splash on the next boot: the yubiOS
+   trust-chain diagram rendered in magenta (`#ff1493`, the YubiKey pink) with the koan
+   *"No TPM. No OEM. No trust anchors you don't control."*
+2. **Audit Mode (genuinely useful)** — enables one extra-verbose run of the measured-boot
+   event log + `systemd-analyze security` for every yubiOS unit, dumped to the journal
+   under a `yubiOS-audit` tag. Read-only; it reports, it does not change.
+3. A `/etc/yubiOS/.konami` breadcrumb (mode 0644) so `yubiOS-enroll` can show a tiny
+   "🕹 unlocked" line on later runs. No secret, no capability.
+
+### Implementation sketch (post-launch)
+
+- `usr/lib/yubiOS/konami.sh`: decode presence-event timings from libfido2's
+  `fido_dev_get_touch_status()` polling loop already used by the enroll scripts; match
+  against the sequence with a tolerance window.
+- Splash: a `plymouth` theme drop-in shipped as a sysext (per the modularity ladder),
+  so the egg is an *optional overlay*, never in the signed base `/usr`.
+- Audit Mode: a `yubiOS-audit.service` `Type=oneshot` unit, `ConditionPathExists=/etc/yubiOS/.konami`,
+  hardened like every other unit (it only reads).
+
+### Why it is safe
+
+- Gated entirely behind a completed, authenticated enrollment session.
+- Produces only cosmetics + read-only diagnostics; enrolls nothing, signs nothing.
+- Lives in a sysext overlay, so it never alters the dm-verity-measured base image.
+- Doctrine still holds: the trust chain does not know or care that the egg exists.

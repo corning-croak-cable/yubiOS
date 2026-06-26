@@ -26,7 +26,8 @@ RUN dnf install -y \
       cryptsetup \
       openssh-clients \
       openssh-server \
-      fido2-tools && \
+      fido2-tools \
+      osslsigncode && \
     dnf clean all
 
 # ── Overlay yubiOS config tree ───────────────────────────────────────────
