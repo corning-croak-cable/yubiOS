@@ -247,7 +247,7 @@ jobs:
           echo "OK fTPM TA -> $stripped"
 
       # ---- Stage 3: OP-TEE pass 2 — final BL32 (EARLY_TA=fTPM + CFG_STMM_PATH)
-        name: Stage 3 — rebuild OP-TEE BL32 folding fTPM Early TA (+ StMM when present)
+      - name: Stage 3 — rebuild OP-TEE BL32 folding fTPM Early TA (+ StMM when present)
         run: |
           set -euxo pipefail
           # CFG_STMM_PATH only when a BL32_AP_MM.fd was obtained (F1 artifact or
