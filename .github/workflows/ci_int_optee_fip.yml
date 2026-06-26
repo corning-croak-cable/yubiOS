@@ -184,7 +184,10 @@ jobs:
             # constant-time barrier GCC-13 lto-wrapper rejects at -flto. -fno-lto
             # (appended last) wins over the toolchain -flto and links cleanly.
             dsc=edk2-platforms/Platform/StandaloneMm/PlatformStandaloneMmPkg/PlatformStandaloneMmRpmb.dsc
-            printf '\n[BuildOptions]\n  GCC:*_*_*_CC_FLAGS = -fno-lto\n  GCC:*_*_*_DLINK_FLAGS = -fno-lto\n' >> "$dsc"
+            # Also relax -Werror=maybe-uninitialized: GCC-13 raises false-positive
+            # 'ServiceType'/'CommBufferAddr' may-be-uninitialized in edk2
+            # ArmStandaloneMmCoreEntryPoint.c (DelegatedEventLoop) — not real on AArch64.
+            printf '\n[BuildOptions]\n  GCC:*_*_*_CC_FLAGS = -fno-lto -Wno-error=maybe-uninitialized\n  GCC:*_*_*_DLINK_FLAGS = -fno-lto\n' >> "$dsc"
             make -C edk2/BaseTools -j"$(nproc)"
             set +u
             . edk2/edksetup.sh BaseTools
