@@ -109,7 +109,7 @@ jobs:
           cp buildx-v0.35.0.linux-amd64 /usr/libexec/docker/cli-plugins/docker-buildx
           chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
           mkdir -p /mnt/docker
-          dockerd --storage-driver=native --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
+          dockerd --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
           docker -H unix:///var/run/ducker.sock buildx create --name hardened \
             --driver docker-container \
             --use
