@@ -161,56 +161,55 @@ jobs:
               if [ -n "$cand" ]; then cp "$cand" "$fd_dst"; got="download(run $rid)"; fi
             fi
           fi
-          # 2) Fallback: rebuild BL32_AP_MM.fd inline from edk2 + edk2-platforms.
+          # 2) Best-effort inline rebuild. NON-FATAL: edk2-platforms StMM is F1's
+          #    lane (ci_int_stmm.yml) and currently hits an edk2 GccLto plugin wall
+          #    on the GCC-13 runner (ld: bad -plugin-opt option). If it fails here we
+          #    proceed fTPM-only so this lane still proves OP-TEE fold + TF-A FIP;
+          #    StMM folds automatically once F1's GREEN artifact is downloadable.
           if [ -z "$got" ]; then
-            echo "::notice::No F1 ci_int_stmm.yml artifact available — rebuilding BL32_AP_MM.fd inline"
-            set -x
-            sudo apt-get install -y --no-install-recommends iasl nasm uuid-dev || true
-            git clone --no-tags https://github.com/yubi-OS/edk2 edk2
-            git -C edk2 checkout "$EDK2_REF"
-            git -C edk2 submodule update --init --recursive
-            git clone --no-tags https://github.com/yubi-OS/edk2-platforms edk2-platforms
-            git -C edk2-platforms checkout "$EDK2_PLATFORMS_REF"
-            export GCC_AARCH64_PREFIX="${AARCH64_PREFIX}"
-            # Canonical edk2-platforms layout: WORKSPACE is the PARENT holding both
-            # trees, each a PACKAGES_PATH entry. Setting WORKSPACE=edk2 with
-            # edk2-platforms out-of-tree builds OpTeeRpmbFv under
-            # AARCH64/edk2-platforms/Drivers/... but generates the FV expecting
-            # AARCH64/Drivers/... — a path mismatch that aborts FV assembly.
-            export WORKSPACE="$GITHUB_WORKSPACE"
-            export PACKAGES_PATH="$GITHUB_WORKSPACE/edk2:$GITHUB_WORKSPACE/edk2-platforms"
-            export EDK_TOOLS_PATH="$GITHUB_WORKSPACE/edk2/BaseTools"
-            # Disable LTO: edk2's bundled mbedtls constant_time.c uses an inline-asm
-            # constant-time barrier GCC-13 lto-wrapper rejects at -flto. -fno-lto
-            # (appended last) wins over the toolchain -flto and links cleanly.
-            dsc=edk2-platforms/Platform/StandaloneMm/PlatformStandaloneMmPkg/PlatformStandaloneMmRpmb.dsc
-            # Also relax -Werror=maybe-uninitialized: GCC-13 raises false-positive
-            # 'ServiceType'/'CommBufferAddr' may-be-uninitialized in edk2
-            # ArmStandaloneMmCoreEntryPoint.c (DelegatedEventLoop) — not real on AArch64.
-            printf '\n[BuildOptions]\n  GCC:*_*_*_CC_FLAGS = -fno-lto -Wno-error=maybe-uninitialized\n  GCC:*_*_*_DLINK_FLAGS = -fno-lto\n' >> "$dsc"
-            make -C edk2/BaseTools -j"$(nproc)"
-            set +u
-            . edk2/edksetup.sh BaseTools
-            set -u
-            # EDK2 GCC toolchain emits the bundled GccLto plugin link flags
-            # (-L .../GccLto -llto-aarch64 -Wl,-plugin-opt=-pass-through=-llto-aarch64).
-            # With LTO disabled (mbedTLS LTO asm miscompile), that -plugin-opt dangles
-            # and binutils 2.42 ld aborts ("bad -plugin-opt option"). Strip every LTO
-            # token from tools_def so compile AND link are consistently LTO-free.
-            sed -i -e 's/-flto//g' -e 's/-Wl,-plugin-opt=-pass-through=-llto-aarch64//g' -e 's#-L$(WORKSPACE)/BaseTools/Bin/GccLto##g' -e 's/-llto-aarch64//g' edk2/Conf/tools_def.txt
-            build -a AARCH64 -t GCC -b DEBUG -n "$(nproc)" \
-              -p Platform/StandaloneMm/PlatformStandaloneMmPkg/PlatformStandaloneMmRpmb.dsc
-            fd=$(find "$WORKSPACE/Build" -path '*MmStandaloneRpmb*' -name '*.fd' -print -quit 2>/dev/null || true)
-            if [ -z "$fd" ]; then
-              echo "::error::no StandaloneMM RPMB .fd produced"; find "$WORKSPACE/Build" -name '*.fd' -o -name '*.efi' | head -50; exit 1
+            echo "::notice::No F1 ci_int_stmm.yml artifact yet — best-effort inline StMM rebuild (non-fatal)"
+            if (
+              set -ex
+              sudo apt-get install -y --no-install-recommends iasl nasm uuid-dev
+              git clone --no-tags https://github.com/yubi-OS/edk2 edk2
+              git -C edk2 checkout "$EDK2_REF"
+              git -C edk2 submodule update --init --recursive
+              git clone --no-tags https://github.com/yubi-OS/edk2-platforms edk2-platforms
+              git -C edk2-platforms checkout "$EDK2_PLATFORMS_REF"
+              export GCC_AARCH64_PREFIX="${AARCH64_PREFIX}"
+              # WORKSPACE = parent of both trees so OpTeeRpmbFv module + FV paths agree.
+              export WORKSPACE="$GITHUB_WORKSPACE"
+              export PACKAGES_PATH="$GITHUB_WORKSPACE/edk2:$GITHUB_WORKSPACE/edk2-platforms"
+              export EDK_TOOLS_PATH="$GITHUB_WORKSPACE/edk2/BaseTools"
+              dsc=edk2-platforms/Platform/StandaloneMm/PlatformStandaloneMmPkg/PlatformStandaloneMmRpmb.dsc
+              # -fno-lto: GCC-13 lto-wrapper chokes on mbedtls constant_time.c asm.
+              # -Wno-error=maybe-uninitialized: GCC-13 false positive in StMM entry.
+              # DLINK == replace: strip edk2 bundled GccLto plugin (-llto-aarch64 +
+              # -plugin-opt=-pass-through) which the runner's ld rejects.
+              printf '\n[BuildOptions]\n  GCC:*_*_*_CC_FLAGS = -fno-lto -Wno-error=maybe-uninitialized\n  GCC:*_*_*_DLINK_FLAGS == -fno-lto\n' >> "$dsc"
+              make -C edk2/BaseTools -j"$(nproc)"
+              set +u; . edk2/edksetup.sh BaseTools; set -u
+              build -a AARCH64 -t GCC -b DEBUG -n "$(nproc)" \
+                -p Platform/StandaloneMm/PlatformStandaloneMmPkg/PlatformStandaloneMmRpmb.dsc
+              fd=$(find "$WORKSPACE/Build" -path '*MmStandaloneRpmb*' -name '*.fd' -print -quit 2>/dev/null || true)
+              test -n "$fd"
+              cp "$fd" "$fd_dst"
+            ); then
+              got="rebuild(edk2-platforms $EDK2_PLATFORMS_REF)"
+            else
+              echo "::warning::inline StMM rebuild failed — proceeding fTPM-only (StMM folds once F1 ci_int_stmm.yml is GREEN)"
             fi
-            cp "$fd" "$fd_dst"; got="rebuild(edk2-platforms $EDK2_PLATFORMS_REF)"
           fi
-          test -f "$fd_dst"
-          echo "STMM_FD=$fd_dst" >> "$GITHUB_ENV"
-          echo "STMM_SOURCE=$got" >> "$GITHUB_ENV"
-          echo "::notice::BL32_AP_MM.fd via $got"
-          ls -l "$fd_dst"
+          if [ -n "$got" ] && [ -f "$fd_dst" ]; then
+            echo "STMM_FD=$fd_dst" >> "$GITHUB_ENV"
+            echo "STMM_SOURCE=$got" >> "$GITHUB_ENV"
+            echo "::notice::BL32_AP_MM.fd via $got"
+            ls -l "$fd_dst"
+          else
+            echo "STMM_FD=" >> "$GITHUB_ENV"
+            echo "STMM_SOURCE=pending-F1 (fTPM-only fold this run)" >> "$GITHUB_ENV"
+            echo "::notice::StMM fold deferred — fTPM-only OP-TEE BL32 this run"
+          fi
 
       # ---- Stage 1: OP-TEE pass 1 — TA dev kit (C2 recipe) -----------------
       - name: Stage 1 — clone + build OP-TEE TA dev kit (pass 1)
@@ -248,9 +247,19 @@ jobs:
           echo "OK fTPM TA -> $stripped"
 
       # ---- Stage 3: OP-TEE pass 2 — final BL32 (EARLY_TA=fTPM + CFG_STMM_PATH)
-      - name: Stage 3 — rebuild OP-TEE BL32 folding fTPM Early TA + StMM
+        name: Stage 3 — rebuild OP-TEE BL32 folding fTPM Early TA (+ StMM when present)
         run: |
           set -euxo pipefail
+          # CFG_STMM_PATH only when a BL32_AP_MM.fd was obtained (F1 artifact or
+          # inline rebuild). Otherwise fold fTPM Early TA alone — StMM folds in once
+          # F1's ci_int_stmm.yml is GREEN. Embedded model either way (research/F2-tfa-fip-spmc.md).
+          STMM_ARG=""
+          if [ -n "${STMM_FD:-}" ] && [ -f "${STMM_FD}" ]; then
+            STMM_ARG="CFG_STMM_PATH=$STMM_FD"
+            echo "folding StMM: $STMM_ARG (source: $STMM_SOURCE)"
+          else
+            echo "::notice::StMM .fd absent — fTPM-only OP-TEE BL32 this run ($STMM_SOURCE)"
+          fi
           make -C optee_os -j"$(nproc)" \
             PLATFORM="$OPTEE_PLATFORM" \
             CROSS_COMPILE64=aarch64-linux-gnu- \
@@ -258,7 +267,7 @@ jobs:
             CFG_RPMB_FS=y CFG_REE_FS=n \
             CFG_EARLY_TA=y EARLY_TA_PATHS="$FTPM_TA" \
             CFG_CORE_DYN_SHM=y \
-            CFG_STMM_PATH="$STMM_FD" \
+            $STMM_ARG \
             all
           h=$(find optee_os/out -name tee-header_v2.bin -print -quit)
           p=$(find optee_os/out -name tee-pager_v2.bin -print -quit)
