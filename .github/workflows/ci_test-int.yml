@@ -540,9 +540,9 @@ jobs:
             -nographic -d guest_errors \
             -serial file:nw.log -serial file:optee.log || true
           fail=0; touch optee.log nw.log
-          grep -Eiq "early_ta_init.*${FTPM_UUID}|Early TA ${FTPM_UUID}" optee.log \
+          grep -Eiq "early_ta_init.*${FTPM_UUID}|Early TA ${FTPM_UUID}" nw.log optee.log \
             && echo "PASS: fTPM Early TA at init" || { echo "::error::fTPM Early TA not at init"; fail=1; }
-          grep -Eiq "ldelf: Loading TS ${FTPM_UUID}|Lookup user TA ELF ${FTPM_UUID}" optee.log \
+          grep -Eiq "ldelf: Loading TS ${FTPM_UUID}|Lookup user TA ELF ${FTPM_UUID}" nw.log optee.log \
             && echo "PASS: fTPM TA probed" || { echo "::error::fTPM TA never probed"; fail=1; }
           grep -Eiq "event log|EventLog|measured boot|TCG2|TPM event log|sml-base" nw.log optee.log \
             && echo "PASS: measured-boot event log surfaced" || { echo "::error::no measured-boot event log"; fail=1; }
