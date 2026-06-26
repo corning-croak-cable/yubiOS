@@ -60,6 +60,36 @@ A/B sysupdate, systemd-homed per-user encryption, and UKI + dm-verity trust chai
 > **ADR-002 note:** Secure Boot signing uses PIV/CCID (via `systemd-sbsign` + PKCS#11),
 > not hidraw. All other operations run on FIDO2 via `/dev/hidraw*`. Full rationale: [ADR.md](ADR.md)
 
+## Get yubiOS
+
+yubiOS ships as a **multi-arch [bootc](https://github.com/bootc-dev/bootc) OCI image on Docker Hub** — this is the primary download.
+
+**Pull** (auto-selects `amd64` / `arm64`):
+```sh
+docker pull 0mniteck/yubios:latest
+```
+
+**Pin by digest** (reproducible — recommended for installs):
+```sh
+docker pull 0mniteck/yubios@sha256:c965a816b9173cf6f227e6b5b09e321e841ab5f8a49075c112657a0a40b5e761
+```
+
+**Install / upgrade with bootc:**
+```sh
+sudo bootc install to-disk --source-imgref docker://0mniteck/yubios:latest /dev/nvme0n1
+sudo bootc switch 0mniteck/yubios:latest && sudo bootc upgrade
+```
+
+| | |
+|---|---|
+| Registry | `docker.io/0mniteck/yubios` |
+| Tags | `:latest` + immutable `:<commit-sha>` per build |
+| Platforms | `linux/amd64`, `linux/arm64` |
+| Supply chain | SLSA build provenance + SBOM attestations attached |
+| Published by | `yubiOS-ci.yml` `merge-manifest` job (current: run #113, `bfbc38f`) |
+
+> Building from source instead? See **Quick start** below.
+
 ## Quick start
 
 ```sh
