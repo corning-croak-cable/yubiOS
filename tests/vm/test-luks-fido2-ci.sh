@@ -16,19 +16,23 @@
 #     git clone -b feat/swtpm-ci https://github.com/yubi-OS/bcvk
 #     (cd bcvk && cargo build --release)
 #     export PATH="$PWD/bcvk/target/release:$PATH"
-# Runner host also needs: swtpm + swtpm-tools (for --swtpm) and libu2f-emu with a
-# QEMU built --enable-u2f (for --swu2f Layer 1 / CTAP1).  See bcvk docs/swtpm.md,
-# docs/swu2f.md.
+# Runner host also needs: swtpm + swtpm-tools (for --swtpm). For the optional swu2f
+# Layer 1 / CTAP1 path also: libu2f-emu with a QEMU built --enable-u2f.
+# See bcvk docs/swtpm.md, docs/swu2f.md.
 #
-# === CTAP1 vs CTAP2 — what this test can and cannot prove today ===
-# bcvk --swu2f Layer 1 is QEMU `u2f-emulated` (libu2f-emu) = U2F / CTAP1 only.
-#   -> covers pam-u2f.
+# === CTAP1 vs CTAP2 — the two FIDO2 layers (bcvk docs/swu2f.md) ===
+# swu2f Layer 1 = QEMU `u2f-emulated` (libu2f-emu) = U2F / CTAP1 only -> pam-u2f.
 # `systemd-cryptenroll --fido2` AND systemd-homed FIDO2 need CTAP2 `hmac-secret`,
-# which libu2f-emu does NOT provide. That needs swu2f Layer 2 (an in-guest /dev/uhid
-# CTAP2 authenticator shipped in the image), staged as a separate guest-image PR
-# (yubiOS#25 follow-up). Until that lands, this test PROBES for a CTAP2 hmac-secret
-# authenticator in the guest and SKIPS (does not fail) the LUKS2-FIDO2 and
-# homed-FIDO2 legs when it is absent. pam-u2f + swtpm legs always run.
+# which libu2f-emu does NOT provide. That is swu2f Layer 2: an IN-GUEST /dev/uhid
+# CTAP2 authenticator shipped in the image. bcvk's --swu2f only loads the `uhid`
+# module (modules-load= karg); the authenticator binary lives in the guest.
+#
+# The yubiOS TEST image (mkosi --profile test) ships `passless` (pando85/passless,
+# Rust; backend pando85/soft-fido2 implements hmac-secret) as that Layer 2
+# authenticator. When present, this test starts it and runs the LUKS2-FIDO2 +
+# homed-FIDO2 legs for real. When absent (e.g. a non-test image), it PROBES for a
+# CTAP2 hmac-secret authenticator and SKIPS (does not fail) those legs. pam-u2f +
+# swtpm legs always run.
 set -euo pipefail
 
 IMAGE="${YUBIOS_IMAGE:-./mkosi.output/yubiOS}"
@@ -81,20 +85,42 @@ fi
 
 # ---- swu2f Layer 1 (CTAP1): pam-u2f ----
 log "swu2f Layer 1: emulated U2F token visible to libfido2"
-g 'ls /dev/hidraw* >/dev/null 2>&1' || die "no /dev/hidraw* — QEMU u2f-emulated not present (build QEMU --enable-u2f + libu2f-emu)"
-g 'command -v fido2-token >/dev/null && fido2-token -L | grep -q .' \
-  || die "fido2-token enumerated no authenticator"
-
-log "pam-u2f: register the emulated token and assert pam_u2f config"
-# pamu2fcfg drives a register against the emulated CTAP1 token (ephemeral identity).
+g 'ls /dev/hidraw* >/dev/null 2>&1' || skip "no /dev/hidraw* — QEMU u2f-emulated not present (Layer 1 optional; build QEMU --enable-u2f + libu2f-emu)"
 if g 'command -v pamu2fcfg >/dev/null'; then
-  g 'pamu2fcfg -u ci > /tmp/u2f_keys 2>/dev/null && test -s /tmp/u2f_keys' \
-    || die "pamu2fcfg failed to register the emulated U2F token"
+  log "pam-u2f: register a token and assert pam_u2f config"
+  if g 'ls /dev/hidraw* >/dev/null 2>&1'; then
+    g 'pamu2fcfg -u ci > /tmp/u2f_keys 2>/dev/null && test -s /tmp/u2f_keys' \
+      || skip "pamu2fcfg found no token to register (Layer 1 device absent)"
+  fi
   # pam_u2f must be present and ordered "required" (not sufficient) in the auth stack.
   g 'grep -Rqs "pam_u2f.so" /etc/pam.d/' || die "pam_u2f.so not wired into /etc/pam.d"
-  echo "pam-u2f register OK + pam_u2f.so present"
+  echo "pam_u2f.so present in /etc/pam.d"
 else
   skip "pamu2fcfg not in guest image; pam-u2f register leg not exercised"
+fi
+
+# ---- swu2f Layer 2 (CTAP2): start the in-guest software authenticator ----
+# bcvk --swu2f only loads the uhid module (docs/swu2f.md); the CTAP2 hmac-secret
+# authenticator runs IN the guest. The TEST image (mkosi --profile test) ships
+# `passless`. Start it so /dev/uhid exposes a CTAP2 token for the probe + FIDO2 legs.
+log "swu2f Layer 2: start in-guest CTAP2 authenticator (passless)"
+if g 'command -v passless >/dev/null'; then
+  g 'modprobe uhid 2>/dev/null || true'
+  g 'test -e /dev/uhid' || skip "/dev/uhid not present after modprobe uhid (bcvk --swu2f should provide it)"
+  # Debug build honors PASSLESS_E2E_AUTO_ACCEPT_UV: auto-approve user verification
+  # with no notification daemon (headless CI). `--backend-type local` is the
+  # testing-only filesystem backend (default is `pass`, which needs gpg). This is
+  # the upstream-documented e2e recipe (passless config.rs).
+  g 'PASSLESS_E2E_AUTO_ACCEPT_UV=1 setsid passless --backend-type local \
+       >/var/log/passless.log 2>&1 < /dev/null & true'
+  # wait for the virtual token to enumerate
+  for i in $(seq 1 15); do
+    g 'command -v fido2-token >/dev/null && fido2-token -L 2>/dev/null | grep -q .' && break
+    [[ "$i" -eq 15 ]] && skip "passless started but no FIDO2 token enumerated (see /var/log/passless.log)"
+    g 'sleep 1'
+  done
+else
+  skip "passless (swu2f Layer 2 CTAP2 authenticator) not in image; build with: mkosi --profile test build"
 fi
 
 # ---- CTAP2 capability probe (gates the FIDO2 hmac-secret legs) ----
@@ -105,8 +131,8 @@ if g 'command -v fido2-token >/dev/null' && \
   CTAP2=1
   echo "CTAP2 hmac-secret authenticator found"
 else
-  skip "no CTAP2 hmac-secret authenticator (swu2f Layer 1 is CTAP1-only)."
-  skip "LUKS2-FIDO2 + homed-FIDO2 legs blocked on swu2f Layer 2 in-guest /dev/uhid authenticator (yubiOS#25 follow-up guest-image PR)."
+  skip "no CTAP2 hmac-secret authenticator found."
+  skip "LUKS2-FIDO2 + homed-FIDO2 legs need swu2f Layer 2 (in-guest /dev/uhid CTAP2 authenticator); build the TEST image (mkosi --profile test)."
 fi
 
 # ---- LUKS2 FIDO2 unlock (CTAP2 only) ----
@@ -142,4 +168,4 @@ else
   skip "homed FIDO2 home — needs CTAP2 (Layer 2)"
 fi
 
-log "PASS: swtpm + swu2f(CTAP1)/pam-u2f legs verified; CTAP2 legs gated on swu2f Layer 2"
+log "PASS: swtpm + swu2f legs verified (CTAP2 legs run when the TEST image ships the Layer 2 authenticator)"

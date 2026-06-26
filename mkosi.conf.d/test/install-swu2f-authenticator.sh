@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: LGPL-2.1-or-later
+#
+# Build & install the `passless` software CTAP2 FIDO2 authenticator into the
+# yubiOS TEST image (swu2f Layer 2 — see bcvk docs/swu2f.md). TEST-ONLY: the
+# production trust anchor stays the YubiKey FIDO2 device (ADR-003). passless is
+# never installed into a production profile.
+#
+# Why passless:
+#   - github.com/pando85/passless (Rust, GPL-3.0). Emulates a hardware FIDO2 key
+#     as a virtual /dev/uhid device — exactly the in-guest CTAP2 path bcvk's
+#     --swu2f targets (host QEMU u2f-emulated is CTAP1-only and cannot drive
+#     systemd-cryptenroll --fido2).
+#   - Backend github.com/pando85/soft-fido2 FULLY implements the CTAP2
+#     `hmac-secret` extension (soft-fido2-ctap/src/extensions.rs: "fully
+#     implemented") — the hard requirement for systemd-cryptenroll --fido2 and
+#     systemd-homed --fido2-device.
+#
+# DEBUG build on purpose: the env switch PASSLESS_E2E_AUTO_ACCEPT_UV (gated on
+# cfg(debug_assertions) in cmd/passless/src/authenticator.rs) lets headless CI
+# auto-approve user-verification with no desktop-notification daemon. A --release
+# build strips that path and would block non-interactive enrollment.
+#
+# NOTE: passless DEVELOPMENT.md carries a stale `arunanshub/passless` clone URL;
+# the live, maintained repo is `pando85/passless` (same author as the
+# pando85/soft-fido2 backend). We pin a release tag for reproducibility.
+set -euo pipefail
+
+PASSLESS_REPO="${PASSLESS_REPO:-https://github.com/pando85/passless.git}"
+PASSLESS_TAG="${PASSLESS_TAG:-v0.11.2}"
+
+if ! command -v dnf >/dev/null 2>&1; then
+    echo "install-swu2f-authenticator: dnf not found in image build root" >&2
+    exit 1
+fi
+
+# soft-fido2 needs libudev (UHID) + libtss2 (TPM backend feature) headers; the
+# rest is the Rust toolchain + git. Installed transiently, removed afterwards so
+# the test image stays close to the production package surface.
+BUILD_DEPS="git cargo rust gcc systemd-devel tpm2-tss-devel"
+dnf -y install ${BUILD_DEPS}
+
+src="$(mktemp -d)"
+trap 'rm -rf "$src"' EXIT
+git clone --depth 1 --branch "${PASSLESS_TAG}" "${PASSLESS_REPO}" "${src}"
+
+# `cargo install --debug` => debug profile (debug_assertions on) => the
+# PASSLESS_E2E_AUTO_ACCEPT_UV path compiles in. --root /usr installs to /usr/bin.
+( cd "${src}" && cargo install --debug --locked --path cmd/passless --root /usr )
+
+# Ship the upstream integration bits verbatim (sysusers creates the `fido` group,
+# udev grants it /dev/uhid, modules-load ensures uhid even without bcvk's karg).
+install -Dm0644 "${src}/contrib/sysusers.d/passless.conf" /usr/lib/sysusers.d/passless.conf
+install -Dm0644 "${src}/contrib/udev/90-passless.rules"   /usr/lib/udev/rules.d/90-passless.rules
+install -Dm0644 "${src}/contrib/modules-load.d/fido.conf" /usr/lib/modules-load.d/yubiOS-swu2f-uhid.conf
+
+dnf -y remove ${BUILD_DEPS} || true
+dnf -y clean all || true
+
+/usr/bin/passless --version || true
+echo "install-swu2f-authenticator: passless ${PASSLESS_TAG} installed (TEST-ONLY swu2f Layer 2)"
