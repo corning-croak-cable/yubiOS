@@ -539,11 +539,14 @@ jobs:
             -bios "${{ steps.image.outputs.flash }}" \
             -nographic -d guest_errors \
             -serial file:nw.log -serial file:optee.log || true
-          echo "=== QEMU serial output dump ===" || true
-          echo "--- nw.log (UART0/BL1/BL31/U-Boot) ---" || true
-          cat nw.log 2>/dev/null | head -60 || echo "(nw.log empty or missing)"
-          echo "--- optee.log (UART1/OP-TEE) ---" || true
-          cat optee.log 2>/dev/null | head -60 || echo "(optee.log empty or missing)"
+          echo "=== QEMU log sizes ===" || true
+          wc -l nw.log optee.log 2>/dev/null || true
+          echo "--- nw.log head 20 ---" || true
+          head -20 nw.log 2>/dev/null || echo "(empty)"
+          echo "--- optee.log: searching for OP-TEE/fTPM/STMM/ERROR lines ---" || true
+          grep -i "optee\|tee\|early_ta\|stmm\|bc50d971\|fTPM\|panic\|ERROR\|Fault\|abort\|Loading\|Starting\|initialized" optee.log 2>/dev/null | head -60 || echo "(no matches or empty)"
+          echo "--- optee.log tail 20 ---" || true
+          tail -20 optee.log 2>/dev/null || echo "(empty)"
           echo "=== end serial dump ==="
           fail=0; touch optee.log nw.log
           grep -Eiq "early_ta_init.*${FTPM_UUID}|Early TA ${FTPM_UUID}" nw.log optee.log \
