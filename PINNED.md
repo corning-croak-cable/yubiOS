@@ -29,12 +29,14 @@ here; do not duplicate the digest list elsewhere.
 | `dhi.io/debian-base` (multi-arch INDEX) | `sha256:1cefd55d979ddbd9110cf73cf3de11798a7893a4598050ba57624bc754b244aa` | **Canonical for workflows + Containerfile `FROM`.** OCI image *index* (manifest list) for `trixie-debian13-dev`; auto-resolves per runner arch. Use this for any multi-arch (amd64 + arm64) job. |
 | ↳ child `linux/amd64` | `sha256:57c88d9180b30314a04650426af8d4301c5c9738e4c5672a1db99a03f6a54721` | resolved automatically; do not pin directly unless an amd64-only job is required |
 | ↳ child `linux/arm64` | `sha256:1634f8387e3172f2b8bf32d93456c52425815191e6e53b858d06bc5a8ef75f47` | resolved automatically |
+| `quay.io/fedora/fedora-bootc:45` (multi-arch INDEX) | `sha256:8a1c786152eaf72346a339ae2b869f5f7445cd311700f932f8bc94433a0e7d1b` | **Containerfile `FROM` base.** OCI image *index*; auto-resolves per arch. |
 | `ghcr.io/actions/jekyll-build-pages` | `sha256:6791ebfd912185ed59bfb5fb102664fa872496b79f87ff8b9cfba292a7345041` | |
 | `ghcr.io/hadolint/hadolint:v2.14.0-debian` | `sha256:158cd0184dcaa18bd8ec20b61f4c1cabdf8b32a592d062f57bdcb8e4c1d312e2` | |
 
 > Superseded single-arch digests (no longer used in workflows; kept for audit only):
 > `62bc0610151db7155b7225f1a03c299bf109ab0b884da6777d1f808c7834d4ea` (amd64-only manifest),
 > `9415967aa0ed8adea8b5c048994259d1982026dca143d0303c7bbe0e11ed67d3` (older single-arch).
+> `b7b34d8720b2e0ccaba980fd92347e7820051496ca0e639704172c6f3fb8877d` (prior quay fedora-bootc:45 index, rotated out of quay → 404).
 > Resolve the current index with the `fetch-dhi-manifest` workflow (it requests the OCI index media type).
 
 ---
