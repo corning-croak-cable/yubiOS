@@ -1,5 +1,5 @@
 # yubiOS — TODO / Future Work
-_Last updated: June 26, 2026 (PR-CI sync: #33 + #38 pull_request CI GREEN; swu2f Layer 2 shipped as PR #40)_
+_Last updated: June 26, 2026 (ARM64 Phase F: fork-CI matrix C1–C6 + R1 + V1 GREEN, edk2-platforms forked, INT integration in flight; OS now published to Docker Hub 0mniteck/yubios)_
 
 ## High priority
 
@@ -12,6 +12,23 @@ _Last updated: June 26, 2026 (PR-CI sync: #33 + #38 pull_request CI GREEN; swu2f
 - [x] Bump fedora-bootc:45 to live post-June-19 digest for systemd 261 (ADR-016) (#14, PR #31) — merged June 26; live digest `sha256:b7b34d87…` (45.20260625.0); old `sha256:6a60ff82…` was dead/404
 - [x] Validate systemd-sbsign + libykcs11 PKCS#11 URI for ECC slot 9c (ADR-008) (#17, PR #32) — merged June 26; spec-validated, test migrated to systemd-sbsign + osslsigncode
 - [ ] Test LUKS2 FIDO2 unlock end-to-end in a VM (#20, PR #33) — hardware-free e2e test on `feat/luks-fido2-e2e-test` (`tests/vm/test-luks-fido2-ci.sh` drives `bcvk ephemeral run --swtpm --swu2f`). **PR CI now GREEN** — the pull_request build was hitting BLOCKER-008 disk exhaustion (native snapshotter); fixed on the PR branch (dockerd native→overlayfs, commit `4450fd4`, mirrors main `e74dadf`); all 5 jobs success @ `4450fd4` (run 28231776269). swtpm `/dev/tpm0` + measured-os + swu2f Layer 1/CTAP1 (pam-u2f) legs run; CTAP2 legs (cryptenroll `--fido2` + homed) now have an in-guest authenticator via **PR #40** (swu2f Layer 2, below). BLOCKER-009 compile-fix RESOLVED. Physical-YubiKey passthrough still needs hardware (BLOCKER-005). Draft — no merge (merge-ready alongside #40, pending Jenny).
+
+- [x] **Multi-arch main CI green + OS published to Docker Hub.** `docker.io/0mniteck/yubios:latest` (linux/amd64 + linux/arm64) is the **primary download**, built by `yubiOS-ci.yml` `merge-manifest` (run #113, `bfbc38f`); SLSA provenance + SBOM attached. Containerfile base bumped to live quay `fedora-bootc:45` digest `sha256:8a1c786…` (old `b7b34d8…` 404d). README `Get yubiOS` + design diagram updated; PINNED.md synced.
+
+## ARM64 Phase F — fork-CI + integration (in progress)
+
+Owned ARM64 fTPM trust-chain CI (ADR-018/019/020). Each component fork now has a `ci_test.yml` that cross-builds it for aarch64, GREEN on both `ubuntu-24.04` and `ubuntu-24.04-arm` (bare runners, fail-fast:false, pinned SHAs):
+
+- [x] C1 — arm-trusted-firmware: TF-A BL31 + TBB FIP (`f9e1064`)
+- [x] C2 — optee_os: OP-TEE core + TA-devkit (`cc18472`)
+- [x] C3 — optee_ftpm: fTPM TA, UUID bc50d971… (`28abbe7`)
+- [x] C4 — ms-tpm-20-ref: TPM 2.0 reference build (`db43de7`)
+- [x] C5 — u-boot: BL33 + fTPM/measured-boot configs (`ef2ab32`)
+- [x] C6 — edk2: StandaloneMM core (`9f13e2a`)
+- [x] R1 — `yubiOS.rego` build policy live + passing on the main CI build job
+- [x] V1 — `tests/vm/*.sh` wired into `ci_test-vm.yml` (`3f46cf0`), honest skips where HW/CTAP2-gated
+- [x] edk2-platforms forked into the org — supplies `PlatformStandaloneMmRpmb.dsc` → `BL32_AP_MM.fd` (C6 fork ships StMM core only)
+- [ ] **INT** — integration CI (`ci_test-int.yml`) stitching edk2 StMM → optee_os devkit → optee_ftpm → optee_os(final, `CFG_STMM_PATH`+`EARLY_TA`) → TF-A FIP (`SPD=opteed`) → u-boot BL33 → QEMU verify. **Embedded model**: single BL32 = OP-TEE with StMM folded in, plain `fiptool` (no separate SP image). Decomposed across 4 lanes: `ci_int_stmm.yml` (F1), `ci_int_optee_fip.yml` (F2), `ci_int_qemu.yml` (F4 — GREEN), `ci_test-int.yml` orchestrator (F3). In flight.
 
 ## Medium priority
 
@@ -44,5 +61,5 @@ _Last updated: June 26, 2026 (PR-CI sync: #33 + #38 pull_request CI GREEN; swu2f
 
 ## Post-launch (see FUTURE.md)
 
-- [ ] ARM64-owned root of trust: TF-A + OP-TEE + ms-tpm-20-ref fTPM + U-Boot measured boot — gives ARM64 a yubiOS-owned TPM 2.0; YubiKey stays primary RoT. Decisions: **ADR-018** (owned secure-world stack), **ADR-019** (dual provisioning paths: fuse-enforcing vs measured/attested), **ADR-020** (U-Boot as UEFI firmware + StandaloneMM variable store). Full plan in FUTURE.md; diagrams in ARCHITECTURE.md §7. Skills: arm-trusted-firmware-optee, ftpm-optee-tpm. (#23, PR #35) — **Phase F0 active:** reproducible QEMU `virt` build recipe (TF-A `PLAT=qemu` + OP-TEE `vexpress-qemu_armv8a` + ms-tpm-20-ref `@98b60a44` fTPM + U-Boot/UEFI) + `/dev/tpm0` PCR-extend verifier pushed to `feat/arm64-ftpm-phase-f0` (draft PR #35, commit `d01075f`); live boot verification human-gated
+- [ ] ARM64-owned root of trust: TF-A + OP-TEE + ms-tpm-20-ref fTPM + U-Boot measured boot — gives ARM64 a yubiOS-owned TPM 2.0; YubiKey stays primary RoT. Decisions: **ADR-018** (owned secure-world stack), **ADR-019** (dual provisioning paths: fuse-enforcing vs measured/attested), **ADR-020** (U-Boot as UEFI firmware + StandaloneMM variable store). Full plan in FUTURE.md; diagrams in ARCHITECTURE.md §7. Skills: arm-trusted-firmware-optee, ftpm-optee-tpm. (#23, PR #35) — **Phase F active (fork-CI matrix green — see the ARM64 Phase F section above; INT in flight):** originally reproducible QEMU `virt` build recipe (TF-A `PLAT=qemu` + OP-TEE `vexpress-qemu_armv8a` + ms-tpm-20-ref `@98b60a44` fTPM + U-Boot/UEFI) + `/dev/tpm0` PCR-extend verifier pushed to `feat/arm64-ftpm-phase-f0` (draft PR #35, commit `d01075f`); live boot verification human-gated
 - [ ] Easter egg: "Konami enrollment" — see FUTURE.md § Easter Egg
