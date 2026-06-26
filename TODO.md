@@ -27,7 +27,7 @@ _Last updated: June 26, 2026 (PR-CI sync: #33 + #38 pull_request CI GREEN; swu2f
 - [x] Add ConditionSecurity=measured-os to yubiOS-enroll.service (ADR-016) (#15, PR #27) — merged June 26
 - [x] Enable systemd-tpm2-swtpm.service in bcvk CI VMs for TPM2 coverage (ADR-016) (#21, PR #34) — merged June 26; **cross-repo `yubi-OS/bcvk` issue #3 still open (BLOCKER-006)**
 - [x] Evaluate + add RestrictFileSystems= (BPF LSM) to enrollment units (ADR-016) (#18, PR #28) — merged June 26; CONFIG_BPF_LSM=y verified active on live base (BLOCKER-007 cleared)
-- [ ] Deploy CI workflows to .github/workflows/ in yubiOS, bcvk, mkosi (manual — token lacks workflow scope) (#22) — drafts staged in `2026/` and `documents/.../ci-workflows/`
+- [ ] Deploy CI workflows to .github/workflows/ in yubiOS, bcvk, mkosi (manual — token lacks workflow scope) (#22) — drafts staged in `refs/` and `documents/.../ci-workflows/`
 - [ ] Add `osslsigncode` to image (mkosi.conf + Containerfile) so the PKCS#11 verify step in tests/validate-pkcs11-uri.sh is live
 - [ ] v261 test coverage scaffolding — systemd-sbsign UKI verify (osslsigncode vs PIV cert), ConditionSecurity=measured-os + RestrictFileSystems= enroll-unit gates, pam-u2f stack — draft PR #38 (`test/v261-coverage-T5`). **PR CI now GREEN** @ `43c2728` (run 28231778451, all 5 jobs success): build fixed (mkdir /mnt/docker + dockerd overlayfs `--data-root=/mnt/docker`, commit `4c19b1d`); unit-test 14 `systemd-analyze verify` had a REAL fail (Exec* binaries absent on the bare runner) — rewritten to stage a minimal root with exec stubs per Exec*= path so directives validate honestly (bogus key still → exit 1), commit `43c2728`. Draft — no merge (merge-ready, pending Jenny).
 
