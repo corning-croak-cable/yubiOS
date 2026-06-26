@@ -56,34 +56,33 @@ DO NOT USE ───── yubi-OS/\
 
 ```
 
-## Default (preffered) Images
+## Default (preferred) Images
+
+**PINNED.md is the single source of truth for every approved digest and action SHA.**
+Do not hardcode or duplicate digests here — look them up in
+[PINNED.md](https://github.com/yubi-OS/yubiOS/raw/refs/heads/main/PINNED.md) and keep that
+file current. The notes below show the shape; the authoritative values live in PINNED.md.
 
 ```
-**in OCI for dockerfiles and .rego**
-docker pull dhi.io/debian-base:trixie-debian13-dev@sha256:9415967aa0ed8adea8b5c048994259d1982026dca143d0303c7bbe0e11ed67d3
+**in OCI for dockerfiles and .rego** (use the multi-arch INDEX digest from PINNED.md)
+docker pull dhi.io/debian-base:trixie-debian13-dev@sha256:1cefd55d979ddbd9110cf73cf3de11798a7893a4598050ba57624bc754b244aa
 docker buildx build --policy reset=true,strict=true,filename=$REPO.rego .
 
-**in Github workflow**
-runs-on: ubuntu-latest
+**in Github workflow** (INDEX digest auto-resolves per runner arch — required for amd64+arm64 matrices)
+runs-on: ubuntu-24.04            # or ubuntu-24.04-arm for native arm64
 container:
   credentials:
     username: 0mniteck42
     password: ${{secrets.DOCKER}}
-  image: docker://dhi.io/debian-base@sha256:9415967aa0ed8adea8b5c048994259d1982026dca143d0303c7bbe0e11ed67d3 # v2026.03.14 trixie-debian13-dev dhi/debian-base
+  image: docker://dhi.io/debian-base@sha256:1cefd55d979ddbd9110cf73cf3de11798a7893a4598050ba57624bc754b244aa # trixie-debian13-dev INDEX (manifest list)
 Steps
-  - name: Checkout v6
-    uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+  - name: Checkout
+    uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # see PINNED.md
 
-**Allowed in workflows** (All refs must be pinned in the repo/.github/workflow/.yml)
- - 0mniteck/.pki/.github/*/*@*
- - actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26
- - actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
- - actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d
- - actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128
- - actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
- - actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9
- - docker://dhi.io/debian-base@sha256:9415967aa0ed8adea8b5c048994259d1982026dca143d0303c7bbe0e11ed67d3
- - docker://ghcr.io/actions/jekyll-build-pages@sha256:6791ebfd912185ed59bfb5fb102664fa872496b79f87ff8b9cfba292a7345041
+**Multi-arch CI:** prefer a native matrix split (ubuntu-24.04 + ubuntu-24.04-arm, runs-on from
+the matrix) over QEMU emulation — see yubiOS-ci.yml. arm64 hosted runners are free on public repos.
+
+**Allowed actions + images:** see PINNED.md. Every `uses:` and image `FROM` must reference a SHA pinned there.
 ```
 
 Finally go ahead and do some deep research on the following links section.
