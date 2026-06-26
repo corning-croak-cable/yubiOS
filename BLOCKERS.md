@@ -1,6 +1,6 @@
 # BLOCKERS.md — yubiOS Open Issue Dependency Map
 
-_Last updated: 2026-06-26. Maintained alongside TODO.md and ADR.md._
+_Last updated: 2026-06-26 (BLOCKER-008 reopened: CI still red). Maintained alongside TODO.md and ADR.md._
 
 ---
 
@@ -104,7 +104,7 @@ _Last updated: 2026-06-26. Maintained alongside TODO.md and ADR.md._
   ```
 - **Depends on:** BLOCKER-002 (#14) landing first.
 
-### BLOCKER-008: yubiOS CI `build` job ran out of disk (RESOLVED 2026-06-26)
+### BLOCKER-008: yubiOS CI `build` job runs out of disk (STILL OPEN — partial fix only, 2026-06-26)
 
 - **Was blocking:** all `yubiOS CI` runs red — only the `build` job failed,
   at `Build OCI image` (Containerfile:60) with
@@ -116,8 +116,15 @@ _Last updated: 2026-06-26. Maintained alongside TODO.md and ADR.md._
   mounted the runner's large `/mnt` disk into the `build` container
   (`volumes: - /mnt:/mnt`) and pointed `dockerd --data-root=/mnt/docker`.
   Kept `--storage-driver=native`; no driver swap, no workflow reshape.
-  Commit `819d427` on `main`. Verified: dispatch run 28228309907 cleared the
-  prior failure point (build ran well past the ~4-min mark where it died).
+  Commit `819d427` on `main`. PARTIAL ONLY: dispatch run 28228309907 moved the
+  failure past `Build OCI image`, but the `build` job still FAILED (completed:
+  failure) — it now dies at the later `Verify symlinks and scripts` step with
+  `no space left on device` on `/mnt/docker/...native/snapshots`. Root cause
+  unchanged: the native snapshotter full-copies the ostree rootfs and the verify
+  step re-extracts it, doubling the footprint on `/mnt`.
+- **Real fix (queued — deliberate pass, not pushed):** switch the build to the
+  overlayfs snapshotter OR fold the verify into the Containerfile so there is no
+  second extraction. Held this poll (cooldown + in-flight runs). **CI remains RED.**
 
 ### BLOCKER-009: bcvk `feat/swtpm-ci` HEAD does not compile — swu2f two-impl divergence
 
