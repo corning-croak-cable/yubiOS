@@ -106,19 +106,19 @@ jobs:
           export PYTHON_COMMAND=python3
           cd "$ws/edk2"
           . ./edksetup.sh
-          # Newer host GCC (13/14 on ubuntu-24.04) promotes warnings that upstream
-          # edk2 sources trip, and EDK2's RELEASE GCC profile adds -flto which
-          # miscompiles mbedTLS constant_time.c aarch64 inline-asm. This is a
-          # build-proof CI (produce + upload BL32_AP_MM.fd), so neutralise both at
-          # the toolchain level: strip -flto and -Werror from the generated
-          # Conf/tools_def.txt. Covers ArmStandaloneMmCoreEntryPoint (maybe-uninitialized)
-          # and CryptoPkg/MbedTlsLib. No repo source is modified.
+          # Two host-GCC-14 toolchain fixups, both build-proof-local (no repo source
+          # is modified; we patch the freshly generated Conf and the cloned DSC):
+          #  1. Strip -Werror (+ -flto): newer GCC promotes warnings upstream edk2
+          #     trips, e.g. ArmStandaloneMmCoreEntryPoint maybe-uninitialized.
+          #  2. mbedTLS constant_time.c aarch64 inline-asm barrier ('ldr %w0,[%1]')
+          #     is rejected as 'invalid asm operand' under -mgeneral-regs-only on
+          #     GCC-13/14. mbedTLS 3.6 ships the CFG switch MBEDTLS_CT_NO_ASM exactly
+          #     for this; inject it via the platform DSC [BuildOptions] so the
+          #     CryptoPkg/MbedTlsLib that the RPMB variable service pulls in builds.
           sed -i 's/ -flto//g; s/ -Werror//g' Conf/tools_def.txt
-          # mbedTLS constant_time.c inline-asm (ldr %w0,[%1] via MBEDTLS_ASM_AARCH64_PTR_CONSTRAINT)
-          # is rejected as 'invalid asm operand' by the cross aarch64 gcc under EDK2's
-          # -mgeneral-regs-only/-mstrict-align. Force mbedTLS portable constant-time C
-          # fallback (still constant-time, just no asm barrier).
-          sed -i 's/^DEFINE GCC_ALL_CC_COMMON .*/& -DMBEDTLS_CT_NO_ASM/' Conf/tools_def.txt
+          dsc="$ws/edk2-platforms/$ACTIVE_PLATFORM"
+          printf '\n[BuildOptions]\n  GCC:*_*_*_CC_FLAGS = -DMBEDTLS_CT_NO_ASM\n' >> "$dsc"
+          echo "appended [BuildOptions] MBEDTLS_CT_NO_ASM to $dsc"
           # Resolve toolchain tag: prefer GCC5 if defined, else the consolidated GCC.
           if grep -q '^DEFINE GCC5_AARCH64_PREFIX' Conf/tools_def.txt 2>/dev/null \
              || grep -q 'GCC5_AARCH64' Conf/tools_def.txt 2>/dev/null; then
