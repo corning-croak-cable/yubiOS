@@ -1,5 +1,15 @@
 name: yubiOS CI
 
+# Multi-arch CI: native matrix split across GitHub-hosted amd64 + arm64 runners.
+# Strategy 1 from the multi-arch research (native split, NOT QEMU) — every test
+# runs on real hardware for each arch, no emulation slowness/flakiness.
+#
+# DEPLOY PRE-REQ: the `container.image` below must be the dhi.io/debian-base
+# *manifest-list (index)* digest, NOT a single-arch digest. A single-arch (amd64)
+# digest will FAIL to pull on ubuntu-24.04-arm. Run the updated fetch-dhi-manifest
+# workflow (it now requests the OCI index media type) to get 1cefd55d979ddbd9110cf73cf3de11798a7893a4598050ba57624bc754b244aa,
+# then replace the placeholder below. The index auto-resolves per runner arch.
+
 on:
   pull_request:
   workflow_dispatch:
@@ -8,20 +18,24 @@ on:
         default: false
         type: boolean
         required: true
-        description: Push to docker hub?
+        description: Push to docker hub (multi-arch manifest)?
+
+permissions:
+  contents: read
 
 jobs:
+  # ── Arch-neutral lint (run once on amd64; linting shell/Dockerfile text is
+  #    architecture-independent, so matrixing would just burn a second runner). ──
   shellcheck:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     container:
       credentials:
         username: 0mniteck42
         password: ${{ secrets.DOCKER }}
-      image: docker://dhi.io/debian-base@sha256:62bc0610151db7155b7225f1a03c299bf109ab0b884da6777d1f808c7834d4ea # trixie-debian13-dev (fetched 2026-06-25)
+      image: docker://dhi.io/debian-base@sha256:1cefd55d979ddbd9110cf73cf3de11798a7893a4598050ba57624bc754b244aa # trixie-debian13-dev INDEX (manifest list)
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-
       - name: shellcheck
         run: |
           apt-get update -qq
@@ -29,59 +43,83 @@ jobs:
           find usr/lib/yubiOS -name '*.sh' | xargs shellcheck --source-path=usr/lib/yubiOS
 
   hadolint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     container:
       image: docker://ghcr.io/hadolint/hadolint:v2.14.0-debian@sha256:158cd0184dcaa18bd8ec20b61f4c1cabdf8b32a592d062f57bdcb8e4c1d312e2
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-
       - name: hadolint (Containerfile lint)
-        run: |
-          hadolint --ignore DL3041 --ignore DL3059 - < Containerfile
+        run: hadolint --ignore DL3041 --ignore DL3059 - < Containerfile
 
+  # ── Arch-relevant: native matrix split. runs-on is set from the matrix. ──
   unit-tests:
-    runs-on: ubuntu-latest
     needs: [shellcheck, hadolint]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
     container:
       credentials:
         username: 0mniteck42
         password: ${{ secrets.DOCKER }}
-      image: docker://dhi.io/debian-base@sha256:62bc0610151db7155b7225f1a03c299bf109ab0b884da6777d1f808c7834d4ea # trixie-debian13-dev (fetched 2026-06-25)
+      image: docker://dhi.io/debian-base@sha256:1cefd55d979ddbd9110cf73cf3de11798a7893a4598050ba57624bc754b244aa # auto-resolves to ${{ matrix.arch }}
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-
       - name: Install test dependencies
         run: |
           apt-get update -qq
           apt-get install -y -qq bats python3 util-linux
-
-      - name: Run unit tests
+      - name: Run unit tests (${{ matrix.arch }})
         run: bats tests/unit/
 
   mkosi:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
     container:
       credentials:
         username: 0mniteck42
         password: ${{ secrets.DOCKER }}
-      image: docker://dhi.io/debian-base@sha256:62bc0610151db7155b7225f1a03c299bf109ab0b884da6777d1f808c7834d4ea # trixie-debian13-dev (fetched 2026-06-25)
+      image: docker://dhi.io/debian-base@sha256:1cefd55d979ddbd9110cf73cf3de11798a7893a4598050ba57624bc754b244aa # auto-resolves to ${{ matrix.arch }}
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-
-      - name: Install mkosi (from yubi-OS fork, v26~devel required)
+      - name: Install mkosi (from yubi-OS fork)
         run: |
           apt-get update -qq
           apt-get install -y -qq python3 python3-pip python3-pexpect git
           pip install --break-system-packages git+https://github.com/yubi-OS/mkosi.git@feature/yubiOS-profile
-
-      - name: Validate mkosi config
+      - name: Validate mkosi config (${{ matrix.arch }})
         run: mkosi summary
 
   build:
-    runs-on: ubuntu-latest
+    needs: [shellcheck, hadolint]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+            docker_arch: x86_64
+            buildx_arch: linux-amd64
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            docker_arch: aarch64
+            buildx_arch: linux-arm64
+    runs-on: ${{ matrix.runner }}
     container:
       options: --privileged
       volumes:
@@ -89,60 +127,96 @@ jobs:
       credentials:
         username: 0mniteck42
         password: ${{ secrets.DOCKER }}
-      image: docker://dhi.io/debian-base@sha256:62bc0610151db7155b7225f1a03c299bf109ab0b884da6777d1f808c7834d4ea # trixie-debian13-dev (fetched 2026-06-25)
-    needs: [shellcheck, hadolint]
+      image: docker://dhi.io/debian-base@sha256:1cefd55d979ddbd9110cf73cf3de11798a7893a4598050ba57624bc754b244aa # auto-resolves to ${{ matrix.arch }}
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
-      - name: Install docker-engine and docker-buildx
+      - name: Install docker-engine and docker-buildx (${{ matrix.arch }})
         run: |
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends git wget iptables nftables
-          # uidmap dbus-user-session slirp4netns
-          wget https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz
-          wget https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64
-          # wget https://download.docker.com/linux/static/stable/x86_64/docker-rootless-extras-29.6.0.tgz
-          tar xzvf docker-29.6.0.tgz
+          wget -q "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-29.6.0.tgz"
+          wget -q "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.${{ matrix.buildx_arch }}"
+          tar xzf docker-29.6.0.tgz
           mkdir -p /usr/libexec/docker/cli-plugins/
           cp docker/* /usr/bin/
-          cp buildx-v0.35.0.linux-amd64 /usr/libexec/docker/cli-plugins/docker-buildx
+          cp "buildx-v0.35.0.${{ matrix.buildx_arch }}" /usr/libexec/docker/cli-plugins/docker-buildx
           chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
           mkdir -p /mnt/docker
           dockerd --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
+          for i in $(seq 1 30); do docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
           docker -H unix:///var/run/ducker.sock buildx create --name hardened \
             --driver docker-container \
             --use
+
       - name: Log in to Docker Hub
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
         run: echo "${{ secrets.DOCKER }}" | docker -H unix:///var/run/ducker.sock login -u 0mniteck42 --password-stdin
 
-      # TODO: add yubiOS.rego + --policy reset=true,strict=true once policy file
-      # is committed (ref: AGENTS.md build policy pattern).
-      # - name: Set up Docker Buildx
-      #   uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4.1.0
-
-      - name: Build OCI image
+      # TODO: add --policy reset=true,strict=true,filename=yubiOS.rego once the
+      # policy file lands (ref: AGENTS.md build policy pattern).
+      - name: Build OCI image (${{ matrix.arch }})
         run: |
           docker -H unix:///var/run/ducker.sock info
           docker -H unix:///var/run/ducker.sock buildx build -f Containerfile \
+            --platform linux/${{ matrix.arch }} \
             --load \
-            -t yubios:ci \
-            -t 0mniteck/yubios:latest \
-            -t "0mniteck/yubios:${{ github.sha }}" \
+            -t "yubios:ci-${{ matrix.arch }}" \
             .
 
-      - name: Verify symlinks and scripts
+      - name: Verify symlinks and scripts (${{ matrix.arch }})
         run: |
-          docker -H unix:///var/run/ducker.sock run --rm yubios:ci sh -c \
+          docker -H unix:///var/run/ducker.sock run --rm "yubios:ci-${{ matrix.arch }}" sh -c \
             'ls -la /usr/lib/yubiOS/ && ls -la /usr/bin/yubiOS-*'
 
-      - name: Verify PAM wiring
+      - name: Verify PAM wiring (${{ matrix.arch }})
         run: |
-          docker -H unix:///var/run/ducker.sock run --rm yubios:ci grep -q pam_u2f /etc/pam.d/sudo && echo "PAM OK"
+          docker -H unix:///var/run/ducker.sock run --rm "yubios:ci-${{ matrix.arch }}" grep -q pam_u2f /etc/pam.d/sudo && echo "PAM OK"
 
-      - name: Push to Docker Hub
+      # Push each arch by a per-arch tag (no cross-job artifact needed — the merge
+      # job combines these tags into one manifest list).
+      - name: Push per-arch image (${{ matrix.arch }})
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
         run: |
-          docker -H unix:///var/run/ducker.sock push 0mniteck/yubios:latest
-          docker -H unix:///var/run/ducker.sock push "0mniteck/yubios:${{ github.sha }}"
+          docker -H unix:///var/run/ducker.sock buildx build -f Containerfile \
+            --builder hardened \
+            --platform linux/${{ matrix.arch }} \
+            --push \
+            -t "0mniteck/yubios:${{ github.sha }}-${{ matrix.arch }}" \
+            .
+
+  # ── Combine the per-arch images into a single multi-arch manifest list.
+  #    Uses the docker CLI (no new actions); only on a pushed dispatch. ──
+  merge-manifest:
+    needs: build
+    if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
+    runs-on: ubuntu-24.04
+    container:
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:1cefd55d979ddbd9110cf73cf3de11798a7893a4598050ba57624bc754b244aa
+    steps:
+      - name: Install docker CLI + buildx
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends wget
+          wget -q "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
+          wget -q "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
+          tar xzf docker-29.6.0.tgz
+          mkdir -p /usr/libexec/docker/cli-plugins/
+          cp docker/* /usr/bin/
+          cp buildx-v0.35.0.linux-amd64 /usr/libexec/docker/cli-plugins/docker-buildx
+          chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER }}" | docker login -u 0mniteck42 --password-stdin
+      - name: Create + push multi-arch manifest
+        run: |
+          docker buildx imagetools create \
+            -t "0mniteck/yubios:${{ github.sha }}" \
+            -t "0mniteck/yubios:latest" \
+            "0mniteck/yubios:${{ github.sha }}-amd64" \
+            "0mniteck/yubios:${{ github.sha }}-arm64"
+      - name: Verify manifest list
+        run: docker buildx imagetools inspect "0mniteck/yubios:${{ github.sha }}"
