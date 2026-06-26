@@ -192,6 +192,9 @@ jobs:
     if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
     runs-on: ubuntu-24.04
     container:
+      options: --privileged
+      volumes:
+        - /mnt:/mnt
       credentials:
         username: 0mniteck42
         password: ${{ secrets.DOCKER }}
