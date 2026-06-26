@@ -475,7 +475,7 @@ hardware lacking a physical TPM chip.
   paths in systemd (PCR measurements, LUKS PCR binding) during CI without physical hardware.
 - yubiOS itself still uses YubiKey FIDO2 for secrets (ADR-003 unchanged) — swtpm is
   for test coverage only, not the production trust anchor.
-- Add `swtpm` package to bcvk test image; configure `ci/vm-swtpm.conf` drop-in.
+- Add `swtpm` package to bcvk test image; configure `assets/ci/vm-swtpm.conf` drop-in.
 
 **Implementation note (2026-06-26, bcvk #3):** bcvk uses *DirectBoot* (extracts kernel+initrd from the UKI, bypassing `systemd-stub` and the ESP), so `systemd-tpm2-swtpm.service` cannot bring up `/dev/tpm0` inside the guest. The shipped route is a **host-side QEMU vTPM emulator device** instead: `swtpm` runs on the host and is attached via `-tpmdev emulator` + arch-aware `-device tpm-tis`/`tpm-crb`, exposed through `bcvk ephemeral run --swtpm`; the guest kernel's `tpm_tis`/`tpm_crb` driver then creates `/dev/tpm0` automatically (no in-guest service). Lands on bcvk branch `feat/swtpm-ci` (referenced directly, never merged).
 
