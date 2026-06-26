@@ -192,6 +192,12 @@ jobs:
             set +u
             . edk2/edksetup.sh BaseTools
             set -u
+            # EDK2 GCC toolchain emits the bundled GccLto plugin link flags
+            # (-L .../GccLto -llto-aarch64 -Wl,-plugin-opt=-pass-through=-llto-aarch64).
+            # With LTO disabled (mbedTLS LTO asm miscompile), that -plugin-opt dangles
+            # and binutils 2.42 ld aborts ("bad -plugin-opt option"). Strip every LTO
+            # token from tools_def so compile AND link are consistently LTO-free.
+            sed -i -e 's/-flto//g' -e 's/-Wl,-plugin-opt=-pass-through=-llto-aarch64//g' -e 's#-L$(WORKSPACE)/BaseTools/Bin/GccLto##g' -e 's/-llto-aarch64//g' edk2/Conf/tools_def.txt
             build -a AARCH64 -t GCC -b DEBUG -n "$(nproc)" \
               -p Platform/StandaloneMm/PlatformStandaloneMmPkg/PlatformStandaloneMmRpmb.dsc
             fd=$(find "$WORKSPACE/Build" -path '*MmStandaloneRpmb*' -name '*.fd' -print -quit 2>/dev/null || true)
