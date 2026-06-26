@@ -152,34 +152,33 @@ yubiOS/
 ## Design decisions
 
 ```
-mkosi --profile yubios build
-          ↓
-    OCI image (yubios:latest)
-          ↓
-bcvk native-to-disk yubios:latest /dev/sdb
-          ↓
-    first boot → yubios-enroll.service → YubiKey tap
-                                              |
-                                              | 
-                                              └─────► YubiKey (PIV slot 9c)
-quay.io/fedora (pinned OCI)                                      │
-        │                                             ▼ systemd-sbsign via PKCS11
-        ▼ Containerfile                          mkosi fork ──────────────► OCI container image (yubiOS)
-  rootless docker buildx build                        │                                   │
-        │                                             │                         ▼ bootc install/upgrade
-        ▼ OCI image → dhi.io/yubi-OS/yubiOS           │                   bare metal / VM disk
-        │                                             │
-        ├─► bootc install to-disk (bare metal)        └─────► bcvk fork ──────► ephemeral VM (test)
-        │           ↑                                              │                  ↑
-        │       bcvk native-to-disk                                └── USB passthrough YubiKey hidraw
-        │                                              
-        ├─► bcvk ephemeral run (dev loop)        systemd-homed
-        │           ↑                                  |
-        │       QEMU + virtiofsd + u2f-passthru        └── LUKS protected /home/ (No plaintext pass)
-        │                                                    |
-        └─► bcvk to-disk (disk image for CI)                 ├─► SLOT 0 ─────► U2f protected unlock
-                    ↑                                        |
-                bootc install to-disk (in ephemeral VM)      └─► SLOT 1 ─────► U2f recovery key
+  quay.io/fedora/fedora-bootc:45  @sha256 (pinned base — ADR-003)
+                 |
+        +--------+---------------------+
+        v Containerfile                v mkosi --profile yubios
+  rootless docker buildx          UKI + dm-verity, signed via
+  --policy yubiOS.rego            YubiKey PIV slot 9c (PKCS#11)
+  (supply-chain gate)                  |
+        +--------+---------------------+
+                 v   multi-arch OCI image  (linux/amd64 + linux/arm64)
+        yubiOS-ci.yml . merge-manifest . SLSA provenance + SBOM attested
+                 |  docker push
+                 v
+   +-------------------------------------------------+
+   | docker.io/0mniteck/yubios:latest                |  <== PRIMARY DOWNLOAD
+   | (+ immutable :<commit-sha> per build)           |
+   +-------------------------------------------------+
+                 |  pull
+   +-------------+------------------+---------------------------------+
+   v bootc install                  v bootc switch + upgrade          v bcvk
+     to-disk (bare metal)             day-2 atomic update              ephemeral VM / native-to-disk
+   |                                                                   (test loop, USB YubiKey passthrough)
+   v  first boot -> yubiOS-enroll.service -> YubiKey tap
+   +-------------+----------------------+------------------------------+
+   v PIV slot 9c (CCID)                 v FIDO2 (hidraw)               v systemd-homed
+  Secure Boot signing                 LUKS2 disk unlock              LUKS2 /home
+  (systemd-sbsign / PKCS#11)          SSH ed25519-sk, pam-u2f         +- SLOT 0  FIDO2 unlock
+                                                                      +- SLOT 1  recovery key
 ```
 
 
