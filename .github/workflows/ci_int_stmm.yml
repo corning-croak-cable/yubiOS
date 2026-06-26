@@ -99,12 +99,17 @@ jobs:
       - name: Build StandaloneMM RPMB platform (BL32_AP_MM.fd)
         id: build
         run: |
-          set -eux
+          set -ex
           ws="$GITHUB_WORKSPACE/uefi"
           export WORKSPACE="$ws"
           export PACKAGES_PATH="$ws/edk2:$ws/edk2-platforms"
+          export PYTHON_COMMAND=python3
           cd "$ws/edk2"
           . ./edksetup.sh
+          # Disable LTO: EDK2's RELEASE GCC profile adds -flto, which miscompiles
+          # mbedTLS constant_time.c aarch64 inline-asm (lto-wrapper 'invalid asm').
+          # The RPMB variable platform pulls CryptoPkg -> MbedTlsLib, so strip -flto.
+          sed -i 's/ -flto//g' Conf/tools_def.txt
           # Resolve toolchain tag: prefer GCC5 if defined, else the consolidated GCC.
           if grep -q '^DEFINE GCC5_AARCH64_PREFIX' Conf/tools_def.txt 2>/dev/null \
              || grep -q 'GCC5_AARCH64' Conf/tools_def.txt 2>/dev/null; then
@@ -122,7 +127,7 @@ jobs:
       - name: Locate + stage BL32_AP_MM.fd
         id: stage
         run: |
-          set -eux
+          set -ex
           ws="$GITHUB_WORKSPACE/uefi"
           fd="$(find "$ws/edk2/Build" -name 'BL32_AP_MM.fd' | head -n1)"
           test -n "$fd"
