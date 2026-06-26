@@ -39,7 +39,7 @@ _Last updated: June 26, 2026_
 - [x] CTAP 2.1 minimum PIN length enforcement — check_fido2_pin_length() in lib.sh (PR #3)
 - [ ] chipsec first-boot validation (portable service or sysext, per ADR-010 DPS) (#24)
 - [ ] Post-quantum TLS for yubiOS services (X25519MLKEM768 / OpenSSL 3.5+) (#26)
-- [ ] bcvk CI — software FIDO2 emulator (swu2f) for enrollment tests without physical YubiKey (#25, T3) — bcvk swtpm branch landed (T2): canonical `feat/swtpm-ci` @2cc8a75 + duplicate `feature/swtpm-ci` (draft PR #4) both commented on bcvk #3, NO merge; swu2f extends `feat/swtpm-ci` — in progress; referenced, never merged
+- [ ] bcvk CI — software FIDO2 emulator (swu2f) for enrollment tests without physical YubiKey (#25, T3) — bcvk swtpm branch landed (T2): canonical `feat/swtpm-ci` now @`8896f1e6` (host-side QEMU vTPM emulator device: `swtpm socket` → `-tpmdev emulator` → arch-aware `tpm-crb`/`tpm-tis-device`). NOTE: in-guest `systemd-tpm2-swtpm.service` route abandoned — bcvk DirectBoot extracts kernel+initrd from the UKI, breaking the systemd-stub chain the service needs, so the guest path can’t yield `/dev/tpm0` (flagged ADR-016 §F1; see knowledge/swtpm-ci-approach.md). Duplicate `feature/swtpm-ci` (draft PR #4) closed as dup. swu2f T3 extends `feat/swtpm-ci` — in progress; bcvk referenced, never merged
 - [ ] One-time hardware smoke test of the systemd-sbsign PKCS#11 path (slot 9c) before first production signing
 
 ## Post-launch (see FUTURE.md)
