@@ -10,7 +10,7 @@ where relevant, the primary sources below that ground its design.
 
 ```bibtex
 @software{yubios2026,
-  author  = {Latuu, Jenny},
+  author  = {Tchatalbachian, Shant},
   title   = {{yubiOS}: A {FIDO2}-first immutable operating system with a
              hardware security key as the sole root of trust},
   year    = {2026},
