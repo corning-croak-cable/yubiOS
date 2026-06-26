@@ -1,5 +1,5 @@
 # yubiOS — TODO / Future Work
-_Last updated: June 26, 2026_
+_Last updated: June 26, 2026 (PR-CI sync: #33 + #38 pull_request CI GREEN; swu2f Layer 2 shipped as PR #40)_
 
 ## High priority
 
@@ -11,7 +11,7 @@ _Last updated: June 26, 2026_
 - [x] ARM64 multi-arch profile documented — ADR-017, MITIGATE.md, README.md, ARCHITECTURE.md updated (June 24)
 - [x] Bump fedora-bootc:45 to live post-June-19 digest for systemd 261 (ADR-016) (#14, PR #31) — merged June 26; live digest `sha256:b7b34d87…` (45.20260625.0); old `sha256:6a60ff82…` was dead/404
 - [x] Validate systemd-sbsign + libykcs11 PKCS#11 URI for ECC slot 9c (ADR-008) (#17, PR #32) — merged June 26; spec-validated, test migrated to systemd-sbsign + osslsigncode
-- [ ] Test LUKS2 FIDO2 unlock end-to-end in a VM (#20, PR #33) — hardware-free e2e test landed on `feat/luks-fido2-e2e-test` @911fcc16 (`tests/vm/test-luks-fido2-ci.sh` drives `bcvk ephemeral run --swtpm --swu2f`): swtpm `/dev/tpm0` + measured-os + swu2f Layer 1/CTAP1 (pam-u2f) legs run; CTAP2 legs (cryptenroll `--fido2` + homed) SKIP pending swu2f Layer 2 in-guest `/dev/uhid` authenticator (BLOCKER-009 compile-fix landed/RESOLVED; swu2f Layer 2 in-guest authenticator guest-image PR still pending). Physical-YubiKey passthrough path still needs hardware (BLOCKER-005). No merge.
+- [ ] Test LUKS2 FIDO2 unlock end-to-end in a VM (#20, PR #33) — hardware-free e2e test on `feat/luks-fido2-e2e-test` (`tests/vm/test-luks-fido2-ci.sh` drives `bcvk ephemeral run --swtpm --swu2f`). **PR CI now GREEN** — the pull_request build was hitting BLOCKER-008 disk exhaustion (native snapshotter); fixed on the PR branch (dockerd native→overlayfs, commit `4450fd4`, mirrors main `e74dadf`); all 5 jobs success @ `4450fd4` (run 28231776269). swtpm `/dev/tpm0` + measured-os + swu2f Layer 1/CTAP1 (pam-u2f) legs run; CTAP2 legs (cryptenroll `--fido2` + homed) now have an in-guest authenticator via **PR #40** (swu2f Layer 2, below). BLOCKER-009 compile-fix RESOLVED. Physical-YubiKey passthrough still needs hardware (BLOCKER-005). Draft — no merge (merge-ready alongside #40, pending Jenny).
 
 ## Medium priority
 
@@ -29,7 +29,7 @@ _Last updated: June 26, 2026_
 - [x] Evaluate + add RestrictFileSystems= (BPF LSM) to enrollment units (ADR-016) (#18, PR #28) — merged June 26; CONFIG_BPF_LSM=y verified active on live base (BLOCKER-007 cleared)
 - [ ] Deploy CI workflows to .github/workflows/ in yubiOS, bcvk, mkosi (manual — token lacks workflow scope) (#22) — drafts staged in `2026/` and `documents/.../ci-workflows/`
 - [ ] Add `osslsigncode` to image (mkosi.conf + Containerfile) so the PKCS#11 verify step in tests/validate-pkcs11-uri.sh is live
-- [ ] v261 test coverage scaffolding — systemd-sbsign UKI verify (osslsigncode vs PIV cert), ConditionSecurity=measured-os + RestrictFileSystems= enroll-unit gates, pam-u2f stack — draft PR #38 (`test/v261-coverage-T5`, commit `56b05b5`); no merge, pending CI
+- [ ] v261 test coverage scaffolding — systemd-sbsign UKI verify (osslsigncode vs PIV cert), ConditionSecurity=measured-os + RestrictFileSystems= enroll-unit gates, pam-u2f stack — draft PR #38 (`test/v261-coverage-T5`). **PR CI now GREEN** @ `43c2728` (run 28231778451, all 5 jobs success): build fixed (mkdir /mnt/docker + dockerd overlayfs `--data-root=/mnt/docker`, commit `4c19b1d`); unit-test 14 `systemd-analyze verify` had a REAL fail (Exec* binaries absent on the bare runner) — rewritten to stage a minimal root with exec stubs per Exec*= path so directives validate honestly (bogus key still → exit 1), commit `43c2728`. Draft — no merge (merge-ready, pending Jenny).
 
 ## Low priority / Research
 
@@ -39,7 +39,7 @@ _Last updated: June 26, 2026_
 - [x] CTAP 2.1 minimum PIN length enforcement — check_fido2_pin_length() in lib.sh (PR #3)
 - [ ] chipsec first-boot validation (portable service or sysext, per ADR-010 DPS) (#24)
 - [ ] Post-quantum TLS for yubiOS services (X25519MLKEM768 / OpenSSL 3.5+) (#26)
-- [ ] bcvk CI — software FIDO2 emulator (swu2f) for enrollment tests without physical YubiKey (#25 — `[post-launch]`; T3 branch work DONE) — swu2f landed on canonical bcvk branch `feat/swtpm-ci` (referenced directly, NEVER merged, like the mkosi fork). Two-layer design: Layer 1 = QEMU `u2f-emulated` (libu2f-emu) USB-HID CTAP1 token, covers pam-u2f; Layer 2 = in-guest `/dev/uhid` CTAP2 authenticator for systemd-cryptenroll `--fido2-device` (hmac-secret), staged as a separate guest-image PR (QEMU u2f-emulated is CTAP1-only). swtpm (T2) on the same branch = host-side QEMU vTPM emulator device (DirectBoot breaks the in-guest systemd-tpm2-swtpm.service path; ADR-016 §F1, see knowledge/swtpm-ci-approach.md). Dup `feature/swtpm-ci` (draft PR #4) closed. Branch unbuilt — needs cargo build + nextest + human Signed-off-by. Unblocks T4 (#33 LUKS2 e2e, in progress on `feat/luks-fido2-e2e-test`).
+- [ ] bcvk CI — software FIDO2 emulator (swu2f) for enrollment tests without physical YubiKey (#25 — `[post-launch]`; T3 branch work DONE) — swu2f landed on canonical bcvk branch `feat/swtpm-ci` (referenced directly, NEVER merged, like the mkosi fork). Two-layer design: Layer 1 = QEMU `u2f-emulated` (libu2f-emu) USB-HID CTAP1 token, covers pam-u2f; Layer 2 = in-guest `/dev/uhid` CTAP2 authenticator for systemd-cryptenroll `--fido2-device` (hmac-secret). **Layer 2 now shipped as yubiOS PR #40** (`feat/swu2f-layer2-ctap2-fixture`, commit `ab37a34`): in-guest `passless` (pando85/passless v0.11.2, soft-fido2 backend with full hmac-secret) in a TEST-only mkosi profile (NOT prod RoT — YubiKey stays, ADR-003), wired into the #33 e2e to un-gate the SKIP'd cryptenroll/homed legs. Commented on #33 + #25. Draft — no follower merge (leader merges once green; needs human cargo build + Signed-off-by). swtpm (T2) on the same branch = host-side QEMU vTPM emulator device (DirectBoot breaks the in-guest systemd-tpm2-swtpm.service path; ADR-016 §F1, see knowledge/swtpm-ci-approach.md). Dup `feature/swtpm-ci` (draft PR #4) closed.
 - [ ] One-time hardware smoke test of the systemd-sbsign PKCS#11 path (slot 9c) before first production signing
 
 ## Post-launch (see FUTURE.md)
