@@ -104,6 +104,21 @@ _Last updated: 2026-06-26. Maintained alongside TODO.md and ADR.md._
   ```
 - **Depends on:** BLOCKER-002 (#14) landing first.
 
+### BLOCKER-008: yubiOS CI `build` job ran out of disk (RESOLVED 2026-06-26)
+
+- **Was blocking:** all `yubiOS CI` runs red — only the `build` job failed,
+  at `Build OCI image` (Containerfile:60) with
+  `copy_file_range: no space left on device` (e.g. run 28219367332).
+- **Root cause:** the build job's nested `dockerd` defaulted its data-root to
+  the runner's small root disk (~14 GB). The bootc/ostree OCI build (ostree
+  objects, native snapshotter full-copy per layer) overflowed it.
+- **Fix (smallest targeted, no redesign — per Jenny's debug-mission constraint):**
+  mounted the runner's large `/mnt` disk into the `build` container
+  (`volumes: - /mnt:/mnt`) and pointed `dockerd --data-root=/mnt/docker`.
+  Kept `--storage-driver=native`; no driver swap, no workflow reshape.
+  Commit `819d427` on `main`. Verified: dispatch run 28228309907 cleared the
+  prior failure point (build ran well past the ~4-min mark where it died).
+
 ---
 
 ## Post-launch deferrals
