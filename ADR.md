@@ -477,6 +477,8 @@ hardware lacking a physical TPM chip.
   for test coverage only, not the production trust anchor.
 - Add `swtpm` package to bcvk test image; configure `ci/vm-swtpm.conf` drop-in.
 
+**Implementation note (2026-06-26, bcvk #3):** bcvk uses *DirectBoot* (extracts kernel+initrd from the UKI, bypassing `systemd-stub` and the ESP), so `systemd-tpm2-swtpm.service` cannot bring up `/dev/tpm0` inside the guest. The shipped route is a **host-side QEMU vTPM emulator device** instead: `swtpm` runs on the host and is attached via `-tpmdev emulator` + arch-aware `-device tpm-tis`/`tpm-crb`, exposed through `bcvk ephemeral run --swtpm`; the guest kernel's `tpm_tis`/`tpm_crb` driver then creates `/dev/tpm0` automatically (no in-guest service). Lands on bcvk branch `feat/swtpm-ci` (referenced directly, never merged).
+
 **Source:** https://github.com/systemd/systemd/releases/tag/v261
 
 ---
