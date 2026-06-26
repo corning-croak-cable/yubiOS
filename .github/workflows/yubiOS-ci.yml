@@ -158,7 +158,7 @@ jobs:
         run: |
           docker -H unix:///var/run/ducker.sock info
           docker -H unix:///var/run/ducker.sock buildx build -f Containerfile \
-            --policy reset=true,strict=true,filename=yubiOS.rego
+            --policy reset=true,strict=true,filename=yubiOS.rego \
             --platform linux/${{ matrix.arch }} \
             --load \
             -t "yubios:ci-${{ matrix.arch }}" \
