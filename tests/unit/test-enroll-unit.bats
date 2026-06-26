@@ -40,7 +40,27 @@ setup() {
 
 @test "systemd-analyze verify reports no errors for the enroll unit" {
   command -v systemd-analyze >/dev/null 2>&1 || skip "systemd-analyze not installed"
-  run systemd-analyze verify --recursive-errors=no "$UNIT"
+  # systemd-analyze verify also checks that every Exec*= binary exists. On a bare
+  # CI runner the shipped binaries (/usr/lib/yubiOS/*.sh) and /bin/{mkdir,touch}
+  # are not installed, so verify would exit non-zero on "is not executable" alone
+  # â an environment artifact, not a unit defect. Stage a minimal root with an
+  # executable stub for each Exec*= path the unit references, then verify against
+  # that root. Real directive/syntax errors still fail honestly (a bogus key still
+  # yields exit 1); only the missing-real-binary artifact is removed.
+  root="$(mktemp -d)"
+  mkdir -p "$root/usr/lib/systemd/system"
+  cp "$UNIT" "$root/usr/lib/systemd/system/"
+  unit_base="$(basename "$UNIT")"
+  grep -hoE '''^[[:space:]]*Exec[A-Za-z]*[[:space:]]*=[[:space:]]*[-@!+]*/[^[:space:]]+''' "$UNIT" \
+    | sed -E '''s/^[^=]*=[[:space:]]*[-@!+]*//''' \
+    | while read -r bin; do
+        [ -n "$bin" ] || continue
+        mkdir -p "$root$(dirname "$bin")"
+        printf '''#!/bin/sh\nexit 0\n''' > "$root$bin"
+        chmod +x "$root$bin"
+      done
+  run systemd-analyze verify --recursive-errors=no --root="$root" "usr/lib/systemd/system/$unit_base"
+  rm -rf "$root"
   [ "$status" -eq 0 ]
 }
 
