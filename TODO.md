@@ -11,7 +11,7 @@ _Last updated: June 26, 2026_
 - [x] ARM64 multi-arch profile documented — ADR-017, MITIGATE.md, README.md, ARCHITECTURE.md updated (June 24)
 - [x] Bump fedora-bootc:45 to live post-June-19 digest for systemd 261 (ADR-016) (#14, PR #31) — merged June 26; live digest `sha256:b7b34d87…` (45.20260625.0); old `sha256:6a60ff82…` was dead/404
 - [x] Validate systemd-sbsign + libykcs11 PKCS#11 URI for ECC slot 9c (ADR-008) (#17, PR #32) — merged June 26; spec-validated, test migrated to systemd-sbsign + osslsigncode
-- [ ] Test LUKS2 FIDO2 unlock end-to-end in a VM (#20, PR #33) — hardware-free e2e test landed on `feat/luks-fido2-e2e-test` @911fcc16 (`tests/vm/test-luks-fido2-ci.sh` drives `bcvk ephemeral run --swtpm --swu2f`): swtpm `/dev/tpm0` + measured-os + swu2f Layer 1/CTAP1 (pam-u2f) legs run; CTAP2 legs (cryptenroll `--fido2` + homed) SKIP pending swu2f Layer 2 in-guest `/dev/uhid` authenticator (BLOCKER-009 compile-fix in flight). Physical-YubiKey passthrough path still needs hardware (BLOCKER-005). No merge.
+- [ ] Test LUKS2 FIDO2 unlock end-to-end in a VM (#20, PR #33) — hardware-free e2e test landed on `feat/luks-fido2-e2e-test` @911fcc16 (`tests/vm/test-luks-fido2-ci.sh` drives `bcvk ephemeral run --swtpm --swu2f`): swtpm `/dev/tpm0` + measured-os + swu2f Layer 1/CTAP1 (pam-u2f) legs run; CTAP2 legs (cryptenroll `--fido2` + homed) SKIP pending swu2f Layer 2 in-guest `/dev/uhid` authenticator (BLOCKER-009 compile-fix landed/RESOLVED; swu2f Layer 2 in-guest authenticator guest-image PR still pending). Physical-YubiKey passthrough path still needs hardware (BLOCKER-005). No merge.
 
 ## Medium priority
 
