@@ -12,6 +12,7 @@
 # Source: https://fidoalliance.org/specs/fido-v2.1-ps-20210615/ s12
 # Source: https://github.com/Yubico/libfido2 — fido2-token(1) -B flag
 set -euo pipefail
+# shellcheck source=lib.sh
 source /usr/lib/yubiOS/lib.sh
 
 FIDO2_DEV=$(detect_fido2_device)

@@ -4,6 +4,7 @@
 # Enrolls a second YubiKey for all active trust anchors.
 # Run after primary enrollment. Both keys will unlock the system.
 set -euo pipefail
+# shellcheck source=lib.sh
 source /usr/lib/yubiOS/lib.sh
 
 yubiOS_log "Backup YubiKey enrollment"

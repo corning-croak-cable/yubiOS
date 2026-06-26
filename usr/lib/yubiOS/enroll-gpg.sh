@@ -6,6 +6,7 @@
 # Source: https://github.com/drduh/YubiKey-Guide
 # Source: https://www.gnupg.org/documentation/manuals/gnupg/
 set -euo pipefail
+# shellcheck source=lib.sh
 source /usr/lib/yubiOS/lib.sh
 
 wait_for_yubikey

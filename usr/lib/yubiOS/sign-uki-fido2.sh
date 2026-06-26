@@ -16,13 +16,21 @@ CERT_PEM="$KEYDIR/sb-cert.pem"
 [[ -f "$CERT_PEM" ]] || yubiOS_die "No certificate at $CERT_PEM."
 
 TMP_KEY="$(mktemp /dev/shm/yubiOS-sb-XXXXXX.pem)"
-# SC2064: use single quotes so $TMP_KEY expands at signal time, not at trap registration
-trap 'shred -u "$TMP_KEY" 2>/dev/null || rm -f "$TMP_KEY"' EXIT
+SIGNED="$(mktemp /dev/shm/yubiOS-signed-XXXXXX.efi)"
+# SC2064: single quotes so vars expand at signal time, not at trap registration
+trap 'shred -u "$TMP_KEY" 2>/dev/null || rm -f "$TMP_KEY"; rm -f "$SIGNED"' EXIT
 
 yubiOS_log "Decrypting signing key (touch YubiKey)..."
 age -d -o "$TMP_KEY" "$ENC_KEY"
 
 yubiOS_log "Signing $EFI..."
-sbsign --key "$TMP_KEY" --cert "$CERT_PEM" --output "$EFI" "$EFI"
+# ADR-008: systemd-sbsign (systemd >= 257) replaces legacy sbsigntool `sbsign`.
+# systemd-sbsign cannot sign in place, so write to a temp file then move over.
+systemd-sbsign sign \
+  --private-key "$TMP_KEY" \
+  --certificate "$CERT_PEM" \
+  --output "$SIGNED" \
+  "$EFI"
+mv -f "$SIGNED" "$EFI"
 
 yubiOS_log "Signed: $EFI"

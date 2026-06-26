@@ -3,36 +3,31 @@
 # Source: bootc design https://github.com/bootc-dev/bootc
 # Source: particleos ethos https://github.com/systemd/particleos
 
-FROM quay.io/fedora/fedora-bootc:45@sha256:5799803704a3f5894c6abf96fa5994991c9ef45931e4f66e79cf93d4caba88aa
+FROM quay.io/fedora/fedora-bootc:45@sha256:b7b34d8720b2e0ccaba980fd92347e7820051496ca0e639704172c6f3fb8877d
 
 # ── YubiKey and FIDO2 stack ──────────────────────────────────────────────
 # libfido2:       FIDO2/CTAP2 library; used by systemd-cryptenroll, OpenSSH, pam-u2f
 # yubikey-manager: ykman CLI for PIV, FIDO2, OATH management
 # yubico-piv-tool: PIV operations for Secure Boot signing (slot 9c)
-# opensc:          PKCS#11 middleware; sbsign uses this to talk to YubiKey PIV
+# opensc:          PKCS#11 middleware; systemd-sbsign uses this to talk to YubiKey PIV
 # pam-u2f:         PAM module for FIDO2/U2F; requires >= 1.3.1 (CVE-2025-23013)
 #                  Source: https://www.yubico.com/support/security-advisories/ysa-2025-01/
 # pcsc-lite:       PC/SC daemon; needed for PIV/CCID interface
-# sbsigntool:      sbsign for Secure Boot UKI signing via PKCS#11
 RUN dnf install -y \
       libfido2 \
-      libfido2-devel \
       yubikey-manager \
       yubico-piv-tool \
       opensc \
       pam-u2f \
-      pam-u2f-devel \
-      systemd-homed \
       pcsc-lite \
       pcsc-lite-ccid \
-      sbsigntool \
-      sbctl \
       tpm2-tools \
       tpm2-tss \
       cryptsetup \
       openssh-clients \
       openssh-server \
-      fido2-tools && \
+      fido2-tools \
+      osslsigncode && \
     dnf clean all
 
 # ── Overlay yubiOS config tree ───────────────────────────────────────────

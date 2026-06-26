@@ -34,7 +34,7 @@ certificate that can be enrolled in the UEFI Secure Boot `db`.
 **Decision:** Use YubiKey PIV slot 9c (Digital Signature) via PKCS#11 for
 Secure Boot key material. Interface: CCID (USB smartcard), not hidraw.
 
-**Signing toolchain:** Use `systemd-sbsign` (systemd v257+) via `--key pkcs11:…`.
+**Signing toolchain:** Use `systemd-sbsign` (systemd v257+; yubiOS base is now pinned to v261+, see ADR-015 and ADR-016) via `--key pkcs11:…`.
 This replaces legacy `sbsigntools` (`sbsign --engine pkcs11`). Both speak PKCS#11;
 systemd-sbsign integrates tighter with the UKI pipeline and is now the upstream default.
 
@@ -66,6 +66,8 @@ No TPM slot is enrolled.
 - FIDO2 enrollment does NOT bind to PCR hash values, so OS updates never require
   re-enrollment (unlike TPM2 PCR-hash policies which break on every kernel/initrd change)
 - Source: https://www.freedesktop.org/software/systemd/man/latest/systemd-cryptenroll.html
+
+**v261 (June 19, 2026):** No regressions for this ADR. `systemd-cryptenroll --fido2-device=auto` and `--fido2-with-client-pin=yes` are unchanged. New v261 features tracked in ADR-016 (`ConditionSecurity=measured-os`, `RestrictFileSystems=`, `systemd-tpm2-swtpm.service`) do not affect the disk-unlock path.
 
 **PIN policy:** `--fido2-with-client-pin=yes` is the default in yubiOS.
 Requires FIDO2 PIN + touch at boot. Strongest available option without biometrics.
@@ -181,7 +183,7 @@ read-only root filesystem, following the particleos pattern.
 **Migration:** Replace any `sbsign --engine pkcs11 --key …` invocations in
 FinalizeScripts and CI with `systemd-sbsign --key pkcs11:… --certificate cert.pem`.
 
-**Consequence:** Requires systemd >= 257. Debian Trixie ships systemd 257.x.
+**Consequence:** Requires systemd >= 257. yubiOS base is now pinned to v261 (ADR-015/ADR-016); Debian Trixie ships systemd 257.x.
 
 ---
 
@@ -417,7 +419,7 @@ mutable tag that silently pulls different content on each build. This creates tw
 
 **Decision:** Pin the base image to:
 
-    FROM quay.io/fedora/fedora-bootc:45@sha256:5799803704a3f5894c6abf96fa5994991c9ef45931e4f66e79cf93d4caba88aa
+    FROM quay.io/fedora/fedora-bootc:45@sha256:b7b34d8720b2e0ccaba980fd92347e7820051496ca0e639704172c6f3fb8877d
 
 **Rationale:**
 - **Reproducibility.** A SHA256 digest is content-addressed and immutable; the same
@@ -475,6 +477,8 @@ hardware lacking a physical TPM chip.
   for test coverage only, not the production trust anchor.
 - Add `swtpm` package to bcvk test image; configure `ci/vm-swtpm.conf` drop-in.
 
+**Implementation note (2026-06-26, bcvk #3):** bcvk uses *DirectBoot* (extracts kernel+initrd from the UKI, bypassing `systemd-stub` and the ESP), so `systemd-tpm2-swtpm.service` cannot bring up `/dev/tpm0` inside the guest. The shipped route is a **host-side QEMU vTPM emulator device** instead: `swtpm` runs on the host and is attached via `-tpmdev emulator` + arch-aware `-device tpm-tis`/`tpm-crb`, exposed through `bcvk ephemeral run --swtpm`; the guest kernel's `tpm_tis`/`tpm_crb` driver then creates `/dev/tpm0` automatically (no in-guest service). Lands on bcvk branch `feat/swtpm-ci` (referenced directly, never merged).
+
 **Source:** https://github.com/systemd/systemd/releases/tag/v261
 
 ---
@@ -502,16 +506,16 @@ ConditionSecurity=measured-os
 
 ---
 
-### v261 Feature 3: `RestrictFileSystemAccess=` (BPF LSM)
+### v261 Feature 3: `RestrictFileSystems=` (BPF LSM)
 
 **What it is:** A new `systemd.exec(5)` sandboxing directive that uses BPF LSM to
 restrict which filesystems a service may access by type. Complements existing
 `ProtectSystem=`, `PrivateDevices=`, and `RestrictNamespaces=`.
 
 **yubiOS action:**
-- Evaluate adding `RestrictFileSystemAccess=` to the enrollment scripts and
+- Evaluate adding `RestrictFileSystems=` to the enrollment scripts and
   YubiKey auth services to limit filesystem surface. Candidate:
-  `RestrictFileSystemAccess=tmpfs proc sysfs devtmpfs`
+  `RestrictFileSystems=tmpfs proc sysfs devtmpfs`
 - Requires systemd >= 261 and a kernel with BPF LSM enabled (`CONFIG_BPF_LSM=y`).
   Verify this is set in the fedora-bootc:45 kernel config before deploying.
 - Add to next `systemd-hardening` skill audit cycle.
@@ -560,7 +564,7 @@ across a `kexec` reboot — enabling kernel updates with near-zero downtime.
 |---|---|
 | `systemd-tpm2-swtpm.service` | 261 |
 | `ConditionSecurity=measured-os` | 261 |
-| `RestrictFileSystemAccess=` | 261 |
+| `RestrictFileSystems=` | 261 |
 | `systemd-sysinstall` | 261 |
 | `FileDescriptorStorePreserve=yes` | 261 |
 
@@ -670,3 +674,61 @@ verify `systemd --version` returns 261. Then add `ConditionSecurity=measured-os`
 - *Variables in normal-world flash* — rejected: writable by a compromised normal world; defeats Secure Boot.
 
 **Source:** [FUTURE.md](FUTURE.md) (components 4–5), U-Boot UEFI + measured-boot docs (v2026.01), EDK2 StandaloneMM on OP-TEE, ADR-018, ADR-002 (UKI/SecureBoot lineage).
+
+---
+
+## ADR-021: U-Boot as the Sole ARM64 Bootloader and UEFI Firmware Provider
+
+**Date:** 2026-06-24  
+**Status:** Accepted — post-launch (see [FUTURE.md](FUTURE.md))  
+**Supersedes:** The alternative-UEFI option mentioned in ADR-020 (edk2-rk3588 as a parallel UEFI path is rejected here).
+
+**Context:** The ARM64 secure-world stack (ADR-018/019/020) needs a BL33 stage that both completes the TF-A boot chain and provides the UEFI environment yubiOS's existing systemd-boot + UKI toolchain requires. Two candidates exist:
+
+- **U-Boot** (`yubi-OS/u-boot` fork of `u-boot/u-boot`): the non-secure BL33 bootloader. Provides a real UEFI environment via its `EFI_LOADER` subsystem. Mainline defconfigs exist for all three primary target boards.
+- **edk2-rk3588** (`edk2-porting/edk2-rk3588`): a community EDK2 port for RK3588 that replaces U-Boot as BL33 with a full TianoCore firmware stack. Designed primarily for running Windows and standard ACPI-first OSes.
+
+**Decision:** U-Boot is the sole UEFI firmware provider on ARM64. edk2-rk3588 as a BL33 replacement is rejected.
+
+**Why U-Boot wins:**
+
+1. **All three target boards have mainline U-Boot defconfigs** (confirmed in `yubi-OS/u-boot` fork):
+   - Orange Pi 5 (RK3588S): `orangepi-5-rk3588s_defconfig`
+   - Rock 5B (RK3588): `rock5b-rk3588_defconfig`
+   - NanoPC-T6 (RK3588): `nanopc-t6-rk3588_defconfig`
+
+2. **U-Boot EFI_LOADER is a real UEFI environment.** Boot services, runtime services, the UEFI system table, `Boot####`/`BootOrder` variables, and PE/COFF loading (`CONFIG_EFI_LOADER=y`). systemd-boot + UKI + UEFI Secure Boot run unmodified, identical to x86-64 (ADR-020).
+
+3. **Direct integration with TF-A + OP-TEE.** U-Boot slots cleanly into the TF-A BL33 position. edk2-rk3588 bundles its own TF-A integration, which we cannot audit or override without forking the entire firmware stack.
+
+4. **Full fTPM integration.** U-Boot has first-class `CONFIG_TPM2_FTPM_TEE=y` (talking to the ms-tpm-20-ref fTPM via the OP-TEE TEE driver), `CONFIG_MEASURED_BOOT=y`, and `CONFIG_EFI_TCG2_PROTOCOL=y` in the same binary. edk2-rk3588 would require separate TPM integration work.
+
+5. **StandaloneMM is independent.** The EDK2 StandaloneMM UEFI variable service (needed for tamper-resistant PK/KEK/db/dbx storage on RPMB, per ADR-020) is built from upstream `tianocore/edk2` as a standalone OP-TEE module (`BL32_AP_MM.fd`, `CFG_STMM_PATH=`). It does not require edk2-rk3588 and works identically with U-Boot as the UEFI consumer.
+
+6. **Scope alignment.** edk2-rk3588 targets Windows 11 / ACPI-first workflows on RK3588. yubiOS is a security-hardened Linux OS. Device Tree mode (Linux-first) is fully supported by U-Boot EFI_LOADER and is the correct boot path for our stack.
+
+**Disposition of `yubi-OS/edk2-rk3588` fork:**  
+Retained in the org for reference (community UEFI firmware art for RK3588 boards) but **not an active build dependency**. The StandaloneMM variable service is sourced from `tianocore/edk2` directly, not from this fork. If StandaloneMM build tooling needs an EDK2 fork in the future, fork `tianocore/edk2` at that point.
+
+**U-Boot kconfig for ARM64 (target config per board + yubiOS overlays):**
+```
+CONFIG_TEE=y
+CONFIG_OPTEE=y
+CONFIG_TPM=y
+CONFIG_TPM_V2=y
+CONFIG_TPM2_FTPM_TEE=y        # fTPM via OP-TEE TEE driver (ADR-018)
+CONFIG_MEASURED_BOOT=y
+CONFIG_TPM2_EVENT_LOG_SIZE=0x10000
+CONFIG_EFI_LOADER=y
+CONFIG_EFI_SECURE_BOOT=y       # PK/KEK/db/dbx PE/COFF authentication (ADR-020)
+CONFIG_EFI_TCG2_PROTOCOL=y     # TCG2 measured boot to fTPM
+CONFIG_EFI_MM_COMM_TEE=y       # StandaloneMM variable service via OP-TEE (ADR-020)
+CONFIG_CMD_OPTEE_RPMB=y
+CONFIG_EFI_CAPSULE_AUTHENTICATE=y  # Firmware update authentication
+```
+
+**Alternatives considered:**
+- *edk2-rk3588 as BL33 UEFI firmware* — rejected: bundled TF-A integration bypasses our chain; ACPI-first design diverges from yubiOS Linux/Device-Tree stack; no first-class fTPM/OP-TEE integration; adds a separate, opaque build dependency for a capability U-Boot already provides.
+- *Direct kernel boot from U-Boot (no UEFI)* — rejected (same as ADR-020): loses UEFI Secure Boot semantics and diverges from the x86-64 UKI/systemd-boot chain.
+
+**Source:** `yubi-OS/u-boot` defconfig inventory (2026-06-24), U-Boot EFI docs (v2026.01), ADR-018 (secure-world stack), ADR-019 (RK3588 as primary Path A target), ADR-020 (UEFI + StandaloneMM), [FUTURE.md](FUTURE.md).

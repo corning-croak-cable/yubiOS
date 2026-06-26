@@ -1,0 +1,148 @@
+name: yubiOS CI
+
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      Docker_push:
+        default: false
+        type: boolean
+        required: true
+        description: Push to docker hub?
+
+jobs:
+  shellcheck:
+    runs-on: ubuntu-latest
+    container:
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:62bc0610151db7155b7225f1a03c299bf109ab0b884da6777d1f808c7834d4ea # trixie-debian13-dev (fetched 2026-06-25)
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: shellcheck
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq shellcheck
+          find usr/lib/yubiOS -name '*.sh' | xargs shellcheck --source-path=usr/lib/yubiOS
+
+  hadolint:
+    runs-on: ubuntu-latest
+    container:
+      image: docker://ghcr.io/hadolint/hadolint:v2.14.0-debian@sha256:158cd0184dcaa18bd8ec20b61f4c1cabdf8b32a592d062f57bdcb8e4c1d312e2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: hadolint (Containerfile lint)
+        run: |
+          hadolint --ignore DL3041 --ignore DL3059 - < Containerfile
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    needs: [shellcheck, hadolint]
+    container:
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:62bc0610151db7155b7225f1a03c299bf109ab0b884da6777d1f808c7834d4ea # trixie-debian13-dev (fetched 2026-06-25)
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Install test dependencies
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq bats python3 util-linux
+
+      - name: Run unit tests
+        run: bats tests/unit/
+
+  mkosi:
+    runs-on: ubuntu-latest
+    container:
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:62bc0610151db7155b7225f1a03c299bf109ab0b884da6777d1f808c7834d4ea # trixie-debian13-dev (fetched 2026-06-25)
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Install mkosi (from yubi-OS fork, v26~devel required)
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq python3 python3-pip python3-pexpect git
+          pip install --break-system-packages git+https://github.com/yubi-OS/mkosi.git@feature/yubiOS-profile
+
+      - name: Validate mkosi config
+        run: mkosi summary
+
+  build:
+    runs-on: ubuntu-latest
+    container:
+      options: --privileged
+      volumes:
+        - /mnt:/mnt
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:62bc0610151db7155b7225f1a03c299bf109ab0b884da6777d1f808c7834d4ea # trixie-debian13-dev (fetched 2026-06-25)
+    needs: [shellcheck, hadolint]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Install docker-engine and docker-buildx
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends git wget iptables nftables
+          # uidmap dbus-user-session slirp4netns
+          wget https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz
+          wget https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64
+          # wget https://download.docker.com/linux/static/stable/x86_64/docker-rootless-extras-29.6.0.tgz
+          tar xzvf docker-29.6.0.tgz
+          mkdir -p /usr/libexec/docker/cli-plugins/
+          cp docker/* /usr/bin/
+          cp buildx-v0.35.0.linux-amd64 /usr/libexec/docker/cli-plugins/docker-buildx
+          chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
+          mkdir -p /mnt/docker
+          dockerd --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
+          docker -H unix:///var/run/ducker.sock buildx create --name hardened \
+            --driver docker-container \
+            --use
+      - name: Log in to Docker Hub
+        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
+        run: echo "${{ secrets.DOCKER }}" | docker -H unix:///var/run/ducker.sock login -u 0mniteck42 --password-stdin
+
+      # TODO: add yubiOS.rego + --policy reset=true,strict=true once policy file
+      # is committed (ref: AGENTS.md build policy pattern).
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4.1.0
+
+      - name: Build OCI image
+        run: |
+          docker -H unix:///var/run/ducker.sock info
+          docker -H unix:///var/run/ducker.sock buildx build -f Containerfile \
+            --load \
+            -t yubios:ci \
+            -t 0mniteck/yubios:latest \
+            -t "0mniteck/yubios:${{ github.sha }}" \
+            .
+
+      - name: Verify symlinks and scripts
+        run: |
+          docker -H unix:///var/run/ducker.sock run --rm yubios:ci sh -c \
+            'ls -la /usr/lib/yubiOS/ && ls -la /usr/bin/yubiOS-*'
+
+      - name: Verify PAM wiring
+        run: |
+          docker -H unix:///var/run/ducker.sock run --rm yubios:ci grep -q pam_u2f /etc/pam.d/sudo && echo "PAM OK"
+
+      - name: Push to Docker Hub
+        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
+        run: |
+          docker -H unix:///var/run/ducker.sock push 0mniteck/yubios:latest
+          docker -H unix:///var/run/ducker.sock push "0mniteck/yubios:${{ github.sha }}"

@@ -6,6 +6,7 @@
 #   e.g: yubiOS-enroll-totp "GitHub" "otpauth://totp/..."
 # Source: https://docs.yubico.com/software/yubikey-manager/yubikey-manager-manual.html
 set -euo pipefail
+# shellcheck source=lib.sh
 source /usr/lib/yubiOS/lib.sh
 
 wait_for_yubikey

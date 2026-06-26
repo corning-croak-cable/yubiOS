@@ -12,6 +12,7 @@
 # Source: https://github.com/Yubico/pam-u2f (pam-u2f 1.4.0 docs)
 
 set -euo pipefail
+# shellcheck source=lib.sh
 source /usr/lib/yubiOS/lib.sh
 
 # Verify pam-u2f is >= 1.3.1

@@ -17,10 +17,14 @@ import future.keywords.in
 default allow := false
 
 # ── Approved base registries ──────────────────────────────────────────────────
-# quay.io/fedora/  — official Fedora bootc images (yubiOS base)
-# dhi.io/          — internal pinned build tooling (AGENTS.md default image)
+# quay.io/fedora/      — official Fedora bootc images (yubiOS base)
+# dhi.io/              — internal pinned build tooling (AGENTS.md default image)
+# ghcr.io/actions/     — GitHub-hosted action containers (pages, attestations)
+# ghcr.io/hadolint/    — Dockerfile/Containerfile linter
 approved_registry(ref) if startswith(ref, "quay.io/fedora/")
 approved_registry(ref) if startswith(ref, "dhi.io/")
+approved_registry(ref) if startswith(ref, "ghcr.io/actions/")
+approved_registry(ref) if startswith(ref, "ghcr.io/hadolint/")
 
 # ── Rule 1: local context (no FROM pull) ─────────────────────────────────────
 # Pure local builds (e.g. COPY-only layers) always pass.
@@ -62,7 +66,7 @@ reason := msg if {
     not input.local
     not approved_registry(input.image.ref)
     msg := sprintf(
-        "Image '%v' is not from an approved registry. Allowed: quay.io/fedora/, dhi.io/",
+        "Image '%v' is not from an approved registry. Allowed: quay.io/fedora/, dhi.io/, ghcr.io/actions/, ghcr.io/hadolint/",
         [input.image.ref],
     )
 }
