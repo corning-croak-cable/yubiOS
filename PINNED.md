@@ -4,6 +4,9 @@ All GitHub Actions and container image references used across the yubi-OS org
 must appear here before being added to any workflow or Containerfile.
 Non-pinned refs (mutable tags, branch names) are not permitted.
 
+**This file is the single source of truth.** AGENTS.md and every workflow refer
+here; do not duplicate the digest list elsewhere.
+
 ---
 
 ## GitHub Actions
@@ -21,17 +24,25 @@ Non-pinned refs (mutable tags, branch names) are not permitted.
 
 ## Container Images
 
-| Image | Pinned Digest |
-|-------|---------------|
-| `dhi.io/debian-base` | `sha256:62bc0610151db7155b7225f1a03c299bf109ab0b884da6777d1f808c7834d4ea` |
-| `ghcr.io/actions/jekyll-build-pages` | `sha256:6791ebfd912185ed59bfb5fb102664fa872496b79f87ff8b9cfba292a7345041` |
-| `ghcr.io/hadolint/hadolint:v2.14.0-debian` | `sha256:158cd0184dcaa18bd8ec20b61f4c1cabdf8b32a592d062f57bdcb8e4c1d312e2` |
+| Image | Pinned Digest | Notes |
+|-------|---------------|-------|
+| `dhi.io/debian-base` (multi-arch INDEX) | `sha256:1cefd55d979ddbd9110cf73cf3de11798a7893a4598050ba57624bc754b244aa` | **Canonical for workflows + Containerfile `FROM`.** OCI image *index* (manifest list) for `trixie-debian13-dev`; auto-resolves per runner arch. Use this for any multi-arch (amd64 + arm64) job. |
+| ↳ child `linux/amd64` | `sha256:57c88d9180b30314a04650426af8d4301c5c9738e4c5672a1db99a03f6a54721` | resolved automatically; do not pin directly unless an amd64-only job is required |
+| ↳ child `linux/arm64` | `sha256:1634f8387e3172f2b8bf32d93456c52425815191e6e53b858d06bc5a8ef75f47` | resolved automatically |
+| `ghcr.io/actions/jekyll-build-pages` | `sha256:6791ebfd912185ed59bfb5fb102664fa872496b79f87ff8b9cfba292a7345041` | |
+| `ghcr.io/hadolint/hadolint:v2.14.0-debian` | `sha256:158cd0184dcaa18bd8ec20b61f4c1cabdf8b32a592d062f57bdcb8e4c1d312e2` | |
+
+> Superseded single-arch digests (no longer used in workflows; kept for audit only):
+> `62bc0610151db7155b7225f1a03c299bf109ab0b884da6777d1f808c7834d4ea` (amd64-only manifest),
+> `9415967aa0ed8adea8b5c048994259d1982026dca143d0303c7bbe0e11ed67d3` (older single-arch).
+> Resolve the current index with the `fetch-dhi-manifest` workflow (it requests the OCI index media type).
 
 ---
 
 ## Policy
 
 - All container image `FROM` statements in Containerfile and `uses:` in workflows must reference a SHA pinned here.
+- For multi-arch (amd64 + arm64) jobs, reference the **INDEX** digest so it auto-resolves per runner architecture — never pin a single-arch child in a matrix job.
 - Mutable tags (`:latest`, `:main`, branch refs) are rejected by `yubiOS.rego` and AGENTS.md policy.
-- To add a new ref: obtain the digest, add a row here, update `yubiOS.rego` if a new registry is introduced, open a PR.
+- To add or roll a ref: obtain the digest (for the base image, run `fetch-dhi-manifest`), update a row here, update `yubiOS.rego` if a new registry is introduced, open a PR.
 - Digests are verified at build time via Docker Build Policy (`--policy reset=true,strict=true`).
