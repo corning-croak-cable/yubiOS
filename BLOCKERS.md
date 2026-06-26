@@ -1,6 +1,6 @@
 # BLOCKERS.md — yubiOS Open Issue Dependency Map
 
-_Last updated: 2026-06-24. Maintained alongside TODO.md and ADR.md._
+_Last updated: 2026-06-26. Maintained alongside TODO.md and ADR.md._
 
 ---
 
@@ -80,13 +80,17 @@ _Last updated: 2026-06-24. Maintained alongside TODO.md and ADR.md._
 - **Workaround for CI:** swtpm (#21) covers measured-boot paths. Software FIDO2 emulator
   (#25) is tracked post-launch.
 
-### BLOCKER-006: swtpm CI work is primarily in yubi-OS/bcvk
+### BLOCKER-006: swtpm CI work is primarily in yubi-OS/bcvk — RESOLVED (2026-06-26)
 
-- **Blocks:** #21 (PR #34) landing on its own
-- **Why:** Adding swtpm to CI VMs requires changes to the bcvk test image definition and
+- **Was blocking:** #21 (PR #34) landing on its own
+- **Why:** Adding swtpm to CI VMs required changes to the bcvk test image definition and
   its workflow in `yubi-OS/bcvk`.
-- **Resolution:** Open a parallel issue in `yubi-OS/bcvk`. PR #34 here tracks the yubiOS
-  CI workflow integration side only.
+- **Resolution:** Parallel issue `yubi-OS/bcvk#3` opened; swtpm branch `feat/swtpm-ci`
+  (commit `2cc8a75`) pushed to `yubi-OS/bcvk` and referenced on #3 — per the
+  "bcvk is referenced, never merged" doctrine, #3 stays open as the tracking issue (no merge).
+  yubiOS PR #34 (CI workflow integration side) merged June 26. A duplicate `feature/swtpm-ci`
+  branch + draft PR #4 from a parallel run were superseded (PR #4 closed); `feat/swtpm-ci`
+  is canonical and is what swu2f (#25) extends.
 
 ### BLOCKER-007: CONFIG_BPF_LSM=y not yet verified for #18 (`RestrictFileSystems=`)
 
