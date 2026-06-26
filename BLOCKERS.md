@@ -31,9 +31,8 @@ _Last updated: 2026-06-24. Maintained alongside TODO.md and ADR.md._
 - **Blocks:** #22 (deploy CI workflows to `.github/workflows/`)
 - **Why:** The API token cannot push files into `.github/workflows/`. GitHub requires
   the `workflow` scope for that path.
-- **Resolution:** Manual commit by Jenny. Files are staged at `yubiOS/2026/yubiOS-ci.yml`
-  per RULES.md convention.
-- **Workaround:** None automated.
+- **Resolution:** Commit with conn_.. you have onfile SU PAT
+- **Workaround:** Yes
 
 ### BLOCKER-002: #14 (v261 digest bump) must land before #15 and #18
 
