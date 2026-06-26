@@ -5,18 +5,20 @@ name: fetch-dhi-manifest
 # OCI manifest media type, which returns a per-arch (amd64) digest that cannot
 # run on arm64 runners. We now request the index types FIRST so the registry
 # returns the manifest-list digest, which auto-resolves per arch when pulled.
+#
+# Runs on the BARE runner (no container): the hardened dhi base ships no curl/
+# python3, and this is just a registry HTTPS query. AGENTS.md allows container
+# absent. The host ubuntu-24.04 image has curl + python3 preinstalled.
 
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   fetch:
     runs-on: ubuntu-24.04
-    container:
-      credentials:
-        username: 0mniteck42
-        password: ${{ secrets.DOCKER }}
-      image: docker://dhi.io/debian-base@sha256:62bc0610151db7155b7225f1a03c299bf109ab0b884da6777d1f808c7834d4ea # bootstrap pin (amd64 ok for this runner)
     steps:
       - name: Get trixie-debian13-dev INDEX (manifest-list) digest
         env:
@@ -26,7 +28,6 @@ jobs:
           TOKEN=$(curl -sf -u "0mniteck42:$DOCKER_PASS" \
             'https://dhi.io/token?service=registry.docker.io&scope=repository:debian-base:pull' \
             | python3 -c 'import sys,json; print(json.load(sys.stdin)["token"])')
-          # Request index/manifest-list media types FIRST (multi-arch), then fall back.
           echo "== HEAD (index media types preferred) =="
           curl -sI -H "Authorization: Bearer $TOKEN" \
             -H "Accept: application/vnd.oci.image.index.v1+json" \
@@ -39,4 +40,4 @@ jobs:
             -H "Accept: application/vnd.oci.image.index.v1+json" \
             -H "Accept: application/vnd.docker.distribution.manifest.list.v2+json" \
             "https://dhi.io/v2/debian-base/manifests/trixie-debian13-dev" \
-            | python3 -c 'import sys,json; d=json.load(sys.stdin); mt=d.get("mediaType",""); print("mediaType:",mt); [print(" -",m["platform"].get("os"),m["platform"].get("architecture"),m["digest"]) for m in d.get("manifests",[])] if "manifests" in d else print("NOT an index — single-arch manifest, no arm64 child")'
+            | python3 -c 'import sys,json; d=json.load(sys.stdin); print("mediaType:", d.get("mediaType","")); [print(" -", m["platform"].get("os"), m["platform"].get("architecture"), m["digest"]) for m in d.get("manifests",[])] if "manifests" in d else print("NOT an index - single-arch manifest, no arm64 child")'
