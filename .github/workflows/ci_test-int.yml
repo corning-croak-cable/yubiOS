@@ -539,6 +539,12 @@ jobs:
             -bios "${{ steps.image.outputs.flash }}" \
             -nographic -d guest_errors \
             -serial file:nw.log -serial file:optee.log || true
+          echo "=== QEMU serial output dump ===" || true
+          echo "--- nw.log (UART0/BL1/BL31/U-Boot) ---" || true
+          cat nw.log 2>/dev/null | head -60 || echo "(nw.log empty or missing)"
+          echo "--- optee.log (UART1/OP-TEE) ---" || true
+          cat optee.log 2>/dev/null | head -60 || echo "(optee.log empty or missing)"
+          echo "=== end serial dump ==="
           fail=0; touch optee.log nw.log
           grep -Eiq "early_ta_init.*${FTPM_UUID}|Early TA ${FTPM_UUID}" nw.log optee.log \
             && echo "PASS: fTPM Early TA at init" || { echo "::error::fTPM Early TA not at init"; fail=1; }
