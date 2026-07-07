@@ -1,5 +1,5 @@
 # yubiOS — TODO / Future Work
-_Last updated: July 7, 2026 (ARM64 Phase F: fork-CI matrix + INT integration ALL GREEN; fTPM e2e verified in QEMU both arches; StMM fold deferred to #41)_
+_Last updated: July 7, 2026 (ARM64 Phase F: INT fully restored and GREEN — StMM fold + MM_COMM + RPMB_FS back on; #41 fixed via CFG_STMM_VOLATILE_STORAGE)_
 
 ## High priority
 
@@ -28,7 +28,7 @@ Owned ARM64 fTPM trust-chain CI (ADR-018/019/020). Each component fork now has a
 - [x] R1 — `yubiOS.rego` build policy live + passing on the main CI build job
 - [x] V1 — `tests/vm/*.sh` wired into `ci_test-vm.yml` (`3f46cf0`), honest skips where HW/CTAP2-gated
 - [x] edk2-platforms forked into the org — supplies `PlatformStandaloneMmRpmb.dsc` → `BL32_AP_MM.fd` (C6 fork ships StMM core only)
-- [x] **INT** integration CI (`ci_test-int.yml`): **GREEN on both arches** (run 28894256274, commit `88522d0`) — Stage 1 (BL32_AP_MM.fd) + Stage 2 (OP-TEE fold + TF-A FIP) + Stage 3 (QEMU e2e: fTPM Early TA embedded, probed by U-Boot via device.pta, and functional — `tpm2 init/startup/self_test` → YUBIOS_TPM_OK). Debug campaign root causes (all documented in #41): U-Boot `CONFIG_EFI_MM_COMM_TEE` opened a session to PTA_STMM_UUID unconditionally (disabled, `d7edbdd`); fTPM's `TA_FLAG_DEVICE_ENUM_TEE_STORAGE_PRIVATE` hid it from U-Boot's device.pta scan (CI patches to plain DEVICE_ENUM); storage-less core makes libutee TEE_Panic the TA per GP spec (CI volatile-NV mode `TA_FTPM_VOLATILE_NV`, RAM-only). StMM-in-OP-TEE fold still disabled — tracked in #41. Follow-up: upstream volatile-NV as a real optee_ftpm build flag.
+- [x] **INT** integration CI (`ci_test-int.yml`): **GREEN on both arches, fully restored** (run 28903617073, commit `5476e1f`, July 7) — Stage 1 (BL32_AP_MM.fd) + Stage 2 (OP-TEE fold w/ StMM + fTPM + TF-A FIP) + Stage 3 (QEMU e2e: StMM loads at 0x40004000 with FVB init, fTPM Early TA probed + functional, `tpm2 init/startup/self_test` → YUBIOS_TPM_OK). #41 closed: root cause was missing `CFG_CORE_HEAP_SIZE=524288 CFG_TEE_RAM_VA_SIZE=0x00400000` plus QEMU-has-no-RPMB (OpTeeRpmbFv init fails → FixupPcd garbage → deref 0); fixed with those mem flags + `CFG_STMM_VOLATILE_STORAGE` (optee_os `feat/stmm-volatile-storage-ci` @ `440b10c`). fTPM `TA_FLAG_DEVICE_ENUM_TEE_STORAGE_PRIVATE` restored as production default; the QEMU lane opts out via `CFG_FTPM_VOLATILE_NV=y` (optee_ftpm `feat/volatile-nv-ci` @ `5e09cdb`). `CONFIG_EFI_MM_COMM_TEE=y` and `CFG_RPMB_FS=y` restored. All in-CI sed/python patches removed; CI-only behavior lives on the two unmerged feature branches pinned by SHA. Real hardware keeps RPMB-backed storage for both StMM and fTPM.
 
 ## Medium priority
 
