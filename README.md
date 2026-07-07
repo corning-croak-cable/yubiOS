@@ -123,20 +123,65 @@ Each step is skippable. Each script is independently re-runnable. See [ONBOARDIN
 
 ```
 yubiOS/
-├── Containerfile              # OCI image (bootc, Fedora base)
-├── mkosi.conf                 # mkosi build (particleos-style UKI + verity)
-├── assets/logo.png            # you're looking at it
+├── .github/workflows/           # CI: main build, ARM64 fTPM integration lanes, dhi manifest fetch
+│   ├── yubiOS-ci.yml               # primary build+test+publish pipeline (merge-manifest -> Docker Hub)
+│   ├── ci_test-vm.yml              # bcvk VM test suite (swtpm, swu2f)
+│   ├── ci_test-int.yml             # ARM64 secure-world integration orchestrator
+│   ├── ci_int_stmm.yml             # StandaloneMM (F1) lane
+│   ├── ci_int_optee_fip.yml        # OP-TEE + TF-A FIP fold (F2) lane
+│   ├── ci_int_qemu.yml             # QEMU e2e (F4) lane
+│   └── fetch-dhi-manifest.yml      # resolves dhi.io/debian-base INDEX digest
+├── assets/
+│   ├── logo.png                    # you're looking at it
+│   └── ci/vm-swtpm.conf            # swtpm drop-in for bcvk CI VMs
+├── mkosi.conf                   # mkosi build (particleos-style UKI + verity)
+├── mkosi.conf.d/
+│   ├── desktop/mkosi.conf          # GNOME desktop profile
+│   ├── minimal/mkosi.conf          # minimal profile
+│   ├── surface-x86/mkosi.conf      # Surface x86 profile
+│   ├── surface-arm64/mkosi.conf    # Surface ARM64 profile
+│   └── test/                       # TEST-only profile: swu2f in-guest CTAP2 authenticator
+│       ├── mkosi.conf
+│       └── install-swu2f-authenticator.sh
+├── Containerfile                # OCI image (bootc, Fedora base)
+├── yubiOS.rego                  # OPA/Rego supply-chain Build Policy
+├── renovate.json                # digest-tracking automation (ADR-015)
+├── refs/                        # per-PR test/implementation specs
+│   ├── v261-base-image.md
+│   ├── sbsign-pkcs11-validate.md
+│   ├── luks-fido2-e2e-test.md
+│   ├── bcvk-swtpm-ci.md
+│   └── arm64-ftpm-phase-f0.md
+├── tests/
+│   ├── unit/                       # bats unit tests (enroll-*, pam-u2f stack, lib)
+│   ├── fixtures/                   # lsblk fixtures for LUKS detection tests
+│   ├── vm/                         # bcvk VM test scripts (LUKS2 e2e, TPM PCR verify, ARM64 fTPM QEMU)
+│   ├── validate-pkcs11-uri.sh       # PKCS#11 URI validation for PIV slot 9c
+│   └── verify-uki-signature.sh      # UKI signature verification
 ├── usr/lib/
-│   ├── bootc/install/           # bootc install config (systemd-boot, DPS)
-│   ├── bootc/kargs.d/           # persistent kernel args
-│   ├── dracut.conf.d/           # fido2 dracut module for boot-time disk unlock
-│   ├── udev/rules.d/            # YubiKey hidraw + CCID uaccess rules
-│   ├── pam.d/                   # PAM U2F sudo config template
-│   ├── systemd/system/          # enrollment service + presets
-│   └── yubiOS/                  # enrollment scripts
-├── ADR.md                     # architecture decision records
-├── ONBOARDING.md              # step-by-step onboarding guide
-└── TODO.md                    # known gaps + future work
+│   ├── bootc/install/               # bootc install config (systemd-boot, DPS)
+│   ├── bootc/kargs.d/               # persistent kernel args
+│   ├── dracut.conf.d/               # fido2 + composefs dracut modules for boot-time unlock
+│   ├── udev/rules.d/                # YubiKey hidraw + CCID uaccess rules
+│   ├── pam.d/                       # PAM U2F sudo + system-auth config
+│   ├── repart/                      # systemd-repart first-boot partition definitions
+│   ├── systemd/system/              # enrollment service unit
+│   ├── systemd/system-preset/       # enrollment service preset
+│   ├── systemd/homed.conf.d/        # homed FIDO2 defaults
+│   └── yubiOS/                      # enrollment scripts (sb, luks, homed, ssh, pam, totp, gpg, largeblob, backup) + lib.sh
+├── ADR.md                       # architecture decision records
+├── ARCHITECTURE.md              # trust chain + build pipeline diagrams
+├── SPEC.md                      # consolidated architecture + use-case specification
+├── MISSION.md                   # project mission
+├── MITIGATE.md                  # attack-surface -> control mapping (Faux Phy threat model)
+├── FUTURE.md                    # post-launch ARM64-owned root of trust plan
+├── ONBOARDING.md                 # step-by-step onboarding guide
+├── PINNED.md                     # single source of truth for pinned digests/SHAs
+├── BLOCKERS.md                   # open issue dependency map
+├── TODO.md                       # known gaps + future work
+├── AGENTS.md                     # guidance for AI coding agents working on this org
+├── MAINTAINER.md                 # maintainer contact
+└── CITATION.md                   # citation + primary-source references
 ```
 
 ## Requirements
