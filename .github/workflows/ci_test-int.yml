@@ -399,11 +399,20 @@ jobs:
           # StMM-in-OP-TEE crash tracked separately, not blocking INT.
           STMM_ARG=""
           echo "::notice::StMM folding disabled (tracked issue: OP-TEE user-mode data-abort at 0x0) — fTPM-only OP-TEE BL32 this run"
+          # KNOWN ISSUE (2026-07-07, run 28884313325): CFG_RPMB_FS=y makes OP-TEE
+          # route RPMB storage through the StandaloneMM SP's OpteeRpmbFv driver
+          # (Variable Service UUID ed32d533-...) REGARDLESS of CFG_STMM_PATH — so
+          # even with StMM folding disabled above, OP-TEE still tried to open that
+          # SP at boot and failed (sys_open_ta_bin ldelf NOT_IMPLEMENTED, 0xffff0009)
+          # before ever reaching the fTPM Early TA probe. This lane only needs to
+          # prove fTPM+TF-A+OP-TEE boot, not RPMB-backed secure storage, so drop
+          # the RPMB FS backend entirely (CFG_RPMB_FS=n) — no storage backend means
+          # no implicit StMM SP dependency. Issue #41 tracks StMM-in-OP-TEE separately.
           make -C optee_os -j"$(nproc)" \
             PLATFORM="$OPTEE_PLATFORM" \
             CROSS_COMPILE64=aarch64-linux-gnu- \
             CROSS_COMPILE=arm-linux-gnueabihf- \
-            CFG_RPMB_FS=y CFG_REE_FS=n \
+            CFG_RPMB_FS=n CFG_REE_FS=n \
             CFG_EARLY_TA=y EARLY_TA_PATHS="$FTPM_TA" \
             CFG_CORE_DYN_SHM=y \
             $STMM_ARG \
