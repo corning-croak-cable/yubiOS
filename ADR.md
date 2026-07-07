@@ -743,3 +743,43 @@ CONFIG_EFI_CAPSULE_AUTHENTICATE=y  # Firmware update authentication
 - *Direct kernel boot from U-Boot (no UEFI)* — rejected (same as ADR-020): loses UEFI Secure Boot semantics and diverges from the x86-64 UKI/systemd-boot chain.
 
 **Source:** `yubi-OS/u-boot` defconfig inventory (2026-06-24), U-Boot EFI docs (v2026.01), ADR-018 (secure-world stack), ADR-019 (RK3588 as primary Path A target), ADR-020 (UEFI + StandaloneMM), [FUTURE.md](FUTURE.md).
+
+## ADR-022: Unified OCI Distribution — Per-Artifact Tags on 0mniteck/yubios
+
+**Date:** 2026-07-07  
+**Status:** Accepted — firmware tag implemented; installer tag accepted, implementation deferred until the CI mkosi job builds a full image  
+**Depends on:** ADR-006 (both mkosi and bootc build paths), ADR-012 (systemd-repart first boot), ADR-015 (pinned-digest bases), ADR-018/019/020 (ARM64 secure-world stack).
+
+**Context:** `docker.io/0mniteck/yubios` is the primary public distribution point, currently carrying one artifact: the multi-arch bootc OS image (`latest` + per-commit SHA tags). Two more build products now exist and need a home:
+
+1. **ARM64 firmware bundle** — TF-A FIP (BL31 + OP-TEE BL32 with StMM + fTPM folded in + U-Boot BL33), `flash.bin`, and `BL32_AP_MM.fd`, built and QEMU-validated end-to-end by `ci_test-int.yml`. This is what provisions the secure world on ARM64 targets before the OS ever boots.
+2. **mkosi-built disk image** — the DPS-partitioned GPT image with UKI that installs the base system, which then runs and tracks the bootc OCI image (`bootc switch` / `bootc upgrade`).
+
+The question: does each artifact get its own tag on the one repo, or do they live in separate registries/repos/release attachments?
+
+**Decision:** One repo, one tag per artifact class. `0mniteck/yubios` becomes the single distribution surface:
+
+| Tag | Artifact | Produced by | Status |
+|---|---|---|---|
+| `latest`, `<sha>` | bootc OS image (multi-arch OCI, bootable) | `yubiOS-ci.yml` (Docker_push dispatch) | live |
+| `firmware`, `firmware-<sha>` | ARM64 firmware bundle (FROM scratch, files under `/firmware/`) | `ci_test-int.yml` Stage 4, only after the QEMU e2e gate is green | live (this ADR) |
+| `installer`, `installer-<sha>` | mkosi disk image + UKI (FROM scratch, files under `/installer/`) | `yubiOS-ci.yml` mkosi job, once it builds a full image | accepted, deferred |
+
+**Why one repo with per-artifact tags:**
+
+1. **Unified install flow.** A provisioning host pulls everything from one address with one auth context: `firmware` flashes the ARM64 secure world, `installer` writes the disk, the installed system tracks `latest` via `bootc upgrade`. No cross-registry trust decisions, no release-page tarballs.
+2. **Same supply-chain perimeter.** PINNED.md, `yubiOS.rego`, SLSA provenance, and digest pinning already govern this repo. Adding registries multiplies the audit surface for zero gain.
+3. **OCI is the right container for non-OS artifacts too.** A `FROM scratch` image holding files is a plain OCI artifact: content-addressed, signable, mirrorable, and pullable with the same tooling (`docker create` + `docker cp`, or `crane export`) on any host. This is the same pattern bootc itself normalized: everything is an image.
+4. **Tags cannot collide with the OS image.** `firmware*` and `installer*` are disjoint namespaces from `latest`/`<sha>`; a client that pulls `latest` can never accidentally boot a firmware bundle (it has no OS content at all).
+5. **Gated publication.** The firmware tag is published only by the integration workflow after the QEMU e2e assertions pass — the tag semantically means "this firmware booted a measured system to YUBIOS_TPM_OK", not just "this compiled".
+
+**Firmware tag caveat (QEMU lane):** the currently published bundle targets `vexpress-qemu_armv8a` with `CFG_STMM_VOLATILE_STORAGE` + `CFG_FTPM_VOLATILE_NV` enabled, because QEMU virt has no RPMB (#41). Its `MANIFEST.txt` says so explicitly. Real-hardware firmware bundles (RK3588 boards, ADR-019) will publish under the same tag scheme once the hardware lane exists, with RPMB-backed storage and without the volatile flags — those flags are CI-only branches pinned by SHA, never merged (optee_os `feat/stmm-volatile-storage-ci`, optee_ftpm `feat/volatile-nv-ci`).
+
+**Installer tag deferral:** the CI mkosi job currently validates config only (`mkosi summary`) — building the full DPS disk image in CI needs loop devices + ~10GB scratch, which the current containerized job doesn't have. The tag scheme is decided now so the mkosi job can adopt it without another ADR when it grows a real image build (bare runner, same pattern as the firmware job).
+
+**Alternatives considered:**
+- *GitHub Releases for firmware/installer artifacts* — rejected: separate download path, no digest-addressed pulls, no policy/provenance reuse, and release assets aren't mirrorable with registry tooling.
+- *Separate Docker Hub repos (`0mniteck/yubios-firmware`, `0mniteck/yubios-installer`)* — rejected: multiplies repos to watch/sign/pin for artifacts that version together with the OS; tag namespacing on one repo carries the same information.
+- *ORAS artifact media types instead of FROM-scratch images* — deferred: cleaner OCI semantics, but Docker Hub UI + plain `docker pull` handling of custom artifact types is still uneven; FROM scratch works everywhere today. Revisit if/when we adopt cosign-signed referrers.
+
+**Source:** `ci_test-int.yml` Stage 4 (this commit), yubiOS-ci.yml push path, issue #41 resolution, ADR-018/019/020, bootc distribution model (ADR-006).
