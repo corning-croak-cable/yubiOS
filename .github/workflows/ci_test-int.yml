@@ -56,6 +56,11 @@ on:
         description: 'Why are you running this manually?'
         required: false
         default: 'manual'
+      Docker_push:
+        description: 'Push firmware bundle to Docker Hub (0mniteck/yubios:firmware)?'
+        type: boolean
+        required: false
+        default: false
 
 permissions:
   contents: read
@@ -599,3 +604,90 @@ jobs:
         if: steps.image.outputs.ready != '1'
         run: |
           echo "::notice title=QEMU e2e LOUD-SKIP::optee_fip (F2/T211) produced no fip/flash yet. Wired, no faked PASS."
+
+  # ===================================================================
+  # Stage 4 — Publish firmware bundle to Docker Hub (0mniteck/yubios:firmware)
+  # Runs only after the QEMU e2e gate is green on both arches, so the tag
+  # only ever carries firmware that passed the full integration assertion.
+  # Publishes the native arm64-built artifact set (the target payload is
+  # AARCH64 either way; the amd64 lane is a cross-build of the same bits).
+  # Triggered by: push to main (this workflow's path filter) or dispatch
+  # with Docker_push=true. FROM scratch — the image has no distro content,
+  # only in-run build artifacts from PINNED.md-pinned sources, so the
+  # yubiOS.rego --policy gate (which vets FROM inputs) has nothing to vet.
+  # ===================================================================
+  firmware-publish:
+    name: Stage 4 — Publish firmware bundle (0mniteck/yubios:firmware)
+    needs: qemu
+    if: >-
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_dispatch' && inputs.Docker_push == true)
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Download firmware artifacts (native arm64 build)
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
+        with:
+          name: fip-flash-arm64
+          path: art
+
+      - name: Assemble /firmware payload + MANIFEST
+        run: |
+          set -euxo pipefail
+          mkdir -p fw/firmware
+          find art -name fip.bin        -exec cp {} fw/firmware/ \; -quit
+          find art -name flash.bin      -exec cp {} fw/firmware/ \; -quit
+          find art -name bl1.bin        -exec cp {} fw/firmware/ \; -quit
+          find art -name BL32_AP_MM.fd  -exec cp {} fw/firmware/ \; -quit
+          find art -name u-boot.bin     -exec cp {} fw/firmware/ \; -quit
+          find art -name fip-info.txt   -exec cp {} fw/firmware/ \; -quit
+          find art -name 'tee-*_v2.bin' -exec cp {} fw/firmware/ \;
+          test -s fw/firmware/fip.bin
+          test -s fw/firmware/flash.bin
+          test -s fw/firmware/BL32_AP_MM.fd
+          {
+            echo "yubiOS ARM64 firmware bundle — QEMU-validated (vexpress-qemu_armv8a)"
+            echo "yubios_commit=${GITHUB_SHA}"
+            echo "workflow_run=${GITHUB_RUN_ID}"
+            echo "tfa_ref=${TFA_REF}"
+            echo "optee_os_ref=${OPTEE_OS_REF} (feat/stmm-volatile-storage-ci)"
+            echo "optee_ftpm_ref=${OPTEE_FTPM_REF} (feat/volatile-nv-ci)"
+            echo "uboot_ref=${UBOOT_REF}"
+            echo "edk2_ref=${EDK2_REF}"
+            echo "edk2_platforms_ref=${EDK2_PLATFORMS_REF}"
+            echo "ms_tpm_ref=${MS_TPM_REF}"
+            echo "ftpm_uuid=${FTPM_UUID}"
+            echo "platform=${OPTEE_PLATFORM}"
+            echo "NOTE: QEMU lane firmware. CFG_STMM_VOLATILE_STORAGE + CFG_FTPM_VOLATILE_NV"
+            echo "are enabled here because QEMU virt has no RPMB. Real-hardware builds keep"
+            echo "RPMB-backed storage for both StMM and the fTPM (ADR-018/019/020)."
+          } > fw/firmware/MANIFEST.txt
+          ls -l fw/firmware/
+
+      - name: Build firmware OCI artifact (FROM scratch)
+        run: |
+          set -euxo pipefail
+          cat > fw/Dockerfile <<'DOCKER'
+          FROM scratch
+          COPY firmware/ /firmware/
+          DOCKER
+          docker build \
+            --label "org.opencontainers.image.title=yubiOS ARM64 firmware bundle" \
+            --label "org.opencontainers.image.description=QEMU-validated TF-A FIP + OP-TEE (StMM+fTPM fold) + U-Boot BL33 + BL32_AP_MM.fd" \
+            --label "org.opencontainers.image.source=https://github.com/yubi-OS/yubiOS" \
+            --label "org.opencontainers.image.revision=${GITHUB_SHA}" \
+            -t "0mniteck/yubios:firmware" \
+            -t "0mniteck/yubios:firmware-${GITHUB_SHA}" \
+            fw
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER }}" | docker login -u 0mniteck42 --password-stdin
+
+      - name: Push firmware tags
+        run: |
+          set -euxo pipefail
+          docker push "0mniteck/yubios:firmware"
+          docker push "0mniteck/yubios:firmware-${GITHUB_SHA}"
+          docker logout
+
+      - name: Verify pushed tag
+        run: docker buildx imagetools inspect "0mniteck/yubios:firmware"
