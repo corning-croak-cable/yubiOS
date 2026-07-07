@@ -34,7 +34,10 @@ _Last updated: 2026-06-26 (PR-CI: #33+#38 pull_request CI GREEN, swu2f Layer 2 s
 - **Resolution:** Commit with conn_.. you have onfile SU PAT
 - **Workaround:** Yes
 
-### BLOCKER-002: #14 (v261 digest bump) must land before #15 and #18
+### BLOCKER-002: #14 (v261 digest bump) must land before #15 and #18 — RESOLVED (2026-06-26)
+
+> Resolved: PR #31 merged June 26. The digests quoted below are historical and have
+> since been superseded; [PINNED.md](PINNED.md) is the single source of truth.
 
 - **Blocks:** #15 (PR #27 `ConditionSecurity=measured-os`), #18 (PR #28 `RestrictFileSystems=`)
 - **Why:** Both directives are systemd 261 features. Current base image predates the
@@ -92,7 +95,9 @@ _Last updated: 2026-06-26 (PR-CI: #33+#38 pull_request CI GREEN, swu2f Layer 2 s
   branch + draft PR #4 from a parallel run were superseded (PR #4 closed); `feat/swtpm-ci`
   is canonical and is what swu2f (#25) extends.
 
-### BLOCKER-007: CONFIG_BPF_LSM=y not yet verified for #18 (`RestrictFileSystems=`)
+### BLOCKER-007: CONFIG_BPF_LSM=y not yet verified for #18 (`RestrictFileSystems=`) — RESOLVED (2026-06-26)
+
+> Resolved: CONFIG_BPF_LSM=y verified active on the live v261 base; PR #28 merged June 26.
 
 - **Blocks:** PR #28 (`feat/v261-restrict-filesystem`) being merge-ready
 - **Why:** `RestrictFileSystems=` is silently ignored if `CONFIG_BPF_LSM=y` is not
@@ -165,14 +170,7 @@ Two yubiOS branches had no open PR. Reconciled against live `main`:
 
 ---
 
-## Suggested merge sequence
+## Merge sequence
 
-1. **Verify new digest** — run systemd + pam-u2f checks above against `6a60ff82...`
-2. **Merge PR #31** (`feat/v261-base-image`) — digest bump + README 257→261
-3. **Merge PR #29** (`feat/sbsign-migration`) — sbsigntool removed (FinalizeScripts partial, follows after step 7)
-4. **Merge PR #30** (`feat/renovate-digest-tracking`) + install Renovate GitHub App
-5. **Merge PR #27** (`feat/v261-measured-os`) — ConditionSecurity=measured-os
-6. **Clear BLOCKER-007** (CONFIG_BPF_LSM check), then merge **PR #28** (`feat/v261-restrict-filesystem`)
-7. **Run PKCS#11 validation** (PR #32) with physical YubiKey, then complete FinalizeScripts in PR #29
-8. **Run e2e test** (PR #33) with YubiKey + bcvk
-9. **Manual:** deploy CI workflows (#22) — copy staged files to `.github/workflows/`
+The original suggested merge sequence was removed 2026-07-07: every step completed or
+was superseded (PRs #27–#31 merged June 26). TODO.md tracks current state.
