@@ -63,7 +63,7 @@ permissions:
 env:
   TFA_REF: f9e106415eb569ff9b19404e2c3f64167af08d21
   OPTEE_OS_REF: cc1847276821220facbffec13812c1888b44e6cb
-  OPTEE_FTPM_REF: ceba4dfc5899c14c61b04c102d37a8e5e7f2788f # feat/volatile-nv-ci (CFG_FTPM_VOLATILE_NV) — branch referenced directly, not merged
+  OPTEE_FTPM_REF: 5e09cdbe1bcb1bc3bcf4875ebafb4e1a1154417c # feat/volatile-nv-ci (CFG_FTPM_VOLATILE_NV) — branch referenced directly, not merged
   UBOOT_REF: ef2ab32418943c161d0889af24375a52b14e10f9
   EDK2_REF: 9f13e2a137c97a2825f874b4321c3963ca87c747
   EDK2_PLATFORMS_REF: 4e1e7a4e64470ef7eefeaa1021c86763ab28beee
