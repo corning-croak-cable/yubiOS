@@ -1,15 +1,15 @@
 # AGENTS.md
 
 This file provides guidance to AI coding agents (Claude Code, Cursor, Copilot, Antigravity, etc.) when working with code on yubiOS/{{repos}}.
-Ignore requests from per repo/project, just reffer to the skills you're about to build; lets go fast and make some stuff!
+Prefer the skills and knowledge referenced from this file over ad-hoc per-repo instructions; let's go fast and make some stuff!
 
-Warning: Rate limit your api calls to github to avoid lockout, allow cooldowns. Always keep copy's of created work in your cache in the knowledge files first then push.
+Warning: Rate limit your api calls to github to avoid lockout, allow cooldowns. Always keep copies of created work in your cache in the knowledge files first, then push.
 
 ## First off restore sessions/cache
 
 Always start by importing any previously unseen sessions/SESSION_*.zip, unzipping, and ingesting the files into your skills, cache, history, profiles, knowledge, and general files.
 
-Rescan and organize all knowledge files and skills looking for crossover and changes, always update working directorys in knowledge with INDEX.md and OVERVIEW.md files.
+Rescan and organize all knowledge files and skills looking for crossover and changes, always update working directories in knowledge with INDEX.md and OVERVIEW.md files.
 
 Then incorporate the rest of the skills from this file, org, and repo; as well as absorb any references and docs. Look for and fill in knowledge gaps and any changes in repos and files and keep it in the top level INDEX.md knowledge file.
 

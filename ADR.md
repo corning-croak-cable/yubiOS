@@ -76,9 +76,15 @@ Requires FIDO2 PIN + touch at boot. Strongest available option without biometric
 FIDO2. This is the only escape hatch if the YubiKey is lost or damaged.
 Print the recovery key and store it physically offline.
 
-**Boot phase binding:** The DEK is sealed to PCR 11 phase word `initrd-enter`.
-Once the boot phase transitions (`initrd-leave` measured), the DEK can no longer be
-unsealed from userspace — protects against post-boot extraction.
+**Boot phase binding (TPM-present systems only):** On hardware with a TPM (or the
+yubiOS-owned ARM64 fTPM, ADR-018), the DEK can additionally be sealed to PCR 11 phase
+word `initrd-enter`; once `initrd-leave` is measured it can no longer be unsealed from
+userspace, protecting against post-boot extraction. On the no-TPM configuration this
+layer does not apply: FIDO2 hmac-secret has no PCR-sealing mechanism, and the
+post-boot guarantee rests on the key never being stored at rest (it is derived per-boot
+from the YubiKey with PIN + touch). This is consistent with the no-PCR-binding rationale
+above, which concerns PCR *hash* policies; phase-word sealing is a separate, optional,
+TPM-dependent layer.
 
 **Dracut:** The `fido2` dracut module must be enabled for FIDO2 unlock at boot.
 This ships in `usr/lib/dracut.conf.d/50-yubiOS-fido2.conf`.
@@ -250,7 +256,7 @@ handle all mount discovery at boot.
 **Partition layout (shipped image):**
 
     (1) ESP              — systemd-boot + UKI
-    (2) /usr A           — squashfs, immutable, Verity-protected, label: yubiOS_<ver>
+    (2) /usr A           — erofs, immutable, Verity-protected, label: yubiOS_<ver>
     (3) /usr A verity    — Merkle tree data
     (4) /usr A sig       — PKCS#7 signature of Verity root hash
 
@@ -447,6 +453,11 @@ mutable tag that silently pulls different content on each build. This creates tw
 **Trade-off:** Digest pinning means security patches in the base image require an
 explicit digest bump (a commit). This is intentional — every base change is auditable,
 and automated tooling handles the operational overhead.
+
+**Amendment (2026-07-07):** The digest shown in the Decision block above is historical
+and has since rotated out of quay (404). Do not copy digests from this ADR;
+[PINNED.md](PINNED.md) is the single source of truth for the current `fedora-bootc:45`
+index digest.
 
 ---
 
