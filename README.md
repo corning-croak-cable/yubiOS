@@ -196,38 +196,43 @@ yubiOS/
 
 ## Design decisions
 
-```
-  quay.io/fedora/fedora-bootc:45  @sha256 (pinned base — ADR-015; digest in PINNED.md)
-                 |
-        +--------+---------------------+
-        v Containerfile                v mkosi --profile yubios
-  rootless docker buildx          UKI + dm-verity, signed via
-  --policy yubiOS.rego            YubiKey PIV slot 9c (PKCS#11)
-  (supply-chain gate)                  |
-        +--------+---------------------+
-                 v   multi-arch OCI image  (linux/amd64 + linux/arm64)
-        yubiOS-ci.yml . merge-manifest . SLSA provenance + SBOM attested
-                 |  docker push
-                 v
-   +-------------------------------------------------+
-   | docker.io/0mniteck/yubios:latest                |  <== PRIMARY DOWNLOAD
-   | (+ immutable :<commit-sha> per build)           |
-   +-------------------------------------------------+
-                 |  pull
-   +-------------+------------------+---------------------------------+
-   v bootc install                  v bootc switch + upgrade          v bcvk
-     to-disk (bare metal)             day-2 atomic update              ephemeral VM / native-to-disk
-   |                                                                   (test loop, USB YubiKey passthrough)
-   v  first boot -> yubiOS-enroll.service -> YubiKey tap
-   +-------------+----------------------+------------------------------+
-   v PIV slot 9c (CCID)                 v FIDO2 (hidraw)               v systemd-homed
-  Secure Boot signing                 LUKS2 disk unlock              LUKS2 /home
-  (systemd-sbsign / PKCS#11)          SSH ed25519-sk, pam-u2f         +- SLOT 0  FIDO2 unlock
-                                                                      +- SLOT 1  recovery key
+```mermaid
+graph TD
+    BASE["quay.io/fedora/fedora-bootc:45\n@sha256 (pinned base — ADR-015)\ndigest in PINNED.md"]
+    CF["Containerfile\nrootless docker buildx\n--policy yubiOS.rego\n(supply-chain gate)"]
+    MKOSI["mkosi --profile yubios\nUKI + dm-verity, signed via\nYubiKey PIV slot 9c (PKCS#11)"]
+    OCI["multi-arch OCI image\nlinux/amd64 + linux/arm64"]
+    CI["yubiOS-ci.yml . merge-manifest\nSLSA provenance + SBOM attested"]
+    REG["docker.io/0mniteck/yubios:latest\n+ immutable :&lt;commit-sha&gt; per build"]
+    INSTALL["bootc install to-disk\n(bare metal)"]
+    UPGRADE["bootc switch + upgrade\nday-2 atomic update"]
+    BCVK["bcvk\nephemeral VM / native-to-disk\n(test loop, USB YubiKey passthrough)"]
+    ENROLL["first boot\nyubiOS-enroll.service\nYubiKey tap"]
+    PIV["PIV slot 9c (CCID)\nSecure Boot signing\n(systemd-sbsign / PKCS#11)"]
+    FIDO["FIDO2 (hidraw)\nLUKS2 disk unlock\nSSH ed25519-sk, pam-u2f"]
+    HOMED["systemd-homed\nLUKS2 /home\nSLOT 0 FIDO2 unlock\nSLOT 1 recovery key"]
+
+    BASE --> CF
+    BASE --> MKOSI
+    CF --> OCI
+    MKOSI --> OCI
+    OCI --> CI
+    CI -->|docker push| REG
+    REG -->|pull| INSTALL
+    REG -->|pull| UPGRADE
+    REG -->|pull| BCVK
+    INSTALL --> ENROLL
+    ENROLL --> PIV
+    ENROLL --> FIDO
+    ENROLL --> HOMED
+
+    style REG fill:#ff1493,color:#fff
+    style ENROLL fill:#ff1493,color:#fff
+    style PIV fill:#0d6e0d,color:#fff
+    style FIDO fill:#0d6e0d,color:#fff
+    style HOMED fill:#0d6e0d,color:#fff
+    style CI fill:#8b4513,color:#fff
 ```
 
-
-```
 All decisions are recorded in [ADR.md](ADR.md) with sources.
 The short version: TPM replaced by YubiKey everywhere it can be.
-```
