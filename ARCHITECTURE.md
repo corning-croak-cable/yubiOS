@@ -22,7 +22,7 @@ graph TD
     LUKS["🔐 root filesystem\nLUKS2 btrfs\nFIDO2 hmac-secret enrolled"]
     HOMED["🏠 systemd-homed\nper-user LUKS2 btrfs\nFIDO2 per user"]
     YK["🔑 YubiKey 5\nPhysical possession required"]
-    PCR["TPM PCR 11\nboot phases measured\ninitrd-enter to complete"]
+    PCR["PCR 11 (TPM/fTPM, if present)\nboot phases measured\ninitrd-enter to complete"]
 
     FW ---|validates + measures| SDB
     SDB ---|picks newest UKI\nvalidates PE signature| UKI
@@ -85,11 +85,11 @@ Single OCI image. Three deployment paths.
 
 ```mermaid
 graph LR
-    BASE["fedora-bootc:45\n@sha256:5799803..."]
+    BASE["fedora-bootc:45\ndigest-pinned, see PINNED.md"]
     CF["Containerfile\nyubiOS packages + usr/ overlay"]
     REGO["yubiOS.rego\nOPA/Rego Build Policy\nisCanonical + dhi.io registry"]
     OCI["OCI Image\nyubiOS:latest"]
-    REG["dhi.io/yubi-OS/yubiOS"]
+    REG["docker.io/0mniteck/yubios\n:latest + immutable :commit-sha"]
 
     BASE -->|FROM digest-pinned| CF
     CF -->|docker buildx build\n--policy strict=true\n--attest provenance,sbom| REGO
@@ -115,7 +115,7 @@ graph LR
 graph LR
     subgraph SHIP["Shipped image — 2 partitions"]
         ESP["1 ESP\nvFAT /efi\nsystemd-boot + UKI"]
-        USRA["2 /usr A\nsquashfs ro\ndm-verity + PKCS7 sig\nyubiOS_0.x"]
+        USRA["2 /usr A\nerofs ro\ndm-verity + PKCS7 sig\nyubiOS_0.x"]
         VERTA["3 /usr A verity\nMerkle tree"]
         SIGA["4 /usr A sig\nPKCS7 of root hash"]
     end
