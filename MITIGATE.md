@@ -31,7 +31,7 @@ yubiOS is built on the principle that *every component must be cryptographically
 | Signed UKI (SecureBoot) | Any bootpath deviating from the signed UKI fails SecureBoot validation before yubiOS userspace runs. | **Block at boot** |
 | `ConditionSecurity=measured-os` (v261) | Enrollment wizard refuses to run if measured-boot semantics are not satisfied. Altered PCR state fails this condition. | **Gate** |
 
-**Residual risk:** OEM firmware modified before SecureBoot key enrollment is inherited. Mitigation: `bootctl enroll-keys` to replace OEM Secure Boot keys. chipsec portable service (TODO #15) for firmware-level anomaly detection.
+**Residual risk:** OEM firmware modified before SecureBoot key enrollment is inherited. Mitigation: `bootctl enroll-keys` to replace OEM Secure Boot keys. chipsec portable service (#24) for firmware-level anomaly detection.
 
 ---
 
@@ -185,7 +185,7 @@ yubiOS is built on the principle that *every component must be cryptographically
 
 | Gap | Reason | Path Forward |
 |---|---|---|
-| OEM ROM Absolute Persistence (Computrace) | Firmware in UEFI ROM runs before SecureBoot chain starts | Reflash firmware + custom SecureBoot key enrollment. chipsec at first boot (TODO #15). |
+| OEM ROM Absolute Persistence (Computrace) | Firmware in UEFI ROM runs before SecureBoot chain starts | Reflash firmware + custom SecureBoot key enrollment. chipsec at first boot (#24). |
 | Hardware radio ignoring OS power commands | Hardware-wired TX/RX below the OS layer | Hardware selection: open-firmware devices (e.g. Intel AX210 without backdoored microcode) |
 | Novel kernel CVEs (dirtyfrag-class) | Requires upstream kernel patch | Automated fedora-bootc:45 digest bumps (Renovate, ADR-015) |
 | qcom,dload on Qualcomm ARM64 hardware | dm-verity blocks library substitution, but Qualcomm firmware sideload runs below the Merkle tree check. Risk is present on Qualcomm-based ARM64 boards. | Prefer non-Qualcomm ARM64 hardware (Ampere, RPi 5, Juno). Board matrix in ADR-017. |
