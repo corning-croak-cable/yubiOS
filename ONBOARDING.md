@@ -15,7 +15,7 @@
 | | |
 |---|---|
 | YubiKey 5 series | firmware ≥ 5.2.3 |
-| systemd | ≥ 248 |
+| systemd | **≥ 261** (ADR-016) |
 | OpenSSH | ≥ 8.2 |
 | pam-u2f | **≥ 1.3.1** (CVE-2025-23013) |
 
@@ -58,7 +58,7 @@ Exports `yubiOS-sb.cer` for UEFI enrollment.
 
 **UEFI enrollment:**
 1. Copy `yubiOS-sb.cer` to USB or `/efi/`
-2. Volume Up + Power → Surface UEFI
+2. Enter firmware setup (commonly F2 / Del / Esc at power-on; on Surface: Volume Up + Power)
 3. Security → Secure Boot → Reset to Setup Mode
 4. Enroll Platform Key from file → `yubiOS-sb.cer`
 5. Re-enable Secure Boot
