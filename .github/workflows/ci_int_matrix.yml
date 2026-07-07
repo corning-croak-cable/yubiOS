@@ -1,0 +1,242 @@
+name: ci_int_matrix
+
+# yubiOS StMM-in-OP-TEE DIAGNOSTIC MATRIX round 4 (2026-07-07) — temporary lane,
+# delete when the StMM fold is green in ci_test-int.yml.
+#
+# GOAL: fix issue #41 (OP-TEE "User mode data-abort at address 0x0" when
+# CFG_STMM_PATH folds the edk2-built BL32_AP_MM.fd), so CFG_STMM_PATH,
+# CONFIG_EFI_MM_COMM_TEE, and TA_FLAG_DEVICE_ENUM_TEE_STORAGE_PRIVATE can be
+# restored together.
+#
+# PRIME HYPOTHESIS (from upstream OP-TEE .github/workflows/ci.yml line ~289):
+# upstream's only CFG_STMM_PATH build on vexpress-qemu_armv8a passes
+#   CFG_CORE_HEAP_SIZE=524288 CFG_TEE_RAM_VA_SIZE=0x00400000
+# which we never did. StMM is a ~2.4MB uncompressed image + 402-page heap +
+# buffers carved from OP-TEE core memory; the platform defaults are too small.
+# (Upstream never BOOTS its .fd — it's /dev/urandom, build-only — so this
+# round boot-tests the real fd. Boot ABI generations match: OP-TEE cc18472
+# stmm_sp.c uses FF-A v1.1 boot info + HOB list; our edk2 9f13e2a entry point
+# uses ArmFfaStandaloneMmCoreLib. Memory sizing is the differentiator.)
+#
+# Variants:
+#   z1-stmm-rpmb    StMM fold + mem flags + CFG_RPMB_FS=y, MM_COMM off — does StMM boot clean?
+#   z2-stmm-mmcomm  z1 + CONFIG_EFI_MM_COMM_TEE=y — does U-Boot's Variable Service session work?
+#   z3-stmm-nostorage  StMM fold + mem flags, CFG_RPMB_FS=n — isolate whether StMM boot needs RPMB.
+#
+# All variants: fTPM from feat/volatile-nv-ci (CFG_FTPM_VOLATILE_NV=y), debug
+# log level, FULL serial dumps. BL32_AP_MM.fd downloaded from the latest green
+# ci_test-int run (Stage 1 artifact) instead of rebuilding edk2 per job.
+# amd64 only. Jobs never fail on assertions — evidence collection.
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/ci_int_matrix.yml']
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Why are you running this manually?'
+        required: false
+        default: 'manual'
+
+permissions:
+  contents: read
+  actions: read
+
+env:
+  TFA_REF: f9e106415eb569ff9b19404e2c3f64167af08d21
+  OPTEE_OS_REF: cc1847276821220facbffec13812c1888b44e6cb
+  OPTEE_FTPM_REF: ceba4dfc5899c14c61b04c102d37a8e5e7f2788f # feat/volatile-nv-ci
+  UBOOT_REF: ef2ab32418943c161d0889af24375a52b14e10f9
+  MS_TPM_REF: 98b60a44aba79b15fcce1c0d1e46cf5918400f6a
+  FTPM_UUID: bc50d971-d4c9-42c4-82cb-343fb7f37896
+  OPTEE_PLATFORM: vexpress-qemu_armv8a
+  MBEDTLS_REF: mbedtls-3.6.6
+  BOOT_TIMEOUT: '150'
+  STMM_MEM_FLAGS: 'CFG_CORE_HEAP_SIZE=524288 CFG_TEE_RAM_VA_SIZE=0x00400000'
+
+jobs:
+  variant:
+    name: ${{ matrix.variant }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - variant: z1-stmm-rpmb
+            storage: 'CFG_RPMB_FS=y CFG_REE_FS=n'
+            mmcomm: 'n'
+          - variant: z2-stmm-mmcomm
+            storage: 'CFG_RPMB_FS=y CFG_REE_FS=n'
+            mmcomm: 'y'
+          - variant: z3-stmm-nostorage
+            storage: 'CFG_RPMB_FS=n CFG_REE_FS=n'
+            mmcomm: 'n'
+    steps:
+      - name: Install toolchain + QEMU
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf \
+            python3 python3-venv python3-dev python3-pyelftools \
+            python3-cryptography python3-setuptools \
+            device-tree-compiler openssl libssl-dev libgnutls28-dev \
+            bison flex bc uuid-dev swig git ca-certificates \
+            qemu-system-arm qemu-utils ipxe-qemu
+
+      - name: Download BL32_AP_MM.fd from latest green ci_test-int run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euxo pipefail
+          rid=$(gh run list -R "$GITHUB_REPOSITORY" --workflow ci_test-int.yml \
+                  --status success -L 1 --json databaseId -q '.[0].databaseId')
+          test -n "$rid"
+          gh run download "$rid" -R "$GITHUB_REPOSITORY" -n BL32_AP_MM-amd64 -D stmm_dl
+          fd=$(find stmm_dl -name 'BL32_AP_MM.fd' -print -quit)
+          test -n "$fd"
+          cp "$fd" "$GITHUB_WORKSPACE/BL32_AP_MM.fd"
+          ls -l "$GITHUB_WORKSPACE/BL32_AP_MM.fd"
+          echo "STMM_FD=$GITHUB_WORKSPACE/BL32_AP_MM.fd" >> "$GITHUB_ENV"
+
+      - name: Build U-Boot BL33 (variant MM_COMM)
+        run: |
+          set -euxo pipefail
+          git clone --no-tags https://github.com/yubi-OS/u-boot u-boot
+          git -C u-boot checkout "$UBOOT_REF"
+          cat > u-boot/yubios_ftpm.config <<'EOF'
+          CONFIG_TEE=y
+          CONFIG_OPTEE=y
+          CONFIG_TPM=y
+          CONFIG_TPM_V2=y
+          CONFIG_TPM2_FTPM_TEE=y
+          CONFIG_CMD_TPM=y
+          CONFIG_EFI_LOADER=y
+          CONFIG_EFI_TCG2_PROTOCOL=y
+          CONFIG_HASH=y
+          CONFIG_MEASURED_BOOT=y
+          CONFIG_BOOTDELAY=1
+          CONFIG_BOOTCOMMAND="tpm2 init && tpm2 startup TPM2_SU_CLEAR && tpm2 self_test full && echo YUBIOS_TPM_OK; bootefi bootmgr"
+          # CONFIG_UNIT_TEST is not set
+          EOF
+          if [ "${{ matrix.mmcomm }}" = "y" ]; then
+            echo 'CONFIG_EFI_MM_COMM_TEE=y' >> u-boot/yubios_ftpm.config
+          else
+            echo '# CONFIG_EFI_MM_COMM_TEE is not set' >> u-boot/yubios_ftpm.config
+          fi
+          cat u-boot/yubios_ftpm.config
+          make -C u-boot CROSS_COMPILE=aarch64-linux-gnu- ARCH=arm qemu_arm64_defconfig
+          ./u-boot/scripts/kconfig/merge_config.sh -m -O u-boot u-boot/.config u-boot/yubios_ftpm.config
+          make -C u-boot CROSS_COMPILE=aarch64-linux-gnu- ARCH=arm olddefconfig
+          grep -E 'CONFIG_EFI_MM_COMM_TEE|CONFIG_BOOTCOMMAND|CONFIG_CMD_TPM' u-boot/.config || true
+          make -C u-boot -j"$(nproc)" CROSS_COMPILE=aarch64-linux-gnu- ARCH=arm
+          test -f u-boot/u-boot.bin
+          echo "BL33_BIN=$GITHUB_WORKSPACE/u-boot/u-boot.bin" >> "$GITHUB_ENV"
+
+      - name: OP-TEE pass 1 — TA dev kit
+        run: |
+          set -euxo pipefail
+          git clone --no-tags https://github.com/yubi-OS/optee_os optee_os
+          git -C optee_os checkout "$OPTEE_OS_REF"
+          make -C optee_os -j"$(nproc)" \
+            PLATFORM="$OPTEE_PLATFORM" \
+            CROSS_COMPILE64=aarch64-linux-gnu- \
+            CROSS_COMPILE=arm-linux-gnueabihf- \
+            ${{ matrix.storage }} CFG_EARLY_TA=y \
+            $STMM_MEM_FLAGS \
+            CFG_TEE_CORE_LOG_LEVEL=3 CFG_TEE_TA_LOG_LEVEL=3 \
+            ta_dev_kit
+          devkit=$(find "$GITHUB_WORKSPACE/optee_os/out" -type d -name 'export-ta_arm64' -print -quit)
+          test -f "$devkit/mk/ta_dev_kit.mk"
+          echo "TA_DEV_KIT_DIR=$devkit" >> "$GITHUB_ENV"
+
+      - name: Build fTPM TA (feat/volatile-nv-ci, CFG_FTPM_VOLATILE_NV=y)
+        run: |
+          set -euxo pipefail
+          git clone --no-tags https://github.com/yubi-OS/optee_ftpm optee_ftpm
+          git -C optee_ftpm checkout "$OPTEE_FTPM_REF"
+          git clone --no-tags https://github.com/yubi-OS/ms-tpm-20-ref ms-tpm-20-ref
+          git -C ms-tpm-20-ref checkout "$MS_TPM_REF"
+          make -C optee_ftpm -j"$(nproc)" \
+            CFG_FTPM_VOLATILE_NV=y \
+            TA_DEV_KIT_DIR="$TA_DEV_KIT_DIR" \
+            CFG_MS_TPM_20_REF="$GITHUB_WORKSPACE/ms-tpm-20-ref" \
+            CROSS_COMPILE_ta_arm64=aarch64-linux-gnu- \
+            CFG_ARM64_ta_arm64=y
+          stripped=$(find optee_ftpm -name "${FTPM_UUID}.stripped.elf" -print -quit)
+          test -n "$stripped"
+          echo "FTPM_TA=$GITHUB_WORKSPACE/$stripped" >> "$GITHUB_ENV"
+
+      - name: OP-TEE pass 2 — final BL32 (StMM fold + fTPM + upstream mem flags)
+        run: |
+          set -euxo pipefail
+          make -C optee_os -j"$(nproc)" \
+            PLATFORM="$OPTEE_PLATFORM" \
+            CROSS_COMPILE64=aarch64-linux-gnu- \
+            CROSS_COMPILE=arm-linux-gnueabihf- \
+            ${{ matrix.storage }} \
+            CFG_EARLY_TA=y EARLY_TA_PATHS="$FTPM_TA" \
+            CFG_CORE_DYN_SHM=y \
+            $STMM_MEM_FLAGS \
+            CFG_STMM_PATH="$STMM_FD" \
+            CFG_TEE_CORE_LOG_LEVEL=3 CFG_TEE_TA_LOG_LEVEL=3 \
+            all
+          h=$(find optee_os/out -name tee-header_v2.bin -print -quit)
+          p=$(find optee_os/out -name tee-pager_v2.bin -print -quit)
+          x=$(find optee_os/out -name tee-pageable_v2.bin -print -quit)
+          test -n "$h" && test -n "$p" && test -n "$x"
+          echo "BL32_HDR=$GITHUB_WORKSPACE/$h"   >> "$GITHUB_ENV"
+          echo "BL32_PAGER=$GITHUB_WORKSPACE/$p" >> "$GITHUB_ENV"
+          echo "BL32_PAGEABLE=$GITHUB_WORKSPACE/$x" >> "$GITHUB_ENV"
+          ls -l "$h" "$p" "$x"
+
+      - name: TF-A FIP
+        run: |
+          set -euxo pipefail
+          git clone --no-tags https://github.com/yubi-OS/arm-trusted-firmware arm-trusted-firmware
+          git -C arm-trusted-firmware checkout "$TFA_REF"
+          git clone --no-tags --branch "$MBEDTLS_REF" https://github.com/Mbed-TLS/mbedtls mbedtls
+          make -C arm-trusted-firmware -j"$(nproc)" \
+            CROSS_COMPILE=aarch64-linux-gnu- \
+            PLAT=qemu ARCH=aarch64 \
+            SPD=opteed \
+            BL32="$BL32_HDR" BL32_EXTRA1="$BL32_PAGER" BL32_EXTRA2="$BL32_PAGEABLE" \
+            BL32_RAM_LOCATION=tdram \
+            BL33="$BL33_BIN" \
+            TRUSTED_BOARD_BOOT=1 GENERATE_COT=1 CREATE_KEYS=1 \
+            MBEDTLS_DIR="$GITHUB_WORKSPACE/mbedtls" \
+            DEBUG=1 \
+            all fip
+          bl1=$(find arm-trusted-firmware/build -name bl1.bin -print -quit)
+          fip=$(find arm-trusted-firmware/build -name fip.bin -print -quit)
+          test -n "$bl1" && test -n "$fip"
+          dd if="$bl1" of=flash.bin bs=4096 conv=notrunc
+          dd if="$fip" of=flash.bin seek=64 bs=4096 conv=notrunc
+          ls -l flash.bin
+
+      - name: QEMU boot + FULL evidence dump
+        run: |
+          set -uxo pipefail
+          timeout "$BOOT_TIMEOUT" qemu-system-aarch64 \
+            -M virt,secure=on -cpu max -m 2048 \
+            -bios flash.bin \
+            -nographic -d guest_errors \
+            -serial file:nw.log -serial file:optee.log || true
+          touch nw.log optee.log
+          echo "=================== FULL nw.log (normal world / U-Boot) ==================="
+          wc -l nw.log
+          sed -n '1,400p' nw.log
+          echo "=================== FULL optee.log (secure world) ==================="
+          wc -l optee.log
+          sed -n '1,400p' optee.log
+          echo "=================== MATRIX RESULT ${{ matrix.variant }} ==================="
+          r() { grep -Eiq "$2" nw.log optee.log && echo "$1=PASS" || echo "$1=FAIL"; }
+          rneg() { grep -Eiq "$2" nw.log optee.log && echo "$1=FAIL" || echo "$1=PASS"; }
+          rneg B1_no_stmm_crash "data-abort|TA panicked|ldelf failed"
+          r B2_stmm_loaded "stmm|StandaloneMm|STMM"
+          r B3_ftpm_ok "YUBIOS_TPM_OK"
+          rneg B4_no_tpm_missing "Missing TPMv2 device|Couldn't set TPM"
+          echo "--- errors/panics/aborts observed: ---"
+          grep -Ei "E/TC|E/LD|panic|abort|data-abort|assert|Synchronous" nw.log optee.log | head -30 || echo "(none)"
+          echo "=================== END MATRIX RESULT ==================="
