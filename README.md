@@ -152,7 +152,7 @@ yubiOS/
 ## Design decisions
 
 ```
-  quay.io/fedora/fedora-bootc:45  @sha256 (pinned base — ADR-003)
+  quay.io/fedora/fedora-bootc:45  @sha256 (pinned base — ADR-015; digest in PINNED.md)
                  |
         +--------+---------------------+
         v Containerfile                v mkosi --profile yubios
