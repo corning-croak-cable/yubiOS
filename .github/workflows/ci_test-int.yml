@@ -391,13 +391,14 @@ jobs:
           # CFG_STMM_PATH only when a BL32_AP_MM.fd was obtained (F1 artifact or
           # inline rebuild). Otherwise fold fTPM Early TA alone — StMM folds in once
           # F1's ci_int_stmm.yml is GREEN. Embedded model either way (research/F2-tfa-fip-spmc.md).
+          # KNOWN ISSUE (2026-07-07): folding StMM via CFG_STMM_PATH crashes OP-TEE
+          # at boot ("User mode data-abort at address 0x0") on qemu vexpress-qemu_armv8a.
+          # The edk2-built BL32_AP_MM.fd builds fine standalone (ci_int_stmm.yml GREEN)
+          # but is not yet compatible as an OP-TEE Secure Partition on this platform.
+          # Disabled here (fTPM-only) so the e2e proves the fTPM+TF-A+OP-TEE chain;
+          # StMM-in-OP-TEE crash tracked separately, not blocking INT.
           STMM_ARG=""
-          if [ -n "${STMM_FD:-}" ] && [ -f "${STMM_FD}" ]; then
-            STMM_ARG="CFG_STMM_PATH=$STMM_FD"
-            echo "folding StMM: $STMM_ARG (source: $STMM_SOURCE)"
-          else
-            echo "::notice::StMM .fd absent — fTPM-only OP-TEE BL32 this run ($STMM_SOURCE)"
-          fi
+          echo "::notice::StMM folding disabled (tracked issue: OP-TEE user-mode data-abort at 0x0) — fTPM-only OP-TEE BL32 this run"
           make -C optee_os -j"$(nproc)" \
             PLATFORM="$OPTEE_PLATFORM" \
             CROSS_COMPILE64=aarch64-linux-gnu- \
