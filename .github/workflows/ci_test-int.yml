@@ -255,7 +255,16 @@ jobs:
           CONFIG_TPM_V2=y
           CONFIG_TPM2_FTPM_TEE=y
           CONFIG_EFI_LOADER=y
-          CONFIG_EFI_MM_COMM_TEE=y
+          # KNOWN ISSUE (2026-07-07, run 28888474517): CONFIG_EFI_MM_COMM_TEE=y makes
+          # U-Boot's own EFI variable driver (lib/efi_loader/efi_variable_tee.c,
+          # get_connection()) open a TEE session to PTA_STMM_UUID at EFI subsystem
+          # init — completely independent of the OP-TEE-side build config (CFG_STMM_PATH
+          # / CFG_RPMB_FS were already off). Since no StMM SP is folded into OP-TEE,
+          # that session request fails ldelf sys_open_ta_bin (0xffff0009) before the
+          # fTPM Early TA is ever probed. Disabled here; CONFIG_TPM2_FTPM_TEE (fTPM
+          # driver) is unrelated and unaffected. Re-enable once StMM-in-OP-TEE (#41)
+          # is fixed.
+          # CONFIG_EFI_MM_COMM_TEE is not set
           CONFIG_EFI_TCG2_PROTOCOL=y
           CONFIG_HASH=y
           CONFIG_MEASURED_BOOT=y
