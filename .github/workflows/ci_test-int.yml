@@ -62,7 +62,7 @@ permissions:
 
 env:
   TFA_REF: f9e106415eb569ff9b19404e2c3f64167af08d21
-  OPTEE_OS_REF: cc1847276821220facbffec13812c1888b44e6cb
+  OPTEE_OS_REF: 440b10c3f9b1c8501f2550e282ae071bb5424972 # feat/stmm-volatile-storage-ci (CFG_STMM_VOLATILE_STORAGE) — branch referenced directly, not merged
   OPTEE_FTPM_REF: 5e09cdbe1bcb1bc3bcf4875ebafb4e1a1154417c # feat/volatile-nv-ci (CFG_FTPM_VOLATILE_NV) — branch referenced directly, not merged
   UBOOT_REF: ef2ab32418943c161d0889af24375a52b14e10f9
   EDK2_REF: 9f13e2a137c97a2825f874b4321c3963ca87c747
@@ -255,16 +255,9 @@ jobs:
           CONFIG_TPM_V2=y
           CONFIG_TPM2_FTPM_TEE=y
           CONFIG_EFI_LOADER=y
-          # KNOWN ISSUE (2026-07-07, run 28888474517): CONFIG_EFI_MM_COMM_TEE=y makes
-          # U-Boot's own EFI variable driver (lib/efi_loader/efi_variable_tee.c,
-          # get_connection()) open a TEE session to PTA_STMM_UUID at EFI subsystem
-          # init — completely independent of the OP-TEE-side build config (CFG_STMM_PATH
-          # / CFG_RPMB_FS were already off). Since no StMM SP is folded into OP-TEE,
-          # that session request fails ldelf sys_open_ta_bin (0xffff0009) before the
-          # fTPM Early TA is ever probed. Disabled here; CONFIG_TPM2_FTPM_TEE (fTPM
-          # driver) is unrelated and unaffected. Re-enable once StMM-in-OP-TEE (#41)
-          # is fixed.
-          # CONFIG_EFI_MM_COMM_TEE is not set
+          # RESTORED (2026-07-07, #41 fixed): StMM now folds + boots (see Stage 3
+          # comment), so U-Boot's EFI variable service can talk to it again.
+          CONFIG_EFI_MM_COMM_TEE=y
           CONFIG_EFI_TCG2_PROTOCOL=y
           CONFIG_HASH=y
           CONFIG_MEASURED_BOOT=y
@@ -373,7 +366,9 @@ jobs:
             PLATFORM="$OPTEE_PLATFORM" \
             CROSS_COMPILE64=aarch64-linux-gnu- \
             CROSS_COMPILE=arm-linux-gnueabihf- \
-            CFG_RPMB_FS=n CFG_REE_FS=n CFG_EARLY_TA=y \
+            CFG_RPMB_FS=y CFG_REE_FS=n CFG_EARLY_TA=y \
+            CFG_STMM_VOLATILE_STORAGE=y \
+            CFG_CORE_HEAP_SIZE=524288 CFG_TEE_RAM_VA_SIZE=0x00400000 \
             CFG_TEE_CORE_LOG_LEVEL=3 CFG_TEE_TA_LOG_LEVEL=3 \
             ta_dev_kit
           devkit=$(find "$GITHUB_WORKSPACE/optee_os/out" -type d -name 'export-ta_arm64' -print -quit)
@@ -409,31 +404,32 @@ jobs:
       - name: Stage 3 — rebuild OP-TEE BL32 folding fTPM Early TA (+ StMM when present)
         run: |
           set -euxo pipefail
-          # CFG_STMM_PATH only when a BL32_AP_MM.fd was obtained (F1 artifact or
-          # inline rebuild). Otherwise fold fTPM Early TA alone — StMM folds in once
-          # F1's ci_int_stmm.yml is GREEN. Embedded model either way (research/F2-tfa-fip-spmc.md).
-          # KNOWN ISSUE (2026-07-07): folding StMM via CFG_STMM_PATH crashes OP-TEE
-          # at boot ("User mode data-abort at address 0x0") on qemu vexpress-qemu_armv8a.
-          # The edk2-built BL32_AP_MM.fd builds fine standalone (ci_int_stmm.yml GREEN)
-          # but is not yet compatible as an OP-TEE Secure Partition on this platform.
-          # Disabled here (fTPM-only) so the e2e proves the fTPM+TF-A+OP-TEE chain;
-          # StMM-in-OP-TEE crash tracked separately, not blocking INT.
+          # StMM RESTORED (2026-07-07, #41 FIXED — ci_int_matrix run 28903016778 z2
+          # all-green): the "user-mode data-abort at 0x0" had two stacked causes:
+          #   1. Under-sized core memory for the ~2.4MB StMM image + 402-page heap —
+          #      upstream's only CFG_STMM_PATH build (OP-TEE ci.yml, vexpress-qemu_armv8a)
+          #      passes CFG_CORE_HEAP_SIZE=524288 CFG_TEE_RAM_VA_SIZE=0x00400000.
+          #   2. No RPMB on QEMU virt → OpTeeRpmbFv's storage ops failed → FVB instance
+          #      invalid → FixupPcd patched the variable-store base PCDs to garbage →
+          #      StMM variable driver dereferenced address 0. Fixed by
+          #      CFG_STMM_VOLATILE_STORAGE (optee_os feat/stmm-volatile-storage-ci):
+          #      RAM-backed EFI_VARS with faithful file semantics. CI-only; real
+          #      hardware keeps RPMB.
+          # StMM folds when Stage S obtained a BL32_AP_MM.fd (it always does in-run).
           STMM_ARG=""
-          echo "::notice::StMM folding disabled (tracked issue: OP-TEE user-mode data-abort at 0x0) — fTPM-only OP-TEE BL32 this run"
-          # KNOWN ISSUE (2026-07-07, run 28884313325): CFG_RPMB_FS=y makes OP-TEE
-          # route RPMB storage through the StandaloneMM SP's OpteeRpmbFv driver
-          # (Variable Service UUID ed32d533-...) REGARDLESS of CFG_STMM_PATH — so
-          # even with StMM folding disabled above, OP-TEE still tried to open that
-          # SP at boot and failed (sys_open_ta_bin ldelf NOT_IMPLEMENTED, 0xffff0009)
-          # before ever reaching the fTPM Early TA probe. This lane only needs to
-          # prove fTPM+TF-A+OP-TEE boot, not RPMB-backed secure storage, so drop
-          # the RPMB FS backend entirely (CFG_RPMB_FS=n) — no storage backend means
-          # no implicit StMM SP dependency. Issue #41 tracks StMM-in-OP-TEE separately.
+          if [ -n "${STMM_FD:-}" ] && [ -f "${STMM_FD}" ]; then
+            STMM_ARG="CFG_STMM_PATH=$STMM_FD"
+            echo "folding StMM: $STMM_ARG (source: $STMM_SOURCE)"
+          else
+            echo "::warning::StMM .fd absent — fTPM-only OP-TEE BL32 this run ($STMM_SOURCE)"
+          fi
           make -C optee_os -j"$(nproc)" \
             PLATFORM="$OPTEE_PLATFORM" \
             CROSS_COMPILE64=aarch64-linux-gnu- \
             CROSS_COMPILE=arm-linux-gnueabihf- \
-            CFG_RPMB_FS=n CFG_REE_FS=n \
+            CFG_RPMB_FS=y CFG_REE_FS=n \
+            CFG_STMM_VOLATILE_STORAGE=y \
+            CFG_CORE_HEAP_SIZE=524288 CFG_TEE_RAM_VA_SIZE=0x00400000 \
             CFG_EARLY_TA=y EARLY_TA_PATHS="$FTPM_TA" \
             CFG_CORE_DYN_SHM=y \
             CFG_TEE_CORE_LOG_LEVEL=3 CFG_TEE_TA_LOG_LEVEL=3 \
@@ -591,8 +587,12 @@ jobs:
           grep -q "YUBIOS_TPM_OK" nw.log \
             && echo "PASS: fTPM functional (init+startup+self_test)" || { echo "::error::fTPM not functional (no YUBIOS_TPM_OK)"; fail=1; }
           # Regression guards: known failure signatures from the debug campaign.
-          ! grep -Eq "Missing TPMv2 device|Couldn't set TPM|TA panicked|ldelf failed" nw.log optee.log \
+          ! grep -Eq "Missing TPMv2 device|Couldn't set TPM|TA panicked|ldelf failed|data-abort" nw.log optee.log \
             && echo "PASS: no known failure signatures" || { echo "::error::known failure signature present"; fail=1; }
+          # StMM assertion (#41 restoration): U-Boot's MM_COMM variable service must
+          # actually load + exercise the StandaloneMM SP without crashing it.
+          grep -Eiq "stmm load address" nw.log optee.log \
+            && echo "PASS: StMM SP loaded into OP-TEE" || { echo "::error::StMM SP never loaded"; fail=1; }
           [ "${fail}" -eq 0 ] && echo "INTEGRATION e2e VERIFIED" || { echo "INTEGRATION e2e FAILED"; exit 1; }
 
       - name: LOUD-SKIP — no bootable image from optee_fip
