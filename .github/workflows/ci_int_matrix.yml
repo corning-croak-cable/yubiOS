@@ -58,21 +58,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - variant: v1-stock
+          - variant: w1-enum-nostorage
             storage: 'CFG_RPMB_FS=n CFG_REE_FS=n'
-            bootcmd: ''
-          - variant: v2-tpm
-            storage: 'CFG_RPMB_FS=n CFG_REE_FS=n'
-            bootcmd: 'tpm2 init; tpm2 startup TPM2_SU_CLEAR; tpm2 self_test full'
-          - variant: v3-efi
-            storage: 'CFG_RPMB_FS=n CFG_REE_FS=n'
-            bootcmd: 'bootefi bootmgr'
-          - variant: v4-both
-            storage: 'CFG_RPMB_FS=n CFG_REE_FS=n'
-            bootcmd: 'tpm2 init; tpm2 startup TPM2_SU_CLEAR; bootefi bootmgr'
-          - variant: v5-rpmb
+            bootcmd: 'tpm2 init; tpm2 startup TPM2_SU_CLEAR; tpm2 self_test full; bootefi bootmgr'
+          - variant: w2-enum-rpmb
             storage: 'CFG_RPMB_FS=y CFG_REE_FS=n'
-            bootcmd: 'tpm2 init; tpm2 startup TPM2_SU_CLEAR; bootefi bootmgr'
+            bootcmd: 'tpm2 init; tpm2 startup TPM2_SU_CLEAR; tpm2 self_test full; bootefi bootmgr'
+          - variant: w3-enum-tpmonly
+            storage: 'CFG_RPMB_FS=n CFG_REE_FS=n'
+            bootcmd: 'tpm2 init; tpm2 startup TPM2_SU_CLEAR'
     steps:
       - name: Install toolchain + QEMU
         run: |
@@ -141,6 +135,17 @@ jobs:
           git -C optee_ftpm checkout "$OPTEE_FTPM_REF"
           git clone --no-tags https://github.com/yubi-OS/ms-tpm-20-ref ms-tpm-20-ref
           git -C ms-tpm-20-ref checkout "$MS_TPM_REF"
+          # ROOT-CAUSE FIX (matrix round 2): the fTPM TA declares
+          # TA_FLAG_DEVICE_ENUM_TEE_STORAGE_PRIVATE — "enumerate me on the TEE
+          # bus only once TEE-private secure storage (RPMB) is up". U-Boot's
+          # device.pta scan requests plain TA_FLAG_DEVICE_ENUM, so the fTPM is
+          # invisible: no udevice bound, `tpm2 init` -> "Couldn't set TPM 0",
+          # TCG2 -> "Missing TPMv2 device". Proven by matrix run 28891652716
+          # (device.pta opened + returned empty in all 5 variants).
+          # Patch the flag to plain TA_FLAG_DEVICE_ENUM for this test lane.
+          sed -i 's/TA_FLAG_DEVICE_ENUM_TEE_STORAGE_PRIVATE/TA_FLAG_DEVICE_ENUM/' \
+            optee_ftpm/include/user_ta_header_defines.h
+          grep -n 'TA_FLAG_DEVICE_ENUM' optee_ftpm/include/user_ta_header_defines.h
           make -C optee_ftpm -j"$(nproc)" \
             TA_DEV_KIT_DIR="$TA_DEV_KIT_DIR" \
             CFG_MS_TPM_20_REF="$GITHUB_WORKSPACE/ms-tpm-20-ref" \
