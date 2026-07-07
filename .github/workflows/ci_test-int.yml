@@ -63,7 +63,7 @@ permissions:
 env:
   TFA_REF: f9e106415eb569ff9b19404e2c3f64167af08d21
   OPTEE_OS_REF: cc1847276821220facbffec13812c1888b44e6cb
-  OPTEE_FTPM_REF: 28abbe7f33a96302cccf07b86b9ea46cf3dc278f
+  OPTEE_FTPM_REF: ceba4dfc5899c14c61b04c102d37a8e5e7f2788f # feat/volatile-nv-ci (CFG_FTPM_VOLATILE_NV) — branch referenced directly, not merged
   UBOOT_REF: ef2ab32418943c161d0889af24375a52b14e10f9
   EDK2_REF: 9f13e2a137c97a2825f874b4321c3963ca87c747
   EDK2_PLATFORMS_REF: 4e1e7a4e64470ef7eefeaa1021c86763ab28beee
@@ -389,45 +389,13 @@ jobs:
           git -C optee_ftpm checkout "$OPTEE_FTPM_REF"
           git clone --no-tags https://github.com/yubi-OS/ms-tpm-20-ref ms-tpm-20-ref
           git -C ms-tpm-20-ref checkout "$MS_TPM_REF"
-          # FIX 1 (ci_int_matrix run 28891652716): the fTPM TA declares
-          # TA_FLAG_DEVICE_ENUM_TEE_STORAGE_PRIVATE (enumerate only once RPMB
-          # storage is up). U-Boot's device.pta scan requests plain
-          # TA_FLAG_DEVICE_ENUM, so the TA was invisible: no TPM udevice bound.
-          sed -i 's/TA_FLAG_DEVICE_ENUM_TEE_STORAGE_PRIVATE/TA_FLAG_DEVICE_ENUM/' \
-            optee_ftpm/include/user_ta_header_defines.h
-          # FIX 2 (ci_int_matrix run 28892675334): once enumerable, the TA panicked
-          # 0xffff0009 inside TEE_OpenPersistentObject — libutee TEE_Panics per GP
-          # spec on TEE_ERROR_NOT_IMPLEMENTED from a storage-less core (QEMU virt
-          # has no RPMB; U-Boot's supplicant can't provide one). Volatile-NV mode:
-          # RAM-only NV manufactured fresh each boot, no storage syscalls at all.
-          # CI-only — real hardware keeps RPMB-backed NV. Proven in run 28893676854.
-          python3 - <<'PYEOF'
-          p = 'optee_ftpm/platform/NVMem.c'
-          src = open(p).read()
-          anchor1 = '\tif (s_NVInitialized) {\n\t\treturn;\n\t}'
-          block1 = anchor1 + '''
-          #ifdef TA_FTPM_VOLATILE_NV
-          \t// CI-only volatile NV: no storage backend exists in bare-QEMU e2e.
-          \ts_NVChipFileNeedsManufacture = TRUE;
-          \ts_blockMap = 0;
-          \ts_NVInitialized = FALSE;
-          \treturn;
-          #endif'''
-          assert src.count(anchor1) == 1, 'anchor1'
-          src = src.replace(anchor1, block1, 1)
-          anchor2 = '\tif ((!s_blockMap) || (!s_NVInitialized)) {\n\t\treturn;\n\t}'
-          block2 = '''#ifdef TA_FTPM_VOLATILE_NV
-          \ts_blockMap = 0;
-          \treturn;
-          #endif
-          ''' + anchor2
-          assert src.count(anchor2) == 1, 'anchor2'
-          src = src.replace(anchor2, block2, 1)
-          open(p,'w').write(src)
-          print('volatile-NV patch applied')
-          PYEOF
-          printf '\ncppflags-y += -DTA_FTPM_VOLATILE_NV=1\n' >> optee_ftpm/sub.mk
+          # Volatile-NV test mode + plain DEVICE_ENUM enumeration now live as a
+          # proper build flag (CFG_FTPM_VOLATILE_NV=y) on the optee_ftpm branch
+          # feat/volatile-nv-ci (pinned above via OPTEE_FTPM_REF — referenced
+          # directly, never merged). Replaces the former in-CI sed/python patches.
+          # Full root-cause campaign: yubi-OS/yubiOS#41.
           make -C optee_ftpm -j"$(nproc)" \
+            CFG_FTPM_VOLATILE_NV=y \
             TA_DEV_KIT_DIR="$TA_DEV_KIT_DIR" \
             CFG_MS_TPM_20_REF="$GITHUB_WORKSPACE/ms-tpm-20-ref" \
             CROSS_COMPILE_ta_arm64=aarch64-linux-gnu- \
