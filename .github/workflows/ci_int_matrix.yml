@@ -45,7 +45,7 @@ permissions:
 
 env:
   TFA_REF: f9e106415eb569ff9b19404e2c3f64167af08d21
-  OPTEE_OS_REF: cc1847276821220facbffec13812c1888b44e6cb
+  OPTEE_OS_REF: 440b10c3f9b1c8501f2550e282ae071bb5424972 # feat/stmm-volatile-storage-ci (CFG_STMM_VOLATILE_STORAGE)
   OPTEE_FTPM_REF: 5e09cdbe1bcb1bc3bcf4875ebafb4e1a1154417c # feat/volatile-nv-ci
   UBOOT_REF: ef2ab32418943c161d0889af24375a52b14e10f9
   MS_TPM_REF: 98b60a44aba79b15fcce1c0d1e46cf5918400f6a
@@ -69,9 +69,6 @@ jobs:
           - variant: z2-stmm-mmcomm
             storage: 'CFG_RPMB_FS=y CFG_REE_FS=n'
             mmcomm: 'y'
-          - variant: z3-stmm-nostorage
-            storage: 'CFG_RPMB_FS=n CFG_REE_FS=n'
-            mmcomm: 'n'
     steps:
       - name: Install toolchain + QEMU
         run: |
@@ -145,6 +142,7 @@ jobs:
             CROSS_COMPILE=arm-linux-gnueabihf- \
             ${{ matrix.storage }} CFG_EARLY_TA=y \
             $STMM_MEM_FLAGS \
+            CFG_STMM_VOLATILE_STORAGE=y \
             CFG_TEE_CORE_LOG_LEVEL=3 CFG_TEE_TA_LOG_LEVEL=3 \
             ta_dev_kit
           devkit=$(find "$GITHUB_WORKSPACE/optee_os/out" -type d -name 'export-ta_arm64' -print -quit)
@@ -179,6 +177,7 @@ jobs:
             CFG_EARLY_TA=y EARLY_TA_PATHS="$FTPM_TA" \
             CFG_CORE_DYN_SHM=y \
             $STMM_MEM_FLAGS \
+            CFG_STMM_VOLATILE_STORAGE=y \
             CFG_STMM_PATH="$STMM_FD" \
             CFG_TEE_CORE_LOG_LEVEL=3 CFG_TEE_TA_LOG_LEVEL=3 \
             all
