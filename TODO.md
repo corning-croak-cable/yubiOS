@@ -1,5 +1,5 @@
 # yubiOS — TODO / Future Work
-_Last updated: June 26, 2026 (ARM64 Phase F: fork-CI matrix C1–C6 + R1 + V1 GREEN, edk2-platforms forked, INT integration in flight; OS now published to Docker Hub 0mniteck/yubios)_
+_Last updated: July 7, 2026 (ARM64 Phase F: fork-CI matrix + INT integration ALL GREEN; fTPM e2e verified in QEMU both arches; StMM fold deferred to #41)_
 
 ## High priority
 
@@ -28,7 +28,7 @@ Owned ARM64 fTPM trust-chain CI (ADR-018/019/020). Each component fork now has a
 - [x] R1 — `yubiOS.rego` build policy live + passing on the main CI build job
 - [x] V1 — `tests/vm/*.sh` wired into `ci_test-vm.yml` (`3f46cf0`), honest skips where HW/CTAP2-gated
 - [x] edk2-platforms forked into the org — supplies `PlatformStandaloneMmRpmb.dsc` → `BL32_AP_MM.fd` (C6 fork ships StMM core only)
-- [ ] **INT** integration CI (`ci_test-int.yml`): **Stage 1** (BL32_AP_MM.fd) + **Stage 2** (OP-TEE fold `CFG_STMM_PATH`+EARLY_TA → TF-A FIP `SPD=opteed`) consistently GREEN both arches. **Stage 3** (QEMU e2e) iterating. Bugs fixed: `-no-reboot` PSCI exit (`52f2f49`), `ipxe-qemu` missing → `efi-virtio.rom` 404 (`0f25c5e`), greps needed `nw.log`+`optee.log` (`5beb49c`). QEMU now runs full 180s — TF-A BL1→BL2 confirmed in `optee.log` (UART1). fTPM Early TA messages not yet found. Current diagnostic commit `2edb529` — targeted OP-TEE/fTPM grep to determine if OP-TEE is loading the fTPM TA or hanging on StMM init. Standalone `ci_int_qemu.yml` (F4) remains GREEN. 4 lanes: `ci_int_stmm.yml` (F1 GREEN), `ci_int_optee_fip.yml` (F2 GREEN), `ci_int_qemu.yml` (F4 GREEN), `ci_test-int.yml` orchestrator (F3 iterating).
+- [x] **INT** integration CI (`ci_test-int.yml`): **GREEN on both arches** (run 28894256274, commit `88522d0`) — Stage 1 (BL32_AP_MM.fd) + Stage 2 (OP-TEE fold + TF-A FIP) + Stage 3 (QEMU e2e: fTPM Early TA embedded, probed by U-Boot via device.pta, and functional — `tpm2 init/startup/self_test` → YUBIOS_TPM_OK). Debug campaign root causes (all documented in #41): U-Boot `CONFIG_EFI_MM_COMM_TEE` opened a session to PTA_STMM_UUID unconditionally (disabled, `d7edbdd`); fTPM's `TA_FLAG_DEVICE_ENUM_TEE_STORAGE_PRIVATE` hid it from U-Boot's device.pta scan (CI patches to plain DEVICE_ENUM); storage-less core makes libutee TEE_Panic the TA per GP spec (CI volatile-NV mode `TA_FTPM_VOLATILE_NV`, RAM-only). StMM-in-OP-TEE fold still disabled — tracked in #41. Follow-up: upstream volatile-NV as a real optee_ftpm build flag.
 
 ## Medium priority
 
