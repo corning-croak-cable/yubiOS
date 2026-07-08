@@ -102,6 +102,12 @@ jobs:
           sudo chmod 666 /dev/fuse || true
           ls -la /dev/fuse || echo "::warning::/dev/fuse still absent after modprobe+mknod"
 
+      - name: Disk space before bcvk build (diagnostic)
+        run: |
+          df -h "$PWD" /tmp || true
+          echo "--- inode usage ---"
+          df -i "$PWD" /tmp || true
+
       - name: Build bcvk @ feat/swtpm-ci (feasibility gate)
         id: bcvk
         run: |
@@ -122,6 +128,13 @@ jobs:
           fi
           echo "$PWD/bcvk-src/target/release" >> "$GITHUB_PATH"
           echo "skip=0" >> "$GITHUB_OUTPUT"
+
+      - name: Disk space after bcvk build attempt (diagnostic)
+        if: always()
+        run: |
+          df -h "$PWD" /tmp || true
+          du -sh bcvk-src 2>/dev/null || true
+          du -sh ~/.cargo 2>/dev/null || true
 
       - name: Gate on KVM (bcvk hard-requires /dev/kvm; now real hardware on arm64 via self-hosted rock1)
         id: kvm
