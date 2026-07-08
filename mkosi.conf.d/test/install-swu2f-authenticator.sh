@@ -38,6 +38,15 @@ fi
 # rest is the Rust toolchain + git. Installed transiently, removed afterwards so
 # the test image stays close to the production package surface.
 BUILD_DEPS="git cargo rust gcc systemd-devel tpm2-tss-devel"
+
+# Defensive: dnf5 can leave a stale package-cache lock file behind in a
+# committed container layer (the PID that held it is long gone by the time a
+# derived image runs this script). dnf5 checks for file existence, not a live
+# flock, so a leftover lock file blocks every subsequent dnf call with
+# "failed to acquire package cache lock: File exists (os error 17)" even
+# though nothing is actually running. Clear it before the first real dnf call.
+rm -f /var/cache/dnf/*.lock /var/cache/dnf/*.pid /run/dnf5.lock /run/dnf.lock 2>/dev/null || true
+
 dnf -y install ${BUILD_DEPS}
 
 src="$(mktemp -d)"
