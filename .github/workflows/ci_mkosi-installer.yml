@@ -129,8 +129,11 @@ jobs:
         run: |
           set -euxo pipefail
           mkdir -p inst/installer
-          raw=$(find mkosi.output -maxdepth 1 \( -name '*.raw' -o -name '*.img' \) -type f -print -quit)
-          test -n "$raw"
+          # The full disk image is ImageId.raw (yubiOS.raw); *.esp.raw and
+          # *.root-*.raw are SplitArtifacts partition splits — don't ship those
+          # as the installer payload.
+          raw=mkosi.output/yubiOS.raw
+          test -s "$raw"
           zstd -T0 -8 --force -o "inst/installer/$(basename "$raw").zst" "$raw"
           find mkosi.output -maxdepth 1 -name '*.efi' -type f -exec cp {} inst/installer/ \;
           find mkosi.output -maxdepth 1 -name '*manifest*' -type f -exec cp {} inst/installer/ \; || true
