@@ -922,3 +922,38 @@ NoNewPrivileges=no
 
 **Source:** OpenSSL 3.5.0 release notes, `openssl.org/docs/man3.5/man3/SSL_CTX_set1_groups_list.html`, Go 1.24 release notes (`go.dev/doc/go1.24`), golang/go#69985, live verification against `registry-1.docker.io`, repo-wide grep audit (no TLS pinning found), issue #26, ADR-004, ADR-006, ADR-015.
 
+
+---
+## ADR-026: `dev`/`dev-<sha>` Test Image Tag (swu2f-Enabled) on `0mniteck/yubios`
+
+**Date:** 2026-07-08
+**Status:** Accepted
+**Depends on:** ADR-022 (unified per-artifact tags on `0mniteck/yubios`), ADR-006 (mkosi + bootc build paths), ADR-023 (ARM64 primary), the `mkosi.conf.d/test/` profile (swu2f Layer 2).
+
+**Context:** `ci_test-vm.yml`'s `vm-e2e` job can now build and run `bcvk` for real on the self-hosted ARM64 runner (`rock1`, KVM confirmed live). The one thing still missing to exercise the actual LUKS2-FIDO2 + systemd-homed + enrollment boot legs (not just the feasibility gate) is a pullable yubiOS image with the swu2f Layer 2 software FIDO2 authenticator (`passless`) baked in — the production `latest`/`<sha>` tag deliberately does not and must not ship it (ADR-003: the YubiKey is the trust anchor, not a software stand-in). Until now that authenticator only existed in the mkosi TEST profile's disk-image output, which isn't something `bcvk`/`podman pull` can consume as an OCI ref.
+
+**Decision:** Extend ADR-022's tag table on `0mniteck/yubios` with a fourth artifact class:
+
+| Tag | Artifact | Produced by | Status |
+|---|---|---|---|
+| `dev`, `dev-<sha>` | Same base OS as `latest`, plus the `passless` swu2f software FIDO2 authenticator (TEST-ONLY) | `ci_dev_image.yml` | live (this ADR) |
+
+Built via a new `Containerfile.dev` that `FROM`s the exact same production base image build (not a fork of the Containerfile — a multi-stage build on top of it) and layers on the identical `mkosi.conf.d/test/install-swu2f-authenticator.sh` script the mkosi TEST profile already uses, so the mkosi-path test image and the bootc-path `dev` tag ship byte-identical swu2f tooling (same principle as ADR-006's "both paths behave identically at runtime," extended to the test variant).
+
+**Guardrails (non-negotiable):**
+- `Containerfile.dev` is never referenced by `yubiOS-ci.yml`'s production build/push path — only by the new, separate `ci_dev_image.yml`.
+- Every image built from `Containerfile.dev` carries `LABEL yubiOS.image.kind="dev-test"` and an explicit warning label.
+- `ci_dev_image.yml` asserts `passless --version` succeeds in the built image before any push — if the swu2f layer is missing, the build fails loudly rather than silently shipping a production-shaped image with no authenticator.
+- `ci_test-vm.yml`'s `image` workflow_dispatch input has no default pointing at `:dev` — a human (or an explicit follow-up dispatch) must pass `0mniteck/yubios:dev` deliberately; the boot leg does not silently start pulling a test image on every run.
+
+**Rationale:**
+- Reuses ADR-022's existing tag-namespace pattern instead of inventing a second distribution mechanism (a second registry, GitHub Releases, etc.) — same reasoning ADR-022 already established.
+- Multi-stage `FROM` on the real production build (not a duplicated Containerfile) means the dev image can never drift from what production actually ships apart from the one deliberate addition — no maintenance burden of two parallel package lists.
+- Reusing the mkosi path's exact install script (not a re-implementation) keeps the swu2f authenticator's build/pin (passless `v0.11.2`, debug build for `PASSLESS_E2E_AUTO_ACCEPT_UV`) as a single source of truth across both build paths.
+
+**Alternatives considered:**
+- *Ship swu2f support inside the production `Containerfile`/`latest` tag, gated by a runtime flag* — rejected outright: a production image must never contain `passless` at all, gated or not; presence-on-disk is the risk MISSION.md and ADR-003 exist to prevent.
+- *Have `bcvk` boot the mkosi disk image directly instead of an OCI tag* — rejected for this workflow: `ci_test-vm.yml`'s `vm-e2e` job already pulls via `podman`/OCI ref (ADR-022's registry-centric distribution model); adding a second, disk-image-based fetch path for just the test leg duplicates infrastructure for no benefit.
+
+**Source:** ADR-022, ADR-006, ADR-003, `mkosi.conf.d/test/mkosi.conf`, `mkosi.conf.d/test/install-swu2f-authenticator.sh`, `ci_test-vm.yml` (this session's rock1 KVM verification).
+

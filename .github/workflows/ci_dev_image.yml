@@ -1,0 +1,158 @@
+name: yubiOS dev/test image (swu2f, ADR-026)
+
+# Builds the swu2f-enabled TEST image (Containerfile.dev, on top of the same
+# base as production) and publishes it to docker.io/0mniteck/yubios under the
+# `dev` / `dev-<sha>` tags — a distinct namespace from `latest`/`<sha>`, per
+# ADR-026 (extends the per-artifact tag scheme from ADR-022).
+#
+# Purpose: give ci_test-vm.yml's vm-e2e job (bcvk on rock1, self-hosted ARM64)
+# a real, pullable yubiOS image so the LUKS2-FIDO2 + systemd-homed + enrollment
+# boot legs actually run instead of loud-skipping for lack of an image.
+#
+# TEST-ONLY: this image ships `passless`, a software FIDO2 authenticator.
+# NEVER treat `dev`/`dev-<sha>` as production-equivalent to `latest`. Never
+# wire this workflow's output into yubiOS-ci.yml's production push path.
+#
+# Same rootless-Docker-in-Docker pattern as yubiOS-ci.yml (ADR-014): dind on
+# dhi.io's hardened base, per-arch build + push, then a manifest-list merge.
+
+on:
+  workflow_dispatch:
+    inputs:
+      Docker_push:
+        default: false
+        type: boolean
+        required: true
+        description: Push dev/test image to Docker Hub (multi-arch manifest)?
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+            docker_arch: x86_64
+            buildx_arch: linux-amd64
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            docker_arch: aarch64
+            buildx_arch: linux-arm64
+    runs-on: ${{ matrix.runner }}
+    container:
+      options: --privileged
+      volumes:
+        - /mnt:/mnt
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:1cefd55d979ddbd9110cf73cf3de11798a7893a4598050ba57624bc754b244aa # auto-resolves to ${{ matrix.arch }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Install docker-engine and docker-buildx (${{ matrix.arch }})
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends git wget iptables nftables
+          wget -q "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-29.6.0.tgz"
+          wget -q "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.${{ matrix.buildx_arch }}"
+          tar xzf docker-29.6.0.tgz
+          mkdir -p /usr/libexec/docker/cli-plugins/
+          cp docker/* /usr/bin/
+          cp "buildx-v0.35.0.${{ matrix.buildx_arch }}" /usr/libexec/docker/cli-plugins/docker-buildx
+          chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
+          mkdir -p /mnt/docker
+          dockerd --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
+          for i in $(seq 1 30); do docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
+          docker -H unix:///var/run/ducker.sock buildx create --name hardened \
+            --driver docker-container \
+            --use
+
+      - name: Log in to Docker Hub
+        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
+        run: echo "${{ secrets.DOCKER }}" | docker -H unix:///var/run/ducker.sock login -u 0mniteck42 --password-stdin
+
+      - name: Build base yubiOS image (production Containerfile, local tag)
+        run: |
+          docker -H unix:///var/run/ducker.sock buildx build -f Containerfile \
+            --policy reset=true,strict=true,filename=yubiOS.rego \
+            --platform linux/${{ matrix.arch }} \
+            --load \
+            -t "yubios:base-${{ matrix.arch }}" \
+            .
+
+      - name: Build dev/test image on top of it (Containerfile.dev, swu2f)
+        run: |
+          docker -H unix:///var/run/ducker.sock buildx build -f Containerfile.dev \
+            --build-arg BASE_IMAGE="yubios:base-${{ matrix.arch }}" \
+            --platform linux/${{ matrix.arch }} \
+            --load \
+            -t "yubios:dev-${{ matrix.arch }}" \
+            .
+
+      - name: Verify passless is present (real regression gate)
+        run: |
+          docker -H unix:///var/run/ducker.sock run --rm "yubios:dev-${{ matrix.arch }}" \
+            sh -c 'command -v passless && passless --version' || \
+            { echo "::error::passless not found in dev image — swu2f layer 2 missing"; exit 1; }
+
+      - name: Push per-arch dev image (${{ matrix.arch }})
+        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
+        run: |
+          docker -H unix:///var/run/ducker.sock buildx build -f Containerfile.dev \
+            --builder hardened \
+            --build-arg BASE_IMAGE="yubios:base-${{ matrix.arch }}" \
+            --platform linux/${{ matrix.arch }} \
+            --push \
+            -t "0mniteck/yubios:dev-${{ github.sha }}-${{ matrix.arch }}" \
+            .
+
+  merge-manifest:
+    needs: build
+    if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
+    runs-on: ubuntu-24.04
+    container:
+      options: --privileged
+      volumes:
+        - /mnt:/mnt
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:1cefd55d979ddbd9110cf73cf3de11798a7893a4598050ba57624bc754b244aa
+    steps:
+      - name: Install docker CLI + buildx
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends git wget iptables nftables
+          wget -q "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
+          wget -q "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
+          tar xzf docker-29.6.0.tgz
+          mkdir -p /usr/libexec/docker/cli-plugins/
+          cp docker/* /usr/bin/
+          cp buildx-v0.35.0.linux-amd64 /usr/libexec/docker/cli-plugins/docker-buildx
+          chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
+          mkdir -p /mnt/docker
+          dockerd --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
+          for i in $(seq 1 30); do docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
+          docker -H unix:///var/run/ducker.sock buildx create --name hardened \
+            --driver docker-container \
+            --use
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER }}" | docker -H unix:///var/run/ducker.sock login -u 0mniteck42 --password-stdin
+
+      - name: Create + push multi-arch dev manifest
+        run: |
+          docker -H unix:///var/run/ducker.sock buildx imagetools create \
+            -t "0mniteck/yubios:dev-${{ github.sha }}" \
+            -t "0mniteck/yubios:dev" \
+            "0mniteck/yubios:dev-${{ github.sha }}-amd64" \
+            "0mniteck/yubios:dev-${{ github.sha }}-arm64"
+
+      - name: Verify manifest list
+        run: docker -H unix:///var/run/ducker.sock buildx imagetools inspect "0mniteck/yubios:dev-${{ github.sha }}"

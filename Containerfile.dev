@@ -1,0 +1,28 @@
+# yubiOS DEV/TEST image — adds swu2f Layer 2 (passless, in-guest software CTAP2
+# FIDO2 authenticator) on top of the base yubiOS image, for hardware-free bcvk
+# CI (LUKS2-FIDO2 + systemd-homed + enrollment e2e, tests/vm/test-luks-fido2-ci.sh
+# and test-fido2-enrollment.sh). Published as 0mniteck/yubios:dev / :dev-<sha>
+# (ADR-026) — a distinct tag namespace from :latest, never the same artifact.
+#
+# TEST-ONLY. The production trust anchor stays the YubiKey FIDO2 device
+# (ADR-003). passless is never present in a production image — this
+# Containerfile is the ONLY place it gets installed, and it is never referenced
+# by yubiOS-ci.yml's build/push path.
+#
+# Reuses the exact same install script the mkosi TEST profile uses
+# (mkosi.conf.d/test/install-swu2f-authenticator.sh) so the mkosi and bootc
+# paths ship byte-identical swu2f tooling, per ADR-006's "both paths behave
+# identically at runtime" principle.
+#
+# Build: docker buildx build -f Containerfile.dev --build-arg BASE_IMAGE=<base tag> .
+
+ARG BASE_IMAGE=yubios:ci-local
+FROM ${BASE_IMAGE}
+
+COPY mkosi.conf.d/test/install-swu2f-authenticator.sh /tmp/install-swu2f-authenticator.sh
+RUN chmod +x /tmp/install-swu2f-authenticator.sh && \
+    /tmp/install-swu2f-authenticator.sh && \
+    rm -f /tmp/install-swu2f-authenticator.sh
+
+LABEL yubiOS.image.kind="dev-test"
+LABEL yubiOS.image.warning="TEST-ONLY: ships the passless swu2f software FIDO2 authenticator. Never use in production. See ADR-003, ADR-026."
