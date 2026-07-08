@@ -88,6 +88,7 @@ jobs:
       - name: DIAG — probe PKCS#11 stack inside the mkosi sandbox
         run: |
           set -uxo pipefail
+          mv mkosi.secure-boot.pem /tmp/sb.pem && mv mkosi.secure-boot.pkcs11-uri /tmp/sb.uri
           sudo mkosi \
             --distribution fedora \
             --release 45 \
@@ -97,6 +98,8 @@ jobs:
             --tools-tree-package opensc \
             --tools-tree-package gnutls-bin \
             --sandbox-tree sandbox \
+            --environment PKCS11_PROVIDER_MODULE=/usr/lib/softhsm/libsofthsm2.so \
+            --environment SOFTHSM2_CONF=/etc/softhsm2.conf \
             sandbox -- sh -c '
               echo ==== conf files ====;
               cat /etc/softhsm2.conf 2>&1;
@@ -118,6 +121,7 @@ jobs:
               /usr/lib/systemd/systemd-keyutil validate --certificate /work/src/mkosi.secure-boot.pem --private-key-source provider:pkcs11 --private-key "pkcs11:token=yubios-9c;object=piv-9c;type=private?pin-value=123456" 2>&1;
               echo ==== done rc=$? ====;
             ' || true
+          mv /tmp/sb.pem mkosi.secure-boot.pem && mv /tmp/sb.uri mkosi.secure-boot.pkcs11-uri
 
       - name: Build disk image (minimal profile, PKCS#11-signed UKI)
         run: |
@@ -131,6 +135,9 @@ jobs:
             --tools-tree-package pkcs11-provider \
             --tools-tree-package opensc \
             --sandbox-tree sandbox \
+            --environment PKCS11_PROVIDER_MODULE=/usr/lib/softhsm/libsofthsm2.so \
+            --environment SOFTHSM2_CONF=/etc/softhsm2.conf \
+            --environment PKCS11_PROVIDER_DEBUG=file:/dev/stderr,level:2 \
             --secure-boot-key-source provider:pkcs11 \
             --secure-boot-key "$(cat mkosi.secure-boot.pkcs11-uri)" \
             --secure-boot-certificate mkosi.secure-boot.pem \
