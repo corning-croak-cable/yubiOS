@@ -1,5 +1,5 @@
 # yubiOS — TODO / Future Work
-_Last updated: July 7, 2026 (ARM64 Phase F: INT fully restored and GREEN — StMM fold + MM_COMM + RPMB_FS back on; #41 fixed via CFG_STMM_VOLATILE_STORAGE)_
+_Last updated: July 8, 2026 (#10 closed: mkosi#2 merged, ci_mkosi-installer.yml green with SoftHSM PKCS#11 signing; ADR-022 tags firmware + installer live on 0mniteck/yubios)_
 
 ## High priority
 
@@ -46,6 +46,9 @@ Owned ARM64 fTPM trust-chain CI (ADR-018/019/020). Each component fork now has a
 - [x] Evaluate + add RestrictFileSystems= (BPF LSM) to enrollment units (ADR-016) (#18, PR #28) — merged June 26; CONFIG_BPF_LSM=y verified active on live base (BLOCKER-007 cleared)
 - [x] CI deployed + green across yubiOS (multi-arch native matrix), bcvk (multi-arch Rust test/clippy), mkosi (profile + shellcheck + ruff) on `.github/workflows/` via the fine-grained PAT (Workflows: Write). Specs live in `refs/`; yml staged in `documents/.../ci-workflows/` (#22)
 - [ ] Add `osslsigncode` to image (mkosi.conf + Containerfile) so the PKCS#11 verify step in tests/validate-pkcs11-uri.sh is live
+- [x] Merge `yubi-OS/mkosi#2` (yubiOS build profile) — merged July 8 (`b2b1ea6`); yubiOS-ci.yml installs mkosi from `@main` (#10)
+- [x] CI mkosi image build + SoftHSM PKCS#11 signing — `ci_mkosi-installer.yml` green July 8; publishes `0mniteck/yubios:installer` (+`installer-<sha>`) per ADR-022 (#10 closed)
+- [x] Firmware bundle tag — `ci_test-int.yml` Stage 4 publishes QEMU-validated `0mniteck/yubios:firmware` (+`firmware-<sha>`) after the e2e gate (ADR-022)
 - [ ] v261 test coverage scaffolding — systemd-sbsign UKI verify (osslsigncode vs PIV cert), ConditionSecurity=measured-os + RestrictFileSystems= enroll-unit gates, pam-u2f stack — draft PR #38 (`test/v261-coverage-T5`). **PR CI now GREEN** @ `43c2728` (run 28231778451, all 5 jobs success): build fixed (mkdir /mnt/docker + dockerd overlayfs `--data-root=/mnt/docker`, commit `4c19b1d`); unit-test 14 `systemd-analyze verify` had a REAL fail (Exec* binaries absent on the bare runner) — rewritten to stage a minimal root with exec stubs per Exec*= path so directives validate honestly (bogus key still → exit 1), commit `43c2728`. Draft — no merge (merge-ready, pending Jenny).
 
 ## Low priority / Research
