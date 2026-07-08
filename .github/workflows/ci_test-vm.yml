@@ -95,7 +95,7 @@ jobs:
           sudo mkdir -p /dev
           [ -e /dev/fuse ] || sudo mknod /dev/fuse c 10 229 || true
           sudo chmod 666 /dev/fuse || true
-          ls -la /dev/fuse || echo "::warning::/dev/fuse still absent after modprobe+mknod
+          ls -la /dev/fuse || echo "::warning::/dev/fuse still absent after modprobe+mknod"
 
       - name: Build bcvk @ feat/swtpm-ci (feasibility gate)
         id: bcvk
