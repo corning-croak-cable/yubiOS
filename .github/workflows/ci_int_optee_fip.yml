@@ -46,12 +46,6 @@ name: ci_int_optee_fip
 # No code is merged; this lands the integration workflow only.
 
 on:
-  push:
-    branches: [main]
-    paths: ['.github/workflows/ci_int_optee_fip.yml']
-  pull_request:
-    branches: [main]
-    paths: ['.github/workflows/ci_int_optee_fip.yml']
   workflow_dispatch:
     inputs:
       reason:

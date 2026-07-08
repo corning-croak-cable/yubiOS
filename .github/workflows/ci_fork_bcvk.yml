@@ -1,0 +1,92 @@
+# PORTED from yubi-OS/bcvk .github/workflows/ci_test.yml (feat/ci).
+# Fork default branches are kept identical to upstream; all yubi-OS changes
+# live on feat/feature branches and all CI runs from this repo via
+# workflow_dispatch only (org policy, July 8 2026).
+name: ci_fork_bcvk
+
+# Multi-arch native CI for the yubiOS bcvk fork. Rust test + clippy run on both
+# amd64 and arm64 GitHub-hosted runners (no QEMU) so arch-specific behaviour in
+# the virtualization kit is exercised natively.
+#
+# Runs on the BARE runners (no dhi container): bcvk is a Rust CLI, not the yubiOS
+# OS image, so it needs a normal C toolchain (libc + crt*.o) that the hardened
+# dhi base intentionally omits. AGENTS.md/PINNED.md allow container absent.
+# Action refs pinned per PINNED.md.
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Why are you running this manually?'
+        required: false
+        default: 'manual'
+permissions:
+  contents: read
+
+jobs:
+  unit-tests:
+    name: Unit tests (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    concurrency:
+      group: ${{ github.workflow }}-tests-${{ matrix.arch }}-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # see PINNED.md
+        with:
+          repository: yubi-OS/bcvk
+          ref: feat/ci
+
+      - name: Install build deps + Rust stable
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq build-essential pkg-config libssl-dev
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+
+      # native_to_disk: check_not_mounted_parse, device_info_human_size, build_podman_cmd_contains_device
+      - name: Test native-to-disk (unit, no hardware)
+        run: "cargo test -p bcvk --lib native_to_disk::"
+
+      # usb_passthrough: pure unit tests (sysfs mocked)
+      - name: Test usb-passthrough (unit, no hardware)
+        run: "cargo test -p bcvk-qemu --lib usb_passthrough::"
+
+      - name: Workspace compile check
+        run: cargo check --workspace
+
+  clippy:
+    name: Clippy (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    # Advisory: clippy -D warnings trips on inherited upstream lint debt across the
+    # fork; keep it visible but non-blocking so it doesn't red the meaningful unit
+    # gate. Tighten to hard-fail once the yubiOS-added crates are clippy-clean.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          repository: yubi-OS/bcvk
+          ref: feat/ci
+      - name: Install build deps + Rust + clippy
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq build-essential pkg-config libssl-dev
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --component clippy
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+      - name: Clippy
+        run: cargo clippy --workspace -- -D warnings

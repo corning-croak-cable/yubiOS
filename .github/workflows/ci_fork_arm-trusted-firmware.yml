@@ -1,0 +1,120 @@
+# PORTED from yubi-OS/arm-trusted-firmware .github/workflows/ci_test.yml (feat/ci).
+# Fork default branches are kept identical to upstream; all yubi-OS changes
+# live on feat/feature branches and all CI runs from this repo via
+# workflow_dispatch only (org policy, July 8 2026).
+name: ci_fork_arm-trusted-firmware
+
+# Component CI for the yubiOS ARM64 fTPM stack (#35, task C1).
+# Builds TF-A for PLAT=qemu (AArch64): the BL31 EL3 monitor with the OP-TEE
+# dispatcher (SPD=opteed), then a Trusted Board Boot FIP (TRUSTED_BOARD_BOOT=1
+# GENERATE_COT=1) to exercise cert_create + fiptool + the mbed TLS crypto path.
+# Real BL32 (OP-TEE) / BL33 (U-Boot) come from sibling fork CIs; this fork uses
+# placeholder payloads only to drive FIP packaging — do NOT stitch components here.
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Why are you running this manually?'
+        required: false
+        default: 'manual'
+permissions:
+  contents: read
+
+jobs:
+  build-tfa:
+    name: TF-A BL31 + TBB FIP (PLAT=qemu)
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    # Bare runner: TF-A needs a full host + AArch64 cross toolchain. The hardened
+    # dhi base image omits crt*.o / libc, so a container build is not used here.
+
+    steps:
+      - name: Checkout arm-trusted-firmware
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6.0.2 — see PINNED.md
+        with:
+          repository: yubi-OS/arm-trusted-firmware
+          ref: feat/ci
+
+      - name: Install build dependencies
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            python3 python3-pyelftools python3-cryptography \
+            device-tree-compiler \
+            openssl libssl-dev \
+            bison flex bc \
+            uuid-dev \
+            git ca-certificates
+          # AArch64 toolchain: cross on amd64, native on the arm64 runner.
+          if [ "$(uname -m)" = "x86_64" ]; then
+            sudo apt-get install -y --no-install-recommends gcc-aarch64-linux-gnu
+            echo "CROSS_COMPILE=aarch64-linux-gnu-" >> "$GITHUB_ENV"
+          else
+            echo "CROSS_COMPILE=" >> "$GITHUB_ENV"
+          fi
+          aarch64-linux-gnu-gcc --version || gcc --version
+
+      - name: Checkout mbed TLS (3.6.6 — matches TF-A MBEDTLS_CONFIG_VERSION 0x03060600)
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6.0.2 — see PINNED.md
+        with:
+          repository: yubi-OS/arm-trusted-firmware
+          ref: feat/ci
+          repository: Mbed-TLS/mbedtls
+          ref: mbedtls-3.6.6
+          path: mbedtls
+
+      - name: Build BL31 (EL3 monitor, SPD=opteed)
+        run: |
+          set -euxo pipefail
+          make -j"$(nproc)" \
+            CROSS_COMPILE="${CROSS_COMPILE}" \
+            PLAT=qemu ARCH=aarch64 \
+            SPD=opteed \
+            DEBUG=1 \
+            bl31
+          ls -l build/qemu/debug/bl31/bl31.elf build/qemu/debug/bl31.bin
+
+      - name: Stage placeholder BL32 / BL33 payloads
+        run: |
+          set -euxo pipefail
+          # Standalone component CI: the real OP-TEE BL32 (3 binaries) and U-Boot
+          # BL33 are produced by their own fork CIs. Placeholder payloads here only
+          # drive the FIP + chain-of-trust packaging — they are never booted.
+          head -c 262144  /dev/urandom > bl32.bin
+          head -c 262144  /dev/urandom > bl32_extra1.bin
+          head -c 1048576 /dev/urandom > bl32_extra2.bin
+          head -c 1048576 /dev/urandom > bl33.bin
+
+      - name: Build TBB FIP (TRUSTED_BOARD_BOOT, GENERATE_COT)
+        run: |
+          set -euxo pipefail
+          make -j"$(nproc)" \
+            CROSS_COMPILE="${CROSS_COMPILE}" \
+            PLAT=qemu ARCH=aarch64 \
+            SPD=opteed \
+            BL32=bl32.bin BL32_EXTRA1=bl32_extra1.bin BL32_EXTRA2=bl32_extra2.bin \
+            BL32_RAM_LOCATION=tdram \
+            BL33=bl33.bin \
+            TRUSTED_BOARD_BOOT=1 GENERATE_COT=1 CREATE_KEYS=1 \
+            MBEDTLS_DIR="${GITHUB_WORKSPACE}/mbedtls" \
+            DEBUG=1 \
+            all fip
+          ls -l build/qemu/debug/bl31/bl31.elf build/qemu/debug/fip.bin
+
+      - name: Upload firmware artifacts
+        if: always()
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v4 — see PINNED.md
+        with:
+          name: tfa-qemu-${{ matrix.runner }}
+          path: |
+            build/qemu/debug/bl31/bl31.elf
+            build/qemu/debug/bl31.bin
+            build/qemu/debug/fip.bin
+          if-no-files-found: warn
+          retention-days: 7

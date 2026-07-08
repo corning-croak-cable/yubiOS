@@ -37,16 +37,12 @@ name: ci_int_stmm
 # Action refs pinned per PINNED.md.
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - .github/workflows/ci_int_stmm.yml
-  pull_request:
-    branches: [main]
-    paths:
-      - .github/workflows/ci_int_stmm.yml
   workflow_dispatch:
-
+    inputs:
+      reason:
+        description: 'Why are you running this manually?'
+        required: false
+        default: 'manual'
 permissions:
   contents: read
 

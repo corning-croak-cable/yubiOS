@@ -12,7 +12,11 @@ name: fetch-dhi-manifest
 
 on:
   workflow_dispatch:
-
+    inputs:
+      reason:
+        description: 'Why are you running this manually?'
+        required: false
+        default: 'manual'
 permissions:
   contents: read
 

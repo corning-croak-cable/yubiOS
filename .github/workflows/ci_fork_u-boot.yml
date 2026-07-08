@@ -1,0 +1,132 @@
+# PORTED from yubi-OS/u-boot .github/workflows/ci_test.yml (feat/ci).
+# Fork default branches are kept identical to upstream; all yubi-OS changes
+# live on feat/feature branches and all CI runs from this repo via
+# workflow_dispatch only (org policy, July 8 2026).
+name: ci_fork_u-boot
+
+# Component CI for the yubiOS ARM64 fTPM stack (#35, task C5).
+# Builds U-Boot as the BL33 non-secure bootloader for qemu_arm64 (AArch64) with
+# the yubiOS fTPM + measured-boot config set layered on top of qemu_arm64_defconfig:
+#   CONFIG_TEE / CONFIG_OPTEE            -> OP-TEE driver (BL32 handoff)
+#   CONFIG_TPM=y CONFIG_TPM_V2=y         -> TPM 2.0 stack
+#   CONFIG_TPM2_FTPM_TEE=y               -> TEE-backed fTPM interface (depends TEE && OPTEE && TPM_V2)
+#   CONFIG_EFI_LOADER / EFI_MM_COMM_TEE  -> UEFI + StandaloneMM variable service (depends OPTEE)
+#   CONFIG_EFI_TCG2_PROTOCOL=y           -> UEFI measured boot (depends TPM_V2)
+#   CONFIG_MEASURED_BOOT=y CONFIG_HASH=y -> non-EFI measured boot (depends HASH && TPM_V2)
+# Real BL31 (TF-A) / BL32 (OP-TEE) come from sibling fork CIs; this fork builds
+# BL33 alone — do NOT stitch components here (that is the leader-gated INT task).
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Why are you running this manually?'
+        required: false
+        default: 'manual'
+permissions:
+  contents: read
+
+jobs:
+  build-uboot:
+    name: U-Boot BL33 + fTPM/measured-boot (qemu_arm64)
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+    # Bare runner: U-Boot needs a full host + AArch64 cross toolchain. The hardened
+    # dhi base image omits crt*.o / libc, so a container build is not used here.
+
+    steps:
+      - name: Checkout u-boot
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6.0.2 — see PINNED.md
+        with:
+          repository: yubi-OS/u-boot
+          ref: feat/ci
+
+      - name: Install build dependencies
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            python3 python3-dev python3-pyelftools python3-setuptools \
+            device-tree-compiler \
+            openssl libssl-dev libgnutls28-dev \
+            bison flex bc \
+            uuid-dev \
+            swig \
+            git ca-certificates
+          # AArch64 toolchain: cross on amd64, native on the arm64 runner.
+          if [ "$(uname -m)" = "x86_64" ]; then
+            sudo apt-get install -y --no-install-recommends gcc-aarch64-linux-gnu
+            echo "CROSS_COMPILE=aarch64-linux-gnu-" >> "$GITHUB_ENV"
+          else
+            echo "CROSS_COMPILE=" >> "$GITHUB_ENV"
+          fi
+          aarch64-linux-gnu-gcc --version || gcc --version
+
+      - name: Write yubiOS fTPM + measured-boot config fragment
+        run: |
+          set -euxo pipefail
+          cat > yubios_ftpm.config <<'EOF'
+          CONFIG_TEE=y
+          CONFIG_OPTEE=y
+          CONFIG_TPM=y
+          CONFIG_TPM_V2=y
+          CONFIG_TPM2_FTPM_TEE=y
+          CONFIG_EFI_LOADER=y
+          CONFIG_EFI_MM_COMM_TEE=y
+          CONFIG_EFI_TCG2_PROTOCOL=y
+          CONFIG_HASH=y
+          CONFIG_MEASURED_BOOT=y
+          # Build the firmware, not U-Boot's own pytest unit tree. qemu_arm64_defconfig
+          # ships CONFIG_UNIT_TEST=y, which compiles test/boot/measurement.c; that file
+          # references map_to_sysmem() without <mapmem.h> and fails -Werror on AArch64.
+          # The fTPM/measured-boot firmware build itself is unaffected.
+          # CONFIG_UNIT_TEST is not set
+          EOF
+          cat yubios_ftpm.config
+
+      - name: Configure (qemu_arm64_defconfig + yubiOS fragment)
+        run: |
+          set -euxo pipefail
+          make CROSS_COMPILE="${CROSS_COMPILE}" ARCH=arm qemu_arm64_defconfig
+          # merge_config.sh layers the fragment and warns on any value Kconfig
+          # deps refuse to honor (honest signal, not a silent drop).
+          ./scripts/kconfig/merge_config.sh -m .config yubios_ftpm.config
+          make CROSS_COMPILE="${CROSS_COMPILE}" ARCH=arm olddefconfig
+
+      - name: Verify yubiOS config symbols landed
+        run: |
+          set -euxo pipefail
+          fail=0
+          for sym in CONFIG_TEE CONFIG_OPTEE CONFIG_TPM CONFIG_TPM_V2 \
+                     CONFIG_TPM2_FTPM_TEE CONFIG_EFI_LOADER CONFIG_EFI_MM_COMM_TEE \
+                     CONFIG_EFI_TCG2_PROTOCOL CONFIG_MEASURED_BOOT; do
+            if grep -q "^${sym}=y" .config; then
+              echo "OK  ${sym}=y"
+            else
+              echo "MISSING ${sym}"; fail=1
+            fi
+          done
+          [ "$fail" = "0" ] || { echo "::error::one or more yubiOS fTPM/measured-boot symbols failed to enable"; exit 1; }
+
+      - name: Build U-Boot (BL33)
+        run: |
+          set -euxo pipefail
+          make -j"$(nproc)" CROSS_COMPILE="${CROSS_COMPILE}" ARCH=arm
+          ls -l u-boot u-boot.bin
+          test -f u-boot.bin
+
+      - name: Upload U-Boot artifacts
+        if: always()
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v4 — see PINNED.md
+        with:
+          name: u-boot-qemu_arm64-${{ matrix.runner }}
+          path: |
+            u-boot
+            u-boot.bin
+            .config
+          if-no-files-found: warn
+          retention-days: 7

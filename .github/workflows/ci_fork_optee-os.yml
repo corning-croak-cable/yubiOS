@@ -1,0 +1,94 @@
+# PORTED from yubi-OS/optee_os .github/workflows/ci_test.yml (feat/ci).
+# Fork default branches are kept identical to upstream; all yubi-OS changes
+# live on feat/feature branches and all CI runs from this repo via
+# workflow_dispatch only (org policy, July 8 2026).
+name: ci_fork_optee_os
+
+# yubiOS OP-TEE (BL32) fork CI — task T2 / C2 of #35.
+# Builds OP-TEE core for PLATFORM=vexpress-qemu_armv8a plus the user-TA dev kit,
+# with the yubiOS RPMB-backed secure-storage flags (CFG_RPMB_FS=y CFG_REE_FS=n
+# CFG_EARLY_TA=y). The dev kit (export-ta_arm64) is what T3/C3 (optee_ftpm) builds
+# its fTPM TA against, so this CI gates that dependency.
+#
+# BARE runners (no dhi container): OP-TEE needs a full cross toolchain
+# (gcc-aarch64-linux-gnu + the 32-bit arm compiler for the ta_arm32 dev kit) plus
+# libc/crt*.o that the hardened dhi base intentionally omits — same lesson as the
+# bcvk Rust CI. Native multi-arch matrix kept for parity; aarch64 firmware cross-
+# compiles cleanly on amd64 and builds native on the arm64 runner.
+# Action refs pinned per PINNED.md.
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Why are you running this manually?'
+        required: false
+        default: 'manual'
+permissions:
+  contents: read
+
+jobs:
+  build-optee:
+    name: Build OP-TEE BL32 + TA devkit (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    concurrency:
+      group: ${{ github.workflow }}-build-${{ matrix.arch }}-${{ github.ref }}
+      cancel-in-progress: true
+    env:
+      PLATFORM: vexpress-qemu_armv8a
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # see PINNED.md
+        with:
+          repository: yubi-OS/optee_os
+          ref: feat/ci
+
+      - name: Install OP-TEE build deps + cross toolchains
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq \
+            gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf \
+            python3 python3-pip python3-pyelftools python3-cryptography \
+            device-tree-compiler bison flex bc uuid-dev libssl-dev openssl \
+            build-essential
+
+      - name: Build OP-TEE core (BL32) + user-TA dev kit
+        run: |
+          make -C "$GITHUB_WORKSPACE" -j"$(nproc)" \
+            PLATFORM="$PLATFORM" \
+            CROSS_COMPILE64=aarch64-linux-gnu- \
+            CROSS_COMPILE=arm-linux-gnueabihf- \
+            CFG_RPMB_FS=y \
+            CFG_REE_FS=n \
+            CFG_EARLY_TA=y \
+            all
+
+      - name: Verify BL32 images + TA dev kit exist
+        run: |
+          set -e
+          fail=0
+          for img in tee-header_v2.bin tee-pager_v2.bin tee-pageable_v2.bin; do
+            found=$(find out -name "$img" -print -quit 2>/dev/null || true)
+            if [ -n "$found" ]; then
+              echo "OK  $img -> $found"
+            else
+              echo "MISSING  $img"; fail=1
+            fi
+          done
+          # TA dev kit: modern OP-TEE exports export-ta_arm64 (older trees: export-user_ta).
+          devkit=$(find out -type d \( -name 'export-ta_arm64' -o -name 'export-user_ta' \) -print -quit 2>/dev/null || true)
+          if [ -n "$devkit" ]; then
+            echo "OK  TA dev kit -> $devkit"
+            ls "$devkit"
+            test -d "$devkit/include" || { echo "dev kit has no include/ headers"; fail=1; }
+          else
+            echo "MISSING  TA dev kit (export-ta_arm64 / export-user_ta)"; fail=1
+          fi
+          exit $fail

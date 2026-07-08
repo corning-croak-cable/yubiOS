@@ -1,0 +1,125 @@
+# PORTED from yubi-OS/ms-tpm-20-ref .github/workflows/ci_test.yml (feat/ci).
+# Fork default branches are kept identical to upstream; all yubi-OS changes
+# live on feat/feature branches and all CI runs from this repo via
+# workflow_dispatch only (org policy, July 8 2026).
+name: ci_fork_ms-tpm-20-ref
+
+# Component CI for the yubiOS ARM64 fTPM stack (#35, task C4).
+# Builds the Microsoft TPM 2.0 reference (ms-tpm-20-ref) — the TPM 2.0 reference
+# implementation that OP-TEE/optee_ftpm wraps as the fTPM Trusted Application.
+# Builds the TPMCmd autotools tree (OpenSSL libcrypto backend, TpmBigNum math)
+# for AArch64:
+#   - ubuntu-24.04      : cross-compile with the aarch64-linux-gnu toolchain
+#                         (+ arm64 OpenSSL dev for libcrypto.pc)
+#   - ubuntu-24.04-arm  : native aarch64 build, then smoke-start the simulator
+# Output: bin_PROGRAMS tpm2-simulator + noinst libtpm.a / libplatform.a.
+# This is a SEPARATE workflow — it does NOT edit the upstream run-tests /
+# docker-check / docker-publish workflows. Bare runners: TPMCmd needs a full
+# host + cross toolchain; the hardened dhi base omits crt*.o / libc.
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Why are you running this manually?'
+        required: false
+        default: 'manual'
+permissions:
+  contents: read
+
+jobs:
+  build-ms-tpm-20-ref:
+    name: ms-tpm-20-ref TPM 2.0 reference (aarch64)
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.runner }}
+
+    steps:
+      - name: Checkout ms-tpm-20-ref
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6.0.2 — see PINNED.md
+        with:
+          repository: yubi-OS/ms-tpm-20-ref
+          ref: feat/ci
+
+      - name: Install build dependencies
+        run: |
+          set -euxo pipefail
+          # autoconf-archive provides AX_PTHREAD (used in configure.ac);
+          # pkg-config + libssl-dev provide libcrypto.pc for PKG_CHECK_MODULES.
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential autoconf automake libtool autoconf-archive \
+            pkg-config libssl-dev \
+            git ca-certificates
+          if [ "$(uname -m)" = "x86_64" ]; then
+            # Cross to aarch64: add the arm64 toolchain and arm64 OpenSSL dev so
+            # the cross libcrypto.pc + libcrypto.so resolve. The 24.04 (noble)
+            # runner's default sources are amd64-only, so pin them to amd64 and
+            # add a ports.ubuntu.com source for arm64.
+            sudo dpkg --add-architecture arm64
+            sudo sed -i 's|^Signed-By:|Architectures: amd64\nSigned-By:|' /etc/apt/sources.list.d/ubuntu.sources
+            sudo tee /etc/apt/sources.list.d/arm64-ports.sources >/dev/null <<'EOF'
+          Types: deb
+          URIs: http://ports.ubuntu.com/ubuntu-ports/
+          Suites: noble noble-updates noble-backports noble-security
+          Components: main universe
+          Architectures: arm64
+          Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+          EOF
+            sudo apt-get update
+            sudo apt-get install -y --no-install-recommends \
+              crossbuild-essential-arm64 libssl-dev:arm64
+            echo "CONFIGURE_HOST=--host=aarch64-linux-gnu" >> "$GITHUB_ENV"
+            echo "CC=aarch64-linux-gnu-gcc" >> "$GITHUB_ENV"
+            # Point pkg-config at the arm64 .pc tree for the cross build.
+            echo "PKG_CONFIG_PATH=/usr/lib/aarch64-linux-gnu/pkgconfig" >> "$GITHUB_ENV"
+            echo "PKG_CONFIG_LIBDIR=/usr/lib/aarch64-linux-gnu/pkgconfig:/usr/share/pkgconfig" >> "$GITHUB_ENV"
+          else
+            echo "CONFIGURE_HOST=" >> "$GITHUB_ENV"
+            echo "CC=gcc" >> "$GITHUB_ENV"
+          fi
+
+      - name: Bootstrap + configure (TPMCmd)
+        run: |
+          set -euxo pipefail
+          cd TPMCmd
+          ./bootstrap
+          ./configure ${CONFIGURE_HOST} CC="${CC}"
+
+      - name: Build the TPM 2.0 reference (tpm2-simulator + libtpm)
+        run: |
+          set -euxo pipefail
+          cd TPMCmd
+          make -j"$(nproc)"
+          file Simulator/src/tpm2-simulator
+          file Simulator/src/tpm2-simulator | grep -q 'ARM aarch64'
+          ls -l Simulator/src/tpm2-simulator
+
+      - name: Smoke-start the simulator (native arm64 only)
+        if: runner.arch == 'ARM64'
+        run: |
+          set -euxo pipefail
+          cd TPMCmd
+          # The simulator listens on a TCP control/command port pair and blocks;
+          # start it, confirm it comes up, then stop it. A clean start proves the
+          # OpenSSL-backed reference links and initialises on aarch64.
+          ./Simulator/src/tpm2-simulator 2321 &
+          SIM_PID=$!
+          sleep 3
+          kill "$SIM_PID" 2>/dev/null || true
+          wait "$SIM_PID" 2>/dev/null || true
+          echo "simulator started + stopped cleanly"
+
+      - name: Upload reference build artifacts
+        if: always()
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v4 — see PINNED.md
+        with:
+          name: ms-tpm-20-ref-${{ matrix.runner }}
+          path: |
+            TPMCmd/Simulator/src/tpm2-simulator
+            TPMCmd/*.a
+            TPMCmd/Simulator/src/*.a
+          if-no-files-found: warn
+          retention-days: 7

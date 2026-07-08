@@ -27,12 +27,6 @@ name: ci_mkosi-installer
 # the hardened dhi container doesn't provide.
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/ci_mkosi-installer.yml'
-      - 'mkosi.conf'
-      - 'mkosi.conf.d/**'
   workflow_dispatch:
     inputs:
       reason:
@@ -61,7 +55,7 @@ jobs:
           set -euxo pipefail
           sudo apt-get update -qq
           sudo apt-get install -y -qq softhsm2 sbsigntool zstd uidmap python3-pip debian-archive-keyring
-          sudo pip install --break-system-packages git+https://github.com/yubi-OS/mkosi.git@main
+          sudo pip install --break-system-packages git+https://github.com/yubi-OS/mkosi.git@feature/yubiOS-profile
           mkosi --version
           # ubuntu 24.04 restricts unprivileged userns via AppArmor; mkosi's
           # sandbox needs it. Harmless if already 0.
@@ -154,9 +148,7 @@ jobs:
           ls -l inst/installer/
 
       - name: Build installer OCI artifact (FROM scratch)
-        if: >-
-          (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-          (github.event_name == 'workflow_dispatch' && inputs.Docker_push == true)
+        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
         run: |
           set -euxo pipefail
           cat > inst/Dockerfile <<'DOCKER'
@@ -173,9 +165,7 @@ jobs:
             inst
 
       - name: Push installer tags
-        if: >-
-          (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-          (github.event_name == 'workflow_dispatch' && inputs.Docker_push == true)
+        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
         run: |
           set -euxo pipefail
           echo "${{ secrets.DOCKER }}" | docker login -u 0mniteck42 --password-stdin

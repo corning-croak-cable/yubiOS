@@ -1,0 +1,65 @@
+# PORTED from yubi-OS/mkosi .github/workflows/ci_test.yml (feature/yubiOS-profile).
+# Fork default branches are kept identical to upstream; all yubi-OS changes
+# live on feat/feature branches and all CI runs from this repo via
+# workflow_dispatch only (org policy, July 8 2026).
+name: ci_fork_mkosi
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Why are you running this manually?'
+        required: false
+        default: 'manual'
+jobs:
+  validate-profile:
+    name: Profile syntax check
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6.0.2
+        with:
+          repository: yubi-OS/mkosi
+          ref: feature/yubiOS-profile
+      - name: Install mkosi
+        run: |
+          sudo apt-get install -y python3 python3-pip
+          pip3 install --quiet .
+      # Parses conf files without needing a YubiKey or real build
+      - name: Profile syntax (yubios)
+        run: mkosi --profile yubios summary || true
+      - name: Profile syntax (yubiOS)
+        run: mkosi --profile yubiOS summary || true
+
+  shellcheck:
+    name: shellcheck
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          repository: yubi-OS/mkosi
+          ref: feature/yubiOS-profile
+      - name: Install shellcheck
+        run: sudo apt-get install -y shellcheck
+      - name: shellcheck (yubiOS profile scripts, if present)
+        run: |
+          files=$(find mkosi.scripts/ mkosi.finalize.d/ -name '*.sh' 2>/dev/null || true)
+          if [ -z "$files" ]; then echo "no yubiOS-profile shell scripts on this ref — skipping"; exit 0; fi
+          echo "$files" | xargs shellcheck --severity=error
+
+  ruff:
+    name: Ruff (Python lint)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          repository: yubi-OS/mkosi
+          ref: feature/yubiOS-profile
+      - name: Install ruff
+        run: pip3 install --quiet ruff
+      - name: ruff format check
+        run: ruff format --check --quiet mkosi/ tests/ kernel-install/*.install
+      - name: ruff lint
+        run: ruff check mkosi/ tests/ kernel-install/*.install

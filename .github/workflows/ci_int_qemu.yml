@@ -29,12 +29,6 @@ name: ci_int_qemu
 # HARD RULES honoured: this lands the workflow only — no merge, no force-push, no tag.
 
 on:
-  push:
-    branches: [main]
-    paths: ['.github/workflows/ci_int_qemu.yml']
-  pull_request:
-    branches: [main]
-    paths: ['.github/workflows/ci_int_qemu.yml']
   workflow_dispatch:
     inputs:
       fip_run_id:

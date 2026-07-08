@@ -44,12 +44,6 @@ name: ci_test-int
 # HARD RULES: lands the integration workflow only — no merge, no force-push, no tag.
 
 on:
-  push:
-    branches: [main]
-    paths: ['.github/workflows/ci_test-int.yml']
-  pull_request:
-    branches: [main]
-    paths: ['.github/workflows/ci_test-int.yml']
   workflow_dispatch:
     inputs:
       reason:
@@ -619,9 +613,7 @@ jobs:
   firmware-publish:
     name: Stage 4 — Publish firmware bundle (0mniteck/yubios:firmware)
     needs: qemu
-    if: >-
-      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
-      (github.event_name == 'workflow_dispatch' && inputs.Docker_push == true)
+    if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
     runs-on: ubuntu-24.04
     steps:
       - name: Download firmware artifacts (native arm64 build)

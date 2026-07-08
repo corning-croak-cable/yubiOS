@@ -18,10 +18,6 @@ name: yubiOS VM e2e (tests/vm)
 # VM boot + CTAP2 legs are SKIPPED *explicitly and loudly* — never a silent pass.
 
 on:
-  pull_request:
-    paths:
-      - 'tests/vm/**'
-      - '.github/workflows/ci_test-vm.yml'
   workflow_dispatch:
     inputs:
       image:

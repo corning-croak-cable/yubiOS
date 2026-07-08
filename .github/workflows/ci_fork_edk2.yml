@@ -1,0 +1,97 @@
+# PORTED from yubi-OS/edk2 .github/workflows/ci_test.yml (feat/ci).
+# Fork default branches are kept identical to upstream; all yubi-OS changes
+# live on feat/feature branches and all CI runs from this repo via
+# workflow_dispatch only (org policy, July 8 2026).
+name: ci_fork_edk2
+
+# yubiOS fork CI for EDK2 (#35 ARM64 fTPM stack, component C6 / StandaloneMM).
+#
+# GROUNDING NOTE (truth-or-silence, see knowledge/arm64-ftpm-build-graph.md):
+# The task names `PlatformStandaloneMmRpmb.dsc` -> `BL32_AP_MM.fd`. That platform
+# DSC lives in the SEPARATE `edk2-platforms` repo (Platform/StandaloneMm/...),
+# which is NOT present in the yubi-OS org. This fork (parent tianocore/edk2)
+# ships the StandaloneMM CORE package `StandaloneMmPkg/StandaloneMmPkg.dsc`
+# (verified on master: PLATFORM_NAME=StandaloneMm, SUPPORTED_ARCHITECTURES=AARCH64|X64).
+# So this fork-CI proves the StandaloneMM core cross-compiles for AARCH64 in
+# isolation (test.ci first). Producing the RPMB platform FD (BL32_AP_MM.fd) is an
+# integration-time step once edk2-platforms is added to the org — tracked for INT.
+#
+# BARE runner (no dhi container): the EDK2 C BaseTools + AARCH64 cross toolchain
+# need a full host libc/crt*.o that the hardened dhi base intentionally omits
+# (same lesson as the bcvk Rust CI). Action refs pinned per PINNED.md.
+#
+# Toolchain tag is GCC (not GCC5): current tianocore/edk2 master consolidated the
+# GCC48/GCC49/GCC5 tags into a single GCC tag (build.py rejects GCC5 as
+# 'Tool chain [GCC5] is not defined'). Cross prefix env is GCC_AARCH64_PREFIX.
+# need a full host libc/crt*.o that the hardened dhi base intentionally omits
+# (same lesson as the bcvk Rust CI). Action refs pinned per PINNED.md.
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Why are you running this manually?'
+        required: false
+        default: 'manual'
+permissions:
+  contents: read
+
+jobs:
+  build-standalonemm:
+    name: StandaloneMM AARCH64 GCC (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    concurrency:
+      group: ${{ github.workflow }}-stmm-${{ matrix.arch }}-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # see PINNED.md
+        with:
+          repository: yubi-OS/edk2
+          ref: feat/ci
+          submodules: recursive
+
+      - name: Install EDK2 build deps
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq \
+            build-essential uuid-dev iasl nasm python3 python3-venv \
+            gcc-aarch64-linux-gnu
+
+      # On the amd64 runner we cross-compile (GCC_AARCH64_PREFIX=aarch64-linux-gnu-).
+      # On the native arm64 runner the host gcc IS aarch64, so the prefix is empty.
+      - name: Resolve GCC AARCH64 toolchain prefix
+        id: tc
+        run: |
+          if [ "${{ matrix.arch }}" = "arm64" ]; then
+            echo "prefix=" >> "$GITHUB_OUTPUT"
+          else
+            echo "prefix=aarch64-linux-gnu-" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build BaseTools
+        run: make -C BaseTools -j"$(nproc)"
+
+      - name: Build StandaloneMmPkg (AARCH64, GCC, RELEASE)
+        run: |
+          export GCC_AARCH64_PREFIX="${{ steps.tc.outputs.prefix }}"
+          set -x
+          . ./edksetup.sh
+          build -a AARCH64 -t GCC -b RELEASE \
+            -p StandaloneMmPkg/StandaloneMmPkg.dsc \
+            -n "$(nproc)"
+
+      - name: Show StandaloneMM build outputs
+        run: |
+          out="Build/StandaloneMm/RELEASE_GCC/FV"
+          echo "== FV directory =="
+          ls -la "$out" 2>/dev/null || echo "no FV dir (no FV defined for core dsc — module .efi are the artifacts)"
+          echo "== StandaloneMM module .efi =="
+          find Build/StandaloneMm -name '*.efi' -path '*AARCH64*' | sort
