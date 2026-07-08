@@ -9,13 +9,22 @@ name: ci_mkosi-installer
 # (yubi-OS/mkosi#2) uses on real hardware. The signed UKI is verified against
 # the mock cert with sbverify before anything is published.
 #
+# HSM plumbing: mkosi's signing/validation sandbox does NOT carry sandbox
+# trees, but it bind-mounts host /run rw whenever the key source is not a
+# file (mkosi's designed path for host HSM daemons like pcscd). So the
+# SoftHSM conf + token store live at /run/yubios-hsm — the same absolute
+# path on the host (where the token is created) and inside the sandbox
+# (where systemd-sbsign signs through pkcs11-provider). The provider is
+# pointed straight at libsofthsm2.so via PKCS11_PROVIDER_MODULE, skipping
+# p11-kit indirection. Debug trail from the campaign: C_Initialize error 5
+# = softhsm can't read SOFTHSM2_CONF inside the sandbox.
+#
 # On green (push to main, or dispatch with Docker_push=true) the artifacts are
 # published as 0mniteck/yubios:installer + installer-<sha> per ADR-022 —
 # the same one-repo/per-artifact-tag scheme as the firmware bundle.
 #
-# BARE runner: mkosi needs loop-free unprivileged image assembly via its
-# fedora tools tree (ToolsTree=default in mkosi.conf); the hardened dhi
-# container lacks the userns/uidmap plumbing.
+# BARE runner: mkosi needs userns/uidmap plumbing and a writable /run that
+# the hardened dhi container doesn't provide.
 
 on:
   push:
@@ -51,69 +60,34 @@ jobs:
         run: |
           set -euxo pipefail
           sudo apt-get update -qq
-          sudo apt-get install -y -qq softhsm2 opensc sbsigntool zstd uidmap python3-pip debian-archive-keyring
+          sudo apt-get install -y -qq softhsm2 sbsigntool zstd uidmap python3-pip debian-archive-keyring
           sudo pip install --break-system-packages git+https://github.com/yubi-OS/mkosi.git@main
           mkosi --version
           # ubuntu 24.04 restricts unprivileged userns via AppArmor; mkosi's
           # sandbox needs it. Harmless if already 0.
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
 
-      - name: SoftHSM token — mock of YubiKey PIV slot 9c
+      - name: SoftHSM token in /run — mock of YubiKey PIV slot 9c
         run: |
           set -euxo pipefail
-          # Key + self-signed cert generated on the host, imported into a SoftHSM
-          # token. The token dir + softhsm2.conf are overlaid into mkosi's tool
-          # sandbox via --sandbox-tree so systemd-sbsign (running inside the
-          # fedora tools tree) reaches the same "HSM" at the fedora default
-          # paths (/etc/softhsm2.conf, /var/lib/softhsm/tokens).
-          mkdir -p sandbox/etc/softhsm sandbox/var/lib/softhsm/tokens
+          # /run is bind-mounted into mkosi's signing sandbox at the same
+          # absolute path, so conf + tokens created here are reachable by
+          # systemd-sbsign inside the tools tree without any overlay tricks.
+          sudo mkdir -p /run/yubios-hsm/tokens
           openssl req -x509 -newkey rsa:3072 -sha256 -days 365 -nodes \
             -subj "/CN=yubiOS CI Secure Boot (SoftHSM mock of PIV 9c)/" \
             -keyout sb.key -out mkosi.secure-boot.pem
           openssl pkcs8 -topk8 -nocrypt -in sb.key -out sb.p8
-          printf 'directories.tokendir = /var/lib/softhsm/tokens\nobjectstore.backend = file\n' \
-            > sandbox/etc/softhsm2.conf
-          cp sandbox/etc/softhsm2.conf sandbox/etc/softhsm/softhsm2.conf
-          # Host-side conf pointing at the same token dir by host path, for init.
-          printf 'directories.tokendir = %s/sandbox/var/lib/softhsm/tokens\nobjectstore.backend = file\n' "$PWD" \
-            > host-softhsm2.conf
-          export SOFTHSM2_CONF=$PWD/host-softhsm2.conf
-          softhsm2-util --init-token --free --label yubios-9c --pin 123456 --so-pin 123456
-          softhsm2-util --import sb.p8 --token yubios-9c --label piv-9c --id 9c --pin 123456
+          printf 'directories.tokendir = /run/yubios-hsm/tokens\nobjectstore.backend = file\n' \
+            | sudo tee /run/yubios-hsm/softhsm2.conf
+          sudo SOFTHSM2_CONF=/run/yubios-hsm/softhsm2.conf \
+            softhsm2-util --init-token --free --label yubios-9c --pin 123456 --so-pin 123456
+          sudo SOFTHSM2_CONF=/run/yubios-hsm/softhsm2.conf \
+            softhsm2-util --import sb.p8 --token yubios-9c --label piv-9c --id 9c --pin 123456
           shred -u sb.key sb.p8
+          sudo chmod -R a+rwX /run/yubios-hsm
           printf 'pkcs11:token=yubios-9c;object=piv-9c;type=private?pin-value=123456' \
             > mkosi.secure-boot.pkcs11-uri
-          cp mkosi.secure-boot.pem sandbox/etc/yubios-ci-cert.pem
-          chmod -R a+rX sandbox
-
-      - name: DIAG — probe PKCS#11 stack inside the mkosi sandbox
-        run: |
-          set -uxo pipefail
-          mv mkosi.secure-boot.pem /tmp/sb.pem && mv mkosi.secure-boot.pkcs11-uri /tmp/sb.uri
-          sudo mkosi \
-            --distribution fedora \
-            --release 45 \
-            --profile minimal \
-            --tools-tree-package softhsm2 \
-            --tools-tree-package pkcs11-provider \
-            --tools-tree-package opensc \
-            --sandbox-tree sandbox \
-            --force \
-            sandbox -- sh -c '
-              echo "==DIAG conf=="; cat /etc/softhsm2.conf; cat /etc/softhsm/softhsm2.conf;
-              echo "==DIAG tokens=="; ls -laR /var/lib/softhsm;
-              echo "==DIAG p11kit modules=="; ls /usr/share/p11-kit/modules/; cat /usr/share/p11-kit/modules/softhsm2.module 2>&1;
-              echo "==DIAG libs=="; find /usr/lib -name "libsofthsm2.so" -o -name "pkcs11.so" -o -name "p11-kit-proxy.so" 2>/dev/null;
-              echo "==DIAG pkcs11-tool direct=="; mod=$(find /usr/lib -name libsofthsm2.so | head -1); pkcs11-tool --module "$mod" --list-token-slots 2>&1;
-              pkcs11-tool --module "$mod" --login --pin 123456 --list-objects 2>&1 | head -12;
-              echo "==DIAG keyutil noenv=="; /usr/lib/systemd/systemd-keyutil validate --certificate /etc/yubios-ci-cert.pem --private-key-source provider:pkcs11 --private-key "pkcs11:token=yubios-9c;object=piv-9c;type=private?pin-value=123456" 2>&1 || true;
-              echo "==DIAG keyutil withenv==";
-              export PKCS11_PROVIDER_MODULE=$(find /usr/lib -name libsofthsm2.so | head -1);
-              export PKCS11_PROVIDER_DEBUG=file:/dev/stderr,level:2;
-              /usr/lib/systemd/systemd-keyutil validate --certificate /etc/yubios-ci-cert.pem --private-key-source provider:pkcs11 --private-key "pkcs11:token=yubios-9c;object=piv-9c;type=private?pin-value=123456" 2>&1 | tail -30;
-              echo "==DIAG done==";
-            ' < /dev/null || true
-          mv /tmp/sb.pem mkosi.secure-boot.pem && mv /tmp/sb.uri mkosi.secure-boot.pkcs11-uri
 
       - name: Build disk image (minimal profile, PKCS#11-signed UKI)
         run: |
@@ -125,11 +99,9 @@ jobs:
             --package kernel \
             --tools-tree-package softhsm2 \
             --tools-tree-package pkcs11-provider \
-            --tools-tree-package opensc \
-            --sandbox-tree sandbox \
             --environment PKCS11_PROVIDER_MODULE=/usr/lib/softhsm/libsofthsm2.so \
-            --environment SOFTHSM2_CONF=/etc/softhsm2.conf \
-            --environment PKCS11_PROVIDER_DEBUG=file:/dev/stderr,level:2 \
+            --environment SOFTHSM2_CONF=/run/yubios-hsm/softhsm2.conf \
+            --environment PKCS11_PROVIDER_DEBUG=file:/dev/stderr,level:1 \
             --secure-boot-key-source provider:pkcs11 \
             --secure-boot-key "$(cat mkosi.secure-boot.pkcs11-uri)" \
             --secure-boot-certificate mkosi.secure-boot.pem \
