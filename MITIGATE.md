@@ -1,9 +1,9 @@
 # MITIGATE.md — yubiOS vs. Faux Phy Attack Chain
 
-> Reference: **Faux Phy ... Phe Phum v0.9** by Shant Tchatalbachian (0mniteck)  
+> Reference: **Faux Phy ... Phe Phum v1.05** by Shant Tchatalbachian (0mniteck)  
 > https://gist.github.com/0mniteck/e92c74276333e43912a5baa6802fcbd4
 >
-> VNDR: Qualcomm (qcom) supply-chain and firmware persistence attack chain.
+> VNDR: Qualcomm (qcom) supply-chain and absolute persistence attack chain.
 
 ---
 
