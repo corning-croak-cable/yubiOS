@@ -101,6 +101,7 @@ jobs:
             --tools-tree-package pkcs11-provider \
             --tools-tree-package distribution-gpg-keys \
             --tools-tree-package dnf \
+            --tools-tree-package rpm \
             --environment PKCS11_PROVIDER_MODULE=/usr/lib/softhsm/libsofthsm2.so \
             --environment SOFTHSM2_CONF=/run/yubios-hsm/softhsm2.conf \
             --environment PKCS11_PROVIDER_DEBUG=file:/dev/stderr,level:1 \
