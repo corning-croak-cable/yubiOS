@@ -78,6 +78,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
+      - name: Free disk space (self-hosted rock1 persists disk across runs -- unlike hosted runners)
+        if: matrix.arch == 'arm64'
+        run: |
+          df -h "$PWD" || true
+          echo "--- pruning podman storage from prior runs (root-owned, since bcvk/vm-e2e now runs under sudo) ---"
+          sudo podman system prune -af --volumes || true
+          echo "--- removing leftover bcvk-src clone + cargo target from a prior run ---"
+          sudo rm -rf "${GITHUB_WORKSPACE}/bcvk-src" || true
+          echo "--- cleaning apt cache ---"
+          sudo apt-get clean || true
+          df -h "$PWD" || true
+
       - name: Install host deps (swtpm + qemu + fido2 + cryptsetup)
         run: |
           sudo apt-get update -qq
@@ -128,6 +140,10 @@ jobs:
           fi
           echo "$PWD/bcvk-src/target/release" >> "$GITHUB_PATH"
           echo "skip=0" >> "$GITHUB_OUTPUT"
+          # Reclaim space immediately: keep the built binary, drop the ~GB of intermediate
+          # build objects before the (large) image pull below. rock1 ran out of disk here.
+          rm -rf bcvk-src/target/release/build bcvk-src/target/release/deps bcvk-src/target/release/incremental 2>/dev/null || true
+          cargo cache -a 2>/dev/null || true
 
       - name: Disk space after bcvk build attempt (diagnostic)
         if: always()
