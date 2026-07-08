@@ -120,6 +120,12 @@ jobs:
           echo "--- inode usage ---"
           df -i "$PWD" /tmp || true
 
+      - name: Free disk space (pre-build -- kill stray containers from an aborted prior run)
+        run: |
+          sudo podman ps -aq | xargs -r sudo podman rm -f || true
+          sudo podman system prune -af --volumes || true
+          df -h "$PWD" || true
+
       - name: Build bcvk @ feat/swtpm-ci (feasibility gate)
         id: bcvk
         run: |
@@ -191,6 +197,12 @@ jobs:
       # bcvk would still report "image not known". Every podman call in this
       # workflow and in tests/vm/*.sh (pull / rm / logs) exists to interoperate
       # with that hardcoded dependency, not because we chose podman ourselves.
+      - name: Free disk space (pre-pull -- reclaim space the cargo build just used)
+        if: steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1' && inputs.image != ''
+        run: |
+          sudo podman system prune -af --volumes || true
+          df -h "$PWD" || true
+
       - name: Pull yubiOS image into podman storage (bcvk boots from local storage)
         if: steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1' && inputs.image != ''
         run: |
@@ -231,6 +243,14 @@ jobs:
           chmod +x tests/vm/test-fido2-enrollment.sh
           sudo env "YUBIOS_IMAGE=${YUBIOS_IMAGE:-./mkosi.output/yubiOS}" bash tests/vm/test-fido2-enrollment.sh
           echo "### vm-e2e (${{ matrix.arch }}): test-fido2-enrollment.sh ran (CTAP2 legs skip unless the test image ships swu2f Layer 2)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Free disk space (post-run -- leave rock1 clean for the next run)
+        if: always()
+        run: |
+          sudo podman ps -aq | xargs -r sudo podman rm -f || true
+          sudo podman system prune -af --volumes || true
+          sudo rm -rf "${GITHUB_WORKSPACE}/bcvk-src" || true
+          df -h "$PWD" || true
 
       - name: Note hardware-only variant (lint-only in CI)
         run: |
