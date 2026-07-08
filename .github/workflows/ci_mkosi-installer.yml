@@ -1,0 +1,168 @@
+name: ci_mkosi-installer
+
+# yubiOS mkosi disk-image build + installer publish (#10, ADR-022).
+#
+# Builds the full DPS-partitioned disk image + UKI from the repo's mkosi.conf
+# (minimal profile) with Secure Boot signing driven through PKCS#11 — a SoftHSM
+# token stands in for YubiKey PIV slot 9c, exercising the exact
+# SecureBootKeySource=provider:pkcs11 + systemd-sbsign path the yubiOS profile
+# (yubi-OS/mkosi#2) uses on real hardware. The signed UKI is verified against
+# the mock cert with sbverify before anything is published.
+#
+# On green (push to main, or dispatch with Docker_push=true) the artifacts are
+# published as 0mniteck/yubios:installer + installer-<sha> per ADR-022 —
+# the same one-repo/per-artifact-tag scheme as the firmware bundle.
+#
+# BARE runner: mkosi needs loop-free unprivileged image assembly via its
+# fedora tools tree (ToolsTree=default in mkosi.conf); the hardened dhi
+# container lacks the userns/uidmap plumbing.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ci_mkosi-installer.yml'
+      - 'mkosi.conf'
+      - 'mkosi.conf.d/**'
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Why are you running this manually?'
+        required: false
+        default: 'manual'
+      Docker_push:
+        description: 'Push installer image to Docker Hub (0mniteck/yubios:installer)?'
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: mkosi disk image — SoftHSM PKCS#11 signed UKI
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0 (PINNED.md)
+
+      - name: Install host deps + mkosi (yubi-OS fork @ main)
+        run: |
+          set -euxo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq softhsm2 opensc sbsigntool zstd uidmap python3-pip
+          sudo pip install --break-system-packages git+https://github.com/yubi-OS/mkosi.git@main
+          mkosi --version
+          # ubuntu 24.04 restricts unprivileged userns via AppArmor; mkosi's
+          # sandbox needs it. Harmless if already 0.
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+
+      - name: SoftHSM token — mock of YubiKey PIV slot 9c
+        run: |
+          set -euxo pipefail
+          # Key + self-signed cert generated on the host, imported into a SoftHSM
+          # token. The token dir + softhsm2.conf are overlaid into mkosi's tool
+          # sandbox via --sandbox-tree so systemd-sbsign (running inside the
+          # fedora tools tree) reaches the same "HSM" at the fedora default
+          # paths (/etc/softhsm2.conf, /var/lib/softhsm/tokens).
+          mkdir -p sandbox/etc sandbox/var/lib/softhsm/tokens
+          openssl req -x509 -newkey rsa:3072 -sha256 -days 365 -nodes \
+            -subj "/CN=yubiOS CI Secure Boot (SoftHSM mock of PIV 9c)/" \
+            -keyout sb.key -out mkosi.secure-boot.pem
+          openssl pkcs8 -topk8 -nocrypt -in sb.key -out sb.p8
+          printf 'directories.tokendir = /var/lib/softhsm/tokens\nobjectstore.backend = file\n' \
+            > sandbox/etc/softhsm2.conf
+          # Host-side conf pointing at the same token dir by host path, for init.
+          printf 'directories.tokendir = %s/sandbox/var/lib/softhsm/tokens\nobjectstore.backend = file\n' "$PWD" \
+            > host-softhsm2.conf
+          export SOFTHSM2_CONF=$PWD/host-softhsm2.conf
+          softhsm2-util --init-token --free --label yubios-9c --pin 123456 --so-pin 123456
+          softhsm2-util --import sb.p8 --token yubios-9c --label piv-9c --id 9c --pin 123456
+          shred -u sb.key sb.p8
+          printf 'pkcs11:token=yubios-9c;object=piv-9c;type=private?pin-value=123456' \
+            > mkosi.secure-boot.pkcs11-uri
+          chmod -R a+rX sandbox
+
+      - name: Build disk image (minimal profile, PKCS#11-signed UKI)
+        run: |
+          set -euxo pipefail
+          sudo mkosi \
+            --distribution fedora \
+            --release 45 \
+            --profile minimal \
+            --package kernel \
+            --tools-tree-package softhsm \
+            --tools-tree-package pkcs11-provider \
+            --tools-tree-package opensc \
+            --sandbox-tree sandbox \
+            --secure-boot-key-source provider:pkcs11 \
+            --secure-boot-key "$(cat mkosi.secure-boot.pkcs11-uri)" \
+            --secure-boot-certificate mkosi.secure-boot.pem \
+            --secure-boot-sign-tool systemd-sbsign \
+            build
+          ls -la mkosi.output/
+
+      - name: Verify UKI is signed by the PKCS#11 (SoftHSM) key
+        run: |
+          set -euxo pipefail
+          uki=$(find mkosi.output -name '*.efi' -type f -print -quit)
+          test -n "$uki"
+          sbverify --cert mkosi.secure-boot.pem "$uki"
+          echo "PKCS#11 signing path VERIFIED (systemd-sbsign via provider:pkcs11 against SoftHSM)"
+
+      - name: Assemble /installer payload + MANIFEST
+        run: |
+          set -euxo pipefail
+          mkdir -p inst/installer
+          raw=$(find mkosi.output -maxdepth 1 \( -name '*.raw' -o -name '*.img' \) -type f -print -quit)
+          test -n "$raw"
+          zstd -T0 -8 --force -o "inst/installer/$(basename "$raw").zst" "$raw"
+          find mkosi.output -maxdepth 1 -name '*.efi' -type f -exec cp {} inst/installer/ \;
+          find mkosi.output -maxdepth 1 -name '*manifest*' -type f -exec cp {} inst/installer/ \; || true
+          cp mkosi.secure-boot.pem inst/installer/ci-secure-boot-cert.pem
+          {
+            echo "yubiOS mkosi installer image (minimal profile) — CI build"
+            echo "yubios_commit=${GITHUB_SHA}"
+            echo "workflow_run=${GITHUB_RUN_ID}"
+            echo "mkosi_source=https://github.com/yubi-OS/mkosi @ main (yubiOS profile merged via PR #2)"
+            echo "signing=UKI signed via SecureBootKeySource=provider:pkcs11 + systemd-sbsign"
+            echo "NOTE: CI signing key is a SoftHSM mock of YubiKey PIV slot 9c."
+            echo "Production images are signed with the real YubiKey (ADR-008); this"
+            echo "image validates the build + PKCS#11 signing path, not a production key."
+            echo "Install flow (ADR-022): write this image to disk, boot; the installed"
+            echo "system tracks 0mniteck/yubios:latest via bootc. ARM64 targets flash"
+            echo "0mniteck/yubios:firmware first (secure world) per ADR-018/019/020."
+          } > inst/installer/MANIFEST.txt
+          ls -l inst/installer/
+
+      - name: Build installer OCI artifact (FROM scratch)
+        if: >-
+          (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+          (github.event_name == 'workflow_dispatch' && inputs.Docker_push == true)
+        run: |
+          set -euxo pipefail
+          cat > inst/Dockerfile <<'DOCKER'
+          FROM scratch
+          COPY installer/ /installer/
+          DOCKER
+          docker build \
+            --label "org.opencontainers.image.title=yubiOS mkosi installer image" \
+            --label "org.opencontainers.image.description=DPS disk image + PKCS#11-signed UKI (minimal profile); installs the base system that runs the bootc images" \
+            --label "org.opencontainers.image.source=https://github.com/yubi-OS/yubiOS" \
+            --label "org.opencontainers.image.revision=${GITHUB_SHA}" \
+            -t "0mniteck/yubios:installer" \
+            -t "0mniteck/yubios:installer-${GITHUB_SHA}" \
+            inst
+
+      - name: Push installer tags
+        if: >-
+          (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+          (github.event_name == 'workflow_dispatch' && inputs.Docker_push == true)
+        run: |
+          set -euxo pipefail
+          echo "${{ secrets.DOCKER }}" | docker login -u 0mniteck42 --password-stdin
+          docker push "0mniteck/yubios:installer"
+          docker push "0mniteck/yubios:installer-${GITHUB_SHA}"
+          docker logout
+          docker buildx imagetools inspect "0mniteck/yubios:installer"
