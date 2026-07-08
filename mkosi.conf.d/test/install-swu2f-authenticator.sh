@@ -45,9 +45,24 @@ BUILD_DEPS="git cargo rust gcc systemd-devel tpm2-tss-devel"
 # flock, so a leftover lock file blocks every subsequent dnf call with
 # "failed to acquire package cache lock: File exists (os error 17)" even
 # though nothing is actually running. Clear it before the first real dnf call.
-rm -f /var/cache/dnf/*.lock /var/cache/dnf/*.pid /run/dnf5.lock /run/dnf.lock 2>/dev/null || true
-
-dnf -y install ${BUILD_DEPS}
+# Retry loop: dnf5's package-cache lock has been observed to be transiently
+# held mid-transaction in this build context (not just stale at start), so a
+# one-shot pre-cleanup isn't sufficient. Clear any lock file and retry a few
+# times with backoff rather than failing the whole image build on flakiness.
+install_ok=0
+for attempt in 1 2 3 4 5; do
+  rm -f /var/cache/dnf/*.lock /var/cache/dnf/*.pid /run/dnf5.lock /run/dnf.lock 2>/dev/null || true
+  if dnf -y install ${BUILD_DEPS}; then
+    install_ok=1
+    break
+  fi
+  echo "install-swu2f-authenticator: dnf install attempt ${attempt} failed (package cache lock contention), retrying..." >&2
+  sleep 5
+done
+if [ "${install_ok}" -ne 1 ]; then
+  echo "install-swu2f-authenticator: dnf install failed after 5 attempts" >&2
+  exit 1
+fi
 
 src="$(mktemp -d)"
 trap 'rm -rf "$src"' EXIT
