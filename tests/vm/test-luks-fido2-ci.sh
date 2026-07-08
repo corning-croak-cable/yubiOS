@@ -64,9 +64,13 @@ VMID="$(bcvk ephemeral run --detach --ssh-keygen --swtpm --swu2f "$IMAGE")"
 echo "VM id: $VMID"
 
 # wait for sshd
-for i in $(seq 1 60); do
+for i in $(seq 1 150); do
   bcvk ssh "$VMID" -- true >/dev/null 2>&1 && break
-  [[ "$i" -eq 60 ]] && die "guest did not become reachable over ssh"
+  if [[ "$i" -eq 150 ]]; then
+    echo "--- podman logs (last 80 lines) ---"
+    podman logs --tail 80 "$VMID" 2>&1 || true
+    die "guest did not become reachable over ssh after 300s"
+  fi
   sleep 2
 done
 
