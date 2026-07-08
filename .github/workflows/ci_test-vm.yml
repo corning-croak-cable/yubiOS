@@ -127,6 +127,14 @@ jobs:
             || { echo "::error::bcvk feat/swtpm-ci missing --swu2f flag"; exit 1; }
           echo "bcvk exposes --swtpm and --swu2f"
 
+      # NOT converted to docker: bcvk (crates/kit/src/run_ephemeral.rs,
+      # crates/kit/src/ephemeral.rs) hardcodes Command::new("podman") for its
+      # privileged ephemeral-VM container and container inspection — there is
+      # no --runtime flag. Pulling with `docker` would populate docker's own
+      # image store, which podman's separate containers-storage can't see, so
+      # bcvk would still report "image not known". Every podman call in this
+      # workflow and in tests/vm/*.sh (pull / rm / logs) exists to interoperate
+      # with that hardcoded dependency, not because we chose podman ourselves.
       - name: Pull yubiOS image into podman storage (bcvk boots from local storage)
         if: steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && inputs.image != ''
         run: |
