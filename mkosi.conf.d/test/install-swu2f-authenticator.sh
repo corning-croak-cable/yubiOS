@@ -65,8 +65,17 @@ if [ "${install_ok}" -ne 1 ]; then
 fi
 
 src="$(mktemp -d)"
-trap 'rm -rf "$src"' EXIT
+cargo_home="$(mktemp -d)"
+trap 'rm -rf "$src" "$cargo_home"' EXIT
 git clone --depth 1 --branch "${PASSLESS_TAG}" "${PASSLESS_REPO}" "${src}"
+
+# The real failure this build hit was NOT dnf (dnf completes cleanly, 113/113):
+# cargo's own cache dir ($CARGO_HOME, defaults to /root/.cargo when running as
+# root) fails to be created with "File exists (os error 17)" in this container
+# build context -- something about /root/.cargo already existing as a
+# non-directory entry in the base image/build overlay. Sidestep it entirely by
+# pointing CARGO_HOME at a throwaway directory we know is clean.
+export CARGO_HOME="${cargo_home}"
 
 # `cargo install --debug` => debug profile (debug_assertions on) => the
 # PASSLESS_E2E_AUTO_ACCEPT_UV path compiles in. --root /usr installs to /usr/bin.
