@@ -134,7 +134,7 @@ jobs:
             echo "### vm-e2e (${{ matrix.arch }}): boot legs SKIPPED — no /dev/kvm on this runner" >> "$GITHUB_STEP_SUMMARY"
           fi
 
-      - name: Gate amd64 boot leg on platform-priority policy (ADR-023: ARM64 is primary)
+      - name: "Gate amd64 boot leg on platform-priority policy (ADR-023: ARM64 is primary)"
         id: policy
         run: |
           if [ "${{ matrix.primary }}" = "true" ]; then
