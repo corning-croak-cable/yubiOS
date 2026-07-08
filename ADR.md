@@ -957,3 +957,28 @@ Built via a new `Containerfile.dev` that `FROM`s the exact same production base 
 
 **Source:** ADR-022, ADR-006, ADR-003, `mkosi.conf.d/test/mkosi.conf`, `mkosi.conf.d/test/install-swu2f-authenticator.sh`, `ci_test-vm.yml` (this session's rock1 KVM verification).
 
+
+---
+
+## ADR-027: U-Boot Console/Shell Authentication Gate (FIDO2/U2F Break-In Protection)
+
+**Date:** 2026-07-08  
+**Status:** Proposed — idea-stage, post-launch (see [FUTURE.md](FUTURE.md) § Idea (unscoped))  
+**Context:** ADR-018/019/020/021 harden the boot chain *through* U-Boot (TF-A TBB, OP-TEE, the fTPM). None of them gate **U-Boot's own interactive console.** On real hardware, U-Boot's autoboot key-sequence check (`abortboot()` in `common/autoboot.c`) lets anyone with UART/serial access interrupt autoboot and drop into the U-Boot shell — from which they can dump memory, alter `bootargs`, or otherwise interfere with the chain before Linux ever loads. U-Boot's existing mitigation, `CONFIG_AUTOBOOT_KEYED` + `CONFIG_AUTOBOOT_ENCRYPTION` (a SHA256-hashed shared password), is copyable and not bound to hardware possession — the exact class of secret the FIDO2-first thesis exists to avoid. This ADR scopes (not yet implements) a FIDO2/U2F touch as a hardware-bound alternative at that same choke point. Originated from a raw chat-attachment idea that used invented APIs (fictional `<u2f.h>`, misapplied `libu2f-server`, a nonexistent `do_shell` command) — see FUTURE.md for the correction; this ADR resolves the scoping questions that doc left open.
+
+**Decision:**
+1. **Scope: ARM64 only.** U-Boot is only in yubiOS's boot chain on ARM64 (FUTURE.md's own scope line); x86-64 keeps systemd-boot + UEFI Secure Boot with no U-Boot stage to gate. Out of scope unless/until U-Boot becomes an x86-64 firmware stage, which is not planned.
+2. **Protocol: CTAP1/U2F, not CTAP2.** U2F's raw HID framing and register/authenticate flow is dramatically simpler to reimplement bare-metal (no CBOR, no libc) than CTAP2 — the right tradeoff for U-Boot's freestanding environment. Revisit only if a real embedded CTAP2 implementation becomes available upstream to build on.
+3. **Hook point: `abortboot()` / the autoboot key-sequence check in `common/autoboot.c`**, added as an *additional* `CONFIG_AUTOBOOT_*` gate alongside (not replacing) `CONFIG_AUTOBOOT_ENCRYPTION` — a board can require both factors, or fall back to password-only on boards where the FIDO2 HID client isn't ready yet. No new command, no `do_shell`.
+4. **Key/enrollment storage:** reuse whatever ADR-018/019/020 already decided for that board's secure secrets — RPMB via OP-TEE on Path A boards with the fTPM stack live, or the same U-Boot environment/DPS partition that already backs U-Boot's FIT verified-boot public key on Path B boards (ADR-019). No new storage mechanism invented for this feature.
+5. **Recovery is mandatory, not optional.** A lost/broken YubiKey must never brick console access. Requires a backup-key enrollment path, mirroring the existing backup-YubiKey pattern already shipped for disk unlock (PR #3), decided and built before this ships — not improvised later.
+6. **Not yet scheduled into a Phase F sub-phase.** Stays Proposed until (a) Phase F0–F3 (fTPM bring-up, FUTURE.md) is further along — the storage decision in point 4 depends on which path (A/B) a given board lands on — and (b) someone prototypes the raw USB HID U2F client against QEMU's USB HID passthrough as a standalone spike, deliberately decoupled from the fTPM roadmap so an unrelated USB-stack experiment can't block or destabilize Phase F.
+
+**Consequences:** Adds new bootloader-side attack surface — a USB HID host client parsing untrusted device input inside U-Boot, pre-Linux, pre-any-mitigation. Historically, USB stacks in bootloaders are a real vector (this is bare-metal C parsing HID reports from an untrusted physical device); this needs its own threat-model/audit pass before merge, not just a working demo. Signature verification reuses U-Boot's existing `lib/ecdsa/` FIT-signing primitive — no new crypto dependency. `CONFIG_AUTOBOOT_ENCRYPTION` stays available as a fallback in parallel; nothing regresses if this project stalls or is deprioritized.
+
+**Alternatives considered:**
+- *`CONFIG_AUTOBOOT_ENCRYPTION` password only, ship nothing new* — rejected as the long-term answer (shared secret, not hardware-bound) but kept as the live fallback; no regression risk in leaving both paths available.
+- *Port CTAP2 / `libfido2`* — rejected for v0: host-side library (glibc, libusb), doesn't run in U-Boot's freestanding runtime; full CBOR/CTAP2 client is materially more code than U2F for no v0 benefit.
+- *Disable the U-Boot break-in path entirely (`CONFIG_AUTOBOOT_KEYED` with no bypass at all)* — rejected: removes a legitimate recovery/debug path; the goal is authenticated access, not zero access.
+
+**Source:** [FUTURE.md](FUTURE.md) § Idea (unscoped) — U-Boot console/shell authentication gate, ADR-018 (secure-world stack + RPMB), ADR-019 (Path A/B storage implications), ADR-020/021 (U-Boot as sole BL33/UEFI provider), U-Boot `common/autoboot.c` + `CONFIG_AUTOBOOT_ENCRYPTION` docs, PR #3 (backup YubiKey enrollment pattern), PR #43 (this doc's origin).

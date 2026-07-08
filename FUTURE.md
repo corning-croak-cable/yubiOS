@@ -277,7 +277,9 @@ Skills: `arm-trusted-firmware-optee`, `ftpm-optee-tpm` (github-yubios space).
 
 ## Idea (unscoped) — U-Boot console/shell authentication gate (FIDO2/U2F)
 
-> Status: **Idea — needs an ADR before scoping**. Not yet in the phased roadmap above.
+> Status: **Idea — scoped by ADR-027, not yet implemented or phased**. See ADR-027 for the
+> resolved design decisions (scope, protocol, hook point, storage, recovery). Not yet in the
+> phased roadmap above.
 > Source: raw idea submitted via chat attachment; the submitted sketch used invented APIs
 > (a fictional `<u2f.h>`/`u2f_authenticate()`, `libu2f-server` — which is a *relying-party
 > server* verification library, not an embedded/authenticator-side client — a `do_shell`
@@ -338,14 +340,17 @@ systemd-homed) — those all run after Linux is up; this runs inside U-Boot, bef
 exists, with no libc, no filesystem beyond what U-Boot's own drivers provide, and no
 existing embedded U2F client to build on.
 
-### Before scoping into a phase
+### Scoping resolved — see ADR-027
 
-- Write an ADR: does this apply to ARM64 only (U-Boot's only role in this doc) or also
-  matter for any x86-64 board that ends up using U-Boot as firmware?
-- Decide CTAP1/U2F vs a cut-down CTAP2 subset up front — don't discover it mid-implementation.
-- Decide the enrollment/storage question above before writing any driver code.
-- Prototype the USB HID U2F client against QEMU's USB HID passthrough before touching
-  real hardware, mirroring the Phase F0 emulated-first approach used for the fTPM.
+The open questions this section used to list are now resolved in **ADR-027**
+(U-Boot Console/Shell Authentication Gate): ARM64-only scope, CTAP1/U2F (not
+CTAP2), hook at `abortboot()` alongside `CONFIG_AUTOBOOT_ENCRYPTION`, storage
+piggybacked on whatever ADR-018/019/020 already decided per-board, and a
+mandatory backup-key recovery path before this ever ships. Still **Proposed**,
+not scheduled into a Phase F sub-phase — implementation waits on Phase F0–F3
+landing far enough to know each board's Path A/B storage answer, plus a
+standalone QEMU USB-HID-passthrough spike of the U2F client, kept deliberately
+decoupled from the fTPM roadmap.
 
 ---
 
