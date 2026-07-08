@@ -83,6 +83,7 @@ jobs:
           shred -u sb.key sb.p8
           printf 'pkcs11:token=yubios-9c;object=piv-9c;type=private?pin-value=123456' \
             > mkosi.secure-boot.pkcs11-uri
+          cp mkosi.secure-boot.pem sandbox/etc/yubios-ci-cert.pem
           chmod -R a+rX sandbox
 
       - name: DIAG — probe PKCS#11 stack inside the mkosi sandbox
@@ -96,31 +97,22 @@ jobs:
             --tools-tree-package softhsm2 \
             --tools-tree-package pkcs11-provider \
             --tools-tree-package opensc \
-            --tools-tree-package gnutls-bin \
             --sandbox-tree sandbox \
-            --environment PKCS11_PROVIDER_MODULE=/usr/lib/softhsm/libsofthsm2.so \
-            --environment SOFTHSM2_CONF=/etc/softhsm2.conf \
+            --force \
             sandbox -- sh -c '
-              echo ==== conf files ====;
-              cat /etc/softhsm2.conf 2>&1;
-              cat /etc/softhsm/softhsm2.conf 2>&1;
-              echo ==== token dir ====;
-              ls -laR /var/lib/softhsm 2>&1;
-              echo ==== p11-kit modules ====;
-              ls -la /usr/share/p11-kit/modules/ 2>&1;
-              cat /usr/share/p11-kit/modules/*.module 2>&1;
-              echo ==== provider + softhsm libs ====;
-              find /usr/lib -name "*pkcs11*" -o -name "*softhsm*" 2>/dev/null | head -20;
-              echo ==== softhsm direct ====;
-              mod=$(find /usr/lib -name libsofthsm2.so | head -1);
-              pkcs11-tool --module "$mod" --list-token-slots 2>&1;
-              pkcs11-tool --module "$mod" --login --pin 123456 --list-objects 2>&1 | head -20;
-              echo ==== p11tool via p11-kit ====;
-              p11tool --list-tokens 2>&1;
-              echo ==== systemd-keyutil ====;
-              /usr/lib/systemd/systemd-keyutil validate --certificate /work/src/mkosi.secure-boot.pem --private-key-source provider:pkcs11 --private-key "pkcs11:token=yubios-9c;object=piv-9c;type=private?pin-value=123456" 2>&1;
-              echo ==== done rc=$? ====;
-            ' || true
+              echo "==DIAG conf=="; cat /etc/softhsm2.conf; cat /etc/softhsm/softhsm2.conf;
+              echo "==DIAG tokens=="; ls -laR /var/lib/softhsm;
+              echo "==DIAG p11kit modules=="; ls /usr/share/p11-kit/modules/; cat /usr/share/p11-kit/modules/softhsm2.module 2>&1;
+              echo "==DIAG libs=="; find /usr/lib -name "libsofthsm2.so" -o -name "pkcs11.so" -o -name "p11-kit-proxy.so" 2>/dev/null;
+              echo "==DIAG pkcs11-tool direct=="; mod=$(find /usr/lib -name libsofthsm2.so | head -1); pkcs11-tool --module "$mod" --list-token-slots 2>&1;
+              pkcs11-tool --module "$mod" --login --pin 123456 --list-objects 2>&1 | head -12;
+              echo "==DIAG keyutil noenv=="; /usr/lib/systemd/systemd-keyutil validate --certificate /etc/yubios-ci-cert.pem --private-key-source provider:pkcs11 --private-key "pkcs11:token=yubios-9c;object=piv-9c;type=private?pin-value=123456" 2>&1 || true;
+              echo "==DIAG keyutil withenv==";
+              export PKCS11_PROVIDER_MODULE=$(find /usr/lib -name libsofthsm2.so | head -1);
+              export PKCS11_PROVIDER_DEBUG=file:/dev/stderr,level:2;
+              /usr/lib/systemd/systemd-keyutil validate --certificate /etc/yubios-ci-cert.pem --private-key-source provider:pkcs11 --private-key "pkcs11:token=yubios-9c;object=piv-9c;type=private?pin-value=123456" 2>&1 | tail -30;
+              echo "==DIAG done==";
+            ' < /dev/null || true
           mv /tmp/sb.pem mkosi.secure-boot.pem && mv /tmp/sb.uri mkosi.secure-boot.pkcs11-uri
 
       - name: Build disk image (minimal profile, PKCS#11-signed UKI)
