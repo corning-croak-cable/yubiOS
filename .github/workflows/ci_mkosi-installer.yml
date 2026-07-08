@@ -106,6 +106,9 @@ jobs:
             --secure-boot-key "$(cat mkosi.secure-boot.pkcs11-uri)" \
             --secure-boot-certificate mkosi.secure-boot.pem \
             --secure-boot-sign-tool systemd-sbsign \
+            --sign-expected-pcr-key-source provider:pkcs11 \
+            --sign-expected-pcr-key "$(cat mkosi.secure-boot.pkcs11-uri)" \
+            --sign-expected-pcr-certificate mkosi.secure-boot.pem \
             build
           ls -la mkosi.output/
 
