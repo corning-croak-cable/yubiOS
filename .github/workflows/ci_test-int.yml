@@ -641,7 +641,14 @@ jobs:
           find art -name u-boot.bin     -exec cp {} fw/firmware/ \; -quit
           find art -name fip-info.txt   -exec cp {} fw/firmware/ \; -quit
           find art -name 'tee-*_v2.bin' -exec cp {} fw/firmware/ \;
+          # flash.bin is assembled by Stage 3, not uploaded by Stage 2 — rebuild it
+          # here the same way (bl1 @ 0, fip @ seek=64, bs=4096) when absent.
+          if [ ! -s fw/firmware/flash.bin ]; then
+            dd if=fw/firmware/bl1.bin of=fw/firmware/flash.bin bs=4096 conv=notrunc
+            dd if=fw/firmware/fip.bin of=fw/firmware/flash.bin seek=64 bs=4096 conv=notrunc
+          fi
           test -s fw/firmware/fip.bin
+          test -s fw/firmware/bl1.bin
           test -s fw/firmware/flash.bin
           test -s fw/firmware/BL32_AP_MM.fd
           {
