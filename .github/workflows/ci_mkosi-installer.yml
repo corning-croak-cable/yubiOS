@@ -51,7 +51,7 @@ jobs:
         run: |
           set -euxo pipefail
           sudo apt-get update -qq
-          sudo apt-get install -y -qq softhsm2 opensc sbsigntool zstd uidmap python3-pip
+          sudo apt-get install -y -qq softhsm2 opensc sbsigntool zstd uidmap python3-pip debian-archive-keyring
           sudo pip install --break-system-packages git+https://github.com/yubi-OS/mkosi.git@main
           mkosi --version
           # ubuntu 24.04 restricts unprivileged userns via AppArmor; mkosi's
@@ -66,13 +66,14 @@ jobs:
           # sandbox via --sandbox-tree so systemd-sbsign (running inside the
           # fedora tools tree) reaches the same "HSM" at the fedora default
           # paths (/etc/softhsm2.conf, /var/lib/softhsm/tokens).
-          mkdir -p sandbox/etc sandbox/var/lib/softhsm/tokens
+          mkdir -p sandbox/etc/softhsm sandbox/var/lib/softhsm/tokens
           openssl req -x509 -newkey rsa:3072 -sha256 -days 365 -nodes \
             -subj "/CN=yubiOS CI Secure Boot (SoftHSM mock of PIV 9c)/" \
             -keyout sb.key -out mkosi.secure-boot.pem
           openssl pkcs8 -topk8 -nocrypt -in sb.key -out sb.p8
           printf 'directories.tokendir = /var/lib/softhsm/tokens\nobjectstore.backend = file\n' \
             > sandbox/etc/softhsm2.conf
+          cp sandbox/etc/softhsm2.conf sandbox/etc/softhsm/softhsm2.conf
           # Host-side conf pointing at the same token dir by host path, for init.
           printf 'directories.tokendir = %s/sandbox/var/lib/softhsm/tokens\nobjectstore.backend = file\n' "$PWD" \
             > host-softhsm2.conf
@@ -92,7 +93,7 @@ jobs:
             --release 45 \
             --profile minimal \
             --package kernel \
-            --tools-tree-package softhsm \
+            --tools-tree-package softhsm2 \
             --tools-tree-package pkcs11-provider \
             --tools-tree-package opensc \
             --sandbox-tree sandbox \
