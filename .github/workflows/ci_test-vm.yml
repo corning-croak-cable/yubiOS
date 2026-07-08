@@ -85,6 +85,17 @@ jobs:
           sudo udevadm control --reload-rules || true
           sudo udevadm trigger --name-match=kvm || true
           ls -la /dev/kvm || true
+          # virtiofsd needs /dev/fuse; GH Actions ubuntu-24.04 runners don't
+          # guarantee the fuse module is loaded / device node present. A
+          # missing /dev/fuse is a plausible cause of virtiofsd's silent
+          # rc=2 (empty stdout+stderr+logfile) seen in prior runs — FUSE
+          # device-open failures in some Rust FUSE crates exit before their
+          # own logger initializes.
+          sudo modprobe fuse || true
+          sudo mkdir -p /dev
+          [ -e /dev/fuse ] || sudo mknod /dev/fuse c 10 229 || true
+          sudo chmod 666 /dev/fuse || true
+          ls -la /dev/fuse || echo "::warning::/dev/fuse still absent after modprobe+mknod
 
       - name: Build bcvk @ feat/swtpm-ci (feasibility gate)
         id: bcvk
