@@ -275,6 +275,85 @@ Skills: `arm-trusted-firmware-optee`, `ftpm-optee-tpm` (github-yubios space).
 
 ---
 
+## Idea (unscoped) — U-Boot console/shell authentication gate (FIDO2/U2F)
+
+> Status: **Idea — scoped by ADR-027, not yet implemented or phased**. See ADR-027 for the
+> resolved design decisions (scope, protocol, hook point, storage, recovery). Not yet in the
+> phased roadmap above.
+> Source: raw idea submitted via chat attachment; the submitted sketch used invented APIs
+> (a fictional `<u2f.h>`/`u2f_authenticate()`, `libu2f-server` — which is a *relying-party
+> server* verification library, not an embedded/authenticator-side client — a `do_shell`
+> command that doesn't exist, and pre-Kconfig U-Boot Makefile style). What follows is the
+> corrected shape of the idea, not the submitted sketch.
+
+### The gap this closes
+
+Everything else in this document hardens the boot chain *up to and through* U-Boot (TF-A
+TBB, OP-TEE, the fTPM). None of it gates **U-Boot's own interactive console**. On real
+hardware, U-Boot's `abortboot()` path (`common/autoboot.c`) lets anyone with UART/serial
+access interrupt autoboot (Ctrl-C, or a configured keypress) and drop into the U-Boot
+shell — from which they can dump memory, alter `bootargs`, reflash environment variables,
+or otherwise interfere with the chain below Linux. U-Boot already ships a mitigation for
+this — `CONFIG_AUTOBOOT_KEYED` + `CONFIG_AUTOBOOT_ENCRYPTION` (SHA256-hashed shared
+password gating the break-in prompt) — but a shared password is exactly the class of
+secret the FIDO2-first thesis exists to avoid: copyable, phishable, and not bound to
+possession of hardware. Gating the U-Boot console behind a YubiKey touch instead would be
+consistent with the rest of yubiOS's stance and would close a real gap in the ARM64 (and,
+in principle, x86-64) boot chain.
+
+### Corrected technical shape
+
+- **Real hook point:** `abortboot()` / the autoboot key-sequence check in
+  `common/autoboot.c`, not a `do_shell` command — there is no such command in mainline
+  U-Boot. This is the same place `CONFIG_AUTOBOOT_ENCRYPTION` already hooks; a U2F gate
+  is an alternative (or additional) factor at that same choke point.
+- **No existing U-Boot FIDO2/U2F client stack.** `libfido2` and `libu2f-server` are
+  host-side (glibc, USB via libusb) — neither runs inside U-Boot's freestanding runtime.
+  This would need a from-scratch minimal CTAP1/U2F **HID client** on top of U-Boot's own
+  USB host stack (`drivers/usb/host/`), reusing U-Boot's existing HID transport code
+  (`common/usb_kbd.c` is the closest existing analog: USB HID class driver polled from the
+  console layer) rather than trying to port a full authenticator library.
+- **Prefer CTAP1/U2F over CTAP2** for a first pass — U2F's raw HID framing and
+  challenge/register/authenticate flow is dramatically simpler to reimplement bare-metal
+  than CTAP2/CBOR. This also matches what the file was actually named after.
+- **Signature verification is not new work.** U-Boot already carries ECDSA verification
+  for FIT image signing (`lib/ecdsa/`, optionally via mbedTLS) — the same primitive
+  verifies a U2F assertion signature; no new crypto library needed, only a new caller.
+- **Enrollment/key storage question (needs an ADR):** the U2F public key + key handle
+  registered for console access has to live somewhere U-Boot can read before Linux boots
+  — U-Boot's environment (if in a protected partition), a dedicated DPS partition, or (if
+  Phase F for the fTPM has landed on that board) RPMB via OP-TEE. Decide this alongside
+  ADR-018/019/020, not independently — it's the same "where do ARM64 secure secrets live"
+  question the fTPM work already answers.
+- **Fail-open vs fail-closed matters more here than elsewhere.** Losing the enrolled
+  YubiKey should not brick the board. Needs an explicit recovery path (e.g. a backup
+  YubiKey slot, mirroring the existing backup-key enrollment pattern already shipped for
+  disk unlock, PR #3) decided in the ADR, not improvised at implementation time.
+
+### Relationship to existing work
+
+Distinct from and complementary to everything else in this file: the fTPM/TF-A/OP-TEE
+work protects the **measured/enforced chain**; this protects the **interactive escape
+hatch** into U-Boot that exists independently of that chain. Also distinct from the
+already-shipped host-side FIDO2 work (LUKS2 unlock ADR-003, pam-u2f, SSH auth,
+systemd-homed) — those all run after Linux is up; this runs inside U-Boot, before Linux
+exists, with no libc, no filesystem beyond what U-Boot's own drivers provide, and no
+existing embedded U2F client to build on.
+
+### Scoping resolved — see ADR-027
+
+The open questions this section used to list are now resolved in **ADR-027**
+(U-Boot Console/Shell Authentication Gate): ARM64-only scope, CTAP1/U2F (not
+CTAP2), hook at `abortboot()` alongside `CONFIG_AUTOBOOT_ENCRYPTION`, storage
+piggybacked on whatever ADR-018/019/020 already decided per-board, and a
+mandatory backup-key recovery path before this ever ships. Still **Proposed**,
+not scheduled into a Phase F sub-phase — implementation waits on Phase F0–F3
+landing far enough to know each board's Path A/B storage answer, plus a
+standalone QEMU USB-HID-passthrough spike of the U2F client, kept deliberately
+decoupled from the fTPM roadmap.
+
+---
+
 ## Easter Egg — "The Konami Tap" (cosmetic, zero trust impact)
 
 > Status: **Planning / fun**. Post-launch, low priority. Strictly cosmetic + diagnostic.
