@@ -97,6 +97,8 @@ jobs:
             --release 45 \
             --profile minimal \
             --package kernel \
+            --package systemd-boot-unsigned \
+            --bootable yes \
             --tools-tree-package softhsm2 \
             --tools-tree-package pkcs11-provider \
             --tools-tree-package distribution-gpg-keys \
