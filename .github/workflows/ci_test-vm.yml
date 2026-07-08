@@ -67,7 +67,10 @@ jobs:
             qemu_pkgs: qemu-system-x86 ovmf
             primary: false
           - arch: arm64
-            runner: ubuntu-24.04-arm
+            # Self-hosted ARM64 board (runner "rock1", labels self-hosted+Linux+ARM64) --
+            # real hardware with actual KVM support, unblocking the boot leg that hosted
+            # ubuntu-24.04-arm runners can't run (no nested virt, see the KVM gate below).
+            runner: [self-hosted, Linux, ARM64]
             qemu_pkgs: qemu-system-arm qemu-efi-aarch64
             primary: true
     runs-on: ${{ matrix.runner }}
@@ -120,14 +123,14 @@ jobs:
           echo "$PWD/bcvk-src/target/release" >> "$GITHUB_PATH"
           echo "skip=0" >> "$GITHUB_OUTPUT"
 
-      - name: Gate on KVM (bcvk hard-requires /dev/kvm; hosted arm64 runners lack it)
+      - name: Gate on KVM (bcvk hard-requires /dev/kvm; now real hardware on arm64 via self-hosted rock1)
         id: kvm
         run: |
           if [ -e /dev/kvm ]; then
             echo "kvm=1" >> "$GITHUB_OUTPUT"
           else
             echo "kvm=0" >> "$GITHUB_OUTPUT"
-            echo "::warning::SKIP: /dev/kvm absent on this runner (hosted arm64 has no nested virt); bcvk boot legs skipped LOUDLY"
+            echo "::warning::SKIP: /dev/kvm absent on this runner (self-hosted ARM64 should have it -- if this fires on rock1, KVM isn't enabled in its kernel/BIOS, not a hosted-runner limitation); bcvk boot legs skipped LOUDLY"
             echo "### vm-e2e (${{ matrix.arch }}): boot legs SKIPPED — no /dev/kvm on this runner" >> "$GITHUB_STEP_SUMMARY"
           fi
 
