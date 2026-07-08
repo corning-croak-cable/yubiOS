@@ -1,0 +1,21 @@
+[Unit]
+Description=yubiOS first-boot firmware validation (CHIPSEC)
+Documentation=https://github.com/yubi-OS/yubiOS/blob/main/ADR.md#adr-024-chipsec-first-boot-firmware-validation-as-a-portable-service
+ConditionSecurity=measured-os
+ConditionFirstBoot=yes
+Before=yubiOS-enroll.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=no
+ExecStart=/usr/lib/yubiOS/chipsec/run-firstboot-check.sh
+# CHIPSEC's HAL requires raw hardware access (/dev/mem, PCI config space,
+# MSRs) to do its job -- this is the documented, scoped exception referenced
+# in ADR-024, not a blanket relaxation. Confined to this one-shot, first-boot
+# service; no network, no persistence, no lingering privilege.
+PrivateNetwork=yes
+ProtectHome=yes
+ProtectSystem=strict
+ReadWritePaths=/run/yubiOS /tmp
+CapabilityBoundingSet=CAP_SYS_RAWIO CAP_SYS_ADMIN CAP_DAC_OVERRIDE
+NoNewPrivileges=no

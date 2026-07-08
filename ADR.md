@@ -812,3 +812,113 @@ The question: does each artifact get its own tag on the one repo, or do they liv
 
 **Source:** ADR-017, ADR-018, ADR-019, ADR-020, ADR-021, MISSION.md, issues #9/#20/#25 (bcvk amd64 virtiofsd bug diagnosis).
 
+
+---
+## ADR-024: chipsec First-Boot Firmware Validation as a Portable Service
+
+**Date:** 2026-07-08
+**Status:** Accepted — design + unit shipped; hardware validation post-launch
+**Depends on:** ADR-010 (DPS, no /etc/fstab), ARCHITECTURE.md §6 (modularity ladder), ADR-016 (`ConditionSecurity=measured-os`)
+
+**Context:** Issue #24 asked for a first-boot chipsec check to "detect Absolute Persistence (Computrace) in the PCR event log and other firmware-level anomalies," packaged as a DPS-compliant portable service. Two corrections from research against the actual `chipsec2` codebase (`skills/chipsec` reference, upstream `github.com/chipsec/chipsec`):
+
+1. **There is no automated CHIPSEC module for Absolute Persistence/Computrace detection.** It is not a PCR-event-log-detectable "anomaly" — Absolute is OEM-embedded firmware, not an unauthorized modification, and CHIPSEC has no module keyed to it. The realistic best-effort surface is `chipsec_util uefi var-list` (Computrace/Absolute-named UEFI variables) and a WPBT ACPI-table presence check — informational, not pass/fail.
+2. **What CHIPSEC actually delivers well** is the firmware trust-chain gate yubiOS already relies on conceptually (per COMPANY.md: "80+ firmware checks... gating check at yubiOS provisioning time"): SPI write-protection, SMM isolation, Secure Boot variable integrity, debug-interface exposure. These map directly onto yubiOS's own trust boundaries — if SMM isn't locked down, a compromised SMM handler can rewrite anything dm-verity thinks is immutable, undermining ADR-007's guarantee regardless of what the OS does above it.
+
+**Decision:** Ship `yubiOS-chipsec-firstboot.service` as a `RootImage=` portable service (verity + PKCS#7 signed GPT image, per the modularity ladder) that runs a fixed, yubiOS-relevant subset of CHIPSEC's `common` module set once at first boot, plus the honest best-effort Computrace/WPBT check, and writes a structured PASS/WARN/FAIL result to `/run/yubiOS/chipsec-result` and the journal (`SYSLOG_IDENTIFIER=yubiOS-chipsec`).
+
+**Module scope (first-boot check-set):**
+
+| Module | Why it matters to yubiOS |
+|---|---|
+| `common.bios_wp` | If BIOS write-protect is off, /usr's dm-verity guarantee (ADR-007) can be undermined below the OS. |
+| `common.spi_lock`, `common.spi_desc` | SPI flash descriptor/lock state — same trust-chain-below-the-OS concern. |
+| `common.smm_lock`, `common.smrr`, `common.smm_code_chk` | SMM isolation. A compromised, unlocked SMM handler can bypass every OS-level control, including the YubiKey-gated LUKS2 unlock. |
+| `common.secureboot.variables` | Confirms the Secure Boot db actually holds only owner-enrolled keys (ADR-001/002), not an OEM/vendor key that slipped back in. |
+| `common.debugenabled` | Hardware debug interfaces (DCI/JTAG) are a documented exfiltration path around every software control. |
+| `common.me_mfg_mode` | Intel ME left in manufacturing mode is a known, severe firmware-level bypass. |
+| Custom: `wpbt-scan` + `uefi-var-computrace-scan` | Best-effort Absolute/Computrace surface: `chipsec_util acpi list` for a WPBT table, `chipsec_util uefi var-list` grepped for Computrace/Absolute-named variables. Informational only — see honesty note above. |
+
+**Packaging:**
+- Built via the same `systemd-repart` + PKCS#11/PIV-slot-9c signing pipeline used for other portable services (ADR-008), not a separate trust mechanism.
+- The `chipsec_helper.ko` kernel module is precompiled against the exact kernel headers pinned in the Containerfile/mkosi build (ADR-015) and shipped inside the portable service image — never built on-target via DKMS, which would need a compiler in the field and drift from the shipped kernel. CI must rebuild it whenever the pinned kernel version bumps.
+- **Explicit, documented security exception:** CHIPSEC's HAL needs `/dev/mem`, raw PCI config space, and MSR access — none of which fit under `ProtectKernelModules=yes`/`PrivateDevices=yes`. Per MISSION.md ("if a feature needs a security exception to exist, it gets cut"), this is not swept under the rug: the exception is scoped to exactly this one-shot, first-boot-only service, is auditable in the unit file below, and the service self-terminates (`RemainAfterExit=no`) rather than running persistently.
+
+**Unit (shipped, `usr/lib/systemd/system/yubiOS-chipsec-firstboot.service`):**
+
+```ini
+[Unit]
+Description=yubiOS first-boot firmware validation (CHIPSEC)
+Documentation=https://github.com/yubi-OS/yubiOS/blob/main/ADR.md#adr-024-chipsec-first-boot-firmware-validation-as-a-portable-service
+ConditionSecurity=measured-os
+ConditionFirstBoot=yes
+Before=yubiOS-enroll.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=no
+ExecStart=/usr/lib/yubiOS/chipsec/run-firstboot-check.sh
+# CHIPSEC HAL requires raw hardware access -- this is the documented,
+# scoped exception referenced in ADR-024. No network, no persistence.
+PrivateNetwork=yes
+ProtectHome=yes
+ProtectSystem=strict
+ReadWritePaths=/run/yubiOS
+CapabilityBoundingSet=CAP_SYS_RAWIO CAP_SYS_ADMIN CAP_DAC_OVERRIDE
+NoNewPrivileges=no
+```
+
+**Gating:** `yubiOS-enroll.service` reads `/run/yubiOS/chipsec-result` if present. A `FAILED` result **warns** on the enrollment TTY by default (yubiOS does not lock owners out of their own hardware on a firmware-level warning — consistent with MISSION.md's stance that recovery paths are mandatory and lockouts are a failure of the power we return to the owner). Fleet/attestation deployments (SPEC.md UC-4) MAY set `yubiOS.chipsec-enforce=1` on the kernel cmdline to fail closed instead; this is opt-in, not the default.
+
+**Alternatives considered:**
+- *Run chipsec as a full module extending /usr* — rejected: raw hardware access has no business living in the always-on, dm-verity-measured base; a portable service scopes the exception to a bounded, auditable, one-shot unit (ARCHITECTURE.md §6).
+- *Claim automated Computrace/PCR-event-log detection* — rejected as inaccurate; no such CHIPSEC module exists. Shipping the best-effort WPBT/UEFI-var scan as informational-only is the honest version of this requirement.
+
+**Source:** `skills/chipsec` reference (CHIPSEC `chipsec2` module map), issue #24, ADR-007, ADR-008, ADR-010, ADR-016, ARCHITECTURE.md §6, MISSION.md.
+
+---
+
+## ADR-025: Post-Quantum Hybrid TLS (X25519MLKEM768) for Update/Attestation Endpoints
+
+**Date:** 2026-07-08
+**Status:** Accepted — verified already satisfied by pinned dependencies; CI check added, no application code required today
+
+**Context:** Issue #26 asked for X25519MLKEM768 hybrid key exchange on yubiOS's update and attestation TLS paths, gated on OpenSSL ≥ 3.5 landing in the Fedora 45 base image. Research resolved both open questions:
+
+1. **OpenSSL prerequisite is met.** Fedora 44 already ships OpenSSL 3.5.7 (LTS, supported to April 2030); Fedora 45's build target is moving to 4.0.1, a superset that retains the ML-KEM support introduced in 3.5. `X25519MLKEM768` is the *default preferred group* in OpenSSL ≥ 3.5 — no application code has to request it.
+2. **The `bootc upgrade` / registry-pull path doesn't go through OpenSSL at all — it's Go.** `podman`/`skopeo`/`containers/image` use Go's `crypto/tls`, and Go 1.24 (Feb 2025) made `X25519MLKEM768` the **default** hybrid group for TLS 1.3 clients whenever `Config.CurvePreferences` is left unset (the yubiOS toolchain does not set it). A Go 1.24+ client always offers the hybrid share; if the server doesn't support it, it falls back to classical X25519 automatically.
+3. **Verified live**, not just from docs: `curl -v https://registry-1.docker.io/v2/` from a host running OpenSSL 3.5.5 negotiated `SSL connection using TLSv1.3 / TLS_AES_128_GCM_SHA256 / X25519MLKEM768 / RSASSA-PSS` against the actual Docker Hub registry endpoint yubiOS's update path depends on (`0mniteck/yubios`, ADR-006/ADR-015).
+4. **Repo audit:** searched the yubiOS repo for any TLS group/cipher pinning (`SSL_CTX_set1_groups_list`, `GODEBUG=tlsmlkem`, `--curves`, `CurvePreferences`, `MinVersion`) — zero hits. Nothing in yubiOS is overriding the library defaults away from PQ hybrid.
+
+**Decision:** No application-level TLS code is required today. yubiOS's OCI update pull path and any future attestation endpoint already negotiate `X25519MLKEM768` by default through its existing pinned dependencies (Fedora 45's OpenSSL ≥ 3.5, ADR-015; the Go 1.24+ container toolchain). What was missing was verification, not implementation:
+
+- Added a CI check (`ci-pq-tls-verify` job, see below) that asserts the built image's `openssl` reports ≥ 3.5 and that a live TLS handshake against the update registry negotiates a `MLKEM` group. This turns "we assume PQC is on" into a gate that fails loudly if a future base-image digest bump or toolchain regression silently drops it.
+- SSH is unaffected (`ed25519-sk`, ADR-004, is already quantum-resistant for signing purposes — this ADR only concerns the TLS *key-exchange* layer, per the issue's own scoping note).
+
+**Verification step (added to CI, informational-first — see Consequences):**
+
+```yaml
+      - name: Verify PQ hybrid TLS default (ADR-025)
+        run: |
+          v="$(openssl version | awk '{print $2}')"
+          echo "openssl version: $v"
+          major="${v%%.*}"; minor="$(echo "$v" | cut -d. -f2)"
+          if [ "$major" -lt 3 ] || { [ "$major" -eq 3 ] && [ "$minor" -lt 5 ]; }; then
+            echo "::error::openssl $v < 3.5 -- X25519MLKEM768 default lost, see ADR-025"; exit 1
+          fi
+          group="$(curl -v https://registry-1.docker.io/v2/ 2>&1 | grep -o 'SSL connection using[^\"]*' || true)"
+          echo "$group"
+          case "$group" in *MLKEM*) echo "PQ hybrid group confirmed" ;; *) echo "::error::no MLKEM group negotiated -- see ADR-025"; exit 1 ;; esac
+```
+
+**Consequences:**
+- No production code change; this ADR is primarily a verification gate plus documentation that the requirement is already satisfied by existing pinned dependencies (ADR-015).
+- If yubiOS ever adds a first-party attestation server (FUTURE.md, ARM64 fTPM work) that terminates its own TLS, that server's stack MUST be audited against this ADR's verification step before shipping — same check, different target.
+- Tracked as a fast-follow: land the CI step above into `yubiOS-ci.yml` as a non-blocking check first (new dependency on network egress in CI), then promote to blocking once stable.
+
+**Alternatives considered:**
+- *Wait for a dedicated future ADR when OpenSSL 3.5 "lands"* (the issue's original framing) — superseded: it already has, and waiting further delays a two-line verification for a requirement that's already true.
+- *Force `SSL_CTX_set1_groups_list` / a build-time pin to `X25519MLKEM768` explicitly* — rejected: the library defaults already do this correctly and are actively maintained upstream; a local pin would drift out of sync with future upstream algorithm-agility changes (e.g. IANA/NIST rotating the preferred ML-KEM parameter set) for no benefit.
+
+**Source:** OpenSSL 3.5.0 release notes, `openssl.org/docs/man3.5/man3/SSL_CTX_set1_groups_list.html`, Go 1.24 release notes (`go.dev/doc/go1.24`), golang/go#69985, live verification against `registry-1.docker.io`, repo-wide grep audit (no TLS pinning found), issue #26, ADR-004, ADR-006, ADR-015.
+

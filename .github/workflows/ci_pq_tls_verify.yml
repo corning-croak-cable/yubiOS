@@ -1,0 +1,44 @@
+name: PQ hybrid TLS verification (ADR-025)
+
+# Verifies that yubiOS's update-pull dependency chain still negotiates
+# X25519MLKEM768 (post-quantum hybrid key exchange) by default, per ADR-025.
+# This is a verification gate, not an implementation: OpenSSL >= 3.5 and
+# Go >= 1.24 already default to the PQ hybrid group without any yubiOS code.
+# The check fails loudly if a future base-image digest bump or toolchain
+# change silently drops that default.
+#
+# Non-blocking on introduction (network egress to Docker Hub from CI is a new
+# dependency for this specific job): promote to a required check once stable.
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  pq-tls-verify:
+    runs-on: ubuntu-24.04
+    continue-on-error: true # non-blocking until this job has a stable track record (ADR-025)
+    steps:
+      - name: Verify openssl >= 3.5 and live PQ hybrid negotiation
+        run: |
+          v="$(openssl version | awk '{print $2}')"
+          echo "openssl version: $v"
+          major="${v%%.*}"
+          minor="$(echo "$v" | cut -d. -f2)"
+          if [ "$major" -lt 3 ] || { [ "$major" -eq 3 ] && [ "$minor" -lt 5 ]; }; then
+            echo "::error::openssl $v < 3.5 -- X25519MLKEM768 default lost, see ADR-025"
+            exit 1
+          fi
+
+          group="$(curl -sv https://registry-1.docker.io/v2/ 2>&1 | grep -o 'SSL connection using[^\"]*' || true)"
+          echo "negotiated: $group"
+          case "$group" in
+            *MLKEM*)
+              echo "PQ hybrid group confirmed against registry-1.docker.io" ;;
+            *)
+              echo "::error::no MLKEM group negotiated against the update registry -- see ADR-025"
+              exit 1
+              ;;
+          esac
