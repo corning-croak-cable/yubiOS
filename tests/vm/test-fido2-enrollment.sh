@@ -21,8 +21,6 @@
 set -euo pipefail
 
 IMAGE="${YUBIOS_IMAGE:-./mkosi.output/yubiOS}"
-SSH_PORT="${SSH_PORT:-2223}"
-VM_TIMEOUT="${VM_TIMEOUT:-300}"
 VMID=""
 
 log()  { printf '\n=== %s ===\n' "$*"; }
@@ -31,7 +29,7 @@ die()  { printf 'FAIL: %s\n' "$*" >&2; exit 1; }
 
 need() { command -v "$1" >/dev/null 2>&1 || die "missing host tool: $1"; }
 
-cleanup() { [[ -n "$VMID" ]] && bcvk ephemeral rm "$VMID" >/dev/null 2>&1 || true; }
+cleanup() { [[ -n "$VMID" ]] && podman rm -f "$VMID" >/dev/null 2>&1 || true; }
 trap cleanup EXIT
 
 # ---- host preflight ----
@@ -44,8 +42,7 @@ g() { bcvk ssh "$VMID" -- "$@"; }
 
 # ---- boot ----
 log "boot ephemeral VM (--swtpm --swu2f)"
-VMID="$(bcvk ephemeral run --detach --ssh-port "$SSH_PORT" \
-          --swtpm --swu2f --timeout "$VM_TIMEOUT" "$IMAGE")"
+VMID="$(bcvk ephemeral run --detach --ssh-keygen --swtpm --swu2f "$IMAGE")"
 [[ -n "$VMID" ]] || die "bcvk ephemeral run returned no VM id"
 echo "VM id: $VMID"
 for i in $(seq 1 60); do
