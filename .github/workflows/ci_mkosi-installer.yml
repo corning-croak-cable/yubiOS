@@ -147,6 +147,26 @@ jobs:
           } > inst/installer/MANIFEST.txt
           ls -l inst/installer/
 
+      - name: Install docker-engine + buildx (pinned, own dockerd on ducker.sock)
+        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
+        run: |
+          set -euxo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends wget iptables nftables
+          wget -q "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
+          wget -q "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
+          tar xzf docker-29.6.0.tgz
+          sudo mkdir -p /usr/libexec/docker/cli-plugins/
+          sudo cp docker/* /usr/bin/
+          sudo cp buildx-v0.35.0.linux-amd64 /usr/libexec/docker/cli-plugins/docker-buildx
+          sudo chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
+          sudo mkdir -p /mnt/docker
+          sudo dockerd --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
+          for i in $(seq 1 30); do sudo docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
+          sudo docker -H unix:///var/run/ducker.sock buildx create --name hardened \
+            --driver docker-container \
+            --use
+
       - name: Build installer OCI artifact (FROM scratch)
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
         run: |
@@ -155,11 +175,13 @@ jobs:
           FROM scratch
           COPY installer/ /installer/
           DOCKER
-          docker build \
+          docker -H unix:///var/run/ducker.sock buildx build \
+            --builder hardened \
             --label "org.opencontainers.image.title=yubiOS mkosi installer image" \
             --label "org.opencontainers.image.description=DPS disk image + PKCS#11-signed UKI (minimal profile); installs the base system that runs the bootc images" \
             --label "org.opencontainers.image.source=https://github.com/yubi-OS/yubiOS" \
             --label "org.opencontainers.image.revision=${GITHUB_SHA}" \
+            --load \
             -t "0mniteck/yubios:installer" \
             -t "0mniteck/yubios:installer-${GITHUB_SHA}" \
             inst
@@ -168,8 +190,8 @@ jobs:
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
         run: |
           set -euxo pipefail
-          echo "${{ secrets.DOCKER }}" | docker login -u 0mniteck42 --password-stdin
-          docker push "0mniteck/yubios:installer"
-          docker push "0mniteck/yubios:installer-${GITHUB_SHA}"
-          docker logout
-          docker buildx imagetools inspect "0mniteck/yubios:installer"
+          echo "${{ secrets.DOCKER }}" | docker -H unix:///var/run/ducker.sock login -u 0mniteck42 --password-stdin
+          docker -H unix:///var/run/ducker.sock push "0mniteck/yubios:installer"
+          docker -H unix:///var/run/ducker.sock push "0mniteck/yubios:installer-${GITHUB_SHA}"
+          docker -H unix:///var/run/ducker.sock logout
+          docker -H unix:///var/run/ducker.sock buildx imagetools inspect "0mniteck/yubios:installer"

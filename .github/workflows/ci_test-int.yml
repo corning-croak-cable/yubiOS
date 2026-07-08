@@ -622,6 +622,25 @@ jobs:
           name: fip-flash-arm64
           path: art
 
+      - name: Install docker-engine + buildx (pinned, own dockerd on ducker.sock)
+        run: |
+          set -euxo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends wget iptables nftables
+          wget -q "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
+          wget -q "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
+          tar xzf docker-29.6.0.tgz
+          sudo mkdir -p /usr/libexec/docker/cli-plugins/
+          sudo cp docker/* /usr/bin/
+          sudo cp buildx-v0.35.0.linux-amd64 /usr/libexec/docker/cli-plugins/docker-buildx
+          sudo chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
+          sudo mkdir -p /mnt/docker
+          sudo dockerd --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
+          for i in $(seq 1 30); do sudo docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
+          sudo docker -H unix:///var/run/ducker.sock buildx create --name hardened \
+            --driver docker-container \
+            --use
+
       - name: Assemble /firmware payload + MANIFEST
         run: |
           set -euxo pipefail
@@ -669,24 +688,26 @@ jobs:
           FROM scratch
           COPY firmware/ /firmware/
           DOCKER
-          docker build \
+          docker -H unix:///var/run/ducker.sock buildx build \
+            --builder hardened \
             --label "org.opencontainers.image.title=yubiOS ARM64 firmware bundle" \
             --label "org.opencontainers.image.description=QEMU-validated TF-A FIP + OP-TEE (StMM+fTPM fold) + U-Boot BL33 + BL32_AP_MM.fd" \
             --label "org.opencontainers.image.source=https://github.com/yubi-OS/yubiOS" \
             --label "org.opencontainers.image.revision=${GITHUB_SHA}" \
+            --load \
             -t "0mniteck/yubios:firmware" \
             -t "0mniteck/yubios:firmware-${GITHUB_SHA}" \
             fw
 
       - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER }}" | docker login -u 0mniteck42 --password-stdin
+        run: echo "${{ secrets.DOCKER }}" | docker -H unix:///var/run/ducker.sock login -u 0mniteck42 --password-stdin
 
       - name: Push firmware tags
         run: |
           set -euxo pipefail
-          docker push "0mniteck/yubios:firmware"
-          docker push "0mniteck/yubios:firmware-${GITHUB_SHA}"
-          docker logout
+          docker -H unix:///var/run/ducker.sock push "0mniteck/yubios:firmware"
+          docker -H unix:///var/run/ducker.sock push "0mniteck/yubios:firmware-${GITHUB_SHA}"
+          docker -H unix:///var/run/ducker.sock logout
 
       - name: Verify pushed tag
-        run: docker buildx imagetools inspect "0mniteck/yubios:firmware"
+        run: docker -H unix:///var/run/ducker.sock buildx imagetools inspect "0mniteck/yubios:firmware"
