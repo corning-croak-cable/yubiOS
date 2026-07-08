@@ -85,6 +85,40 @@ jobs:
             > mkosi.secure-boot.pkcs11-uri
           chmod -R a+rX sandbox
 
+      - name: DIAG — probe PKCS#11 stack inside the mkosi sandbox
+        run: |
+          set -uxo pipefail
+          sudo mkosi \
+            --distribution fedora \
+            --release 45 \
+            --profile minimal \
+            --tools-tree-package softhsm2 \
+            --tools-tree-package pkcs11-provider \
+            --tools-tree-package opensc \
+            --tools-tree-package gnutls-bin \
+            --sandbox-tree sandbox \
+            sandbox -- sh -c '
+              echo ==== conf files ====;
+              cat /etc/softhsm2.conf 2>&1;
+              cat /etc/softhsm/softhsm2.conf 2>&1;
+              echo ==== token dir ====;
+              ls -laR /var/lib/softhsm 2>&1;
+              echo ==== p11-kit modules ====;
+              ls -la /usr/share/p11-kit/modules/ 2>&1;
+              cat /usr/share/p11-kit/modules/*.module 2>&1;
+              echo ==== provider + softhsm libs ====;
+              find /usr/lib -name "*pkcs11*" -o -name "*softhsm*" 2>/dev/null | head -20;
+              echo ==== softhsm direct ====;
+              mod=$(find /usr/lib -name libsofthsm2.so | head -1);
+              pkcs11-tool --module "$mod" --list-token-slots 2>&1;
+              pkcs11-tool --module "$mod" --login --pin 123456 --list-objects 2>&1 | head -20;
+              echo ==== p11tool via p11-kit ====;
+              p11tool --list-tokens 2>&1;
+              echo ==== systemd-keyutil ====;
+              /usr/lib/systemd/systemd-keyutil validate --certificate /work/src/mkosi.secure-boot.pem --private-key-source provider:pkcs11 --private-key "pkcs11:token=yubios-9c;object=piv-9c;type=private?pin-value=123456" 2>&1;
+              echo ==== done rc=$? ====;
+            ' || true
+
       - name: Build disk image (minimal profile, PKCS#11-signed UKI)
         run: |
           set -euxo pipefail
