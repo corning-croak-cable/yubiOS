@@ -79,6 +79,12 @@ jobs:
           sudo apt-get install -y -qq --no-install-recommends \
             swtpm swtpm-tools qemu-utils ${{ matrix.qemu_pkgs }} \
             fido2-tools cryptsetup-bin git build-essential pkg-config libssl-dev
+          # GH runners ship /dev/kvm root:kvm 0660 — the runner user (and
+          # root-in-rootless-podman) can't open it. Documented GH recipe:
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules || true
+          sudo udevadm trigger --name-match=kvm || true
+          ls -la /dev/kvm || true
 
       - name: Build bcvk @ feat/swtpm-ci (feasibility gate)
         id: bcvk
