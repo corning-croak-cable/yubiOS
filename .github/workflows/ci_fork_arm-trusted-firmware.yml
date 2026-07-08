@@ -1,7 +1,3 @@
-# PORTED from yubi-OS/arm-trusted-firmware .github/workflows/ci_test.yml (feat/ci).
-# Fork default branches are kept identical to upstream; all yubi-OS changes
-# live on feat/feature branches and all CI runs from this repo via
-# workflow_dispatch only (org policy, July 8 2026).
 name: ci_fork_arm-trusted-firmware
 
 # Component CI for the yubiOS ARM64 fTPM stack (#35, task C1).
@@ -63,8 +59,6 @@ jobs:
       - name: Checkout mbed TLS (3.6.6 — matches TF-A MBEDTLS_CONFIG_VERSION 0x03060600)
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6.0.2 — see PINNED.md
         with:
-          repository: yubi-OS/arm-trusted-firmware
-          ref: feat/ci
           repository: Mbed-TLS/mbedtls
           ref: mbedtls-3.6.6
           path: mbedtls
