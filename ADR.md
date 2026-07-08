@@ -747,7 +747,7 @@ CONFIG_EFI_CAPSULE_AUTHENTICATE=y  # Firmware update authentication
 ## ADR-022: Unified OCI Distribution — Per-Artifact Tags on 0mniteck/yubios
 
 **Date:** 2026-07-07  
-**Status:** Accepted — firmware tag implemented; installer tag accepted, implementation deferred until the CI mkosi job builds a full image  
+**Status:** Accepted — firmware and installer tags both implemented (installer landed 2026-07-08 via `ci_mkosi-installer.yml`, closing #10)  
 **Depends on:** ADR-006 (both mkosi and bootc build paths), ADR-012 (systemd-repart first boot), ADR-015 (pinned-digest bases), ADR-018/019/020 (ARM64 secure-world stack).
 
 **Context:** `docker.io/0mniteck/yubios` is the primary public distribution point, currently carrying one artifact: the multi-arch bootc OS image (`latest` + per-commit SHA tags). Two more build products now exist and need a home:
@@ -763,7 +763,7 @@ The question: does each artifact get its own tag on the one repo, or do they liv
 |---|---|---|---|
 | `latest`, `<sha>` | bootc OS image (multi-arch OCI, bootable) | `yubiOS-ci.yml` (Docker_push dispatch) | live |
 | `firmware`, `firmware-<sha>` | ARM64 firmware bundle (FROM scratch, files under `/firmware/`) | `ci_test-int.yml` Stage 4, only after the QEMU e2e gate is green | live (this ADR) |
-| `installer`, `installer-<sha>` | mkosi disk image + UKI (FROM scratch, files under `/installer/`) | `yubiOS-ci.yml` mkosi job, once it builds a full image | accepted, deferred |
+| `installer`, `installer-<sha>` | mkosi disk image + UKI (FROM scratch, files under `/installer/`) | `ci_mkosi-installer.yml`, after the sbverify signing assertion passes | live |
 
 **Why one repo with per-artifact tags:**
 
@@ -775,7 +775,7 @@ The question: does each artifact get its own tag on the one repo, or do they liv
 
 **Firmware tag caveat (QEMU lane):** the currently published bundle targets `vexpress-qemu_armv8a` with `CFG_STMM_VOLATILE_STORAGE` + `CFG_FTPM_VOLATILE_NV` enabled, because QEMU virt has no RPMB (#41). Its `MANIFEST.txt` says so explicitly. Real-hardware firmware bundles (RK3588 boards, ADR-019) will publish under the same tag scheme once the hardware lane exists, with RPMB-backed storage and without the volatile flags — those flags are CI-only branches pinned by SHA, never merged (optee_os `feat/stmm-volatile-storage-ci`, optee_ftpm `feat/volatile-nv-ci`).
 
-**Installer tag deferral:** the CI mkosi job currently validates config only (`mkosi summary`) — building the full DPS disk image in CI needs loop devices + ~10GB scratch, which the current containerized job doesn't have. The tag scheme is decided now so the mkosi job can adopt it without another ADR when it grows a real image build (bare runner, same pattern as the firmware job).
+**Installer tag implementation (2026-07-08):** `ci_mkosi-installer.yml` builds the full DPS disk image + UKI on a bare runner (minimal profile, Fedora 45, Debian tools tree). Secure Boot + expected-PCR signing run through `SecureBootKeySource=provider:pkcs11` + `systemd-sbsign` against a SoftHSM token mocking YubiKey PIV slot 9c — the exact mechanism the yubiOS profile (yubi-OS/mkosi#2, merged) uses on real hardware. Key plumbing detail: mkosi's signing sandbox carries no sandbox trees but bind-mounts host `/run` for non-file key sources, so the SoftHSM conf + token store live at `/run/yubios-hsm` (same absolute path host-side and sandbox-side), with `PKCS11_PROVIDER_MODULE` pointed straight at `libsofthsm2.so`. The UKI is verified with `sbverify` against the mock cert before publish. The payload ships `yubiOS.raw.zst` (full disk image), the signed UKI, the mkosi manifest, the CI cert, and a MANIFEST.txt stating explicitly that the CI key is a mock — production images are signed by the real YubiKey (ADR-008).
 
 **Alternatives considered:**
 - *GitHub Releases for firmware/installer artifacts* — rejected: separate download path, no digest-addressed pulls, no policy/provenance reuse, and release assets aren't mirrorable with registry tooling.
