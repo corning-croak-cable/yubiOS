@@ -192,7 +192,7 @@ yubiOS/
 | systemd | **261** (systemd-sbsign, systemd-cryptenroll FIDO2; v261 adds `ConditionSecurity=measured-os`, `RestrictFileSystems=`) |
 | OpenSSH | 8.2 (FIDO2 key types) |
 | pam-u2f | **1.3.1** (CVE-2025-23013 fix) |
-| Platform | **x86-64** (primary); **arm64/aarch64** (in development — see ADR-017) |
+| Platform | **arm64/aarch64** (primary target — ADR-023); **x86-64** (secondary, fully supported — ADR-017) |
 
 ## Design decisions
 

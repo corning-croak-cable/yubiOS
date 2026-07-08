@@ -13,6 +13,12 @@ The answer is structural, not procedural. Nothing in yubiOS asks you to trust an
 
 An AI resilient system is one where a poisoned contribution, wherever it came from, either fails verification or never had the authority to matter.
 
+## Security should be the default — for everyone.
+
+Hardware roots of trust have historically been a luxury: TPMs, HSMs, and vendor secure enclaves sit behind enterprise contracts, OEM partnerships, or price points most individuals never clear. yubiOS's bet is that a $25–$70 YubiKey is a better root of trust than a TPM most people will never own, control, or even know is there.
+
+That's the default we're building toward: not "security for people who can afford a security team," but security that ships in the box, requires no vendor relationship, and works the same for a solo developer as it would for a fleet. If an architecture decision would make yubiOS's trust model depend on scale, budget, or enterprise tooling to reach an individual owner, that's a signal to reconsider it — the same standard MISSION.md already applies to convenience features that would weaken a trust boundary.
+
 ## With great power, comes great responsibility
 
 A root of trust is concentrated power. Whoever holds the signing key, the ROTPK, or the RPMB write key holds the machine. yubiOS's stance is that this power belongs to the owner of the hardware, and to no one else: not the OEM, not the SoC vendor, not us.

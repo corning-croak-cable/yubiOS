@@ -1,9 +1,10 @@
-# FUTURE.md — Post-Launch: A yubiOS-Owned Root of Trust on ARM64
+# FUTURE.md — Post-Launch: A yubiOS-Owned Root of Trust on ARM64 (Primary Platform)
 
 > *No TPM. No OEM. No trust anchors you don't control.*
 >
 > Status: **Planning** — post-launch (after Phase 0 ships). Nothing here blocks launch.
-> Scope: ARM64 only (ADR-017). x86-64 keeps its existing UKI + SecureBoot + dm-verity chain.
+> Scope: ARM64 only — yubiOS's primary target platform (ADR-017, ADR-023). x86-64 remains a
+> fully supported secondary platform and keeps its existing UKI + SecureBoot + dm-verity chain.
 
 ---
 

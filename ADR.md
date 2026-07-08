@@ -783,3 +783,32 @@ The question: does each artifact get its own tag on the one repo, or do they liv
 - *ORAS artifact media types instead of FROM-scratch images* — deferred: cleaner OCI semantics, but Docker Hub UI + plain `docker pull` handling of custom artifact types is still uneven; FROM scratch works everywhere today. Revisit if/when we adopt cosign-signed referrers.
 
 **Source:** `ci_test-int.yml` Stage 4 (this commit), yubiOS-ci.yml push path, issue #41 resolution, ADR-018/019/020, bootc distribution model (ADR-006).
+
+---
+## ADR-023: ARM64 as Primary Target Platform
+
+**Date:** 2026-07-08
+**Status:** Accepted
+**Depends on:** ADR-017 (ARM64 multi-arch profile), ADR-018/019/020/021 (yubiOS-owned ARM64 secure-world stack, RK3588 as primary Path A target, UEFI + StandaloneMM, U-Boot BL33)
+
+**Context:** ADR-017 shipped yubiOS multi-arch with x86-64 as primary and arm64 as secondary/in-development. Since then, every piece of the project's differentiating security work — the owner-burned ROTPK, the TF-A/OP-TEE/fTPM secure-world stack, RK3588 as the flagship Path A target — has landed on ARM64 (ADR-018/019/020/021). x86-64 has no equivalent path to an owner-owned hardware root of trust below the UKI: its SoC/PCH firmware and any TPM are OEM-supplied and outside yubiOS's control, and there is no from-scratch UEFI/PCH replacement in scope. ARM64/RK3588 is the only target where yubiOS can own every layer down to the boot ROM key. Separately, this cycle's CI work spent significant effort chasing an amd64-specific bcvk/virtiofsd bug in the VM boot leg (issues #9/#20/#25) with no ARM64 equivalent failure — a signal about where the project's hardware attention now belongs, not just a CI nuisance.
+
+**Decision:** ARM64 (RK3588 Path A per ADR-019 as the flagship target; RK3399 as the stepping stone) is now yubiOS's **primary** target platform. x86-64 remains a **supported secondary** platform: identical trust chain above the UKI (YubiKey FIDO2, systemd-sbsign PIV, UKI + dm-verity), full build + CI coverage, but without a path to an owner-owned hardware root of trust below the UKI.
+
+**Rationale:**
+- Owner-owned trust, all the way down, is the mission (MISSION.md). Only ARM64/RK3588 delivers that today; x86-64 structurally cannot without replacing OEM UEFI/PCH firmware, which is out of scope.
+- ADR-018/019/020/021 already committed real engineering investment to the ARM64 secure-world stack. This ADR aligns platform priority with where that investment already went, instead of carrying a stale "x86-64 primary" framing against the evidence.
+- The unresolved amd64 bcvk/virtiofsd boot-leg bug (#9/#20/#25) is a bug on a now-secondary architecture. CI policy should stop blocking on it rather than treating it as an equal-priority regression.
+
+**Consequences:**
+- README.md's Requirements table, ARCHITECTURE.md's opening framing, SPEC.md §1/§3/§5, and FUTURE.md's scope line are updated to state ARM64 primacy explicitly.
+- `ci_test-vm.yml`'s amd64 boot leg becomes an explicit, loud policy skip (new `policy` gate, mirroring the existing arm64-no-KVM skip pattern) citing this ADR. The underlying bcvk/virtiofsd diagnosis in #9/#20/#25 remains valid supporting context — the skip is a platform-priority decision, not a claim that the bug is fixed or irrelevant.
+- Does not change ADR-006 (both mkosi and bootc build paths) or ADR-014 (multi-platform Buildx): both architectures continue to build and ship on `0mniteck/yubios`.
+- x86-64 is not deprecated. It moves from "primary" to "secondary, fully supported."
+
+**Alternatives considered:**
+- *Keep x86-64 primary, ARM64 secondary* — rejected: does not reflect where the mission-critical work (an owner-owned root of trust) actually lives.
+- *Equal-priority, no primary/secondary framing* — rejected: docs and CI need a tie-breaker for triage calls like the amd64 boot-leg bug; an explicit primary avoids re-litigating this every time a platform-specific issue surfaces.
+
+**Source:** ADR-017, ADR-018, ADR-019, ADR-020, ADR-021, MISSION.md, issues #9/#20/#25 (bcvk amd64 virtiofsd bug diagnosis).
+

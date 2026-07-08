@@ -3,8 +3,10 @@
 > *No TPM. No OEM. No trust anchors you don't control.*
 
 YubiKey replaces the TPM at every trust boundary: Secure Boot signing, disk encryption,
-home directory encryption, SSH, and PAM authentication. yubiOS targets arm64/x86-64 as the
-primary platforms.
+home directory encryption, SSH, and PAM authentication. ARM64 is yubiOS's primary target
+platform (ADR-023) — it is the only platform where yubiOS owns the hardware root of trust
+all the way to the boot ROM key (§7, ADR-018/019/020/021). x86-64 is a fully supported
+secondary platform with an identical trust chain above the UKI.
 
 ---
 
@@ -187,10 +189,11 @@ legacy packages| NS["systemd-nspawn\n\nExamples: Debian dev container\nRPM compa
 
 ---
 
-## 7. ARM64 Secure-World Stack (Post-Launch — ADR-018/019/020)
+## 7. ARM64 Secure-World Stack (Primary Platform; Hardware Bring-Up Post-Launch — ADR-018/019/020/021/023)
 
-> Post-launch ARM64 root of trust. yubiOS owns TF-A, OP-TEE, the fTPM, and U-Boot.
-> The YubiKey stays the primary RoT; the fTPM is the platform-integrity root. Full plan: [FUTURE.md](FUTURE.md).
+> ARM64 is yubiOS's primary target platform (ADR-023). This section is the owner-owned root of
+> trust yubiOS builds itself: TF-A, OP-TEE, the fTPM, and U-Boot. Hardware bring-up on real boards
+> is post-launch; the YubiKey stays the primary RoT, the fTPM is the platform-integrity root. Full plan: [FUTURE.md](FUTURE.md).
 
 ### 7a. ARM64 boot trust chain (TF-A → OP-TEE/fTPM → U-Boot UEFI)
 

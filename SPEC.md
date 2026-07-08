@@ -1,6 +1,6 @@
 # yubiOS Specification
 
-Version 0.1 (draft) · 2026-07-07 · Status: pre-launch, tracks `main`
+Version 0.2 · 2026-07-08 · Status: pre-launch, tracks `main`
 
 This document is the consolidated specification for yubiOS: what the system is, what it guarantees, how it is built and updated, and the deployment scenarios it is designed for. Decisions and rationale live in [ADR.md](ADR.md); threat coverage lives in [MITIGATE.md](MITIGATE.md); this document defines the normative surface.
 
@@ -12,7 +12,7 @@ The key words MUST, MUST NOT, SHOULD, and MAY are to be interpreted as described
 
 yubiOS is a FIDO2-first immutable Linux operating system in which a YubiKey 5 series hardware token is the sole un-exportable root of trust. It replaces the TPM at every trust boundary the owner interacts with: Secure Boot signing, disk encryption, home directory encryption, SSH authentication, and PAM login.
 
-In scope: the OS image, its build pipeline, its trust chain, its update mechanism, and its enrollment flows on x86-64 (production) and arm64 (in development, ADR-017; owned secure-world stack post-launch, ADR-018/019/020/021).
+In scope: the OS image, its build pipeline, its trust chain, its update mechanism, and its enrollment flows on arm64 (primary target platform, ADR-023; owned secure-world stack post-launch, ADR-018/019/020/021) and x86-64 (secondary, fully supported, ADR-017).
 
 Out of scope: application-level security, hardware below the UEFI firmware boundary (see MITIGATE.md "What yubiOS Cannot Fully Prevent"), and non-YubiKey FIDO2 tokens (untested, though nothing in the design is Yubico-specific beyond firmware version floors).
 
@@ -46,7 +46,26 @@ One token, five boundaries:
 - **FIDO2 ed25519-sk resident keys (hidraw)** — SSH, `-O resident -O verify-required` (ADR-004).
 - **FIDO2 U2F (hidraw)** — sudo/login via `pam_u2f.so` (`auth required`), pam-u2f ≥ 1.3.1 (ADR-005).
 
-### 3.3 Boot trust chain (x86-64)
+### 3.3 Boot trust chain (ARM64, primary)
+
+```
+TF-A Trusted Board Boot: ROTPK burned to SoC OTP/eFuse (Path A) or U-Boot FIT verified
+boot + fTPM measurement (Path B, dev boards)
+  → BL31 EL3 Secure Monitor → BL32 OP-TEE (fTPM TA + StandaloneMM)
+  → BL33 U-Boot, providing the UEFI environment (EFI_LOADER)
+  → systemd-boot (PE signed via PIV 9c) → UKI — same signed artifacts as x86-64
+  → /usr: composefs over dm-verity-checked erofs; usrhash= in signed cmdline
+  → root fs: LUKS2 btrfs, FIDO2-enrolled (touch + PIN at boot)
+  → /home: systemd-homed per-user LUKS2, FIDO2 per user
+```
+
+On Path A, the ROTPK hash is owner-burned into SoC OTP/eFuse — no vendor key, no OEM signature
+in the chain from the boot ROM onward (ADR-018/019/020/021). Boot stages are measured into the
+yubiOS-owned fTPM's PCRs. This is the only configuration where yubiOS controls every trust
+anchor down to hardware. Hardware bring-up on real boards is post-launch (FUTURE.md); the chain
+itself is accepted design (ADR-018/019/020/021).
+
+### 3.4 Boot trust chain (x86-64, secondary)
 
 ```
 UEFI firmware (owner-enrolled Secure Boot db)
@@ -57,9 +76,11 @@ UEFI firmware (owner-enrolled Secure Boot db)
   → /home: systemd-homed per-user LUKS2, FIDO2 per user
 ```
 
-Boot phases are measured into PCR 11 where a TPM or fTPM is present; on the no-TPM configuration, integrity rests on the signed UKI + dm-verity chain and physical possession of the YubiKey.
-
-On ARM64 (post-launch), the chain extends downward: TF-A Trusted Board Boot rooted in an owner-burned ROTPK (Path A) or U-Boot FIT verified boot + fTPM measurement (Path B), with U-Boot providing the UEFI environment so the same signed systemd-boot + UKI artifacts run unmodified (ADR-019/020/021).
+Boot phases are measured into PCR 11 where a TPM or fTPM is present; on the no-TPM configuration,
+integrity rests on the signed UKI + dm-verity chain and physical possession of the YubiKey. Below
+the UKI, x86-64 depends on the platform's own UEFI firmware and (optional) TPM — trust anchors
+yubiOS does not own end to end. Fully supported; not the platform where the mission's
+owner-owned-hardware-root-of-trust goal is fully realized (ADR-023).
 
 ## 4. System composition
 
@@ -91,7 +112,7 @@ Service units ship with `NoNewPrivileges=`, `DynamicUser=`, `ProtectProc=invisib
 
 ## 5. Sample use cases
 
-### UC-1: Personal laptop, full trust chain (primary)
+### UC-1: Personal laptop, full trust chain (x86-64, secondary platform)
 
 Ana installs yubiOS to her laptop's NVMe (`bootc install to-disk`), enrolls her own Secure Boot Platform Key from the YubiKey-generated certificate, and walks the four-step wizard. Every boot: YubiKey touch + FIDO2 PIN unlocks the disk; sudo requires a touch; SSH to her servers uses the resident ed25519-sk key. If her laptop is stolen, the disk is unopenable without the token and PIN; if the YubiKey is lost, the printed recovery key gets her back in and a backup key re-enrolls. OS updates arrive via `bootc upgrade` with zero re-enrollment.
 
@@ -115,7 +136,7 @@ A release engineer keeps a yubiOS machine as the UKI-signing station. The signin
 
 CI exercises the trust chain without physical tokens: bcvk ephemeral VMs with host-side swtpm provide `/dev/tpm0` for measured-boot paths, and the swu2f software authenticator covers pam-u2f (CTAP1) and cryptenroll/homed (CTAP2) legs. Physical-YubiKey passthrough (`bcvk ephemeral run` USB passthrough) covers the remaining hardware-gated tests. Emulated authenticators are TEST-only and MUST NOT appear in production images.
 
-### UC-7: ARM64 single-board computer, owner-owned firmware (post-launch)
+### UC-7: ARM64 single-board computer, owner-owned firmware (primary platform; hardware bring-up post-launch)
 
 Dana provisions a Rock 5B (RK3588): burns her ROTPK into SoC OTP (Path A, rehearsed on a sacrificial board), builds TF-A + OP-TEE + the ms-tpm-20-ref fTPM + U-Boot from the pinned yubi-OS forks, and boots the same signed systemd-boot + UKI she uses on x86-64. Every layer from the boot ROM key up is hers; the fTPM holds PCRs for attestation; her YubiKey still unlocks the disk. A dev board on Path B gets measured-boot attestation instead of enforcement, and is documented as such (ADR-019).
 
@@ -137,6 +158,30 @@ A build or deployment claiming to be yubiOS MUST satisfy all of:
 5. A/B updates with Boot Assessment; `yubiOS-upgrade.service` calls `bootctl set-boot-good` only after health checks.
 6. `yubiOS-enroll.service` gated by `ConditionSecurity=measured-os`.
 7. No mutable-tag (`:latest`, branch) references anywhere in Containerfile or workflows.
+
+## 8. Upstream specifications referenced
+
+This document and the ADRs it consolidates build on the following normative and de-facto
+standards. Where yubiOS deliberately diverges from a recommended default (e.g. not binding
+LUKS2 to TPM2 PCR-hash policies, ADR-011), the divergence is called out in the relevant ADR,
+not here.
+
+| Area | Spec / doc | Link |
+|---|---|---|
+| Requirement language | RFC 2119 | https://www.rfc-editor.org/rfc/rfc2119 |
+| FIDO2 / CTAP2 | FIDO Alliance CTAP2.1 | https://fidoalliance.org/specs/fido-v2.1-ps-20210615/fido-client-to-authenticator-protocol-v2.1-ps-20210615.html |
+| WebAuthn (ed25519-sk lineage) | W3C Web Authentication Level 3 | https://www.w3.org/TR/webauthn-3/ |
+| PIV smartcard | NIST SP 800-73-4 | https://csrc.nist.gov/pubs/sp/800/73/4/upd1/final |
+| PKCS#11 | OASIS PKCS#11 v3.1 | https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.1/pkcs11-spec-v3.1.html |
+| UEFI / Secure Boot | UEFI Specification 2.10 | https://uefi.org/specs/UEFI/2.10/ |
+| TPM 2.0 (fTPM reference) | TCG TPM 2.0 Library Specification | https://trustedcomputinggroup.org/resource/tpm-library-specification/ |
+| TF-A Trusted Board Boot | Arm Trusted Firmware-A documentation | https://trustedfirmware-a.readthedocs.io/ |
+| OP-TEE / GlobalPlatform TEE | GlobalPlatform TEE Client API Specification | https://globalplatform.org/specs-library/tee-client-api-specification/ |
+| Discoverable Partitions | systemd.io DPS | https://systemd.io/DISCOVERABLE_PARTITIONS/ |
+| Boot Assessment / A-B updates | systemd.io Automatic Boot Assessment | https://systemd.io/AUTOMATIC_BOOT_ASSESSMENT/ |
+| OCI images | OCI Image Format Specification | https://github.com/opencontainers/image-spec |
+| Supply-chain provenance | SLSA v1.0 | https://slsa.dev/spec/v1.0/ |
+| Container signing / attestation | Sigstore / cosign docs | https://docs.sigstore.dev/ |
 
 ---
 
