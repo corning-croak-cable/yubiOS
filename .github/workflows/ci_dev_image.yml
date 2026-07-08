@@ -87,11 +87,14 @@ jobs:
             .
 
       - name: Build dev/test image on top of it (Containerfile.dev, swu2f)
+        # Classic (non-buildx) docker build: the docker-container buildx driver runs an
+        # isolated BuildKit instance that can't resolve a local-only FROM tag (it tried
+        # to pull yubios:base-${{ matrix.arch }} from Docker Hub and got insufficient_scope).
+        # Plain `docker build` reads the daemon's own local image store directly, so it
+        # sees the base image --load just placed there.
         run: |
-          docker -H unix:///var/run/ducker.sock buildx build -f Containerfile.dev \
+          docker -H unix:///var/run/ducker.sock build -f Containerfile.dev \
             --build-arg BASE_IMAGE="yubios:base-${{ matrix.arch }}" \
-            --platform linux/${{ matrix.arch }} \
-            --load \
             -t "yubios:dev-${{ matrix.arch }}" \
             .
 
@@ -103,14 +106,11 @@ jobs:
 
       - name: Push per-arch dev image (${{ matrix.arch }})
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
+        # Tag the already-built local image and push with the classic client -- no need
+        # for buildx here, this is a single-arch image already resolved above.
         run: |
-          docker -H unix:///var/run/ducker.sock buildx build -f Containerfile.dev \
-            --builder hardened \
-            --build-arg BASE_IMAGE="yubios:base-${{ matrix.arch }}" \
-            --platform linux/${{ matrix.arch }} \
-            --push \
-            -t "0mniteck/yubios:dev-${{ github.sha }}-${{ matrix.arch }}" \
-            .
+          docker -H unix:///var/run/ducker.sock tag "yubios:dev-${{ matrix.arch }}" "0mniteck/yubios:dev-${{ github.sha }}-${{ matrix.arch }}"
+          docker -H unix:///var/run/ducker.sock push "0mniteck/yubios:dev-${{ github.sha }}-${{ matrix.arch }}"
 
   merge-manifest:
     needs: build
