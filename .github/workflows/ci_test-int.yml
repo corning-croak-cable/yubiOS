@@ -86,7 +86,7 @@ jobs:
           - arch: amd64
             runner: ubuntu-24.04
           - arch: arm64
-            runner: ubuntu-24.04-arm
+            runner: [self-hosted, Linux, ARM64, GPU]
     runs-on: ${{ matrix.runner }}
     env:
       EDK2_REPO: https://github.com/yubi-OS/edk2.git
@@ -189,7 +189,7 @@ jobs:
   # ===================================================================
   # Stage 2 - OP-TEE fold (StMM + fTPM -> single BL32) + TF-A FIP (fip.bin)
   # Block source: F2 / ci_int_optee_fip.yml @ GREEN commit f3473172
-  #   (run 28248906459 SUCCESS on ubuntu-24.04 + ubuntu-24.04-arm; T211 DONE 2026-06-26T15:57:39Z).
+  #   (run 28248906459 SUCCESS on ubuntu-24.04 + self-hosted ARM64 GPU; T211 DONE 2026-06-26T15:57:39Z).
   # Integrated VERBATIM from F2 green stage workflow. The ONLY orchestration
   # adaptation is Stage S, which prefers the BL32_AP_MM.fd handed over by the
   # in-run stmm job (needs: stmm + download-artifact) and falls back to F2
@@ -207,7 +207,7 @@ jobs:
           - arch: amd64
             runner: ubuntu-24.04
           - arch: arm64
-            runner: ubuntu-24.04-arm
+            runner: [self-hosted, Linux, ARM64, GPU]
     runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout yubiOS (workflow context)
@@ -514,7 +514,7 @@ jobs:
           - arch: amd64
             runner: ubuntu-24.04
           - arch: arm64
-            runner: ubuntu-24.04-arm
+            runner: [self-hosted, Linux, ARM64, GPU]
     runs-on: ${{ matrix.runner }}
     env:
       BOOT_TIMEOUT: '180'

@@ -1,12 +1,12 @@
 name: yubiOS CI
 
-# Multi-arch CI: native matrix split across GitHub-hosted amd64 + arm64 runners.
+# Multi-arch CI: native matrix split across GitHub-hosted amd64 + self-hosted ARM64 GPU runners.
 # Strategy 1 from the multi-arch research (native split, NOT QEMU) — every test
 # runs on real hardware for each arch, no emulation slowness/flakiness.
 #
 # DEPLOY PRE-REQ: the `container.image` below must be the dhi.io/debian-base
 # *manifest-list (index)* digest, NOT a single-arch digest. A single-arch (amd64)
-# digest will FAIL to pull on ubuntu-24.04-arm. Run the updated fetch-dhi-manifest
+# digest will FAIL to pull on ARM64 runners. Run the updated fetch-dhi-manifest
 # workflow (it now requests the OCI index media type) to get 1cefd55d979ddbd9110cf73cf3de11798a7893a4598050ba57624bc754b244aa,
 # then replace the placeholder below. The index auto-resolves per runner arch.
 
@@ -61,7 +61,7 @@ jobs:
           - arch: amd64
             runner: ubuntu-24.04
           - arch: arm64
-            runner: ubuntu-24.04-arm
+            runner: [self-hosted, Linux, ARM64, GPU]
     runs-on: ${{ matrix.runner }}
     container:
       credentials:
@@ -86,7 +86,7 @@ jobs:
           - arch: amd64
             runner: ubuntu-24.04
           - arch: arm64
-            runner: ubuntu-24.04-arm
+            runner: [self-hosted, Linux, ARM64, GPU]
     runs-on: ${{ matrix.runner }}
     container:
       credentials:
@@ -115,7 +115,7 @@ jobs:
             docker_arch: x86_64
             buildx_arch: linux-amd64
           - arch: arm64
-            runner: ubuntu-24.04-arm
+            runner: [self-hosted, Linux, ARM64, GPU]
             docker_arch: aarch64
             buildx_arch: linux-arm64
     runs-on: ${{ matrix.runner }}

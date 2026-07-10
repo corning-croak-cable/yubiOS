@@ -23,7 +23,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        runner: [ubuntu-24.04, ubuntu-24.04-arm]
+        include:
+          - runner: ubuntu-24.04
+            runner_name: ubuntu-24.04
+          - runner: [self-hosted, Linux, ARM64, GPU]
+            runner_name: self-hosted-linux-arm64-gpu
     runs-on: ${{ matrix.runner }}
     # Bare runner: TF-A needs a full host + AArch64 cross toolchain. The hardened
     # dhi base image omits crt*.o / libc, so a container build is not used here.
@@ -105,7 +109,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v4 — see PINNED.md
         with:
-          name: tfa-qemu-${{ matrix.runner }}
+          name: tfa-qemu-${{ matrix.runner_name }}
           path: |
             build/qemu/debug/bl31/bl31.elf
             build/qemu/debug/bl31.bin
