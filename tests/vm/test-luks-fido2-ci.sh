@@ -144,9 +144,9 @@ if [[ "$CTAP2" -eq 1 ]]; then
      echo -n testpass | cryptsetup luksFormat --type luks2 -q /tmp/t.luks -
      PASSWORD=testpass systemd-cryptenroll --fido2-device=auto \
        --fido2-with-client-pin=no /tmp/t.luks
-     cryptsetup open --type luks2 /tmp/t.luks t_ci --token-only
+     systemd-cryptsetup attach t_ci /tmp/t.luks - fido2-device=auto
      cryptsetup status t_ci | grep -q "type:.*LUKS2"
-     cryptsetup close t_ci' \
+     systemd-cryptsetup detach t_ci' \
     || die "LUKS2 FIDO2 enroll/unlock failed against CTAP2 authenticator"
   echo "LUKS2 FIDO2 enroll + token unlock OK"
 else
