@@ -69,7 +69,7 @@ jobs:
           - arch: arm64
             # Self-hosted ARM64 board (runner "rock1", labels self-hosted+Linux+ARM64+KVM) --
             # real hardware with actual KVM support, unblocking the boot leg that hosted
-            # ubuntu-24.04-arm runners can't run (no nested virt, see the KVM gate below).
+            # self-hosted ARM64 GPU runners can't run (no nested virt, see the KVM gate below).
             runner: [self-hosted, Linux, ARM64, KVM]
             qemu_pkgs: qemu-system-arm qemu-efi-aarch64
             primary: true

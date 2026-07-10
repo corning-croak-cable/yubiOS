@@ -1,5 +1,5 @@
 # yubiOS — TODO / Future Work
-_Last updated: July 10, 2026 (follow-up from ci_test-vm.yml run 29065584237/job 86297785033: CTAP2 LUKS reopen now uses systemd-cryptsetup for systemd-cryptenroll tokens)_
+_Last updated: July 10, 2026 (ARM64 CI runner policy updated: non-KVM lanes use self-hosted Linux ARM64 GPU runners; VM/KVM lane remains self-hosted Linux ARM64 KVM)_
 
 ## High priority
 
@@ -17,7 +17,7 @@ _Last updated: July 10, 2026 (follow-up from ci_test-vm.yml run 29065584237/job 
 
 ## ARM64 Phase F — fork-CI + integration (in progress)
 
-Owned ARM64 fTPM trust-chain CI (ADR-018/019/020). Each component fork now has a `ci_test.yml` that cross-builds it for aarch64, GREEN on both `ubuntu-24.04` and `ubuntu-24.04-arm` (bare runners, fail-fast:false, pinned SHAs):
+Owned ARM64 fTPM trust-chain CI (ADR-018/019/020). Each component fork now has a `ci_test.yml` that cross-builds it for aarch64; ARM64 non-KVM lanes are now targeted at `[self-hosted, Linux, ARM64, GPU]`, while the VM/e2e KVM lane stays on `[self-hosted, Linux, ARM64, KVM]` (bare runners, fail-fast:false, pinned SHAs):
 
 - [x] C1 — arm-trusted-firmware: TF-A BL31 + TBB FIP (`f9e1064`)
 - [x] C2 — optee_os: OP-TEE core + TA-devkit (`cc18472`)
