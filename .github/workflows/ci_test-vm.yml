@@ -152,6 +152,12 @@ jobs:
             )
             rm -rf /tmp/qemu-zstd-src
           fi
+          sudo mkdir -p "${QEMU_PREFIX}/bcvk-bin"
+          sudo tee "${QEMU_PREFIX}/bcvk-bin/qemu-system-aarch64" >/dev/null <<EOF
+          #!/usr/bin/env bash
+          exec /run/host-mounts/qemu-zstd/bin/qemu-system-aarch64 -L /run/host-mounts/qemu-zstd/share/qemu "\$@"
+          EOF
+          sudo chmod 0755 "${QEMU_PREFIX}/bcvk-bin/qemu-system-aarch64"
           "${QEMU_PREFIX}/bin/qemu-system-aarch64" --version
           echo "${QEMU_PREFIX}/bin" >> "$GITHUB_PATH"
           echo "qemu_prefix=${QEMU_PREFIX}" >> "$GITHUB_OUTPUT"
@@ -257,7 +263,7 @@ jobs:
         env:
           YUBIOS_IMAGE: ${{ inputs.image }}
           BCVK_EPHEMERAL_EXTRA_ARGS: >-
-            ${{ matrix.arch == 'arm64' && format('--ro-bind {0}/bin:qemu-zstd-bin --ro-bind /lib/aarch64-linux-gnu:host-lib --ro-bind /usr/lib/aarch64-linux-gnu:host-usrlib --env PATH=/run/host-mounts/qemu-zstd-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env LD_LIBRARY_PATH=/run/host-mounts/host-lib:/run/host-mounts/host-usrlib', steps.qemu-zstd.outputs.qemu_prefix) || '' }}
+            ${{ matrix.arch == 'arm64' && format('--ro-bind {0}:qemu-zstd --ro-bind /lib/aarch64-linux-gnu:host-lib --ro-bind /usr/lib/aarch64-linux-gnu:host-usrlib --env PATH=/run/host-mounts/qemu-zstd/bcvk-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env LD_LIBRARY_PATH=/run/host-mounts/host-lib:/run/host-mounts/host-usrlib:/run/host-mounts/qemu-zstd/lib', steps.qemu-zstd.outputs.qemu_prefix) || '' }}
         run: |
           if [ -z "${YUBIOS_IMAGE}" ] && [ ! -e ./mkosi.output/yubiOS ]; then
             echo "::warning::SKIP: no yubiOS image available (no workflow_dispatch 'image' input, no mkosi.output/yubiOS). VM boot + LUKS2-FIDO2 + homed legs NOT exercised."
@@ -290,7 +296,7 @@ jobs:
         env:
           YUBIOS_IMAGE: ${{ inputs.image }}
           BCVK_EPHEMERAL_EXTRA_ARGS: >-
-            ${{ matrix.arch == 'arm64' && format('--ro-bind {0}/bin:qemu-zstd-bin --ro-bind /lib/aarch64-linux-gnu:host-lib --ro-bind /usr/lib/aarch64-linux-gnu:host-usrlib --env PATH=/run/host-mounts/qemu-zstd-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env LD_LIBRARY_PATH=/run/host-mounts/host-lib:/run/host-mounts/host-usrlib', steps.qemu-zstd.outputs.qemu_prefix) || '' }}
+            ${{ matrix.arch == 'arm64' && format('--ro-bind {0}:qemu-zstd --ro-bind /lib/aarch64-linux-gnu:host-lib --ro-bind /usr/lib/aarch64-linux-gnu:host-usrlib --env PATH=/run/host-mounts/qemu-zstd/bcvk-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env LD_LIBRARY_PATH=/run/host-mounts/host-lib:/run/host-mounts/host-usrlib:/run/host-mounts/qemu-zstd/lib', steps.qemu-zstd.outputs.qemu_prefix) || '' }}
         run: |
           if [ -z "${YUBIOS_IMAGE}" ] && [ ! -e ./mkosi.output/yubiOS ]; then
             echo "::warning::SKIP: no yubiOS image available — enrollment-surface e2e not exercised."

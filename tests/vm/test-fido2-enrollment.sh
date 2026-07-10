@@ -34,7 +34,7 @@ die()  { printf 'FAIL: %s\n' "$*" >&2; exit 1; }
 need() { command -v "$1" >/dev/null 2>&1 || die "missing host tool: $1"; }
 
 # Optional host-provided bcvk arguments. CI uses this to bind a zstd-capable
-# qemu-system-aarch64 into bcvk's inner podman container; local runs normally
+# a qemu-system-aarch64 wrapper into bcvk's inner podman container; local runs normally
 # leave it empty. Keep this as a simple whitespace-split string: paths used by
 # CI intentionally contain no spaces.
 BCVK_EXTRA_ARGS=()
