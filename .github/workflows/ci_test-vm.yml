@@ -34,8 +34,8 @@ on:
     inputs:
       image:
         description: 'Pullable yubiOS OCI image ref (or local path) to boot for the full e2e. Leave blank to skip the VM boot leg.'
-        required: false
-        default: ''
+        required: true
+        default: 'docker.io/0mniteck/yubios:dev'
         type: string
 
 permissions:
