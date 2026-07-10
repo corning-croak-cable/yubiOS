@@ -17,7 +17,7 @@ _Last updated: July 10, 2026 (ARM64 CI runner policy updated: non-KVM lanes use 
 
 ## ARM64 Phase F — fork-CI + integration (in progress)
 
-Owned ARM64 fTPM trust-chain CI (ADR-018/019/020). Each component fork now has a `ci_test.yml` that cross-builds it for aarch64; ARM64 non-KVM lanes are now targeted at `[self-hosted, Linux, ARM64, GPU]`, while the VM/e2e KVM lane stays on `[self-hosted, Linux, ARM64, KVM]` (bare runners, fail-fast:false, pinned SHAs): The top-level `ci.yml` orchestrator sequences these fork, integration, image, installer, VM, and verification workflows by dispatching the next workflow from each successful `workflow_run` completion while preserving each callee's workflow_dispatch defaults.
+Owned ARM64 fTPM trust-chain CI (ADR-018/019/020). Each component fork now has a `ci_test.yml` that cross-builds it for aarch64; ARM64 non-KVM lanes are now targeted at `[self-hosted, Linux, ARM64, GPU]`, while the VM/e2e KVM lane stays on `[self-hosted, Linux, ARM64, KVM]` (bare runners, fail-fast:false, pinned SHAs): The top-level `ci.yml` orchestrator sequences these fork, integration, image, installer, VM, and verification workflows through explicit callbacks from each `.yml` workflow into `ci.yml`, carrying the current state plus the original dispatch defaults across the chain.
 
 - [x] C1 — arm-trusted-firmware: TF-A BL31 + TBB FIP (`f9e1064`)
 - [x] C2 — optee_os: OP-TEE core + TA-devkit (`cc18472`)

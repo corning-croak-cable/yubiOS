@@ -1,20 +1,31 @@
 name: ci
 
-# Top-level yubiOS CI orchestrator.
+# Top-level yubiOS CI state machine.
 #
 # Documentation grounding: README.md/MISSION.md/SPEC.md define the FIDO2-first
 # OS deliverable; ADR.md, ARCHITECTURE.md, FUTURE.md, MITIGATE.md, BLOCKERS.md,
 # TODO.md, ONBOARDING.md, MAINTAINER.md, SAUNA_TOOLS.md, CITATION.md, PINNED.md,
-# and refs/*.md define the current CI contract, artifact order, pinned action/image
-# policy, and the ARM64 fTPM + VM-e2e constraints this workflow sequences.
+# and refs/*.md define the CI contract, artifact order, pinned action/image
+# policy, and ARM64 fTPM + VM-e2e constraints this workflow sequences.
 #
-# This file intentionally DISPATCHES existing workflows instead of duplicating
-# their jobs.  It carries each callee's workflow_dispatch defaults forward and
-# uses workflow_run completions to advance the chain in a deterministic order.
+# Existing workflow files call back here with the current chain state.  This keeps
+# dispatch inputs (push flags, VM image, target ref) explicit instead of relying on
+# workflow_run, whose event payload cannot carry the original workflow_dispatch
+# inputs across the chain.
 
 on:
   workflow_dispatch:
     inputs:
+      state:
+        description: 'Current orchestrator state: start, or the completed workflow name.'
+        required: true
+        default: 'start'
+        type: string
+      completed_conclusion:
+        description: 'Conclusion reported by the callback workflow.'
+        required: true
+        default: 'success'
+        type: string
       reason:
         description: 'Why are you running the overarching CI orchestrator?'
         required: false
@@ -50,165 +61,139 @@ on:
         required: true
         default: 'docker.io/0mniteck/yubios:dev'
         type: string
-  workflow_run:
-    workflows:
-      - fetch-dhi-manifest
-      - ci_fork_mkosi
-      - ci_fork_bcvk
-      - ci_fork_arm-trusted-firmware
-      - ci_fork_optee_os
-      - ci_fork_ms-tpm-20-ref
-      - ci_fork_optee_ftpm
-      - ci_fork_u-boot
-      - ci_fork_edk2
-      - ci_int_stmm
-      - ci_int_optee_fip
-      - ci_int_qemu
-      - ci_test-int
-      - yubiOS CI
-      - yubiOS dev/test image (swu2f, ADR-026)
-      - yubiOS VM e2e (tests/vm)
-      - ci_mkosi-installer
-      - PQ hybrid TLS verification (ADR-025)
-    types:
-      - completed
 
 permissions:
   contents: read
   actions: write
 
 jobs:
-  start:
-    name: Start ordered CI chain
-    if: github.event_name == 'workflow_dispatch'
+  dispatch-next:
+    name: Dispatch next workflow from current state
     runs-on: ubuntu-24.04
     steps:
-      - name: Dispatch first workflow with carried defaults
+      - name: Resolve and dispatch next workflow
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
+          STATE: ${{ inputs.state }}
+          COMPLETED_CONCLUSION: ${{ inputs.completed_conclusion }}
           REF: ${{ inputs.target_ref != '' && inputs.target_ref || github.ref_name }}
           REASON: ${{ inputs.reason }}
-        run: |
-          set -euo pipefail
-          payload=$(jq -n --arg ref "$REF" --arg reason "$REASON" \
-            '{ref: $ref, inputs: {reason: $reason}}')
-          curl -fsS -X POST \
-            -H "Authorization: Bearer ${GH_TOKEN}" \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/repos/${REPO}/actions/workflows/fetch-dhi-manifest.yml/dispatches" \
-            -d "$payload"
-          echo "Dispatched fetch-dhi-manifest.yml on ${REF}."
-
-  continue:
-    name: Continue ordered CI chain
-    if: github.event_name == 'workflow_run'
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Dispatch next workflow on successful completion
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-          COMPLETED_WORKFLOW: ${{ github.event.workflow_run.name }}
-          CONCLUSION: ${{ github.event.workflow_run.conclusion }}
-          REF: ${{ github.event.workflow_run.head_branch }}
-          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          DOCKER_PUSH: ${{ inputs.Docker_push }}
+          DEV_DOCKER_PUSH: ${{ inputs.Dev_Docker_push }}
+          FIRMWARE_DOCKER_PUSH: ${{ inputs.Firmware_Docker_push }}
+          INSTALLER_DOCKER_PUSH: ${{ inputs.Installer_Docker_push }}
+          VM_IMAGE: ${{ inputs.vm_image }}
         run: |
           set -euo pipefail
 
-          if [ "$CONCLUSION" != "success" ]; then
-            echo "Not continuing: ${COMPLETED_WORKFLOW} concluded ${CONCLUSION}."
-            exit 0
+          if [ "$COMPLETED_CONCLUSION" != "success" ]; then
+            echo "::error::CI chain stopped at '${STATE}' with conclusion '${COMPLETED_CONCLUSION}'."
+            exit 1
           fi
 
           next_file=''
-          inputs_json='{}'
-          case "$COMPLETED_WORKFLOW" in
+          callee_inputs='{}'
+          case "$STATE" in
+            start)
+              next_file='fetch-dhi-manifest.yml'
+              callee_inputs=$(jq -n --arg reason "$REASON" '{reason: $reason}')
+              ;;
             fetch-dhi-manifest)
               next_file='ci_fork_mkosi.yml'
-              inputs_json=$(jq -n --arg reason "ci orchestrator after ${COMPLETED_WORKFLOW}@${HEAD_SHA}" '{reason: $reason}')
+              callee_inputs=$(jq -n --arg reason "ci after fetch-dhi-manifest" '{reason: $reason}')
               ;;
             ci_fork_mkosi)
               next_file='ci_fork_bcvk.yml'
-              inputs_json=$(jq -n --arg reason "ci orchestrator after ${COMPLETED_WORKFLOW}@${HEAD_SHA}" '{reason: $reason}')
+              callee_inputs=$(jq -n --arg reason "ci after ci_fork_mkosi" '{reason: $reason}')
               ;;
             ci_fork_bcvk)
               next_file='ci_fork_arm-trusted-firmware.yml'
-              inputs_json=$(jq -n --arg reason "ci orchestrator after ${COMPLETED_WORKFLOW}@${HEAD_SHA}" '{reason: $reason}')
+              callee_inputs=$(jq -n --arg reason "ci after ci_fork_bcvk" '{reason: $reason}')
               ;;
             ci_fork_arm-trusted-firmware)
               next_file='ci_fork_optee-os.yml'
-              inputs_json=$(jq -n --arg reason "ci orchestrator after ${COMPLETED_WORKFLOW}@${HEAD_SHA}" '{reason: $reason}')
+              callee_inputs=$(jq -n --arg reason "ci after ci_fork_arm-trusted-firmware" '{reason: $reason}')
               ;;
             ci_fork_optee_os)
               next_file='ci_fork_ms-tpm-20-ref.yml'
-              inputs_json=$(jq -n --arg reason "ci orchestrator after ${COMPLETED_WORKFLOW}@${HEAD_SHA}" '{reason: $reason}')
+              callee_inputs=$(jq -n --arg reason "ci after ci_fork_optee_os" '{reason: $reason}')
               ;;
             ci_fork_ms-tpm-20-ref)
               next_file='ci_fork_optee-ftpm.yml'
-              inputs_json=$(jq -n --arg reason "ci orchestrator after ${COMPLETED_WORKFLOW}@${HEAD_SHA}" '{reason: $reason}')
+              callee_inputs=$(jq -n --arg reason "ci after ci_fork_ms-tpm-20-ref" '{reason: $reason}')
               ;;
             ci_fork_optee_ftpm)
               next_file='ci_fork_u-boot.yml'
-              inputs_json=$(jq -n --arg reason "ci orchestrator after ${COMPLETED_WORKFLOW}@${HEAD_SHA}" '{reason: $reason}')
+              callee_inputs=$(jq -n --arg reason "ci after ci_fork_optee_ftpm" '{reason: $reason}')
               ;;
             ci_fork_u-boot)
               next_file='ci_fork_edk2.yml'
-              inputs_json=$(jq -n --arg reason "ci orchestrator after ${COMPLETED_WORKFLOW}@${HEAD_SHA}" '{reason: $reason}')
+              callee_inputs=$(jq -n --arg reason "ci after ci_fork_u-boot" '{reason: $reason}')
               ;;
             ci_fork_edk2)
               next_file='ci_int_stmm.yml'
-              inputs_json=$(jq -n --arg reason "ci orchestrator after ${COMPLETED_WORKFLOW}@${HEAD_SHA}" '{reason: $reason}')
+              callee_inputs=$(jq -n --arg reason "ci after ci_fork_edk2" '{reason: $reason}')
               ;;
             ci_int_stmm)
               next_file='ci_int_optee_fip.yml'
-              inputs_json=$(jq -n --arg reason "ci orchestrator after ${COMPLETED_WORKFLOW}@${HEAD_SHA}" '{reason: $reason}')
+              callee_inputs=$(jq -n --arg reason "ci after ci_int_stmm" '{reason: $reason}')
               ;;
             ci_int_optee_fip)
               next_file='ci_int_qemu.yml'
-              inputs_json=$(jq -n --arg reason "ci orchestrator after ${COMPLETED_WORKFLOW}@${HEAD_SHA}" '{reason: $reason}')
+              callee_inputs=$(jq -n --arg reason "ci after ci_int_optee_fip" '{reason: $reason}')
               ;;
             ci_int_qemu)
               next_file='ci_test-int.yml'
-              inputs_json=$(jq -n --arg reason "ci orchestrator after ${COMPLETED_WORKFLOW}@${HEAD_SHA}" '{reason: $reason, Docker_push: "false"}')
+              callee_inputs=$(jq -n --arg reason "ci after ci_int_qemu" --arg push "$FIRMWARE_DOCKER_PUSH" '{reason: $reason, Docker_push: $push}')
               ;;
             ci_test-int)
               next_file='yubiOS-ci.yml'
-              inputs_json=$(jq -n '{Docker_push: "false"}')
+              callee_inputs=$(jq -n --arg push "$DOCKER_PUSH" '{Docker_push: $push}')
               ;;
             'yubiOS CI')
               next_file='ci_dev_image.yml'
-              inputs_json=$(jq -n '{Docker_push: "false"}')
+              callee_inputs=$(jq -n --arg push "$DEV_DOCKER_PUSH" '{Docker_push: $push}')
               ;;
             'yubiOS dev/test image (swu2f, ADR-026)')
               next_file='ci_test-vm.yml'
-              inputs_json=$(jq -n '{image: "docker.io/0mniteck/yubios:dev"}')
+              callee_inputs=$(jq -n --arg image "$VM_IMAGE" '{image: $image}')
               ;;
             'yubiOS VM e2e (tests/vm)')
               next_file='ci_mkosi-installer.yml'
-              inputs_json=$(jq -n --arg reason "ci orchestrator after ${COMPLETED_WORKFLOW}@${HEAD_SHA}" '{reason: $reason, Docker_push: "false"}')
+              callee_inputs=$(jq -n --arg reason "ci after yubiOS VM e2e (tests/vm)" --arg push "$INSTALLER_DOCKER_PUSH" '{reason: $reason, Docker_push: $push}')
               ;;
             ci_mkosi-installer)
               next_file='ci_pq_tls_verify.yml'
-              inputs_json='{}'
+              callee_inputs='{}'
               ;;
             'PQ hybrid TLS verification (ADR-025)')
               echo 'Ordered CI chain complete.'
               exit 0
               ;;
             *)
-              echo "No next workflow configured for ${COMPLETED_WORKFLOW}."
-              exit 0
+              echo "::error::No next workflow configured for state '${STATE}'."
+              exit 1
               ;;
           esac
 
-          payload=$(jq -n --arg ref "$REF" --argjson inputs "$inputs_json" \
-            '{ref: $ref, inputs: $inputs}')
+          common_inputs=$(jq -n \
+            --arg ci_callback 'true' \
+            --arg ci_chain_ref "$REF" \
+            --arg ci_reason "$REASON" \
+            --arg ci_Docker_push "$DOCKER_PUSH" \
+            --arg ci_Dev_Docker_push "$DEV_DOCKER_PUSH" \
+            --arg ci_Firmware_Docker_push "$FIRMWARE_DOCKER_PUSH" \
+            --arg ci_Installer_Docker_push "$INSTALLER_DOCKER_PUSH" \
+            --arg ci_vm_image "$VM_IMAGE" \
+            '{ci_callback: $ci_callback, ci_chain_ref: $ci_chain_ref, ci_reason: $ci_reason, ci_Docker_push: $ci_Docker_push, ci_Dev_Docker_push: $ci_Dev_Docker_push, ci_Firmware_Docker_push: $ci_Firmware_Docker_push, ci_Installer_Docker_push: $ci_Installer_Docker_push, ci_vm_image: $ci_vm_image}')
+          inputs_json=$(jq -n --argjson a "$callee_inputs" --argjson b "$common_inputs" '$a + $b')
+          payload=$(jq -n --arg ref "$REF" --argjson inputs "$inputs_json" '{ref: $ref, inputs: $inputs}')
+
           curl -fsS -X POST \
             -H "Authorization: Bearer ${GH_TOKEN}" \
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             "https://api.github.com/repos/${REPO}/actions/workflows/${next_file}/dispatches" \
             -d "$payload"
-          echo "Dispatched ${next_file} on ${REF} after ${COMPLETED_WORKFLOW}@${HEAD_SHA}."
+          echo "Dispatched ${next_file} on ${REF} from state ${STATE}."

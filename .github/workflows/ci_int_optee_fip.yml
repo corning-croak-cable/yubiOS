@@ -52,6 +52,46 @@ on:
         description: 'Why are you running this manually?'
         required: false
         default: 'manual'
+      ci_callback:
+        description: 'Internal: call back to ci.yml when this workflow finishes.'
+        required: false
+        default: false
+        type: boolean
+      ci_chain_ref:
+        description: 'Internal: ref carried by the ci.yml orchestrator.'
+        required: false
+        default: ''
+        type: string
+      ci_reason:
+        description: 'Internal: original ci.yml orchestrator reason.'
+        required: false
+        default: 'manual'
+        type: string
+      ci_Docker_push:
+        description: 'Internal: production image push flag carried by ci.yml.'
+        required: false
+        default: false
+        type: boolean
+      ci_Dev_Docker_push:
+        description: 'Internal: dev image push flag carried by ci.yml.'
+        required: false
+        default: false
+        type: boolean
+      ci_Firmware_Docker_push:
+        description: 'Internal: firmware artifact push flag carried by ci.yml.'
+        required: false
+        default: false
+        type: boolean
+      ci_Installer_Docker_push:
+        description: 'Internal: installer artifact push flag carried by ci.yml.'
+        required: false
+        default: false
+        type: boolean
+      ci_vm_image:
+        description: 'Internal: VM image ref carried by ci.yml.'
+        required: false
+        default: 'docker.io/0mniteck/yubios:dev'
+        type: string
 
 permissions:
   contents: read
@@ -330,3 +370,47 @@ jobs:
             fip-info.txt
           if-no-files-found: warn
           retention-days: 7
+
+  ci-callback:
+    name: Callback to ci.yml orchestrator
+    if: ${{ always() && github.event_name == 'workflow_dispatch' && inputs.ci_callback == true }}
+    needs: [optee-fip]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Report current state to ci.yml
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          WORKFLOW_NAME: ${{ github.workflow }}
+          REF: ${{ inputs.ci_chain_ref != '' && inputs.ci_chain_ref || github.ref_name }}
+          NEEDS_JSON: ${{ toJSON(needs) }}
+          CI_REASON: ${{ inputs.ci_reason }}
+          CI_DOCKER_PUSH: ${{ inputs.ci_Docker_push }}
+          CI_DEV_DOCKER_PUSH: ${{ inputs.ci_Dev_Docker_push }}
+          CI_FIRMWARE_DOCKER_PUSH: ${{ inputs.ci_Firmware_Docker_push }}
+          CI_INSTALLER_DOCKER_PUSH: ${{ inputs.ci_Installer_Docker_push }}
+          CI_VM_IMAGE: ${{ inputs.ci_vm_image }}
+        run: |
+          set -euo pipefail
+          conclusion=$(jq -r 'to_entries | if any(.value.result; . == "failure" or . == "cancelled") then "failure" else "success" end' <<<"$NEEDS_JSON")
+          payload=$(jq -n \
+            --arg ref "$REF" \
+            --arg state "$WORKFLOW_NAME" \
+            --arg completed_conclusion "$conclusion" \
+            --arg reason "$CI_REASON" \
+            --arg Docker_push "$CI_DOCKER_PUSH" \
+            --arg Dev_Docker_push "$CI_DEV_DOCKER_PUSH" \
+            --arg Firmware_Docker_push "$CI_FIRMWARE_DOCKER_PUSH" \
+            --arg Installer_Docker_push "$CI_INSTALLER_DOCKER_PUSH" \
+            --arg vm_image "$CI_VM_IMAGE" \
+            '{ref: $ref, inputs: {state: $state, completed_conclusion: $completed_conclusion, reason: $reason, target_ref: $ref, Docker_push: $Docker_push, Dev_Docker_push: $Dev_Docker_push, Firmware_Docker_push: $Firmware_Docker_push, Installer_Docker_push: $Installer_Docker_push, vm_image: $vm_image}}')
+          curl -fsS -X POST \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${REPO}/actions/workflows/ci.yml/dispatches" \
+            -d "$payload"
+          echo "Reported ${WORKFLOW_NAME} as ${conclusion} to ci.yml."
