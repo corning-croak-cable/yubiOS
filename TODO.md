@@ -1,7 +1,9 @@
 # yubiOS — TODO / Future Work
-_Last updated: July 10, 2026 (follow-up from ci_test-vm.yml run 29065584237/job 86297785033: CTAP2 LUKS reopen now uses systemd-cryptsetup for systemd-cryptenroll tokens)_
+_Last updated: July 10, 2026 (bcvk fork branch upstream-sync pass: local merge commits prepared for all four fork branches; push blocked by missing GitHub credentials in this environment)_
 
 ## High priority
+
+- [ ] Push bcvk fork branch upstream-sync merges once GitHub credentials are available. I cloned `yubi-OS/bcvk`, confirmed `origin/main` already matches `upstream/main` (`92ee5cee`), and merged the 9 upstream commits from `origin/main` into each fork feature branch locally: `feat/ci` → `39a1047b`, `feat/swtpm-ci` → `6acc221` (resolved `CommonVmOpts` conflict by keeping swtpm/swu2f plus upstream output/log-dir fields), `feature/native-to-disk` → `b40e165`, and `feature/yubikey-usb-passthrough` → `4e8bf86` (resolved `CommonVmOpts` + direct-boot cmdline conflicts by keeping YubiKey passthrough plus upstream virtiofsd/output/log-dir and sysroot.mount cmdline behavior). `cargo fmt --check` passes on the final branch after formatting/amending the YubiKey merge. `cargo test --workspace --all-targets` compiles and passes unit tests, then fails integration tests because this container has no `bcvk`/`podman` commands in PATH. `git push origin feat/ci feat/swtpm-ci feature/native-to-disk feature/yubikey-usb-passthrough` failed with `could not read Username for 'https://github.com'`; rerun that exact push from an authenticated environment.
 
 - [x] Wire yubiOS-sudo PAM config into /etc/pam.d/sudo via Containerfile (PR #1)
 - [x] Add /usr/bin/ symlinks for yubiOS-enroll-* commands via Containerfile (PR #1)
