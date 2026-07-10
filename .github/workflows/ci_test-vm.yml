@@ -274,7 +274,7 @@ jobs:
           chmod +x tests/vm/test-luks-fido2-ci.sh
           echo "Running test-luks-fido2-ci.sh against image: ${YUBIOS_IMAGE:-./mkosi.output/yubiOS}"
           set +e
-          sudo env "PATH=$PATH" "YUBIOS_IMAGE=${YUBIOS_IMAGE:-./mkosi.output/yubiOS}" bash tests/vm/test-luks-fido2-ci.sh
+          sudo env "PATH=$PATH" "YUBIOS_IMAGE=${YUBIOS_IMAGE:-./mkosi.output/yubiOS}" "BCVK_EPHEMERAL_EXTRA_ARGS=${BCVK_EPHEMERAL_EXTRA_ARGS:-}" bash tests/vm/test-luks-fido2-ci.sh
           rc=$?
           set -e
           if [ "$rc" -eq 77 ]; then
@@ -298,7 +298,7 @@ jobs:
           fi
           chmod +x tests/vm/test-fido2-enrollment.sh
           set +e
-          sudo env "PATH=$PATH" "YUBIOS_IMAGE=${YUBIOS_IMAGE:-./mkosi.output/yubiOS}" bash tests/vm/test-fido2-enrollment.sh
+          sudo env "PATH=$PATH" "YUBIOS_IMAGE=${YUBIOS_IMAGE:-./mkosi.output/yubiOS}" "BCVK_EPHEMERAL_EXTRA_ARGS=${BCVK_EPHEMERAL_EXTRA_ARGS:-}" bash tests/vm/test-fido2-enrollment.sh
           rc=$?
           set -e
           if [ "$rc" -eq 77 ]; then
