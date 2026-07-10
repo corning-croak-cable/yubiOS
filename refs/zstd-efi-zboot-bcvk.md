@@ -18,8 +18,8 @@ The failure is therefore a host harness/kernel-loader compatibility issue, not a
 yubiOS FIDO2, LUKS, swtpm, swu2f, systemd-homed, or PAM regression. yubiOS now
 tackles this in CI by building a pinned upstream QEMU commit that contains
 `hw/loader: Add support for zboot images compressed with zstd` and placing
-that `qemu-system-aarch64` ahead of Ubuntu's packaged QEMU before bcvk runs.
-The skip remains as a final fallback for stale self-hosted caches or manual runs
+that `qemu-system-aarch64` on the host `PATH` and bind-mounting it into bcvk's
+inner podman container before the VM starts. The skip remains as a final fallback for stale self-hosted caches or manual runs
 that still use an older QEMU.
 
 ## Research notes
@@ -44,6 +44,9 @@ that still use an older QEMU.
    upstream QEMU commit `3a18e8a25992d1643707e2cebdd6e9bb2bd7d3b9` for the ARM64
    VM job before building/running bcvk. That commit is the zstd EFI zboot loader
    fix and is cached under `/opt/qemu-zstd/<commit>` on the self-hosted runner.
+   The VM test steps pass `BCVK_EPHEMERAL_EXTRA_ARGS` so bcvk bind-mounts the
+   pinned QEMU binary and its host library directories into the inner podman
+   container; merely adding QEMU to the outer runner `PATH` is insufficient.
 2. Keep `tests/vm/test-luks-fido2-ci.sh` and
    `tests/vm/test-fido2-enrollment.sh` skip-tolerant for this exact host-side
    DirectBoot/zstd failure as a safety net for manual runs or stale runners.
