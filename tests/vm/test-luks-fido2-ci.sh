@@ -40,6 +40,10 @@ VMID=""
 
 log()  { printf '\n=== %s ===\n' "$*"; }
 skip() { printf 'SKIP: %s\n' "$*"; }       # skip != fail (tool/capability absent)
+skip_unsupported_zboot() {
+  printf 'SKIP: %s\n' "bcvk cannot DirectBoot this ARM64 EFI zboot kernel because it is zstd-compressed; rebuild the image with a bcvk-supported kernel compression or update bcvk zboot support."
+  exit 77
+}
 die()  { printf 'FAIL: %s\n' "$*" >&2; exit 1; }
 
 need() { command -v "$1" >/dev/null 2>&1 || die "missing host tool: $1"; }
@@ -68,7 +72,11 @@ for i in $(seq 1 150); do
   bcvk ssh "$VMID" -- true >/dev/null 2>&1 && break
   if [[ "$i" -eq 150 ]]; then
     echo "--- podman logs (last 80 lines) ---"
-    podman logs --tail 80 "$VMID" 2>&1 || true
+    logs="$(podman logs --tail 80 "$VMID" 2>&1 || true)"
+    printf '%s\n' "$logs"
+    if grep -Fq 'unable to handle EFI zboot image with "zstd" compression' <<<"$logs"; then
+      skip_unsupported_zboot
+    fi
     die "guest did not become reachable over ssh after 300s"
   fi
   sleep 2
