@@ -41,7 +41,7 @@ VMID=""
 log()  { printf '\n=== %s ===\n' "$*"; }
 skip() { printf 'SKIP: %s\n' "$*"; }       # skip != fail (tool/capability absent)
 skip_unsupported_zboot() {
-  printf 'SKIP: %s\n' "bcvk cannot DirectBoot this ARM64 EFI zboot kernel because it is zstd-compressed; rebuild the image with a bcvk-supported kernel compression or update bcvk zboot support."
+  printf 'SKIP: %s\n' "bcvk/QEMU cannot DirectBoot this ARM64 EFI zboot kernel because it is zstd-compressed; use a bcvk/QEMU build with EFI zboot zstd support, boot through firmware/stub, or rebuild only the CI test image with a bcvk-supported kernel compression. See refs/zstd-efi-zboot-bcvk.md."
   exit 77
 }
 die()  { printf 'FAIL: %s\n' "$*" >&2; exit 1; }
