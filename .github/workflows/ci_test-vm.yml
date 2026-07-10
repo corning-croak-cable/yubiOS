@@ -126,6 +126,47 @@ jobs:
           sudo chmod 666 /dev/fuse || true
           ls -la /dev/fuse || echo "::warning::/dev/fuse still absent after modprobe+mknod"
 
+      - name: Install zstd-capable QEMU for ARM64 DirectBoot
+        if: matrix.arch == 'arm64'
+        run: |
+          set -euo pipefail
+          # Fedora ARM64 vmlinuz images are EFI zboot images with zstd-compressed
+          # payloads. Ubuntu 24.04's packaged QEMU predates upstream commit
+          # 3a18e8a25992 (hw/loader: Add support for zboot images compressed
+          # with zstd), so bcvk's DirectBoot path fails before the guest starts.
+          # Build only qemu-system-aarch64 from that pinned upstream commit and
+          # prepend it to PATH for bcvk. rock1 is self-hosted and persistent, so
+          # keep /opt/qemu-zstd as a local cache between runs.
+          QEMU_ZSTD_COMMIT=3a18e8a25992d1643707e2cebdd6e9bb2bd7d3b9
+          QEMU_PREFIX=/opt/qemu-zstd/${QEMU_ZSTD_COMMIT}
+          if [ ! -x "${QEMU_PREFIX}/bin/qemu-system-aarch64" ]; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq --no-install-recommends \
+              ninja-build python3-venv python3-pip meson pkg-config \
+              libglib2.0-dev libpixman-1-dev zlib1g-dev libzstd-dev \
+              libslirp-dev libusb-1.0-0-dev libudev-dev libaio-dev \
+              libcap-ng-dev libattr1-dev
+            rm -rf /tmp/qemu-zstd-src
+            git clone --filter=blob:none --depth 1 \
+              https://github.com/qemu/qemu.git /tmp/qemu-zstd-src
+            git -C /tmp/qemu-zstd-src fetch --depth 1 origin "${QEMU_ZSTD_COMMIT}"
+            git -C /tmp/qemu-zstd-src checkout --detach "${QEMU_ZSTD_COMMIT}"
+            (
+              cd /tmp/qemu-zstd-src
+              ./configure \
+                --prefix="${QEMU_PREFIX}" \
+                --target-list=aarch64-softmmu \
+                --disable-docs \
+                --disable-werror
+              ninja -C build qemu-system-aarch64
+              sudo ninja -C build install
+            )
+            rm -rf /tmp/qemu-zstd-src
+          fi
+          "${QEMU_PREFIX}/bin/qemu-system-aarch64" --version
+          echo "${QEMU_PREFIX}/bin" >> "$GITHUB_PATH"
+          echo "### vm-e2e (arm64): using zstd-capable QEMU ${QEMU_ZSTD_COMMIT}" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Disk space before bcvk build (diagnostic)
         run: |
           df -h "$PWD" /tmp || true

@@ -15,11 +15,12 @@ unable to handle EFI zboot image with "zstd" compression
 ```
 
 The failure is therefore a host harness/kernel-loader compatibility issue, not a
-yubiOS FIDO2, LUKS, swtpm, swu2f, systemd-homed, or PAM regression. Until the
-runner QEMU/bcvk stack can unpack zstd EFI zboot kernels (or bcvk switches this
-path to boot through firmware/stub code that can self-decompress), yubiOS should
-keep classifying this exact DirectBoot failure as an explicit CI skip (`exit 77`)
-so real guest-test failures remain actionable.
+yubiOS FIDO2, LUKS, swtpm, swu2f, systemd-homed, or PAM regression. yubiOS now
+tackles this in CI by building a pinned upstream QEMU commit that contains
+`hw/loader: Add support for zboot images compressed with zstd` and placing
+that `qemu-system-aarch64` ahead of Ubuntu's packaged QEMU before bcvk runs.
+The skip remains as a final fallback for stale self-hosted caches or manual runs
+that still use an older QEMU.
 
 ## Research notes
 
@@ -39,21 +40,23 @@ so real guest-test failures remain actionable.
 
 ## Tactical yubiOS stance
 
-1. Keep `tests/vm/test-luks-fido2-ci.sh` and
+1. In `.github/workflows/ci_test-vm.yml`, install `qemu-system-aarch64` from
+   upstream QEMU commit `3a18e8a25992d1643707e2cebdd6e9bb2bd7d3b9` for the ARM64
+   VM job before building/running bcvk. That commit is the zstd EFI zboot loader
+   fix and is cached under `/opt/qemu-zstd/<commit>` on the self-hosted runner.
+2. Keep `tests/vm/test-luks-fido2-ci.sh` and
    `tests/vm/test-fido2-enrollment.sh` skip-tolerant for this exact host-side
-   DirectBoot/zstd failure.
-2. Make the skip message prescriptive: this is resolved by either using a
-   bcvk/QEMU build with zstd EFI zboot support, or by booting the image through a
-   firmware/stub path instead of QEMU DirectBoot.
+   DirectBoot/zstd failure as a safety net for manual runs or stale runners.
 3. Do **not** downgrade yubiOS production compression or kernel packaging just to
    satisfy an older CI harness; production should stay aligned with Fedora's
    ARM64 defaults unless the boot stack itself is affected.
 
 ## Strategic fixes to evaluate
 
-- **Preferred harness fix:** update yubi-OS/bcvk's canonical `feat/swtpm-ci`
-  branch to depend on a QEMU build that includes EFI zboot zstd unpack support,
-  then remove the yubiOS skip once CI runners have that version.
+- **Preferred harness fix:** keep the workflow-level pinned QEMU build until the
+  runner distribution ships a QEMU release that includes commit
+  `3a18e8a25992d1643707e2cebdd6e9bb2bd7d3b9`; then replace the source build with
+  a version gate and remove the fallback skip once bcvk CI proves stable.
 - **Alternate harness fix:** add a bcvk mode for ARM64 bootc images that boots
   through UEFI/systemd-stub rather than direct-kernel boot. This more closely
   resembles real Secure Boot flows and avoids duplicating decompressor support in
