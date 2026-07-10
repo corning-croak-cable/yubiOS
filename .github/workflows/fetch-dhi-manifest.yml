@@ -17,14 +17,59 @@ on:
         description: 'Why are you running this manually?'
         required: false
         default: 'manual'
+      ci_callback:
+        description: 'Internal: call back to ci.yml when this workflow finishes.'
+        required: false
+        default: false
+        type: boolean
+      ci_chain_ref:
+        description: 'Internal: ref carried by the ci.yml orchestrator.'
+        required: false
+        default: ''
+        type: string
+      ci_reason:
+        description: 'Internal: original ci.yml orchestrator reason.'
+        required: false
+        default: 'manual'
+        type: string
+      ci_Docker_push:
+        description: 'Internal: production image push flag carried by ci.yml.'
+        required: false
+        default: false
+        type: boolean
+      ci_Dev_Docker_push:
+        description: 'Internal: dev image push flag carried by ci.yml.'
+        required: false
+        default: false
+        type: boolean
+      ci_Firmware_Docker_push:
+        description: 'Internal: firmware artifact push flag carried by ci.yml.'
+        required: false
+        default: false
+        type: boolean
+      ci_Installer_Docker_push:
+        description: 'Internal: installer artifact push flag carried by ci.yml.'
+        required: false
+        default: false
+        type: boolean
+      ci_vm_image:
+        description: 'Internal: VM image ref carried by ci.yml.'
+        required: false
+        default: 'docker.io/0mniteck/yubios:dev'
+        type: string
+
 permissions:
-  contents: read
+  contents: write
+  actions: write
 
 jobs:
   fetch:
     runs-on: ubuntu-24.04
     steps:
-      - name: Get trixie-debian13-dev INDEX (manifest-list) digest
+      - name: Checkout yubiOS for PINNED.md update
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6.0.2 — see PINNED.md
+
+      - name: Fetch dhi.io Debian base manifest and update pinned refs
         env:
           DOCKER_PASS: ${{ secrets.DOCKER }}
         run: |
@@ -32,16 +77,129 @@ jobs:
           TOKEN=$(curl -sf -u "0mniteck42:$DOCKER_PASS" \
             'https://dhi.io/token?service=registry.docker.io&scope=repository:debian-base:pull' \
             | python3 -c 'import sys,json; print(json.load(sys.stdin)["token"])')
+
           echo "== HEAD (index media types preferred) =="
-          curl -sI -H "Authorization: Bearer $TOKEN" \
+          headers=$(curl -sI -H "Authorization: Bearer $TOKEN" \
             -H "Accept: application/vnd.oci.image.index.v1+json" \
             -H "Accept: application/vnd.docker.distribution.manifest.list.v2+json" \
             -H "Accept: application/vnd.oci.image.manifest.v1+json" \
-            "https://dhi.io/v2/debian-base/manifests/trixie-debian13-dev" \
-            | grep -i -E 'docker-content-digest|content-type'
+            "https://dhi.io/v2/debian-base/manifests/trixie-debian13-dev")
+          printf '%s\n' "$headers" | grep -i -E 'docker-content-digest|content-type'
+          index_digest=$(printf '%s\n' "$headers" | awk 'tolower($1)=="docker-content-digest:" {gsub("\r", "", $2); print $2; exit}')
+          test -n "$index_digest"
+
           echo "== Confirm it is an INDEX and list its per-arch children =="
-          curl -s -H "Authorization: Bearer $TOKEN" \
+          curl -sf -H "Authorization: Bearer $TOKEN" \
             -H "Accept: application/vnd.oci.image.index.v1+json" \
             -H "Accept: application/vnd.docker.distribution.manifest.list.v2+json" \
-            "https://dhi.io/v2/debian-base/manifests/trixie-debian13-dev" \
-            | python3 -c 'import sys,json; d=json.load(sys.stdin); print("mediaType:", d.get("mediaType","")); [print(" -", m["platform"].get("os"), m["platform"].get("architecture"), m["digest"]) for m in d.get("manifests",[])] if "manifests" in d else print("NOT an index - single-arch manifest, no arm64 child")'
+            "https://dhi.io/v2/debian-base/manifests/trixie-debian13-dev" > /tmp/dhi-index.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('/tmp/dhi-index.json'))
+          print('mediaType:', d.get('mediaType',''))
+          if 'manifests' not in d:
+              raise SystemExit('NOT an index - single-arch manifest, no arm64 child')
+          for m in d['manifests']:
+              p=m.get('platform',{})
+              print(' -', p.get('os'), p.get('architecture'), m.get('digest'))
+          PY
+
+          amd64_digest=$(python3 - <<'PY'
+          import json
+          d=json.load(open('/tmp/dhi-index.json'))
+          for m in d['manifests']:
+              p=m.get('platform',{})
+              if p.get('os') == 'linux' and p.get('architecture') == 'amd64':
+                  print(m['digest']); break
+          PY
+          )
+          arm64_digest=$(python3 - <<'PY'
+          import json
+          d=json.load(open('/tmp/dhi-index.json'))
+          for m in d['manifests']:
+              p=m.get('platform',{})
+              if p.get('os') == 'linux' and p.get('architecture') == 'arm64':
+                  print(m['digest']); break
+          PY
+          )
+          test -n "$amd64_digest"
+          test -n "$arm64_digest"
+
+          python3 - "$index_digest" "$amd64_digest" "$arm64_digest" <<'PY'
+          import pathlib, re, sys
+          new_index, new_amd64, new_arm64 = sys.argv[1:4]
+          pinned = pathlib.Path('PINNED.md')
+          text = pinned.read_text()
+          old_index = re.search(r'`dhi\.io/debian-base`[^|]*\| `(sha256:[0-9a-f]{64})`', text).group(1)
+          old_amd64 = re.search(r'child `linux/amd64`[^|]*\| `(sha256:[0-9a-f]{64})`', text).group(1)
+          old_arm64 = re.search(r'child `linux/arm64`[^|]*\| `(sha256:[0-9a-f]{64})`', text).group(1)
+          replacements = {old_index: new_index, old_amd64: new_amd64, old_arm64: new_arm64}
+
+          for path in pathlib.Path('.').rglob('*'):
+              if not path.is_file() or '.git' in path.parts:
+                  continue
+              try:
+                  data = path.read_text()
+              except UnicodeDecodeError:
+                  continue
+              updated = data
+              for old, new in replacements.items():
+                  updated = updated.replace(old, new)
+                  updated = updated.replace(old.removeprefix('sha256:'), new.removeprefix('sha256:'))
+              if updated != data:
+                  path.write_text(updated)
+                  print(f'updated {path}')
+          PY
+
+          if git diff --quiet; then
+            echo "PINNED.md and referenced dhi.io digests already current."
+          else
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add PINNED.md .
+            git commit -m "Refresh pinned dhi.io Debian base digest"
+          fi
+
+  ci-callback:
+    name: Callback to ci.yml orchestrator
+    if: ${{ always() && github.event_name == 'workflow_dispatch' && inputs.ci_callback == true }}
+    needs: [fetch]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Report current state to ci.yml
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          WORKFLOW_NAME: ${{ github.workflow }}
+          REF: ${{ inputs.ci_chain_ref != '' && inputs.ci_chain_ref || github.ref_name }}
+          NEEDS_JSON: ${{ toJSON(needs) }}
+          CI_REASON: ${{ inputs.ci_reason }}
+          CI_DOCKER_PUSH: ${{ inputs.ci_Docker_push }}
+          CI_DEV_DOCKER_PUSH: ${{ inputs.ci_Dev_Docker_push }}
+          CI_FIRMWARE_DOCKER_PUSH: ${{ inputs.ci_Firmware_Docker_push }}
+          CI_INSTALLER_DOCKER_PUSH: ${{ inputs.ci_Installer_Docker_push }}
+          CI_VM_IMAGE: ${{ inputs.ci_vm_image }}
+        run: |
+          set -euo pipefail
+          conclusion=$(jq -r 'to_entries | if any(.value.result; . == "failure" or . == "cancelled") then "failure" else "success" end' <<<"$NEEDS_JSON")
+          payload=$(jq -n \
+            --arg ref "$REF" \
+            --arg state "$WORKFLOW_NAME" \
+            --arg completed_conclusion "$conclusion" \
+            --arg reason "$CI_REASON" \
+            --arg Docker_push "$CI_DOCKER_PUSH" \
+            --arg Dev_Docker_push "$CI_DEV_DOCKER_PUSH" \
+            --arg Firmware_Docker_push "$CI_FIRMWARE_DOCKER_PUSH" \
+            --arg Installer_Docker_push "$CI_INSTALLER_DOCKER_PUSH" \
+            --arg vm_image "$CI_VM_IMAGE" \
+            '{ref: $ref, inputs: {state: $state, completed_conclusion: $completed_conclusion, reason: $reason, target_ref: $ref, Docker_push: $Docker_push, Dev_Docker_push: $Dev_Docker_push, Firmware_Docker_push: $Firmware_Docker_push, Installer_Docker_push: $Installer_Docker_push, vm_image: $vm_image}}')
+          curl -fsS -X POST \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${REPO}/actions/workflows/ci.yml/dispatches" \
+            -d "$payload"
+          echo "Reported ${WORKFLOW_NAME} as ${conclusion} to ci.yml."
