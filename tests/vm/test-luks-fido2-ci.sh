@@ -37,6 +37,8 @@ set -euo pipefail
 
 IMAGE="${YUBIOS_IMAGE:-./mkosi.output/yubiOS}"
 VMID=""
+SSH_WAIT_SECS="${YUBIOS_SSH_WAIT_SECS:-300}"
+SSH_WAIT_TRIES=$((SSH_WAIT_SECS / 2))
 
 log()  { printf '\n=== %s ===\n' "$*"; }
 skip() { printf 'SKIP: %s\n' "$*"; }       # skip != fail (tool/capability absent)
@@ -77,16 +79,16 @@ VMID="$(bcvk ephemeral run "${BCVK_EXTRA_ARGS[@]}" --detach --ssh-keygen --swtpm
 echo "VM id: $VMID"
 
 # wait for sshd
-for i in $(seq 1 150); do
+for i in $(seq 1 "${SSH_WAIT_TRIES}"); do
   bcvk ssh "$VMID" -- true >/dev/null 2>&1 && break
-  if [[ "$i" -eq 150 ]]; then
+  if [[ "$i" -eq "${SSH_WAIT_TRIES}" ]]; then
     echo "--- podman logs (last 80 lines) ---"
     logs="$(podman logs --tail 80 "$VMID" 2>&1 || true)"
     printf '%s\n' "$logs"
     if grep -Fq 'unable to handle EFI zboot image with "zstd" compression' <<<"$logs"; then
       skip_unsupported_zboot
     fi
-    die "guest did not become reachable over ssh after 300s"
+    die "guest did not become reachable over ssh after ${SSH_WAIT_SECS}s"
   fi
   sleep 2
 done
