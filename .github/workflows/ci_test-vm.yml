@@ -18,18 +18,6 @@ name: yubiOS VM e2e (tests/vm)
 # VM boot + CTAP2 legs are SKIPPED *explicitly and loudly* — never a silent pass.
 
 on:
-  push:
-    branches:
-      - main
-      - 'feat/**'
-    paths:
-      - '.github/workflows/ci_test-vm.yml'
-      - 'tests/vm/**'
-      - 'Containerfile'
-      - 'Containerfile.dev'
-      - 'mkosi.conf'
-      - 'mkosi.conf.d/**'
-      - 'usr/**'
   workflow_dispatch:
     inputs:
       image:
@@ -125,6 +113,55 @@ jobs:
           [ -e /dev/fuse ] || sudo mknod /dev/fuse c 10 229 || true
           sudo chmod 666 /dev/fuse || true
           ls -la /dev/fuse || echo "::warning::/dev/fuse still absent after modprobe+mknod"
+
+      - name: Install zstd-capable QEMU for ARM64 DirectBoot
+        id: qemu-zstd
+        if: matrix.arch == 'arm64'
+        run: |
+          set -euo pipefail
+          # Fedora ARM64 vmlinuz images are EFI zboot images with zstd-compressed
+          # payloads. Ubuntu 24.04's packaged QEMU predates upstream commit
+          # 3a18e8a25992 (hw/loader: Add support for zboot images compressed
+          # with zstd), so bcvk's DirectBoot path fails before the guest starts.
+          # Build only qemu-system-aarch64 from that pinned upstream commit and
+          # prepend it to PATH for bcvk. rock1 is self-hosted and persistent, so
+          # keep /opt/qemu-zstd as a local cache between runs.
+          QEMU_ZSTD_COMMIT=3a18e8a25992d1643707e2cebdd6e9bb2bd7d3b9
+          QEMU_PREFIX=/opt/qemu-zstd/${QEMU_ZSTD_COMMIT}
+          if [ ! -x "${QEMU_PREFIX}/bin/qemu-system-aarch64" ]; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq --no-install-recommends \
+              ninja-build python3-venv python3-pip meson pkg-config \
+              libglib2.0-dev libpixman-1-dev zlib1g-dev libzstd-dev \
+              libslirp-dev libusb-1.0-0-dev libudev-dev libaio-dev \
+              libcap-ng-dev libattr1-dev
+            rm -rf /tmp/qemu-zstd-src
+            git clone --filter=blob:none --depth 1 \
+              https://github.com/qemu/qemu.git /tmp/qemu-zstd-src
+            git -C /tmp/qemu-zstd-src fetch --depth 1 origin "${QEMU_ZSTD_COMMIT}"
+            git -C /tmp/qemu-zstd-src checkout --detach "${QEMU_ZSTD_COMMIT}"
+            (
+              cd /tmp/qemu-zstd-src
+              ./configure \
+                --prefix="${QEMU_PREFIX}" \
+                --target-list=aarch64-softmmu \
+                --disable-docs \
+                --disable-werror
+              ninja -C build qemu-system-aarch64
+              sudo ninja -C build install
+            )
+            rm -rf /tmp/qemu-zstd-src
+          fi
+          sudo mkdir -p "${QEMU_PREFIX}/bcvk-bin"
+          sudo tee "${QEMU_PREFIX}/bcvk-bin/qemu-system-aarch64" >/dev/null <<EOF
+          #!/usr/bin/env bash
+          exec /run/host-mounts/qemu-zstd/bin/qemu-system-aarch64 -L /run/host-mounts/qemu-zstd/share/qemu "\$@"
+          EOF
+          sudo chmod 0755 "${QEMU_PREFIX}/bcvk-bin/qemu-system-aarch64"
+          "${QEMU_PREFIX}/bin/qemu-system-aarch64" --version
+          echo "${QEMU_PREFIX}/bin" >> "$GITHUB_PATH"
+          echo "qemu_prefix=${QEMU_PREFIX}" >> "$GITHUB_OUTPUT"
+          echo "### vm-e2e (arm64): using zstd-capable QEMU ${QEMU_ZSTD_COMMIT}" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Disk space before bcvk build (diagnostic)
         run: |
@@ -225,6 +262,9 @@ jobs:
         if: steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1'
         env:
           YUBIOS_IMAGE: ${{ inputs.image }}
+          YUBIOS_SSH_WAIT_SECS: ${{ matrix.arch == 'arm64' && '900' || '300' }}
+          BCVK_EPHEMERAL_EXTRA_ARGS: >-
+            ${{ matrix.arch == 'arm64' && format('--ro-bind {0}:qemu-zstd --ro-bind /lib/aarch64-linux-gnu:host-lib --ro-bind /usr/lib/aarch64-linux-gnu:host-usrlib --env PATH=/run/host-mounts/qemu-zstd/bcvk-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env LD_LIBRARY_PATH=/run/host-mounts/host-lib:/run/host-mounts/host-usrlib:/run/host-mounts/qemu-zstd/lib', steps.qemu-zstd.outputs.qemu_prefix) || '' }}
         run: |
           if [ -z "${YUBIOS_IMAGE}" ] && [ ! -e ./mkosi.output/yubiOS ]; then
             echo "::warning::SKIP: no yubiOS image available (no workflow_dispatch 'image' input, no mkosi.output/yubiOS). VM boot + LUKS2-FIDO2 + homed legs NOT exercised."
@@ -241,7 +281,7 @@ jobs:
           chmod +x tests/vm/test-luks-fido2-ci.sh
           echo "Running test-luks-fido2-ci.sh against image: ${YUBIOS_IMAGE:-./mkosi.output/yubiOS}"
           set +e
-          sudo env "PATH=$PATH" "YUBIOS_IMAGE=${YUBIOS_IMAGE:-./mkosi.output/yubiOS}" bash tests/vm/test-luks-fido2-ci.sh
+          sudo env "PATH=$PATH" "YUBIOS_IMAGE=${YUBIOS_IMAGE:-./mkosi.output/yubiOS}" "BCVK_EPHEMERAL_EXTRA_ARGS=${BCVK_EPHEMERAL_EXTRA_ARGS:-}" "YUBIOS_SSH_WAIT_SECS=${YUBIOS_SSH_WAIT_SECS:-300}" bash tests/vm/test-luks-fido2-ci.sh
           rc=$?
           set -e
           if [ "$rc" -eq 77 ]; then
@@ -256,6 +296,9 @@ jobs:
         if: steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1'
         env:
           YUBIOS_IMAGE: ${{ inputs.image }}
+          YUBIOS_SSH_WAIT_SECS: ${{ matrix.arch == 'arm64' && '900' || '300' }}
+          BCVK_EPHEMERAL_EXTRA_ARGS: >-
+            ${{ matrix.arch == 'arm64' && format('--ro-bind {0}:qemu-zstd --ro-bind /lib/aarch64-linux-gnu:host-lib --ro-bind /usr/lib/aarch64-linux-gnu:host-usrlib --env PATH=/run/host-mounts/qemu-zstd/bcvk-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env LD_LIBRARY_PATH=/run/host-mounts/host-lib:/run/host-mounts/host-usrlib:/run/host-mounts/qemu-zstd/lib', steps.qemu-zstd.outputs.qemu_prefix) || '' }}
         run: |
           if [ -z "${YUBIOS_IMAGE}" ] && [ ! -e ./mkosi.output/yubiOS ]; then
             echo "::warning::SKIP: no yubiOS image available — enrollment-surface e2e not exercised."
@@ -263,7 +306,7 @@ jobs:
           fi
           chmod +x tests/vm/test-fido2-enrollment.sh
           set +e
-          sudo env "PATH=$PATH" "YUBIOS_IMAGE=${YUBIOS_IMAGE:-./mkosi.output/yubiOS}" bash tests/vm/test-fido2-enrollment.sh
+          sudo env "PATH=$PATH" "YUBIOS_IMAGE=${YUBIOS_IMAGE:-./mkosi.output/yubiOS}" "BCVK_EPHEMERAL_EXTRA_ARGS=${BCVK_EPHEMERAL_EXTRA_ARGS:-}" "YUBIOS_SSH_WAIT_SECS=${YUBIOS_SSH_WAIT_SECS:-300}" bash tests/vm/test-fido2-enrollment.sh
           rc=$?
           set -e
           if [ "$rc" -eq 77 ]; then

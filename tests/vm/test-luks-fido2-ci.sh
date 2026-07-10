@@ -37,16 +37,27 @@ set -euo pipefail
 
 IMAGE="${YUBIOS_IMAGE:-./mkosi.output/yubiOS}"
 VMID=""
+SSH_WAIT_SECS="${YUBIOS_SSH_WAIT_SECS:-300}"
+SSH_WAIT_TRIES=$((SSH_WAIT_SECS / 2))
 
 log()  { printf '\n=== %s ===\n' "$*"; }
 skip() { printf 'SKIP: %s\n' "$*"; }       # skip != fail (tool/capability absent)
 skip_unsupported_zboot() {
-  printf 'SKIP: %s\n' "bcvk cannot DirectBoot this ARM64 EFI zboot kernel because it is zstd-compressed; rebuild the image with a bcvk-supported kernel compression or update bcvk zboot support."
+  printf 'SKIP: %s\n' "bcvk/QEMU cannot DirectBoot this ARM64 EFI zboot kernel because it is zstd-compressed; use a bcvk/QEMU build with EFI zboot zstd support, boot through firmware/stub, or rebuild only the CI test image with a bcvk-supported kernel compression. See refs/zstd-efi-zboot-bcvk.md."
   exit 77
 }
 die()  { printf 'FAIL: %s\n' "$*" >&2; exit 1; }
 
 need() { command -v "$1" >/dev/null 2>&1 || die "missing host tool: $1"; }
+
+# Optional host-provided bcvk arguments. CI uses this to bind a zstd-capable
+# a qemu-system-aarch64 wrapper into bcvk's inner podman container; local runs normally
+# leave it empty. Keep this as a simple whitespace-split string: paths used by
+# CI intentionally contain no spaces.
+BCVK_EXTRA_ARGS=()
+if [[ -n "${BCVK_EPHEMERAL_EXTRA_ARGS:-}" ]]; then
+  read -r -a BCVK_EXTRA_ARGS <<<"${BCVK_EPHEMERAL_EXTRA_ARGS}"
+fi
 
 cleanup() { [[ -n "$VMID" ]] && podman rm -f "$VMID" >/dev/null 2>&1 || true; }
 trap cleanup EXIT
@@ -63,21 +74,21 @@ g() { bcvk ssh "$VMID" -- "$@"; }
 
 # ---- boot the ephemeral VM with software TPM + software U2F ----
 log "boot ephemeral VM (--swtpm --swu2f)"
-VMID="$(bcvk ephemeral run --detach --ssh-keygen --swtpm --swu2f "$IMAGE")"
+VMID="$(bcvk ephemeral run "${BCVK_EXTRA_ARGS[@]}" --detach --ssh-keygen --swtpm --swu2f "$IMAGE")"
 [[ -n "$VMID" ]] || die "bcvk ephemeral run returned no VM id"
 echo "VM id: $VMID"
 
 # wait for sshd
-for i in $(seq 1 150); do
+for i in $(seq 1 "${SSH_WAIT_TRIES}"); do
   bcvk ssh "$VMID" -- true >/dev/null 2>&1 && break
-  if [[ "$i" -eq 150 ]]; then
+  if [[ "$i" -eq "${SSH_WAIT_TRIES}" ]]; then
     echo "--- podman logs (last 80 lines) ---"
     logs="$(podman logs --tail 80 "$VMID" 2>&1 || true)"
     printf '%s\n' "$logs"
     if grep -Fq 'unable to handle EFI zboot image with "zstd" compression' <<<"$logs"; then
       skip_unsupported_zboot
     fi
-    die "guest did not become reachable over ssh after 300s"
+    die "guest did not become reachable over ssh after ${SSH_WAIT_SECS}s"
   fi
   sleep 2
 done
