@@ -100,8 +100,12 @@ jobs:
               callee_inputs=$(jq -n --arg reason "$REASON" '{reason: $reason}')
               ;;
             fetch-dhi-manifest)
-              next_file='ci_fork_mkosi.yml'
+              next_file='fetch-fedora-bootc-manifest.yml'
               callee_inputs=$(jq -n --arg reason "ci after fetch-dhi-manifest" '{reason: $reason}')
+              ;;
+            fetch-fedora-bootc-manifest)
+              next_file='ci_fork_mkosi.yml'
+              callee_inputs=$(jq -n --arg reason "ci after fetch-fedora-bootc-manifest" '{reason: $reason}')
               ;;
             ci_fork_mkosi)
               next_file='ci_fork_bcvk.yml'
