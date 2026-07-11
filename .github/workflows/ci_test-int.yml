@@ -227,17 +227,6 @@ jobs:
           path: artifacts/BL32_AP_MM.fd
           if-no-files-found: error
 
-  # ===================================================================
-  # Stage 2 - OP-TEE fold (StMM + fTPM -> single BL32) + TF-A FIP (fip.bin)
-  # Block source: F2 / ci_int_optee_fip.yml @ GREEN commit f3473172
-  #   (run 28248906459 SUCCESS on ubuntu-24.04 + self-hosted ARM64 GPU; T211 DONE 2026-06-26T15:57:39Z).
-  # Integrated VERBATIM from F2 green stage workflow. The ONLY orchestration
-  # adaptation is Stage S, which prefers the BL32_AP_MM.fd handed over by the
-  # in-run stmm job (needs: stmm + download-artifact) and falls back to F2
-  # own gh-run-list / inline-rebuild path. No build flag invented.
-  # Embedded model (research/F2-tfa-fip-spmc.md): SPD=opteed, StMM folded into
-  # OP-TEE via CFG_STMM_PATH, fTPM as EARLY_TA, plain fiptool. SPM_MM never set.
-  # ===================================================================
   optee_fip:
     name: Stage 2 - OP-TEE fold (StMM+fTPM) + TF-A FIP (fip.bin) ${{ matrix.arch }}
     needs: stmm
@@ -274,8 +263,6 @@ jobs:
           else
             echo "AARCH64_PREFIX=" >> "$GITHUB_ENV"
           fi
-
-      # ---- Stage 0: U-Boot BL33 (C5 recipe) --------------------------------
 
       - name: Download BL32_AP_MM.fd from in-run stmm job
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
@@ -316,8 +303,6 @@ jobs:
           echo "BL33_BIN=$GITHUB_WORKSPACE/u-boot/u-boot.bin" >> "$GITHUB_ENV"
           ls -l u-boot/u-boot.bin
 
-      # ---- Stage S: BL32_AP_MM.fd — consume F1's artifact, else rebuild ----
-
       - name: Stage S - obtain BL32_AP_MM.fd (prefer in-run stmm job, else F1 run / rebuild)
         env:
           GH_TOKEN: ${{ github.token }}
@@ -336,7 +321,6 @@ jobs:
             set -euo pipefail
             fd_dst="$GITHUB_WORKSPACE/BL32_AP_MM.fd"
             got=""
-            # 1) Prefer the artifact from F1's latest GREEN ci_int_stmm.yml run (same repo).
             rid=$(gh run list -R "$GITHUB_REPOSITORY" --workflow ci_int_stmm.yml \
                     --status success -L 1 --json databaseId -q '.[0].databaseId' 2>/dev/null || true)
             if [ -n "${rid:-}" ]; then
@@ -347,11 +331,6 @@ jobs:
                 if [ -n "$cand" ]; then cp "$cand" "$fd_dst"; got="download(run $rid)"; fi
               fi
             fi
-            # 2) Best-effort inline rebuild. NON-FATAL: edk2-platforms StMM is F1's
-            #    lane (ci_int_stmm.yml) and currently hits an edk2 GccLto plugin wall
-            #    on the GCC-13 runner (ld: bad -plugin-opt option). If it fails here we
-            #    proceed fTPM-only so this lane still proves OP-TEE fold + TF-A FIP;
-            #    StMM folds automatically once F1's GREEN artifact is downloadable.
             if [ -z "$got" ]; then
               echo "::notice::No F1 ci_int_stmm.yml artifact yet — best-effort inline StMM rebuild (non-fatal)"
               if (
@@ -363,15 +342,10 @@ jobs:
                 git clone --no-tags https://github.com/yubi-OS/edk2-platforms edk2-platforms
                 git -C edk2-platforms checkout "$EDK2_PLATFORMS_REF"
                 export GCC_AARCH64_PREFIX="${AARCH64_PREFIX}"
-                # WORKSPACE = parent of both trees so OpTeeRpmbFv module + FV paths agree.
                 export WORKSPACE="$GITHUB_WORKSPACE"
                 export PACKAGES_PATH="$GITHUB_WORKSPACE/edk2:$GITHUB_WORKSPACE/edk2-platforms"
                 export EDK_TOOLS_PATH="$GITHUB_WORKSPACE/edk2/BaseTools"
                 dsc=edk2-platforms/Platform/StandaloneMm/PlatformStandaloneMmPkg/PlatformStandaloneMmRpmb.dsc
-                # -fno-lto: GCC-13 lto-wrapper chokes on mbedtls constant_time.c asm.
-                # -Wno-error=maybe-uninitialized: GCC-13 false positive in StMM entry.
-                # DLINK == replace: strip edk2 bundled GccLto plugin (-llto-aarch64 +
-                # -plugin-opt=-pass-through) which the runner's ld rejects.
                 printf '\n[BuildOptions]\n  GCC:*_*_*_CC_FLAGS = -fno-lto -Wno-error=maybe-uninitialized\n  GCC:*_*_*_DLINK_FLAGS == -fno-lto\n' >> "$dsc"
                 make -C edk2/BaseTools -j"$(nproc)"
                 set +u; . edk2/edksetup.sh BaseTools; set -u
@@ -416,7 +390,6 @@ jobs:
           echo "TA_DEV_KIT_DIR=$devkit" >> "$GITHUB_ENV"
           echo "OK devkit -> $devkit"
 
-      # ---- Stage 2: fTPM Early TA (C3 recipe) ------------------------------
       - name: Stage 2 — build fTPM TA vs devkit + ms-tpm-20-ref
         run: |
           set -euxo pipefail
@@ -424,11 +397,6 @@ jobs:
           git -C optee_ftpm checkout "$OPTEE_FTPM_REF"
           git clone --no-tags https://github.com/yubi-OS/ms-tpm-20-ref ms-tpm-20-ref
           git -C ms-tpm-20-ref checkout "$MS_TPM_REF"
-          # Volatile-NV test mode + plain DEVICE_ENUM enumeration now live as a
-          # proper build flag (CFG_FTPM_VOLATILE_NV=y) on the optee_ftpm branch
-          # feat/volatile-nv-ci (pinned above via OPTEE_FTPM_REF — referenced
-          # directly, never merged). Replaces the former in-CI sed/python patches.
-          # Full root-cause campaign: yubi-OS/yubiOS#41.
           make -C optee_ftpm -j"$(nproc)" \
             CFG_FTPM_VOLATILE_NV=y \
             TA_DEV_KIT_DIR="$TA_DEV_KIT_DIR" \
@@ -440,22 +408,9 @@ jobs:
           echo "FTPM_TA=$GITHUB_WORKSPACE/$stripped" >> "$GITHUB_ENV"
           echo "OK fTPM TA -> $stripped"
 
-      # ---- Stage 3: OP-TEE pass 2 — final BL32 (EARLY_TA=fTPM + CFG_STMM_PATH)
       - name: Stage 3 — rebuild OP-TEE BL32 folding fTPM Early TA (+ StMM when present)
         run: |
           set -euxo pipefail
-          # StMM RESTORED (2026-07-07, #41 FIXED — ci_int_matrix run 28903016778 z2
-          # all-green): the "user-mode data-abort at 0x0" had two stacked causes:
-          #   1. Under-sized core memory for the ~2.4MB StMM image + 402-page heap —
-          #      upstream's only CFG_STMM_PATH build (OP-TEE ci.yml, vexpress-qemu_armv8a)
-          #      passes CFG_CORE_HEAP_SIZE=524288 CFG_TEE_RAM_VA_SIZE=0x00400000.
-          #   2. No RPMB on QEMU virt → OpTeeRpmbFv's storage ops failed → FVB instance
-          #      invalid → FixupPcd patched the variable-store base PCDs to garbage →
-          #      StMM variable driver dereferenced address 0. Fixed by
-          #      CFG_STMM_VOLATILE_STORAGE (optee_os feat/stmm-volatile-storage-ci):
-          #      RAM-backed EFI_VARS with faithful file semantics. CI-only; real
-          #      hardware keeps RPMB.
-          # StMM folds when Stage S obtained a BL32_AP_MM.fd (it always does in-run).
           STMM_ARG=""
           if [ -n "${STMM_FD:-}" ] && [ -f "${STMM_FD}" ]; then
             STMM_ARG="CFG_STMM_PATH=$STMM_FD"
@@ -484,7 +439,6 @@ jobs:
           echo "BL32_PAGEABLE=$GITHUB_WORKSPACE/$x" >> "$GITHUB_ENV"
           ls -l "$h" "$p" "$x"
 
-      # ---- Stage 4: TF-A FIP — BL31 + BL32(OP-TEE) + BL33(u-boot) ----------
       - name: Stage 4 — clone TF-A + mbedTLS, build TBB FIP (SPD=opteed)
         run: |
           set -euxo pipefail
@@ -507,7 +461,6 @@ jobs:
           fip=$(find arm-trusted-firmware/build -name fip.bin -print -quit)
           test -n "$fip"
           echo "FIP_BIN=$GITHUB_WORKSPACE/$fip" >> "$GITHUB_ENV"
-          # flash.bin (BL1 + FIP concatenation) for the QEMU boot lane (C-INT / F4).
           flash=$(find arm-trusted-firmware/build -name flash.bin -print -quit || true)
           if [ -n "$flash" ]; then echo "FLASH_BIN=$GITHUB_WORKSPACE/$flash" >> "$GITHUB_ENV"; fi
           ls -l "$fip" ${flash:+"$flash"}
@@ -521,7 +474,6 @@ jobs:
           grep -qi 'Secure Payload BL32 (Trusted OS)\|tos-fw\|Trusted OS' fip-info.txt
           grep -qi 'Non-Trusted Firmware BL33\|nt-fw\|Non-Trusted' fip-info.txt
           echo "INT lane I-B OK: fip.bin bundles fTPM+StMM-folded OP-TEE BL32 + U-Boot BL33 (StMM via $STMM_SOURCE)"
-
 
       - name: Upload fip + flash (+ OP-TEE fold artifacts) for qemu stage
         if: always()
@@ -539,12 +491,6 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
 
-  # ===================================================================
-  # Stage 3 — QEMU end-to-end verify
-  # Block source: F4 / ci_int_qemu.yml  (job qemu-e2e)
-  # In the orchestrator the image comes from the in-run optee_fip artifact
-  # (download-artifact) instead of the cross-workflow gh-CLI pull F4 uses standalone.
-  # ===================================================================
   qemu:
     name: Stage 3 — QEMU fTPM e2e (${{ matrix.arch }})
     needs: optee_fip
@@ -621,16 +567,10 @@ jobs:
             && echo "PASS: fTPM Early TA at init" || { echo "::error::fTPM Early TA not at init"; fail=1; }
           grep -Eiq "ldelf: Loading TS ${FTPM_UUID}|Lookup user TA ELF ${FTPM_UUID}" nw.log optee.log \
             && echo "PASS: fTPM TA probed" || { echo "::error::fTPM TA never probed"; fail=1; }
-          # A3 redefined (ci_int_matrix run 28893676854): a SUCCESSFUL TCG2 init is
-          # silent — the old string grep could never pass. The bootcmd emits
-          # YUBIOS_TPM_OK only after tpm2 init + startup + self_test all succeed.
           grep -q "YUBIOS_TPM_OK" nw.log \
             && echo "PASS: fTPM functional (init+startup+self_test)" || { echo "::error::fTPM not functional (no YUBIOS_TPM_OK)"; fail=1; }
-          # Regression guards: known failure signatures from the debug campaign.
           ! grep -Eq "Missing TPMv2 device|Couldn't set TPM|TA panicked|ldelf failed|data-abort" nw.log optee.log \
             && echo "PASS: no known failure signatures" || { echo "::error::known failure signature present"; fail=1; }
-          # StMM assertion (#41 restoration): U-Boot's MM_COMM variable service must
-          # actually load + exercise the StandaloneMM SP without crashing it.
           grep -Eiq "stmm load address" nw.log optee.log \
             && echo "PASS: StMM SP loaded into OP-TEE" || { echo "::error::StMM SP never loaded"; fail=1; }
           [ "${fail}" -eq 0 ] && echo "INTEGRATION e2e VERIFIED" || { echo "INTEGRATION e2e FAILED"; exit 1; }
@@ -640,17 +580,6 @@ jobs:
         run: |
           echo "::notice title=QEMU e2e LOUD-SKIP::optee_fip (F2/T211) produced no fip/flash yet. Wired, no faked PASS."
 
-  # ===================================================================
-  # Stage 4 — Publish firmware bundle to Docker Hub (0mniteck/yubios:firmware)
-  # Runs only after the QEMU e2e gate is green on both arches, so the tag
-  # only ever carries firmware that passed the full integration assertion.
-  # Publishes the native arm64-built artifact set (the target payload is
-  # AARCH64 either way; the amd64 lane is a cross-build of the same bits).
-  # Triggered by: push to main (this workflow's path filter) or dispatch
-  # with Docker_push=true. FROM scratch — the image has no distro content,
-  # only in-run build artifacts from PINNED.md-pinned sources, so the
-  # yubiOS.rego --policy gate (which vets FROM inputs) has nothing to vet.
-  # ===================================================================
   firmware-publish:
     name: Stage 4 — Publish firmware bundle (0mniteck/yubios:firmware)
     needs: qemu
@@ -693,8 +622,6 @@ jobs:
           find art -name u-boot.bin     -exec cp {} fw/firmware/ \; -quit
           find art -name fip-info.txt   -exec cp {} fw/firmware/ \; -quit
           find art -name 'tee-*_v2.bin' -exec cp {} fw/firmware/ \;
-          # flash.bin is assembled by Stage 3, not uploaded by Stage 2 — rebuild it
-          # here the same way (bl1 @ 0, fip @ seek=64, bs=4096) when absent.
           if [ ! -s fw/firmware/flash.bin ]; then
             dd if=fw/firmware/bl1.bin of=fw/firmware/flash.bin bs=4096 conv=notrunc
             dd if=fw/firmware/fip.bin of=fw/firmware/flash.bin seek=64 bs=4096 conv=notrunc
@@ -777,7 +704,7 @@ jobs:
           CI_VM_IMAGE: ${{ inputs.ci_vm_image }}
         run: |
           set -euo pipefail
-          conclusion=$(jq -r 'to_entries | if any(.value.result; . == "failure" or . == "cancelled") then "failure" else "success" end' <<<"$NEEDS_JSON")
+          conclusion=$(jq -r 'if any(to_entries[]; .value.result == "failure" or .value.result == "cancelled") then "failure" else "success" end' <<<"$NEEDS_JSON")
           payload=$(jq -n \
             --arg ref "$REF" \
             --arg state "$WORKFLOW_NAME" \
