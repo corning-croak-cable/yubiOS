@@ -90,6 +90,9 @@ jobs:
           set -euxo pipefail
 
           restore_live_boot_tools() {
+            if [ -e /etc/kernel/postinst.d/kdump-tools.ci-disabled ]; then
+              sudo mv /etc/kernel/postinst.d/kdump-tools.ci-disabled /etc/kernel/postinst.d/kdump-tools
+            fi
             for tool in flash-kernel update-initramfs; do
               if [ -e "/usr/sbin/${tool}.distrib" ]; then
                 sudo rm -f "/usr/sbin/${tool}"
@@ -100,10 +103,13 @@ jobs:
 
           # The self-hosted ARM64 GPU runner boots from live media.  If apt finds
           # pending kernel/initramfs packages, dpkg's maintainer scripts try to
-          # rewrite /cdrom/casper/initrd.gz and fail with ENOSPC.  TF-A only needs
-          # userspace build tools here, so suppress boot-media updates during apt.
+          # update live boot or kdump initrds and fail against the overlay root.
+          # TF-A only needs userspace build tools here, so suppress those updates.
           if [ "${RUNNER_ENVIRONMENT:-}" = "self-hosted" ] && [ "${RUNNER_ARCH:-}" = "ARM64" ] && [ -d /cdrom/casper ]; then
             trap restore_live_boot_tools EXIT
+            if [ -e /etc/kernel/postinst.d/kdump-tools ] && [ ! -e /etc/kernel/postinst.d/kdump-tools.ci-disabled ]; then
+              sudo mv /etc/kernel/postinst.d/kdump-tools /etc/kernel/postinst.d/kdump-tools.ci-disabled
+            fi
             for tool in update-initramfs flash-kernel; do
               if [ -x "/usr/sbin/${tool}" ] && [ ! -e "/usr/sbin/${tool}.distrib" ]; then
                 sudo dpkg-divert --quiet --local --rename --add "/usr/sbin/${tool}"
