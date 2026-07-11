@@ -157,6 +157,9 @@ jobs:
     needs: build
     if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
     runs-on: ubuntu-24.04
+    env:
+      DEV_SHA_TAG: 0mniteck/yubios:dev-${{ github.sha }}
+      DEV_FLOATING_TAG: 0mniteck/yubios:dev
     container:
       options: --privileged
       volumes:
@@ -187,16 +190,29 @@ jobs:
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER }}" | docker -H unix:///var/run/ducker.sock login -u 0mniteck42 --password-stdin
 
+      - name: Guard dev/test manifest tags
+        run: |
+          set -euo pipefail
+          for tag in "$DEV_SHA_TAG" "$DEV_FLOATING_TAG"; do
+            case "$tag" in
+              0mniteck/yubios:dev|0mniteck/yubios:dev-*) ;;
+              *)
+                echo "::error::dev/test publish attempted non-dev tag: $tag"
+                exit 1
+                ;;
+            esac
+          done
+
       - name: Create + push multi-arch dev manifest
         run: |
           docker -H unix:///var/run/ducker.sock buildx imagetools create \
-            -t "0mniteck/yubios:dev-${{ github.sha }}" \
-            -t "0mniteck/yubios:dev" \
+            -t "$DEV_SHA_TAG" \
+            -t "$DEV_FLOATING_TAG" \
             "0mniteck/yubios:dev-${{ github.sha }}-amd64" \
             "0mniteck/yubios:dev-${{ github.sha }}-arm64"
 
       - name: Verify manifest list
-        run: docker -H unix:///var/run/ducker.sock buildx imagetools inspect "0mniteck/yubios:dev-${{ github.sha }}"
+        run: docker -H unix:///var/run/ducker.sock buildx imagetools inspect "$DEV_SHA_TAG"
 
   ci-callback:
     name: Callback to ci.yml orchestrator
