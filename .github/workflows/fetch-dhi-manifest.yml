@@ -76,6 +76,7 @@ jobs:
       - name: Fetch dhi.io Debian base manifest and update pinned refs
         env:
           DOCKER_PASS: ${{ secrets.DOCKER }}
+          GH_TK: ${{ secrets.GH_TK }}
         run: |
           set -euo pipefail
           TOKEN=$(curl -sf -u "0mniteck42:$DOCKER_PASS" \
@@ -162,7 +163,7 @@ jobs:
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
             git add PINNED.md .
             git commit -m "Refresh pinned dhi.io Debian base digest"
-            export GITHUB_TOKEN=${{ secrets.GH_TK }}
+            GITHUB_TOKEN=$GH_TK
             git push
           fi
 
