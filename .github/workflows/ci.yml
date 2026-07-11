@@ -140,16 +140,8 @@ jobs:
               callee_inputs=$(jq -n --arg reason "ci after ci_fork_edk2" '{reason: $reason}')
               ;;
             ci_int_stmm)
-              next_file='ci_int_optee_fip.yml'
-              callee_inputs=$(jq -n --arg reason "ci after ci_int_stmm" '{reason: $reason}')
-              ;;
-            ci_int_optee_fip)
-              next_file='ci_int_qemu.yml'
-              callee_inputs=$(jq -n --arg reason "ci after ci_int_optee_fip" '{reason: $reason}')
-              ;;
-            ci_int_qemu)
               next_file='ci_test-int.yml'
-              callee_inputs=$(jq -n --arg reason "ci after ci_int_qemu" --arg push "$FIRMWARE_DOCKER_PUSH" '{reason: $reason, Docker_push: $push}')
+              callee_inputs=$(jq -n --arg reason "ci after ci_int_stmm" --arg push "$FIRMWARE_DOCKER_PUSH" '{reason: $reason, Docker_push: $push}')
               ;;
             ci_test-int)
               next_file='yubiOS-ci.yml'
