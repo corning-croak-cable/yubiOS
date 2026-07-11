@@ -56,6 +56,11 @@ on:
         required: true
         default: false
         type: boolean
+      ci_fork_run:
+        description: 'Run the ci_fork_* component workflows in the orchestrated chain?'
+        required: true
+        default: false
+        type: boolean
       vm_image:
         description: 'Pullable yubiOS OCI image ref for ci_test-vm.yml.'
         required: true
@@ -83,6 +88,7 @@ jobs:
           DEV_DOCKER_PUSH: ${{ inputs.Dev_Docker_push }}
           FIRMWARE_DOCKER_PUSH: ${{ inputs.Firmware_Docker_push }}
           INSTALLER_DOCKER_PUSH: ${{ inputs.Installer_Docker_push }}
+          CI_FORK_RUN: ${{ inputs.ci_fork_run }}
           VM_IMAGE: ${{ inputs.vm_image }}
         run: |
           set -euo pipefail
@@ -104,8 +110,13 @@ jobs:
               callee_inputs=$(jq -n --arg reason "ci after fetch-dhi-manifest" '{reason: $reason}')
               ;;
             fetch-fedora-bootc-manifest)
-              next_file='ci_fork_mkosi.yml'
-              callee_inputs=$(jq -n --arg reason "ci after fetch-fedora-bootc-manifest" '{reason: $reason}')
+              if [ "$CI_FORK_RUN" = "true" ]; then
+                next_file='ci_fork_mkosi.yml'
+                callee_inputs=$(jq -n --arg reason "ci after fetch-fedora-bootc-manifest" '{reason: $reason}')
+              else
+                next_file='ci_test-int.yml'
+                callee_inputs=$(jq -n --arg reason "ci after fetch-fedora-bootc-manifest" --arg push "$FIRMWARE_DOCKER_PUSH" '{reason: $reason, Docker_push: $push}')
+              fi
               ;;
             ci_fork_mkosi)
               next_file='ci_fork_bcvk.yml'
