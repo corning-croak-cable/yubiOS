@@ -147,11 +147,21 @@ jobs:
 
       - name: Push per-arch dev image (${{ matrix.arch }})
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
+        env:
+          DEV_ARCH_TAG: 0mniteck/yubios:dev-${{ github.sha }}-${{ matrix.arch }}
         # Tag the already-built local image and push with the classic client -- no need
         # for buildx here, this is a single-arch image already resolved above.
         run: |
-          docker -H unix:///var/run/ducker.sock tag "yubios:dev-${{ matrix.arch }}" "0mniteck/yubios:dev-${{ github.sha }}-${{ matrix.arch }}"
-          docker -H unix:///var/run/ducker.sock push "0mniteck/yubios:dev-${{ github.sha }}-${{ matrix.arch }}"
+          set -euo pipefail
+          case "$DEV_ARCH_TAG" in
+            0mniteck/yubios:dev-*-amd64|0mniteck/yubios:dev-*-arm64) ;;
+            *)
+              echo "::error::dev/test per-arch publish attempted non-dev tag: $DEV_ARCH_TAG"
+              exit 1
+              ;;
+          esac
+          docker -H unix:///var/run/ducker.sock tag "yubios:dev-${{ matrix.arch }}" "$DEV_ARCH_TAG"
+          docker -H unix:///var/run/ducker.sock push "$DEV_ARCH_TAG"
 
   merge-manifest:
     needs: build
