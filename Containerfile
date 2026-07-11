@@ -28,6 +28,7 @@ RUN dnf install -y \
       openssh-server \
       fido2-tools \
       python3-pip \
+      python3-devel \
       gcc \
       osslsigncode && \
     dnf clean all
