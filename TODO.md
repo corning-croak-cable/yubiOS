@@ -1,5 +1,5 @@
 # yubiOS — TODO / Future Work
-_Last updated: July 10, 2026 (ARM64 CI runner policy updated: non-KVM lanes use self-hosted Linux ARM64 GPU runners; VM/KVM lane remains self-hosted Linux ARM64 KVM)_
+_Last updated: July 11, 2026 (ARM64 CI runner policy updated for ci_fork_bcvk: non-KVM bcvk lanes use GitHub-hosted native arm64; VM/KVM lane remains self-hosted Linux ARM64 KVM)_
 
 ## High priority
 
@@ -45,7 +45,7 @@ Owned ARM64 fTPM trust-chain CI (ADR-018/019/020). Each component fork now has a
 - [x] Enable systemd-tpm2-swtpm.service in bcvk CI VMs for TPM2 coverage (ADR-016) (#21, PR #34) — merged June 26; **cross-repo `yubi-OS/bcvk` issue #3 still open (BLOCKER-006)**
 - [x] Evaluate + add RestrictFileSystems= (BPF LSM) to enrollment units (ADR-016) (#18, PR #28) — merged June 26; CONFIG_BPF_LSM=y verified active on live base (BLOCKER-007 cleared)
 - [x] CI deployed + green across yubiOS (multi-arch native matrix), bcvk (multi-arch Rust test/clippy), mkosi (profile + shellcheck + ruff) on `.github/workflows/` via the fine-grained PAT (Workflows: Write). Specs live in `refs/`; yml staged in `documents/.../ci-workflows/` (#22)
-- [ ] Add `osslsigncode` to image (mkosi.conf + Containerfile) so the PKCS#11 verify step in tests/validate-pkcs11-uri.sh is live
+- [x] Add `osslsigncode` to image (mkosi.conf + Containerfile) so the PKCS#11 verify step in tests/validate-pkcs11-uri.sh is live — verified present in both image paths; `validate-pkcs11-uri.sh` runs `osslsigncode verify` when available
 - [x] Merge `yubi-OS/mkosi#2` (yubiOS build profile) — merged July 8 (`b2b1ea6`); yubiOS-ci.yml installs mkosi from `@main` (#10)
 - [x] CI mkosi image build + SoftHSM PKCS#11 signing — `ci_mkosi-installer.yml` green July 8; publishes `0mniteck/yubios:installer` (+`installer-<sha>`) per ADR-022 (#10 closed)
 - [x] Firmware bundle tag — `ci_test-int.yml` Stage 4 publishes QEMU-validated `0mniteck/yubios:firmware` (+`firmware-<sha>`) after the e2e gate (ADR-022)
