@@ -79,7 +79,7 @@ jobs:
             exit 1
           fi
 
-          group="$(curl -sv https://registry-1.docker.io/v2/ 2>&1 | grep -o 'SSL connection using[^\"]*' || true)"
+          group="$(curl -sv https://omniteck.com/ 2>&1 | grep -o 'SSL connection using[^\"]*' || true)"
           echo "negotiated: $group"
           case "$group" in
             *MLKEM*)
