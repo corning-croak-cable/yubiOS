@@ -29,7 +29,7 @@ All GitHub Actions and container image references used across the yubi-OS org mu
 | `dhi.io/debian-base` (multi-arch INDEX) | `sha256:ce12bf580bb4c3986b7c934db5948353646371326c038a506dbe19545a1e0ee7` | **Canonical for workflows + Containerfile `FROM` where DHI is used.** OCI image index for `trixie-debian13-dev`; auto-resolves per runner arch. |
 | child `linux/amd64` | `sha256:573453453097b1e95c7a24f80f3fdd1ed7552cb2d4fbc89995cab19ebe920a47` | Resolved automatically; do not pin directly unless an amd64-only job requires it. |
 | child `linux/arm64` | `sha256:e2f2c3ea2fd70a4e4750c00f6e9fde90cf2f6930165765bc8156a305ab2185c6` | Resolved automatically. |
-| `quay.io/fedora/fedora-bootc:45` (multi-arch INDEX) | `sha256:3674264e179971a0b001bca8bd01f31b3e776ff8636c6d39262c6e27958994dc` | **Containerfile `FROM` base.** OCI image index; auto-resolves per arch. Re-resolved 2026-07-11. Refresh with `fetch-fedora-bootc-manifest`. |
+| `quay.io/fedora/fedora-bootc:45` (multi-arch INDEX) | `sha256:02217fcb8bfb5da8995f317d6ed23867b6e8f1dec47ef5e0791a5c5a12897267` | **Containerfile `FROM` base.** OCI image index; auto-resolves per arch. Re-resolved 2026-07-11. Refresh with `fetch-fedora-bootc-manifest`. |
 | `ghcr.io/actions/jekyll-build-pages` | `sha256:6791ebfd912185ed59bfb5fb102664fa872496b79f87ff8b9cfba292a7345041` | Pages build image. |
 | `ghcr.io/hadolint/hadolint:v2.14.0-debian` | `sha256:158cd0184dcaa18bd8ec20b61f4c1cabdf8b32a592d062f57bdcb8e4c1d312e2` | Hadolint image. |
 
