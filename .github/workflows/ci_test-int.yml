@@ -615,6 +615,7 @@ jobs:
           sudo env PATH="$docker_bin:$PATH" "$docker_bin/dockerd" \
             --storage-driver=overlayfs \
             --data-root=/mnt/docker \
+            --pidfile "${RUNNER_TEMP}/ducker.pid" \
             -H unix:///var/run/ducker.sock &
           for i in $(seq 1 30); do sudo env PATH="$docker_bin:$PATH" "$docker_bin/docker" -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
           sudo env PATH="$docker_bin:$PATH" "$docker_bin/docker" -H unix:///var/run/ducker.sock buildx create --name hardened \
