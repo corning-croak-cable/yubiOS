@@ -34,9 +34,13 @@ RUN dnf install -y \
 # ── First-boot firmware validation (ADR-024) ─────────────────────────────
 # CHIPSEC is distributed from PyPI rather than Fedora repos. Pin the source
 # release and hash so the first-boot firmware checker is reproducible.
-RUN python3 -m pip install --no-cache-dir --break-system-packages --require-hashes \
-      'chipsec==1.13.16' \
-      --hash=sha256:63bed5ad4224402397817ea82b94c3a21736386a04ff778c003704bd6dfdbca3
+RUN printf '%s\n' \
+      'chipsec==1.13.16 \' \
+      '    --hash=sha256:63bed5ad4224402397817ea82b94c3a21736386a04ff778c003704bd6dfdbca3' \
+      > /tmp/chipsec-requirements.txt && \
+    python3 -m pip install --no-cache-dir --break-system-packages --require-hashes \
+      -r /tmp/chipsec-requirements.txt && \
+    rm /tmp/chipsec-requirements.txt
 
 # ── Overlay yubiOS config tree ───────────────────────────────────────────
 COPY usr/ /usr/
