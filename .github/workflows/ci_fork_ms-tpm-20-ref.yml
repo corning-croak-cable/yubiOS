@@ -1,7 +1,8 @@
 # PORTED from yubi-OS/ms-tpm-20-ref .github/workflows/ci_test.yml (feat/ci).
 # Fork default branches are kept identical to upstream; all yubi-OS changes
-# live on feat/feature branches and all CI runs from this repo via
-# workflow_dispatch only (org policy, July 8 2026).
+# live on feat/feature branches and all orchestrated CI runs from this repo via
+# workflow_dispatch (org policy, July 8 2026), with a narrow self-change trigger
+# for validating this workflow file.
 name: ci_fork_ms-tpm-20-ref
 
 # Component CI for the yubiOS ARM64 fTPM stack (#35, task C4).
@@ -18,6 +19,10 @@ name: ci_fork_ms-tpm-20-ref
 # host + cross toolchain; the hardened dhi base omits crt*.o / libc.
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ci_fork_ms-tpm-20-ref.yml' # self-change trigger for validating workflow edits
   workflow_dispatch:
     inputs:
       reason:
