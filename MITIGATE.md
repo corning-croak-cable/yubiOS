@@ -70,6 +70,74 @@ Use `RestrictFileSystems=` when a filesystem-type allow/deny policy is appropria
 - Compromise after the system is unlocked and the owner session is active.
 - Supply-chain compromise of a pinned source before the project detects and rotates the pin.
 
+```mermaid
+flowchart TD
+    OEM["🏭 OEM / Vendor\nSupply Chain Access"]
+
+    subgraph S1["Step 1 — OEM Persistence"]
+        S1A["1-A Modified PM firmware\n#PME enforcables\nModified S3 path"]
+        S1B["1-B Stacked UEFI / EDK2\nevil-twin firmware\nBroken CNTVOFF_EL2"]
+        S1C["1-C CVE exploitation\nPage-cache poisoning\n91 hidden GPT partitions"]
+    end
+
+    subgraph S2["Step 2 — Pre-Init Hijack"]
+        S2A["2-A Obfuscated kernel modules\nInvisible device tree nodes\nCoresight debug channels"]
+        S2B["2-B Firmware sideload\nModified libselinux/libapparmor\n/usr bind-mount poison"]
+        S2C["2-C Poisoned generators\nJournal flush\nNVMe / GPT-auto blocked"]
+    end
+
+    subgraph S3["Step 3 — Runtime Control"]
+        S3A["3-A Faux ACPI tables\nTEE MitM / tz.uefisecapp\nAbsolute Persistence"]
+        S3B["3-B Radio persistence\nPassphrase exfil via framebuffer\nttyHS to TX/RX"]
+        S3C["3-C dmesg/proc scrub\nfd hijacking\nMagic-number services"]
+    end
+
+    OEM --> S1A & S1B & S1C
+    S1B --> S2A
+    S1C --> S2B
+    S2B --> S2C
+    S2C --> S3A
+    S3A --> S3B & S3C
+
+    M1A["🔍 PCR 4 measurement\nConditionSecurity=measured-os\nchipsec detection"]
+    M1B["🛡 Signed UKI + SecureBoot\nPCR 11 + usrhash= cmdline"]
+    M1C1["🔄 Fedora 45 CVE patches\ndm-verity read protection"]
+    M1C2["🛡 DPS UUID-only automount\nHidden partitions ignored"]
+    M2A["🛡 Kernel lockdown SecureBoot\nSigned modules + IMA"]
+    M2B["🛡 dm-verity /usr\non every IO read\nModified libs → IO error"]
+    M2C["🛡 dm-verity generators\nusrhash= enforced\nDPS fallback discovery"]
+    M3A1["🛡 Signed cmdline blocks\nACPI table override"]
+    M3A2["✅ No TEE dependency\nYubiKey FIDO2 trust anchor\nNo tz.uefisecapp to MitM"]
+    M3A3["🔍 chipsec detects\nComputrace in PCR event log"]
+    M3B1["🛡 PrivateNetwork=yes\nBindNetworkInterface="]
+    M3B2["✅ No passphrase to capture\nFIDO2 hmac-secret only\npam-u2f touch required"]
+    M3C["🛡 dm-verity service units\nDynamicUser + ProtectProc=\nNoNewPrivileges="]
+
+    S1A -. detected by .-> M1A
+    S1B -. blocked by .-> M1B
+    S1C -. mitigated by .-> M1C1
+    S1C -. ignored by .-> M1C2
+    S2A -. blocked by .-> M2A
+    S2B -. blocked by .-> M2B
+    S2C -. blocked by .-> M2C
+    S3A -. blocked by .-> M3A1
+    S3A -. immune .-> M3A2
+    S3A -. detected by .-> M3A3
+    S3B -. contained by .-> M3B1
+    S3B -. immune .-> M3B2
+    S3C -. blocked by .-> M3C
+
+    style M2B fill:#0d6e0d,color:#fff
+    style M2C fill:#0d6e0d,color:#fff
+    style M1B fill:#0d6e0d,color:#fff
+    style M3A2 fill:#ff1493,color:#fff
+    style M3B2 fill:#ff1493,color:#fff
+    style M3A3 fill:#8b4513,color:#fff
+    style M1A fill:#1a1a2e,color:#fff
+    style M2A fill:#1a1a2e,color:#fff
+    style M3C fill:#1a1a2e,color:#fff
+```
+
 ## Current Follow-Up
 
 The active inconsistency and mitigation cleanup log is [refs/planning-cycle-2026-07-11.md](refs/planning-cycle-2026-07-11.md). It records the research sources used for the systemd, PQ TLS, bootc, and QEMU corrections.
