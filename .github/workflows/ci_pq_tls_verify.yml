@@ -72,8 +72,9 @@ jobs:
       image: docker://dhi.io/debian-base@sha256:ce12bf580bb4c3986b7c934db5948353646371326c038a506dbe19545a1e0ee7 # trixie-debian13-dev INDEX (manifest list)
     continue-on-error: true # non-blocking until this job has a stable track record (ADR-025)
     steps:
-      - name: Verify openssl >= 3.5 and live PQ hybrid negotiation
+      - name: Verify OpenSSL >= 3.5 and live PQ hybrid negotiation
         run: |
+          set -euo pipefail
           apt update && apt install curl -y
           v="$(openssl version | awk '{print $2}')"
           echo "openssl version: $v"
@@ -83,17 +84,37 @@ jobs:
             echo "::error::openssl $v < 3.5 -- X25519MLKEM768 default lost, see ADR-025"
             exit 1
           fi
-          curl -sv https://omniteck.com/ 2>&1 
           group="$(curl -sv https://omniteck.com/ 2>&1 | grep -o 'SSL connection using[^\"]*' || true)"
           echo "negotiated: $group"
           case "$group" in
             *MLKEM*)
-              echo "PQ hybrid group confirmed against registry-1.docker.io" ;;
+              echo "PQ hybrid group confirmed against omniteck.com" ;;
             *)
-              echo "::error::no MLKEM group negotiated against the update registry -- see ADR-025"
+              echo "::error::no MLKEM group negotiated against the live TLS endpoint -- see ADR-025"
               exit 1
               ;;
           esac
+
+      - name: Report Go TLS floor visibility
+        run: |
+          set -euo pipefail
+          if command -v go >/dev/null 2>&1; then
+            v="$(go version | awk '{print $3}' | sed 's/^go//')"
+            echo "go version: $v"
+            major="${v%%.*}"
+            minor="$(echo "$v" | cut -d. -f2)"
+            if [ "$major" -lt 1 ] || { [ "$major" -eq 1 ] && [ "$minor" -lt 24 ]; }; then
+              echo "::error::go $v < 1.24 -- Go TLS X25519MLKEM768 default may be missing, see ADR-025"
+              exit 1
+            fi
+            echo "Go TLS floor confirmed for installed Go toolchain."
+          else
+            echo "Go toolchain is not installed in this CI container."
+            echo "Checking the distro candidate so base-image bumps still show Go floor drift in logs."
+            apt update
+            apt-cache policy golang-go || true
+            echo "No first-party Go TLS client is built in this workflow; see SPEC.md section 9 and ADR-025."
+          fi
 
   ci-callback:
     name: Callback to ci.yml orchestrator
@@ -130,7 +151,7 @@ jobs:
             --arg Firmware_Docker_push "$CI_FIRMWARE_DOCKER_PUSH" \
             --arg Installer_Docker_push "$CI_INSTALLER_DOCKER_PUSH" \
             --arg vm_image "$CI_VM_IMAGE" \
-            '{ref: $ref, inputs: {state: $state, completed_conclusion: $completed_conclusion, reason: $reason, target_ref: $ref, Docker_push: $Docker_push, Dev_Docker_push: $Dev_Docker_push, Firmware_Docker_push: $Firmware_Docker_push, Installer_Docker_push: $Installer_Docker_push, vm_image: $vm_image}}')
+            '{ref: $ref, inputs: {state: $state, completed_conclusion: $completed_conclusion, reason: $reason, target_ref: $ref, Docker_push: $Docker_push, Dev_Docker_push: $Dev_Docker_push, Firmware_Docker_push: $Firmware_DOCKER_PUSH, Installer_Docker_push: $Installer_Docker_PUSH, vm_image: $vm_image}}')
           curl -fsS -X POST \
             -H "Authorization: Bearer ${GH_TOKEN}" \
             -H "Accept: application/vnd.github+json" \
