@@ -61,6 +61,11 @@ permissions:
 jobs:
   pq-tls-verify:
     runs-on: ubuntu-24.04
+    container:
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:ce12bf580bb4c3986b7c934db5948353646371326c038a506dbe19545a1e0ee7 # trixie-debian13-dev INDEX (manifest list)
     continue-on-error: true # non-blocking until this job has a stable track record (ADR-025)
     steps:
       - name: Verify openssl >= 3.5 and live PQ hybrid negotiation
