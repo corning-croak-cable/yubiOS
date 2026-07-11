@@ -44,7 +44,7 @@ jobs:
           git config user.name "yubiOS CI Coding Agent"
           git config user.email "ci-agent@yubi-os.local"
           git add .github/workflows/*.yml
-          git rm --quiet .github/workflows/apply-jq-callback-fix.yml
+          git rm --quiet -f .github/workflows/apply-jq-callback-fix.yml
           if git diff --cached --quiet; then
             echo "No workflow changes to commit."
             exit 0
