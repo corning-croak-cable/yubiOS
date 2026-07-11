@@ -14,6 +14,10 @@ name: ci_fork_bcvk
 # Action refs pinned per PINNED.md.
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ci_fork_bcvk.yml' # self-change trigger for validating workflow edits
   workflow_dispatch:
     inputs:
       reason:
@@ -75,7 +79,7 @@ jobs:
           - arch: amd64
             runner: ubuntu-24.04
           - arch: arm64
-            runner: [self-hosted, Linux, ARM64, GPU]
+            runner: ubuntu-24.04-arm
     runs-on: ${{ matrix.runner }}
     concurrency:
       group: ${{ github.workflow }}-tests-${{ matrix.arch }}-${{ github.ref }}
@@ -113,12 +117,11 @@ jobs:
           - arch: amd64
             runner: ubuntu-24.04
           - arch: arm64
-            runner: [self-hosted, Linux, ARM64, GPU]
+            runner: ubuntu-24.04-arm
     runs-on: ${{ matrix.runner }}
     # Advisory: clippy -D warnings trips on inherited upstream lint debt across the
     # fork; keep it visible but non-blocking so it doesn't red the meaningful unit
     # gate. Tighten to hard-fail once the yubiOS-added crates are clippy-clean.
-    continue-on-error: true
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
@@ -131,6 +134,7 @@ jobs:
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --component clippy
           echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
       - name: Clippy
+        continue-on-error: true
         run: cargo clippy --workspace -- -D warnings
 
   ci-callback:
@@ -157,7 +161,7 @@ jobs:
           CI_VM_IMAGE: ${{ inputs.ci_vm_image }}
         run: |
           set -euo pipefail
-          conclusion=$(jq -r 'if any(to_entries[]; .value.result == "failure" or .value.result == "cancelled") then "failure" else "success" end' <<<"$NEEDS_JSON")
+          conclusion=$(jq -r 'if .["unit-tests"].result == "failure" or .["unit-tests"].result == "cancelled" then "failure" else "success" end' <<<"$NEEDS_JSON")
           payload=$(jq -n \
             --arg ref "$REF" \
             --arg state "$WORKFLOW_NAME" \
