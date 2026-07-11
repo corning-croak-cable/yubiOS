@@ -65,7 +65,7 @@ file current. The notes below show the shape; the authoritative values live in P
 
 ```
 **in OCI for dockerfiles and .rego** (use the multi-arch INDEX digest from PINNED.md)
-docker pull dhi.io/debian-base:trixie-debian13-dev@sha256:1cefd55d979ddbd9110cf73cf3de11798a7893a4598050ba57624bc754b244aa
+docker pull dhi.io/debian-base:trixie-debian13-dev@sha256:ce12bf580bb4c3986b7c934db5948353646371326c038a506dbe19545a1e0ee7
 docker buildx build --policy reset=true,strict=true,filename=$REPO.rego .
 
 **in Github workflow** (INDEX digest auto-resolves per runner arch — required for amd64+arm64 matrices)
@@ -74,7 +74,7 @@ container:
   credentials:
     username: 0mniteck42
     password: ${{secrets.DOCKER}}
-  image: docker://dhi.io/debian-base@sha256:1cefd55d979ddbd9110cf73cf3de11798a7893a4598050ba57624bc754b244aa # trixie-debian13-dev INDEX (manifest list)
+  image: docker://dhi.io/debian-base@sha256:ce12bf580bb4c3986b7c934db5948353646371326c038a506dbe19545a1e0ee7 # trixie-debian13-dev INDEX (manifest list)
 Steps
   - name: Checkout
     uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # see PINNED.md

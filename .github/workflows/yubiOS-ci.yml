@@ -7,7 +7,7 @@ name: yubiOS CI
 # DEPLOY PRE-REQ: the `container.image` below must be the dhi.io/debian-base
 # *manifest-list (index)* digest, NOT a single-arch digest. A single-arch (amd64)
 # digest will FAIL to pull on ARM64 runners. Run the updated fetch-dhi-manifest
-# workflow (it now requests the OCI index media type) to get 1cefd55d979ddbd9110cf73cf3de11798a7893a4598050ba57624bc754b244aa,
+# workflow (it now requests the OCI index media type) to get ce12bf580bb4c3986b7c934db5948353646371326c038a506dbe19545a1e0ee7,
 # then replace the placeholder below. The index auto-resolves per runner arch.
 
 on:
@@ -81,7 +81,7 @@ jobs:
       credentials:
         username: 0mniteck42
         password: ${{ secrets.DOCKER }}
-      image: docker://dhi.io/debian-base@sha256:1cefd55d979ddbd9110cf73cf3de11798a7893a4598050ba57624bc754b244aa # trixie-debian13-dev INDEX (manifest list)
+      image: docker://dhi.io/debian-base@sha256:ce12bf580bb4c3986b7c934db5948353646371326c038a506dbe19545a1e0ee7 # trixie-debian13-dev INDEX (manifest list)
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -117,7 +117,7 @@ jobs:
       credentials:
         username: 0mniteck42
         password: ${{ secrets.DOCKER }}
-      image: docker://dhi.io/debian-base@sha256:1cefd55d979ddbd9110cf73cf3de11798a7893a4598050ba57624bc754b244aa # auto-resolves to ${{ matrix.arch }}
+      image: docker://dhi.io/debian-base@sha256:ce12bf580bb4c3986b7c934db5948353646371326c038a506dbe19545a1e0ee7 # auto-resolves to ${{ matrix.arch }}
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -142,7 +142,7 @@ jobs:
       credentials:
         username: 0mniteck42
         password: ${{ secrets.DOCKER }}
-      image: docker://dhi.io/debian-base@sha256:1cefd55d979ddbd9110cf73cf3de11798a7893a4598050ba57624bc754b244aa # auto-resolves to ${{ matrix.arch }}
+      image: docker://dhi.io/debian-base@sha256:ce12bf580bb4c3986b7c934db5948353646371326c038a506dbe19545a1e0ee7 # auto-resolves to ${{ matrix.arch }}
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -176,7 +176,7 @@ jobs:
       credentials:
         username: 0mniteck42
         password: ${{ secrets.DOCKER }}
-      image: docker://dhi.io/debian-base@sha256:1cefd55d979ddbd9110cf73cf3de11798a7893a4598050ba57624bc754b244aa # auto-resolves to ${{ matrix.arch }}
+      image: docker://dhi.io/debian-base@sha256:ce12bf580bb4c3986b7c934db5948353646371326c038a506dbe19545a1e0ee7 # auto-resolves to ${{ matrix.arch }}
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -247,7 +247,7 @@ jobs:
       credentials:
         username: 0mniteck42
         password: ${{ secrets.DOCKER }}
-      image: docker://dhi.io/debian-base@sha256:1cefd55d979ddbd9110cf73cf3de11798a7893a4598050ba57624bc754b244aa
+      image: docker://dhi.io/debian-base@sha256:ce12bf580bb4c3986b7c934db5948353646371326c038a506dbe19545a1e0ee7
     steps:
       - name: Install docker CLI + buildx
         run: |
