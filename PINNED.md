@@ -1,11 +1,10 @@
 # PINNED.md - yubiOS approved refs & digests
 
-All GitHub Actions and container image references used across the yubi-OS org
-must appear here before being added to any workflow or Containerfile.
-Non-pinned refs (mutable tags, branch names) are not permitted.
+_Last reviewed: 2026-07-11 during the docs/research planning cycle._
 
-**This file is the single source of truth.** AGENTS.md and every workflow refer
-here; do not duplicate the digest list elsewhere.
+All GitHub Actions and container image references used across the yubi-OS org must appear here before being added to any workflow or Containerfile. Non-pinned refs such as mutable tags and branch names are not permitted.
+
+**This file is the single source of truth.** AGENTS.md, ADRs, research notes, and workflows may point here, but they should not duplicate the live digest list.
 
 ---
 
@@ -27,26 +26,26 @@ here; do not duplicate the digest list elsewhere.
 
 | Image | Pinned Digest | Notes |
 |-------|---------------|-------|
-| `dhi.io/debian-base` (multi-arch INDEX) | `sha256:ce12bf580bb4c3986b7c934db5948353646371326c038a506dbe19545a1e0ee7` | **Canonical for workflows + Containerfile `FROM`.** OCI image *index* (manifest list) for `trixie-debian13-dev`; auto-resolves per runner arch. Use this for any multi-arch (amd64 + arm64) job. |
-| child `linux/amd64` | `sha256:573453453097b1e95c7a24f80f3fdd1ed7552cb2d4fbc89995cab19ebe920a47` | resolved automatically; do not pin directly unless an amd64-only job is required |
-| child `linux/arm64` | `sha256:e2f2c3ea2fd70a4e4750c00f6e9fde90cf2f6930165765bc8156a305ab2185c6` | resolved automatically |
-| `quay.io/fedora/fedora-bootc:45` (multi-arch INDEX) | `sha256:3674264e179971a0b001bca8bd01f31b3e776ff8636c6d39262c6e27958994dc` | **Containerfile `FROM` base.** OCI image *index*; auto-resolves per arch. Re-resolved 2026-07-11 (prior digest 404d on quay). Refresh with `fetch-fedora-bootc-manifest`. |
-| `ghcr.io/actions/jekyll-build-pages` | `sha256:6791ebfd912185ed59bfb5fb102664fa872496b79f87ff8b9cfba292a7345041` | |
-| `ghcr.io/hadolint/hadolint:v2.14.0-debian` | `sha256:158cd0184dcaa18bd8ec20b61f4c1cabdf8b32a592d062f57bdcb8e4c1d312e2` | |
+| `dhi.io/debian-base` (multi-arch INDEX) | `sha256:ce12bf580bb4c3986b7c934db5948353646371326c038a506dbe19545a1e0ee7` | **Canonical for workflows + Containerfile `FROM` where DHI is used.** OCI image index for `trixie-debian13-dev`; auto-resolves per runner arch. |
+| child `linux/amd64` | `sha256:573453453097b1e95c7a24f80f3fdd1ed7552cb2d4fbc89995cab19ebe920a47` | Resolved automatically; do not pin directly unless an amd64-only job requires it. |
+| child `linux/arm64` | `sha256:e2f2c3ea2fd70a4e4750c00f6e9fde90cf2f6930165765bc8156a305ab2185c6` | Resolved automatically. |
+| `quay.io/fedora/fedora-bootc:45` (multi-arch INDEX) | `sha256:3674264e179971a0b001bca8bd01f31b3e776ff8636c6d39262c6e27958994dc` | **Containerfile `FROM` base.** OCI image index; auto-resolves per arch. Re-resolved 2026-07-11. Refresh with `fetch-fedora-bootc-manifest`. |
+| `ghcr.io/actions/jekyll-build-pages` | `sha256:6791ebfd912185ed59bfb5fb102664fa872496b79f87ff8b9cfba292a7345041` | Pages build image. |
+| `ghcr.io/hadolint/hadolint:v2.14.0-debian` | `sha256:158cd0184dcaa18bd8ec20b61f4c1cabdf8b32a592d062f57bdcb8e4c1d312e2` | Hadolint image. |
 
-> Superseded single-arch digests (no longer used in workflows; kept for audit only):
-> `62bc0610151db7155b7225f1a03c299bf109ab0b884da6777d1f808c7834d4ea` (amd64-only manifest),
-> `9415967aa0ed8adea8b5c048994259d1982026dca143d0303c7bbe0e11ed67d3` (older single-arch).
-> `b7b34d8720b2e0ccaba980fd92347e7820051496ca0e639704172c6f3fb8877d` (prior quay fedora-bootc:45 index, rotated out of quay -> 404).
-> `8a1c786152eaf72346a339ae2b869f5f7445cd311700f932f8bc94433a0e7d1b` (2026-07-07 quay fedora-bootc:45 index, also rotated out -> 404 as of 2026-07-08).
-> Resolve the current DHI index with `fetch-dhi-manifest` and the current Fedora bootc index with `fetch-fedora-bootc-manifest`; both workflows request OCI index media types.
+> Superseded single-arch or rotated digests kept for audit only:
+> `62bc0610151db7155b7225f1a03c299bf109ab0b884da6777d1f808c7834d4ea`,
+> `9415967aa0ed8adea8b5c048994259d1982026dca143d0303c7bbe0e11ed67d3`,
+> `b7b34d8720b2e0ccaba980fd92347e7820051496ca0e639704172c6f3fb8877d`,
+> `8a1c786152eaf72346a339ae2b869f5f7445cd311700f932f8bc94433a0e7d1b`.
 
 ---
 
 ## Policy
 
-- All container image `FROM` statements in Containerfile and `uses:` in workflows must reference a SHA pinned here.
-- For multi-arch (amd64 + arm64) jobs, reference the **INDEX** digest so it auto-resolves per runner architecture - never pin a single-arch child in a matrix job.
-- Mutable tags (`:latest`, `:main`, branch refs) are rejected by `yubiOS.rego` and AGENTS.md policy.
-- To add or roll a ref: obtain the digest, update a row here, update all repo references to the old digest, update `yubiOS.rego` if a new registry is introduced, open a PR. Use `fetch-dhi-manifest` for `dhi.io/debian-base` and `fetch-fedora-bootc-manifest` for `quay.io/fedora/fedora-bootc:45`.
+- All container image `FROM` statements in Containerfile and `uses:` entries in workflows must reference a SHA pinned here.
+- For multi-arch jobs, reference the OCI index digest so it auto-resolves per runner architecture; do not pin a single-arch child in a matrix job.
+- Mutable tags such as `:latest`, `:main`, or branch refs are rejected by `yubiOS.rego` and AGENTS.md policy.
+- To add or roll a ref: obtain the digest, update this file, update repo references to the old digest, update `yubiOS.rego` if a new registry is introduced, and open a PR.
+- Use `fetch-dhi-manifest` for `dhi.io/debian-base` and `fetch-fedora-bootc-manifest` for `quay.io/fedora/fedora-bootc:45`.
 - Digests are verified at build time via Docker Build Policy (`--policy reset=true,strict=true`).

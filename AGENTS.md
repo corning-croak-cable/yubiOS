@@ -1,111 +1,89 @@
 # AGENTS.md
 
-This file provides guidance to AI coding agents (Claude Code, Cursor, Copilot, Antigravity, etc.) when working with code on yubiOS/{{repos}}.
-Prefer the skills and knowledge referenced from this file over ad-hoc per-repo instructions; let's go fast and make some stuff!
+This file provides guidance to AI coding agents working on yubiOS and the supporting yubi-OS repositories. Prefer the skills and knowledge referenced here over ad-hoc instructions, but keep repository-specific guidance in this file and reusable skill-routing guidance in the skill files.
 
-Warning: Rate limit your api calls to github to avoid lockout, allow cooldowns. Always keep copies of created work in your cache in the knowledge files first, then push.
+Warning: rate-limit GitHub API calls to avoid lockout. Batch independent reads, avoid repeated URL opens, and keep work scoped to the current task.
 
-## First off restore sessions/cache
+## Session start
 
-Always start by importing any previously unseen sessions/SESSION_*.zip, unzipping, and ingesting the files into your skills, cache, history, profiles, knowledge, and general files.
+1. Read this file first, then [PINNED.md](PINNED.md), then the task-specific docs or workflow files.
+2. Import any explicitly provided `SESSION_*.zip` artifacts before relying on old cache state.
+3. Re-scan relevant knowledge and skills for drift. Use `skill-creator` guidance when improving agent skill files, but do not copy full skill bodies into repo docs.
+4. Reassess [TODO.md](TODO.md), [BLOCKERS.md](BLOCKERS.md), and `refs/` notes when a planning or research task updates project state.
 
-Rescan and organize all knowledge files and skills looking for crossover and changes, always update working directories in knowledge with INDEX.md and OVERVIEW.md files.
+## Repository overview
 
-Then incorporate the rest of the skills from this file, org, and repo; as well as absorb any references and docs. Look for and fill in knowledge gaps and any changes in repos and files and keep it in the top level INDEX.md knowledge file.
+Primary repo: https://github.com/yubi-OS/yubiOS
 
-Consider this [AGENTS.md](https://github.com/yubi-OS/yubiOS/raw/refs/heads/main/AGENTS.md) as primary and to always combine together with the constantly updated skills/knowledge referenced from [AGENTS.md](https://github.com/yubi-OS/agent-skills/raw/refs/heads/main/AGENTS.md)
+FIDO2-first immutable OS: YubiKey as root of trust for Secure Boot, disk encryption, SSH, and PAM. The design avoids mandatory TPM, OEM, or distribution-controlled trust anchors.
 
-Always check for and update stale skills and knowledge that have upstream changes or during AGENTS.md ingestion; ie. a Refresh skills SKILL.
+## Hands-off repos
 
-Finally reassess and update the TODO.md in this branch with relevant next steps.
+Do not use or modify any repository whose repository name contains a period. This does not restrict folders or files inside an allowed repository.
 
-## Repository Overview - https://github.com/yubi-OS/yubiOS
+## Project repository list
 
-FIDO2-first immutable OS: YubiKey as root of trust for Secure Boot, disk encryption, SSH, and PAM — no TPM, no OEM dependency
-This is the primary repo for the org at https://github.com/yubi-OS
+| Repo | Purpose | Status |
+|---|---|---|
+| `yubi-OS/yubiOS` | Main project | Active |
+| `yubi-OS/bootc` | Bootable OCI images fork | Active |
+| `yubi-OS/bcvk` | Bootc virtualization kit fork | Active; referenced by yubiOS CI |
+| `yubi-OS/mkosi` | OS image builder fork | Active |
+| `yubi-OS/particleos` | Reference implementation fork | Reference only |
+| `yubi-OS/arm-trusted-firmware` | TF-A BL31 / TBB fork | ARM64 fTPM stack |
+| `yubi-OS/optee_os` | OP-TEE secure-world OS fork | ARM64 fTPM stack |
+| `yubi-OS/optee_ftpm` | fTPM TA fork | ARM64 fTPM stack |
+| `yubi-OS/u-boot` | BL33 + UEFI provider fork | ARM64 fTPM stack |
+| `yubi-OS/ms-tpm-20-ref` | TPM 2.0 reference fork | ARM64 fTPM stack |
+| `yubi-OS/edk2` | StandaloneMM variable service source | ARM64 support |
+| `yubi-OS/edk2-rk3588` | RK3588 EDK2 reference | Reference only |
 
-## Hands-off .repos
+Hands off: `.example`, `.github`, `yubi-OS.github.io`, and any other repo name containing `.`.
 
-Do NOT use or modify any repo that contains a decimal or period anywhere in the name. Does not restrict folders or files just the repo.
+## Source of truth rules
 
-## Project Repository List
+- [PINNED.md](PINNED.md) is the single source of truth for approved GitHub Action SHAs and container image digests.
+- Do not duplicate digest tables in this file. Show shape/examples only.
+- Current workflow-file writes are permitted through the connected GitHub app / granted workflow-capable path. Historical notes about missing `workflow` scope are resolved unless a live connector error proves otherwise.
+- Draft/staging workflow notes belong in `refs/`; production workflows live under `.github/workflows/`.
+
+## Default image shape
+
+Use the multi-arch OCI index digest from [PINNED.md](PINNED.md):
+
+```sh
+docker pull dhi.io/debian-base:trixie-debian13-dev@sha256:<PINNED_INDEX_DIGEST>
+docker buildx build --policy reset=true,strict=true,filename=yubiOS.rego .
 ```
 
-<https://github.com/>\
-│ yubi-OS/ # Org-level\
-├───────────────────── yubiOS/ # Main Project\
-├───────────────────── bootc/ # Bootable OCI images (fork)\
-├───────────────────── bcvk/ # Bootc virtualization kit — CI test VM + image installer/upgrader (fork)\
-├───────────────────── mkosi/ # OS container image builder (fork)\
-├───────────────────── particleos/ # Reference implementation (fork)\
-│\
-│ ARM64 fTPM stack (post-launch, ADR-018/019/020/021):\
-├───────────────────── arm-trusted-firmware/ # TF-A BL31 — PLAT=rk3588, ROTPK, FIP, TBB (fork)\
-├───────────────────── optee_os/ # BL32 secure-world OS — PLATFORM=rockchip, RPMB, Early TA (fork)\
-├───────────────────── optee_ftpm/ # fTPM TA — ms-tpm-20-ref integration, UUID bc50d971 (fork)\
-├───────────────────── u-boot/ # BL33 + UEFI — EFI_LOADER, TPM2_FTPM_TEE, measured boot (fork, ADR-021)\
-├───────────────────── ms-tpm-20-ref/ # TPM 2.0 reference — pinned 98b60a44 (fork)\
-├───────────────────── edk2/ # EDK2 StandaloneMM variable service for UEFI Secure Boot vars on RPMB (fork)\
-├───────────────────── edk2-rk3588/ # EDK2 UEFI for RK3588 boards — reference only, not active path (fork, ADR-021)\
-│\
-DO NOT USE ───── yubi-OS/\
-├───────────────────── .example/ # HANDS OFF\
-├───────────────────── .github/ # HANDS OFF\
-├───────────────────── ,[yubi-OS.github.io/](http://yubi-OS.github.io/) # HANDS OFF\
-│
+Workflow containers must use the pinned index digest and Docker Hub credentials from repository secrets:
 
-```
-
-## Default (preferred) Images
-
-**PINNED.md is the single source of truth for every approved digest and action SHA.**
-Do not hardcode or duplicate digests here — look them up in
-[PINNED.md](https://github.com/yubi-OS/yubiOS/raw/refs/heads/main/PINNED.md) and keep that
-file current. The notes below show the shape; the authoritative values live in PINNED.md.
-
-```
-**in OCI for dockerfiles and .rego** (use the multi-arch INDEX digest from PINNED.md)
-docker pull dhi.io/debian-base:trixie-debian13-dev@sha256:ce12bf580bb4c3986b7c934db5948353646371326c038a506dbe19545a1e0ee7
-docker buildx build --policy reset=true,strict=true,filename=$REPO.rego .
-
-**in Github workflow** (INDEX digest auto-resolves per runner arch — required for amd64+arm64 matrices)
-runs-on: ubuntu-24.04            # or ubuntu-24.04-arm for native arm64
+```yaml
 container:
   credentials:
     username: 0mniteck42
-    password: ${{secrets.DOCKER}}
-  image: docker://dhi.io/debian-base@sha256:ce12bf580bb4c3986b7c934db5948353646371326c038a506dbe19545a1e0ee7 # trixie-debian13-dev INDEX (manifest list)
-Steps
-  - name: Checkout
-    uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # see PINNED.md
-
-**Multi-arch CI:** prefer a native matrix split (ubuntu-24.04 + ubuntu-24.04-arm, runs-on from
-the matrix) over QEMU emulation — see yubiOS-ci.yml. arm64 hosted runners are free on public repos.
-
-**Allowed actions + images:** see PINNED.md. Every `uses:` and image `FROM` must reference a SHA pinned there.
+    password: ${{ secrets.DOCKER }}
+  image: docker://dhi.io/debian-base@sha256:<PINNED_INDEX_DIGEST>
 ```
 
-Finally go ahead and do some deep research on the following links section.
+ARM64 runner policy is workflow-specific. Current docs distinguish non-KVM ARM64 lanes from VM/KVM lanes; check the workflow before changing runner labels.
 
-## Deep Research Links
+## Deep research links
 
-- <https://www.man7.org/linux/man-pages/man5/systemd.exec.5.html>
-- <https://www.man7.org/linux/man-pages/man5/systemd.unit.5.html>
-- <https://www.man7.org/linux/man-pages/man5/systemd.service.5.html>
-- <https://man7.org/linux/man-pages/man7/systemd.directives.7.html>
-- <https://0pointer.net/blog/fitting-everything-together.html>
-- <https://0pointer.net/blog/> # Build or update 0pointer SKILL - Mastery and big picture
-- <https://docs.docker.com/>
-- <https://docs.docker.com/build/policies/intro/>
-- <https://docs.docker.com/build/policies/intro/examples/>
-- <https://docs.docker.com/build/policies/intro/intro/>
-- <https://docs.docker.com/build/policies/intro/usage/>
-- <https://pq.cloudflareresearch.com/>
-- <https://docs.github.com/en/actions>
-- <https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions>
-- <https://docs.github.com/en/actions/writing-workflows/choosing-when-your-workflow-runs/events-that-trigger-workflows>
-- <https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication>
-- <https://docs.github.com/en/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions>
-- <https://docs.github.com/en/rest/actions>
-- <https://docs.github.com/en/rest/actions/workflow-runs>
-- <https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event>
+- https://www.freedesktop.org/software/systemd/man/systemd.exec.html
+- https://www.freedesktop.org/software/systemd/man/systemd.unit.html
+- https://www.freedesktop.org/software/systemd/man/systemd.service.html
+- https://man7.org/linux/man-pages/man7/systemd.directives.7.html
+- https://github.com/systemd/systemd/releases/tag/v261
+- https://0pointer.net/blog/fitting-everything-together.html
+- https://docs.docker.com/build/policies/intro/
+- https://openssl-library.org/news/openssl-3.5-notes/
+- https://go.dev/doc/go1.24
+- https://bootc.dev/bootc/bootc-install.html
+- https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions
+- https://docs.github.com/en/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions
+- https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event
+
+## Planning-cycle notes
+
+The latest documentation/research planning pass is in [refs/planning-cycle-2026-07-11.md](refs/planning-cycle-2026-07-11.md). Use it before repeating the same drift audit.

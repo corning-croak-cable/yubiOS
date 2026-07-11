@@ -1,4 +1,6 @@
-# Architecture Decision Records — yubiOS
+# Architecture Decision Records - yubiOS
+
+Last reviewed: 2026-07-11
 
 ## ADR-001: YubiKey as TPM replacement
 
@@ -13,7 +15,7 @@ with vendor keys the user never sees.
 **Rationale:**
 - Hardware-bound key material that travels with the user, not the board
 - Open specification (FIDO2/CTAP2, PIV/PKCS#11, OATH)
-- Touch-required by default — no silent decryption
+- Touch-required by default -- no silent decryption
 - User-generated keys: no OEM or manufacturer trust chain
 
 **Trade-offs:**
@@ -34,7 +36,7 @@ certificate that can be enrolled in the UEFI Secure Boot `db`.
 **Decision:** Use YubiKey PIV slot 9c (Digital Signature) via PKCS#11 for
 Secure Boot key material. Interface: CCID (USB smartcard), not hidraw.
 
-**Signing toolchain:** Use `systemd-sbsign` (systemd v257+; yubiOS base is now pinned to v261+, see ADR-015 and ADR-016) via `--key pkcs11:…`.
+**Signing toolchain:** Use `systemd-sbsign` (systemd v257+; yubiOS base is now pinned to v261+, see ADR-015 and ADR-016) via `--key pkcs11:...`.
 This replaces legacy `sbsigntools` (`sbsign --engine pkcs11`). Both speak PKCS#11;
 systemd-sbsign integrates tighter with the UKI pipeline and is now the upstream default.
 
@@ -47,8 +49,11 @@ systemd-sbsign integrates tighter with the UKI pipeline and is now the upstream 
 **Future:** A fully hidraw-only signing path (FIDO2 HMAC-secret wrapping a
 Secure Boot key) is tracked in TODO.md. `age-plugin-fido2-hmac` is a candidate.
 
-**Consequence:** Users need `pcscd` running for PIV ops. ykman must have CCID enabled.
-    ykman config usb --enable FIDO --enable CCID
+**Consequence:** Users need `pcscd` running for PIV ops.
+
+```bash
+ykman config usb --enable FIDO --enable CCID
+```
 
 ---
 
@@ -60,14 +65,14 @@ Secure Boot key) is tracked in TODO.md. `age-plugin-fido2-hmac` is a candidate.
 No TPM slot is enrolled.
 
 **Rationale:**
-- FIDO2 credential (HMAC-secret extension) stored in LUKS2 token header — no TPM needed
+- FIDO2 credential (HMAC-secret extension) stored in LUKS2 token header -- no TPM needed
 - Disk unlockable on any machine with the YubiKey (TPM-bound disks are board-locked)
-- Touch required at every boot — prevents silent decryption
+- Touch required at every boot -- prevents silent decryption
 - FIDO2 enrollment does NOT bind to PCR hash values, so OS updates never require
   re-enrollment (unlike TPM2 PCR-hash policies which break on every kernel/initrd change)
 - Source: https://www.freedesktop.org/software/systemd/man/latest/systemd-cryptenroll.html
 
-**v261 (June 19, 2026):** No regressions for this ADR. `systemd-cryptenroll --fido2-device=auto` and `--fido2-with-client-pin=yes` are unchanged. New v261 features tracked in ADR-016 (`ConditionSecurity=measured-os`, `RestrictFileSystems=`, `systemd-tpm2-swtpm.service`) do not affect the disk-unlock path.
+**v261 review (2026-07-11):** No regressions for this ADR. `systemd-cryptenroll --fido2-device=auto` and `--fido2-with-client-pin=yes` are unchanged. New or reviewed systemd items tracked in ADR-016 (`ConditionSecurity=measured-os`, `RestrictFileSystemAccess=`, `systemd-tpm2-swtpm.service`, and the existing `RestrictFileSystems=` hardening control) do not affect the disk-unlock path.
 
 **PIN policy:** `--fido2-with-client-pin=yes` is the default in yubiOS.
 Requires FIDO2 PIN + touch at boot. Strongest available option without biometrics.
@@ -118,7 +123,7 @@ This ships in `usr/lib/dracut.conf.d/50-yubiOS-fido2.conf`.
 **Rationale:**
 - CVE-2025-23013: partial authentication bypass in pam-u2f < 1.3.1
 - Source: https://www.yubico.com/support/security-advisories/ysa-2025-01/
-- `auth required pam_u2f.so` (not `sufficient`) — YubiKey touch always needed
+- `auth required pam_u2f.so` (not `sufficient`) -- YubiKey touch always needed
 - `authfile=/etc/yubico/u2f_keys` centralises enrolled keys for easier audit
 
 **Recovery:** If YubiKey is lost, boot to emergency shell (add `rd.break` karg),
@@ -153,7 +158,7 @@ read-only root filesystem, following the particleos pattern.
 **Rationale:**
 - composefs provides a cryptographically-verified directory tree via fs-verity
 - erofs backing store is signed by systemd-repart's verity support
-- Roothash is embedded in the UKI kernel cmdline at build time — tampering is
+- Roothash is embedded in the UKI kernel cmdline at build time -- tampering is
   detected before any userspace runs
 - Fully compatible with bootc day-2 upgrades: each new OCI layer produces a
   new erofs+verity pair; old layers are garbage-collected
@@ -177,17 +182,17 @@ read-only root filesystem, following the particleos pattern.
 **Decision:** Use `systemd-sbsign` as the UKI signing tool going forward.
 
 **Rationale:**
-- `systemd-sbsign` is maintained inside the systemd tree — same release cycle, same
+- `systemd-sbsign` is maintained inside the systemd tree -- same release cycle, same
   PKCS#11 integration, co-developed with `ukify` and the unified kernel image pipeline
 - Supports `--key pkcs11:slot=0;id=02` (YubiKey PIV slot 9c) natively
 - Generates and verifies PCR 11 signatures in one step (`--pcr-private-key` /
-  `--pcr-public-key`) alongside the SecureBoot signature — no separate invocations
+  `--pcr-public-key`) alongside the SecureBoot signature -- no separate invocations
 - Upstream mkosi switched its signing backend to `systemd-sbsign` in v25+
 - Source: https://www.freedesktop.org/software/systemd/man/latest/systemd-sbsign.html
 - Source: https://0pointer.net/blog/announcing-systemd-v257.html
 
-**Migration:** Replace any `sbsign --engine pkcs11 --key …` invocations in
-FinalizeScripts and CI with `systemd-sbsign --key pkcs11:… --certificate cert.pem`.
+**Migration:** Replace any `sbsign --engine pkcs11 --key ...` invocations in
+FinalizeScripts and CI with `systemd-sbsign --key pkcs11:... --certificate cert.pem`.
 
 **Consequence:** Requires systemd >= 257. yubiOS base is now pinned to v261 (ADR-015/ADR-016); Debian Trixie ships systemd 257.x.
 
@@ -199,7 +204,7 @@ FinalizeScripts and CI with `systemd-sbsign --key pkcs11:… --certificate cert.
 
 **Context:** Traditional Linux home directories rely on system-wide FDE for data protection.
 This means all users share one encryption key; any system compromise exposes all user data,
-and data is readable whenever the system is unlocked — including during suspend.
+and data is readable whenever the system is unlocked -- including during suspend.
 
 **Decision:** Use systemd-homed for all user home directories. Each home is an independent
 LUKS2-encrypted volume unlocked by the user's own YubiKey FIDO2 credential.
@@ -208,10 +213,10 @@ LUKS2-encrypted volume unlocked by the user's own YubiKey FIDO2 credential.
 - Per-user encryption: user data cryptographically inaccessible even when system is running
   but the user is not logged in
 - Suspend security: homed locks (flushes LUKS2 keys) before system suspend; resumes only
-  after YubiKey re-authentication — key never sits in RAM during suspend
+  after YubiKey re-authentication -- key never sits in RAM during suspend
 - Portable homes: LUKS2 volume is a self-contained file; can migrate between machines with
   `homectl adopt` without re-encryption
-- Dynamic UID assignment at login via uidmap mounts — no fixed UID conflicts across machines
+- Dynamic UID assignment at login via uidmap mounts -- no fixed UID conflicts across machines
 - Source: https://0pointer.net/blog/authenticated-boot-and-disk-encryption-on-linux.html
   (section: How to Encrypt/Authenticate the User's Home Directory)
 
@@ -223,18 +228,18 @@ LUKS2-encrypted volume unlocked by the user's own YubiKey FIDO2 credential.
 - btrfs is required for the home volume filesystem (online resize support)
 
 **v258 additions used:**
-- `homectl add-signing-key` — enroll FIDO2 signing key for portable home across machines
-- `homectl adopt` — import an existing home onto a new machine
-- `homectl list-signing-keys` — audit enrolled keys
+- `homectl add-signing-key` -- enroll FIDO2 signing key for portable home across machines
+- `homectl adopt` -- import an existing home onto a new machine
+- `homectl list-signing-keys` -- audit enrolled keys
 
 ---
 
-## ADR-010: Discoverable Partitions Specification (DPS) — no /etc/fstab
+## ADR-010: Discoverable Partitions Specification (DPS) - no /etc/fstab
 
 **Status:** Accepted
 
 **Context:** Traditional Linux installations encode mount points in /etc/fstab, which lives
-inside the root filesystem — creating a circular dependency (you need the root fs to know
+inside the root filesystem -- creating a circular dependency (you need the root fs to know
 where the root fs is). Boot loader configs duplicate this information, creating drift.
 
 **Decision:** Partition all yubiOS disks using GPT partition type UUIDs from the
@@ -243,29 +248,33 @@ handle all mount discovery at boot.
 
 **Rationale:**
 - DPS UUIDs are self-describing: partition type encodes role (/usr, root, home, swap,
-  ESP, verity data, verity sig) and architecture — no external config needed
+  ESP, verity data, verity sig) and architecture -- no external config needed
 - Same disk image boots on bare metal, in a VM, and in a systemd-nspawn container with
-  zero configuration changes — all three entry points understand DPS
+  zero configuration changes -- all three entry points understand DPS
 - systemd-dissect, systemd-repart, systemd-nspawn, systemd-gpt-auto-generator all consume
   DPS natively; the same toolset handles image introspection, provisioning, and booting
-- A/B versioning is encoded in GPT partition labels (`yubiOS_0.8`) — strverscmp() picks
+- A/B versioning is encoded in GPT partition labels (`yubiOS_0.8`) -- strverscmp() picks
   the newest automatically in every tool that dissects the image
 - Source: https://systemd.io/DISCOVERABLE_PARTITIONS
 - Source: https://0pointer.net/blog/the-wondrous-world-of-discoverable-gpt-disk-images.html
 
 **Partition layout (shipped image):**
 
-    (1) ESP              — systemd-boot + UKI
-    (2) /usr A           — erofs, immutable, Verity-protected, label: yubiOS_<ver>
-    (3) /usr A verity    — Merkle tree data
-    (4) /usr A sig       — PKCS#7 signature of Verity root hash
+```text
+(1) ESP              - systemd-boot + UKI
+(2) /usr A           - erofs, immutable, Verity-protected, label: yubiOS_<ver>
+(3) /usr A verity    - Merkle tree data
+(4) /usr A sig       - PKCS#7 signature of Verity root hash
+```
 
 **Created on first boot by systemd-repart:**
 
-    (5-7) /usr B + verity + sig  — initially _empty, filled on first update
-    (8)   root fs                — LUKS2 btrfs, YubiKey FIDO2 enrolled
-    (9)   home fs                — integrity-protected, systemd-homed per-user LUKS2
-    (10)  swap                   — encrypted
+```text
+(5-7) /usr B + verity + sig  - initially _empty, filled on first update
+(8)   root fs                - LUKS2 btrfs, YubiKey FIDO2 enrolled
+(9)   home fs                - integrity-protected, systemd-homed per-user LUKS2
+(10)  swap                   - encrypted
+```
 
 ---
 
@@ -274,7 +283,7 @@ handle all mount discovery at boot.
 **Status:** Accepted
 
 **Context:** When using TPM2 PCR-hash policies for LUKS2 unlock, every kernel, initrd, or
-boot configuration change produces new PCR values — invalidating the existing enrollment.
+boot configuration change produces new PCR values -- invalidating the existing enrollment.
 Users must re-enroll the LUKS2 volume after every OS update, or pre-enroll future PCR
 values using signed PCR policies (complex, distribution-dependent).
 
@@ -282,21 +291,19 @@ values using signed PCR policies (complex, distribution-dependent).
 to TPM PCR hash values. Updates require zero re-enrollment.
 
 **Rationale:**
-- FIDO2 HMAC-secret produces a deterministic key from (credential_id, salt, PIN) —
+- FIDO2 HMAC-secret produces a deterministic key from (credential_id, salt, PIN) --
   this key is independent of what OS or kernel version is running
 - Updating the UKI, rebuilding the initrd, or changing kernel args has no effect on
-  the LUKS2 token — it will still unlock on next boot with the same YubiKey + PIN
+  the LUKS2 token -- it will still unlock on next boot with the same YubiKey + PIN
 - Contrast with TPM2 PCR policies: PCR 11 changes on every UKI rebuild (different hash);
   the enrolled DEK is inaccessible unless the PCR policy is updated ahead of each update
 - The signed PCR policy approach (Brave New Trusted Boot World, 2022) does solve the
   update problem for TPM2, but requires a distribution-maintained signing infrastructure;
   FIDO2 achieves the same update-survivability with hardware possession as the proof
 - Source: https://0pointer.net/blog/unlocking-luks2-volumes-with-tpm2-fido2-pkcs11-security-hardware-on-systemd-248.html
-  (Future section: notes TPM2 PCR re-enrollment complexity)
 - Source: https://0pointer.net/blog/brave-new-trusted-boot-world.html
-  (signed PCR policy design — this is what we avoid needing by using FIDO2)
 
-**Trade-off:** FIDO2 does not verify *which OS* is running before releasing the key —
+**Trade-off:** FIDO2 does not verify *which OS* is running before releasing the key --
 the disk will unlock if the correct YubiKey is present regardless of the boot environment.
 This is a conscious trade-off: the YubiKey's physical possession requirement provides the
 equivalent protection, and it avoids OEM/distribution trust dependencies.
@@ -308,7 +315,7 @@ equivalent protection, and it avoids OEM/distribution trust dependencies.
 **Status:** Accepted
 
 **Context:** Traditional OS installation involves running an installer that provisions
-partitions, generates encryption keys, and configures the system — before the first real
+partitions, generates encryption keys, and configures the system -- before the first real
 boot. This means cryptographic keys are generated outside the target device, creating
 opportunities for leakage during manufacturing or distribution.
 
@@ -323,11 +330,10 @@ never leaves it.
 - Live image = installer image: `dd` the shipped image to a USB stick, it IS the installer;
   no separate installer artifact needed
 - Adaptive sizing: systemd-repart reads the physical disk size and sizes the root fs
-  partition to fill available space — no fixed-size pre-allocation
+  partition to fill available space -- no fixed-size pre-allocation
 - Factory reset is the inverse: systemd-repart erases partitions 8-10 on next boot and
   recreates them with fresh keys (triggered via EFI variable or kernel argument)
 - Source: https://0pointer.net/blog/fitting-everything-together.html
-  (section: OS Installation vs. OS Instantiation)
 - Source: https://www.freedesktop.org/software/systemd/man/latest/systemd-repart.html
 
 **Implementation:**
@@ -361,13 +367,14 @@ counters embedded in UKI filenames.
   newest version is always preferred without manual intervention
 
 **Source:** https://systemd.io/AUTOMATIC_BOOT_ASSESSMENT
-**Source:** https://0pointer.net/blog/fitting-everything-together.html (section: Updating Images)
+**Source:** https://0pointer.net/blog/fitting-everything-together.html
 
 **Consequence:**
 - The `yubiOS-upgrade.service` unit must call `bootctl set-boot-good` after verifying
   a successful boot (network up, key services healthy)
-- Rollback is automatic if the counter hits zero — but active monitoring should alert on
+- Rollback is automatic if the counter hits zero -- but active monitoring should alert on
   rollback events so regressions are caught before affecting all deployed instances
+
 ---
 
 ## ADR-014: Rootless Docker (Docker Buildx) over rootless Podman
@@ -377,8 +384,8 @@ counters embedded in UKI filenames.
 **Context:** The build pipeline needs a rootless container build tool. Both Podman and
 Docker Buildx can build OCI images without root. The project already depends on Docker Buildx
 for Build Policies enforcement (`docker buildx build --policy ... --policy strict=true`)
-per the OPA/Rego supply-chain strategy. Carrying two separate container runtimes — Podman
-for builds, Docker Buildx for policy enforcement — adds redundant tooling and an extra
+per the OPA/Rego supply-chain strategy. Carrying two separate container runtimes -- Podman
+for builds, Docker Buildx for policy enforcement -- adds redundant tooling and an extra
 surface in the trust chain.
 
 **Decision:** Use rootless Docker Buildx (`docker buildx build`) as the sole container build
@@ -388,27 +395,19 @@ runtime. Remove Podman from the build dependency chain.
 - **One dependency, not two.** Every tool that processes the image before signing is an
   attack surface. Collapsing to a single runtime means a single audit target.
 - **Build Policies require Buildx.** OPA/Rego Build Policies (`--policy`) are a
-  Docker Buildx / BuildKit feature. Podman's Buildah backend has no equivalent; the
-  policy gate would either be skipped or require a second tool. Using Buildx exclusively
-  ensures `yubiOS.rego` runs on every `docker buildx build` without exception.
-- **Native provenance and SBOM.** Buildx’s `--attest type=provenance,mode=max` and
-  `--attest type=sbom` generate SLSA provenance at build time in one flag. Equivalent
-  Podman/Buildah paths require separate cosign / syft invocations.
-- **Uniform install path.** The runtime command for installing yubiOS to disk
-  (`docker run --rm --privileged ... bootc install to-disk /dev/...`) is already
-  Docker-CLI. Keeping build and run on the same tool eliminates `podman` as a distinct
-  runtime requirement for end users.
-- **daemonless trade-off accepted.** Docker requires a daemon (`dockerd`) or
-  Docker-in-Docker in CI. The dhi.io CI base image ships Docker; on developer machines
-  Docker Desktop or rootless `dockerd` provides the daemon. This overhead is accepted
-  in exchange for the unified toolchain above.
+  Docker Buildx / BuildKit feature. Podman's Buildah backend has no equivalent.
+- **Native provenance and SBOM.** Buildx's `--attest type=provenance,mode=max` and
+  `--attest type=sbom` generate SLSA provenance at build time in one flag.
+- **Uniform install path.** The runtime command for installing yubiOS to disk is already
+  Docker-CLI/bootc-oriented.
+- **daemonless trade-off accepted.** Docker requires a daemon (`dockerd`) or Docker-in-Docker
+  in CI. This overhead is accepted in exchange for the unified toolchain above.
 
 **Migration:** Replace all `podman build` invocations with `docker buildx build` and
-all `podman run` with `docker run`. The `Containerfile` syntax is identical; no
-contents change beyond the build header comment.
+all `podman run` with `docker run`. The `Containerfile` syntax is identical.
 
-**Source:** https://docs.docker.com/build/policies/intro/ (Build Policies, Buildx-only feature)
-**Source:** https://docs.docker.com/build/attestations/ (provenance + SBOM attestations)
+**Source:** https://docs.docker.com/build/policies/intro/
+**Source:** https://docs.docker.com/build/attestations/
 
 ---
 
@@ -416,48 +415,26 @@ contents change beyond the build header comment.
 
 **Status:** Accepted
 
-**Context:** The Containerfile previously used `quay.io/fedora/fedora-bootc:latest` — a
-mutable tag that silently pulls different content on each build. This creates two problems:
-1. Non-reproducible builds: the base layer changes without any commit-level signal.
-2. Policy violation: `yubiOS.rego` already requires `input.image.isCanonical` (digest-pinned
-   refs) for all base images. Using `:latest` causes every `docker buildx build --policy`
-   invocation to fail its own supply-chain gate.
+**Context:** The Containerfile previously used `quay.io/fedora/fedora-bootc:latest` -- a
+mutable tag that silently pulls different content on each build.
 
-**Decision:** Pin the base image to:
-
-    FROM quay.io/fedora/fedora-bootc:45@sha256:b7b34d8720b2e0ccaba980fd92347e7820051496ca0e639704172c6f3fb8877d
+**Decision:** Pin the base image by digest and use [PINNED.md](PINNED.md) as the live source of truth for the current digest.
 
 **Rationale:**
-- **Reproducibility.** A SHA256 digest is content-addressed and immutable; the same
-  digest produces identical bits on every build, everywhere, forever.
-- **Self-consistency.** Brings the Containerfile into compliance with `yubiOS.rego`,
-  which rejects non-canonical refs. The image now passes its own policy gate.
-- **Systemd version guarantee.** Fedora 45 ships systemd ≥ 257, satisfying ADR-008’s
-  requirement for `systemd-sbsign` (the UKI signing tool). A mutable `:latest` tag
-  could regress this at any point.
-- **fedora-bootc is the right base.** Unlike `quay.io/fedora/fedora`, `fedora-bootc`
-  is purpose-built for bootc deployments: /usr-merged, composefs pre-configured,
-  systemd-boot-ready, correct /etc layout for hermetic first-boot via systemd-repart,
-  no legacy sysvinit, no dnf or package-manager cruft in the deployed image.
-- **Source:** https://quay.io/repository/fedora/fedora-bootc
-- **Source:** https://github.com/containers/bootc (fedora-bootc upstream)
+- **Reproducibility.** A SHA256 digest is content-addressed and immutable.
+- **Self-consistency.** Brings the Containerfile into compliance with `yubiOS.rego`.
+- **Systemd version guarantee.** The selected base must satisfy the systemd features required by current docs.
+- **fedora-bootc is the right base.** It is purpose-built for bootc deployments.
 
 **Digest update policy:**
-- Digest MUST be updated via tooling (Renovate, Dependabot, or `bootc-base-imagectl`)
-  when a new Fedora 45 point release is published. Manual bumps are acceptable but
-  must include a commit message that states the new digest and the Fedora 45.x version.
-- Before bumping: verify the new digest still ships systemd ≥ 257 and pam-u2f ≥ 1.3.1.
+- Digest MUST be updated via tooling or a reviewed manual bump when a new Fedora 45 point release is published.
+- Before bumping: verify the new digest still ships required floors, including systemd target, pam-u2f >= 1.3.1, OpenSSL 3.5+, and relevant Go TLS support.
 - Never revert to a mutable tag (`:latest`, `:45`) without a digest suffix.
 - When Fedora 46 is released and stable, open a separate ADR amendment to bump the major version.
 
-**Trade-off:** Digest pinning means security patches in the base image require an
-explicit digest bump (a commit). This is intentional — every base change is auditable,
-and automated tooling handles the operational overhead.
+**Amendment (2026-07-07):** Historical digests in this ADR are not current pins. Do not copy digests from ADR text; [PINNED.md](PINNED.md) is the single source of truth.
 
-**Amendment (2026-07-07):** The digest shown in the Decision block above is historical
-and has since rotated out of quay (404). Do not copy digests from this ADR;
-[PINNED.md](PINNED.md) is the single source of truth for the current `fedora-bootc:45`
-index digest.
+**Amendment (2026-07-11):** The planning cycle removed old README/TODO language that treated run-specific digests as evergreen. Future docs should cite [PINNED.md](PINNED.md) rather than embedding digest examples unless they are explicitly marked as historical evidence.
 
 ---
 
@@ -465,48 +442,26 @@ index digest.
 
 **Status:** Accepted
 
-**Context:** systemd v261 shipped June 19–21, 2026. Several features directly affect
-yubiOS architecture: a new software TPM service (bcvk CI), a new security condition
-for measured-boot units, a new filesystem restriction primitive, a new native OS
-installer, and live-update/kexec state handover.
+**Context:** systemd v261 shipped in June 2026. Several features affect yubiOS architecture: a new software TPM service for VM coverage, a security condition for measured-boot units, a new filesystem access primitive, a native OS installer, and live-update/kexec state handover. The 2026-07-11 research cycle corrected one earlier wording issue: `RestrictFileSystems=` is not the v261 addition. `RestrictFileSystemAccess=` is.
 
-**Decision:** Track and adopt the following v261 features for yubiOS. Each item below
-is either an immediate action or a tracked future item.
+**Decision:** Track and adopt the following v261 features for yubiOS where they match the threat model. Keep existing controls such as `RestrictFileSystems=` in the hardening toolbox, but do not misattribute their version floor.
 
----
+### v261 Feature 1: `systemd-tpm2-swtpm.service` - software TPM for VMs
 
-### v261 Feature 1: `systemd-tpm2-swtpm.service` — software TPM for VMs
-
-**What it is:** A new service that starts IBM’s `swtpm` (software TPM 2.0 emulator)
-and exposes it to the system. Enables TPM2-based measured-boot features on VMs and
-hardware lacking a physical TPM chip.
+**What it is:** A service that starts IBM's `swtpm` software TPM emulator and exposes it to the system.
 
 **yubiOS action (CI):**
-- Enable `systemd-tpm2-swtpm.service` in bcvk ephemeral VMs to exercise the TPM2 code
-  paths in systemd (PCR measurements, LUKS PCR binding) during CI without physical hardware.
-- yubiOS itself still uses YubiKey FIDO2 for secrets (ADR-003 unchanged) — swtpm is
-  for test coverage only, not the production trust anchor.
-- Add `swtpm` package to bcvk test image; configure `assets/ci/vm-swtpm.conf` drop-in.
-
-**Implementation note (2026-06-26, bcvk #3):** bcvk uses *DirectBoot* (extracts kernel+initrd from the UKI, bypassing `systemd-stub` and the ESP), so `systemd-tpm2-swtpm.service` cannot bring up `/dev/tpm0` inside the guest. The shipped route is a **host-side QEMU vTPM emulator device** instead: `swtpm` runs on the host and is attached via `-tpmdev emulator` + arch-aware `-device tpm-tis`/`tpm-crb`, exposed through `bcvk ephemeral run --swtpm`; the guest kernel's `tpm_tis`/`tpm_crb` driver then creates `/dev/tpm0` automatically (no in-guest service). Lands on bcvk branch `feat/swtpm-ci` (referenced directly, never merged).
+- Use TPM emulation to exercise measured-boot paths in CI without physical hardware.
+- yubiOS itself still uses YubiKey FIDO2 for secrets (ADR-003 unchanged).
+- bcvk DirectBoot cannot rely on an in-guest service for `/dev/tpm0`; the shipped route is host-side QEMU vTPM attachment through `swtpm`, `-tpmdev emulator`, and architecture-aware `tpm-tis`/`tpm-crb` devices.
 
 **Source:** https://github.com/systemd/systemd/releases/tag/v261
 
----
-
 ### v261 Feature 2: `ConditionSecurity=measured-os`
 
-**What it is:** A new unit condition that is true only when the running OS has full
-measured-boot semantics — i.e., every component from firmware to userspace is
-cryptographically measured and the system passes attestation checks.
+**What it is:** A unit condition that is true only when the running OS has full measured-boot semantics.
 
-**yubiOS action (high value):**
-- Add `ConditionSecurity=measured-os` to the `yubiOS-enroll.service` unit and any
-  security-critical service that should refuse to run on a system whose trust chain
-  is incomplete (e.g., SecureBoot disabled, initrd unsigned).
-- This closes a gap where the enrollment wizard could fire on a non-measured boot
-  and silently enroll a YubiKey into an untrustworthy chain.
-- Implementation: add to `usr/lib/systemd/system/yubiOS-enroll.service`
+**yubiOS action:** Add `ConditionSecurity=measured-os` to services that must refuse to run on an unmeasured boot, especially enrollment and first-boot validation paths.
 
 ```ini
 [Unit]
@@ -515,470 +470,218 @@ ConditionSecurity=measured-os
 
 **Source:** https://github.com/systemd/systemd/releases/tag/v261
 
----
+### v261 Feature 3: `RestrictFileSystemAccess=` plus existing `RestrictFileSystems=`
 
-### v261 Feature 3: `RestrictFileSystems=` (BPF LSM)
-
-**What it is:** A new `systemd.exec(5)` sandboxing directive that uses BPF LSM to
-restrict which filesystems a service may access by type. Complements existing
-`ProtectSystem=`, `PrivateDevices=`, and `RestrictNamespaces=`.
+**Correction (2026-07-11):** Earlier text in this ADR and related docs described `RestrictFileSystems=` as a new v261 feature. That was inaccurate. `RestrictFileSystems=` is the existing `systemd.exec(5)` BPF-LSM filesystem-type limiter. systemd v261 introduced `RestrictFileSystemAccess=`, a separate filesystem access primitive.
 
 **yubiOS action:**
-- Evaluate adding `RestrictFileSystems=` to the enrollment scripts and
-  YubiKey auth services to limit filesystem surface. Candidate:
-  `RestrictFileSystems=tmpfs proc sysfs devtmpfs`
-- Requires systemd >= 261 and a kernel with BPF LSM enabled (`CONFIG_BPF_LSM=y`).
-  Verify this is set in the fedora-bootc:45 kernel config before deploying.
-- Add to next `systemd-hardening` skill audit cycle.
+- Use `RestrictFileSystems=` when a service should be limited by filesystem type and the kernel has BPF LSM support.
+- Evaluate `RestrictFileSystemAccess=` separately during the next unit-hardening audit after confirming distro availability and syntax.
+- Do not block `RestrictFileSystems=` usage on a systemd v261 floor; block it on the actual systemd/kernel support it needs.
 
-**Source:** https://github.com/systemd/systemd/releases/tag/v261
+**Sources:**
+- https://www.freedesktop.org/software/systemd/man/latest/systemd.exec.html
+- https://github.com/systemd/systemd/releases/tag/v261
 
----
+### v261 Feature 4: `systemd-sysinstall` - native text-based OS installer
 
-### v261 Feature 4: `systemd-sysinstall` — native text-based OS installer
+**What it is:** A native installer that orchestrates `systemd-repart`, `bootctl`, and `systemd-creds` via Varlink.
 
-**What it is:** A new native installer that orchestrates `systemd-repart`,
-`bootctl`, and `systemd-creds` via Varlink. Replaces distribution-specific
-installation scripts with a standardized, composable installation path.
-
-**yubiOS context (ADR-012 alignment):**
-- ADR-012 uses `systemd-repart` for first-boot partitioning (no traditional installer).
-  `systemd-sysinstall` is upstream’s answer to the same problem, and confirms that
-  design choice.
-- yubiOS does NOT need to adopt `systemd-sysinstall` directly — the first-boot
-  systemd-repart path is already in place and is simpler for the single-image model.
-- Track for future use: `systemd-sysinstall` may become the right path for
-  multi-boot installs or guided first-boot UX beyond what `yubiOS-enroll` provides.
-
----
+**yubiOS context:** ADR-012 already uses systemd-repart for first-boot partitioning. `systemd-sysinstall` confirms the design direction and may become useful for guided install UX, but it is not required for the current single-image model.
 
 ### v261 Feature 5: Live Update / Kexec Handover (LUO/KHO)
 
-**What it is:** PID1 supports Linux’s Live Update Orchestration (LUO) and Kexec
-Handover (KHO). The system can carry FD store state, service state, and credentials
-across a `kexec` reboot — enabling kernel updates with near-zero downtime.
+**What it is:** PID1 support for carrying FD store state, service state, and credentials across kexec.
 
-**yubiOS context (ADR-013 alignment):**
-- yubiOS uses A/B partition updates via `systemd-sysupdate` + Boot Assessment (ADR-013).
-  LUO/KHO is a complementary path for latency-sensitive environments where even a
-  short reboot is unacceptable.
-- For the current yubiOS use case (desktop/laptop), the A/B reboot model is correct.
-  Kexec handover is worth tracking for server/appliance deployments.
-- `FileDescriptorStorePreserve=yes` — new unit option — can preserve open FIDO2
-  credential handles across kexec if implemented. Track but do not act yet.
+**yubiOS context:** A/B partition updates via systemd-sysupdate and Boot Assessment remain the baseline. LUO/KHO is worth tracking for server/appliance deployments.
 
----
+**Minimum version notes:**
 
-**Minimum systemd version for v261 features:**
-
-| Feature | Min version |
+| Feature | Min version / requirement |
 |---|---|
 | `systemd-tpm2-swtpm.service` | 261 |
 | `ConditionSecurity=measured-os` | 261 |
-| `RestrictFileSystems=` | 261 |
+| `RestrictFileSystemAccess=` | 261 |
 | `systemd-sysinstall` | 261 |
 | `FileDescriptorStorePreserve=yes` | 261 |
+| `RestrictFileSystems=` | Existing `systemd.exec(5)` control; requires BPF LSM support for enforcement |
 
-Fedora 45 ships systemd 261 (confirmed via `rpm -q systemd` in fedora-bootc:45 after June 2026
-point release). The pinned digest in ADR-015 predates v261; bump to a post-June-19 Fedora 45
-digest to get these features in the base image.
-
-**Immediate action:** Bump `fedora-bootc:45` digest to a post-June-19 point release and
-verify `systemd --version` returns 261. Then add `ConditionSecurity=measured-os` to
-`yubiOS-enroll.service` (highest-value, lowest-risk change).
-
-**Source:** https://github.com/systemd/systemd/releases/tag/v261
+**Immediate action after 2026-07-11 review:** Keep [PINNED.md](PINNED.md) as the package-floor source, add `ConditionSecurity=measured-os` where the corresponding service exists, and schedule a unit-hardening audit that treats `RestrictFileSystems=` and `RestrictFileSystemAccess=` as separate controls.
 
 ---
 
 ## ADR-017: ARM64 Multi-Architecture Profile
 
-**Date:** 2026-06-24  
-**Status:** Accepted  
-**Context:** yubiOS is designed around FIDO2 hardware trust, immutable /usr, and UKI-based boot — none of which are x86-64-specific. ARM64/aarch64 is the dominant architecture in embedded, server, and mobile-adjacent hardware, and is a natural second target.
+**Date:** 2026-06-24
+**Status:** Accepted; platform priority superseded by ADR-023
 
-**Decision:** Ship yubiOS as a multi-arch project: x86-64 as the primary, supported production platform; arm64/aarch64 as a secondary, in-development platform. The trust chain (YubiKey FIDO2, systemd-sbsign PIV, UKI + dm-verity) is architecturally identical on both platforms.
+**Context:** yubiOS is designed around FIDO2 hardware trust, immutable /usr, and UKI-based boot -- none of which are x86-64-specific. ARM64/aarch64 is dominant in embedded, server, and mobile-adjacent hardware, and is the natural platform for the owner-owned secure-world work.
+
+**Decision:** Ship yubiOS as a multi-arch project. The trust chain above the UKI is architecturally identical on ARM64 and x86-64. ADR-023 later changed the platform priority: ARM64 is primary; x86-64 is supported secondary.
 
 **Build changes:**
-- docker buildx build --platform linux/amd64,linux/arm64 via QEMU emulation on amd64 runners (docker/setup-qemu-action in CI).
-- The fedora-bootc:45 base image is multi-arch. The existing Containerfile requires no platform-specific changes beyond the --platform flag.
-- bcvk native-to-disk works on ARM64 target hardware without modification (Rust cross-compilation via --target aarch64-unknown-linux-gnu).
-
-**ARM64-specific mitigations (see MITIGATE.md for full analysis):**
-
-| Attack | ARM64 mitigation |
-|---|---|
-| CNTVOFF_EL2 virtual timer offset | Kernel arch_timer erratum workarounds applied at boot. UKI/PCR trust chain unchanged. |
-| ARM CoreSight debug/trace exfiltration | Kernel lockdown (SecureBoot active) disables CoreSight trace interfaces via CONFIG_LOCK_DOWN_KERNEL_FORCE_CONFIDENTIALITY. |
-| qcom,dload Qualcomm firmware sideload | dm-verity blocks library substitution regardless of sideload path. Preferred hardware: non-Qualcomm ARM64 (Ampere, RPi 5, ARM Juno). |
-
-**Preferred ARM64 hardware targets (for qcom,dload attack surface — ADR-017 scope):**
-- Raspberry Pi 5 (BCM2712, no Qualcomm sideload) — **Path B only for yubiOS-owned RoT** (VideoCore VII firmware runs before ARM cores; Broadcom key permanently in chain; see ADR-019)
-- **RK3588** (Rockchip — no vendor key in chain, FIREWALL_DDR hardware TrustZone isolation; **primary Path A target**; boards: Orange Pi 5, Rock 5B, NanoPC-T6)
-- **RK3399** (Rockchip — same TF-A/OP-TEE lineage, blobless DDR init, dry-run testable; **Path A stepping stone**; boards: RockPro64, Pinebook Pro)
-- Ampere Altra / AmpereOne (server, documented fuse provisioning)
+- docker buildx build --platform linux/amd64,linux/arm64 via QEMU emulation on amd64 runners.
+- The fedora-bootc:45 base image is multi-arch.
+- bcvk native-to-disk works on ARM64 target hardware without modification once the corresponding runner/hardware path is live.
 
 **Consequences:**
-- CI must add docker/setup-qemu-action for cross-platform builds.
-- ARM64 hardware testing is separate from x86-64 VM CI (bcvk native-to-disk to physical ARM64 hardware).
-- MITIGATE.md updated: CNTVOFF_EL2, CoreSight, and qcom,dload entries revised from "N/A (x86-64 only)" to active mitigations.
-- ARCHITECTURE.md and README.md updated to document the multi-arch profile.
+- CI must continue multi-platform builds.
+- ARM64 hardware testing is distinct from x86-64 VM CI.
+- MITIGATE.md tracks ARM-specific mitigations and residual risks.
 
-**Source:** ADR-008 (systemd-sbsign is PIV-based, not arch-specific), ADR-014 (Docker Buildx multi-platform), ADR-015 (fedora-bootc:45 is multi-arch), [MITIGATE.md](MITIGATE.md)
+**Amendment (2026-07-11):** Any older text that says x86-64 is primary should be read through ADR-023. The current docs now state ARM64 primary, x86-64 supported secondary.
 
 ---
 
 ## ADR-018: yubiOS-Owned ARM64 Secure-World Stack (TF-A + OP-TEE + fTPM)
 
-**Date:** 2026-06-24  
-**Status:** Proposed — post-launch (see [FUTURE.md](FUTURE.md))  
-**Context:** On most ARM64 hardware there is no discrete TPM and no firmware TPM we control — the SoC vendor owns the secure world (their TF-A, their TrustZone payload, their boot ROM key, their fTPM if any). Measured boot still needs a TPM-shaped thing to hold PCRs and seal secrets. Inheriting the vendor's secure world reintroduces exactly the OEM/vendor supply-chain trust anchor yubiOS exists to remove (see [MITIGATE.md](MITIGATE.md)).
+**Date:** 2026-06-24
+**Status:** Proposed - post-launch (see [FUTURE.md](FUTURE.md))
 
-**Decision:** Post-launch, build the whole ARM64 secure-world stack ourselves: **ARM Trusted Firmware (TF-A)** as our EL3 monitor and Trusted Board Boot chain; **OP-TEE** as BL32, our secure-world OS; the **Microsoft `ms-tpm-20-ref` fTPM** run as an OP-TEE Trusted Application so the PCRs and sealing root are ours; **U-Boot** as BL33. Pin `OP-TEE/optee_ftpm` + `microsoft/ms-tpm-20-ref@98b60a44aba79b15fcce1c0d1e46cf5918400f6a`; fTPM TA UUID `bc50d971-d4c9-42c4-82cb-343fb7f37896`; build as an Early TA (`CFG_EARLY_TA=y`) with NV in RPMB (`CFG_RPMB_FS=y`).
+**Decision:** Post-launch, build the ARM64 secure-world stack: TF-A as EL3 monitor and Trusted Board Boot chain, OP-TEE as BL32, the Microsoft `ms-tpm-20-ref` fTPM as an OP-TEE Trusted Application, and U-Boot as BL33.
 
-**fTPM vs YubiKey — complementary, not redundant:** the fTPM is the *platform-integrity* root (PCR measurement, attestation, optional seal); the YubiKey stays the *user-identity* root and the primary disk-unlock path (FIDO2 hmac-secret, ADR-003). The fTPM must never become the sole disk-unlock gate — doing so would re-create an on-device, vendor-shaped trust anchor. It is where `ConditionSecurity=measured-os` (ADR-016) binds on hardware with no real TPM.
+**fTPM vs YubiKey:** The fTPM is the platform-integrity root; the YubiKey stays the user-identity root and primary disk-unlock path. The fTPM must never become the sole disk-unlock gate.
 
-**Alternatives considered:**
-- *Vendor fTPM / TrustZone as-is* — rejected: trust anchor we did not choose; defeats the thesis.
-- *No TPM on ARM64, YubiKey only* — rejected: leaves no PCR set or local attestation root for measured boot.
-- *Discrete TPM chip* — rejected: most target ARM64 boards have no TPM header; adds a part we don't control.
-
-**Consequences:** Per-SoC TF-A bring-up is significant; pick one board and go deep first. The fTPM is software (an `ms-tpm-20-ref`/OP-TEE bug is a TPM bug) — track CVEs, pin commits, fold into Renovate (ADR-015). Highest risk: the Early-TA RPMB bootstrap before `tee-supplicant` (OP-TEE issue #5766) — prove on QEMU `virt` first.
-
-**Source:** [FUTURE.md](FUTURE.md), `knowledge/arm64-ftpm-stack.md`, skills `arm-trusted-firmware-optee` + `ftpm-optee-tpm`, ADR-016 (measured-os), ADR-017 (ARM64).
+**Consequences:** Per-SoC TF-A bring-up is significant. Prove on QEMU first, then on selected boards, before claiming production Path A hardware support.
 
 ---
 
 ## ADR-019: Dual Root-of-Trust Provisioning Paths (Fuse-Enforcing vs Measured/Attested)
 
-**Date:** 2026-06-24  
-**Status:** Proposed — post-launch (see [FUTURE.md](FUTURE.md))  
-**Context:** TF-A Trusted Board Boot anchors the chain in a ROTPK hash burned into SoC OTP/eFuse. Burning fuses is irreversible and can brick boards; some SoCs lock or hide the fuses; dev boards often can't or shouldn't be burned. We need a coherent stance for boards where we cannot (or choose not to) anchor a hardware root of trust.
+**Date:** 2026-06-24
+**Status:** Proposed - post-launch (see [FUTURE.md](FUTURE.md))
 
-**Decision:** Support two provisioning paths. The five TF-A stages are identical on both; only the *root* differs.
-- **Path A — fuses burnable (enforcing):** ROTPK hash in OTP/eFuse, full TBB, BL1 rejects any image that doesn't chain to it. Bad code never executes. The production path. Targets: **RK3588** (primary — no vendor key in chain, FIREWALL_DDR hardware TrustZone isolation, RSA/ECDSA OTP, SRK revocation table, dry-run testable; boards: Orange Pi 5, Rock 5B, NanoPC-T6), **RK3399** (stepping stone — same TF-A/OP-TEE lineage, blobless DDR init, dry-run via `rkdeveloptool db`; boards: RockPro64, Pinebook Pro), Ampere with documented fuse provisioning. **RPi 5 is Path B only** — see note below.
-- **Path B — no/locked/unburned fuses (measured + attested):** no hardware-enforced rejection. Software root of trust via U-Boot FIT verified boot (public key in the U-Boot control DTB) plus measured boot into the fTPM; trust is decided *after* boot by local/remote attestation and fTPM/YubiKey secret release. For dev boards and early bring-up.
+**Decision:** Support two provisioning paths:
+- **Path A - fuses burnable (enforcing):** owner-burned ROTPK hash in OTP/eFuse, full TBB, BL1 rejects any image that does not chain to it.
+- **Path B - no/locked/unburned fuses (measured + attested):** software root via U-Boot FIT verified boot plus measured boot into the fTPM; trust is decided after boot by attestation and secret release.
 
-> **RPi 5 (BCM2712) Path B classification:** The Broadcom VideoCore VII closed-source firmware executes before the ARM cores start and holds a Broadcom key permanently in the boot chain. Counter-signing the EEPROM with a customer key adds an OTP-burned layer, but cannot remove the Broadcom key or replace the closed VideoCore stage. This violates the yubiOS requirement that every trust anchor be owner-controlled and auditable. RPi 5 is valuable for toolchain validation (Pi 4 dry-run; Pi 5 requires OTP burn first), Qualcomm-attack-surface analysis (no qcom,dload), and measured/attested deployments (Path B), but cannot serve as a production Path A target for a yubiOS-owned root of trust.
+**Honest framing:** Path B records what ran and can withhold secrets when measurements are wrong, but compromised code may execute long enough to measure itself. Path A is stronger.
 
-**Honest framing:** Path B records what ran and can withhold secrets when measurements are wrong, but a compromised stage still executes long enough to measure itself. It is evidence-and-sealing, not boot-time rejection, and its anchor lives in writable firmware (only as strong as the storage holding U-Boot and its key). Path A is strictly stronger; Path B is a deliberate, documented fallback, not a substitute.
-
-**Consequences:** Each supported board is tagged Path A or Path B and documented. Path A provisioning (ROTPK burn) is treated like a production-secret operation, rehearsed on a sacrificial board. The RPMB key write (`CFG_RPMB_WRITE_KEY=y`) for the variable store / fTPM NV is another effectively-irreversible per-device step folded into provisioning.
-
-**Source:** [FUTURE.md](FUTURE.md) (two-path trust chain), `knowledge/rockchip-otp-secure-boot.md`, `knowledge/rpi5-otp-secure-boot.md`, TF-A TBB docs, U-Boot `FIT_SIGNATURE` verified boot.
+**Amendment (2026-07-11):** RPi 5 remains Path B only because the Broadcom VideoCore firmware remains in the root chain. RK3588 remains the preferred Path A family.
 
 ---
 
 ## ADR-020: U-Boot as the ARM64 UEFI Firmware + Authenticated Variable Store (OP-TEE StandaloneMM)
 
-**Date:** 2026-06-24  
-**Status:** Proposed — post-launch (see [FUTURE.md](FUTURE.md))  
-**Context:** yubiOS's x86-64 boot chain is systemd-boot + UKI + UEFI Secure Boot. We do not want a divergent, bespoke ARM64 boot path. U-Boot's `EFI_LOADER` subsystem is a real UEFI environment (boot + runtime services, system table, `Boot####`/`BootOrder`, PE/COFF loading), so the same signed artifacts can run on ARM64 with U-Boot speaking UEFI in place of vendor EDK2.
+**Date:** 2026-06-24
+**Status:** Proposed - post-launch (see [FUTURE.md](FUTURE.md))
 
-**Decision:** On ARM64, U-Boot (BL33) provides the UEFI environment and chainloads the **same systemd-boot + UKI** that x86-64 uses, unmodified. Enable `CONFIG_EFI_LOADER`, `CONFIG_EFI_SECURE_BOOT` (PK/KEK/db/dbx authentication of PE/COFF binaries, incl. UKIs), and `CONFIG_EFI_TCG2_PROTOCOL` (UKI-stage measurement into the fTPM, per ADR-018). Store the Secure Boot variables (PK/KEK/db/dbx) in **EDK2 StandaloneMM** run as an **OP-TEE** module, backed by **RPMB** (`CFG_STMM_PATH=`, `CONFIG_EFI_MM_COMM_TEE=y`, `CONFIG_CMD_OPTEE_RPMB=y`), so they are tamper-resistant rather than living in writable normal-world flash. Use `CONFIG_EFI_CAPSULE_*` (capsule-on-disk, FMP) for U-Boot/FIP/OP-TEE firmware updates.
+**Decision:** On ARM64, U-Boot provides the UEFI environment and chainloads the same systemd-boot + UKI artifacts that x86-64 uses. Secure Boot variables are stored through EDK2 StandaloneMM running as an OP-TEE module and backed by RPMB on production boards.
 
-**Consequences:** ARM64 stops being a special boot path — one UKI signing flow, one set of Secure Boot keys, one systemd-boot, across both architectures. The variable store shares the same RPMB that backs the fTPM. Capsule-on-disk folds firmware updates into the A/B + Renovate story (ADR-013/015). U-Boot's UEFI is a subset of the spec; verify each needed protocol on the target board during bring-up.
-
-**Alternatives considered:**
-- *Vendor EDK2 / TianoCore firmware* — rejected: vendor-owned trust anchor; same objection as ADR-018.
-- *Boot the kernel directly from U-Boot (no UEFI)* — rejected: diverges from the x86-64 UKI/systemd-boot chain and loses UEFI Secure Boot semantics.
-- *Variables in normal-world flash* — rejected: writable by a compromised normal world; defeats Secure Boot.
-
-**Source:** [FUTURE.md](FUTURE.md) (components 4–5), U-Boot UEFI + measured-boot docs (v2026.01), EDK2 StandaloneMM on OP-TEE, ADR-018, ADR-002 (UKI/SecureBoot lineage).
+**Consequences:** ARM64 avoids a bespoke boot path while preserving owner-controlled Secure Boot and fTPM measurement.
 
 ---
 
 ## ADR-021: U-Boot as the Sole ARM64 Bootloader and UEFI Firmware Provider
 
-**Date:** 2026-06-24  
-**Status:** Accepted — post-launch (see [FUTURE.md](FUTURE.md))  
-**Supersedes:** The alternative-UEFI option mentioned in ADR-020 (edk2-rk3588 as a parallel UEFI path is rejected here).
+**Date:** 2026-06-24
+**Status:** Accepted - post-launch (see [FUTURE.md](FUTURE.md))
 
-**Context:** The ARM64 secure-world stack (ADR-018/019/020) needs a BL33 stage that both completes the TF-A boot chain and provides the UEFI environment yubiOS's existing systemd-boot + UKI toolchain requires. Two candidates exist:
+**Decision:** U-Boot is the sole UEFI firmware provider on ARM64. edk2-rk3588 as a BL33 replacement is rejected for yubiOS's current path.
 
-- **U-Boot** (`yubi-OS/u-boot` fork of `u-boot/u-boot`): the non-secure BL33 bootloader. Provides a real UEFI environment via its `EFI_LOADER` subsystem. Mainline defconfigs exist for all three primary target boards.
-- **edk2-rk3588** (`edk2-porting/edk2-rk3588`): a community EDK2 port for RK3588 that replaces U-Boot as BL33 with a full TianoCore firmware stack. Designed primarily for running Windows and standard ACPI-first OSes.
-
-**Decision:** U-Boot is the sole UEFI firmware provider on ARM64. edk2-rk3588 as a BL33 replacement is rejected.
-
-**Why U-Boot wins:**
-
-1. **All three target boards have mainline U-Boot defconfigs** (confirmed in `yubi-OS/u-boot` fork):
-   - Orange Pi 5 (RK3588S): `orangepi-5-rk3588s_defconfig`
-   - Rock 5B (RK3588): `rock5b-rk3588_defconfig`
-   - NanoPC-T6 (RK3588): `nanopc-t6-rk3588_defconfig`
-
-2. **U-Boot EFI_LOADER is a real UEFI environment.** Boot services, runtime services, the UEFI system table, `Boot####`/`BootOrder` variables, and PE/COFF loading (`CONFIG_EFI_LOADER=y`). systemd-boot + UKI + UEFI Secure Boot run unmodified, identical to x86-64 (ADR-020).
-
-3. **Direct integration with TF-A + OP-TEE.** U-Boot slots cleanly into the TF-A BL33 position. edk2-rk3588 bundles its own TF-A integration, which we cannot audit or override without forking the entire firmware stack.
-
-4. **Full fTPM integration.** U-Boot has first-class `CONFIG_TPM2_FTPM_TEE=y` (talking to the ms-tpm-20-ref fTPM via the OP-TEE TEE driver), `CONFIG_MEASURED_BOOT=y`, and `CONFIG_EFI_TCG2_PROTOCOL=y` in the same binary. edk2-rk3588 would require separate TPM integration work.
-
-5. **StandaloneMM is independent.** The EDK2 StandaloneMM UEFI variable service (needed for tamper-resistant PK/KEK/db/dbx storage on RPMB, per ADR-020) is built from upstream `tianocore/edk2` as a standalone OP-TEE module (`BL32_AP_MM.fd`, `CFG_STMM_PATH=`). It does not require edk2-rk3588 and works identically with U-Boot as the UEFI consumer.
-
-6. **Scope alignment.** edk2-rk3588 targets Windows 11 / ACPI-first workflows on RK3588. yubiOS is a security-hardened Linux OS. Device Tree mode (Linux-first) is fully supported by U-Boot EFI_LOADER and is the correct boot path for our stack.
-
-**Disposition of `yubi-OS/edk2-rk3588` fork:**  
-Retained in the org for reference (community UEFI firmware art for RK3588 boards) but **not an active build dependency**. The StandaloneMM variable service is sourced from `tianocore/edk2` directly, not from this fork. If StandaloneMM build tooling needs an EDK2 fork in the future, fork `tianocore/edk2` at that point.
-
-**U-Boot kconfig for ARM64 (target config per board + yubiOS overlays):**
-```
-CONFIG_TEE=y
-CONFIG_OPTEE=y
-CONFIG_TPM=y
-CONFIG_TPM_V2=y
-CONFIG_TPM2_FTPM_TEE=y        # fTPM via OP-TEE TEE driver (ADR-018)
-CONFIG_MEASURED_BOOT=y
-CONFIG_TPM2_EVENT_LOG_SIZE=0x10000
-CONFIG_EFI_LOADER=y
-CONFIG_EFI_SECURE_BOOT=y       # PK/KEK/db/dbx PE/COFF authentication (ADR-020)
-CONFIG_EFI_TCG2_PROTOCOL=y     # TCG2 measured boot to fTPM
-CONFIG_EFI_MM_COMM_TEE=y       # StandaloneMM variable service via OP-TEE (ADR-020)
-CONFIG_CMD_OPTEE_RPMB=y
-CONFIG_EFI_CAPSULE_AUTHENTICATE=y  # Firmware update authentication
-```
-
-**Alternatives considered:**
-- *edk2-rk3588 as BL33 UEFI firmware* — rejected: bundled TF-A integration bypasses our chain; ACPI-first design diverges from yubiOS Linux/Device-Tree stack; no first-class fTPM/OP-TEE integration; adds a separate, opaque build dependency for a capability U-Boot already provides.
-- *Direct kernel boot from U-Boot (no UEFI)* — rejected (same as ADR-020): loses UEFI Secure Boot semantics and diverges from the x86-64 UKI/systemd-boot chain.
-
-**Source:** `yubi-OS/u-boot` defconfig inventory (2026-06-24), U-Boot EFI docs (v2026.01), ADR-018 (secure-world stack), ADR-019 (RK3588 as primary Path A target), ADR-020 (UEFI + StandaloneMM), [FUTURE.md](FUTURE.md).
-
-## ADR-022: Unified OCI Distribution — Per-Artifact Tags on 0mniteck/yubios
-
-**Date:** 2026-07-07  
-**Status:** Accepted — firmware and installer tags both implemented (installer landed 2026-07-08 via `ci_mkosi-installer.yml`, closing #10)  
-**Depends on:** ADR-006 (both mkosi and bootc build paths), ADR-012 (systemd-repart first boot), ADR-015 (pinned-digest bases), ADR-018/019/020 (ARM64 secure-world stack).
-
-**Context:** `docker.io/0mniteck/yubios` is the primary public distribution point, currently carrying one artifact: the multi-arch bootc OS image (`latest` + per-commit SHA tags). Two more build products now exist and need a home:
-
-1. **ARM64 firmware bundle** — TF-A FIP (BL31 + OP-TEE BL32 with StMM + fTPM folded in + U-Boot BL33), `flash.bin`, and `BL32_AP_MM.fd`, built and QEMU-validated end-to-end by `ci_test-int.yml`. This is what provisions the secure world on ARM64 targets before the OS ever boots.
-2. **mkosi-built disk image** — the DPS-partitioned GPT image with UKI that installs the base system, which then runs and tracks the bootc OCI image (`bootc switch` / `bootc upgrade`).
-
-The question: does each artifact get its own tag on the one repo, or do they live in separate registries/repos/release attachments?
-
-**Decision:** One repo, one tag per artifact class. `0mniteck/yubios` becomes the single distribution surface:
-
-| Tag | Artifact | Produced by | Status |
-|---|---|---|---|
-| `latest`, `<sha>` | bootc OS image (multi-arch OCI, bootable) | `yubiOS-ci.yml` (Docker_push dispatch) | live |
-| `firmware`, `firmware-<sha>` | ARM64 firmware bundle (FROM scratch, files under `/firmware/`) | `ci_test-int.yml` Stage 4, only after the QEMU e2e gate is green | live (this ADR) |
-| `installer`, `installer-<sha>` | mkosi disk image + UKI (FROM scratch, files under `/installer/`) | `ci_mkosi-installer.yml`, after the sbverify signing assertion passes | live |
-
-**Why one repo with per-artifact tags:**
-
-1. **Unified install flow.** A provisioning host pulls everything from one address with one auth context: `firmware` flashes the ARM64 secure world, `installer` writes the disk, the installed system tracks `latest` via `bootc upgrade`. No cross-registry trust decisions, no release-page tarballs.
-2. **Same supply-chain perimeter.** PINNED.md, `yubiOS.rego`, SLSA provenance, and digest pinning already govern this repo. Adding registries multiplies the audit surface for zero gain.
-3. **OCI is the right container for non-OS artifacts too.** A `FROM scratch` image holding files is a plain OCI artifact: content-addressed, signable, mirrorable, and pullable with the same tooling (`docker create` + `docker cp`, or `crane export`) on any host. This is the same pattern bootc itself normalized: everything is an image.
-4. **Tags cannot collide with the OS image.** `firmware*` and `installer*` are disjoint namespaces from `latest`/`<sha>`; a client that pulls `latest` can never accidentally boot a firmware bundle (it has no OS content at all).
-5. **Gated publication.** The firmware tag is published only by the integration workflow after the QEMU e2e assertions pass — the tag semantically means "this firmware booted a measured system to YUBIOS_TPM_OK", not just "this compiled".
-
-**Firmware tag caveat (QEMU lane):** the currently published bundle targets `vexpress-qemu_armv8a` with `CFG_STMM_VOLATILE_STORAGE` + `CFG_FTPM_VOLATILE_NV` enabled, because QEMU virt has no RPMB (#41). Its `MANIFEST.txt` says so explicitly. Real-hardware firmware bundles (RK3588 boards, ADR-019) will publish under the same tag scheme once the hardware lane exists, with RPMB-backed storage and without the volatile flags — those flags are CI-only branches pinned by SHA, never merged (optee_os `feat/stmm-volatile-storage-ci`, optee_ftpm `feat/volatile-nv-ci`).
-
-**Installer tag implementation (2026-07-08):** `ci_mkosi-installer.yml` builds the full DPS disk image + UKI on a bare runner (minimal profile, Fedora 45, Debian tools tree). Secure Boot + expected-PCR signing run through `SecureBootKeySource=provider:pkcs11` + `systemd-sbsign` against a SoftHSM token mocking YubiKey PIV slot 9c — the exact mechanism the yubiOS profile (yubi-OS/mkosi#2, merged) uses on real hardware. Key plumbing detail: mkosi's signing sandbox carries no sandbox trees but bind-mounts host `/run` for non-file key sources, so the SoftHSM conf + token store live at `/run/yubios-hsm` (same absolute path host-side and sandbox-side), with `PKCS11_PROVIDER_MODULE` pointed straight at `libsofthsm2.so`. The UKI is verified with `sbverify` against the mock cert before publish. The payload ships `yubiOS.raw.zst` (full disk image), the signed UKI, the mkosi manifest, the CI cert, and a MANIFEST.txt stating explicitly that the CI key is a mock — production images are signed by the real YubiKey (ADR-008).
-
-**Alternatives considered:**
-- *GitHub Releases for firmware/installer artifacts* — rejected: separate download path, no digest-addressed pulls, no policy/provenance reuse, and release assets aren't mirrorable with registry tooling.
-- *Separate Docker Hub repos (`0mniteck/yubios-firmware`, `0mniteck/yubios-installer`)* — rejected: multiplies repos to watch/sign/pin for artifacts that version together with the OS; tag namespacing on one repo carries the same information.
-- *ORAS artifact media types instead of FROM-scratch images* — deferred: cleaner OCI semantics, but Docker Hub UI + plain `docker pull` handling of custom artifact types is still uneven; FROM scratch works everywhere today. Revisit if/when we adopt cosign-signed referrers.
-
-**Source:** `ci_test-int.yml` Stage 4 (this commit), yubiOS-ci.yml push path, issue #41 resolution, ADR-018/019/020, bootc distribution model (ADR-006).
+**Why U-Boot wins:** It integrates with TF-A + OP-TEE, provides EFI_LOADER, supports Secure Boot and TCG2 measurement, has board defconfigs for target boards, and keeps the Linux/Device-Tree path aligned with yubiOS goals.
 
 ---
+
+## ADR-022: Unified OCI Distribution - Per-Artifact Tags on 0mniteck/yubios
+
+**Date:** 2026-07-07
+**Status:** Accepted - firmware and installer tags both implemented
+
+**Decision:** `0mniteck/yubios` is the single distribution surface with one tag family per artifact class.
+
+| Tag | Artifact | Status |
+|---|---|---|
+| `latest`, `<sha>` | bootc OS image | live |
+| `firmware`, `firmware-<sha>` | ARM64 firmware bundle | live for CI/QEMU class; real hardware still needs Path A proof |
+| `installer`, `installer-<sha>` | mkosi disk image + UKI | live |
+| `dev`, `dev-<sha>` | TEST-only swu2f-enabled image | live via ADR-026 |
+
+**Caveat:** Production and TEST-only tags must never be interchangeable. Dev image contents are not allowed in `latest`.
+
+---
+
 ## ADR-023: ARM64 as Primary Target Platform
 
 **Date:** 2026-07-08
 **Status:** Accepted
-**Depends on:** ADR-017 (ARM64 multi-arch profile), ADR-018/019/020/021 (yubiOS-owned ARM64 secure-world stack, RK3588 as primary Path A target, UEFI + StandaloneMM, U-Boot BL33)
 
-**Context:** ADR-017 shipped yubiOS multi-arch with x86-64 as primary and arm64 as secondary/in-development. Since then, every piece of the project's differentiating security work — the owner-burned ROTPK, the TF-A/OP-TEE/fTPM secure-world stack, RK3588 as the flagship Path A target — has landed on ARM64 (ADR-018/019/020/021). x86-64 has no equivalent path to an owner-owned hardware root of trust below the UKI: its SoC/PCH firmware and any TPM are OEM-supplied and outside yubiOS's control, and there is no from-scratch UEFI/PCH replacement in scope. ARM64/RK3588 is the only target where yubiOS can own every layer down to the boot ROM key. Separately, this cycle's CI work spent significant effort chasing an amd64-specific bcvk/virtiofsd bug in the VM boot leg (issues #9/#20/#25) with no ARM64 equivalent failure — a signal about where the project's hardware attention now belongs, not just a CI nuisance.
+**Decision:** ARM64, especially RK3588 Path A, is yubiOS's primary target platform. x86-64 remains supported secondary.
 
-**Decision:** ARM64 (RK3588 Path A per ADR-019 as the flagship target; RK3399 as the stepping stone) is now yubiOS's **primary** target platform. x86-64 remains a **supported secondary** platform: identical trust chain above the UKI (YubiKey FIDO2, systemd-sbsign PIV, UKI + dm-verity), full build + CI coverage, but without a path to an owner-owned hardware root of trust below the UKI.
+**Rationale:** Owner-owned trust below the UKI is the mission. ARM64/RK3588 can plausibly deliver this through owner-provisioned firmware and secure-world work; x86-64 cannot without replacing OEM firmware, which is out of scope.
 
-**Rationale:**
-- Owner-owned trust, all the way down, is the mission (MISSION.md). Only ARM64/RK3588 delivers that today; x86-64 structurally cannot without replacing OEM UEFI/PCH firmware, which is out of scope.
-- ADR-018/019/020/021 already committed real engineering investment to the ARM64 secure-world stack. This ADR aligns platform priority with where that investment already went, instead of carrying a stale "x86-64 primary" framing against the evidence.
-- The unresolved amd64 bcvk/virtiofsd boot-leg bug (#9/#20/#25) is a bug on a now-secondary architecture. CI policy should stop blocking on it rather than treating it as an equal-priority regression.
-
-**Consequences:**
-- README.md's Requirements table, ARCHITECTURE.md's opening framing, SPEC.md §1/§3/§5, and FUTURE.md's scope line are updated to state ARM64 primacy explicitly.
-- `ci_test-vm.yml`'s amd64 boot leg becomes an explicit, loud policy skip (new `policy` gate, mirroring the existing arm64-no-KVM skip pattern) citing this ADR. The underlying bcvk/virtiofsd diagnosis in #9/#20/#25 remains valid supporting context — the skip is a platform-priority decision, not a claim that the bug is fixed or irrelevant.
-- Does not change ADR-006 (both mkosi and bootc build paths) or ADR-014 (multi-platform Buildx): both architectures continue to build and ship on `0mniteck/yubios`.
-- x86-64 is not deprecated. It moves from "primary" to "secondary, fully supported."
-
-**Alternatives considered:**
-- *Keep x86-64 primary, ARM64 secondary* — rejected: does not reflect where the mission-critical work (an owner-owned root of trust) actually lives.
-- *Equal-priority, no primary/secondary framing* — rejected: docs and CI need a tie-breaker for triage calls like the amd64 boot-leg bug; an explicit primary avoids re-litigating this every time a platform-specific issue surfaces.
-
-**Source:** ADR-017, ADR-018, ADR-019, ADR-020, ADR-021, MISSION.md, issues #9/#20/#25 (bcvk amd64 virtiofsd bug diagnosis).
-
+**Consequences:** Docs and CI triage should use ARM64 primacy as the tie-breaker for platform-specific issues. x86-64 is not deprecated.
 
 ---
+
 ## ADR-024: chipsec First-Boot Firmware Validation as a Portable Service
 
 **Date:** 2026-07-08
-**Status:** Accepted — design + unit shipped; hardware validation post-launch
-**Depends on:** ADR-010 (DPS, no /etc/fstab), ARCHITECTURE.md §6 (modularity ladder), ADR-016 (`ConditionSecurity=measured-os`)
+**Status:** Accepted - design + unit shipped; hardware validation post-launch
 
-**Context:** Issue #24 asked for a first-boot chipsec check to "detect Absolute Persistence (Computrace) in the PCR event log and other firmware-level anomalies," packaged as a DPS-compliant portable service. Two corrections from research against the actual `chipsec2` codebase (`skills/chipsec` reference, upstream `github.com/chipsec/chipsec`):
+**Decision:** Ship `yubiOS-chipsec-firstboot.service` as a one-shot, first-boot firmware validation service. It runs a yubiOS-relevant CHIPSEC subset plus best-effort WPBT/Computrace surface checks and writes structured results to `/run/yubiOS/chipsec-result` and the journal.
 
-1. **There is no automated CHIPSEC module for Absolute Persistence/Computrace detection.** It is not a PCR-event-log-detectable "anomaly" — Absolute is OEM-embedded firmware, not an unauthorized modification, and CHIPSEC has no module keyed to it. The realistic best-effort surface is `chipsec_util uefi var-list` (Computrace/Absolute-named UEFI variables) and a WPBT ACPI-table presence check — informational, not pass/fail.
-2. **What CHIPSEC actually delivers well** is the firmware trust-chain gate yubiOS already relies on conceptually (per COMPANY.md: "80+ firmware checks... gating check at yubiOS provisioning time"): SPI write-protection, SMM isolation, Secure Boot variable integrity, debug-interface exposure. These map directly onto yubiOS's own trust boundaries — if SMM isn't locked down, a compromised SMM handler can rewrite anything dm-verity thinks is immutable, undermining ADR-007's guarantee regardless of what the OS does above it.
+**Honesty note:** CHIPSEC does not provide a reliable automated Absolute/Computrace verdict. Computrace/WPBT scanning is informational, not a pass/fail guarantee.
 
-**Decision:** Ship `yubiOS-chipsec-firstboot.service` as a `RootImage=` portable service (verity + PKCS#7 signed GPT image, per the modularity ladder) that runs a fixed, yubiOS-relevant subset of CHIPSEC's `common` module set once at first boot, plus the honest best-effort Computrace/WPBT check, and writes a structured PASS/WARN/FAIL result to `/run/yubiOS/chipsec-result` and the journal (`SYSLOG_IDENTIFIER=yubiOS-chipsec`).
-
-**Module scope (first-boot check-set):**
-
-| Module | Why it matters to yubiOS |
-|---|---|
-| `common.bios_wp` | If BIOS write-protect is off, /usr's dm-verity guarantee (ADR-007) can be undermined below the OS. |
-| `common.spi_lock`, `common.spi_desc` | SPI flash descriptor/lock state — same trust-chain-below-the-OS concern. |
-| `common.smm_lock`, `common.smrr`, `common.smm_code_chk` | SMM isolation. A compromised, unlocked SMM handler can bypass every OS-level control, including the YubiKey-gated LUKS2 unlock. |
-| `common.secureboot.variables` | Confirms the Secure Boot db actually holds only owner-enrolled keys (ADR-001/002), not an OEM/vendor key that slipped back in. |
-| `common.debugenabled` | Hardware debug interfaces (DCI/JTAG) are a documented exfiltration path around every software control. |
-| `common.me_mfg_mode` | Intel ME left in manufacturing mode is a known, severe firmware-level bypass. |
-| Custom: `wpbt-scan` + `uefi-var-computrace-scan` | Best-effort Absolute/Computrace surface: `chipsec_util acpi list` for a WPBT table, `chipsec_util uefi var-list` grepped for Computrace/Absolute-named variables. Informational only — see honesty note above. |
-
-**Packaging:**
-- Built via the same `systemd-repart` + PKCS#11/PIV-slot-9c signing pipeline used for other portable services (ADR-008), not a separate trust mechanism.
-- The `chipsec_helper.ko` kernel module is precompiled against the exact kernel headers pinned in the Containerfile/mkosi build (ADR-015) and shipped inside the portable service image — never built on-target via DKMS, which would need a compiler in the field and drift from the shipped kernel. CI must rebuild it whenever the pinned kernel version bumps.
-- **Explicit, documented security exception:** CHIPSEC's HAL needs `/dev/mem`, raw PCI config space, and MSR access — none of which fit under `ProtectKernelModules=yes`/`PrivateDevices=yes`. Per MISSION.md ("if a feature needs a security exception to exist, it gets cut"), this is not swept under the rug: the exception is scoped to exactly this one-shot, first-boot-only service, is auditable in the unit file below, and the service self-terminates (`RemainAfterExit=no`) rather than running persistently.
-
-**Unit (shipped, `usr/lib/systemd/system/yubiOS-chipsec-firstboot.service`):**
-
-```ini
-[Unit]
-Description=yubiOS first-boot firmware validation (CHIPSEC)
-Documentation=https://github.com/yubi-OS/yubiOS/blob/main/ADR.md#adr-024-chipsec-first-boot-firmware-validation-as-a-portable-service
-ConditionSecurity=measured-os
-ConditionFirstBoot=yes
-Before=yubiOS-enroll.service
-
-[Service]
-Type=oneshot
-RemainAfterExit=no
-ExecStart=/usr/lib/yubiOS/chipsec/run-firstboot-check.sh
-# CHIPSEC HAL requires raw hardware access -- this is the documented,
-# scoped exception referenced in ADR-024. No network, no persistence.
-PrivateNetwork=yes
-ProtectHome=yes
-ProtectSystem=strict
-ReadWritePaths=/run/yubiOS
-CapabilityBoundingSet=CAP_SYS_RAWIO CAP_SYS_ADMIN CAP_DAC_OVERRIDE
-NoNewPrivileges=no
-```
-
-**Gating:** `yubiOS-enroll.service` reads `/run/yubiOS/chipsec-result` if present. A `FAILED` result **warns** on the enrollment TTY by default (yubiOS does not lock owners out of their own hardware on a firmware-level warning — consistent with MISSION.md's stance that recovery paths are mandatory and lockouts are a failure of the power we return to the owner). Fleet/attestation deployments (SPEC.md UC-4) MAY set `yubiOS.chipsec-enforce=1` on the kernel cmdline to fail closed instead; this is opt-in, not the default.
-
-**Alternatives considered:**
-- *Run chipsec as a full module extending /usr* — rejected: raw hardware access has no business living in the always-on, dm-verity-measured base; a portable service scopes the exception to a bounded, auditable, one-shot unit (ARCHITECTURE.md §6).
-- *Claim automated Computrace/PCR-event-log detection* — rejected as inaccurate; no such CHIPSEC module exists. Shipping the best-effort WPBT/UEFI-var scan as informational-only is the honest version of this requirement.
-
-**Source:** `skills/chipsec` reference (CHIPSEC `chipsec2` module map), issue #24, ADR-007, ADR-008, ADR-010, ADR-016, ARCHITECTURE.md §6, MISSION.md.
+**Security exception:** CHIPSEC needs raw hardware access. This exception is scoped to the one-shot service and must not become a persistent base-system privilege.
 
 ---
 
 ## ADR-025: Post-Quantum Hybrid TLS (X25519MLKEM768) for Update/Attestation Endpoints
 
 **Date:** 2026-07-08
-**Status:** Accepted — verified already satisfied by pinned dependencies; CI check added, no application code required today
+**Status:** Accepted - satisfied by pinned dependencies; CI verification required
 
-**Context:** Issue #26 asked for X25519MLKEM768 hybrid key exchange on yubiOS's update and attestation TLS paths, gated on OpenSSL ≥ 3.5 landing in the Fedora 45 base image. Research resolved both open questions:
+**Decision:** No application-level TLS code is required today. OpenSSL 3.5+ and Go 1.24+ already negotiate `X25519MLKEM768` by default on the relevant paths when defaults are not overridden. yubiOS should verify this in CI and avoid local curve pinning away from upstream defaults.
 
-1. **OpenSSL prerequisite is met.** Fedora 44 already ships OpenSSL 3.5.7 (LTS, supported to April 2030); Fedora 45's build target is moving to 4.0.1, a superset that retains the ML-KEM support introduced in 3.5. `X25519MLKEM768` is the *default preferred group* in OpenSSL ≥ 3.5 — no application code has to request it.
-2. **The `bootc upgrade` / registry-pull path doesn't go through OpenSSL at all — it's Go.** `podman`/`skopeo`/`containers/image` use Go's `crypto/tls`, and Go 1.24 (Feb 2025) made `X25519MLKEM768` the **default** hybrid group for TLS 1.3 clients whenever `Config.CurvePreferences` is left unset (the yubiOS toolchain does not set it). A Go 1.24+ client always offers the hybrid share; if the server doesn't support it, it falls back to classical X25519 automatically.
-3. **Verified live**, not just from docs: `curl -v https://registry-1.docker.io/v2/` from a host running OpenSSL 3.5.5 negotiated `SSL connection using TLSv1.3 / TLS_AES_128_GCM_SHA256 / X25519MLKEM768 / RSASSA-PSS` against the actual Docker Hub registry endpoint yubiOS's update path depends on (`0mniteck/yubios`, ADR-006/ADR-015).
-4. **Repo audit:** searched the yubiOS repo for any TLS group/cipher pinning (`SSL_CTX_set1_groups_list`, `GODEBUG=tlsmlkem`, `--curves`, `CurvePreferences`, `MinVersion`) — zero hits. Nothing in yubiOS is overriding the library defaults away from PQ hybrid.
+**2026-07-11 research confirmation:** OpenSSL 3.5 release notes and Go 1.24 release notes both document the default hybrid group behavior. The active risk is regression through future base-image/toolchain changes, not missing implementation.
 
-**Decision:** No application-level TLS code is required today. yubiOS's OCI update pull path and any future attestation endpoint already negotiate `X25519MLKEM768` by default through its existing pinned dependencies (Fedora 45's OpenSSL ≥ 3.5, ADR-015; the Go 1.24+ container toolchain). What was missing was verification, not implementation:
-
-- Added a CI check (`ci-pq-tls-verify` job, see below) that asserts the built image's `openssl` reports ≥ 3.5 and that a live TLS handshake against the update registry negotiates a `MLKEM` group. This turns "we assume PQC is on" into a gate that fails loudly if a future base-image digest bump or toolchain regression silently drops it.
-- SSH is unaffected (`ed25519-sk`, ADR-004, is already quantum-resistant for signing purposes — this ADR only concerns the TLS *key-exchange* layer, per the issue's own scoping note).
-
-**Verification step (added to CI, informational-first — see Consequences):**
-
-```yaml
-      - name: Verify PQ hybrid TLS default (ADR-025)
-        run: |
-          v="$(openssl version | awk '{print $2}')"
-          echo "openssl version: $v"
-          major="${v%%.*}"; minor="$(echo "$v" | cut -d. -f2)"
-          if [ "$major" -lt 3 ] || { [ "$major" -eq 3 ] && [ "$minor" -lt 5 ]; }; then
-            echo "::error::openssl $v < 3.5 -- X25519MLKEM768 default lost, see ADR-025"; exit 1
-          fi
-          group="$(curl -v https://registry-1.docker.io/v2/ 2>&1 | grep -o 'SSL connection using[^\"]*' || true)"
-          echo "$group"
-          case "$group" in *MLKEM*) echo "PQ hybrid group confirmed" ;; *) echo "::error::no MLKEM group negotiated -- see ADR-025"; exit 1 ;; esac
-```
-
-**Consequences:**
-- No production code change; this ADR is primarily a verification gate plus documentation that the requirement is already satisfied by existing pinned dependencies (ADR-015).
-- If yubiOS ever adds a first-party attestation server (FUTURE.md, ARM64 fTPM work) that terminates its own TLS, that server's stack MUST be audited against this ADR's verification step before shipping — same check, different target.
-- Tracked as a fast-follow: land the CI step above into `yubiOS-ci.yml` as a non-blocking check first (new dependency on network egress in CI), then promote to blocking once stable.
-
-**Alternatives considered:**
-- *Wait for a dedicated future ADR when OpenSSL 3.5 "lands"* (the issue's original framing) — superseded: it already has, and waiting further delays a two-line verification for a requirement that's already true.
-- *Force `SSL_CTX_set1_groups_list` / a build-time pin to `X25519MLKEM768` explicitly* — rejected: the library defaults already do this correctly and are actively maintained upstream; a local pin would drift out of sync with future upstream algorithm-agility changes (e.g. IANA/NIST rotating the preferred ML-KEM parameter set) for no benefit.
-
-**Source:** OpenSSL 3.5.0 release notes, `openssl.org/docs/man3.5/man3/SSL_CTX_set1_groups_list.html`, Go 1.24 release notes (`go.dev/doc/go1.24`), golang/go#69985, live verification against `registry-1.docker.io`, repo-wide grep audit (no TLS pinning found), issue #26, ADR-004, ADR-006, ADR-015.
-
+**Consequences:** If yubiOS adds a first-party attestation server later, that server must inherit this ADR's verification requirement.
 
 ---
+
 ## ADR-026: `dev`/`dev-<sha>` Test Image Tag (swu2f-Enabled) on `0mniteck/yubios`
 
 **Date:** 2026-07-08
 **Status:** Accepted
-**Depends on:** ADR-022 (unified per-artifact tags on `0mniteck/yubios`), ADR-006 (mkosi + bootc build paths), ADR-023 (ARM64 primary), the `mkosi.conf.d/test/` profile (swu2f Layer 2).
 
-**Context:** `ci_test-vm.yml`'s `vm-e2e` job can now build and run `bcvk` for real on the self-hosted ARM64 runner (`rock1`, KVM confirmed live). The one thing still missing to exercise the actual LUKS2-FIDO2 + systemd-homed + enrollment boot legs (not just the feasibility gate) is a pullable yubiOS image with the swu2f Layer 2 software FIDO2 authenticator (`passless`) baked in — the production `latest`/`<sha>` tag deliberately does not and must not ship it (ADR-003: the YubiKey is the trust anchor, not a software stand-in). Until now that authenticator only existed in the mkosi TEST profile's disk-image output, which isn't something `bcvk`/`podman pull` can consume as an OCI ref.
+**Decision:** Publish a TEST-only `dev`/`dev-<sha>` tag family that layers the swu2f software FIDO2 authenticator onto the same base OS for VM validation.
 
-**Decision:** Extend ADR-022's tag table on `0mniteck/yubios` with a fourth artifact class:
-
-| Tag | Artifact | Produced by | Status |
-|---|---|---|---|
-| `dev`, `dev-<sha>` | Same base OS as `latest`, plus the `passless` swu2f software FIDO2 authenticator (TEST-ONLY) | `ci_dev_image.yml` | live (this ADR) |
-
-Built via a new `Containerfile.dev` that `FROM`s the exact same production base image build (not a fork of the Containerfile — a multi-stage build on top of it) and layers on the identical `mkosi.conf.d/test/install-swu2f-authenticator.sh` script the mkosi TEST profile already uses, so the mkosi-path test image and the bootc-path `dev` tag ship byte-identical swu2f tooling (same principle as ADR-006's "both paths behave identically at runtime," extended to the test variant).
-
-**Guardrails (non-negotiable):**
-- `Containerfile.dev` is never referenced by `yubiOS-ci.yml`'s production build/push path — only by the new, separate `ci_dev_image.yml`.
-- Every image built from `Containerfile.dev` carries `LABEL yubiOS.image.kind="dev-test"` and an explicit warning label.
-- `ci_dev_image.yml` asserts `passless --version` succeeds in the built image before any push — if the swu2f layer is missing, the build fails loudly rather than silently shipping a production-shaped image with no authenticator.
-- `ci_test-vm.yml`'s `image` workflow_dispatch input has no default pointing at `:dev` — a human (or an explicit follow-up dispatch) must pass `0mniteck/yubios:dev` deliberately; the boot leg does not silently start pulling a test image on every run.
-
-**Rationale:**
-- Reuses ADR-022's existing tag-namespace pattern instead of inventing a second distribution mechanism (a second registry, GitHub Releases, etc.) — same reasoning ADR-022 already established.
-- Multi-stage `FROM` on the real production build (not a duplicated Containerfile) means the dev image can never drift from what production actually ships apart from the one deliberate addition — no maintenance burden of two parallel package lists.
-- Reusing the mkosi path's exact install script (not a re-implementation) keeps the swu2f authenticator's build/pin (passless `v0.11.2`, debug build for `PASSLESS_E2E_AUTO_ACCEPT_UV`) as a single source of truth across both build paths.
-
-**Alternatives considered:**
-- *Ship swu2f support inside the production `Containerfile`/`latest` tag, gated by a runtime flag* — rejected outright: a production image must never contain `passless` at all, gated or not; presence-on-disk is the risk MISSION.md and ADR-003 exist to prevent.
-- *Have `bcvk` boot the mkosi disk image directly instead of an OCI tag* — rejected for this workflow: `ci_test-vm.yml`'s `vm-e2e` job already pulls via `podman`/OCI ref (ADR-022's registry-centric distribution model); adding a second, disk-image-based fetch path for just the test leg duplicates infrastructure for no benefit.
-
-**Source:** ADR-022, ADR-006, ADR-003, `mkosi.conf.d/test/mkosi.conf`, `mkosi.conf.d/test/install-swu2f-authenticator.sh`, `ci_test-vm.yml` (this session's rock1 KVM verification).
-
+**Guardrails:**
+- `Containerfile.dev` is never referenced by the production build/push path.
+- Dev images carry explicit TEST-only labels.
+- CI asserts `passless --version` before push.
+- Production tags must not include swu2f tooling.
 
 ---
 
 ## ADR-027: U-Boot Console/Shell Authentication Gate (FIDO2/U2F Break-In Protection)
 
-**Date:** 2026-07-08  
-**Status:** Proposed — idea-stage, post-launch (see [FUTURE.md](FUTURE.md) § Idea (unscoped))  
-**Context:** ADR-018/019/020/021 harden the boot chain *through* U-Boot (TF-A TBB, OP-TEE, the fTPM). None of them gate **U-Boot's own interactive console.** On real hardware, U-Boot's autoboot key-sequence check (`abortboot()` in `common/autoboot.c`) lets anyone with UART/serial access interrupt autoboot and drop into the U-Boot shell — from which they can dump memory, alter `bootargs`, or otherwise interfere with the chain before Linux ever loads. U-Boot's existing mitigation, `CONFIG_AUTOBOOT_KEYED` + `CONFIG_AUTOBOOT_ENCRYPTION` (a SHA256-hashed shared password), is copyable and not bound to hardware possession — the exact class of secret the FIDO2-first thesis exists to avoid. This ADR scopes (not yet implements) a FIDO2/U2F touch as a hardware-bound alternative at that same choke point. Originated from a raw chat-attachment idea that used invented APIs (fictional `<u2f.h>`, misapplied `libu2f-server`, a nonexistent `do_shell` command) — see FUTURE.md for the correction; this ADR resolves the scoping questions that doc left open.
+**Date:** 2026-07-08
+**Status:** Proposed - idea-stage, post-launch
 
-**Decision:**
-1. **Scope: ARM64 only.** U-Boot is only in yubiOS's boot chain on ARM64 (FUTURE.md's own scope line); x86-64 keeps systemd-boot + UEFI Secure Boot with no U-Boot stage to gate. Out of scope unless/until U-Boot becomes an x86-64 firmware stage, which is not planned.
-2. **Protocol: CTAP1/U2F, not CTAP2.** U2F's raw HID framing and register/authenticate flow is dramatically simpler to reimplement bare-metal (no CBOR, no libc) than CTAP2 — the right tradeoff for U-Boot's freestanding environment. Revisit only if a real embedded CTAP2 implementation becomes available upstream to build on.
-3. **Hook point: `abortboot()` / the autoboot key-sequence check in `common/autoboot.c`**, added as an *additional* `CONFIG_AUTOBOOT_*` gate alongside (not replacing) `CONFIG_AUTOBOOT_ENCRYPTION` — a board can require both factors, or fall back to password-only on boards where the FIDO2 HID client isn't ready yet. No new command, no `do_shell`.
-4. **Key/enrollment storage:** reuse whatever ADR-018/019/020 already decided for that board's secure secrets — RPMB via OP-TEE on Path A boards with the fTPM stack live, or the same U-Boot environment/DPS partition that already backs U-Boot's FIT verified-boot public key on Path B boards (ADR-019). No new storage mechanism invented for this feature.
-5. **Recovery is mandatory, not optional.** A lost/broken YubiKey must never brick console access. Requires a backup-key enrollment path, mirroring the existing backup-YubiKey pattern already shipped for disk unlock (PR #3), decided and built before this ships — not improvised later.
-6. **Not yet scheduled into a Phase F sub-phase.** Stays Proposed until (a) Phase F0–F3 (fTPM bring-up, FUTURE.md) is further along — the storage decision in point 4 depends on which path (A/B) a given board lands on — and (b) someone prototypes the raw USB HID U2F client against QEMU's USB HID passthrough as a standalone spike, deliberately decoupled from the fTPM roadmap so an unrelated USB-stack experiment can't block or destabilize Phase F.
+**Decision:** Scope an ARM64-only U-Boot console protection experiment using CTAP1/U2F at the `abortboot()` / autoboot key-sequence gate. CTAP2/libfido2 is out of scope for the first spike because U-Boot is a freestanding pre-Linux environment.
 
-**Consequences:** Adds new bootloader-side attack surface — a USB HID host client parsing untrusted device input inside U-Boot, pre-Linux, pre-any-mitigation. Historically, USB stacks in bootloaders are a real vector (this is bare-metal C parsing HID reports from an untrusted physical device); this needs its own threat-model/audit pass before merge, not just a working demo. Signature verification reuses U-Boot's existing `lib/ecdsa/` FIT-signing primitive — no new crypto dependency. `CONFIG_AUTOBOOT_ENCRYPTION` stays available as a fallback in parallel; nothing regresses if this project stalls or is deprioritized.
+**Recovery requirement:** Backup enrollment and non-bricking recovery behavior must be designed before this can ship.
 
-**Alternatives considered:**
-- *`CONFIG_AUTOBOOT_ENCRYPTION` password only, ship nothing new* — rejected as the long-term answer (shared secret, not hardware-bound) but kept as the live fallback; no regression risk in leaving both paths available.
-- *Port CTAP2 / `libfido2`* — rejected for v0: host-side library (glibc, libusb), doesn't run in U-Boot's freestanding runtime; full CBOR/CTAP2 client is materially more code than U2F for no v0 benefit.
-- *Disable the U-Boot break-in path entirely (`CONFIG_AUTOBOOT_KEYED` with no bypass at all)* — rejected: removes a legitimate recovery/debug path; the goal is authenticated access, not zero access.
+**Risk:** Adds a USB HID parser before Linux starts. This needs its own threat-model and audit pass.
 
-**Source:** [FUTURE.md](FUTURE.md) § Idea (unscoped) — U-Boot console/shell authentication gate, ADR-018 (secure-world stack + RPMB), ADR-019 (Path A/B storage implications), ADR-020/021 (U-Boot as sole BL33/UEFI provider), U-Boot `common/autoboot.c` + `CONFIG_AUTOBOOT_ENCRYPTION` docs, PR #3 (backup YubiKey enrollment pattern), PR #43 (this doc's origin).
+---
+
+## ADR-028: 2026-07-11 Documentation Planning Cycle
+
+**Date:** 2026-07-11
+**Status:** Accepted
+
+**Context:** A docs and research planning cycle reviewed current repo markdown, recent merged PRs, and upstream sources for systemd v261, OpenSSL 3.5, Go 1.24, bootc installation, and QEMU zstd EFI zboot. The review found repeated stale statements across docs.
+
+**Decision:** Use [refs/planning-cycle-2026-07-11.md](refs/planning-cycle-2026-07-11.md) as the evidence log for this cycle and update the docs around four consistency rules:
+
+1. `PINNED.md` is the live source for current image/tool digests.
+2. ARM64 is primary; x86-64 is supported secondary.
+3. `RestrictFileSystems=` and `RestrictFileSystemAccess=` are separate systemd controls.
+4. TEST-only swu2f/dev artifacts must stay isolated from production artifacts.
+
+**Consequences:** Future planning cycles should add dated refs and then update the source-of-truth docs that repeat the affected claims. Do not leave resolved blockers in `BLOCKERS.md` or active tasks in `TODO.md` merely for historical context.
+
+**Sources:** [refs/planning-cycle-2026-07-11.md](refs/planning-cycle-2026-07-11.md), [CITATION.md](CITATION.md).

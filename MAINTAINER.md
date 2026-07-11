@@ -1,6 +1,57 @@
-Maintained-By:
- - Shant Tchatalbachian (0mniteck) shant@omniteck.com
- - +18186415757 (sms)
- - Omniteck.42 (signal)
+# Maintainer Playbook
 
-Assisted-By: Claude Fable 5 (SAUNA.AI)
+Last reviewed: 2026-07-11
+
+This file captures recurring maintainer rules for yubiOS documentation, CI, and planning work.
+
+## Branch And PR Policy
+
+- Wiki and docs planning work uses `docs/research`.
+- Focused implementation branches should be named after the work they carry.
+- Do not delete branches as part of routine docs or CI work.
+- When a change should land, open a PR with a concrete summary, validation, and known inconsistencies.
+
+## Source Of Truth
+
+| Topic | File |
+|---|---|
+| Current base and tool pins | `PINNED.md` |
+| Accepted architecture decisions | `ADR.md` |
+| Normative behavior | `SPEC.md` |
+| Threat mitigations and residual risk | `MITIGATE.md` |
+| Future work | `FUTURE.md` |
+| Active blockers | `BLOCKERS.md` |
+| Active tasks | `TODO.md` |
+| Research-cycle evidence | `refs/` |
+
+Do not let historical run output, old PR notes, or stale TODO fragments override the current source-of-truth files.
+
+## Research Cycle Checklist
+
+1. Read the task-specific file, then `AGENTS.md`, `PINNED.md`, and relevant ADRs/refs.
+2. Gather primary upstream sources for claims that may have changed.
+3. Record dated findings under `refs/` when the work spans more than one file.
+4. Update docs that repeat the affected claim.
+5. Flag inconsistencies instead of quietly smoothing over unresolved conflicts.
+6. Open a PR, merge when appropriate, and create or update an issue with the outcome.
+
+## Current Consistency Flags
+
+- `RestrictFileSystems=` is the existing BPF-LSM filesystem-type limiter, not the systemd v261 addition. v261 introduced `RestrictFileSystemAccess=`.
+- `PINNED.md` is the live digest source. Historical digests in ADRs and old workflow logs are not current pins.
+- ARM64 is primary for the owner-owned root-of-trust thesis; x86-64 is supported and secondary.
+- TEST-only swu2f/dev images must remain isolated from production tags.
+
+## CI Triage Rules
+
+- Retry only likely-transient failures and avoid retry loops.
+- Deterministic failures should become fixes or documented blockers.
+- Old-sha reruns do not validate current `main`.
+- Workflow trigger edits should be narrow and path-scoped.
+- CI outcomes should be summarized in the issue or PR that motivated the work.
+
+## Release Hygiene
+
+- A release or publish path must cite the branch, commit, workflow run, and artifact/tag.
+- Digest bumps should update [PINNED.md](PINNED.md) and include evidence that required package floors still hold.
+- New artifacts need explicit production/test classification before publication.

@@ -1,6 +1,12 @@
-# sbsign PKCS#11 validation
+# systemd-sbsign PKCS#11 validation
 
-Validate systemd-sbsign + libykcs11 PKCS#11 URI for ECC slot 9c (ADR-008).
+Status: validation path documented and wired for the yubiOS signing flow. A physical YubiKey remains required for final production signing validation.
+
+## Goal
+
+Validate `systemd-sbsign` with YubiKey PIV slot 9c through PKCS#11, then verify the signed UKI with `osslsigncode`.
+
+## Manual validation shape
 
 ```sh
 p11-kit list-modules | grep ykcs11
@@ -10,10 +16,13 @@ systemd-sbsign sign \
   --certificate /etc/yubico/sb-cert.pem \
   --output yubiOS.signed.efi \
   yubiOS.efi
-# Verify (sbverify is gone with sbsigntool; systemd-sbsign has no verify verb):
 osslsigncode verify -in yubiOS.signed.efi -CAfile /etc/yubico/sb-cert.pem
 ```
 
-Full runnable test: `tests/validate-pkcs11-uri.sh` (run with a YubiKey after `yubiOS-enroll-sb`).
-The signing step is the gate; `osslsigncode` corroborates. Feed the validated URI
-into the mkosi `SecureBootKey=` / `SecureBootKeySource=engine:pkcs11` settings.
+## Repo hook
+
+Run `tests/validate-pkcs11-uri.sh` after `yubiOS-enroll-sb` on a host with a configured YubiKey. The signing step is the primary gate; `osslsigncode` corroborates the PE signature.
+
+## Consistency rule
+
+Keep build docs on `systemd-sbsign`; do not reintroduce legacy `sbsign --engine pkcs11` examples except as historical context in ADR-008.

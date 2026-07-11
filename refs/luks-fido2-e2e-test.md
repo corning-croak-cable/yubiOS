@@ -1,27 +1,29 @@
-# LUKS2 FIDO2 end-to-end test (hardware-free CI path)
+# LUKS2 FIDO2 end-to-end test
 
-Closes #20. Relates to #33, #9. Refs yubiOS#25 (swu2f), yubi-OS/bcvk#3 (swtpm).
+Status: active CI coverage with hardware-free and hardware-in-the-loop paths. Production trust remains a physical YubiKey; software authenticators are TEST-only.
 
-Two complementary e2e tests exercise the same trust boundaries:
+Relates to yubiOS #20/#25/#33, yubi-OS/bcvk#3, ADR-003, ADR-026.
 
-| Test | Authenticator | Where it runs |
-|------|---------------|----------------|
-| `tests/vm/test-luks-fido2.sh`    | **real YubiKey** + `bcvk native-to-disk` | bare metal / hardware-in-the-loop |
-| `tests/vm/test-luks-fido2-ci.sh` | **software** swtpm + swu2f via `bcvk ephemeral run` | CI, no hardware |
+## Test paths
 
-yubiOS production trust anchor stays the **YubiKey FIDO2** device (ADR-003). swtpm/swu2f are TEST-ONLY.
+| Test | Authenticator | Where it runs | Purpose |
+|---|---|---|---|
+| `tests/vm/test-luks-fido2.sh` | Real YubiKey + `bcvk native-to-disk` | Bare metal / hardware-in-the-loop | Production-path confidence |
+| `tests/vm/test-luks-fido2-ci.sh` | swtpm + swu2f via `bcvk ephemeral run` | CI, no hardware | Regression coverage |
+| `tests/vm/test-fido2-enrollment.sh` | TEST-only `0mniteck/yubios:dev` image with `passless` | CI / explicit dispatch | CTAP2 hmac-secret legs without a physical token |
 
-## CI path (`test-luks-fido2-ci.sh`)
+## CI coverage
 
-Boots `bcvk ephemeral run --swtpm --swu2f <image>` and asserts over SSH:
+- swtpm provides `/dev/tpm0`/`/dev/tpmrm0` for measured-boot code paths.
+- swu2f Layer 1 covers CTAP1/U2F and pam-u2f flows.
+- swu2f Layer 2 uses the TEST-only `passless` authenticator in the `dev` image for CTAP2 hmac-secret, covering `systemd-cryptenroll --fido2-device=auto` and systemd-homed legs where available.
 
-- **swtpm** (host-side QEMU vTPM, bcvk#3): `/dev/tpm0` + `/dev/tpmrm0` present; `ConditionSecurity=measured-os` probed (skip-tolerant under direct-kernel boot).
-- **swu2f Layer 1** (QEMU `u2f-emulated`, libu2f-emu, **CTAP1**, yubiOS#25): emulated token visible via `/dev/hidraw*` + `fido2-token -L`; pam-u2f register via `pamu2fcfg` + `pam_u2f.so` wired in `/etc/pam.d`.
+## Guardrails
 
-### What is gated, and why
-
-`systemd-cryptenroll --fido2` and systemd-homed FIDO2 need **CTAP2 `hmac-secret`**, which libu2f-emu (CTAP1) cannot provide. That requires **swu2f Layer 2** — an in-guest `/dev/uhid` CTAP2 authenticator shipped in the image — staged as a separate guest-image PR (yubiOS#25 follow-up). Until it lands, the test PROBES for a CTAP2 hmac-secret authenticator and **skips (does not fail)** the LUKS2-FIDO2 and homed-FIDO2 legs. pam-u2f + swtpm legs always run.
+- The `dev` image must never become a production install default.
+- Production images must not contain `passless` or any software authenticator used as a YubiKey stand-in.
+- Physical-YubiKey passthrough remains the final authority for release confidence.
 
 ## bcvk dependency
 
-`--swtpm` / `--swu2f` live on the canonical bcvk branch `yubi-OS/bcvk@feat/swtpm-ci` (bcvk is referenced, never merged, like the mkosi fork). Build it and put it on PATH before running. Runner host also needs `swtpm`+`swtpm-tools` and `libu2f-emu` with QEMU built `--enable-u2f`.
+`--swtpm` and `--swu2f` live on the canonical bcvk branch `yubi-OS/bcvk@feat/swtpm-ci`. bcvk is referenced by yubiOS CI and is not merged into this repository.

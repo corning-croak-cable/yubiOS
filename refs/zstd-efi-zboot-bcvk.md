@@ -1,80 +1,39 @@
 # ARM64 EFI zboot + zstd blocker (bcvk DirectBoot)
 
-_Last updated: July 10, 2026_
+_Last reviewed: 2026-07-11_
 
 ## Executive summary
 
-Fedora Rawhide/Fedora 45 ARM64 kernels can be packaged as EFI zboot images whose
-embedded kernel payload is `zstd` compressed. The yubiOS VM e2e tests currently
-launch `bcvk ephemeral run`, which uses QEMU's direct-kernel/DirectBoot path for
-the kernel extracted from the bootc image. That QEMU path historically handled
-EFI zboot `gzip`, but not `zstd`, and fails before the guest reaches SSH with:
+Fedora ARM64 kernels can be packaged as EFI zboot images whose embedded kernel payload is `zstd` compressed. The yubiOS VM e2e harness launches `bcvk ephemeral run`, which uses QEMU's direct-kernel/DirectBoot path for the kernel extracted from the bootc image. Older QEMU direct loaders handled EFI zboot `gzip` but not `zstd`, producing:
 
 ```text
 unable to handle EFI zboot image with "zstd" compression
 ```
 
-The failure is therefore a host harness/kernel-loader compatibility issue, not a
-yubiOS FIDO2, LUKS, swtpm, swu2f, systemd-homed, or PAM regression. yubiOS now
-tackles this in CI by building a pinned upstream QEMU commit that contains
-`hw/loader: Add support for zboot images compressed with zstd` and placing
-that `qemu-system-aarch64` on the host `PATH` and bind-mounting a wrapper plus
-the QEMU prefix into bcvk's inner podman container before the VM starts. The
-wrapper passes `-L /run/host-mounts/qemu-zstd/share/qemu` so QEMU can find ROMs
-such as `efi-virtio.rom`. The skip remains as a final fallback for stale self-hosted caches or manual runs
-that still use an older QEMU.
+This is a host harness/kernel-loader compatibility issue, not a yubiOS FIDO2, LUKS2, swtpm, swu2f, systemd-homed, or PAM regression.
+
+## Current yubiOS stance
+
+1. Keep production aligned with Fedora ARM64 defaults; do not downgrade production compression solely for CI.
+2. In `.github/workflows/ci_test-vm.yml`, use the pinned upstream QEMU commit `3a18e8a25992d1643707e2cebdd6e9bb2bd7d3b9` for the ARM64 bcvk lane until runner distributions ship the zstd EFI zboot loader fix.
+3. Bind-mount the QEMU prefix/wrapper into bcvk's inner container so DirectBoot uses the zstd-capable QEMU binary and the matching ROM search path.
+4. Keep the exact-error skip as a fallback for stale self-hosted caches and manual runs with an older QEMU.
 
 ## Research notes
 
-- Red Hat Bugzilla 2385692 tracks the same symptom on aarch64: QEMU direct boot
-  cannot boot current Fedora Rawhide kernels once they moved to zboot + zstd.
-- dracut-ng issue 1406 reports Fedora ARM64 VM-test failures beginning with a
-  Fedora kernel update from `6.14.11-300.fc42.aarch64`, with the same
-  `unable to handle EFI zboot image with "zstd" compression` message.
-- QEMU patch series `Add support for zboot images compressed with zstd` adds a
-  zstd branch to `unpack_efi_zboot_image()` and preserves the same error message
-  for unsupported compression types, confirming the string comes from QEMU's
-  direct EFI zboot unpacker.
-- Linux EFI zboot discussions explain why this only hits some boot paths: EFI
-  zboot is a self-decompressing EFI wrapper, but direct-kernel boot bypasses the
-  normal firmware/stub execution path and asks the VMM/loader to unpack the image
-  itself.
+- Fedora/Rawhide ARM64 moved through kernel images that exposed this direct-loader limitation.
+- QEMU's fix adds a zstd branch to the EFI zboot unpacker and keeps the unsupported-compression error path for other cases.
+- Firmware/stub boot is strategically cleaner than DirectBoot because the EFI stub owns decompression, which more closely resembles Secure Boot production flow.
 
-## Tactical yubiOS stance
+## Strategic fixes
 
-1. In `.github/workflows/ci_test-vm.yml`, install `qemu-system-aarch64` from
-   upstream QEMU commit `3a18e8a25992d1643707e2cebdd6e9bb2bd7d3b9` for the ARM64
-   VM job before building/running bcvk. That commit is the zstd EFI zboot loader
-   fix and is cached under `/opt/qemu-zstd/<commit>` on the self-hosted runner.
-   The VM test steps pass `BCVK_EPHEMERAL_EXTRA_ARGS` so bcvk bind-mounts the
-   pinned QEMU prefix, a small `-L` wrapper, and its host library directories
-   into the inner podman container; merely adding QEMU to the outer runner
-   `PATH` is insufficient.
-2. Keep `tests/vm/test-luks-fido2-ci.sh` and
-   `tests/vm/test-fido2-enrollment.sh` skip-tolerant for this exact host-side
-   DirectBoot/zstd failure as a safety net for manual runs or stale runners.
-3. Do **not** downgrade yubiOS production compression or kernel packaging just to
-   satisfy an older CI harness; production should stay aligned with Fedora's
-   ARM64 defaults unless the boot stack itself is affected.
+- Preferred short-term: pinned QEMU until distro QEMU contains the fix.
+- Preferred medium-term: bcvk ARM64 firmware/stub boot mode for better fidelity.
+- Last-resort CI workaround: test-only ARM64 image variant with older supported compression, never production.
 
-## Strategic fixes to evaluate
+## Sources
 
-- **Preferred harness fix:** keep the workflow-level pinned QEMU build until the
-  runner distribution ships a QEMU release that includes commit
-  `3a18e8a25992d1643707e2cebdd6e9bb2bd7d3b9`; then replace the source build with
-  a version gate and remove the fallback skip once bcvk CI proves stable.
-- **Alternate harness fix:** add a bcvk mode for ARM64 bootc images that boots
-  through UEFI/systemd-stub rather than direct-kernel boot. This more closely
-  resembles real Secure Boot flows and avoids duplicating decompressor support in
-  QEMU's direct loader.
-- **Image workaround:** if a short-lived CI lane must run before QEMU/bcvk is
-  fixed, build a test-only ARM64 kernel/image variant that uses a
-  bcvk-supported EFI zboot compression type. Keep this out of production and
-  document the divergence.
-
-## Source links
-
-- Red Hat Bugzilla 2385692: <https://bugzilla.redhat.com/show_bug.cgi?id=2385692>
-- dracut-ng issue 1406: <https://github.com/dracut-ng/dracut-ng/issues/1406>
-- QEMU zstd EFI zboot patch: <https://patchew.org/QEMU/20251011081347.4063198-1-daan.j.demeyer%40gmail.com/20251011081347.4063198-4-daan.j.demeyer%40gmail.com/>
-- Linux EFI zboot background: <https://lwn.net/Articles/906386/>
+- QEMU pull mail: https://lists.nongnu.org/archive/html/qemu-devel/2026-01/msg04080.html
+- QEMU patch discussion: https://patchew.org/QEMU/20251011081347.4063198-1-daan.j.demeyer%40gmail.com/20251011081347.4063198-4-daan.j.demeyer%40gmail.com/
+- dracut-ng issue 1406: https://github.com/dracut-ng/dracut-ng/issues/1406
+- Linux EFI zboot background: https://lwn.net/Articles/906386/
