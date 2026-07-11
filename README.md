@@ -4,9 +4,9 @@
 
 # yubiOS
 
-**FIDO2-first immutable OS - YubiKey is the root of trust**
+**FIDO2-first immutable OS — YubiKey is the root of trust**
 
-### Work In Progress - Work In Progress - Work In Progress
+### 🦴 🚧 Work In Progress 🚧 Work In Progress 🚧 Work In Progress 🚧
 
 [![License: LGPL-2.1](https://img.shields.io/badge/license-LGPL--2.1-magenta?style=flat-square)](LICENSE)
 [![Status: Groundwork](https://img.shields.io/badge/status-groundwork-blueviolet?style=flat-square)](TODO.md)
@@ -27,34 +27,34 @@ yubiOS fuses four lineages:
 |---|---|---|
 | **particleos ethos** | [systemd/particleos](https://github.com/systemd/particleos) | Immutable rootfs, UKI, dm-verity, composefs, systemd-boot |
 | **bootc design** | [bootc-dev/bootc](https://github.com/bootc-dev/bootc) | OCI image as OS delivery unit, day-2 upgrades via registry pull |
-| **Amutable vision** | [Lennart Poettering + systemd team](https://amutable.com) | "Integrity should be built into every critical infrastructure project" - image-based OS, verifiable integrity, determinism as a default |
+| **Amutable vision** | [Lennart Poettering + systemd team](https://amutable.com) | "Integrity should be built into every critical infrastructure project" — image-based OS, verifiable integrity, determinism as a default |
 | **YubiKey root of trust** | FIDO2 / PIV / OATH | Hardware-bound trust replacing TPM at every boundary |
 
 ### Ecosystem alignment
 
 In January 2026 the core systemd team and the engineers behind, composefs, runc, Flatcar,
-ParticleOS, and Ubuntu Core - founded [Amutable](https://amutable.com) with the mission:
+ParticleOS, and Ubuntu Core — founded [Amutable](https://amutable.com) with the mission:
 
-> *"Deliver determinism and verifiable integrity to Linux workloads everywhere."*
+> *“Deliver determinism and verifiable integrity to Linux workloads everywhere.”*
 
 yubiOS is independently building toward the same architecture, with one additional constraint:
 the YubiKey replaces the TPM as the hardware root of trust at every layer. The "Fitting Everything
 Together" essay at [0pointer.net](https://0pointer.net/blog/fitting-everything-together.html) is the
-primary design reference for yubiOS - hermetic /usr, DPS partitions, systemd-repart first-boot,
+primary design reference for yubiOS — hermetic /usr, DPS partitions, systemd-repart first-boot,
 A/B sysupdate, systemd-homed per-user encryption, and UKI + dm-verity trust chain.
 
 ## Trust chain
 
 ```
-+-------------------------------------------+
-|                 YubiKey 5                 |
-+-------------------------------------------+
-| PIV slot 9c (CCID)   Secure Boot signing  |
-| FIDO2 HMAC-secret    Disk unlock (hidraw) |
-| FIDO2 ed25519-sk     SSH keys    (hidraw) |
-| FIDO2 U2F            sudo/login  (hidraw) |
-| OATH TOTP            App 2FA     (hidraw) |
-+-------------------------------------------+
+┌───────────────────────────────────────────┐
+│                 YubiKey 5                 │
+├───────────────────────────────────────────┤
+│ PIV slot 9c (CCID)   Secure Boot signing  │
+│ FIDO2 HMAC-secret    Disk unlock (hidraw) │
+│ FIDO2 ed25519-sk     SSH keys    (hidraw) │
+│ FIDO2 U2F            sudo/login  (hidraw) │
+│ OATH TOTP            App 2FA     (hidraw) │
+└───────────────────────────────────────────┘
 ```
 
 > **ADR-002 note:** Secure Boot signing uses PIV/CCID (via `systemd-sbsign` + PKCS#11),
@@ -62,14 +62,14 @@ A/B sysupdate, systemd-homed per-user encryption, and UKI + dm-verity trust chai
 
 ## Get yubiOS
 
-yubiOS ships as a **multi-arch [bootc](https://github.com/bootc-dev/bootc) OCI image on Docker Hub** - this is the primary download.
+yubiOS ships as a **multi-arch [bootc](https://github.com/bootc-dev/bootc) OCI image on Docker Hub** — this is the primary download.
 
 **Pull** (auto-selects `amd64` / `arm64`):
 ```sh
 docker pull 0mniteck/yubios:latest
 ```
 
-**Pin by digest** (reproducible - recommended for installs):
+**Pin by digest** (reproducible — recommended for installs):
 ```sh
 docker pull 0mniteck/yubios@sha256:c965a816b9173cf6f227e6b5b09e321e841ab5f8a49075c112657a0a40b5e761
 ```
@@ -111,10 +111,10 @@ yubiOS-enroll
 On first boot `yubiOS-enroll.service` fires on tty1 and walks through:
 
 ```
- --- Step 1/4: Secure Boot Signing ---
- --- Step 2/4: Disk Encryption (FIDO2 hidraw) ---
- --- Step 3/4: SSH Key (ed25519-sk resident) ---
- --- Step 4/4: sudo / Login Auth (U2F pam-u2f) ---
+ ─── Step 1/4: Secure Boot Signing ───
+ ─── Step 2/4: Disk Encryption (FIDO2 hidraw) ───
+ ─── Step 3/4: SSH Key (ed25519-sk resident) ───
+ ─── Step 4/4: sudo / Login Auth (U2F pam-u2f) ───
 ```
 
 Each step is skippable. Each script is independently re-runnable. See [ONBOARDING.md](ONBOARDING.md).
@@ -193,13 +193,13 @@ yubiOS/
 | systemd | **261** (systemd-sbsign, systemd-cryptenroll FIDO2; v261 adds `ConditionSecurity=measured-os`, `RestrictFileSystems=`) |
 | OpenSSH | 8.2 (FIDO2 key types) |
 | pam-u2f | **1.3.1** (CVE-2025-23013 fix) |
-| Platform | **arm64/aarch64** (primary target - ADR-023); **x86-64** (secondary, fully supported - ADR-017) |
+| Platform | **arm64/aarch64** (primary target — ADR-023); **x86-64** (secondary, fully supported — ADR-017) |
 
 ## Design decisions
 
 ```mermaid
 graph TD
-    BASE["quay.io/fedora/fedora-bootc:45\n@sha256 (pinned base - ADR-015)\ndigest in PINNED.md"]
+    BASE["quay.io/fedora/fedora-bootc:45\n@sha256 (pinned base — ADR-015)\ndigest in PINNED.md"]
     CF["Containerfile\nrootless docker buildx\n--policy yubiOS.rego\n(supply-chain gate)"]
     MKOSI["mkosi --profile yubios\nUKI + dm-verity, signed via\nYubiKey PIV slot 9c (PKCS#11)"]
     OCI["multi-arch OCI image\nlinux/amd64 + linux/arm64"]
