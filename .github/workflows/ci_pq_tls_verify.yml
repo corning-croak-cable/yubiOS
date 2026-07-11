@@ -78,7 +78,7 @@ jobs:
             echo "::error::openssl $v < 3.5 -- X25519MLKEM768 default lost, see ADR-025"
             exit 1
           fi
-
+          curl -sv https://omniteck.com/ 2>&1 
           group="$(curl -sv https://omniteck.com/ 2>&1 | grep -o 'SSL connection using[^\"]*' || true)"
           echo "negotiated: $group"
           case "$group" in
