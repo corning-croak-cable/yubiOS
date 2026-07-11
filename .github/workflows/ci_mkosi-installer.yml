@@ -1,4 +1,4 @@
-name: ci_mkosi-installer
+name: yubiOS mkosi-installer
 
 # yubiOS mkosi disk-image build + installer publish (#10, ADR-022).
 #
