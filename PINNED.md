@@ -30,7 +30,7 @@ here; do not duplicate the digest list elsewhere.
 | `dhi.io/debian-base` (multi-arch INDEX) | `sha256:1cefd55d979ddbd9110cf73cf3de11798a7893a4598050ba57624bc754b244aa` | **Canonical for workflows + Containerfile `FROM`.** OCI image *index* (manifest list) for `trixie-debian13-dev`; auto-resolves per runner arch. Use this for any multi-arch (amd64 + arm64) job. |
 | child `linux/amd64` | `sha256:57c88d9180b30314a04650426af8d4301c5c9738e4c5672a1db99a03f6a54721` | resolved automatically; do not pin directly unless an amd64-only job is required |
 | child `linux/arm64` | `sha256:1634f8387e3172f2b8bf32d93456c52425815191e6e53b858d06bc5a8ef75f47` | resolved automatically |
-| `quay.io/fedora/fedora-bootc:45` (multi-arch INDEX) | `sha256:88f7ab696754cf257ced669479c3ce5d35222f3a123f745989239bf56dbf8d0a` | **Containerfile `FROM` base.** OCI image *index*; auto-resolves per arch. Re-resolved 2026-07-08 (prior digest 404d on quay). Refresh with `fetch-fedora-bootc-manifest`. |
+| `quay.io/fedora/fedora-bootc:45` (multi-arch INDEX) | `sha256:3674264e179971a0b001bca8bd01f31b3e776ff8636c6d39262c6e27958994dc` | **Containerfile `FROM` base.** OCI image *index*; auto-resolves per arch. Re-resolved 2026-07-11 (prior digest 404d on quay). Refresh with `fetch-fedora-bootc-manifest`. |
 | `ghcr.io/actions/jekyll-build-pages` | `sha256:6791ebfd912185ed59bfb5fb102664fa872496b79f87ff8b9cfba292a7345041` | |
 | `ghcr.io/hadolint/hadolint:v2.14.0-debian` | `sha256:158cd0184dcaa18bd8ec20b61f4c1cabdf8b32a592d062f57bdcb8e4c1d312e2` | |
 
