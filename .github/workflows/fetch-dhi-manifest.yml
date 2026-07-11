@@ -184,7 +184,7 @@ jobs:
           CI_VM_IMAGE: ${{ inputs.ci_vm_image }}
         run: |
           set -euo pipefail
-          conclusion=$(jq -r 'to_entries | if any(.value.result; . == "failure" or . == "cancelled") then "failure" else "success" end' <<<"$NEEDS_JSON")
+          conclusion=$(jq -r 'if any(to_entries[]; .value.result == "failure" or .value.result == "cancelled") then "failure" else "success" end' <<<"$NEEDS_JSON")
           payload=$(jq -n \
             --arg ref "$REF" \
             --arg state "$WORKFLOW_NAME" \
@@ -195,7 +195,7 @@ jobs:
             --arg Firmware_Docker_push "$CI_FIRMWARE_DOCKER_PUSH" \
             --arg Installer_Docker_push "$CI_INSTALLER_DOCKER_PUSH" \
             --arg vm_image "$CI_VM_IMAGE" \
-            '{ref: $ref, inputs: {state: $state, completed_conclusion: $completed_conclusion, reason: $reason, target_ref: $ref, Docker_push: $Docker_push, Dev_Docker_push: $Dev_Docker_push, Firmware_Docker_push: $Firmware_Docker_push, Installer_Docker_push: $Installer_Docker_push, vm_image: $vm_image}}')
+            '{ref: $ref, inputs: {state: $state, completed_conclusion: $completed_conclusion, reason: $reason, target_ref: $ref, Docker_push: $Docker_push, Dev_Docker_push: $Dev_Docker_push, Firmware_Docker_push: $Firmware_DOCKER_PUSH, Installer_Docker_push: $Installer_Docker_push, vm_image: $vm_image}}')
           curl -fsS -X POST \
             -H "Authorization: Bearer ${GH_TOKEN}" \
             -H "Accept: application/vnd.github+json" \
