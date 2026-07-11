@@ -261,7 +261,7 @@ jobs:
           CI_VM_IMAGE: ${{ inputs.ci_vm_image }}
         run: |
           set -euo pipefail
-          conclusion=$(jq -r 'to_entries | if any(.value.result; . == "failure" or . == "cancelled") then "failure" else "success" end' <<<"$NEEDS_JSON")
+          conclusion=$(jq -r 'if any(to_entries[]; .value.result == "failure" or .value.result == "cancelled") then "failure" else "success" end' <<<"$NEEDS_JSON")
           payload=$(jq -n \
             --arg ref "$REF" \
             --arg state "$WORKFLOW_NAME" \
