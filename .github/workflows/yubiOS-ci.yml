@@ -11,6 +11,15 @@ name: yubiOS CI
 # then replace the placeholder below. The index auto-resolves per runner arch.
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/yubiOS-ci.yml'
+      - 'Containerfile'
+      - 'yubiOS.rego'
+      - 'usr/**'
+      - 'tests/unit/**'
+      - 'mkosi.*'
   workflow_dispatch:
     inputs:
       Docker_push:
