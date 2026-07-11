@@ -31,9 +31,10 @@ Do not let historical run output, old PR notes, or stale TODO fragments override
 1. Read the task-specific file, then `AGENTS.md`, `PINNED.md`, and relevant ADRs/refs.
 2. Gather primary upstream sources for claims that may have changed.
 3. Record dated findings under `refs/` when the work spans more than one file.
-4. Update docs that repeat the affected claim.
-5. Flag inconsistencies instead of quietly smoothing over unresolved conflicts.
-6. Open a PR, merge when appropriate, and create or update an issue with the outcome.
+4. Name planning-cycle notes `refs/planning-cycle-YYYY-MM-DD.md`, keep each note scoped to that research cycle, and link source-of-truth files instead of copying live pin tables.
+5. Update docs that repeat the affected claim.
+6. Flag inconsistencies instead of quietly smoothing over unresolved conflicts.
+7. Open a PR, merge when appropriate, and create or update an issue with the outcome.
 
 ## Current Consistency Flags
 
