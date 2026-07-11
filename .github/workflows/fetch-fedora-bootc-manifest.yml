@@ -1,0 +1,198 @@
+name: fetch-fedora-bootc-manifest
+
+# Resolves the quay.io/fedora/fedora-bootc:45 *INDEX* (manifest-list)
+# digest, then replaces the previously pinned Fedora bootc digest everywhere it
+# appears in repo text files.  The Containerfile keeps the :45 tag plus digest
+# suffix so humans can see the Fedora stream while Build Policy gets an
+# immutable ref.
+#
+# Runs on the BARE runner (no container): this is only a registry HTTPS query
+# and a repo text update. AGENTS.md allows container absent.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fetch-fedora-bootc-manifest.yml' # self-change trigger for validating workflow edits
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Why are you running this manually?'
+        required: false
+        default: 'manual'
+      ci_callback:
+        description: 'Internal: call back to ci.yml when this workflow finishes.'
+        required: false
+        default: false
+        type: boolean
+      ci_chain_ref:
+        description: 'Internal: ref carried by the ci.yml orchestrator.'
+        required: false
+        default: ''
+        type: string
+      ci_reason:
+        description: 'Internal: original ci.yml orchestrator reason.'
+        required: false
+        default: 'manual'
+        type: string
+      ci_Docker_push:
+        description: 'Internal: production image push flag carried by ci.yml.'
+        required: false
+        default: false
+        type: boolean
+      ci_Dev_Docker_push:
+        description: 'Internal: dev image push flag carried by ci.yml.'
+        required: false
+        default: false
+        type: boolean
+      ci_Firmware_Docker_push:
+        description: 'Internal: firmware artifact push flag carried by ci.yml.'
+        required: false
+        default: false
+        type: boolean
+      ci_Installer_Docker_push:
+        description: 'Internal: installer artifact push flag carried by ci.yml.'
+        required: false
+        default: false
+        type: boolean
+      ci_vm_image:
+        description: 'Internal: VM image ref carried by ci.yml.'
+        required: false
+        default: 'docker.io/0mniteck/yubios:dev'
+        type: string
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout yubiOS for PINNED.md update
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6.0.2 - see PINNED.md
+
+      - name: Fetch Fedora bootc manifest and update pinned refs
+        run: |
+          set -euo pipefail
+          image_path='fedora/fedora-bootc'
+          tag='45'
+          manifest_url="https://quay.io/v2/${image_path}/manifests/${tag}"
+          accept_headers=(
+            -H 'Accept: application/vnd.oci.image.index.v1+json'
+            -H 'Accept: application/vnd.docker.distribution.manifest.list.v2+json'
+            -H 'Accept: application/vnd.oci.image.manifest.v1+json'
+          )
+
+          echo "== HEAD quay.io/${image_path}:${tag} (index media types preferred) =="
+          headers=$(curl -sI "${accept_headers[@]}" "$manifest_url")
+          if ! printf '%s\n' "$headers" | grep -qi '^docker-content-digest:'; then
+            TOKEN=$(curl -fsSL "https://quay.io/v2/auth?service=quay.io&scope=repository:${image_path}:pull" \
+              | python3 -c 'import sys,json; print(json.load(sys.stdin)["token"])')
+            headers=$(curl -sI -H "Authorization: Bearer $TOKEN" "${accept_headers[@]}" "$manifest_url")
+            auth_args=(-H "Authorization: Bearer $TOKEN")
+          else
+            auth_args=()
+          fi
+          printf '%s\n' "$headers" | grep -i -E 'docker-content-digest|content-type'
+          index_digest=$(printf '%s\n' "$headers" | awk 'tolower($1)=="docker-content-digest:" {gsub("\r", "", $2); print $2; exit}')
+          test -n "$index_digest"
+
+          echo "== Confirm it is an INDEX and list its per-arch children =="
+          curl -fsSL "${auth_args[@]}" \
+            -H 'Accept: application/vnd.oci.image.index.v1+json' \
+            -H 'Accept: application/vnd.docker.distribution.manifest.list.v2+json' \
+            "$manifest_url" > /tmp/fedora-bootc-index.json
+          python3 - <<'PY'
+          import json
+          d=json.load(open('/tmp/fedora-bootc-index.json'))
+          print('mediaType:', d.get('mediaType',''))
+          if 'manifests' not in d:
+              raise SystemExit('NOT an index - single-arch manifest returned')
+          for m in d['manifests']:
+              p=m.get('platform',{})
+              print(' -', p.get('os'), p.get('architecture'), m.get('digest'))
+          PY
+
+          python3 - "$index_digest" <<'PY'
+          import datetime, pathlib, re, sys
+          new_index = sys.argv[1]
+          today = datetime.date.today().isoformat()
+          pinned = pathlib.Path('PINNED.md')
+          text = pinned.read_text()
+          match = re.search(r'`quay\.io/fedora/fedora-bootc:45`[^|]*\| `(sha256:[0-9a-f]{64})`', text)
+          if not match:
+              raise SystemExit('Could not find current fedora-bootc:45 digest in PINNED.md')
+          old_index = match.group(1)
+          replacements = {old_index: new_index}
+
+          for path in pathlib.Path('.').rglob('*'):
+              if not path.is_file() or '.git' in path.parts:
+                  continue
+              try:
+                  data = path.read_text()
+              except UnicodeDecodeError:
+                  continue
+              updated = data
+              for old, new in replacements.items():
+                  updated = updated.replace(old, new)
+                  updated = updated.replace(old.removeprefix('sha256:'), new.removeprefix('sha256:'))
+              if path == pinned:
+                  updated = re.sub(r'Re-resolved \d{4}-\d{2}-\d{2}', f'Re-resolved {today}', updated)
+              if updated != data:
+                  path.write_text(updated)
+                  print(f'updated {path}')
+          PY
+
+          if git diff --quiet; then
+            echo "PINNED.md and referenced Fedora bootc digests already current."
+          else
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add PINNED.md .
+            git commit -m "Refresh pinned Fedora bootc digest"
+          fi
+
+  ci-callback:
+    name: Callback to ci.yml orchestrator
+    if: ${{ always() && github.event_name == 'workflow_dispatch' && inputs.ci_callback == true }}
+    needs: [fetch]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Report current state to ci.yml
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          WORKFLOW_NAME: ${{ github.workflow }}
+          REF: ${{ inputs.ci_chain_ref != '' && inputs.ci_chain_ref || github.ref_name }}
+          NEEDS_JSON: ${{ toJSON(needs) }}
+          CI_REASON: ${{ inputs.ci_reason }}
+          CI_DOCKER_PUSH: ${{ inputs.ci_Docker_push }}
+          CI_DEV_DOCKER_PUSH: ${{ inputs.ci_Dev_Docker_push }}
+          CI_FIRMWARE_DOCKER_PUSH: ${{ inputs.ci_Firmware_Docker_push }}
+          CI_INSTALLER_DOCKER_PUSH: ${{ inputs.ci_Installer_Docker_push }}
+          CI_VM_IMAGE: ${{ inputs.ci_vm_image }}
+        run: |
+          set -euo pipefail
+          conclusion=$(jq -r 'if any(to_entries[]; .value.result == "failure" or .value.result == "cancelled") then "failure" else "success" end' <<<"$NEEDS_JSON")
+          payload=$(jq -n \
+            --arg ref "$REF" \
+            --arg state "$WORKFLOW_NAME" \
+            --arg completed_conclusion "$conclusion" \
+            --arg reason "$CI_REASON" \
+            --arg Docker_push "$CI_DOCKER_PUSH" \
+            --arg Dev_Docker_push "$CI_DEV_DOCKER_PUSH" \
+            --arg Firmware_Docker_push "$CI_FIRMWARE_DOCKER_PUSH" \
+            --arg Installer_Docker_push "$CI_INSTALLER_DOCKER_PUSH" \
+            --arg vm_image "$CI_VM_IMAGE" \
+            '{ref: $ref, inputs: {state: $state, completed_conclusion: $completed_conclusion, reason: $reason, target_ref: $ref, Docker_push: $Docker_push, Dev_Docker_push: $Dev_Docker_push, Firmware_Docker_push: $Firmware_Docker_push, Installer_Docker_push: $Installer_Docker_push, vm_image: $vm_image}}')
+          curl -fsS -X POST \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${REPO}/actions/workflows/ci.yml/dispatches" \
+            -d "$payload"
+          echo "Reported ${WORKFLOW_NAME} as ${conclusion} to ci.yml."
