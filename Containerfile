@@ -27,14 +27,22 @@ RUN dnf install -y \
       openssh-clients \
       openssh-server \
       fido2-tools \
+      python3-pip \
       osslsigncode && \
     dnf clean all
+
+# ── First-boot firmware validation (ADR-024) ─────────────────────────────
+# CHIPSEC is distributed from PyPI rather than Fedora repos. Pin the source
+# release and hash so the first-boot firmware checker is reproducible.
+RUN python3 -m pip install --no-cache-dir --break-system-packages --require-hashes \
+      'chipsec==1.13.16' \
+      --hash=sha256:63bed5ad4224402397817ea82b94c3a21736386a04ff778c003704bd6dfdbca3
 
 # ── Overlay yubiOS config tree ───────────────────────────────────────────
 COPY usr/ /usr/
 
-# ── Permissions for enrollment scripts ───────────────────────────────────
-RUN chmod +x /usr/lib/yubiOS/*.sh
+# ── Permissions for enrollment and first-boot scripts ────────────────────
+RUN chmod +x /usr/lib/yubiOS/*.sh /usr/lib/yubiOS/chipsec/*.sh
 
 # ── /usr/bin symlinks for enrollment commands ────────────────────────────
 # Wrapper scripts in /usr/lib/yubiOS/ exec the real scripts.
