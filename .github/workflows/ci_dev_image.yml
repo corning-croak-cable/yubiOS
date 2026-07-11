@@ -17,6 +17,10 @@ name: yubiOS dev/test image (swu2f, ADR-026)
 # dhi.io's hardened base, per-arch build + push, then a manifest-list merge.
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ci_dev_image.yml' # self-change trigger for validating workflow edits
   workflow_dispatch:
     inputs:
       Docker_push:
