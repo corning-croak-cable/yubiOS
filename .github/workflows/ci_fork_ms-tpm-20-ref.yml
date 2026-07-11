@@ -11,7 +11,7 @@ name: ci_fork_ms-tpm-20-ref
 # for AArch64:
 #   - ubuntu-24.04      : cross-compile with the aarch64-linux-gnu toolchain
 #                         (+ arm64 OpenSSL dev for libcrypto.pc)
-#   - self-hosted ARM64 GPU: native aarch64 build, then smoke-start the simulator
+#   - ubuntu-24.04-arm  : native aarch64 build, then smoke-start the simulator
 # Output: bin_PROGRAMS tpm2-simulator + noinst libtpm.a / libplatform.a.
 # This is a SEPARATE workflow — it does NOT edit the upstream run-tests /
 # docker-check / docker-publish workflows. Bare runners: TPMCmd needs a full
@@ -78,8 +78,8 @@ jobs:
         include:
           - runner: ubuntu-24.04
             runner_name: ubuntu-24.04
-          - runner: [self-hosted, Linux, ARM64, GPU]
-            runner_name: self-hosted-linux-arm64-gpu
+          - runner: ubuntu-24.04-arm
+            runner_name: ubuntu-24.04-arm
     runs-on: ${{ matrix.runner }}
 
     steps:
