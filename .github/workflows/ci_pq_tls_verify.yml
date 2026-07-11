@@ -70,7 +70,7 @@ jobs:
     steps:
       - name: Verify openssl >= 3.5 and live PQ hybrid negotiation
         run: |
-          sudo apt update && sudo apt install curl -y
+          apt update && apt install curl -y
           v="$(openssl version | awk '{print $2}')"
           echo "openssl version: $v"
           major="${v%%.*}"
