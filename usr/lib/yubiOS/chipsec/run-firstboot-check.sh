@@ -28,7 +28,12 @@ MODULES="common.bios_wp common.spi_lock common.spi_desc common.smm_lock common.s
 OVERALL=PASS
 REPORT=/run/yubiOS/chipsec-report.json
 
-if ! chipsec_main.py $(for m in $MODULES; do printf ' -m %s' "$m"; done) --json "$REPORT" >/tmp/chipsec-firstboot.log 2>&1; then
+set --
+for module in $MODULES; do
+  set -- "$@" -m "$module"
+done
+
+if ! chipsec_main.py "$@" --json "$REPORT" >/tmp/chipsec-firstboot.log 2>&1; then
   log "WARNING: chipsec_main.py exited non-zero -- see /tmp/chipsec-firstboot.log"
 fi
 
