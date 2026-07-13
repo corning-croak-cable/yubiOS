@@ -518,8 +518,8 @@ jobs:
           set -euxo pipefail
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            qemu-system-arm qemu-utils tpm2-tools python3 coreutils ca-certificates ipxe-qemu
-          qemu-system-aarch64 --version || true
+            qemu-system-arm qemu-utils tpm2-tools python3 coreutils ca-certificates ipxe-qemu || true
+          qemu-system-aarch64 --version
 
       - name: Download fip/flash from optee_fip job
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
