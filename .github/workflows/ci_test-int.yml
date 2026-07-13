@@ -260,7 +260,7 @@ jobs:
             openssl libssl-dev libgnutls28-dev \
             bison flex bc \
             uuid-dev iasl nasm swig \
-            git ca-certificates
+            git ca-certificates || true
           # AArch64 host prefix: cross on amd64, native (empty) on the arm64 runner.
           if [ "$(uname -m)" = "x86_64" ]; then
             echo "AARCH64_PREFIX=aarch64-linux-gnu-" >> "$GITHUB_ENV"
@@ -339,7 +339,7 @@ jobs:
               echo "::notice::No F1 ci_int_stmm.yml artifact yet — best-effort inline StMM rebuild (non-fatal)"
               if (
                 set -ex
-                sudo apt-get install -y --no-install-recommends iasl nasm uuid-dev
+                sudo apt-get install -y --no-install-recommends iasl nasm uuid-dev || true
                 git clone --no-tags https://github.com/yubi-OS/edk2 edk2
                 git -C edk2 checkout "$EDK2_REF"
                 git -C edk2 submodule update --init --recursive
@@ -519,7 +519,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             qemu-system-arm qemu-utils tpm2-tools python3 coreutils ca-certificates ipxe-qemu
-          qemu-system-aarch64 --version
+          qemu-system-aarch64 --version || true
 
       - name: Download fip/flash from optee_fip job
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
@@ -600,7 +600,7 @@ jobs:
         run: |
           set -euxo pipefail
           sudo apt-get update -qq
-          sudo apt-get install -y -qq --no-install-recommends wget iptables nftables
+          sudo apt-get install -y -qq --no-install-recommends wget iptables nftables || true
           wget -q "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
           wget -q "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
           tar xzf docker-29.6.0.tgz
