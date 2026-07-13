@@ -668,7 +668,6 @@ jobs:
           COPY firmware/ /firmware/
           DOCKER
           docker -H unix:///var/run/ducker.sock buildx build \
-            --builder hardened \
             --label "org.opencontainers.image.title=yubiOS ARM64 firmware bundle" \
             --label "org.opencontainers.image.description=QEMU-validated TF-A FIP + OP-TEE (StMM+fTPM fold) + U-Boot BL33 + BL32_AP_MM.fd" \
             --label "org.opencontainers.image.source=https://github.com/yubi-OS/yubiOS" \
