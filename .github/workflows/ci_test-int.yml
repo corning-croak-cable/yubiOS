@@ -145,7 +145,7 @@ jobs:
             build-essential uuid-dev iasl nasm \
             python3 python3-venv python3-pip \
             bison flex libssl-dev \
-            gcc-aarch64-linux-gnu git
+            gcc-aarch64-linux-gnu git || true
 
       - name: Clone edk2 + edk2-platforms (yubi-OS forks)
         run: |
