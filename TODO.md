@@ -1,8 +1,9 @@
 # yubiOS TODO
 
-Last reviewed: 2026-07-11
+Last reviewed: 2026-07-14
 Status: active task list
-Latest research note: [refs/research-refresh-2026-07-11.md](refs/research-refresh-2026-07-11.md).
+Latest targeted audit: [refs/systemd-v262-audit-2026-07-14.md](refs/systemd-v262-audit-2026-07-14.md).
+Latest broad research note: [refs/research-refresh-2026-07-11.md](refs/research-refresh-2026-07-11.md).
 
 Use this file for current work. Completed historical context belongs in merged PRs, ADRs, or dated refs.
 
@@ -13,7 +14,7 @@ Use this file for current work. Completed historical context belongs in merged P
 - [x] Refresh refs that described v261, swu2f, swtpm, PKCS#11 signing, and zstd EFI zboot as future or stale.
 - [x] Remove obsolete workflow-token warning language from repo guidance.
 - [x] Make [PINNED.md](PINNED.md) the explicit live source for image digests.
-- [ ] Before systemd v262 adoption, audit docs/code for `/run/boot-loader-entries/`, `systemd-sysupdated` D-Bus, and `updatectl` assumptions.
+- [x] Before systemd v262 adoption, audit docs/code for `/run/boot-loader-entries/`, `systemd-sysupdated` D-Bus, and `updatectl` assumptions: [refs/systemd-v262-audit-2026-07-14.md](refs/systemd-v262-audit-2026-07-14.md).
 - [ ] Keep future planning cycles dated and scoped under `refs/`.
 
 ## Current CI Tasks
@@ -52,7 +53,8 @@ Use this file for current work. Completed historical context belongs in merged P
 
 ## Watch List
 
-- systemd v262 is expected to remove `/run/boot-loader-entries/` support and the experimental `systemd-sysupdated` D-Bus API; keep UAPI.1/BLS and Varlink assumptions explicit.
+- systemd v262 removes `/run/boot-loader-entries/` support and the experimental `systemd-sysupdated` D-Bus API; the 2026-07-14 audit found no repo dependency, but future update UX should stay on UAPI.1/BLS and Varlink/systemd-sysupdate rather than removed interfaces or unaudited `updatectl` assumptions.
+- systemd v262 renames `systemd-sysupdate.service`/`.timer` to `systemd-sysupdate-update.service`/`.timer`; verify compatibility symlinks before adding units against the old names.
 - Go 1.26 expands default hybrid PQ TLS key exchanges beyond `X25519MLKEM768`; tests should assert acceptable policy rather than a single hard-coded group.
 - bootc 1.11 DPS support may help future installer UX, but the current `to-disk` baseline still uses `root=UUID=` for compatibility.
 - `systemd-sysinstall` may become useful for guided install UX, but the current repart/bootc model remains the baseline.
