@@ -84,11 +84,12 @@ jobs:
             docker_arch: x86_64
             buildx_arch: linux-amd64
           - arch: arm64
-            runner: [self-hosted, Linux, ARM64, GPU]
+            runner: ubuntu-24.04-arm
             docker_arch: aarch64
             buildx_arch: linux-arm64
     runs-on: ${{ matrix.runner }}
     container:
+      options: --privileged
       volumes:
         - /mnt:/mnt
       credentials:
