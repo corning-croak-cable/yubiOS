@@ -227,6 +227,11 @@ jobs:
             echo "### vm-e2e (${{ matrix.arch }}): SKIPPED — bcvk source unavailable" >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
+          if ! grep -Fq -- 'cmd.arg("--privileged")' bcvk-src/crates/kit/src/run_ephemeral.rs; then
+            perl -0pi -e 's/(    cmd\.args\(\[\n        \/\/ Needed to create nested containers)/    cmd.arg("--privileged");\n    \/\/ Ubuntu rootful Podman needs the fully privileged profile for bcvk\n    \/\/ to bind-mount the extracted kernel inside its bwrap namespace.\n\n$1/' bcvk-src/crates/kit/src/run_ephemeral.rs
+          fi
+          grep -Fq -- 'cmd.arg("--privileged")' bcvk-src/crates/kit/src/run_ephemeral.rs \
+            || { echo "::error::failed to apply bcvk privileged-container CI patch"; exit 1; }
           ( cd bcvk-src && cargo build --release )
           if [ ! -x bcvk-src/target/release/bcvk ]; then
             echo "skip=1" >> "$GITHUB_OUTPUT"
