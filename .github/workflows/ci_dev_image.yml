@@ -89,7 +89,6 @@ jobs:
             buildx_arch: linux-arm64
     runs-on: ${{ matrix.runner }}
     container:
-      options: --privileged
       volumes:
         - /mnt:/mnt
       credentials:
