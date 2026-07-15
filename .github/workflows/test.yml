@@ -1,0 +1,375 @@
+name: yubiOS QEMU kernel mount debug
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/test.yml' # self-change trigger for validating workflow edits
+  workflow_dispatch:
+    inputs:
+      image:
+        description: 'Pullable yubiOS OCI image ref to boot/probe'
+        required: true
+        default: 'docker.io/0mniteck/yubios:dev'
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  qemu-kernel-mount-debug:
+    name: qemu kernel bind-mount debug (arm64 rock1)
+    runs-on: [self-hosted, Linux, ARM64, KVM]
+    timeout-minutes: 120
+    env:
+      YUBIOS_IMAGE: ${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}
+      QEMU_ZSTD_COMMIT: 3a18e8a25992d1643707e2cebdd6e9bb2bd7d3b9
+      DIAG_DIR: /tmp/yubios-qemu-kernel-debug
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Prepare diagnostic directory
+        run: |
+          set -euxo pipefail
+          sudo rm -rf "${DIAG_DIR}"
+          mkdir -p "${DIAG_DIR}"
+          {
+            echo "run=${GITHUB_RUN_ID}"
+            echo "sha=${GITHUB_SHA}"
+            echo "image=${YUBIOS_IMAGE}"
+            date -Is
+          } | tee "${DIAG_DIR}/run-context.txt"
+
+      - name: Host preflight snapshot
+        run: |
+          set +e
+          {
+            echo "### identity"
+            id
+            uname -a
+            echo "### runner"
+            env | sort | sed -E 's/(TOKEN|PASSWORD|SECRET|KEY)=.*/\1=***redacted***/'
+            echo "### security status"
+            grep -E 'Cap(Eff|Prm|Bnd)|NoNewPrivs|Seccomp' /proc/self/status
+            command -v capsh >/dev/null 2>&1 && capsh --print || true
+            command -v aa-status >/dev/null 2>&1 && sudo aa-status || true
+            command -v sestatus >/dev/null 2>&1 && sestatus || true
+            echo "### kernel/userns sysctls"
+            sysctl kernel.apparmor_restrict_unprivileged_userns 2>/dev/null || true
+            sysctl kernel.unprivileged_userns_clone 2>/dev/null || true
+            sysctl user.max_user_namespaces 2>/dev/null || true
+            echo "### devices"
+            ls -la /dev/kvm /dev/fuse 2>/dev/null || true
+            echo "### mounts"
+            findmnt -R /run || true
+            findmnt -R /var/lib/containers 2>/dev/null || true
+            echo "### df"
+            df -h "$PWD" /tmp /run || true
+          } | tee "${DIAG_DIR}/host-preflight.txt"
+
+      - name: Install host deps and normalize devices
+        run: |
+          set -euxo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends \
+            swtpm swtpm-tools qemu-utils qemu-system-arm qemu-efi-aarch64 \
+            fido2-tools cryptsetup-bin git build-essential pkg-config libssl-dev virtiofsd \
+            bubblewrap libcap2-bin util-linux strace jq apparmor-utils
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules || true
+          sudo udevadm trigger --name-match=kvm || true
+          sudo modprobe fuse || true
+          sudo mkdir -p /dev
+          [ -e /dev/fuse ] || sudo mknod /dev/fuse c 10 229 || true
+          sudo chmod 666 /dev/fuse || true
+          ls -la /dev/kvm /dev/fuse || true
+          podman --version | tee "${DIAG_DIR}/podman-version.txt"
+          bwrap --version | tee "${DIAG_DIR}/bwrap-version.txt"
+
+      - name: Free old podman state and pull target image
+        run: |
+          set -euxo pipefail
+          sudo podman ps -aq | xargs -r sudo podman rm -f || true
+          sudo podman system prune -af --volumes || true
+          sudo podman pull "${YUBIOS_IMAGE}"
+          sudo podman image inspect "${YUBIOS_IMAGE}" | tee "${DIAG_DIR}/image-inspect.json" >/dev/null
+          sudo podman images | tee "${DIAG_DIR}/podman-images.txt"
+
+      - name: Host control bind mount at /run/qemu/kernel
+        run: |
+          set +e
+          {
+            set -x
+            sudo mkdir -p /run/qemu
+            printf 'host-control-kernel\n' | sudo tee /tmp/yubios-host-kernel-source >/dev/null
+            sudo rm -f /run/qemu/kernel
+            sudo touch /run/qemu/kernel
+            sudo mount --bind -o ro /tmp/yubios-host-kernel-source /run/qemu/kernel
+            host_rc=$?
+            findmnt -T /run/qemu/kernel -o TARGET,SOURCE,FSTYPE,OPTIONS || true
+            sudo umount /run/qemu/kernel || true
+            echo "host_bind_mount_rc=${host_rc}"
+            exit 0
+          } 2>&1 | tee "${DIAG_DIR}/host-bind-mount.txt"
+
+      - name: Install zstd-capable QEMU for ARM64 DirectBoot
+        id: qemu-zstd
+        run: |
+          set -euxo pipefail
+          QEMU_PREFIX=/opt/qemu-zstd/${QEMU_ZSTD_COMMIT}
+          if [ ! -x "${QEMU_PREFIX}/bin/qemu-system-aarch64" ]; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq --no-install-recommends \
+              ninja-build python3-venv python3-pip meson pkg-config \
+              libglib2.0-dev libpixman-1-dev zlib1g-dev libzstd-dev \
+              libslirp-dev libusb-1.0-0-dev libudev-dev libaio-dev \
+              libcap-ng-dev libattr1-dev
+            rm -rf /tmp/qemu-zstd-src
+            git clone --filter=blob:none --depth 1 https://github.com/qemu/qemu.git /tmp/qemu-zstd-src
+            git -C /tmp/qemu-zstd-src fetch --depth 1 origin "${QEMU_ZSTD_COMMIT}"
+            git -C /tmp/qemu-zstd-src checkout --detach "${QEMU_ZSTD_COMMIT}"
+            (
+              cd /tmp/qemu-zstd-src
+              ./configure \
+                --prefix="${QEMU_PREFIX}" \
+                --target-list=aarch64-softmmu \
+                --disable-docs \
+                --disable-werror
+              ninja -C build qemu-system-aarch64
+              sudo ninja -C build install
+            )
+            rm -rf /tmp/qemu-zstd-src
+          fi
+          sudo mkdir -p "${QEMU_PREFIX}/bcvk-bin"
+          sudo tee "${QEMU_PREFIX}/bcvk-bin/qemu-system-aarch64" >/dev/null <<'EOF'
+          #!/usr/bin/env bash
+          exec /run/host-mounts/qemu-zstd/bin/qemu-system-aarch64 -L /run/host-mounts/qemu-zstd/share/qemu "$@"
+          EOF
+          sudo chmod 0755 "${QEMU_PREFIX}/bcvk-bin/qemu-system-aarch64"
+          "${QEMU_PREFIX}/bin/qemu-system-aarch64" --version | tee "${DIAG_DIR}/qemu-version.txt"
+          echo "qemu_prefix=${QEMU_PREFIX}" >> "$GITHUB_OUTPUT"
+
+      - name: Build bcvk with current CI privileged patch
+        id: bcvk
+        run: |
+          set -euxo pipefail
+          rm -rf bcvk-src
+          git clone --depth 1 -b feat/swtpm-ci https://github.com/yubi-OS/bcvk bcvk-src
+          if ! grep -Fq -- 'cmd.arg("--privileged")' bcvk-src/crates/kit/src/run_ephemeral.rs; then
+            perl -0pi -e 's/(    cmd\.args\(\[\n        \/\/ Needed to create nested containers)/    cmd.arg("--privileged");\n    \/\/ Ubuntu rootful Podman needs the fully privileged profile for bcvk\n    \/\/ to bind-mount the extracted kernel inside its bwrap namespace.\n\n$1/' bcvk-src/crates/kit/src/run_ephemeral.rs
+          fi
+          grep -Fq -- 'cmd.arg("--privileged")' bcvk-src/crates/kit/src/run_ephemeral.rs
+          {
+            echo "### podman command construction"
+            nl -ba bcvk-src/crates/kit/src/run_ephemeral.rs | sed -n '780,875p'
+            echo "### kernel bind mount site"
+            nl -ba bcvk-src/crates/kit/src/run_ephemeral.rs | sed -n '1395,1445p'
+            echo "### entrypoint bwrap site"
+            nl -ba bcvk-src/crates/kit/scripts/entrypoint.sh | sed -n '1,140p'
+          } | tee "${DIAG_DIR}/bcvk-source-snippets.txt"
+          ( cd bcvk-src && cargo build --release )
+          test -x bcvk-src/target/release/bcvk
+          echo "$PWD/bcvk-src/target/release" >> "$GITHUB_PATH"
+          bcvk-src/target/release/bcvk ephemeral run --help | tee "${DIAG_DIR}/bcvk-help.txt" >/dev/null
+
+      - name: Create mount probe scripts and podman argv wrapper
+        run: |
+          set -euxo pipefail
+          mkdir -p "${DIAG_DIR}/bin"
+          cat > "${DIAG_DIR}/bin/podman" <<'EOF'
+          #!/usr/bin/env bash
+          log="${YUBIOS_PODMAN_ARGV_LOG:-/tmp/yubios-qemu-kernel-debug/podman-argv.log}"
+          {
+            echo "=== $(date -Is) podman invocation ==="
+            i=0
+            for arg in "$@"; do
+              printf 'argv[%02d]=%q\n' "$i" "$arg"
+              i=$((i + 1))
+            done
+          } >> "$log"
+          exec /usr/bin/podman "$@"
+          EOF
+          chmod 0755 "${DIAG_DIR}/bin/podman"
+
+          cat > "${DIAG_DIR}/mount-probe.sh" <<'EOF'
+          #!/usr/bin/env bash
+          set -euxo pipefail
+          echo "### probe identity"
+          id
+          uname -a
+          echo "### probe status"
+          grep -E 'Cap(Eff|Prm|Bnd)|NoNewPrivs|Seccomp' /proc/self/status || true
+          command -v capsh >/dev/null 2>&1 && capsh --print || true
+          echo "### source image mount"
+          findmnt -T /run/source-image -o TARGET,SOURCE,FSTYPE,OPTIONS || true
+          findmnt -R /run | sed -n '1,120p' || true
+          echo "### candidate kernels"
+          find /run/source-image/usr/lib/modules -maxdepth 3 -type f \( -name vmlinuz -o -name 'vmlinuz-*' -o -name '*.efi' \) -print 2>/dev/null | sort | tee /tmp/kernel-candidates.txt
+          kernel="$(grep -E '/vmlinuz(-|$)|/vmlinuz$' /tmp/kernel-candidates.txt | head -n 1 || true)"
+          if [ -z "${kernel}" ]; then
+            kernel="$(head -n 1 /tmp/kernel-candidates.txt || true)"
+          fi
+          test -n "${kernel}"
+          echo "kernel=${kernel}"
+          mkdir -p /run/qemu
+          rm -f /run/qemu/kernel
+          : > /run/qemu/kernel
+          ls -l "${kernel}" /run/qemu/kernel
+          stat -c 'kernel mode=%a uid=%u gid=%g type=%F mount=%m' "${kernel}" || true
+          stat -c 'target mode=%a uid=%u gid=%g type=%F mount=%m' /run/qemu/kernel || true
+          mount --bind -o ro "${kernel}" /run/qemu/kernel
+          rc=$?
+          echo "mount_rc=${rc}"
+          findmnt -T /run/qemu/kernel -o TARGET,SOURCE,FSTYPE,OPTIONS || true
+          umount /run/qemu/kernel || true
+          exit "${rc}"
+          EOF
+          chmod 0755 "${DIAG_DIR}/mount-probe.sh"
+
+          cat > "${DIAG_DIR}/bwrap-probe.sh" <<'EOF'
+          #!/usr/bin/env bash
+          set -euxo pipefail
+          echo "### outer container identity"
+          id
+          grep -E 'Cap(Eff|Prm|Bnd)|NoNewPrivs|Seccomp' /proc/self/status || true
+          command -v capsh >/dev/null 2>&1 && capsh --print || true
+          mkdir -p /run/tmproot
+          cd /run/tmproot
+          ln -sf usr/bin bin
+          ln -sf usr/lib lib
+          ln -sf usr/lib64 lib64
+          ln -sf usr/sbin sbin
+          mkdir -p etc var dev proc run sys tmp
+          systemd-sysusers --root "$(pwd)" >/dev/null 2>&1 || true
+          cp /etc/resolv.conf /run/tmproot/etc/resolv.conf 2>/dev/null || true
+          mkdir -p /run/inner-shared
+          bwrap --as-pid-1 --unshare-pid \
+            --bind /run/tmproot / \
+            --proc /proc \
+            --dev-bind /dev /dev \
+            --bind /var/tmp /var/tmp \
+            --tmpfs /run \
+            --tmpfs /tmp \
+            --bind /run/inner-shared /run/inner-shared \
+            --bind /run /run \
+            -- /usr/bin/bash /run/mount-probe.sh
+          EOF
+          chmod 0755 "${DIAG_DIR}/bwrap-probe.sh"
+
+      - name: Plain privileged podman image-mount probe
+        run: |
+          set +e
+          sudo env YUBIOS_PODMAN_ARGV_LOG="${DIAG_DIR}/podman-argv.log" PATH="${DIAG_DIR}/bin:$PATH" \
+            podman run --rm --pull=never --privileged \
+              --security-opt=label=disable \
+              --security-opt=seccomp=unconfined \
+              --security-opt=unmask=/proc/* \
+              --security-opt=apparmor=unconfined \
+              --mount=type=tmpfs,target=/run \
+              -v /sys:/sys:ro \
+              -v /var/tmp:/var/tmp \
+              --device=/dev/kvm \
+              --mount=type=image,source="${YUBIOS_IMAGE}",target=/run/source-image,rw=true \
+              -v "${DIAG_DIR}/mount-probe.sh:/run/mount-probe.sh:ro" \
+              "${YUBIOS_IMAGE}" /usr/bin/bash /run/mount-probe.sh \
+            2>&1 | tee "${DIAG_DIR}/plain-podman-probe.txt"
+          echo "plain_podman_probe_rc=${PIPESTATUS[0]}" | tee -a "${DIAG_DIR}/plain-podman-probe.txt"
+          exit 0
+
+      - name: bwrap namespace image-mount probe
+        run: |
+          set +e
+          sudo env YUBIOS_PODMAN_ARGV_LOG="${DIAG_DIR}/podman-argv.log" PATH="${DIAG_DIR}/bin:$PATH" \
+            podman run --rm --pull=never --privileged \
+              --security-opt=label=disable \
+              --security-opt=seccomp=unconfined \
+              --security-opt=unmask=/proc/* \
+              --security-opt=apparmor=unconfined \
+              --mount=type=tmpfs,target=/run \
+              -v /sys:/sys:ro \
+              -v /var/tmp:/var/tmp \
+              --device=/dev/kvm \
+              --mount=type=image,source="${YUBIOS_IMAGE}",target=/run/source-image,rw=true \
+              -v "${DIAG_DIR}/mount-probe.sh:/run/mount-probe.sh:ro" \
+              -v "${DIAG_DIR}/bwrap-probe.sh:/run/bwrap-probe.sh:ro" \
+              "${YUBIOS_IMAGE}" /usr/bin/bash /run/bwrap-probe.sh \
+            2>&1 | tee "${DIAG_DIR}/bwrap-probe.txt"
+          echo "bwrap_probe_rc=${PIPESTATUS[0]}" | tee -a "${DIAG_DIR}/bwrap-probe.txt"
+          exit 0
+
+      - name: bcvk ephemeral reproduction with backtrace and podman argv capture
+        run: |
+          set +e
+          mkdir -p "${DIAG_DIR}/vm-logs"
+          QEMU_PREFIX="${{ steps.qemu-zstd.outputs.qemu_prefix }}"
+          EXTRA_ARGS=(
+            --ro-bind "${QEMU_PREFIX}:qemu-zstd"
+            --ro-bind /lib/aarch64-linux-gnu:host-lib
+            --ro-bind /usr/lib/aarch64-linux-gnu:host-usrlib
+            --env PATH=/run/host-mounts/qemu-zstd/bcvk-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+            --env LD_LIBRARY_PATH=/run/host-mounts/host-lib:/run/host-mounts/host-usrlib:/run/host-mounts/qemu-zstd/lib
+            --env RUST_BACKTRACE=full
+            --env RUST_LOG=trace
+            --log-dir=journal,console="${DIAG_DIR}/vm-logs"
+          )
+          sudo env \
+            YUBIOS_PODMAN_ARGV_LOG="${DIAG_DIR}/podman-argv.log" \
+            PATH="${DIAG_DIR}/bin:$PWD/bcvk-src/target/release:$PATH" \
+            RUST_BACKTRACE=full \
+            RUST_LOG=trace \
+            bcvk ephemeral run "${EXTRA_ARGS[@]}" --detach --ssh-keygen --swtpm --swu2f "${YUBIOS_IMAGE}" \
+            >"${DIAG_DIR}/bcvk-stdout.txt" \
+            2>"${DIAG_DIR}/bcvk-stderr.txt"
+          bcvk_rc=$?
+          echo "bcvk_detach_rc=${bcvk_rc}" | tee "${DIAG_DIR}/bcvk-rc.txt"
+          VMID="$(tail -n 1 "${DIAG_DIR}/bcvk-stdout.txt" | tr -d '[:space:]')"
+          echo "vmid=${VMID}" | tee -a "${DIAG_DIR}/bcvk-rc.txt"
+          if [ -n "${VMID}" ]; then
+            sleep 30
+            sudo podman ps -a --no-trunc | tee "${DIAG_DIR}/podman-ps-after-bcvk.txt"
+            sudo podman inspect "${VMID}" | tee "${DIAG_DIR}/bcvk-container-inspect.json" >/dev/null || true
+            sudo podman logs "${VMID}" >"${DIAG_DIR}/bcvk-container.log" 2>&1 || true
+            tail -200 "${DIAG_DIR}/bcvk-container.log" || true
+            sudo podman rm -f "${VMID}" >/dev/null 2>&1 || true
+          fi
+          exit 0
+
+      - name: Kernel/audit tail after probes
+        if: always()
+        run: |
+          set +e
+          sudo dmesg -T | tail -300 | tee "${DIAG_DIR}/dmesg-tail.txt" || true
+          sudo journalctl -k -n 300 --no-pager | tee "${DIAG_DIR}/journal-kernel-tail.txt" || true
+          sudo journalctl -n 300 --no-pager | tee "${DIAG_DIR}/journal-tail.txt" || true
+          sudo aa-status | tee "${DIAG_DIR}/aa-status-final.txt" || true
+          sudo podman info --debug | tee "${DIAG_DIR}/podman-info-debug.txt" || true
+          sudo podman ps -a --no-trunc | tee "${DIAG_DIR}/podman-ps-final.txt" || true
+
+      - name: Diagnostic summary
+        if: always()
+        run: |
+          set +e
+          {
+            echo "### qemu kernel mount debug"
+            echo "- image: ${YUBIOS_IMAGE}"
+            echo "- workflow file: .github/workflows/test.yml"
+            echo ""
+            echo "#### Probe return codes"
+            grep -R "probe_rc\\|bcvk_detach_rc\\|host_bind_mount_rc" "${DIAG_DIR}"/*.txt 2>/dev/null || true
+            echo ""
+            echo "#### Permission-denied signatures"
+            grep -RIn "permission denied\\|Failed to bind mount kernel\\|apparmor\\|DENIED" "${DIAG_DIR}" 2>/dev/null | tail -80 || true
+            echo ""
+            echo "#### Captured bcvk podman argv"
+            sed -n '1,220p' "${DIAG_DIR}/podman-argv.log" 2>/dev/null || true
+          } | tee "${DIAG_DIR}/summary.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v4.6.2
+        with:
+          name: qemu-kernel-mount-debug
+          path: /tmp/yubios-qemu-kernel-debug
+          if-no-files-found: warn
