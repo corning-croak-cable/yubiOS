@@ -88,6 +88,37 @@ jobs:
           podman --version | tee "${DIAG_DIR}/podman-version.txt"
           bwrap --version | tee "${DIAG_DIR}/bwrap-version.txt"
 
+      - name: Host bwrap capability smoke test
+        run: |
+          set +e
+          run_case() {
+            name="$1"
+            shift
+            echo "### ${name}" | tee -a "${DIAG_DIR}/host-bwrap-smoke.txt"
+            sudo rm -f /tmp/yubios-bwrap-source
+            printf 'host-bwrap-kernel\n' | sudo tee /tmp/yubios-bwrap-source >/dev/null
+            sudo bwrap --as-pid-1 --unshare-pid "$@" \
+              --bind / / \
+              --proc /proc \
+              --dev-bind /dev /dev \
+              --tmpfs /run \
+              -- /usr/bin/bash -euxo pipefail -c '
+                grep -E "Cap(Eff|Prm|Bnd)|NoNewPrivs|Seccomp" /proc/self/status || true
+                command -v capsh >/dev/null 2>&1 && capsh --print || true
+                mkdir -p /run/qemu
+                : > /run/qemu/kernel
+                mount --bind -o ro /tmp/yubios-bwrap-source /run/qemu/kernel
+                findmnt -T /run/qemu/kernel -o TARGET,SOURCE,FSTYPE,OPTIONS || true
+                umount /run/qemu/kernel
+              ' 2>&1 | tee -a "${DIAG_DIR}/host-bwrap-smoke.txt"
+            rc=${PIPESTATUS[0]}
+            echo "${name}_rc=${rc}" | tee -a "${DIAG_DIR}/host-bwrap-smoke.txt"
+          }
+          run_case bwrap_no_cap
+          run_case bwrap_cap_sys_admin --cap-add CAP_SYS_ADMIN
+          run_case bwrap_cap_all --cap-add ALL
+          exit 0
+
       - name: Free old podman state and pull target image
         run: |
           set -euxo pipefail
@@ -161,6 +192,10 @@ jobs:
             perl -0pi -e 's/(    cmd\.args\(\[\n        \/\/ Needed to create nested containers)/    cmd.arg("--privileged");\n    \/\/ Ubuntu rootful Podman needs the fully privileged profile for bcvk\n    \/\/ to bind-mount the extracted kernel inside its bwrap namespace.\n\n$1/' bcvk-src/crates/kit/src/run_ephemeral.rs
           fi
           grep -Fq -- 'cmd.arg("--privileged")' bcvk-src/crates/kit/src/run_ephemeral.rs
+          if ! grep -Fq -- '--cap-add CAP_SYS_ADMIN' bcvk-src/crates/kit/scripts/entrypoint.sh; then
+            perl -0pi -e 's/(bwrap --as-pid-1 --unshare-pid)/$1 --cap-add CAP_SYS_ADMIN/' bcvk-src/crates/kit/scripts/entrypoint.sh
+          fi
+          grep -Fq -- '--cap-add CAP_SYS_ADMIN' bcvk-src/crates/kit/scripts/entrypoint.sh
           {
             echo "### podman command construction"
             nl -ba bcvk-src/crates/kit/src/run_ephemeral.rs | sed -n '780,875p'
@@ -268,6 +303,7 @@ jobs:
               --security-opt=unmask=/proc/* \
               --security-opt=apparmor=unconfined \
               --mount=type=tmpfs,target=/run \
+              -v /usr:/run/tmproot/usr:ro \
               -v /sys:/sys:ro \
               -v /var/tmp:/var/tmp \
               --device=/dev/kvm \
@@ -288,6 +324,7 @@ jobs:
               --security-opt=unmask=/proc/* \
               --security-opt=apparmor=unconfined \
               --mount=type=tmpfs,target=/run \
+              -v /usr:/run/tmproot/usr:ro \
               -v /sys:/sys:ro \
               -v /var/tmp:/var/tmp \
               --device=/dev/kvm \
@@ -298,6 +335,12 @@ jobs:
             2>&1 | tee "${DIAG_DIR}/bwrap-probe.txt"
           echo "bwrap_probe_rc=${PIPESTATUS[0]}" | tee -a "${DIAG_DIR}/bwrap-probe.txt"
           exit 0
+
+      - name: Set unpriv_bwrap AppArmor profile to complain for bcvk fix trial
+        run: |
+          set +e
+          sudo aa-complain unpriv_bwrap 2>&1 | tee "${DIAG_DIR}/aa-complain-unpriv-bwrap.txt" || true
+          sudo aa-status | tee "${DIAG_DIR}/aa-status-after-complain.txt" || true
 
       - name: bcvk ephemeral reproduction with backtrace and podman argv capture
         run: |
@@ -346,6 +389,7 @@ jobs:
           sudo aa-status | tee "${DIAG_DIR}/aa-status-final.txt" || true
           sudo podman info --debug | tee "${DIAG_DIR}/podman-info-debug.txt" || true
           sudo podman ps -a --no-trunc | tee "${DIAG_DIR}/podman-ps-final.txt" || true
+          sudo aa-enforce unpriv_bwrap 2>&1 | tee "${DIAG_DIR}/aa-enforce-unpriv-bwrap.txt" || true
 
       - name: Diagnostic summary
         if: always()
@@ -358,6 +402,7 @@ jobs:
             echo ""
             echo "#### Probe return codes"
             grep -R "probe_rc\\|bcvk_detach_rc\\|host_bind_mount_rc" "${DIAG_DIR}"/*.txt 2>/dev/null || true
+            grep -R "bwrap_.*_rc" "${DIAG_DIR}"/*.txt 2>/dev/null || true
             echo ""
             echo "#### Permission-denied signatures"
             grep -RIn "permission denied\\|Failed to bind mount kernel\\|apparmor\\|DENIED" "${DIAG_DIR}" 2>/dev/null | tail -80 || true
