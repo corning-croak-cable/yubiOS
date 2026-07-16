@@ -6,9 +6,11 @@
 # Run: bats tests/unit/test-chipsec-firstboot-unit.bats
 
 UNIT="usr/lib/systemd/system/yubiOS-chipsec-firstboot.service"
+WRAPPER="usr/lib/yubiOS/chipsec/run-firstboot-check.sh"
 
 setup() {
   [ -f "$UNIT" ] || UNIT="/usr/lib/systemd/system/yubiOS-chipsec-firstboot.service"
+  [ -f "$WRAPPER" ] || WRAPPER="/usr/lib/yubiOS/chipsec/run-firstboot-check.sh"
 }
 
 @test "chipsec unit gates on measured boot and first boot" {
@@ -51,6 +53,31 @@ setup() {
   [ "$status" -eq 0 ]
 
   run grep -E '^[[:space:]]*NoNewPrivileges[[:space:]]*=[[:space:]]*no[[:space:]]*$' "$UNIT"
+  [ "$status" -eq 0 ]
+}
+
+@test "chipsec wrapper documents warning-mode result semantics" {
+  run grep -F 'RESULT=PASS' "$WRAPPER"
+  [ "$status" -eq 0 ]
+
+  run grep -F 'RESULT=WARN' "$WRAPPER"
+  [ "$status" -eq 0 ]
+
+  run grep -F 'RESULT=FAILED' "$WRAPPER"
+  [ "$status" -eq 0 ]
+
+  run grep -F 'informational only -- it does not PASS/FAIL' "$WRAPPER"
+  [ "$status" -eq 0 ]
+}
+
+@test "chipsec wrapper warning paths stay non-fatal and explicit" {
+  run grep -F 'OVERALL=WARN' "$WRAPPER"
+  [ "$status" -eq 0 ]
+
+  run grep -F 'treating as inconclusive, not a hard failure' "$WRAPPER"
+  [ "$status" -eq 0 ]
+
+  run grep -F 'WPBT_PRESENT=$WPBT_SEEN' "$WRAPPER"
   [ "$status" -eq 0 ]
 }
 
