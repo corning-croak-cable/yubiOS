@@ -1,23 +1,27 @@
 name: yubiOS VM e2e (tests/vm)
 
-# T7 / V1 — wire tests/vm/*.sh into a RUNNING workflow.
+# T7 / V1  wire tests/vm/*.sh into a RUNNING workflow.
 #
 # Two scripts live in tests/vm/:
-#   * test-luks-fido2-ci.sh  — hardware-FREE e2e: drives `bcvk ephemeral run
+#   * test-luks-fido2-ci.sh   hardware-FREE e2e: drives `bcvk ephemeral run
 #     --swtpm --swu2f` (canonical bcvk branch feat/swtpm-ci) and runs assertions
 #     in-guest. It is deliberately skip-tolerant: pam-u2f + swtpm legs run; the
 #     LUKS2-FIDO2 + homed-FIDO2 legs SKIP (not fail) unless a CTAP2 hmac-secret
 #     authenticator (swu2f Layer 2, shipped only in the mkosi --profile test
 #     image) is present.
-#   * test-luks-fido2.sh     — hardware e2e: needs a PHYSICAL YubiKey + a spare
+#   * test-luks-fido2.sh      hardware e2e: needs a PHYSICAL YubiKey + a spare
 #     block device + root. Never executed in CI (it flashes a disk); lint-only.
 #
 # Honest CI contract: this workflow lints both scripts for real, provisions and
 # verifies the real bcvk dependency, and EXECUTES test-luks-fido2-ci.sh when a
 # yubiOS image is available. When no image is available on a hosted runner, the
-# VM boot + CTAP2 legs are SKIPPED *explicitly and loudly* — never a silent pass.
+# VM boot + CTAP2 legs are SKIPPED *explicitly and loudly*  never a silent pass.
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ci_test-vm.yml' # self-change trigger for validating workflow edits
   workflow_dispatch:
     inputs:
       image:
@@ -71,7 +75,7 @@ permissions:
   actions: write
 
 jobs:
-  # ── Real gate: shell syntax + shellcheck on every tests/vm script. ──
+  #  Real gate: shell syntax + shellcheck on every tests/vm script. 
   lint-vm-scripts:
     runs-on: ubuntu-24.04
     container:
@@ -94,7 +98,7 @@ jobs:
           done
           [ "$fail" -eq 0 ] || exit 1
 
-  # ── VM e2e: native matrix, bare runner (full host toolchain: cargo + qemu + ──
+  #  VM e2e: native matrix, bare runner (full host toolchain: cargo + qemu + 
   #    KVM). Hardened dhi base omits crt*.o/libc, so bcvk's cargo build needs the
   #    bare runner (same lesson as the bcvk Rust CI). fail-fast:false for parity.
   vm-e2e:
@@ -136,8 +140,9 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq --no-install-recommends \
             swtpm swtpm-tools qemu-utils ${{ matrix.qemu_pkgs }} \
-            fido2-tools cryptsetup-bin git build-essential pkg-config libssl-dev virtiofsd
-          # GH runners ship /dev/kvm root:kvm 0660 — the runner user (and
+            fido2-tools cryptsetup-bin git build-essential pkg-config libssl-dev virtiofsd \
+            apparmor-utils
+          # GH runners ship /dev/kvm root:kvm 0660  the runner user (and
           # root-in-rootless-podman) can't open it. Documented GH recipe:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules || true
@@ -146,7 +151,7 @@ jobs:
           # virtiofsd needs /dev/fuse; GH Actions ubuntu-24.04 runners don't
           # guarantee the fuse module is loaded / device node present. A
           # missing /dev/fuse is a plausible cause of virtiofsd's silent
-          # rc=2 (empty stdout+stderr+logfile) seen in prior runs — FUSE
+          # rc=2 (empty stdout+stderr+logfile) seen in prior runs  FUSE
           # device-open failures in some Rust FUSE crates exit before their
           # own logger initializes.
           sudo modprobe fuse || true
@@ -223,8 +228,8 @@ jobs:
           git clone --depth 1 -b feat/swtpm-ci https://github.com/yubi-OS/bcvk bcvk-src
           if [ ! -d bcvk-src ]; then
             echo "skip=1" >> "$GITHUB_OUTPUT"
-            echo "::warning::SKIP: could not clone yubi-OS/bcvk feat/swtpm-ci — VM e2e not feasible on this runner"
-            echo "### vm-e2e (${{ matrix.arch }}): SKIPPED — bcvk source unavailable" >> "$GITHUB_STEP_SUMMARY"
+            echo "::warning::SKIP: could not clone yubi-OS/bcvk feat/swtpm-ci  VM e2e not feasible on this runner"
+            echo "### vm-e2e (${{ matrix.arch }}): SKIPPED  bcvk source unavailable" >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           if ! grep -Fq -- 'cmd.arg("--privileged")' bcvk-src/crates/kit/src/run_ephemeral.rs; then
@@ -232,11 +237,16 @@ jobs:
           fi
           grep -Fq -- 'cmd.arg("--privileged")' bcvk-src/crates/kit/src/run_ephemeral.rs \
             || { echo "::error::failed to apply bcvk privileged-container CI patch"; exit 1; }
+          if ! grep -Fq -- '--cap-add CAP_SYS_ADMIN' bcvk-src/crates/kit/scripts/entrypoint.sh; then
+            perl -0pi -e 's/(bwrap --as-pid-1 --unshare-pid)/$1 --cap-add CAP_SYS_ADMIN/' bcvk-src/crates/kit/scripts/entrypoint.sh
+          fi
+          grep -Fq -- '--cap-add CAP_SYS_ADMIN' bcvk-src/crates/kit/scripts/entrypoint.sh \
+            || { echo "::error::failed to apply bcvk bwrap CAP_SYS_ADMIN CI patch"; exit 1; }
           ( cd bcvk-src && cargo build --release )
           if [ ! -x bcvk-src/target/release/bcvk ]; then
             echo "skip=1" >> "$GITHUB_OUTPUT"
-            echo "::warning::SKIP: bcvk failed to build from feat/swtpm-ci — VM e2e not feasible (see cargo output above)"
-            echo "### vm-e2e (${{ matrix.arch }}): SKIPPED — bcvk build failed" >> "$GITHUB_STEP_SUMMARY"
+            echo "::warning::SKIP: bcvk failed to build from feat/swtpm-ci  VM e2e not feasible (see cargo output above)"
+            echo "### vm-e2e (${{ matrix.arch }}): SKIPPED  bcvk build failed" >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           echo "$PWD/bcvk-src/target/release" >> "$GITHUB_PATH"
@@ -261,7 +271,7 @@ jobs:
           else
             echo "kvm=0" >> "$GITHUB_OUTPUT"
             echo "::warning::SKIP: /dev/kvm absent on this runner (self-hosted ARM64 should have it -- if this fires on rock1, KVM isn't enabled in its kernel/BIOS, not a hosted-runner limitation); bcvk boot legs skipped LOUDLY"
-            echo "### vm-e2e (${{ matrix.arch }}): boot legs SKIPPED — no /dev/kvm on this runner" >> "$GITHUB_STEP_SUMMARY"
+            echo "### vm-e2e (${{ matrix.arch }}): boot legs SKIPPED  no /dev/kvm on this runner" >> "$GITHUB_STEP_SUMMARY"
           fi
 
       - name: "Gate amd64 boot leg on platform-priority policy (ADR-023: ARM64 is primary)"
@@ -271,8 +281,8 @@ jobs:
             echo "boot=1" >> "$GITHUB_OUTPUT"
           else
             echo "boot=0" >> "$GITHUB_OUTPUT"
-            echo "::warning::SKIP: ${{ matrix.arch }} boot leg skipped — ARM64 is yubiOS's primary target platform (ADR-023); amd64 CI does not block on the open bcvk/virtiofsd bug on a now-secondary arch (see #9/#20/#25 for the diagnosis)."
-            echo "### vm-e2e (${{ matrix.arch }}): boot legs SKIPPED — secondary platform per ADR-023 (bcvk/virtiofsd diagnosis: #9/#20/#25)" >> "$GITHUB_STEP_SUMMARY"
+            echo "::warning::SKIP: ${{ matrix.arch }} boot leg skipped  ARM64 is yubiOS's primary target platform (ADR-023); amd64 CI does not block on the open bcvk/virtiofsd bug on a now-secondary arch (see #9/#20/#25 for the diagnosis)."
+            echo "### vm-e2e (${{ matrix.arch }}): boot legs SKIPPED  secondary platform per ADR-023 (bcvk/virtiofsd diagnosis: #9/#20/#25)" >> "$GITHUB_STEP_SUMMARY"
           fi
 
       - name: Assert bcvk exposes --swtpm/--swu2f (real regression gate)
@@ -286,7 +296,7 @@ jobs:
 
       # NOT converted to docker: bcvk (crates/kit/src/run_ephemeral.rs,
       # crates/kit/src/ephemeral.rs) hardcodes Command::new("podman") for its
-      # privileged ephemeral-VM container and container inspection — there is
+      # privileged ephemeral-VM container and container inspection  there is
       # no --runtime flag. Pulling with `docker` would populate docker's own
       # image store, which podman's separate containers-storage can't see, so
       # bcvk would still report "image not known". Every podman call in this
@@ -304,6 +314,17 @@ jobs:
           sudo podman pull "${{ inputs.image }}"
           sudo podman images | head -5
 
+      - name: Relax unpriv_bwrap AppArmor profile for bcvk VM boot
+        if: matrix.arch == 'arm64' && steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1'
+        run: |
+          if command -v aa-complain >/dev/null 2>&1; then
+            sudo aa-complain unpriv_bwrap || true
+            sudo aa-status | sed -n '1,140p' || true
+            echo "### vm-e2e (arm64): unpriv_bwrap AppArmor profile set to complain for bcvk VM boot" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::warning::aa-complain unavailable; bcvk may still hit the unpriv_bwrap CAP_SYS_ADMIN denial"
+          fi
+
       - name: Run tests/vm/test-luks-fido2-ci.sh (boot leg gated on image availability)
         if: steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1'
         env:
@@ -316,14 +337,14 @@ jobs:
             echo "::warning::SKIP: no yubiOS image available (no workflow_dispatch 'image' input, no mkosi.output/yubiOS). VM boot + LUKS2-FIDO2 + homed legs NOT exercised."
             {
               echo "### vm-e2e (${{ matrix.arch }}): VM boot leg SKIPPED (explicit)"
-              echo "- bcvk built from feat/swtpm-ci and exposes \`--swtpm\`/\`--swu2f\` ✅"
-              echo "- swtpm / qemu / fido2-tools / cryptsetup installed ✅"
-              echo "- **Skipped:** VM boot + LUKS2-FIDO2 + systemd-homed legs — needs a built yubiOS test image (\`mkosi --profile test\`) or a \`workflow_dispatch\` \`image\` input."
+              echo "- bcvk built from feat/swtpm-ci and exposes \`--swtpm\`/\`--swu2f\` "
+              echo "- swtpm / qemu / fido2-tools / cryptsetup installed "
+              echo "- **Skipped:** VM boot + LUKS2-FIDO2 + systemd-homed legs  needs a built yubiOS test image (\`mkosi --profile test\`) or a \`workflow_dispatch\` \`image\` input."
               echo "- To run the full e2e: dispatch this workflow with \`image\` set to a pullable yubiOS OCI ref, or build the test image into \`./mkosi.output/yubiOS\` first."
             } >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
-          [ -e /dev/kvm ] || echo "::warning::/dev/kvm absent — bcvk may fall back to slow TCG emulation"
+          [ -e /dev/kvm ] || echo "::warning::/dev/kvm absent  bcvk may fall back to slow TCG emulation"
           chmod +x tests/vm/test-luks-fido2-ci.sh
           echo "Running test-luks-fido2-ci.sh against image: ${YUBIOS_IMAGE:-./mkosi.output/yubiOS}"
           set +e
@@ -332,7 +353,7 @@ jobs:
           set -e
           if [ "$rc" -eq 77 ]; then
             echo "::warning::SKIP: bcvk cannot DirectBoot the ARM64 zstd EFI zboot kernel in this image yet; VM boot leg skipped rather than failing on a known harness limitation."
-            echo "### vm-e2e (${{ matrix.arch }}): test-luks-fido2-ci.sh SKIPPED — bcvk lacks zstd EFI zboot support for this ARM64 image" >> "$GITHUB_STEP_SUMMARY"
+            echo "### vm-e2e (${{ matrix.arch }}): test-luks-fido2-ci.sh SKIPPED  bcvk lacks zstd EFI zboot support for this ARM64 image" >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           [ "$rc" -eq 0 ] || exit "$rc"
@@ -347,7 +368,7 @@ jobs:
             ${{ matrix.arch == 'arm64' && format('--ro-bind {0}:qemu-zstd --ro-bind /lib/aarch64-linux-gnu:host-lib --ro-bind /usr/lib/aarch64-linux-gnu:host-usrlib --env PATH=/run/host-mounts/qemu-zstd/bcvk-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env LD_LIBRARY_PATH=/run/host-mounts/host-lib:/run/host-mounts/host-usrlib:/run/host-mounts/qemu-zstd/lib', steps.qemu-zstd.outputs.qemu_prefix) || '' }}
         run: |
           if [ -z "${YUBIOS_IMAGE}" ] && [ ! -e ./mkosi.output/yubiOS ]; then
-            echo "::warning::SKIP: no yubiOS image available — enrollment-surface e2e not exercised."
+            echo "::warning::SKIP: no yubiOS image available  enrollment-surface e2e not exercised."
             exit 0
           fi
           chmod +x tests/vm/test-fido2-enrollment.sh
@@ -357,7 +378,7 @@ jobs:
           set -e
           if [ "$rc" -eq 77 ]; then
             echo "::warning::SKIP: bcvk cannot DirectBoot the ARM64 zstd EFI zboot kernel in this image yet; enrollment boot leg skipped rather than failing on a known harness limitation."
-            echo "### vm-e2e (${{ matrix.arch }}): test-fido2-enrollment.sh SKIPPED — bcvk lacks zstd EFI zboot support for this ARM64 image" >> "$GITHUB_STEP_SUMMARY"
+            echo "### vm-e2e (${{ matrix.arch }}): test-fido2-enrollment.sh SKIPPED  bcvk lacks zstd EFI zboot support for this ARM64 image" >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           [ "$rc" -eq 0 ] || exit "$rc"
@@ -366,6 +387,9 @@ jobs:
       - name: Free disk space (post-run -- leave rock1 clean for the next run)
         if: always()
         run: |
+          if command -v aa-enforce >/dev/null 2>&1; then
+            sudo aa-enforce unpriv_bwrap || true
+          fi
           sudo podman ps -aq | xargs -r sudo podman rm -f || true
           sudo podman system prune -af --volumes || true
           sudo rm -rf "${GITHUB_WORKSPACE}/bcvk-src" || true
@@ -373,7 +397,7 @@ jobs:
 
       - name: Note hardware-only variant (lint-only in CI)
         run: |
-          echo "tests/vm/test-luks-fido2.sh needs a physical YubiKey + spare block device + root; lint-only in CI (never executed — it flashes a disk)." >> "$GITHUB_STEP_SUMMARY"
+          echo "tests/vm/test-luks-fido2.sh needs a physical YubiKey + spare block device + root; lint-only in CI (never executed  it flashes a disk)." >> "$GITHUB_STEP_SUMMARY"
 
   ci-callback:
     name: Callback to ci.yml orchestrator
