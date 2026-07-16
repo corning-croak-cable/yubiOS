@@ -140,7 +140,7 @@ jobs:
     steps:
       - name: Install EDK2 build deps
         run: |
-          rm -rf /mnt/actions-runner/_work/yubiOS
+          rm -rf /mnt/actions-runner/_work/yubiOS/*
           sudo apt-get update -qq
           sudo apt-get install -y -qq \
             build-essential uuid-dev iasl nasm \
