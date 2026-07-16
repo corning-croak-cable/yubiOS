@@ -249,12 +249,15 @@ jobs:
             echo "### vm-e2e (${{ matrix.arch }}): SKIPPED -- bcvk build failed" >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
-          echo "$PWD/bcvk-src/target/release" >> "$GITHUB_PATH"
+          BCVK_BIN_DIR="${RUNNER_TEMP:-/tmp}/bcvk-bin"
+          mkdir -p "$BCVK_BIN_DIR" || { echo "::error::failed to create bcvk bin dir"; exit 1; }
+          cp bcvk-src/target/release/bcvk "$BCVK_BIN_DIR/bcvk" || { echo "::error::failed to stage bcvk binary"; exit 1; }
+          chmod 0755 "$BCVK_BIN_DIR/bcvk"
+          echo "$BCVK_BIN_DIR" >> "$GITHUB_PATH"
           echo "skip=0" >> "$GITHUB_OUTPUT"
-          # Reclaim space immediately: keep the built binary, drop the ~GB of intermediate
-          # build objects before the (large) image pull below. rock1 ran out of disk here.
-          rm -rf bcvk-src/target/release/build bcvk-src/target/release/deps bcvk-src/target/release/incremental 2>/dev/null || true
-          cargo cache -a 2>/dev/null || true
+          # Reclaim space immediately before the large image pull. Keep only the
+          # bcvk binary; rock1 has a small root disk and hit 69 MB free after pull.
+          rm -rf bcvk-src ~/.cargo/registry ~/.cargo/git ~/.cargo/.package-cache 2>/dev/null || true
 
       - name: Disk space after bcvk build attempt (diagnostic)
         if: always()
@@ -347,7 +350,7 @@ jobs:
           YUBIOS_IMAGE: ${{ inputs.image }}
           YUBIOS_SSH_WAIT_SECS: ${{ matrix.arch == 'arm64' && '900' || '300' }}
           BCVK_EPHEMERAL_EXTRA_ARGS: >-
-            ${{ matrix.arch == 'arm64' && format('--ro-bind {0}:qemu-zstd --ro-bind /lib/aarch64-linux-gnu:host-lib --ro-bind /usr/lib/aarch64-linux-gnu:host-usrlib --env PATH=/run/host-mounts/qemu-zstd/bcvk-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env LD_LIBRARY_PATH=/run/host-mounts/host-lib:/run/host-mounts/host-usrlib:/run/host-mounts/qemu-zstd/lib', steps.qemu-zstd.outputs.qemu_prefix) || '' }}
+            ${{ matrix.arch == 'arm64' && format('--ro-bind {0}:qemu-zstd --ro-bind /lib/aarch64-linux-gnu:host-lib --ro-bind /usr/lib/aarch64-linux-gnu:host-usrlib --env PATH=/run/host-mounts/qemu-zstd/bcvk-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env LD_LIBRARY_PATH=/run/host-mounts/host-lib:/run/host-mounts/host-usrlib:/run/host-mounts/qemu-zstd/lib --log-dir=journal,console=/tmp/yubios-vm-e2e-logs', steps.qemu-zstd.outputs.qemu_prefix) || '' }}
         run: |
           if [ -z "${YUBIOS_IMAGE}" ] && [ ! -e ./mkosi.output/yubiOS ]; then
             echo "::warning::SKIP: no yubiOS image available (no workflow_dispatch 'image' input, no mkosi.output/yubiOS). VM boot + LUKS2-FIDO2 + homed legs NOT exercised."
@@ -362,11 +365,24 @@ jobs:
           fi
           [ -e /dev/kvm ] || echo "::warning::/dev/kvm absent -- bcvk may fall back to slow TCG emulation"
           chmod +x tests/vm/test-luks-fido2-ci.sh
+          sudo rm -rf /tmp/yubios-vm-e2e-logs
+          sudo mkdir -p /tmp/yubios-vm-e2e-logs
+          sudo chmod 0777 /tmp/yubios-vm-e2e-logs
           echo "Running test-luks-fido2-ci.sh against image: ${YUBIOS_IMAGE:-./mkosi.output/yubiOS}"
           set +e
           sudo env "PATH=$PATH" "YUBIOS_IMAGE=${YUBIOS_IMAGE:-./mkosi.output/yubiOS}" "BCVK_EPHEMERAL_EXTRA_ARGS=${BCVK_EPHEMERAL_EXTRA_ARGS:-}" "YUBIOS_SSH_WAIT_SECS=${YUBIOS_SSH_WAIT_SECS:-300}" bash tests/vm/test-luks-fido2-ci.sh
           rc=$?
           set -e
+          if [ "$rc" -ne 0 ]; then
+            echo "--- disk after failed VM run ---"
+            df -h "$PWD" /tmp /var/lib/containers || true
+            echo "--- VM console log tail ---"
+            sudo tail -200 /tmp/yubios-vm-e2e-logs/console.txt || true
+            echo "--- VM journal tail ---"
+            sudo tail -200 /tmp/yubios-vm-e2e-logs/journal.json || true
+            echo "--- VM initrd journal tail ---"
+            sudo tail -200 /tmp/yubios-vm-e2e-logs/journal-initrd.json || true
+          fi
           if [ "$rc" -eq 77 ]; then
             echo "::warning::SKIP: bcvk cannot DirectBoot the ARM64 zstd EFI zboot kernel in this image yet; VM boot leg skipped rather than failing on a known harness limitation."
             echo "### vm-e2e (${{ matrix.arch }}): test-luks-fido2-ci.sh SKIPPED -- bcvk lacks zstd EFI zboot support for this ARM64 image" >> "$GITHUB_STEP_SUMMARY"
@@ -381,17 +397,30 @@ jobs:
           YUBIOS_IMAGE: ${{ inputs.image }}
           YUBIOS_SSH_WAIT_SECS: ${{ matrix.arch == 'arm64' && '900' || '300' }}
           BCVK_EPHEMERAL_EXTRA_ARGS: >-
-            ${{ matrix.arch == 'arm64' && format('--ro-bind {0}:qemu-zstd --ro-bind /lib/aarch64-linux-gnu:host-lib --ro-bind /usr/lib/aarch64-linux-gnu:host-usrlib --env PATH=/run/host-mounts/qemu-zstd/bcvk-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env LD_LIBRARY_PATH=/run/host-mounts/host-lib:/run/host-mounts/host-usrlib:/run/host-mounts/qemu-zstd/lib', steps.qemu-zstd.outputs.qemu_prefix) || '' }}
+            ${{ matrix.arch == 'arm64' && format('--ro-bind {0}:qemu-zstd --ro-bind /lib/aarch64-linux-gnu:host-lib --ro-bind /usr/lib/aarch64-linux-gnu:host-usrlib --env PATH=/run/host-mounts/qemu-zstd/bcvk-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env LD_LIBRARY_PATH=/run/host-mounts/host-lib:/run/host-mounts/host-usrlib:/run/host-mounts/qemu-zstd/lib --log-dir=journal,console=/tmp/yubios-vm-e2e-logs', steps.qemu-zstd.outputs.qemu_prefix) || '' }}
         run: |
           if [ -z "${YUBIOS_IMAGE}" ] && [ ! -e ./mkosi.output/yubiOS ]; then
             echo "::warning::SKIP: no yubiOS image available -- enrollment-surface e2e not exercised."
             exit 0
           fi
           chmod +x tests/vm/test-fido2-enrollment.sh
+          sudo rm -rf /tmp/yubios-vm-e2e-logs
+          sudo mkdir -p /tmp/yubios-vm-e2e-logs
+          sudo chmod 0777 /tmp/yubios-vm-e2e-logs
           set +e
           sudo env "PATH=$PATH" "YUBIOS_IMAGE=${YUBIOS_IMAGE:-./mkosi.output/yubiOS}" "BCVK_EPHEMERAL_EXTRA_ARGS=${BCVK_EPHEMERAL_EXTRA_ARGS:-}" "YUBIOS_SSH_WAIT_SECS=${YUBIOS_SSH_WAIT_SECS:-300}" bash tests/vm/test-fido2-enrollment.sh
           rc=$?
           set -e
+          if [ "$rc" -ne 0 ]; then
+            echo "--- disk after failed enrollment VM run ---"
+            df -h "$PWD" /tmp /var/lib/containers || true
+            echo "--- VM console log tail ---"
+            sudo tail -200 /tmp/yubios-vm-e2e-logs/console.txt || true
+            echo "--- VM journal tail ---"
+            sudo tail -200 /tmp/yubios-vm-e2e-logs/journal.json || true
+            echo "--- VM initrd journal tail ---"
+            sudo tail -200 /tmp/yubios-vm-e2e-logs/journal-initrd.json || true
+          fi
           if [ "$rc" -eq 77 ]; then
             echo "::warning::SKIP: bcvk cannot DirectBoot the ARM64 zstd EFI zboot kernel in this image yet; enrollment boot leg skipped rather than failing on a known harness limitation."
             echo "### vm-e2e (${{ matrix.arch }}): test-fido2-enrollment.sh SKIPPED -- bcvk lacks zstd EFI zboot support for this ARM64 image" >> "$GITHUB_STEP_SUMMARY"
