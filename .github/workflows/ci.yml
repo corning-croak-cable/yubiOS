@@ -150,7 +150,7 @@ jobs:
               next_file='ci_test-int.yml'
               callee_inputs=$(jq -n --arg reason "ci after ci_fork_edk2" --arg push "$FIRMWARE_DOCKER_PUSH" '{reason: $reason, Docker_push: $push}')
               ;;
-            ci_test-int)
+            'yubiOS firmware')
               next_file='yubiOS-ci.yml'
               callee_inputs=$(jq -n --arg push "$DOCKER_PUSH" '{Docker_push: $push}')
               ;;
