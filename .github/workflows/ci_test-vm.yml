@@ -317,13 +317,20 @@ jobs:
       - name: Relax unpriv_bwrap AppArmor profile for bcvk VM boot
         if: matrix.arch == 'arm64' && steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1'
         run: |
-          if command -v aa-complain >/dev/null 2>&1; then
-            sudo aa-complain unpriv_bwrap || true
-            sudo aa-status | sed -n '1,140p' || true
-            echo "### vm-e2e (arm64): unpriv_bwrap AppArmor profile set to complain for bcvk VM boot" >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo "::warning::aa-complain unavailable; bcvk may still hit the unpriv_bwrap CAP_SYS_ADMIN denial"
+          set -euo pipefail
+          aa_complain="$(command -v aa-complain || true)"
+          aa_status="$(command -v aa-status || true)"
+          [ -n "$aa_complain" ] || [ ! -x /usr/sbin/aa-complain ] || aa_complain=/usr/sbin/aa-complain
+          [ -n "$aa_status" ] || [ ! -x /usr/sbin/aa-status ] || aa_status=/usr/sbin/aa-status
+          if [ -z "$aa_complain" ]; then
+            echo "::error::aa-complain unavailable after installing apparmor-utils; cannot relax unpriv_bwrap for bcvk VM boot"
+            exit 1
           fi
+          sudo "$aa_complain" unpriv_bwrap
+          if [ -n "$aa_status" ]; then
+            sudo "$aa_status" | sed -n '1,140p' || true
+          fi
+          echo "### vm-e2e (arm64): unpriv_bwrap AppArmor profile set to complain for bcvk VM boot" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Run tests/vm/test-luks-fido2-ci.sh (boot leg gated on image availability)
         if: steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1'
@@ -387,8 +394,10 @@ jobs:
       - name: Free disk space (post-run -- leave rock1 clean for the next run)
         if: always()
         run: |
-          if command -v aa-enforce >/dev/null 2>&1; then
-            sudo aa-enforce unpriv_bwrap || true
+          aa_enforce="$(command -v aa-enforce || true)"
+          [ -n "$aa_enforce" ] || [ ! -x /usr/sbin/aa-enforce ] || aa_enforce=/usr/sbin/aa-enforce
+          if [ -n "$aa_enforce" ]; then
+            sudo "$aa_enforce" unpriv_bwrap || true
           fi
           sudo podman ps -aq | xargs -r sudo podman rm -f || true
           sudo podman system prune -af --volumes || true
