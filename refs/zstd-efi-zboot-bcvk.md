@@ -1,6 +1,6 @@
 # ARM64 EFI zboot + zstd blocker (bcvk DirectBoot)
 
-_Last reviewed: 2026-07-11_
+_Last reviewed: 2026-07-16_
 
 ## Executive summary
 
@@ -18,6 +18,17 @@ This is a host harness/kernel-loader compatibility issue, not a yubiOS FIDO2, LU
 2. In `.github/workflows/ci_test-vm.yml`, use the pinned upstream QEMU commit `3a18e8a25992d1643707e2cebdd6e9bb2bd7d3b9` for the ARM64 bcvk lane until runner distributions ship the zstd EFI zboot loader fix.
 3. Bind-mount the QEMU prefix/wrapper into bcvk's inner container so DirectBoot uses the zstd-capable QEMU binary and the matching ROM search path.
 4. Keep the exact-error skip as a fallback for stale self-hosted caches and manual runs with an older QEMU.
+
+## Latest CI evidence
+
+Run [29525332901](https://github.com/yubi-OS/yubiOS/actions/runs/29525332901) proved the pinned workaround is effective enough to reach the guest on the primary ARM64 lane:
+
+- `ci_test-vm.yml` installed or reused QEMU from commit `3a18e8a25992d1643707e2cebdd6e9bb2bd7d3b9` and reported `QEMU emulator version 10.2.50`.
+- The ARM64 job pulled the yubiOS image, relaxed AppArmor profiles, and ran `tests/vm/test-luks-fido2-ci.sh` through bcvk.
+- The guest reached Fedora Linux 45 aarch64 login, `multi-user.target`, and `graphical.target`.
+- The remaining failure was `bootloader-update.service` inside the guest, not the earlier `unable to handle EFI zboot image with "zstd" compression` host-loader failure.
+
+Planning impact: keep the workaround and stale-cache skip, but treat the next blocker as guest boot/update-service triage rather than zstd DirectBoot bring-up. See [vm-e2e-run-29525332901.md](vm-e2e-run-29525332901.md).
 
 ## Research notes
 
