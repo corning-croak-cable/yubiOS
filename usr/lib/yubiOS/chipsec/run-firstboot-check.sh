@@ -9,6 +9,14 @@
 # Honesty note (see ADR-024): there is no automated CHIPSEC module for
 # Absolute Persistence / Computrace detection. The wpbt/uefi-var scan below is
 # informational only -- it does not PASS/FAIL, it reports what it finds.
+#
+# Result contract:
+#   RESULT=PASS   all scoped CHIPSEC checks passed.
+#   RESULT=WARN   CHIPSEC produced warnings or no report; surface this as
+#                 firmware-warning evidence, not as a clean bill of health.
+#   RESULT=FAILED one or more scoped CHIPSEC checks failed.
+# WPBT/Computrace detections are recorded separately as informational evidence
+# and must not, by themselves, change the PASS/WARN/FAILED result.
 
 set -eu
 
