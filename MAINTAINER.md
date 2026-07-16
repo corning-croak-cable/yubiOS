@@ -2,6 +2,11 @@
 
 Last reviewed: 2026-07-11
 
+Maintained-By:
+ - Shant Tchatalbachian (0mniteck) shant@omniteck.com
+ - +18186415757 (sms)
+ - Omniteck.42 (signal)
+
 This file captures recurring maintainer rules for yubiOS documentation, CI, and planning work.
 
 ## Branch And PR Policy
