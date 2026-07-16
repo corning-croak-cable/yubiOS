@@ -31,6 +31,19 @@ yubiOS is an immutable, bootc-delivered Linux OS that treats the owner's YubiKey
 
 ARM64 is the primary target platform because it is where yubiOS can own the firmware stack below the UKI through TF-A, OP-TEE, fTPM, and U-Boot. x86-64 remains fully supported above the UKI, but its firmware and optional TPM are platform/OEM trust anchors.
 
+### Ecosystem alignment
+
+In January 2026 the core systemd team and the engineers behind, composefs, runc, Flatcar,
+ParticleOS, and Ubuntu Core — founded [Amutable](https://amutable.com) with the mission:
+
+> *“Deliver determinism and verifiable integrity to Linux workloads everywhere.”*
+
+yubiOS is independently building toward the same architecture, with one additional constraint:
+the YubiKey replaces the TPM as the hardware root of trust at every layer. The "Fitting Everything
+Together" essay at [0pointer.net](https://0pointer.net/blog/fitting-everything-together.html) is the
+primary design reference for yubiOS — hermetic /usr, DPS partitions, systemd-repart first-boot,
+A/B sysupdate, systemd-homed per-user encryption, and UKI + dm-verity trust chain.
+
 ## Trust chain
 
 ```text
