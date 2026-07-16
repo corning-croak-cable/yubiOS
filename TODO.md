@@ -1,6 +1,6 @@
 # yubiOS TODO
 
-Last reviewed: 2026-07-14
+Last reviewed: 2026-07-16
 Status: active task list
 Latest targeted audit: [refs/systemd-v262-audit-2026-07-14.md](refs/systemd-v262-audit-2026-07-14.md).
 Latest broad research note: [refs/research-refresh-2026-07-11.md](refs/research-refresh-2026-07-11.md).
@@ -23,7 +23,7 @@ Use this file for current work. Completed historical context belongs in merged P
 - [ ] Keep the QEMU zstd EFI zboot workaround version-gated until runner QEMU contains upstream zstd EFI zboot loader support.
 - [ ] Keep `dev`/`dev-<sha>` swu2f images isolated from production build and publish paths.
 - [ ] Treat old-sha workflow reruns as historical unless the workflow is rerun against current `main`.
-- [ ] For workflow trigger edits, add narrow path-scoped push triggers only when required for validation.
+- [x] For workflow trigger edits, add narrow path-scoped push triggers only when required for validation.
 - [ ] If build policy wiring moves into Bake, keep Docker `target.policy` keys aligned with CLI policy flags and avoid duplicate `Dockerfile.rego` loading assumptions.
 
 ## Current ARM64 Tasks
@@ -39,7 +39,7 @@ Use this file for current work. Completed historical context belongs in merged P
 
 - [ ] Audit services for `ConditionSecurity=measured-os` where enrollment or signing behavior must not run on an unmeasured boot.
 - [ ] Audit `RestrictFileSystems=` separately from the v261 `RestrictFileSystemAccess=` control.
-- [ ] Keep CHIPSEC first-boot validation scoped as a one-shot exception and document firmware-warning behavior.
+- [x] Keep CHIPSEC first-boot validation scoped as a one-shot exception and document firmware-warning behavior: the unit and Bats coverage enforce the one-shot exception, while `run-firstboot-check.sh` documents `PASS`/`WARN`/`FAILED` semantics and informational WPBT/Computrace evidence.
 - [ ] Add or refresh real-hardware YubiKey validation evidence for FIDO2 unlock and homed flows.
 - [ ] Keep recovery paths documented before enabling any feature that can lock an owner out.
 
