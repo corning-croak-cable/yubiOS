@@ -102,6 +102,7 @@ on:
 
 permissions:
   contents: read
+  actions: write
 
 env:
   TFA_REF: f9e106415eb569ff9b19404e2c3f64167af08d21
@@ -114,7 +115,6 @@ env:
   FTPM_UUID: bc50d971-d4c9-42c4-82cb-343fb7f37896
   OPTEE_PLATFORM: vexpress-qemu_armv8a
   MBEDTLS_REF: mbedtls-3.6.6
-  actions: write
 
 jobs:
   # ===================================================================
@@ -140,6 +140,7 @@ jobs:
     steps:
       - name: Install EDK2 build deps
         run: |
+          rm -rf /mnt/actions-runner/_work/yubiOS
           sudo apt-get update -qq
           sudo apt-get install -y -qq \
             build-essential uuid-dev iasl nasm \
