@@ -24,6 +24,18 @@ Scope: markdown consistency, refs research refresh, and source-of-truth cleanup 
 | bootc install | `bootc install to-disk` remains the direct block-device install path; `to-filesystem` is the other install mode. | https://bootc.dev/bootc/bootc-install.html |
 | QEMU ARM64 zboot/zstd | QEMU gained a direct-loader fix for EFI zboot images compressed with zstd; yubiOS CI's pinned QEMU workaround is a harness fix, not a production compression rollback. | https://lists.nongnu.org/archive/html/qemu-devel/2026-01/msg04080.html |
 
+## 2026-07-16 VM e2e addendum
+
+Run [29525332901](https://github.com/yubi-OS/yubiOS/actions/runs/29525332901) turned the VM e2e planning state from host-bring-up uncertainty into guest-level triage. The primary ARM64 job still failed, but the useful wins are now documented in [vm-e2e-run-29525332901.md](vm-e2e-run-29525332901.md):
+
+- `rock1` provided real ARM64 KVM and `/dev/fuse` for the bcvk/virtiofsd path.
+- The pinned zstd-capable QEMU build (`3a18e8a25992d1643707e2cebdd6e9bb2bd7d3b9`, reporting QEMU `10.2.50`) carried the ARM64 DirectBoot path past the former zstd EFI zboot failure.
+- `yubi-OS/bcvk@feat/swtpm-ci` built and exposed the `--swtpm` and `--swu2f` flags as a real regression gate.
+- The yubiOS image pull, AppArmor relaxation, and VM boot completed far enough to reach Fedora 45 aarch64 login plus `multi-user.target` and `graphical.target`.
+- The active failure is now `bootloader-update.service` inside the guest; the enrollment-surface test skipped behind that failed boot step.
+
+Planning update: keep QEMU zstd workaround maintenance on the watch list, but prioritize diagnosing `bootloader-update.service` and rerunning the LUKS/FIDO2 and enrollment surfaces after that guest-level failure is fixed or explicitly classified.
+
 ## Inconsistencies flagged
 
 | File(s) | Inconsistency | Resolution in this docs pass |
@@ -37,6 +49,8 @@ Scope: markdown consistency, refs research refresh, and source-of-truth cleanup 
 
 ## Follow-ups
 
+- Diagnose `bootloader-update.service` from run 29525332901 and decide whether the image, VM test image, or failed-unit policy needs the fix.
+- Rerun `ci_test-vm.yml` after the bootloader-update decision so `tests/vm/test-fido2-enrollment.sh` is no longer hidden behind the earlier boot failure.
 - Audit code and tests for the distinction between `RestrictFileSystems=` and `RestrictFileSystemAccess=` before adding the newer v261 control anywhere.
 - Re-check the Docker Hub `0mniteck/yubios:latest` digest after the next green `yubiOS-ci.yml` publish; avoid treating old run-specific digests as evergreen docs facts.
 - Keep `PINNED.md` as the single source of truth for base images and GitHub Action SHAs; do not duplicate digest tables in `AGENTS.md` or research notes.
