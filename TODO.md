@@ -4,6 +4,7 @@ Last reviewed: 2026-07-16
 Status: active task list
 Latest targeted audit: [refs/systemd-v262-audit-2026-07-14.md](refs/systemd-v262-audit-2026-07-14.md).
 Latest broad research note: [refs/research-refresh-2026-07-11.md](refs/research-refresh-2026-07-11.md).
+Latest VM e2e evidence: [refs/vm-e2e-run-29525332901.md](refs/vm-e2e-run-29525332901.md).
 
 Use this file for current work. Completed historical context belongs in merged PRs, ADRs, or dated refs.
 
@@ -15,12 +16,15 @@ Use this file for current work. Completed historical context belongs in merged P
 - [x] Remove obsolete workflow-token warning language from repo guidance.
 - [x] Make [PINNED.md](PINNED.md) the explicit live source for image digests.
 - [x] Before systemd v262 adoption, audit docs/code for `/run/boot-loader-entries/`, `systemd-sysupdated` D-Bus, and `updatectl` assumptions: [refs/systemd-v262-audit-2026-07-14.md](refs/systemd-v262-audit-2026-07-14.md).
+- [x] Record the 2026-07-16 VM e2e milestone from run 29525332901: [refs/vm-e2e-run-29525332901.md](refs/vm-e2e-run-29525332901.md).
 - [ ] Keep future planning cycles dated and scoped under `refs/`.
 
 ## Current CI Tasks
 
 - [ ] Keep PQ TLS verification visible in CI for OpenSSL 3.5+ and Go 1.24+ defaults; when the repo toolchain reaches Go 1.26, include `SecP256r1MLKEM768` and `SecP384r1MLKEM1024` in accepted hybrid-group checks.
 - [ ] Keep the QEMU zstd EFI zboot workaround version-gated until runner QEMU contains upstream zstd EFI zboot loader support.
+- [ ] Triage the `bootloader-update.service` guest failure from run 29525332901; that run reached Fedora login on ARM64, so this is now a guest/image or failed-unit-policy issue rather than a host KVM, bcvk, AppArmor, image-pull, or zstd DirectBoot blocker.
+- [ ] Rerun `tests/vm/test-fido2-enrollment.sh` after the bootloader-update failure is fixed or explicitly classified; the enrollment surface was skipped behind the failed LUKS/FIDO2 boot step.
 - [ ] Keep `dev`/`dev-<sha>` swu2f images isolated from production build and publish paths.
 - [ ] Treat old-sha workflow reruns as historical unless the workflow is rerun against current `main`.
 - [x] For workflow trigger edits, add narrow path-scoped push triggers only when required for validation.
@@ -53,6 +57,7 @@ Use this file for current work. Completed historical context belongs in merged P
 
 ## Watch List
 
+- Run 29525332901 proved the ARM64 lane can boot the dev image to Fedora login with the pinned QEMU workaround; keep watching for runner QEMU refreshes before removing that workaround.
 - systemd v262 removes `/run/boot-loader-entries/` support and the experimental `systemd-sysupdated` D-Bus API; the 2026-07-14 audit found no repo dependency, but future update UX should stay on UAPI.1/BLS and Varlink/systemd-sysupdate rather than removed interfaces or unaudited `updatectl` assumptions.
 - systemd v262 renames `systemd-sysupdate.service`/`.timer` to `systemd-sysupdate-update.service`/`.timer`; verify compatibility symlinks before adding units against the old names.
 - Go 1.26 expands default hybrid PQ TLS key exchanges beyond `X25519MLKEM768`; tests should assert acceptable policy rather than a single hard-coded group.

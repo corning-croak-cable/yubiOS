@@ -18,6 +18,21 @@ Relates to yubiOS #20/#25/#33, yubi-OS/bcvk#3, ADR-003, ADR-026.
 - swu2f Layer 1 covers CTAP1/U2F and pam-u2f flows.
 - swu2f Layer 2 uses the TEST-only `passless` authenticator in the `dev` image for CTAP2 hmac-secret, covering `systemd-cryptenroll --fido2-device=auto` and systemd-homed legs where available.
 
+## Latest CI milestone
+
+Run [29525332901](https://github.com/yubi-OS/yubiOS/actions/runs/29525332901) on 2026-07-16 is a useful milestone even though the ARM64 job failed. The `arm64` lane on self-hosted `rock1` reached a booted Fedora 45 aarch64 guest, showed a serial login prompt, reached `multi-user.target` and `graphical.target`, and started core services including `systemd-homed.service`, `pcscd.service`, `NetworkManager.service`, and `sshd.service`.
+
+The host/harness wins from that run are now evidence-backed:
+
+- real ARM64 KVM was available on `rock1`;
+- `/dev/fuse` was present for virtiofsd/bwrap paths;
+- pinned QEMU commit `3a18e8a25992d1643707e2cebdd6e9bb2bd7d3b9` booted the zstd EFI zboot image path;
+- `yubi-OS/bcvk@feat/swtpm-ci` built and exposed `--swtpm` plus `--swu2f`;
+- the yubiOS image was pulled into podman storage for bcvk;
+- AppArmor profile relaxation completed before boot.
+
+The active failure moved inside the guest: `bootloader-update.service` failed during `tests/vm/test-luks-fido2-ci.sh`, and `tests/vm/test-fido2-enrollment.sh` skipped because that earlier step failed. Full run evidence is recorded in [vm-e2e-run-29525332901.md](vm-e2e-run-29525332901.md).
+
 ## Guardrails
 
 - The `dev` image must never become a production install default.
