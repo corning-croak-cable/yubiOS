@@ -1,4 +1,4 @@
-name: ci_test-int
+name: yubiOS firmware
 
 # yubiOS ARM64 fTPM Secure-Boot INTEGRATION CI — ORCHESTRATOR (#35, task T219 / F3).
 #
