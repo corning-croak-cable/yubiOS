@@ -11,6 +11,18 @@ setup() {
   [ -f "$CONF" ] || CONF="/usr/lib/yubiOS/sshd_config.d/10-yubiOS-bcvk-root-key.conf"
 }
 
+@test "bcvk ssh authorized-keys command reads direct root ssh credential" {
+  tmpdir="$(mktemp -d)"
+  key="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBcvkDirectCredential bcvk-test"
+  printf '%s\n' "$key" > "$tmpdir/ssh.authorized_keys.root"
+
+  run env CREDENTIALS_DIRECTORY="$tmpdir" bash "$SCRIPT" root
+  rm -rf "$tmpdir"
+
+  [ "$status" -eq 0 ]
+  [ "$output" = "$key" ]
+}
+
 @test "bcvk ssh authorized-keys command decodes root key from tmpfiles credential" {
   tmpdir="$(mktemp -d)"
   key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCbcvkTest bcvk-test"
