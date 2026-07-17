@@ -17,6 +17,7 @@ Use this file for current work. Completed historical context belongs in merged P
 - [x] Make [PINNED.md](PINNED.md) the explicit live source for image digests.
 - [x] Before systemd v262 adoption, audit docs/code for `/run/boot-loader-entries/`, `systemd-sysupdated` D-Bus, and `updatectl` assumptions: [refs/systemd-v262-audit-2026-07-14.md](refs/systemd-v262-audit-2026-07-14.md).
 - [x] Record the 2026-07-16 VM e2e milestone from run 29525332901: [refs/vm-e2e-run-29525332901.md](refs/vm-e2e-run-29525332901.md).
+- [x] Switch the active install docs from `bootc install to-disk` to `bootc install to-filesystem --root-mount-spec=""` so DPS auto-discovery remains explicit.
 - [ ] Keep future planning cycles dated and scoped under `refs/`.
 
 ## Current CI Tasks
@@ -31,6 +32,7 @@ Use this file for current work. Completed historical context belongs in merged P
 - [x] For workflow trigger edits, add narrow path-scoped push triggers only when required for validation.
 - [ ] If build policy wiring moves into Bake, keep Docker `target.policy` keys aligned with CLI policy flags and avoid duplicate `Dockerfile.rego` loading assumptions.
 - [ ] Add board variant fields to real-hardware firmware workflows before hardware lanes land: `rock5b-rk3588` as the primary/default Path A variant and `rockpro64-rk3399` as the supported secondary variant.
+- [ ] Validate the documented `bootc install to-filesystem` path on a fresh VM or disposable disk, including external partition preparation, mounted `/mnt`, `--skip-finalize`, and omitted `root=` via `--root-mount-spec=""`.
 
 ## Current ARM64 Tasks
 
@@ -53,7 +55,6 @@ Use this file for current work. Completed historical context belongs in merged P
 
 - [ ] Update [PINNED.md](PINNED.md) for every base-image/tool digest change.
 - [ ] Verify package floors after digest bumps: systemd target, pam-u2f >= 1.3.1, OpenSSL 3.5+, and Go 1.24+ where relevant.
-- [ ] Audit bootc 1.11+ install docs/code for DPS behavior: `to-disk` still injects `root=UUID=`, while DPS auto-discovery requires the explicit `to-filesystem --root-mount-spec=""` path and a Boot Loader Interface-capable bootloader.
 - [ ] Keep production, installer, firmware, and dev/test artifacts clearly labeled and non-overlapping.
 - [ ] Preserve provenance/SBOM expectations for published artifacts.
 - [ ] Keep production bootc (`latest`, `<sha>`), dev/test (`dev`, `dev-<sha>`), and installer (`installer`, `installer-<sha>`) tags board-neutral unless the OS or installer artifact actually diverges by board.
@@ -66,7 +67,7 @@ Use this file for current work. Completed historical context belongs in merged P
 - systemd v262 removes `/run/boot-loader-entries/` support and the experimental `systemd-sysupdated` D-Bus API; the 2026-07-14 audit found no repo dependency, but future update UX should stay on UAPI.1/BLS and Varlink/systemd-sysupdate rather than removed interfaces or unaudited `updatectl` assumptions.
 - systemd v262 renames `systemd-sysupdate.service`/`.timer` to `systemd-sysupdate-update.service`/`.timer`; verify compatibility symlinks before adding units against the old names.
 - Go 1.26 expands default hybrid PQ TLS key exchanges beyond `X25519MLKEM768`; tests should assert acceptable policy rather than a single hard-coded group.
-- bootc 1.11 DPS support may help future installer UX, but the current `to-disk` baseline still uses `root=UUID=` for compatibility.
+- `bootc install to-filesystem --root-mount-spec=""` is now the documented install baseline for DPS auto-discovery; keep watching for installer UX that can prepare and mount the target filesystems safely.
 - `systemd-sysinstall` may become useful for guided install UX, but the current repart/bootc model remains the baseline.
 - LUO/KHO may matter for appliance/server deployments, but A/B reboot remains correct for the current desktop/laptop thesis.
 - U-Boot FIDO2/U2F console authentication remains idea-stage until USB HID, crypto, and recovery risks are audited.
