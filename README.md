@@ -4,14 +4,14 @@
 
 # yubiOS
 
-**FIDO2-first immutable OS - YubiKey is the root of trust**
+**FIDO2-first immutable OS with owner-held identity and unlock control**
 
 [![License: LGPL-2.1](https://img.shields.io/badge/license-LGPL--2.1-magenta?style=flat-square)](LICENSE)
 [![Status: Groundwork](https://img.shields.io/badge/status-groundwork-blueviolet?style=flat-square)](TODO.md)
 [![YubiKey 5](https://img.shields.io/badge/YubiKey-5%20series-ff1493?style=flat-square)](https://www.yubico.com)
 [![FIDO2](https://img.shields.io/badge/FIDO2-hidraw-purple?style=flat-square)](https://fidoalliance.org)
 
-*No TPM. No OEM. No trust anchors you don't control.*
+*No mandatory TPM for owner-facing unlock or identity workflows. Platform integrity remains explicit and scoped.*
 ### 🦴 🚧 Work In Progress 🚧 Work In Progress 🚧 Work In Progress 🚧
 
 </div>
@@ -20,16 +20,16 @@
 
 ## What it is
 
-yubiOS is an immutable, bootc-delivered Linux OS that treats the owner's YubiKey as the user-facing root of trust. It combines:
+yubiOS is an immutable, bootc-delivered Linux OS that treats the owner's YubiKey as the user-facing identity, unlock, and authorization boundary. It combines:
 
 | Layer | Inspiration | What it gives us |
 |---|---|---|
 | particleos ethos | [systemd/particleos](https://github.com/systemd/particleos) | Immutable `/usr`, UKIs, dm-verity, composefs, systemd-boot |
 | bootc design | [bootc-dev/bootc](https://github.com/bootc-dev/bootc) | OCI image as OS delivery unit, day-2 upgrades via registry pull |
 | systemd image model | [Fitting Everything Together](https://0pointer.net/blog/fitting-everything-together.html) | DPS partitions, systemd-repart first boot, A/B sysupdate, systemd-homed |
-| YubiKey root of trust | FIDO2 / PIV / OATH | Owner-held trust for signing, unlock, SSH, PAM, and app 2FA |
+| YubiKey owner-control plane | FIDO2 / PIV / OATH | Owner-held authorization for signing, unlock, SSH, PAM, and app 2FA |
 
-ARM64 is the primary target platform because it is where yubiOS can own the firmware stack below the UKI through TF-A, OP-TEE, fTPM, and U-Boot. x86-64 remains fully supported above the UKI, but its firmware and optional TPM are platform/OEM trust anchors.
+ARM64 is the primary target platform because it is where yubiOS can work toward owning the firmware stack below the UKI through TF-A, OP-TEE, fTPM, and U-Boot. x86-64 remains fully supported above the UKI, but its firmware and optional TPM are platform/OEM trust anchors.
 
 ### Ecosystem alignment
 
@@ -39,7 +39,9 @@ ParticleOS, and Ubuntu Core — founded [Amutable](https://amutable.com) with th
 > *“Deliver determinism and verifiable integrity to Linux workloads everywhere.”*
 
 yubiOS is independently building toward the same architecture, with one additional constraint:
-the YubiKey replaces the TPM as the hardware root of trust at every layer. The "Fitting Everything
+the owner-facing authority should live with the machine owner. A YubiKey provides the signing,
+unlock, SSH, PAM, and application-2FA boundary, while TPM/fTPM measurement and firmware
+state remain separate platform-integrity signals where they are useful. The "Fitting Everything
 Together" essay at [0pointer.net](https://0pointer.net/blog/fitting-everything-together.html) is the
 primary design reference for yubiOS — hermetic /usr, DPS partitions, systemd-repart first-boot,
 A/B sysupdate, systemd-homed per-user encryption, and UKI + dm-verity trust chain.
@@ -59,13 +61,15 @@ Secure Boot signing uses PIV/CCID, not hidraw. Full rationale: [ADR-002](ADR.md#
 
 ## Get yubiOS
 
-yubiOS ships as a multi-arch [bootc](https://github.com/bootc-dev/bootc) OCI image on Docker Hub:
+yubiOS currently publishes a pre-launch multi-arch [bootc](https://github.com/bootc-dev/bootc) OCI image on Docker Hub:
 
 ```sh
 docker pull 0mniteck/yubios:latest
 ```
 
 For reproducible installs, pin the image by the digest produced by the latest green `yubiOS-ci.yml` publish for the intended release. Do not treat a run-specific digest in an old PR or research note as evergreen.
+
+> **Warning:** yubiOS is groundwork / work in progress. The install command below can destroy data on the target disk. Test on disposable hardware or a VM, back up recovery material first, and use the current [TODO.md](TODO.md), [BLOCKERS.md](BLOCKERS.md), and [PR.md](PR.md) before treating any image as safe for broader use.
 
 Install or upgrade with bootc:
 
@@ -185,6 +189,7 @@ graph TD
 ## Current research notes
 
 - Latest docs/research planning pass: [refs/planning-cycle-2026-07-11.md](refs/planning-cycle-2026-07-11.md)
+- Public-relations campaign: [PR.md](PR.md), with kickoff friend map at [refs/pr-friend-map-2026-07-17.md](refs/pr-friend-map-2026-07-17.md)
 - ARM64 zstd EFI zboot / bcvk DirectBoot: [refs/zstd-efi-zboot-bcvk.md](refs/zstd-efi-zboot-bcvk.md)
 - LUKS2 FIDO2 e2e coverage: [refs/luks-fido2-e2e-test.md](refs/luks-fido2-e2e-test.md)
 - ARM64 fTPM Phase F0: [refs/arm64-ftpm-phase-f0.md](refs/arm64-ftpm-phase-f0.md)
