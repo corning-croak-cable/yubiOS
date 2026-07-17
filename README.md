@@ -69,20 +69,20 @@ docker pull 0mniteck/yubios:latest
 
 For reproducible installs, pin the image by the digest produced by the latest green `yubiOS-ci.yml` publish for the intended release. Do not treat a run-specific digest in an old PR or research note as evergreen.
 
-> **Warning:** yubiOS is groundwork / work in progress. The install flow below can destroy data on the target disk. Test on disposable hardware or a VM, back up recovery material first, and use the current [TODO.md](TODO.md), [BLOCKERS.md](BLOCKERS.md), and [PR.md](PR.md) before treating any image as safe for broader use.
+> **Warning:** yubiOS is groundwork / work in progress. The install flows below can destroy data on the target disk. Test on disposable hardware or a VM, back up recovery material first, and use the current [TODO.md](TODO.md), [BLOCKERS.md](BLOCKERS.md), and [PR.md](PR.md) before treating any image as safe for broader use.
 
 Prepare and mount the target filesystems first, for example with `systemd-repart` or another installer that creates the yubiOS DPS layout. Mount the target root at `/mnt` and its boot filesystem at `/mnt/boot`, then install the image with `bootc install to-filesystem`:
 
 ## Build from source, install to-filesystem, 1 step
 
 ```sh
-docker buildx build --policy reset=true,strict=true,filename=yubiOS.rego -t yubiOS . && \
+docker buildx build --load --policy reset=true,strict=true,filename=yubiOS.rego -t yubios:local . && \
 docker run --rm --privileged --pid=host --ipc=host \
   --security-opt label=type:unconfined_t \
   -v /dev:/dev \
   -v /var/lib/containers:/var/lib/containers \
   -v /:/run/host \
-  yubiOS bootc install to-filesystem \
+  yubios:local bootc install to-filesystem \
     --bootloader=systemd \
     --root-mount-spec="" \
     --composefs-backend \
@@ -94,8 +94,8 @@ docker run --rm --privileged --pid=host --ipc=host \
 
 ```sh
 IMAGE=docker.io/0mniteck/yubios:latest
-sudo podman pull "$IMAGE" && \
-sudo podman run --rm --privileged --pid=host --ipc=host \
+sudo docker pull "$IMAGE" && \
+sudo docker run --rm --privileged --pid=host --ipc=host \
   --security-opt label=type:unconfined_t \
   -v /var/lib/containers:/var/lib/containers \
   -v /dev:/dev \
@@ -139,25 +139,29 @@ Each step is skippable and independently re-runnable. See [ONBOARDING.md](ONBOAR
 ```text
 yubiOS/
 ├── .github/workflows/              # CI, manifest refresh, publish, VM/e2e, integration lanes
-├── assets/                         # logo and CI assets
-├── mkosi.conf                      # mkosi build path
-├── mkosi.conf.d/                   # desktop, minimal, surface, chipsec, and test profiles
-├── Containerfile                   # production bootc image
-├── Containerfile.dev               # TEST-only swu2f dev image
-├── yubiOS.rego                     # OPA/Rego Build Policy
-├── renovate.json                   # digest-tracking automation
-├── refs/                           # research notes, planning cycles, per-issue implementation specs
-├── tests/                          # unit, VM, PKCS#11, and UKI verification tests
-├── usr/lib/                        # shipped OS overlay: bootc, dracut, PAM, repart, systemd, yubiOS scripts
+├── assets/                         # logo and release/documentation assets
+├── mkosi.conf                      # primary mkosi build definition
+├── mkosi.conf.d/                   # desktop, minimal, Surface, Chipsec, and test profiles
+├── refs/                           # dated research notes, planning cycles, implementation specs
+├── tests/                          # unit, VM, PKCS#11, FIDO2, UKI, and policy verification tests
+├── usr/lib/                        # OS overlay: bootc, dracut, PAM, repart, systemd, yubiOS scripts
+├── Containerfile                   # production bootc image definition
+├── Containerfile.dev               # TEST-only swu2f/dev image definition
+├── yubiOS.rego                     # Docker Build Policy gate for pins and registries
+├── renovate.json                   # pinned digest tracking automation
+├── AGENTS.md                       # repository guidance for coding agents
+├── README.md                       # project overview, install, and source map
 ├── ADR.md                          # architecture decision records
-├── ARCHITECTURE.md                 # trust chain + build pipeline diagrams
+├── ARCHITECTURE.md                 # trust chain and build pipeline diagrams
 ├── SPEC.md                         # normative project specification
-├── MISSION.md                      # project mission
+├── MISSION.md                      # project mission and AI-resilience framing
 ├── MITIGATE.md                     # threat model and control mapping
-├── FUTURE.md                       # post-launch ARM64-owned root-of-trust plan
+├── FUTURE.md                       # roadmap and research backlog
 ├── ONBOARDING.md                   # operator enrollment guide
+├── CITATION.md                     # citation guidance and upstream source trail
+├── PR.md                           # public-relations campaign planning
 ├── PINNED.md                       # approved refs and digests
-├── BLOCKERS.md                     # dependency and blocker map
+├── BLOCKERS.md                     # active dependency and blocker map
 └── TODO.md                         # active planning surface
 ```
 

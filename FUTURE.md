@@ -1,6 +1,6 @@
 # Future Work
 
-Last reviewed: 2026-07-11
+Last reviewed: 2026-07-17
 Status: roadmap and research backlog
 
 This file tracks future work that is not yet the normative baseline. Active requirements belong in [SPEC.md](SPEC.md); accepted decisions belong in [ADR.md](ADR.md); open blockers belong in [BLOCKERS.md](BLOCKERS.md).
@@ -36,6 +36,33 @@ Path B remains useful for measured/attested development and CI, but it must be d
 - Keep `RestrictFileSystems=` and `RestrictFileSystemAccess=` distinct in all hardening docs.
 - Prefer primary upstream sources in [CITATION.md](CITATION.md), then link repo-specific evidence from ADRs and refs.
 
+## Milestone Net: OpenWrt WireGuard Deception LAN
+
+Goal: research an OpenWrt project or package that turns a WireGuard-protected LAN into a deliberate "needle in the haystack" environment for SSH discovery attempts. The package should expose many low-risk decoy SSH endpoints, slow enumeration with tarpits where safe, and notify the owner when an agent or attacker probes for the real host.
+
+Research shape:
+
+- Package as an OpenWrt feed/package with UCI configuration, procd services, firewall/nftables integration, and optional LuCI only after the CLI path is stable.
+- Bind to the WireGuard zone by default. Do not expose the deception surface on WAN unless an operator explicitly enables a lab mode.
+- Support multi-host deception through loopback aliases, WireGuard-only decoy address pools, or nftables DNAT to lightweight responders.
+- Evaluate an `endlessh`-style banner tarpit for delay, plus a higher-interaction honeypot mode only when storage, CPU, and legal/logging policy are explicit.
+- Notify through syslog/ubus plus owner-selected channels such as ntfy, Gotify, Matrix, email, or a webhook, with rate limits and deduplication.
+- Keep real host discovery dependent on known WireGuard peer identity, SSH host-key verification, and yubiOS/YubiKey controls. Deception is detection and delay, not primary authentication.
+
+Safety constraints:
+
+- Do not store attempted passwords, private keys, or sensitive payloads by default; hash or redact evidence when retention is needed.
+- Keep strict CPU, memory, connection, and log-size ceilings so a tarpit cannot become a self-DoS.
+- Separate protected-LAN mode from internet-facing lab mode in package defaults and documentation.
+- Document privacy, legal, recovery, and false-positive handling before recommending deployment.
+
+Evidence needed before promotion:
+
+- OpenWrt VM or spare-router proof with a decoy address pool and owner notification path.
+- Packet-level test evidence showing scans hit decoys before the real SSH endpoint is discoverable.
+- Reproducible package build recipe, config lint, and firewall rule tests.
+- ADR coverage for the trust boundary, notification model, evidence retention, and failure behavior.
+
 ## Post-Launch Hardware Work
 
 | Work item | Status | Notes |
@@ -62,4 +89,5 @@ Move an item into [ADR.md](ADR.md), [SPEC.md](SPEC.md), or implementation only w
 - Recovery and failure behavior are documented.
 - CI or real-hardware evidence is defined.
 - Required pins and upstream source references are recorded.
+- Notification and evidence-retention policies are defined when detection or deception is involved.
 - The change does not introduce a silent production/test artifact crossover.
