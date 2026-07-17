@@ -1,6 +1,6 @@
 # Architecture Decision Records - yubiOS
 
-Last reviewed: 2026-07-11
+Last reviewed: 2026-07-16
 
 ## ADR-001: YubiKey as TPM replacement
 
@@ -685,3 +685,27 @@ ConditionSecurity=measured-os
 **Consequences:** Future planning cycles should add dated refs and then update the source-of-truth docs that repeat the affected claims. Do not leave resolved blockers in `BLOCKERS.md` or active tasks in `TODO.md` merely for historical context.
 
 **Sources:** [refs/planning-cycle-2026-07-11.md](refs/planning-cycle-2026-07-11.md), [CITATION.md](CITATION.md).
+
+---
+
+## ADR-029: Radxa ROCK 5B as Primary Path A Board; ROCKPro64 as Supported Secondary
+
+**Date:** 2026-07-16
+**Status:** Accepted
+
+**Context:** ADR-023 established ARM64, especially RK3588 Path A, as the primary yubiOS platform direction, but it intentionally left the first concrete production-root board open. The current TODO list still tracked board selection as an active item. The project now needs stable board names for real-hardware evidence, firmware workflow variants, and Path A vs Path B reporting.
+
+**Decision:** Use Radxa ROCK 5B (RK3588) as the primary Path A production-root proof board. Treat ROCKPro64 (RK3399) as a supported secondary board for bring-up and regression evidence.
+
+**Rationale:**
+- RK3588 was already the preferred Path A family in ADR-019 and ADR-023; ROCK 5B makes that preference actionable.
+- A single primary board keeps ROTPK/fuse, RPMB, OP-TEE, StandaloneMM, fTPM NV, and U-Boot UEFI evidence from spreading across too many variants before the first proof is complete.
+- RK3399/ROCKPro64 remains valuable because it exercises the older Rockchip secure-world and U-Boot lineage, but it should not block the RK3588 production-root proof.
+
+**Workflow and artifact consequences:**
+- Real-hardware firmware workflows should use explicit variant names: `rock5b-rk3588` for the primary/default Path A lane and `rockpro64-rk3399` for the supported secondary lane.
+- The production bootc OS image remains board-neutral: `0mniteck/yubios:latest` and `0mniteck/yubios:<sha>` should continue to identify the shared OS artifact, not a board-specific build.
+- `dev`/`dev-<sha>` and `installer`/`installer-<sha>` also remain board-neutral unless their payloads actually diverge by board.
+- Board-specific tags are only needed for firmware once real-hardware payloads diverge from the current QEMU/CI firmware bundle. If that happens, use the existing `0mniteck/yubios` namespace with tags such as `firmware-rock5b-rk3588`, `firmware-rock5b-rk3588-<sha>`, `firmware-rockpro64-rk3399`, and `firmware-rockpro64-rk3399-<sha>`.
+
+**Consequences:** TODO.md should treat board selection as complete, then track evidence collection, sacrificial hardware provisioning, and workflow variant work separately. Documentation should avoid using generic RK3588 language when it means the ROCK 5B proof lane specifically.
