@@ -111,6 +111,7 @@ jobs:
         run: |
           set -euxo pipefail
           ws="$GITHUB_WORKSPACE/uefi"
+          rm -rf "$ws"
           mkdir -p "$ws"
           git clone --filter=tree:0 "$EDK2_REPO" "$ws/edk2"
           git -C "$ws/edk2" checkout "$EDK2_REF"
@@ -209,6 +210,7 @@ jobs:
       - name: Clone and build U-Boot BL33
         run: |
           set -euxo pipefail
+          rm -rf u-boot
           git clone --no-tags https://github.com/yubi-OS/u-boot u-boot
           git -C u-boot checkout "$UBOOT_REF"
           cat > u-boot/yubios_ftpm.config <<'EOF'
@@ -246,6 +248,7 @@ jobs:
       - name: Build OP-TEE TA dev kit
         run: |
           set -euxo pipefail
+          rm -rf optee_os
           git clone --no-tags https://github.com/yubi-OS/optee_os optee_os
           git -C optee_os checkout "$OPTEE_OS_REF"
           make -C optee_os -j"$(nproc)" \
@@ -264,6 +267,7 @@ jobs:
       - name: Build fTPM TA
         run: |
           set -euxo pipefail
+          rm -rf optee_ftpm ms-tpm-20-ref
           git clone --no-tags https://github.com/yubi-OS/optee_ftpm optee_ftpm
           git -C optee_ftpm checkout "$OPTEE_FTPM_REF"
           git clone --no-tags https://github.com/yubi-OS/ms-tpm-20-ref ms-tpm-20-ref
@@ -304,6 +308,7 @@ jobs:
       - name: Build TF-A trusted FIP
         run: |
           set -euxo pipefail
+          rm -rf arm-trusted-firmware mbedtls
           git clone --no-tags https://github.com/yubi-OS/arm-trusted-firmware arm-trusted-firmware
           git -C arm-trusted-firmware checkout "$TFA_REF"
           git clone --no-tags --branch "$MBEDTLS_REF" https://github.com/Mbed-TLS/mbedtls mbedtls
@@ -376,6 +381,9 @@ jobs:
             qemu-system-arm qemu-utils tpm2-tools python3 coreutils ca-certificates ipxe-qemu || true
           qemu-system-aarch64 --version
 
+      - name: Clean QEMU artifact directory
+        run: rm -rf image
+
       - name: Download fip/flash from optee_fip job
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
         with:
@@ -386,6 +394,7 @@ jobs:
         id: image
         run: |
           set -euxo pipefail
+          rm -rf image/flash.bin
           flash="$(find image -name flash.bin -type f -print -quit 2>/dev/null || true)"
           if [ -z "$flash" ]; then
             bl1="$(find image -name bl1.bin -type f -print -quit 2>/dev/null || true)"
@@ -453,6 +462,9 @@ jobs:
             publish_original: false
             storage_note: RPMB-backed StMM and fTPM NV required before production hardware claim
     steps:
+      - name: Clean firmware publish workspace
+        run: rm -rf art fw
+
       - name: Download firmware artifacts (native arm64 build)
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
         with:
@@ -495,6 +507,7 @@ jobs:
           STORAGE_NOTE: ${{ matrix.storage_note }}
         run: |
           set -euxo pipefail
+          rm -rf fw
           mkdir -p fw/firmware
           find art -name fip.bin        -exec cp {} fw/firmware/ \; -quit
           find art -name flash.bin      -exec cp {} fw/firmware/ \; -quit
