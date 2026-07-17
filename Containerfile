@@ -3,7 +3,7 @@
 # Source: bootc design https://github.com/bootc-dev/bootc
 # Source: particleos ethos https://github.com/systemd/particleos
 
-FROM quay.io/fedora/fedora-bootc:45@sha256:15e4dd0c0513edfc61c6f31cbfae884167138977a664d8f6c0094d65668b9746
+FROM quay.io/fedora/fedora-bootc:45@sha256:5f1f299e76959c3707d27bcf7b2df9f46f9a64044bff03a148c3eadb3e9c32cc
 
 # ── YubiKey and FIDO2 stack ──────────────────────────────────────────────
 # libfido2:       FIDO2/CTAP2 library; used by systemd-cryptenroll, OpenSSH, pam-u2f
