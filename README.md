@@ -90,11 +90,11 @@ docker run --rm --privileged --pid=host --ipc=host \
     /run/host/mnt/
 ```
 
-## Install from OCI image
+## Fetch/install from the OCI image, 1 step
 
 ```sh
 IMAGE=docker.io/0mniteck/yubios:latest
-sudo podman pull "$IMAGE"
+sudo podman pull "$IMAGE" && \
 sudo podman run --rm --privileged --pid=host --ipc=host \
   --security-opt label=type:unconfined_t \
   -v /var/lib/containers:/var/lib/containers \
