@@ -56,11 +56,11 @@ wait_for_bcvk_ssh() {
   local vmid="$1"
   local wait_secs="$2"
   local tries=$((wait_secs / 2))
-  local i
 
   [ "$tries" -gt 0 ] || tries=1
-  for i in $(seq 1 "$tries"); do
+  while [ "$tries" -gt 0 ]; do
     bcvk ssh "$vmid" -- true >/dev/null 2>&1 && return 0
+    tries=$((tries - 1))
     sleep 2
   done
 
