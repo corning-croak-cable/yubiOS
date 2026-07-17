@@ -171,15 +171,11 @@ Every public claim must have an owner, evidence link, review date, and maturity 
 
 Complete before proactive outreach:
 
-- [ ] Add the actual license file. The README advertises LGPL-2.1 and links `LICENSE`, but no `LICENSE` file exists in the current repository.
 - [ ] Complete a name and trademark review for “yubiOS,” document independence from Yubico, and review logo use. This is a launch-risk check, not a legal conclusion.
-- [ ] Replace personal maintainer contact details in public docs with role-based addresses such as `press@`, `security@`, and `maintainers@`.
-- [ ] Add `SECURITY.md`, `CONTRIBUTING.md`, and a code of conduct or clearly link equivalent governance documents.
 - [ ] Reconcile the README and repository description with the claim ledger: remove or qualify “No TPM,” “sole root,” “at every layer,” and unqualified “ships” language.
 - [ ] Put a destructive-install warning, supported-hardware matrix, backup requirement, and recovery link beside every public disk-write command.
 - [ ] Confirm that public `latest`, immutable, `dev`, installer, and firmware tags match the documented classification.
 - [ ] Publish a current release-evidence page linking the commit, build, tests, artifact digests, provenance, SBOM, and known gaps.
-- [ ] Add a stable press/contact page and basic privacy-respecting analytics or link tracking.
 
 If any of the first five items are incomplete, remain in quiet community-research mode.
 
