@@ -405,11 +405,20 @@ jobs:
           fi
           CROSS=""
           [ "$(uname -m)" = "x86_64" ] && CROSS="aarch64-linux-gnu-"
+          tfa_args=(CROSS_COMPILE="${CROSS}" PLAT="$TFA_PLAT" ARCH=aarch64)
+          if [ "$TFA_PLAT" = "rk3399" ]; then
+            tfa_ld="${CROSS}ld.bfd"
+            if [ -z "$CROSS" ]; then
+              tfa_ld=ld.bfd
+            fi
+            command -v "$tfa_ld"
+            "$tfa_ld" --version
+            tfa_args+=(LD="$tfa_ld")
+          fi
           if [ "$BUILD_KIND" = "qemu" ]; then
             git clone --no-tags --branch "$MBEDTLS_REF" https://github.com/Mbed-TLS/mbedtls mbedtls
             make -C arm-trusted-firmware -j"$(nproc)" \
-              CROSS_COMPILE="${CROSS}" \
-              PLAT="$TFA_PLAT" ARCH=aarch64 \
+              "${tfa_args[@]}" \
               SPD=opteed \
               BL32="$BL32_HDR" BL32_EXTRA1="$BL32_PAGER" BL32_EXTRA2="$BL32_PAGEABLE" \
               BL32_RAM_LOCATION=tdram \
@@ -427,8 +436,7 @@ jobs:
             fi
           else
             make -C arm-trusted-firmware -j"$(nproc)" \
-              CROSS_COMPILE="${CROSS}" \
-              PLAT="$TFA_PLAT" ARCH=aarch64 \
+              "${tfa_args[@]}" \
               bl31
             bl31="$(find arm-trusted-firmware/build -path "*/release/bl31/bl31.elf" -print -quit)"
             test -n "$bl31"
