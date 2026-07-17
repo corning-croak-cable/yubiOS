@@ -23,7 +23,10 @@ set -euo pipefail
 IMAGE="${YUBIOS_IMAGE:-./mkosi.output/yubiOS}"
 VMID=""
 SSH_WAIT_SECS="${YUBIOS_SSH_WAIT_SECS:-300}"
-SSH_WAIT_TRIES=$((SSH_WAIT_SECS / 2))
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+
+# shellcheck source=tests/vm/bcvk-ssh-lib.sh
+. "${SCRIPT_DIR}/bcvk-ssh-lib.sh"
 
 log()  { printf '\n=== %s ===\n' "$*"; }
 skip() { printf 'SKIP: %s\n' "$*"; }       # skip != fail (tool/capability absent)
@@ -60,19 +63,13 @@ log "boot ephemeral VM (--swtpm --swu2f)"
 VMID="$(bcvk ephemeral run "${BCVK_EXTRA_ARGS[@]}" --detach --ssh-keygen --swtpm --swu2f "$IMAGE")"
 [[ -n "$VMID" ]] || die "bcvk ephemeral run returned no VM id"
 echo "VM id: $VMID"
-for i in $(seq 1 "${SSH_WAIT_TRIES}"); do
-  bcvk ssh "$VMID" -- true >/dev/null 2>&1 && break
-  if [[ "$i" -eq "${SSH_WAIT_TRIES}" ]]; then
-    echo "--- podman logs (last 80 lines) ---"
-    logs="$(podman logs --tail 80 "$VMID" 2>&1 || true)"
-    printf '%s\n' "$logs"
-    if grep -Fq 'unable to handle EFI zboot image with "zstd" compression' <<<"$logs"; then
-      skip_unsupported_zboot
-    fi
-    die "guest did not become reachable over ssh after ${SSH_WAIT_SECS}s"
+if ! wait_for_bcvk_ssh "$VMID" "$SSH_WAIT_SECS"; then
+  logs="$(bcvk_podman_logs_tail "$VMID" 200)"
+  if grep -Fq 'unable to handle EFI zboot image with "zstd" compression' <<<"$logs"; then
+    skip_unsupported_zboot
   fi
-  sleep 2
-done
+  die "guest did not become reachable over ssh after ${SSH_WAIT_SECS}s"
+fi
 
 # ---- 1. enrollment surface ----
 log "enrollment surface: yubiOS-enroll-* commands + /usr/lib/yubiOS"
