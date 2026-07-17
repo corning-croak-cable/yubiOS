@@ -4,7 +4,7 @@
 
 # yubiOS
 
-**FIDO2-first immutable OS with owner-held identity and unlock control**
+**FIDO2-first immutable OS — HSM/U2F is the root of trust**
 
 [![License: LGPL-2.1](https://img.shields.io/badge/license-LGPL--2.1-magenta?style=flat-square)](LICENSE)
 [![Status: Groundwork](https://img.shields.io/badge/status-groundwork-blueviolet?style=flat-square)](TODO.md)
@@ -73,6 +73,25 @@ For reproducible installs, pin the image by the digest produced by the latest gr
 
 Prepare and mount the target filesystems first, for example with `systemd-repart` or another installer that creates the yubiOS DPS layout. Mount the target root at `/mnt` and its boot filesystem at `/mnt/boot`, then install the image with `bootc install to-filesystem`:
 
+## Build from source, install to-filesystem, 1 step
+
+```sh
+docker buildx build --policy reset=true,strict=true,filename=yubiOS.rego -t yubiOS . && \
+docker run --rm --privileged --pid=host --ipc=host \
+  --security-opt label=type:unconfined_t \
+  -v /dev:/dev \
+  -v /var/lib/containers:/var/lib/containers \
+  -v /:/run/host \
+  yubiOS bootc install to-filesystem \
+    --bootloader=systemd \
+    --root-mount-spec="" \
+    --composefs-backend \
+    --skip-finalize \
+    /run/host/mnt/
+```
+
+## Install from OCI image
+
 ```sh
 IMAGE=docker.io/0mniteck/yubios:latest
 sudo podman pull "$IMAGE"
@@ -94,34 +113,15 @@ sudo bootc switch 0mniteck/yubios:latest
 sudo bootc upgrade
 ```
 
-| | |
-|---|---|
+Every approved base image and GitHub Action SHA lives in [PINNED.md](PINNED.md). That file is the single source of truth for pins.
+
 | Registry | `docker.io/0mniteck/yubios` |
+|---|---|
 | Production tags | `latest` plus immutable commit tags |
 | Test tags | `dev`, `dev-<sha>` for swu2f TEST-only images |
 | Artifact tags | `installer`, `firmware` and per-commit variants |
 | Platforms | `linux/amd64`, `linux/arm64` |
 | Supply chain | SLSA build provenance + SBOM attestations |
-
-## Build from source
-
-```sh
-docker buildx build --policy reset=true,strict=true,filename=yubiOS.rego -t yubiOS .
-
-docker run --rm --privileged --pid=host --ipc=host \
-  --security-opt label=type:unconfined_t \
-  -v /dev:/dev \
-  -v /var/lib/containers:/var/lib/containers \
-  -v /:/run/host \
-  yubiOS bootc install to-filesystem \
-    --bootloader=systemd \
-    --root-mount-spec="" \
-    --composefs-backend \
-    --skip-finalize \
-    /run/host/mnt/
-```
-
-Every approved base image and GitHub Action SHA lives in [PINNED.md](PINNED.md). That file is the single source of truth for pins.
 
 ## Enrollment wizard
 
