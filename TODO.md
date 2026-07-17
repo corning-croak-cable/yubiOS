@@ -29,15 +29,16 @@ Use this file for current work. Completed historical context belongs in merged P
 - [ ] Treat old-sha workflow reruns as historical unless the workflow is rerun against current `main`.
 - [x] For workflow trigger edits, add narrow path-scoped push triggers only when required for validation.
 - [ ] If build policy wiring moves into Bake, keep Docker `target.policy` keys aligned with CLI policy flags and avoid duplicate `Dockerfile.rego` loading assumptions.
+- [ ] Add board variant fields to real-hardware firmware workflows before hardware lanes land: `rock5b-rk3588` as the primary/default Path A variant and `rockpro64-rk3399` as the supported secondary variant.
 
 ## Current ARM64 Tasks
 
-- [ ] Choose the first Path A board for production-root proof, with RK3588 still preferred.
-- [ ] Rehearse ROTPK/fuse provisioning on sacrificial hardware before production language.
-- [ ] Prove OP-TEE, StandaloneMM, RPMB-backed variables, fTPM NV, and U-Boot UEFI on hardware.
+- [x] Choose the first Path A board for production-root proof: Radxa ROCK 5B / RK3588 is primary; ROCKPro64 / RK3399 is supported secondary per ADR-029.
+- [ ] Rehearse ROTPK/fuse provisioning on sacrificial ROCK 5B hardware before production language.
+- [ ] Prove OP-TEE, StandaloneMM, RPMB-backed variables, fTPM NV, and U-Boot UEFI on ROCK 5B hardware first, then carry the supported-secondary evidence to ROCKPro64.
 - [ ] Record exact TF-A, OP-TEE, StandaloneMM/RPMB, and U-Boot config evidence for Path A, including `CFG_RPMB_FS`, `CONFIG_EFI_MM_COMM_TEE`, and `CONFIG_SUPPORT_EMMC_RPMB`.
 - [ ] Verify the same signed UKI boots across ARM64 and x86-64 paths.
-- [ ] Document Path A vs Path B status per board.
+- [ ] Document Path A vs Path B status per board, starting with `rock5b-rk3588` and `rockpro64-rk3399`.
 
 ## Current Security Tasks
 
@@ -54,6 +55,8 @@ Use this file for current work. Completed historical context belongs in merged P
 - [ ] Audit bootc 1.11+ install docs/code for DPS behavior: `to-disk` still injects `root=UUID=`, while DPS auto-discovery requires the explicit `to-filesystem --root-mount-spec=""` path and a Boot Loader Interface-capable bootloader.
 - [ ] Keep production, installer, firmware, and dev/test artifacts clearly labeled and non-overlapping.
 - [ ] Preserve provenance/SBOM expectations for published artifacts.
+- [ ] Keep production bootc (`latest`, `<sha>`), dev/test (`dev`, `dev-<sha>`), and installer (`installer`, `installer-<sha>`) tags board-neutral unless the OS or installer artifact actually diverges by board.
+- [ ] If real-hardware firmware payloads diverge from the current QEMU/CI `firmware` bundle, publish board-scoped firmware tags under the existing `0mniteck/yubios` namespace: `firmware-rock5b-rk3588`, `firmware-rock5b-rk3588-<sha>`, `firmware-rockpro64-rk3399`, and `firmware-rockpro64-rk3399-<sha>`.
 
 ## Watch List
 
