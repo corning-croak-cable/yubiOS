@@ -110,9 +110,10 @@ jobs:
       - name: Clone edk2 + edk2-platforms
         run: |
           set -euxo pipefail
-          ws="$GITHUB_WORKSPACE/uefi"
+          ws="${RUNNER_TEMP:-$GITHUB_WORKSPACE}/yubios-rk-${{ matrix.arch }}-uefi"
           rm -rf "$ws"
           mkdir -p "$ws"
+          echo "UEFI_WS=$ws" >> "$GITHUB_ENV"
           git clone --filter=tree:0 "$EDK2_REPO" "$ws/edk2"
           git -C "$ws/edk2" checkout "$EDK2_REF"
           git clone --filter=tree:0 "$EDK2_PLATFORMS_REPO" "$ws/edk2-platforms"
@@ -131,12 +132,12 @@ jobs:
           fi
 
       - name: Build BaseTools
-        run: make -C "$GITHUB_WORKSPACE/uefi/edk2/BaseTools" -j"$(nproc)"
+        run: make -C "$UEFI_WS/edk2/BaseTools" -j"$(nproc)"
 
       - name: Build StandaloneMM RPMB platform
         run: |
           set -euxo pipefail
-          ws="$GITHUB_WORKSPACE/uefi"
+          ws="$UEFI_WS"
           export WORKSPACE="$ws"
           export PACKAGES_PATH="$ws/edk2:$ws/edk2-platforms"
           export EDK_TOOLS_PATH="$ws/edk2/BaseTools"
@@ -158,7 +159,7 @@ jobs:
       - name: Stage BL32_AP_MM.fd
         run: |
           set -euxo pipefail
-          fd="$(find "$GITHUB_WORKSPACE/uefi/Build" -name 'BL32_AP_MM.fd' | head -n1)"
+          fd="$(find "$UEFI_WS/Build" -name 'BL32_AP_MM.fd' | head -n1)"
           test -n "$fd"
           mkdir -p artifacts
           cp "$fd" artifacts/BL32_AP_MM.fd
