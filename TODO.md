@@ -8,6 +8,23 @@ Latest VM e2e evidence: [refs/vm-e2e-run-29525332901.md](refs/vm-e2e-run-2952533
 
 Use this file for current work. Completed historical context belongs in merged PRs, ADRs, or dated refs.
 
+## FUTURE.md Coverage Map
+
+Use this map to keep [FUTURE.md](FUTURE.md) roadmap entries tied to active TODO work instead of letting roadmap-only sections drift.
+
+| FUTURE.md section | Current TODO.md coverage | Follow-up |
+|---|---|---|
+| Near-Term Planning Cycle | Covered by Current Documentation Tasks | Keep dated `refs/` planning-cycle notes scoped to each research pass |
+| Milestone F: ARM64 Owner-Owned Root Of Trust | Covered by Current ARM64 Tasks | Continue ROCK 5B/RK3588 Path A proof and ROCKPro64/RK3399 secondary evidence |
+| Milestone SecTime: Secure-World Time Evidence | Missing before this map | Track OP-TEE/TF-A secure time evidence under Current Roadmap Research Tasks |
+| Milestone Frost: Firmware-Assisted GPU Resource Lockout | Missing before this map | Track Panfrost, cgroup, and firmware lockout research under Current Roadmap Research Tasks |
+| Milestone CI: Keep The Test Lanes Honest | Covered by Current CI Tasks | Keep PQ TLS, QEMU zstd EFI zboot, VM e2e, and dev/prod isolation checks visible |
+| Milestone Docs: Prevent Snapshot Drift | Covered by Current Documentation Tasks | Keep refs, PINNED, CITATION, and hardening terminology aligned |
+| Milestone Net: OpenWrt WireGuard Deception LAN | Partially covered by the Endlessh fit ref, not active TODOs | Add OpenWrt package proof, decoy scan evidence, notification policy, and ADR tasks |
+| Post-Launch Hardware Work | Partially covered by Current ARM64 and Supply-Chain Tasks | Promote individual items only when they have a board target, evidence target, and recovery plan |
+| Deferred Ideas | Watch-list only | Keep `systemd-sysinstall`, LUO/KHO, U-Boot FIDO2/U2F, and ORAS media types out of active scope until promoted |
+| Exit Criteria For Moving Work Out Of FUTURE | Partially covered by security and docs tasks | Require trust boundary, recovery, evidence, pins, notification/retention policy, and prod/test separation before promotion |
+
 ## Current Documentation Tasks
 
 - [x] Add a dated planning-cycle note for the 2026-07-11 research pass: [refs/planning-cycle-2026-07-11.md](refs/planning-cycle-2026-07-11.md).
@@ -19,6 +36,39 @@ Use this file for current work. Completed historical context belongs in merged P
 - [x] Record the 2026-07-16 VM e2e milestone from run 29525332901: [refs/vm-e2e-run-29525332901.md](refs/vm-e2e-run-29525332901.md).
 - [x] Switch the active install docs from `bootc install to-disk` to `bootc install to-filesystem --root-mount-spec=""` so DPS auto-discovery remains explicit.
 - [ ] Keep future planning cycles dated and scoped under `refs/`.
+
+## Current Roadmap Research Tasks
+
+These items map [FUTURE.md](FUTURE.md) sections that were missing or only partially represented in the active TODO list.
+
+### Milestone SecTime
+
+- [ ] Add a source-backed `refs/` note identifying the active OP-TEE secure time configuration for RK3399 and RK3588, including `CFG_SECURE_TIME_SOURCE_CNTPCT`, AArch64 timer handling, and TF-A `SPD=opteed` integration.
+- [ ] Define what yubiOS may safely claim from secure-world time: monotonic within a boot, suspend/resume behavior, normal-world tamper resistance, and power-loss/reboot limits.
+- [ ] Add or design an OP-TEE TA/smoke test that records monotonic secure-world reads and expected failure behavior on ROCK 5B/RK3588 and ROCKPro64/RK3399.
+- [ ] Draft ADR coverage for which decisions may rely on secure-world time and which require stronger counters, sealed state, or remote-attestation freshness.
+
+### Milestone Frost
+
+- [ ] Add a source-backed `refs/` map of current Panfrost/Rockchip kernel patch points for probe/init, BO create/free, PRIME import, and submit guarding.
+- [ ] Determine whether the target kernel can use DRM device-memory cgroup accounting for Panfrost, or whether a minimal cgroup-aware BO accounting prototype is required first.
+- [ ] Sketch the U-Boot device-tree/reserved-memory handoff plus secure-monitor SMC or mailbox interface for context quarantine, IOMMU revocation, GPU reset, or power gating.
+- [ ] Prove whether RK3399/RK3588 lockout can target an offending cgroup/context or must fall back to full-GPU reset behavior.
+- [ ] Define tests for false positives, graphics stack recovery, telemetry, logs, owner notification, and owner recovery after a Frost event.
+- [ ] Draft ADR coverage for the trust boundary between Linux policy, OP-TEE/TF-A hard cutoff, and user recovery.
+
+### Milestone Net
+
+- [ ] Turn [refs/endlessh-openwrt-fit-2026-07-17.md](refs/endlessh-openwrt-fit-2026-07-17.md) into an OpenWrt package proof plan with feed/package layout, UCI config, procd service behavior, firewall/nftables integration, and WireGuard-zone defaults.
+- [ ] Build an OpenWrt VM or spare-router proof with a WireGuard-only decoy address pool and an owner-selected notification path.
+- [ ] Capture packet-level evidence that scans hit decoys before the real SSH endpoint is discoverable.
+- [ ] Define logging defaults that avoid storing attempted passwords, private keys, or sensitive payloads, while still preserving useful owner notification evidence.
+- [ ] Draft ADR coverage for the deception trust boundary, notification model, evidence retention, lab-mode exposure, and failure behavior.
+
+### FUTURE Promotion Gates
+
+- [ ] Before moving any FUTURE item into ADR, SPEC, or implementation, record its trust boundary, recovery behavior, evidence target, required pins/upstream sources, notification/evidence-retention policy when relevant, and production/test artifact separation.
+- [ ] Keep post-launch hardware and deferred ideas watch-listed until a specific owner, board or deployment target, evidence target, and recovery plan exist.
 
 ## Current CI Tasks
 
