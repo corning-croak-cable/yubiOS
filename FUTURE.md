@@ -40,6 +40,8 @@ Path B remains useful for measured/attested development and CI, but it must be d
 
 Goal: research an OpenWrt project or package that turns a WireGuard-protected LAN into a deliberate "needle in the haystack" environment for SSH discovery attempts. The package should expose many low-risk decoy SSH endpoints, slow enumeration with tarpits where safe, and notify the owner when an agent or attacker probes for the real host.
 
+Current fit analysis: [refs/endlessh-openwrt-fit-2026-07-17.md](refs/endlessh-openwrt-fit-2026-07-17.md).
+
 Research shape:
 
 - Package as an OpenWrt feed/package with UCI configuration, procd services, firewall/nftables integration, and optional LuCI only after the CLI path is stable.
