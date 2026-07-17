@@ -69,12 +69,27 @@ docker pull 0mniteck/yubios:latest
 
 For reproducible installs, pin the image by the digest produced by the latest green `yubiOS-ci.yml` publish for the intended release. Do not treat a run-specific digest in an old PR or research note as evergreen.
 
-> **Warning:** yubiOS is groundwork / work in progress. The install command below can destroy data on the target disk. Test on disposable hardware or a VM, back up recovery material first, and use the current [TODO.md](TODO.md), [BLOCKERS.md](BLOCKERS.md), and [PR.md](PR.md) before treating any image as safe for broader use.
+> **Warning:** yubiOS is groundwork / work in progress. The install flow below can destroy data on the target disk. Test on disposable hardware or a VM, back up recovery material first, and use the current [TODO.md](TODO.md), [BLOCKERS.md](BLOCKERS.md), and [PR.md](PR.md) before treating any image as safe for broader use.
 
-Install or upgrade with bootc:
+Prepare and mount the target filesystems first, for example with `systemd-repart` or another installer that creates the yubiOS DPS layout. Mount the target root at `/mnt` and its boot filesystem at `/mnt/boot`, then install the image with `bootc install to-filesystem`:
 
 ```sh
-sudo bootc install to-filesystem --source-imgref docker://0mniteck/yubios:latest /dev/nvme0n1
+IMAGE=docker.io/0mniteck/yubios:latest
+sudo podman pull "$IMAGE"
+sudo podman run --rm --privileged --pid=host --ipc=host \
+  --security-opt label=type:unconfined_t \
+  -v /var/lib/containers:/var/lib/containers \
+  -v /dev:/dev \
+  -v /:/run/host \
+  "$IMAGE" \
+  bootc install to-filesystem \
+    --source-imgref="registry:${IMAGE}" \
+    --bootloader=systemd \
+    --root-mount-spec="" \
+    --composefs-backend \
+    --skip-finalize \
+    /run/host/mnt/
+
 sudo bootc switch 0mniteck/yubios:latest
 sudo bootc upgrade
 ```
@@ -93,9 +108,17 @@ sudo bootc upgrade
 ```sh
 docker buildx build --policy reset=true,strict=true,filename=yubiOS.rego -t yubiOS .
 
-docker run --rm --privileged --pid=host \
-  -v /dev:/dev -v /var/lib/containers:/var/lib/containers \
-  yubiOS bootc install to-filesystem /dev/nvme0n1
+docker run --rm --privileged --pid=host --ipc=host \
+  --security-opt label=type:unconfined_t \
+  -v /dev:/dev \
+  -v /var/lib/containers:/var/lib/containers \
+  -v /:/run/host \
+  yubiOS bootc install to-filesystem \
+    --bootloader=systemd \
+    --root-mount-spec="" \
+    --composefs-backend \
+    --skip-finalize \
+    /run/host/mnt/
 ```
 
 Every approved base image and GitHub Action SHA lives in [PINNED.md](PINNED.md). That file is the single source of truth for pins.
@@ -156,7 +179,7 @@ graph TD
     OCI["multi-arch OCI image\nlinux/amd64 + linux/arm64"]
     CI["yubiOS-ci.yml . merge-manifest\nSLSA provenance + SBOM attested"]
     REG["docker.io/0mniteck/yubios:latest\n+ immutable :&lt;commit-sha&gt; per build"]
-    INSTALL["bootc install to-disk\n(bare metal)"]
+    INSTALL["bootc install to-filesystem\n(externally prepared /mnt)"]
     UPGRADE["bootc switch + upgrade\nday-2 atomic update"]
     BCVK["bcvk\nephemeral VM / native-to-disk\n(test loop, USB YubiKey passthrough)"]
     ENROLL["first boot\nyubiOS-enroll.service\nYubiKey tap"]
