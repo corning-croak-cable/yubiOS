@@ -16,14 +16,24 @@ This guide gets a contributor or early tester oriented without requiring them to
 
 For repository work, expect Docker Buildx, a recent systemd toolchain where relevant, and a YubiKey 5 series device for real enrollment paths. CI may use SoftHSM or swu2f only where the workflow explicitly marks the artifact as TEST-only.
 
-For installation experiments, the current documentation tracks the bootc model:
+For installation experiments, the current documentation tracks the bootc `to-filesystem` model. Prepare and mount the target filesystems first, with the target root at `/mnt` and boot filesystem at `/mnt/boot`, then run bootc against that mounted tree:
 
 ```bash
-docker run --rm --privileged --pid=host \
+IMAGE=docker.io/0mniteck/yubios:latest
+sudo podman pull "$IMAGE"
+sudo podman run --rm --privileged --pid=host --ipc=host \
+  --security-opt label=type:unconfined_t \
   -v /var/lib/containers:/var/lib/containers \
   -v /dev:/dev \
-  quay.io/centos-bootc/bootc-image-builder:latest \
-  bootc install to-disk /dev/<target> docker.io/0mniteck/yubios:latest
+  -v /:/run/host \
+  "$IMAGE" \
+  bootc install to-filesystem \
+    --source-imgref="registry:${IMAGE}" \
+    --bootloader=systemd \
+    --root-mount-spec="" \
+    --composefs-backend \
+    --skip-finalize \
+    /run/host/mnt/
 ```
 
 Use the exact command shape documented by the current bootc release and yubiOS workflow before writing a real disk. Never test destructive install commands against a disk with data you need.
