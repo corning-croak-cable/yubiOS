@@ -1,0 +1,630 @@
+name: yubiOS RK firmware
+
+# Rockchip-oriented firmware workflow derived from ci_test-int.yml.
+# It keeps the existing QEMU-validated firmware build path, then publishes the
+# original firmware tag plus board-scoped firmware-{{board}} tags for the RK
+# board matrix. The board-scoped images intentionally carry board metadata in
+# /firmware/MANIFEST.txt even while the payload is still the QEMU CI firmware.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ci_firmware-rk.yml' # self-change trigger for validating workflow edits
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Why are you running this manually?'
+        required: false
+        default: 'manual'
+        type: string
+      Docker_push:
+        description: 'Push firmware bundle and board-scoped variants to Docker Hub?'
+        type: boolean
+        required: false
+        default: false
+      ci_callback:
+        description: 'Internal: call back to ci.yml when this workflow finishes.'
+        required: false
+        default: false
+        type: boolean
+      ci_chain_ref:
+        description: 'Internal: ref carried by the ci.yml orchestrator.'
+        required: false
+        default: ''
+        type: string
+      ci_reason:
+        description: 'Internal: original ci.yml orchestrator reason.'
+        required: false
+        default: 'manual'
+        type: string
+      ci_Docker_push:
+        description: 'Internal: production image push flag carried by ci.yml.'
+        required: false
+        default: false
+        type: boolean
+      ci_Dev_Docker_push:
+        description: 'Internal: dev image push flag carried by ci.yml.'
+        required: false
+        default: false
+        type: boolean
+      ci_Firmware_Docker_push:
+        description: 'Internal: firmware artifact push flag carried by ci.yml.'
+        required: false
+        default: false
+        type: boolean
+      ci_Installer_Docker_push:
+        description: 'Internal: installer artifact push flag carried by ci.yml.'
+        required: false
+        default: false
+        type: boolean
+      ci_vm_image:
+        description: 'Internal: VM image ref carried by ci.yml.'
+        required: false
+        default: 'docker.io/0mniteck/yubios:dev'
+        type: string
+
+permissions:
+  contents: read
+  actions: write
+
+env:
+  TFA_REF: f9e106415eb569ff9b19404e2c3f64167af08d21
+  OPTEE_OS_REF: 440b10c3f9b1c8501f2550e282ae071bb5424972 # feat/stmm-volatile-storage-ci
+  OPTEE_FTPM_REF: 5e09cdbe1bcb1bc3bcf4875ebafb4e1a1154417c # feat/volatile-nv-ci
+  UBOOT_REF: ef2ab32418943c161d0889af24375a52b14e10f9
+  EDK2_REF: 9f13e2a137c97a2825f874b4321c3963ca87c747
+  EDK2_PLATFORMS_REF: 4e1e7a4e64470ef7eefeaa1021c86763ab28beee
+  MS_TPM_REF: 98b60a44aba79b15fcce1c0d1e46cf5918400f6a
+  FTPM_UUID: bc50d971-d4c9-42c4-82cb-343fb7f37896
+  OPTEE_PLATFORM: vexpress-qemu_armv8a
+  MBEDTLS_REF: mbedtls-3.6.6
+
+jobs:
+  stmm:
+    name: Stage 1 - BL32_AP_MM.fd (StandaloneMM RPMB, AARCH64) ${{ matrix.arch }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: [self-hosted, Linux, ARM64, GPU]
+    runs-on: ${{ matrix.runner }}
+    env:
+      EDK2_REPO: https://github.com/yubi-OS/edk2.git
+      EDK2_PLATFORMS_REPO: https://github.com/yubi-OS/edk2-platforms.git
+      ACTIVE_PLATFORM: Platform/StandaloneMm/PlatformStandaloneMmPkg/PlatformStandaloneMmRpmb.dsc
+    steps:
+      - name: Install EDK2 build deps
+        run: |
+          set -euxo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq \
+            build-essential uuid-dev iasl nasm \
+            python3 python3-venv python3-pip \
+            bison flex libssl-dev \
+            gcc-aarch64-linux-gnu git || true
+
+      - name: Clone edk2 + edk2-platforms
+        run: |
+          set -euxo pipefail
+          ws="$GITHUB_WORKSPACE/uefi"
+          mkdir -p "$ws"
+          git clone --filter=tree:0 "$EDK2_REPO" "$ws/edk2"
+          git -C "$ws/edk2" checkout "$EDK2_REF"
+          git clone --filter=tree:0 "$EDK2_PLATFORMS_REPO" "$ws/edk2-platforms"
+          git -C "$ws/edk2-platforms" checkout "$EDK2_PLATFORMS_REF"
+          git -C "$ws/edk2" submodule update --init --recursive
+          test -f "$ws/edk2-platforms/$ACTIVE_PLATFORM"
+          test -f "$ws/edk2-platforms/${ACTIVE_PLATFORM%.dsc}.fdf"
+
+      - name: Resolve AARCH64 cross prefix
+        id: tc
+        run: |
+          if [ "${{ matrix.arch }}" = "arm64" ]; then
+            echo "prefix=" >> "$GITHUB_OUTPUT"
+          else
+            echo "prefix=aarch64-linux-gnu-" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build BaseTools
+        run: make -C "$GITHUB_WORKSPACE/uefi/edk2/BaseTools" -j"$(nproc)"
+
+      - name: Build StandaloneMM RPMB platform
+        run: |
+          set -euxo pipefail
+          ws="$GITHUB_WORKSPACE/uefi"
+          export WORKSPACE="$ws"
+          export PACKAGES_PATH="$ws/edk2:$ws/edk2-platforms"
+          export PYTHON_COMMAND=python3
+          cd "$ws/edk2"
+          . ./edksetup.sh
+          cfg=CryptoPkg/Library/MbedTlsLib/Include/mbedtls/mbedtls_config.h
+          sed -i 's@^#define MBEDTLS_HAVE_ASM@/* yubiOS CI: aarch64 inline asm disabled */ // #define MBEDTLS_HAVE_ASM@' "$cfg"
+          sed -i 's@^#define MBEDTLS_AESCE_C@/* yubiOS CI: ARM AES-CE disabled under -mgeneral-regs-only */ // #define MBEDTLS_AESCE_C@' "$cfg"
+          sed -i 's/ -Werror//g' Conf/tools_def.txt
+          export GCCNOLTO_AARCH64_PREFIX="${{ steps.tc.outputs.prefix }}"
+          build -a AARCH64 -t GCCNOLTO -b RELEASE \
+            -p "$ACTIVE_PLATFORM" \
+            -n "$(nproc)"
+
+      - name: Stage BL32_AP_MM.fd
+        run: |
+          set -euxo pipefail
+          fd="$(find "$GITHUB_WORKSPACE/uefi/Build" -name 'BL32_AP_MM.fd' | head -n1)"
+          test -n "$fd"
+          mkdir -p artifacts
+          cp "$fd" artifacts/BL32_AP_MM.fd
+          sha256sum artifacts/BL32_AP_MM.fd
+
+      - name: Upload BL32_AP_MM.fd
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
+        with:
+          name: BL32_AP_MM-${{ matrix.arch }}
+          path: artifacts/BL32_AP_MM.fd
+          if-no-files-found: error
+
+  optee_fip:
+    name: Stage 2 - OP-TEE fold (StMM+fTPM) + TF-A FIP ${{ matrix.arch }}
+    needs: stmm
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: [self-hosted, Linux, ARM64, GPU]
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Install full ARM64 firmware toolchain
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf \
+            python3 python3-venv python3-dev \
+            python3-pyelftools python3-cryptography python3-setuptools \
+            device-tree-compiler \
+            openssl libssl-dev libgnutls28-dev \
+            bison flex bc \
+            uuid-dev iasl nasm swig \
+            git ca-certificates || true
+          if [ "$(uname -m)" = "x86_64" ]; then
+            echo "AARCH64_PREFIX=aarch64-linux-gnu-" >> "$GITHUB_ENV"
+          else
+            echo "AARCH64_PREFIX=" >> "$GITHUB_ENV"
+          fi
+
+      - name: Download BL32_AP_MM.fd from stmm job
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
+        with:
+          name: BL32_AP_MM-${{ matrix.arch }}
+          path: stmm_artifact
+
+      - name: Clone and build U-Boot BL33
+        run: |
+          set -euxo pipefail
+          git clone --no-tags https://github.com/yubi-OS/u-boot u-boot
+          git -C u-boot checkout "$UBOOT_REF"
+          cat > u-boot/yubios_ftpm.config <<'EOF'
+          CONFIG_TEE=y
+          CONFIG_OPTEE=y
+          CONFIG_TPM=y
+          CONFIG_TPM_V2=y
+          CONFIG_TPM2_FTPM_TEE=y
+          CONFIG_EFI_LOADER=y
+          CONFIG_EFI_MM_COMM_TEE=y
+          CONFIG_EFI_TCG2_PROTOCOL=y
+          CONFIG_HASH=y
+          CONFIG_MEASURED_BOOT=y
+          CONFIG_CMD_TPM=y
+          CONFIG_BOOTDELAY=1
+          CONFIG_BOOTCOMMAND="tpm2 init && tpm2 startup TPM2_SU_CLEAR && tpm2 self_test full && echo YUBIOS_TPM_OK; bootefi bootmgr"
+          # CONFIG_UNIT_TEST is not set
+          EOF
+          make -C u-boot CROSS_COMPILE="${AARCH64_PREFIX}" ARCH=arm qemu_arm64_defconfig
+          ./u-boot/scripts/kconfig/merge_config.sh -m -O u-boot u-boot/.config u-boot/yubios_ftpm.config
+          make -C u-boot CROSS_COMPILE="${AARCH64_PREFIX}" ARCH=arm olddefconfig
+          make -C u-boot -j"$(nproc)" CROSS_COMPILE="${AARCH64_PREFIX}" ARCH=arm
+          test -f u-boot/u-boot.bin
+          echo "BL33_BIN=$GITHUB_WORKSPACE/u-boot/u-boot.bin" >> "$GITHUB_ENV"
+
+      - name: Stage StMM artifact
+        run: |
+          set -euxo pipefail
+          fd="$(find stmm_artifact -name 'BL32_AP_MM.fd' -print -quit)"
+          test -n "$fd"
+          cp "$fd" "$GITHUB_WORKSPACE/BL32_AP_MM.fd"
+          echo "STMM_FD=$GITHUB_WORKSPACE/BL32_AP_MM.fd" >> "$GITHUB_ENV"
+          ls -l "$GITHUB_WORKSPACE/BL32_AP_MM.fd"
+
+      - name: Build OP-TEE TA dev kit
+        run: |
+          set -euxo pipefail
+          git clone --no-tags https://github.com/yubi-OS/optee_os optee_os
+          git -C optee_os checkout "$OPTEE_OS_REF"
+          make -C optee_os -j"$(nproc)" \
+            PLATFORM="$OPTEE_PLATFORM" \
+            CROSS_COMPILE64=aarch64-linux-gnu- \
+            CROSS_COMPILE=arm-linux-gnueabihf- \
+            CFG_RPMB_FS=y CFG_REE_FS=n CFG_EARLY_TA=y \
+            CFG_STMM_VOLATILE_STORAGE=y \
+            CFG_CORE_HEAP_SIZE=524288 CFG_TEE_RAM_VA_SIZE=0x00400000 \
+            CFG_TEE_CORE_LOG_LEVEL=3 CFG_TEE_TA_LOG_LEVEL=3 \
+            ta_dev_kit
+          devkit="$(find "$GITHUB_WORKSPACE/optee_os/out" -type d -name 'export-ta_arm64' -print -quit)"
+          test -f "$devkit/mk/ta_dev_kit.mk"
+          echo "TA_DEV_KIT_DIR=$devkit" >> "$GITHUB_ENV"
+
+      - name: Build fTPM TA
+        run: |
+          set -euxo pipefail
+          git clone --no-tags https://github.com/yubi-OS/optee_ftpm optee_ftpm
+          git -C optee_ftpm checkout "$OPTEE_FTPM_REF"
+          git clone --no-tags https://github.com/yubi-OS/ms-tpm-20-ref ms-tpm-20-ref
+          git -C ms-tpm-20-ref checkout "$MS_TPM_REF"
+          make -C optee_ftpm -j"$(nproc)" \
+            CFG_FTPM_VOLATILE_NV=y \
+            TA_DEV_KIT_DIR="$TA_DEV_KIT_DIR" \
+            CFG_MS_TPM_20_REF="$GITHUB_WORKSPACE/ms-tpm-20-ref" \
+            CROSS_COMPILE_ta_arm64=aarch64-linux-gnu- \
+            CFG_ARM64_ta_arm64=y
+          stripped="$(find optee_ftpm -name "${FTPM_UUID}.stripped.elf" -print -quit)"
+          test -n "$stripped"
+          echo "FTPM_TA=$GITHUB_WORKSPACE/$stripped" >> "$GITHUB_ENV"
+
+      - name: Rebuild OP-TEE BL32 folding fTPM Early TA and StMM
+        run: |
+          set -euxo pipefail
+          make -C optee_os -j"$(nproc)" \
+            PLATFORM="$OPTEE_PLATFORM" \
+            CROSS_COMPILE64=aarch64-linux-gnu- \
+            CROSS_COMPILE=arm-linux-gnueabihf- \
+            CFG_RPMB_FS=y CFG_REE_FS=n \
+            CFG_STMM_VOLATILE_STORAGE=y \
+            CFG_CORE_HEAP_SIZE=524288 CFG_TEE_RAM_VA_SIZE=0x00400000 \
+            CFG_EARLY_TA=y EARLY_TA_PATHS="$FTPM_TA" \
+            CFG_CORE_DYN_SHM=y \
+            CFG_TEE_CORE_LOG_LEVEL=3 CFG_TEE_TA_LOG_LEVEL=3 \
+            CFG_STMM_PATH="$STMM_FD" \
+            all
+          h="$(find optee_os/out -name tee-header_v2.bin -print -quit)"
+          p="$(find optee_os/out -name tee-pager_v2.bin -print -quit)"
+          x="$(find optee_os/out -name tee-pageable_v2.bin -print -quit)"
+          test -n "$h" && test -n "$p" && test -n "$x"
+          echo "BL32_HDR=$GITHUB_WORKSPACE/$h" >> "$GITHUB_ENV"
+          echo "BL32_PAGER=$GITHUB_WORKSPACE/$p" >> "$GITHUB_ENV"
+          echo "BL32_PAGEABLE=$GITHUB_WORKSPACE/$x" >> "$GITHUB_ENV"
+
+      - name: Build TF-A trusted FIP
+        run: |
+          set -euxo pipefail
+          git clone --no-tags https://github.com/yubi-OS/arm-trusted-firmware arm-trusted-firmware
+          git -C arm-trusted-firmware checkout "$TFA_REF"
+          git clone --no-tags --branch "$MBEDTLS_REF" https://github.com/Mbed-TLS/mbedtls mbedtls
+          CROSS=""
+          [ "$(uname -m)" = "x86_64" ] && CROSS="aarch64-linux-gnu-"
+          make -C arm-trusted-firmware -j"$(nproc)" \
+            CROSS_COMPILE="${CROSS}" \
+            PLAT=qemu ARCH=aarch64 \
+            SPD=opteed \
+            BL32="$BL32_HDR" BL32_EXTRA1="$BL32_PAGER" BL32_EXTRA2="$BL32_PAGEABLE" \
+            BL32_RAM_LOCATION=tdram \
+            BL33="$BL33_BIN" \
+            TRUSTED_BOARD_BOOT=1 GENERATE_COT=1 CREATE_KEYS=1 \
+            MBEDTLS_DIR="$GITHUB_WORKSPACE/mbedtls" \
+            DEBUG=1 \
+            all fip
+          fip="$(find arm-trusted-firmware/build -name fip.bin -print -quit)"
+          test -n "$fip"
+          echo "FIP_BIN=$GITHUB_WORKSPACE/$fip" >> "$GITHUB_ENV"
+          flash="$(find arm-trusted-firmware/build -name flash.bin -print -quit || true)"
+          if [ -n "$flash" ]; then
+            echo "FLASH_BIN=$GITHUB_WORKSPACE/$flash" >> "$GITHUB_ENV"
+          fi
+
+      - name: Verify FIP contents
+        run: |
+          set -euxo pipefail
+          ft=arm-trusted-firmware/tools/fiptool/fiptool
+          test -x "$ft" || make -C arm-trusted-firmware fiptool
+          "$ft" info "$FIP_BIN" | tee fip-info.txt
+          grep -qi 'Secure Payload BL32\|tos-fw\|Trusted OS' fip-info.txt
+          grep -qi 'Non-Trusted Firmware BL33\|nt-fw\|Non-Trusted' fip-info.txt
+
+      - name: Upload fip + flash artifacts
+        if: always()
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
+        with:
+          name: fip-flash-${{ matrix.arch }}
+          path: |
+            arm-trusted-firmware/build/**/fip.bin
+            arm-trusted-firmware/build/**/flash.bin
+            arm-trusted-firmware/build/**/bl1.bin
+            BL32_AP_MM.fd
+            optee_os/out/**/tee-*_v2.bin
+            u-boot/u-boot.bin
+            fip-info.txt
+          if-no-files-found: warn
+          retention-days: 7
+
+  qemu:
+    name: Stage 3 - QEMU fTPM e2e (${{ matrix.arch }})
+    needs: optee_fip
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: [self-hosted, Linux, ARM64, GPU]
+    runs-on: ${{ matrix.runner }}
+    env:
+      BOOT_TIMEOUT: '180'
+    steps:
+      - name: Install QEMU + TPM tooling
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            qemu-system-arm qemu-utils tpm2-tools python3 coreutils ca-certificates ipxe-qemu || true
+          qemu-system-aarch64 --version
+
+      - name: Download fip/flash from optee_fip job
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
+        with:
+          name: fip-flash-${{ matrix.arch }}
+          path: image
+
+      - name: Resolve or assemble flash.bin
+        id: image
+        run: |
+          set -euxo pipefail
+          flash="$(find image -name flash.bin -type f -print -quit 2>/dev/null || true)"
+          if [ -z "$flash" ]; then
+            bl1="$(find image -name bl1.bin -type f -print -quit 2>/dev/null || true)"
+            fip="$(find image -name fip.bin -type f -print -quit 2>/dev/null || true)"
+            if [ -n "$bl1" ] && [ -n "$fip" ]; then
+              dd if="$bl1" of=image/flash.bin bs=4096 conv=notrunc
+              dd if="$fip" of=image/flash.bin seek=64 bs=4096 conv=notrunc
+              flash="image/flash.bin"
+            fi
+          fi
+          if [ -n "$flash" ]; then
+            echo "flash=$flash" >> "$GITHUB_OUTPUT"
+            echo "ready=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=0" >> "$GITHUB_OUTPUT"
+            echo "::warning title=No bootable image::optee_fip produced no flash.bin/fip.bin."
+          fi
+
+      - name: Boot stitched image under QEMU and assert fTPM markers
+        if: steps.image.outputs.ready == '1'
+        run: |
+          set -euxo pipefail
+          timeout "$BOOT_TIMEOUT" qemu-system-aarch64 \
+            -M virt,secure=on -cpu max -m 2048 \
+            -bios "${{ steps.image.outputs.flash }}" \
+            -nographic -d guest_errors \
+            -serial file:nw.log -serial file:optee.log || true
+          touch nw.log optee.log
+          fail=0
+          grep -Eiq "early_ta_init.*${FTPM_UUID}|Early TA ${FTPM_UUID}" nw.log optee.log \
+            && echo "PASS: fTPM Early TA at init" || { echo "::error::fTPM Early TA not at init"; fail=1; }
+          grep -Eiq "ldelf: Loading TS ${FTPM_UUID}|Lookup user TA ELF ${FTPM_UUID}" nw.log optee.log \
+            && echo "PASS: fTPM TA probed" || { echo "::error::fTPM TA never probed"; fail=1; }
+          grep -q "YUBIOS_TPM_OK" nw.log \
+            && echo "PASS: fTPM functional" || { echo "::error::fTPM not functional"; fail=1; }
+          ! grep -Eq "Missing TPMv2 device|Couldn't set TPM|TA panicked|ldelf failed|data-abort" nw.log optee.log \
+            && echo "PASS: no known failure signatures" || { echo "::error::known failure signature present"; fail=1; }
+          grep -Eiq "stmm load address" nw.log optee.log \
+            && echo "PASS: StMM SP loaded into OP-TEE" || { echo "::error::StMM SP never loaded"; fail=1; }
+          [ "$fail" -eq 0 ]
+
+      - name: Loud skip when no bootable image exists
+        if: steps.image.outputs.ready != '1'
+        run: echo "::notice title=QEMU e2e loud skip::No fip/flash artifact was available."
+
+  firmware-publish:
+    name: Stage 4 - Publish firmware bundle (${{ matrix.board }})
+    needs: qemu
+    if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - board: qemu-arm64
+            board_title: QEMU ARM64 CI baseline
+            publish_original: true
+            storage_note: Volatile StMM and fTPM NV for QEMU virt CI
+          - board: rock5b-rk3588
+            board_title: Radxa ROCK 5B / RK3588 primary Path A
+            publish_original: false
+            storage_note: RPMB-backed StMM and fTPM NV required before production hardware claim
+          - board: rockpro64-rk3399
+            board_title: ROCKPro64 / RK3399 supported secondary Path A
+            publish_original: false
+            storage_note: RPMB-backed StMM and fTPM NV required before production hardware claim
+    steps:
+      - name: Download firmware artifacts (native arm64 build)
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
+        with:
+          name: fip-flash-arm64
+          path: art
+
+      - name: Install docker-engine + buildx
+        run: |
+          set -euxo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends wget iptables nftables || true
+          wget -q "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
+          wget -q "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
+          tar xzf docker-29.6.0.tgz
+          docker_bin="${RUNNER_TEMP}/docker-static/bin"
+          docker_plugins="${HOME}/.docker/cli-plugins"
+          mkdir -p "$docker_bin" "$docker_plugins"
+          sudo mkdir -p /mnt/docker /var/run
+          install -m 0755 docker/* "$docker_bin/"
+          install -m 0755 buildx-v0.35.0.linux-amd64 "$docker_plugins/docker-buildx"
+          echo "$docker_bin" >> "$GITHUB_PATH"
+          export PATH="$docker_bin:$PATH"
+          sudo env PATH="$docker_bin:$PATH" "$docker_bin/dockerd" \
+            --storage-driver=overlayfs \
+            --data-root=/mnt/docker \
+            --pidfile "${RUNNER_TEMP}/ducker.pid" \
+            -H unix:///var/run/ducker.sock &
+          for _ in $(seq 1 30); do
+            sudo env PATH="$docker_bin:$PATH" "$docker_bin/docker" -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break
+            sleep 1
+          done
+          sudo env PATH="$docker_bin:$PATH" "$docker_bin/docker" -H unix:///var/run/ducker.sock buildx create --name hardened \
+            --driver docker-container \
+            --use
+
+      - name: Assemble board-scoped /firmware payload
+        env:
+          BOARD: ${{ matrix.board }}
+          BOARD_TITLE: ${{ matrix.board_title }}
+          STORAGE_NOTE: ${{ matrix.storage_note }}
+        run: |
+          set -euxo pipefail
+          mkdir -p fw/firmware
+          find art -name fip.bin        -exec cp {} fw/firmware/ \; -quit
+          find art -name flash.bin      -exec cp {} fw/firmware/ \; -quit
+          find art -name bl1.bin        -exec cp {} fw/firmware/ \; -quit
+          find art -name BL32_AP_MM.fd  -exec cp {} fw/firmware/ \; -quit
+          find art -name u-boot.bin     -exec cp {} fw/firmware/ \; -quit
+          find art -name fip-info.txt   -exec cp {} fw/firmware/ \; -quit
+          find art -name 'tee-*_v2.bin' -exec cp {} fw/firmware/ \;
+          if [ ! -s fw/firmware/flash.bin ]; then
+            dd if=fw/firmware/bl1.bin of=fw/firmware/flash.bin bs=4096 conv=notrunc
+            dd if=fw/firmware/fip.bin of=fw/firmware/flash.bin seek=64 bs=4096 conv=notrunc
+          fi
+          test -s fw/firmware/fip.bin
+          test -s fw/firmware/bl1.bin
+          test -s fw/firmware/flash.bin
+          test -s fw/firmware/BL32_AP_MM.fd
+          {
+            echo "yubiOS ARM64 firmware bundle"
+            echo "board=${BOARD}"
+            echo "board_title=${BOARD_TITLE}"
+            echo "yubios_commit=${GITHUB_SHA}"
+            echo "workflow_run=${GITHUB_RUN_ID}"
+            echo "tfa_ref=${TFA_REF}"
+            echo "optee_os_ref=${OPTEE_OS_REF} (feat/stmm-volatile-storage-ci)"
+            echo "optee_ftpm_ref=${OPTEE_FTPM_REF} (feat/volatile-nv-ci)"
+            echo "uboot_ref=${UBOOT_REF}"
+            echo "edk2_ref=${EDK2_REF}"
+            echo "edk2_platforms_ref=${EDK2_PLATFORMS_REF}"
+            echo "ms_tpm_ref=${MS_TPM_REF}"
+            echo "ftpm_uuid=${FTPM_UUID}"
+            echo "platform=${OPTEE_PLATFORM}"
+            echo "storage_note=${STORAGE_NOTE}"
+            echo "NOTE: Current payload is QEMU-validated firmware. Board-scoped tags are"
+            echo "routing and metadata placeholders until the real hardware Path A lanes"
+            echo "produce board-divergent RK3399/RK3588 payloads."
+          } > fw/firmware/MANIFEST.txt
+          ls -l fw/firmware/
+
+      - name: Build firmware OCI artifact
+        env:
+          BOARD: ${{ matrix.board }}
+          BOARD_TITLE: ${{ matrix.board_title }}
+          PUBLISH_ORIGINAL: ${{ matrix.publish_original }}
+        run: |
+          set -euxo pipefail
+          cat > fw/Dockerfile <<'DOCKER'
+          FROM scratch
+          COPY firmware/ /firmware/
+          DOCKER
+          tag_args=(
+            -t "0mniteck/yubios:firmware-${BOARD}"
+            -t "0mniteck/yubios:firmware-${BOARD}-${GITHUB_SHA}"
+          )
+          if [ "$PUBLISH_ORIGINAL" = "true" ]; then
+            tag_args+=(
+              -t "0mniteck/yubios:firmware"
+              -t "0mniteck/yubios:firmware-${GITHUB_SHA}"
+            )
+          fi
+          docker -H unix:///var/run/ducker.sock buildx build \
+            --label "org.opencontainers.image.title=yubiOS ARM64 firmware bundle (${BOARD})" \
+            --label "org.opencontainers.image.description=QEMU-validated TF-A FIP + OP-TEE StMM/fTPM + U-Boot BL33 for ${BOARD_TITLE}" \
+            --label "org.opencontainers.image.source=https://github.com/yubi-OS/yubiOS" \
+            --label "org.opencontainers.image.revision=${GITHUB_SHA}" \
+            --label "io.yubios.firmware.board=${BOARD}" \
+            --load \
+            "${tag_args[@]}" \
+            fw
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER }}" | docker -H unix:///var/run/ducker.sock login -u 0mniteck42 --password-stdin
+
+      - name: Push firmware tags
+        env:
+          BOARD: ${{ matrix.board }}
+          PUBLISH_ORIGINAL: ${{ matrix.publish_original }}
+        run: |
+          set -euxo pipefail
+          docker -H unix:///var/run/ducker.sock push "0mniteck/yubios:firmware-${BOARD}"
+          docker -H unix:///var/run/ducker.sock push "0mniteck/yubios:firmware-${BOARD}-${GITHUB_SHA}"
+          if [ "$PUBLISH_ORIGINAL" = "true" ]; then
+            docker -H unix:///var/run/ducker.sock push "0mniteck/yubios:firmware"
+            docker -H unix:///var/run/ducker.sock push "0mniteck/yubios:firmware-${GITHUB_SHA}"
+          fi
+          docker -H unix:///var/run/ducker.sock logout
+
+      - name: Verify pushed board tag
+        env:
+          BOARD: ${{ matrix.board }}
+        run: docker -H unix:///var/run/ducker.sock buildx imagetools inspect "0mniteck/yubios:firmware-${BOARD}"
+
+  ci-callback:
+    name: Callback to ci.yml orchestrator
+    if: ${{ always() && github.event_name == 'workflow_dispatch' && inputs.ci_callback == true }}
+    needs: [stmm, optee_fip, qemu, firmware-publish]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Report current state to ci.yml
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          WORKFLOW_NAME: ${{ github.workflow }}
+          REF: ${{ inputs.ci_chain_ref != '' && inputs.ci_chain_ref || github.ref_name }}
+          NEEDS_JSON: ${{ toJSON(needs) }}
+          CI_REASON: ${{ inputs.ci_reason }}
+          CI_DOCKER_PUSH: ${{ inputs.ci_Docker_push }}
+          CI_DEV_DOCKER_PUSH: ${{ inputs.ci_Dev_Docker_push }}
+          CI_FIRMWARE_DOCKER_PUSH: ${{ inputs.ci_Firmware_Docker_push }}
+          CI_INSTALLER_DOCKER_PUSH: ${{ inputs.ci_Installer_Docker_push }}
+          CI_VM_IMAGE: ${{ inputs.ci_vm_image }}
+        run: |
+          set -euo pipefail
+          conclusion=$(jq -r 'if any(to_entries[]; .value.result == "failure" or .value.result == "cancelled") then "failure" else "success" end' <<<"$NEEDS_JSON")
+          payload=$(jq -n \
+            --arg ref "$REF" \
+            --arg state "$WORKFLOW_NAME" \
+            --arg completed_conclusion "$conclusion" \
+            --arg reason "$CI_REASON" \
+            --arg Docker_push "$CI_DOCKER_PUSH" \
+            --arg Dev_Docker_push "$CI_DEV_DOCKER_PUSH" \
+            --arg Firmware_Docker_push "$CI_FIRMWARE_DOCKER_PUSH" \
+            --arg Installer_Docker_push "$CI_INSTALLER_DOCKER_PUSH" \
+            --arg vm_image "$CI_VM_IMAGE" \
+            '{ref: $ref, inputs: {state: $state, completed_conclusion: $completed_conclusion, reason: $reason, target_ref: $ref, Docker_push: $Docker_push, Dev_Docker_push: $Dev_Docker_push, Firmware_Docker_push: $Firmware_Docker_push, Installer_Docker_push: $Installer_Docker_push, vm_image: $vm_image}}')
+          curl -fsS -X POST \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${REPO}/actions/workflows/ci.yml/dispatches" \
+            -d "$payload"
+          echo "Reported ${WORKFLOW_NAME} as ${conclusion} to ci.yml."
