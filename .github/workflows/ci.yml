@@ -8,9 +8,9 @@ name: CI
 # and refs/*.md define the CI contract, artifact order, pinned action/image
 # policy, and ARM64 fTPM + VM-e2e constraints this workflow sequences.
 #
-# Existing workflow files call back here with the current chain state.  This keeps
-# dispatch inputs (push flags, VM image, target ref) explicit instead of relying on
-# workflow_run, whose event payload cannot carry the original workflow_dispatch
+# Existing workflow files call back here with the current chain state. This keeps
+# dispatch inputs (push flags, VM image, target ref) explicit instead of relying
+# on workflow_run, whose event payload cannot carry the original workflow_dispatch
 # inputs across the chain.
 
 on:
@@ -47,7 +47,7 @@ on:
         default: false
         type: boolean
       Firmware_Docker_push:
-        description: 'Push the firmware OCI artifact from ci_test-int.yml?'
+        description: 'Push the firmware OCI artifacts from ci_firmware-rk.yml?'
         required: true
         default: false
         type: boolean
@@ -114,7 +114,7 @@ jobs:
                 next_file='ci_fork_mkosi.yml'
                 callee_inputs=$(jq -n --arg reason "ci after fetch-fedora-bootc-manifest" '{reason: $reason}')
               else
-                next_file='ci_test-int.yml'
+                next_file='ci_firmware-rk.yml'
                 callee_inputs=$(jq -n --arg reason "ci after fetch-fedora-bootc-manifest" --arg push "$FIRMWARE_DOCKER_PUSH" '{reason: $reason, Docker_push: $push}')
               fi
               ;;
@@ -147,10 +147,10 @@ jobs:
               callee_inputs=$(jq -n --arg reason "ci after ci_fork_u-boot" '{reason: $reason}')
               ;;
             ci_fork_edk2)
-              next_file='ci_test-int.yml'
+              next_file='ci_firmware-rk.yml'
               callee_inputs=$(jq -n --arg reason "ci after ci_fork_edk2" --arg push "$FIRMWARE_DOCKER_PUSH" '{reason: $reason, Docker_push: $push}')
               ;;
-            'yubiOS firmware')
+            'yubiOS RK firmware')
               next_file='yubiOS-ci.yml'
               callee_inputs=$(jq -n --arg push "$DOCKER_PUSH" '{Docker_push: $push}')
               ;;
