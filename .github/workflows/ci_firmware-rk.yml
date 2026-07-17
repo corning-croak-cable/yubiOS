@@ -142,7 +142,10 @@ jobs:
           export EDK_TOOLS_PATH="$ws/edk2/BaseTools"
           export PYTHON_COMMAND=python3
           cd "$ws/edk2"
+          # EDK2 setup scripts intentionally probe unset environment variables.
+          set +u
           . ./edksetup.sh
+          set -u
           cfg=CryptoPkg/Library/MbedTlsLib/Include/mbedtls/mbedtls_config.h
           sed -i 's@^#define MBEDTLS_HAVE_ASM@/* yubiOS CI: aarch64 inline asm disabled */ // #define MBEDTLS_HAVE_ASM@' "$cfg"
           sed -i 's@^#define MBEDTLS_AESCE_C@/* yubiOS CI: ARM AES-CE disabled under -mgeneral-regs-only */ // #define MBEDTLS_AESCE_C@' "$cfg"
