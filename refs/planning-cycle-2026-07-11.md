@@ -21,7 +21,7 @@ Scope: markdown consistency, refs research refresh, and source-of-truth cleanup 
 | systemd filesystem controls | `RestrictFileSystems=` is a valid older BPF-LSM filesystem-type limiter added before v261; v261's newer control is `RestrictFileSystemAccess=` for verified dm-verity-backed execution. Docs must not conflate them. | https://www.freedesktop.org/software/systemd/man/systemd.exec.html |
 | OpenSSL PQ TLS | OpenSSL 3.5 changed default TLS groups/keyshares to prefer hybrid PQC and offer `X25519MLKEM768` plus `X25519`. | https://openssl-library.org/news/openssl-3.5-notes/ |
 | Go PQ TLS | Go 1.24 supports `X25519MLKEM768` and enables it by default when `crypto/tls.Config.CurvePreferences` is nil. | https://go.dev/doc/go1.24 |
-| bootc install | `bootc install to-disk` remains the direct block-device install path; `to-filesystem` is the other install mode. | https://bootc.dev/bootc/bootc-install.html |
+| bootc install | yubiOS now documents `bootc install to-filesystem --root-mount-spec=""` for the active install path so the target root is externally prepared and DPS auto-discovery can omit the `root=` kernel argument. | https://bootc.dev/bootc/bootc-install.html |
 | QEMU ARM64 zboot/zstd | QEMU gained a direct-loader fix for EFI zboot images compressed with zstd; yubiOS CI's pinned QEMU workaround is a harness fix, not a production compression rollback. | https://lists.nongnu.org/archive/html/qemu-devel/2026-01/msg04080.html |
 
 ## 2026-07-16 VM e2e addendum
@@ -53,4 +53,5 @@ Planning update: keep QEMU zstd workaround maintenance on the watch list, but pr
 - Rerun `ci_test-vm.yml` after the bootloader-update decision so `tests/vm/test-fido2-enrollment.sh` is no longer hidden behind the earlier boot failure.
 - Audit code and tests for the distinction between `RestrictFileSystems=` and `RestrictFileSystemAccess=` before adding the newer v261 control anywhere.
 - Re-check the Docker Hub `0mniteck/yubios:latest` digest after the next green `yubiOS-ci.yml` publish; avoid treating old run-specific digests as evergreen docs facts.
+- Validate the `bootc install to-filesystem --root-mount-spec=""` path on a disposable target after the external partition-preparation step is scripted or otherwise proven.
 - Keep `PINNED.md` as the single source of truth for base images and GitHub Action SHAs; do not duplicate digest tables in `AGENTS.md` or research notes.
