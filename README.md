@@ -4,7 +4,7 @@
 
 # yubiOS
 
-**FIDO2-first immutable OS — HSM/U2F is the root of trust**
+**FIDO2-first immutable OS — HSM/U2F as the root of trust**
 
 [![License: LGPL-2.1](https://img.shields.io/badge/license-LGPL--2.1-magenta?style=flat-square)](LICENSE)
 [![Status: Groundwork](https://img.shields.io/badge/status-groundwork-blueviolet?style=flat-square)](TODO.md)
