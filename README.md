@@ -95,7 +95,7 @@ docker buildx build --policy reset=true,strict=true,filename=yubiOS.rego -t yubi
 
 docker run --rm --privileged --pid=host \
   -v /dev:/dev -v /var/lib/containers:/var/lib/containers \
-  yubiOS bootc install to-disk /dev/nvme0n1
+  yubiOS bootc install to-filesystem /dev/nvme0n1
 ```
 
 Every approved base image and GitHub Action SHA lives in [PINNED.md](PINNED.md). That file is the single source of truth for pins.
