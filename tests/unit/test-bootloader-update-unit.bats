@@ -3,22 +3,31 @@
 # Run: bats tests/unit/test-bootloader-update-unit.bats
 
 DROPIN="usr/lib/systemd/system/bootloader-update.service.d/10-skip-bcvk-virtiofs-root.conf"
+SCRIPT="usr/lib/yubiOS/skip-bootloader-update-if-bcvk.sh"
 
 setup() {
   [ -f "$DROPIN" ] || DROPIN="/usr/lib/systemd/system/bootloader-update.service.d/10-skip-bcvk-virtiofs-root.conf"
+  [ -f "$SCRIPT" ] || SCRIPT="/usr/lib/yubiOS/skip-bootloader-update-if-bcvk.sh"
 }
 
-@test "bootloader-update drop-in skips bcvk ephemeral virtiofs roots only" {
-  run grep -Fx 'ConditionKernelCommandLine=!rootfstype=virtiofs' "$DROPIN"
+@test "bootloader-update uses the bcvk runtime ExecCondition" {
+  run grep -Fx 'ExecCondition=/usr/lib/yubiOS/skip-bootloader-update-if-bcvk.sh' "$DROPIN"
   [ "$status" -eq 0 ]
 }
 
-@test "bootloader-update condition is declared in the Unit section" {
-  section="$(awk '/^\[/{s=$0} /ConditionKernelCommandLine/{print s}' "$DROPIN")"
-  [ "$section" = "[Unit]" ]
+@test "bootloader-update ExecCondition is declared in the Service section" {
+  section="$(awk '/^\[/{s=$0} /ExecCondition=/{print s}' "$DROPIN")"
+  [ "$section" = "[Service]" ]
+}
+
+@test "bootloader-update helper identifies virtiofs root from proc mounts" {
+  run grep -F '/proc/mounts' "$SCRIPT"
+  [ "$status" -eq 0 ]
+  run grep -F '$3 == "virtiofs"' "$SCRIPT"
+  [ "$status" -eq 0 ]
 }
 
 @test "bootloader-update drop-in documents installed-system behavior" {
-  run grep -F 'real installed systems' "$DROPIN"
+  run grep -F 'Real installed' "$DROPIN"
   [ "$status" -eq 0 ]
 }
