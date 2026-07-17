@@ -144,7 +144,7 @@ mount rootfs, comment out pam_u2f line in /etc/pam.d/sudo.
 - Maintainers can choose based on deployment model
 
 **mkosi produces:** signed UKI `.efi`, dm-verity root, composefs image
-**bootc produces:** OCI image deployable via `bootc install to-disk`
+**bootc produces:** OCI image deployable via `bootc install to-filesystem`
 
 ---
 
