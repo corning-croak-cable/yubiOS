@@ -27,7 +27,7 @@ Out of scope: application-level security, hardware below an unowned firmware bou
 ## 3. Trust Model
 
 | Root | Hardware | Question answered | Scope |
-|---|---|---|---|
+|---|---|---|
 | YubiKey 5 | Owner-held external token | Is the authorized owner present? | PIV signing, FIDO2 unlocks, SSH, PAM/U2F, OATH/TOTP |
 | TPM/fTPM | Platform device or yubiOS-owned ARM64 secure-world TA | Did this platform boot the expected measured stack? | PCR measurement, attestation, `ConditionSecurity=measured-os` |
 
@@ -204,7 +204,7 @@ Service units ship with `NoNewPrivileges=`, `DynamicUser=`, `ProtectProc=invisib
 
 ### UC-1: Personal laptop, full trust chain (x86-64, secondary platform)
 
-Ana installs yubiOS to her laptop's NVMe (`bootc install to-disk`), enrolls her own Secure Boot Platform Key from the YubiKey-generated certificate, and walks the four-step wizard. Every boot: YubiKey touch + FIDO2 PIN unlocks the disk; sudo requires a touch; SSH to her servers uses the resident ed25519-sk key. If her laptop is stolen, the disk is unopenable without the token and PIN; if the YubiKey is lost, the printed recovery key gets her back in and a backup key re-enrolls. OS updates arrive via `bootc upgrade` with zero re-enrollment.
+Ana prepares and mounts the target filesystems, then installs yubiOS to her laptop's NVMe with `bootc install to-filesystem --root-mount-spec=""`, enrolls her own Secure Boot Platform Key from the YubiKey-generated certificate, and walks the four-step wizard. Every boot: YubiKey touch + FIDO2 PIN unlocks the disk; sudo requires a touch; SSH to her servers uses the resident ed25519-sk key. If her laptop is stolen, the disk is unopenable without the token and PIN; if the YubiKey is lost, the printed recovery key gets her back in and a backup key re-enrolls. OS updates arrive via `bootc upgrade` with zero re-enrollment.
 
 ### UC-2: Developer workstation with dev tooling overlays
 
