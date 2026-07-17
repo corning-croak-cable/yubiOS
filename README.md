@@ -11,7 +11,7 @@
 [![YubiKey 5](https://img.shields.io/badge/YubiKey-5%20series-ff1493?style=flat-square)](https://www.yubico.com)
 [![FIDO2](https://img.shields.io/badge/FIDO2-hidraw-purple?style=flat-square)](https://fidoalliance.org)
 
-*No mandatory TPM for owner-facing unlock or identity workflows. Platform integrity remains explicit and scoped.*
+*No OEM. No trust anchors you don't control.*
 ### 🦴 🚧 Work In Progress 🚧 Work In Progress 🚧 Work In Progress 🚧
 
 </div>
@@ -74,7 +74,7 @@ For reproducible installs, pin the image by the digest produced by the latest gr
 Install or upgrade with bootc:
 
 ```sh
-sudo bootc install to-disk --source-imgref docker://0mniteck/yubios:latest /dev/nvme0n1
+sudo bootc install to-filesystem --source-imgref docker://0mniteck/yubios:latest /dev/nvme0n1
 sudo bootc switch 0mniteck/yubios:latest
 sudo bootc upgrade
 ```
