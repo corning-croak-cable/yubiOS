@@ -22,6 +22,46 @@ Goal: prove the production Path A story on real ARM64 hardware.
 
 Path B remains useful for measured/attested development and CI, but it must be described as evidence-and-sealing rather than boot-time rejection.
 
+## Milestone SecTime: Secure-World Time Evidence
+
+Goal: verify whether RK3399/RK3588 yubiOS boards can make trustworthy time claims from the secure world before those claims are used for attestation, logs, replay windows, or freshness policy.
+
+Research shape:
+
+- Audit the TF-A, U-Boot, and OP-TEE board configuration for the secure time path, starting with `CFG_SECURE_TIME_SOURCE_CNTPCT`, OP-TEE AArch64 timer handling, and TF-A `SPD=opteed` integration.
+- Distinguish an ARM generic timer counter read from secure world from a board-backed secure RTC, RPMB monotonic counter, or normal-world/REE time fallback.
+- Define what "secure enough" means for yubiOS: monotonic within a boot, stable across suspend/resume, resistant to normal-world tampering, and explicit about power-loss and reboot limits.
+- Add an OP-TEE smoke test or TA-level probe that records monotonic reads and failure behavior on RK3399 and RK3588 hardware.
+- Keep policy claims out of [SPEC.md](SPEC.md) until the clock source, rollback behavior, and recovery path are source-backed and board-tested.
+
+Evidence needed before promotion:
+
+- Source-backed note under `refs/` identifying the active OP-TEE secure time configuration for RK3399 and RK3588.
+- Hardware log showing secure-world monotonic reads across boot, suspend/resume, and expected failure cases.
+- ADR coverage for which security decisions may rely on secure-world time and which must use a stronger counter, sealed state, or remote attestation freshness.
+- Recovery guidance for boards with only REE-backed time or with ambiguous secure clock wiring.
+
+## Milestone Frost: Firmware-Assisted GPU Resource Lockout
+
+Goal: research a Panfrost-centered "Frost" path that can observe, limit, quarantine, or reset GPU resource abuse on RK3399/RK3588 without treating U-Boot as a runtime policy engine.
+
+Research shape:
+
+- Treat Linux DRM/Panfrost and cgroup v2 as the accounting and policy layer. Prefer the emerging DRM device-memory cgroup path when available; otherwise prototype minimal cgroup-aware Panfrost BO accounting.
+- Hook BO allocation, PRIME import, BO destruction, and an optional submit guard rather than relying on userspace ioctl policy alone.
+- Use U-Boot for early setup only: reserved memory, device-tree nodes, control mailbox metadata, and handoff to Linux plus secure monitor firmware.
+- Define a secure monitor or firmware interface, such as SMC or a shared mailbox, for hard actions: context quarantine, IOMMU revocation, GPU reset, or power gating.
+- Stage enforcement from observe, warn, and deny-allocation modes to cgroup/context quarantine, then full GPU reset or power-cycle only for repeated or unsafe violations.
+- Separate device-memory limits from GPU time scheduling so the milestone is clear about what Frost protects and what remains future scheduler work.
+
+Evidence needed before promotion:
+
+- Source-backed map of current Panfrost/Rockchip kernel patch points for probe/init, BO create/free, PRIME import, and submit guarding.
+- RK3399/RK3588 proof showing whether lockout can target an offending cgroup/context or must fall back to safe full-GPU reset behavior.
+- Device-tree, reserved-memory, and control-mailbox sketch with recovery and failure behavior.
+- Tests for false positives, graphics stack recovery, telemetry, logs, and owner notification.
+- ADR coverage of the trust boundary between Linux policy, OP-TEE/TF-A hard cutoff, and user recovery.
+
 ## Milestone CI: Keep The Test Lanes Honest
 
 - Keep native ARM64 KVM evidence visible for the dev/swu2f VM leg.
