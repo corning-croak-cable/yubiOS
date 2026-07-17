@@ -45,6 +45,11 @@ RUN echo 'chipsec==1.13.16 --hash=sha256:63bed5ad4224402397817ea82b94c3a21736386
 # ── Overlay yubiOS config tree ───────────────────────────────────────────
 COPY usr/ /usr/
 
+# ── SSH: allow bcvk CI root key credentials only when present ─────────────
+RUN mkdir -p /etc/ssh/sshd_config.d && \
+    cp /usr/lib/yubiOS/sshd_config.d/10-yubiOS-bcvk-root-key.conf \
+      /etc/ssh/sshd_config.d/10-yubiOS-bcvk-root-key.conf
+
 # ── Permissions for enrollment and first-boot scripts ────────────────────
 RUN chmod +x /usr/lib/yubiOS/*.sh /usr/lib/yubiOS/chipsec/*.sh
 
