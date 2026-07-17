@@ -5,6 +5,8 @@ Status: active task list
 Latest targeted audit: [refs/systemd-v262-audit-2026-07-14.md](refs/systemd-v262-audit-2026-07-14.md).
 Latest broad research note: [refs/research-refresh-2026-07-11.md](refs/research-refresh-2026-07-11.md).
 Latest VM e2e evidence: [refs/vm-e2e-run-29525332901.md](refs/vm-e2e-run-29525332901.md), plus SSH follow-up run [29543974333 / job 87776913919](https://github.com/yubi-OS/yubiOS/actions/runs/29543974333/job/87776913919).
+Latest roadmap research pass: [refs/sectime-rk-secure-time-2026-07-17.md](refs/sectime-rk-secure-time-2026-07-17.md), [refs/frost-panfrost-lockout-2026-07-17.md](refs/frost-panfrost-lockout-2026-07-17.md), [refs/openwrt-deception-proof-plan-2026-07-17.md](refs/openwrt-deception-proof-plan-2026-07-17.md), and [refs/roadmap-promotion-gates-2026-07-17.md](refs/roadmap-promotion-gates-2026-07-17.md).
+Latest firmware workflow split: [refs/firmware-rk-workflow-2026-07-17.md](refs/firmware-rk-workflow-2026-07-17.md).
 
 Use this file for current work. Completed historical context belongs in merged PRs, ADRs, or dated refs.
 
@@ -15,15 +17,15 @@ Use this map to keep [FUTURE.md](FUTURE.md) roadmap entries tied to active TODO 
 | FUTURE.md section | Current TODO.md coverage | Follow-up |
 |---|---|---|
 | Near-Term Planning Cycle | Covered by Current Documentation Tasks | Keep dated `refs/` planning-cycle notes scoped to each research pass |
-| Milestone F: ARM64 Owner-Owned Root Of Trust | Covered by Current ARM64 Tasks | Continue ROCK 5B/RK3588 Path A proof and ROCKPro64/RK3399 secondary evidence |
-| Milestone SecTime: Secure-World Time Evidence | Missing before this map | Track OP-TEE/TF-A secure time evidence under Current Roadmap Research Tasks |
-| Milestone Frost: Firmware-Assisted GPU Resource Lockout | Missing before this map | Track Panfrost, cgroup, and firmware lockout research under Current Roadmap Research Tasks |
-| Milestone CI: Keep The Test Lanes Honest | Covered by Current CI Tasks | Keep PQ TLS, QEMU zstd EFI zboot, VM e2e, and dev/prod isolation checks visible |
-| Milestone Docs: Prevent Snapshot Drift | Covered by Current Documentation Tasks | Keep refs, PINNED, CITATION, and hardening terminology aligned |
-| Milestone Net: OpenWrt WireGuard Deception LAN | Partially covered by the Endlessh fit ref, not active TODOs | Add OpenWrt package proof, decoy scan evidence, notification policy, and ADR tasks |
-| Post-Launch Hardware Work | Partially covered by Current ARM64 and Supply-Chain Tasks | Promote individual items only when they have a board target, evidence target, and recovery plan |
+| Milestone F: ARM64 Owner-Owned Root Of Trust | Covered by Current ARM64 Tasks and [refs/arm64-rk-board-status-2026-07-17.md](refs/arm64-rk-board-status-2026-07-17.md) | Continue ROCK 5B/RK3588 Path A proof and ROCKPro64/RK3399 secondary evidence |
+| Milestone SecTime: Secure-World Time Evidence | Covered by [refs/sectime-rk-secure-time-2026-07-17.md](refs/sectime-rk-secure-time-2026-07-17.md) | Hardware TA/smoke-test evidence remains open |
+| Milestone Frost: Firmware-Assisted GPU Resource Lockout | Covered by [refs/frost-panfrost-lockout-2026-07-17.md](refs/frost-panfrost-lockout-2026-07-17.md) | Kernel prototype and RK hardware recovery proof remain open |
+| Milestone CI: Keep The Test Lanes Honest | Covered by Current CI Tasks and [refs/firmware-rk-workflow-2026-07-17.md](refs/firmware-rk-workflow-2026-07-17.md) | Keep PQ TLS, QEMU zstd EFI zboot, VM e2e, firmware callback, and dev/prod isolation checks visible |
+| Milestone Docs: Prevent Snapshot Drift | Covered by Current Documentation Tasks | Keep refs, PINNED, CITATION, CI_MAP, and hardening terminology aligned |
+| Milestone Net: OpenWrt WireGuard Deception LAN | Covered by [refs/openwrt-deception-proof-plan-2026-07-17.md](refs/openwrt-deception-proof-plan-2026-07-17.md) | Build the VM/spare-router proof and packet evidence |
+| Post-Launch Hardware Work | Covered by promotion gates and ARM64 board-status refs | Promote individual items only when they have a board target, evidence target, and recovery plan |
 | Deferred Ideas | Watch-list only | Keep `systemd-sysinstall`, LUO/KHO, U-Boot FIDO2/U2F, and ORAS media types out of active scope until promoted |
-| Exit Criteria For Moving Work Out Of FUTURE | Partially covered by security and docs tasks | Require trust boundary, recovery, evidence, pins, notification/retention policy, and prod/test separation before promotion |
+| Exit Criteria For Moving Work Out Of FUTURE | Covered by [refs/roadmap-promotion-gates-2026-07-17.md](refs/roadmap-promotion-gates-2026-07-17.md) | Require trust boundary, recovery, evidence, pins, notification/retention policy, and prod/test separation before promotion |
 
 ## Current Documentation Tasks
 
@@ -35,7 +37,7 @@ Use this map to keep [FUTURE.md](FUTURE.md) roadmap entries tied to active TODO 
 - [x] Before systemd v262 adoption, audit docs/code for `/run/boot-loader-entries/`, `systemd-sysupdated` D-Bus, and `updatectl` assumptions: [refs/systemd-v262-audit-2026-07-14.md](refs/systemd-v262-audit-2026-07-14.md).
 - [x] Record the 2026-07-16 VM e2e milestone from run 29525332901: [refs/vm-e2e-run-29525332901.md](refs/vm-e2e-run-29525332901.md).
 - [x] Switch the active install docs from `bootc install to-disk` to `bootc install to-filesystem --root-mount-spec=""` so DPS auto-discovery remains explicit.
-- [ ] Keep future planning cycles dated and scoped under `refs/`.
+- [x] Keep future planning cycles dated and scoped under `refs/`: see the 2026-07-17 SecTime, Frost, OpenWrt, roadmap-gate, hardening, ARM64 board, and firmware workflow refs.
 
 ## Current Roadmap Research Tasks
 
@@ -43,32 +45,32 @@ These items map [FUTURE.md](FUTURE.md) sections that were missing or only partia
 
 ### Milestone SecTime
 
-- [ ] Add a source-backed `refs/` note identifying the active OP-TEE secure time configuration for RK3399 and RK3588, including `CFG_SECURE_TIME_SOURCE_CNTPCT`, AArch64 timer handling, and TF-A `SPD=opteed` integration.
-- [ ] Define what yubiOS may safely claim from secure-world time: monotonic within a boot, suspend/resume behavior, normal-world tamper resistance, and power-loss/reboot limits.
-- [ ] Add or design an OP-TEE TA/smoke test that records monotonic secure-world reads and expected failure behavior on ROCK 5B/RK3588 and ROCKPro64/RK3399.
-- [ ] Draft ADR coverage for which decisions may rely on secure-world time and which require stronger counters, sealed state, or remote-attestation freshness.
+- [x] Add a source-backed `refs/` note identifying the active OP-TEE secure time configuration for RK3399 and RK3588, including `CFG_SECURE_TIME_SOURCE_CNTPCT`, AArch64 timer handling, and TF-A `SPD=opteed` integration: [refs/sectime-rk-secure-time-2026-07-17.md](refs/sectime-rk-secure-time-2026-07-17.md).
+- [x] Define what yubiOS may safely claim from secure-world time: monotonic within a boot, suspend/resume behavior, normal-world tamper resistance, and power-loss/reboot limits: [refs/sectime-rk-secure-time-2026-07-17.md](refs/sectime-rk-secure-time-2026-07-17.md).
+- [x] Add or design an OP-TEE TA/smoke test that records monotonic secure-world reads and expected failure behavior on ROCK 5B/RK3588 and ROCKPro64/RK3399: [refs/sectime-rk-secure-time-2026-07-17.md](refs/sectime-rk-secure-time-2026-07-17.md).
+- [x] Draft ADR coverage for which decisions may rely on secure-world time and which require stronger counters, sealed state, or remote-attestation freshness: [refs/sectime-rk-secure-time-2026-07-17.md](refs/sectime-rk-secure-time-2026-07-17.md).
 
 ### Milestone Frost
 
-- [ ] Add a source-backed `refs/` map of current Panfrost/Rockchip kernel patch points for probe/init, BO create/free, PRIME import, and submit guarding.
-- [ ] Determine whether the target kernel can use DRM device-memory cgroup accounting for Panfrost, or whether a minimal cgroup-aware BO accounting prototype is required first.
-- [ ] Sketch the U-Boot device-tree/reserved-memory handoff plus secure-monitor SMC or mailbox interface for context quarantine, IOMMU revocation, GPU reset, or power gating.
-- [ ] Prove whether RK3399/RK3588 lockout can target an offending cgroup/context or must fall back to full-GPU reset behavior.
-- [ ] Define tests for false positives, graphics stack recovery, telemetry, logs, owner notification, and owner recovery after a Frost event.
-- [ ] Draft ADR coverage for the trust boundary between Linux policy, OP-TEE/TF-A hard cutoff, and user recovery.
+- [x] Add a source-backed `refs/` map of current Panfrost/Rockchip kernel patch points for probe/init, BO create/free, PRIME import, and submit guarding: [refs/frost-panfrost-lockout-2026-07-17.md](refs/frost-panfrost-lockout-2026-07-17.md).
+- [x] Determine whether the target kernel can use DRM device-memory cgroup accounting for Panfrost, or whether a minimal cgroup-aware BO accounting prototype is required first: [refs/frost-panfrost-lockout-2026-07-17.md](refs/frost-panfrost-lockout-2026-07-17.md).
+- [x] Sketch the U-Boot device-tree/reserved-memory handoff plus secure-monitor SMC or mailbox interface for context quarantine, IOMMU revocation, GPU reset, or power gating: [refs/frost-panfrost-lockout-2026-07-17.md](refs/frost-panfrost-lockout-2026-07-17.md).
+- [ ] Prove whether RK3399/RK3588 lockout can target an offending cgroup/context or must fall back to full-GPU reset behavior. Requires kernel prototype plus RK hardware recovery evidence.
+- [x] Define tests for false positives, graphics stack recovery, telemetry, logs, owner notification, and owner recovery after a Frost event: [refs/frost-panfrost-lockout-2026-07-17.md](refs/frost-panfrost-lockout-2026-07-17.md).
+- [x] Draft ADR coverage for the trust boundary between Linux policy, OP-TEE/TF-A hard cutoff, and user recovery: [refs/frost-panfrost-lockout-2026-07-17.md](refs/frost-panfrost-lockout-2026-07-17.md).
 
 ### Milestone Net
 
-- [ ] Turn [refs/endlessh-openwrt-fit-2026-07-17.md](refs/endlessh-openwrt-fit-2026-07-17.md) into an OpenWrt package proof plan with feed/package layout, UCI config, procd service behavior, firewall/nftables integration, and WireGuard-zone defaults.
+- [x] Turn [refs/endlessh-openwrt-fit-2026-07-17.md](refs/endlessh-openwrt-fit-2026-07-17.md) into an OpenWrt package proof plan with feed/package layout, UCI config, procd service behavior, firewall/nftables integration, and WireGuard-zone defaults: [refs/openwrt-deception-proof-plan-2026-07-17.md](refs/openwrt-deception-proof-plan-2026-07-17.md).
 - [ ] Build an OpenWrt VM or spare-router proof with a WireGuard-only decoy address pool and an owner-selected notification path.
 - [ ] Capture packet-level evidence that scans hit decoys before the real SSH endpoint is discoverable.
-- [ ] Define logging defaults that avoid storing attempted passwords, private keys, or sensitive payloads, while still preserving useful owner notification evidence.
-- [ ] Draft ADR coverage for the deception trust boundary, notification model, evidence retention, lab-mode exposure, and failure behavior.
+- [x] Define logging defaults that avoid storing attempted passwords, private keys, or sensitive payloads, while still preserving useful owner notification evidence: [refs/openwrt-deception-proof-plan-2026-07-17.md](refs/openwrt-deception-proof-plan-2026-07-17.md).
+- [x] Draft ADR coverage for the deception trust boundary, notification model, evidence retention, lab-mode exposure, and failure behavior: [refs/openwrt-deception-proof-plan-2026-07-17.md](refs/openwrt-deception-proof-plan-2026-07-17.md).
 
 ### FUTURE Promotion Gates
 
-- [ ] Before moving any FUTURE item into ADR, SPEC, or implementation, record its trust boundary, recovery behavior, evidence target, required pins/upstream sources, notification/evidence-retention policy when relevant, and production/test artifact separation.
-- [ ] Keep post-launch hardware and deferred ideas watch-listed until a specific owner, board or deployment target, evidence target, and recovery plan exist.
+- [x] Before moving any FUTURE item into ADR, SPEC, or implementation, record its trust boundary, recovery behavior, evidence target, required pins/upstream sources, notification/evidence-retention policy when relevant, and production/test artifact separation: [refs/roadmap-promotion-gates-2026-07-17.md](refs/roadmap-promotion-gates-2026-07-17.md).
+- [x] Keep post-launch hardware and deferred ideas watch-listed until a specific owner, board or deployment target, evidence target, and recovery plan exist: [refs/roadmap-promotion-gates-2026-07-17.md](refs/roadmap-promotion-gates-2026-07-17.md).
 
 ## Current CI Tasks
 
@@ -81,7 +83,7 @@ These items map [FUTURE.md](FUTURE.md) sections that were missing or only partia
 - [ ] Treat old-sha workflow reruns as historical unless the workflow is rerun against current `main`.
 - [x] For workflow trigger edits, add narrow path-scoped push triggers only when required for validation.
 - [ ] If build policy wiring moves into Bake, keep Docker `target.policy` keys aligned with CLI policy flags and avoid duplicate `Dockerfile.rego` loading assumptions.
-- [ ] Add board variant fields to real-hardware firmware workflows before hardware lanes land: `rock5b-rk3588` as the primary/default Path A variant and `rockpro64-rk3399` as the supported secondary variant.
+- [x] Add board variant fields to real-hardware firmware workflows before hardware lanes land: `rock5b-rk3588` as the primary/default Path A variant and `rockpro64-rk3399` as the supported secondary variant. See `.github/workflows/ci_firmware-rk.yml` and [refs/firmware-rk-workflow-2026-07-17.md](refs/firmware-rk-workflow-2026-07-17.md).
 - [ ] Validate the documented `bootc install to-filesystem` path on a fresh VM or disposable disk, including external partition preparation, mounted `/mnt`, `--skip-finalize`, and omitted `root=` via `--root-mount-spec=""`.
 
 ## Current ARM64 Tasks
@@ -91,29 +93,30 @@ These items map [FUTURE.md](FUTURE.md) sections that were missing or only partia
 - [ ] Prove OP-TEE, StandaloneMM, RPMB-backed variables, fTPM NV, and U-Boot UEFI on ROCK 5B hardware first, then carry the supported-secondary evidence to ROCKPro64.
 - [ ] Record exact TF-A, OP-TEE, StandaloneMM/RPMB, and U-Boot config evidence for Path A, including `CFG_RPMB_FS`, `CONFIG_EFI_MM_COMM_TEE`, and `CONFIG_SUPPORT_EMMC_RPMB`.
 - [ ] Verify the same signed UKI boots across ARM64 and x86-64 paths.
-- [ ] Document Path A vs Path B status per board, starting with `rock5b-rk3588` and `rockpro64-rk3399`.
+- [x] Document Path A vs Path B status per board, starting with `rock5b-rk3588` and `rockpro64-rk3399`: [refs/arm64-rk-board-status-2026-07-17.md](refs/arm64-rk-board-status-2026-07-17.md).
 
 ## Current Security Tasks
 
-- [ ] Audit services for `ConditionSecurity=measured-os` where enrollment or signing behavior must not run on an unmeasured boot.
-- [ ] Audit `RestrictFileSystems=` separately from the v261 `RestrictFileSystemAccess=` control.
+- [x] Audit services for `ConditionSecurity=measured-os` where enrollment or signing behavior must not run on an unmeasured boot: [refs/systemd-hardening-audit-2026-07-17.md](refs/systemd-hardening-audit-2026-07-17.md).
+- [x] Audit `RestrictFileSystems=` separately from the v261 `RestrictFileSystemAccess=` control: [refs/systemd-hardening-audit-2026-07-17.md](refs/systemd-hardening-audit-2026-07-17.md).
 - [x] Keep CHIPSEC first-boot validation scoped as a one-shot exception and document firmware-warning behavior: the unit and Bats coverage enforce the one-shot exception, while `run-firstboot-check.sh` documents `PASS`/`WARN`/`FAILED` semantics and informational WPBT/Computrace evidence.
 - [ ] Add or refresh real-hardware YubiKey validation evidence for FIDO2 unlock and homed flows.
-- [ ] Keep recovery paths documented before enabling any feature that can lock an owner out.
+- [x] Keep recovery paths documented before enabling any feature that can lock an owner out: [refs/roadmap-promotion-gates-2026-07-17.md](refs/roadmap-promotion-gates-2026-07-17.md).
 
 ## Current Supply-Chain Tasks
 
 - [ ] Update [PINNED.md](PINNED.md) for every base-image/tool digest change.
 - [ ] Verify package floors after digest bumps: systemd target, pam-u2f >= 1.3.1, OpenSSL 3.5+, and Go 1.24+ where relevant.
-- [ ] Keep production, installer, firmware, and dev/test artifacts clearly labeled and non-overlapping.
+- [x] Keep production, installer, firmware, and dev/test artifacts clearly labeled and non-overlapping: [refs/firmware-rk-workflow-2026-07-17.md](refs/firmware-rk-workflow-2026-07-17.md).
 - [ ] Preserve provenance/SBOM expectations for published artifacts.
-- [ ] Keep production bootc (`latest`, `<sha>`), dev/test (`dev`, `dev-<sha>`), and installer (`installer`, `installer-<sha>`) tags board-neutral unless the OS or installer artifact actually diverges by board.
-- [ ] If real-hardware firmware payloads diverge from the current QEMU/CI `firmware` bundle, publish board-scoped firmware tags under the existing `0mniteck/yubios` namespace: `firmware-rock5b-rk3588`, `firmware-rock5b-rk3588-<sha>`, `firmware-rockpro64-rk3399`, and `firmware-rockpro64-rk3399-<sha>`.
+- [x] Keep production bootc (`latest`, `<sha>`), dev/test (`dev`, `dev-<sha>`), and installer (`installer`, `installer-<sha>`) tags board-neutral unless the OS or installer artifact actually diverges by board. Firmware is now the only board-scoped tag family.
+- [x] Publish board-scoped firmware tags under the existing `0mniteck/yubios` namespace: `firmware-rock5b-rk3588`, `firmware-rock5b-rk3588-<sha>`, `firmware-rockpro64-rk3399`, and `firmware-rockpro64-rk3399-<sha>`, plus the QEMU baseline tags documented in [refs/arm64-rk-board-status-2026-07-17.md](refs/arm64-rk-board-status-2026-07-17.md).
 
 ## Watch List
 
 - Run 29525332901 proved the ARM64 lane can boot the dev image to Fedora login with the pinned QEMU workaround; keep watching for runner QEMU refreshes before removing that workaround.
 - Run 29543974333 reached system targets and started sshd/networking, but root SSH did not become reachable through bcvk within 900s; the next failure should include the unsuppressed `bcvk ssh` error plus an in-container `ssh -vvv` attempt.
+- `.github/workflows/ci_firmware-rk.yml` is now the orchestrated firmware lane. Keep `ci_test-int.yml` available for manual/historical comparison, but do not route the top-level `ci.yml` chain through its `yubiOS firmware` state.
 - systemd v262 removes `/run/boot-loader-entries/` support and the experimental `systemd-sysupdated` D-Bus API; the 2026-07-14 audit found no repo dependency, but future update UX should stay on UAPI.1/BLS and Varlink/systemd-sysupdate rather than removed interfaces or unaudited `updatectl` assumptions.
 - systemd v262 renames `systemd-sysupdate.service`/`.timer` to `systemd-sysupdate-update.service`/`.timer`; verify compatibility symlinks before adding units against the old names.
 - Go 1.26 expands default hybrid PQ TLS key exchanges beyond `X25519MLKEM768`; tests should assert acceptable policy rather than a single hard-coded group.
