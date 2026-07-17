@@ -21,7 +21,7 @@ on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/ci_test-vm.yml' # self-change trigger for validating workflow edits
+      - '.github/workflows/ci_test-vm.yml' # self-change trigger for validating workflow edits on current main
   workflow_dispatch:
     inputs:
       image:
