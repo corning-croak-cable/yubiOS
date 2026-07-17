@@ -1,5 +1,5 @@
 # yubiOS bootc install configuration
-# Applied during: bootc install to-disk
+# Applied during: bootc install to-filesystem
 # Schema verified from: https://github.com/bootc-dev/bootc/blob/main/crates/lib/src/install/config.rs
 
 [install]
