@@ -94,8 +94,8 @@ docker run --rm --privileged --pid=host --ipc=host \
 
 ```sh
 IMAGE=docker.io/0mniteck/yubios:latest
-sudo docker pull "$IMAGE" && \
-sudo docker run --rm --privileged --pid=host --ipc=host \
+docker pull "$IMAGE" && \
+docker run --rm --privileged --pid=host --ipc=host \
   --security-opt label=type:unconfined_t \
   -v /var/lib/containers:/var/lib/containers \
   -v /dev:/dev \
@@ -109,8 +109,8 @@ sudo docker run --rm --privileged --pid=host --ipc=host \
     --skip-finalize \
     /run/host/mnt/
 
-sudo bootc switch 0mniteck/yubios:latest
-sudo bootc upgrade
+bootc switch 0mniteck/yubios:latest
+bootc upgrade
 ```
 
 Every approved base image and GitHub Action SHA lives in [PINNED.md](PINNED.md). That file is the single source of truth for pins.
