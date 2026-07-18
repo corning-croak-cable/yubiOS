@@ -12,6 +12,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/ci_firmware-rk.yml' # self-change trigger for validating workflow edits
+      - 'yubiOS-bake.hcl'
   workflow_dispatch:
     inputs:
       reason:
@@ -797,55 +798,25 @@ jobs:
           } > fw/firmware/MANIFEST.txt
           ls -l fw/firmware/
 
-      - name: Build firmware OCI artifact
-        if: steps.rk_tpl_gate.outputs.skip_publish != '1'
-        env:
-          BOARD: ${{ matrix.board }}
-          BOARD_TITLE: ${{ matrix.board_title }}
-          PUBLISH_ORIGINAL: ${{ matrix.publish_original }}
-        run: |
-          set -euxo pipefail
-          cat > fw/Dockerfile <<'DOCKER'
-          FROM scratch
-          COPY firmware/ /firmware/
-          DOCKER
-          tag_args=(
-            -t "0mniteck/yubios:firmware-${BOARD}"
-            -t "0mniteck/yubios:firmware-${BOARD}-${GITHUB_SHA}"
-          )
-          if [ "$PUBLISH_ORIGINAL" = "true" ]; then
-            tag_args+=(
-              -t "0mniteck/yubios:firmware"
-              -t "0mniteck/yubios:firmware-${GITHUB_SHA}"
-            )
-          fi
-          docker -H unix:///var/run/ducker.sock buildx build \
-            --label "org.opencontainers.image.title=yubiOS ARM64 firmware bundle (${BOARD})" \
-            --label "org.opencontainers.image.description=Board-specific TF-A + OP-TEE StMM/fTPM + U-Boot firmware for ${BOARD_TITLE}" \
-            --label "org.opencontainers.image.source=https://github.com/yubi-OS/yubiOS" \
-            --label "org.opencontainers.image.revision=${GITHUB_SHA}" \
-            --label "io.yubios.firmware.board=${BOARD}" \
-            --load \
-            "${tag_args[@]}" \
-            fw
-
       - name: Log in to Docker Hub
         if: steps.rk_tpl_gate.outputs.skip_publish != '1'
         run: echo "${{ secrets.DOCKER }}" | docker -H unix:///var/run/ducker.sock login -u 0mniteck42 --password-stdin
 
-      - name: Push firmware tags
+      - name: Build and push firmware OCI artifact through Bake
         if: steps.rk_tpl_gate.outputs.skip_publish != '1'
         env:
-          BOARD: ${{ matrix.board }}
-          PUBLISH_ORIGINAL: ${{ matrix.publish_original }}
+          FIRMWARE_CONTEXT: fw
+          FIRMWARE_BOARD: ${{ matrix.board }}
+          FIRMWARE_BOARD_TITLE: ${{ matrix.board_title }}
+          FIRMWARE_PUBLISH_ORIGINAL: ${{ matrix.publish_original }}
+          GIT_SHA: ${{ github.sha }}
+          PUSH: 'true'
         run: |
           set -euxo pipefail
-          docker -H unix:///var/run/ducker.sock push "0mniteck/yubios:firmware-${BOARD}"
-          docker -H unix:///var/run/ducker.sock push "0mniteck/yubios:firmware-${BOARD}-${GITHUB_SHA}"
-          if [ "$PUBLISH_ORIGINAL" = "true" ]; then
-            docker -H unix:///var/run/ducker.sock push "0mniteck/yubios:firmware"
-            docker -H unix:///var/run/ducker.sock push "0mniteck/yubios:firmware-${GITHUB_SHA}"
-          fi
+          docker -H unix:///var/run/ducker.sock buildx bake \
+            --builder hardened \
+            --file yubiOS-bake.hcl \
+            firmware
           docker -H unix:///var/run/ducker.sock logout
 
       - name: Verify pushed board tag

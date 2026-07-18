@@ -14,9 +14,13 @@
 # paths ship byte-identical swu2f tooling, per ADR-006's "both paths behave
 # identically at runtime" principle.
 #
-# Build: docker buildx build -f Containerfile.dev --build-arg BASE_IMAGE=<base tag> .
+# Build through yubiOS-bake.hcl so the production image is supplied as the
+# policy-checked `yubios-base` named context instead of a daemon-local tag.
+# Standalone equivalent:
+#   docker buildx build -f Containerfile.dev \
+#     --build-context yubios-base=docker-image://<pinned-yubios-ref> .
 
-ARG BASE_IMAGE=yubios:ci-local
+ARG BASE_IMAGE=yubios-base
 FROM ${BASE_IMAGE}
 
 COPY mkosi.conf.d/test/install-swu2f-authenticator.sh /tmp/install-swu2f-authenticator.sh

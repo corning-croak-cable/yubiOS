@@ -1,5 +1,5 @@
 # yubiOS — FIDO2-first immutable OS image (Fedora base)
-# Build: docker buildx build --policy reset=true,strict=true,filename=yubiOS.rego -t yubiOS .
+# Build: ARCH=amd64 PLATFORM=linux/amd64 docker buildx bake -f yubiOS-bake.hcl yubios-ci
 # Source: bootc design https://github.com/bootc-dev/bootc
 # Source: particleos ethos https://github.com/systemd/particleos
 

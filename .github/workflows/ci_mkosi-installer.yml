@@ -208,32 +208,19 @@ jobs:
             --driver docker-container \
             --use
 
-      - name: Build installer OCI artifact (FROM scratch)
+      - name: Build and push installer OCI artifact through Bake
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
-        run: |
-          set -euxo pipefail
-          cat > inst/Dockerfile <<'DOCKER'
-          FROM scratch
-          COPY installer/ /installer/
-          DOCKER
-          docker -H unix:///var/run/ducker.sock buildx build \
-            --builder hardened \
-            --label "org.opencontainers.image.title=yubiOS mkosi installer image" \
-            --label "org.opencontainers.image.description=DPS disk image + PKCS#11-signed UKI (minimal profile); installs the base system that runs the bootc images" \
-            --label "org.opencontainers.image.source=https://github.com/yubi-OS/yubiOS" \
-            --label "org.opencontainers.image.revision=${GITHUB_SHA}" \
-            --load \
-            -t "0mniteck/yubios:installer" \
-            -t "0mniteck/yubios:installer-${GITHUB_SHA}" \
-            inst
-
-      - name: Push installer tags
-        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
+        env:
+          GIT_SHA: ${{ github.sha }}
+          INSTALLER_CONTEXT: inst
+          PUSH: 'true'
         run: |
           set -euxo pipefail
           echo "${{ secrets.DOCKER }}" | docker -H unix:///var/run/ducker.sock login -u 0mniteck42 --password-stdin
-          docker -H unix:///var/run/ducker.sock push "0mniteck/yubios:installer"
-          docker -H unix:///var/run/ducker.sock push "0mniteck/yubios:installer-${GITHUB_SHA}"
+          docker -H unix:///var/run/ducker.sock buildx bake \
+            --builder hardened \
+            --file yubiOS-bake.hcl \
+            installer
           docker -H unix:///var/run/ducker.sock logout
           docker -H unix:///var/run/ducker.sock buildx imagetools inspect "0mniteck/yubios:installer"
 

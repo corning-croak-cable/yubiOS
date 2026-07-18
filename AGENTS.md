@@ -53,8 +53,13 @@ Use the multi-arch OCI index digest from [PINNED.md](PINNED.md):
 
 ```sh
 docker pull dhi.io/debian-base:trixie-debian13-dev@sha256:<PINNED_INDEX_DIGEST>
-docker buildx build --policy reset=true,strict=true,filename=yubiOS.rego .
+ARCH=amd64 PLATFORM=linux/amd64 \
+  docker buildx bake --file yubiOS-bake.hcl yubios-ci
 ```
+
+`yubiOS-bake.hcl` is canonical for non-fork container builds. Its inherited
+`target.policy` loads `yubiOS.rego` with `reset=true` and `strict=true`; do not
+duplicate or bypass that policy in workflow-local `buildx build` commands.
 
 Workflow containers must use the pinned index digest and Docker Hub credentials from repository secrets:
 

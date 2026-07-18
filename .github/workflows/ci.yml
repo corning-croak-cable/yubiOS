@@ -12,6 +12,9 @@ name: CI
 # dispatch inputs (push flags, VM image, target ref) explicit instead of relying
 # on workflow_run, whose event payload cannot carry the original workflow_dispatch
 # inputs across the chain.
+#
+# Every Docker build invoked by the non-ci_fork portion of this chain is defined
+# in yubiOS-bake.hcl. This file retains only GitHub dispatch/state semantics.
 
 on:
   workflow_dispatch:
