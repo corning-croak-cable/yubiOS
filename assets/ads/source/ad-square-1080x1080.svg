@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#05030b"/>
+      <stop offset="0.55" stop-color="#0a0713"/>
+      <stop offset="1" stop-color="#12031a"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="72%" cy="38%" r="62%">
+      <stop offset="0" stop-color="#ff1493" stop-opacity="0.25"/>
+      <stop offset="0.43" stop-color="#8b2cff" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#05030b" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="54" height="54" patternUnits="userSpaceOnUse">
+      <path d="M54 0H0V54" fill="none" stroke="#a25cff" stroke-opacity="0.08" stroke-width="1"/>
+      <circle cx="0" cy="0" r="2" fill="#00e5ff" fill-opacity="0.24"/>
+    </pattern>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="12" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <clipPath id="logoClip"><rect x="72" y="72" width="128" height="128" rx="28"/></clipPath>
+    <linearGradient id="stroke" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#ff1493"/><stop offset="0.55" stop-color="#a63cff"/><stop offset="1" stop-color="#86ff33"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1080" height="1080" fill="url(#bg)"/>
+  <rect width="1080" height="1080" fill="url(#halo)"/>
+  <rect width="1080" height="1080" fill="url(#grid)"/>
+
+  <g fill="none" stroke="url(#stroke)" filter="url(#glow)" opacity="0.34">
+    <rect x="770" y="92" width="190" height="360" rx="95" stroke-width="22" transform="rotate(28 865 272)"/>
+    <rect x="822" y="352" width="190" height="360" rx="95" stroke-width="22" transform="rotate(-28 917 532)"/>
+    <path d="M760 708C890 638 1022 710 1014 842C1004 980 846 1012 758 928" stroke-width="18"/>
+  </g>
+  <circle cx="850" cy="504" r="278" fill="none" stroke="#00e5ff" stroke-opacity="0.12" stroke-width="2" stroke-dasharray="8 18"/>
+  <circle cx="850" cy="504" r="222" fill="none" stroke="#ff1493" stroke-opacity="0.15" stroke-width="2"/>
+
+  <rect x="64" y="64" width="144" height="144" rx="34" fill="#ff1493" fill-opacity="0.14" stroke="#ff54b4" stroke-opacity="0.65"/>
+  <image href="../../logo.png" x="72" y="72" width="128" height="128" preserveAspectRatio="xMidYMid slice" clip-path="url(#logoClip)"/>
+  <text x="232" y="135" fill="#f8f4ff" font-family="Nimbus Sans, DejaVu Sans, sans-serif" font-size="62" font-weight="700" letter-spacing="-2">yubiOS</text>
+  <text x="234" y="174" fill="#a89db8" font-family="Nimbus Mono PS, DejaVu Sans Mono, monospace" font-size="17" letter-spacing="2.5">OWNER-HELD TRUST</text>
+
+  <rect x="72" y="250" width="304" height="42" rx="21" fill="#160d20" stroke="#ff1493" stroke-opacity="0.72"/>
+  <circle cx="96" cy="271" r="5" fill="#86ff33" filter="url(#glow)"/>
+  <text x="112" y="278" fill="#f6edff" font-family="Nimbus Mono PS, DejaVu Sans Mono, monospace" font-size="16" font-weight="700" letter-spacing="1.5">EXPERIMENTAL • PRE-LAUNCH</text>
+
+  <g font-family="Nimbus Sans, DejaVu Sans, sans-serif" font-weight="700" letter-spacing="-3">
+    <text x="68" y="452" fill="#faf7ff" font-size="91">PUT THE <tspan fill="#ff3ba6">OWNER</tspan></text>
+    <text x="68" y="560" fill="#faf7ff" font-size="96">BACK IN THE</text>
+    <text x="68" y="690" fill="#faf7ff" font-size="122">TRUST CHAIN.</text>
+  </g>
+  <rect x="72" y="732" width="118" height="6" rx="3" fill="#ff1493"/>
+  <rect x="198" y="732" width="56" height="6" rx="3" fill="#00e5ff"/>
+  <rect x="262" y="732" width="32" height="6" rx="3" fill="#86ff33"/>
+
+  <text x="72" y="810" fill="#d7ccdf" font-family="Nimbus Sans, DejaVu Sans, sans-serif" font-size="31" font-weight="400">FIDO2-first. Image-based. Built in public.</text>
+  <text x="72" y="851" fill="#8f849e" font-family="Nimbus Mono PS, DejaVu Sans Mono, monospace" font-size="17" letter-spacing="1.1">SIGNING • UNLOCK • SSH • LOCAL AUTH</text>
+
+  <rect x="72" y="920" width="424" height="76" rx="38" fill="#f6effb"/>
+  <text x="112" y="969" fill="#100717" font-family="Nimbus Sans, DejaVu Sans, sans-serif" font-size="25" font-weight="700" letter-spacing="0.4">EXPLORE THE OPEN PROJECT →</text>
+  <text x="1034" y="974" text-anchor="end" fill="#9487a3" font-family="Nimbus Mono PS, DejaVu Sans Mono, monospace" font-size="16">github.com/yubi-OS/yubiOS</text>
+
+</svg>
