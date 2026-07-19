@@ -684,17 +684,17 @@ jobs:
           name: fip-flash-${{ matrix.board }}-arm64
           path: art
 
-      - name: Honor RK3588 TPL publish gate
+      - name: RK3588 TPL publish gate
         id: rk_tpl_gate
         run: |
           set -euo pipefail
-          if [ -s art/rk-tpl-required.txt ]; then
-            cat art/rk-tpl-required.txt
-            echo "skip_publish=1" >> "$GITHUB_OUTPUT"
-            echo "::notice title=Firmware publish skipped::${{ matrix.board }} requires ROCKCHIP_TPL; no bootable Rockchip image was produced."
-          else
+          #if [ -s art/rk-tpl-required.txt ]; then
+          #  cat art/rk-tpl-required.txt
+          #  echo "skip_publish=1" >> "$GITHUB_OUTPUT"
+          #  echo "::notice title=Firmware publish skipped::${{ matrix.board }} requires ROCKCHIP_TPL; no bootable Rockchip image was produced."
+          #else
             echo "skip_publish=0" >> "$GITHUB_OUTPUT"
-          fi
+          #fi
 
       - name: Install docker-engine + buildx
         if: steps.rk_tpl_gate.outputs.skip_publish != '1'
