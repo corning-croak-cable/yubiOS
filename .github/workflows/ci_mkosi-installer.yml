@@ -216,7 +216,7 @@ jobs:
       credentials:
         username: 0mniteck42
         password: ${{ secrets.DOCKER }}
-      image: docker://dhi.io/debian-base@sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6 # PINNED.md
+      image: docker://dhi.io/debian-base@sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # PINNED.md
@@ -227,27 +227,23 @@ jobs:
           name: mkosi-installer-payload
           path: inst/installer
 
-      - name: Install docker-engine + buildx (user-scoped hardened builder)
+      - name: Install docker CLI + buildx
         run: |
-          set -euxo pipefail
           apt-get update -qq
-          apt-get install -y -qq --no-install-recommends curl iptables nftables
+          apt-get install -y -qq --no-install-recommends git curl iptables nftables
           wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
           wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
           tar xzf docker-29.6.0.tgz
-          mkdir -p /usr/libexec/docker/cli-plugins/ /mnt/docker
+          mkdir -p /usr/libexec/docker/cli-plugins/
           cp docker/* /usr/bin/
           cp buildx-v0.35.0.linux-amd64 /usr/libexec/docker/cli-plugins/docker-buildx
           chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
+          mkdir -p /mnt/docker
           dockerd --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
-          for _ in $(seq 1 30); do
-            docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break
-            sleep 1
-          done
+          for i in $(seq 1 30); do docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
           docker -H unix:///var/run/ducker.sock buildx create --name hardened \
             --driver docker-container \
             --use
-          docker -H unix:///var/run/ducker.sock buildx inspect --builder hardened --bootstrap
 
       - name: Build and push installer OCI artifact through Bake
         env:
