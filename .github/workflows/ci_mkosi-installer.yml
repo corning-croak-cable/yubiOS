@@ -133,8 +133,20 @@ jobs:
           apt-get install -y -qq --no-install-recommends \
             ca-certificates debian-archive-keyring findutils openssl procps \
             python3-pip sbsigntool softhsm2 uidmap zstd
-          pip install --break-system-packages git+https://github.com/yubi-OS/mkosi.git@feature/yubiOS-profile
-          mkosi dependencies | xargs -r -d '\n' apt-get install -y -qq --no-install-recommends
+          mkosi_wheel_dir=$(mktemp -d)
+          python3 -m pip wheel --no-deps --wheel-dir "$mkosi_wheel_dir" \
+            git+https://github.com/yubi-OS/mkosi.git@feature/yubiOS-profile
+          python3 -m pip install --break-system-packages "$mkosi_wheel_dir"/mkosi-*.whl
+          mkosi dependencies > "$mkosi_wheel_dir/dependencies"
+          xargs -r -d '\n' apt-get install -y -qq --no-install-recommends \
+            < "$mkosi_wheel_dir/dependencies"
+          # mkosi's dependency set can replace DHI's Python 3.14 with Debian's
+          # Python 3.13. Reinstall the same pure-Python wheel for the final
+          # interpreter, then discard Bash's cached pre-transition launcher.
+          python3 -m pip install --break-system-packages --force-reinstall \
+            "$mkosi_wheel_dir"/mkosi-*.whl
+          hash -r
+          python3 -c 'import mkosi'
           mkosi --version
           # The Ubuntu 24.04 runner host may restrict unprivileged userns via
           # AppArmor; the privileged DHI job container can relax it for mkosi.
