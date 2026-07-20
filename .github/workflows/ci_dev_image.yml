@@ -104,9 +104,9 @@ jobs:
       - name: Install docker-engine and docker-buildx (${{ matrix.arch }})
         run: |
           apt-get update -qq
-          apt-get install -y -qq --no-install-recommends git wget iptables nftables
-          wget -q "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-29.6.0.tgz"
-          wget -q "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.${{ matrix.buildx_arch }}"
+          apt-get install -y -qq --no-install-recommends git curl iptables nftables
+          wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-29.6.0.tgz"
+          wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.${{ matrix.buildx_arch }}"
           tar xzf docker-29.6.0.tgz
           mkdir -p /usr/libexec/docker/cli-plugins/
           cp docker/* /usr/bin/
@@ -167,9 +167,9 @@ jobs:
       - name: Install docker CLI + buildx
         run: |
           apt-get update -qq
-          apt-get install -y -qq --no-install-recommends git wget iptables nftables
-          wget -q "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
-          wget -q "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
+          apt-get install -y -qq --no-install-recommends git curl iptables nftables
+          wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
+          wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
           tar xzf docker-29.6.0.tgz
           mkdir -p /usr/libexec/docker/cli-plugins/
           cp docker/* /usr/bin/

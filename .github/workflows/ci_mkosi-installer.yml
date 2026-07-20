@@ -198,9 +198,15 @@ jobs:
         run: |
           set -euxo pipefail
           sudo apt-get update -qq
-          sudo apt-get install -y -qq --no-install-recommends wget iptables nftables || true
-          wget -q "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
-          wget -q "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
+          sudo apt-get install -y -qq --no-install-recommends curl iptables nftables || true
+          # ubuntu-24.04 ships curl 8.5 without bundled wcurl; pin the upstream release.
+          curl --fail --location --silent --show-error \
+            --output "${RUNNER_TEMP}/wcurl" \
+            "https://github.com/curl/wcurl/releases/download/v2026.01.05/wcurl"
+          echo "180aaaa62b84e6a92bdebc7e31992c82b446ee72c37006d349c7882c5b54d1ae  ${RUNNER_TEMP}/wcurl" | sha256sum --check
+          sudo install -m 0755 "${RUNNER_TEMP}/wcurl" /usr/local/bin/wcurl
+          wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
+          wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
           tar xzf docker-29.6.0.tgz
           docker_bin="${RUNNER_TEMP}/docker-static/bin"
           docker_plugins="${HOME}/.docker/cli-plugins"
