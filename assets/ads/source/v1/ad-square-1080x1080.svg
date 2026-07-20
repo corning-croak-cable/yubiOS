@@ -37,7 +37,7 @@
   <circle cx="850" cy="504" r="222" fill="none" stroke="#ff1493" stroke-opacity="0.15" stroke-width="2"/>
 
   <rect x="64" y="64" width="144" height="144" rx="34" fill="#ff1493" fill-opacity="0.14" stroke="#ff54b4" stroke-opacity="0.65"/>
-  <image href="../../logo.png" x="72" y="72" width="128" height="128" preserveAspectRatio="xMidYMid slice" clip-path="url(#logoClip)"/>
+  <image href="../../../logo.png" x="72" y="72" width="128" height="128" preserveAspectRatio="xMidYMid slice" clip-path="url(#logoClip)"/>
   <text x="232" y="135" fill="#f8f4ff" font-family="Nimbus Sans, DejaVu Sans, sans-serif" font-size="62" font-weight="700" letter-spacing="-2">yubiOS</text>
   <text x="234" y="174" fill="#a89db8" font-family="Nimbus Mono PS, DejaVu Sans Mono, monospace" font-size="17" letter-spacing="2.5">OWNER-HELD TRUST</text>
 

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="970" height="250" viewBox="0 0 970 250">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#03040d"/><stop offset="0.62" stop-color="#060413"/><stop offset="1" stop-color="#090418"/></linearGradient>
+    <linearGradient id="shade" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#03040d" stop-opacity="0.88"/><stop offset="0.50" stop-color="#03040d" stop-opacity="0.52"/><stop offset="0.72" stop-color="#03040d" stop-opacity="0.06"/><stop offset="1" stop-opacity="0"/></linearGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <clipPath id="logoClip"><rect x="28" y="22" width="66" height="66" rx="15"/></clipPath>
+  </defs>
+  <rect width="970" height="250" fill="url(#shade)"/>
+  <path d="M0 118H570" stroke="#8b35ff" stroke-opacity="0.18"/><path d="M0 124H530" stroke="#00e5ff" stroke-opacity="0.12"/>
+  <rect x="23" y="17" width="76" height="76" rx="19" fill="#ff1493" fill-opacity="0.12" stroke="#ff53b4" stroke-opacity="0.54"/>
+  <image href="../../../logo.png" x="28" y="22" width="66" height="66" preserveAspectRatio="xMidYMid slice" clip-path="url(#logoClip)"/>
+  <text x="116" y="60" fill="#fbf7ff" font-family="Nimbus Sans, DejaVu Sans, sans-serif" font-size="36" font-weight="700" letter-spacing="-1.2">yubiOS</text>
+  <rect x="116" y="69" width="207" height="24" rx="12" fill="#100d1d" fill-opacity="0.92" stroke="#ff1493" stroke-opacity="0.60"/>
+  <circle cx="130" cy="81" r="3" fill="#89ff38" filter="url(#glow)"/>
+  <text x="140" y="85" fill="#f4ecf8" font-family="Nimbus Mono PS, DejaVu Sans Mono, monospace" font-size="9.5" font-weight="700" letter-spacing="1">EXPERIMENTAL • OPEN SOURCE</text>
+  <g font-family="Nimbus Sans, DejaVu Sans, sans-serif" font-weight="700" letter-spacing="-1.7" stroke="#03040c" stroke-opacity="0.44" stroke-width="1.5" paint-order="stroke fill">
+    <text x="27" y="151" fill="#fbf8ff" font-size="42">LINUX®, MEET</text>
+    <text x="27" y="197" fill="#fbf8ff" font-size="40">TRUST <tspan fill="#ff3aa5">IN YOUR HANDS.</tspan></text>
+  </g>
+  <text x="29" y="219" fill="#c9bdcf" font-family="Nimbus Sans, DejaVu Sans, sans-serif" font-size="13">FIDO2-first. Image-based. Built in public.</text>
+  <text x="28" y="240" fill="#8c8192" font-family="Nimbus Sans, DejaVu Sans, sans-serif" font-size="8.4">Linux® is the registered trademark of Linus Torvalds in the U.S. and other countries.</text>
+  <text x="942" y="240" text-anchor="end" fill="#8c8192" font-family="Nimbus Sans, DejaVu Sans, sans-serif" font-size="8.4">Penguin concept: Larry Ewing &amp; The GIMP.</text>
+</svg>
