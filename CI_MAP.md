@@ -113,7 +113,7 @@ flowchart TD
 |---|---|---|---|
 | `yubiOS-ci.yml` | `yubios-ci` (`yubios` + `yubios-smoke`) | `yubios` | Containerized job creates and names user-scoped `hardened` builder |
 | `ci_dev_image.yml` | `yubios-dev-ci` (`yubios-dev` + `yubios-dev-smoke`) | `yubios-dev` | Containerized job creates and names user-scoped `hardened` builder |
-| `ci_firmware-rk.yml` | None unless publication is requested | `firmware` | Containerized job creates and names user-scoped `hardened` builder |
+| `ci_firmware-rk.yml` | None unless publication is requested | `firmware` | Every Stage 1–4 job uses the pinned DHI container and creates a user-scoped `hardened` builder |
 | `ci_mkosi-installer.yml` | Host-side mkosi validation plus artifact handoff | `installer` | Containerized job creates and names user-scoped `hardened` builder |
 | `ci_pq_tls_verify.yml` | `pq-tls-verify` | None; output is `cacheonly` | Containerized job creates and names user-scoped `hardened` builder |
 
@@ -121,17 +121,17 @@ Production and dev publication remains a two-stage operation: native runners pub
 
 ## ARM64/RK Firmware Integration
 
-`ci_firmware-rk.yml` is the orchestrated firmware lane. It preserves the firmware integration shape from `ci_test-int.yml`, prepares one board payload per matrix entry, then invokes the Bake `firmware` target with `PUSH=true` when publication is requested. The QEMU board retains the compatibility `firmware` tags; every publishable board receives board-scoped tags.
+`ci_firmware-rk.yml` is the orchestrated firmware lane. Every build, verification, and publication stage runs in the pinned multi-arch DHI container and installs Docker/Buildx through the shared `wcurl` pattern, creating a user-scoped `hardened` builder. The workflow preserves the firmware integration shape, prepares one board payload per matrix entry, then invokes the Bake `firmware` target with `PUSH=true` when publication is requested. The QEMU board retains the compatibility `firmware` tags; every publishable board receives board-scoped tags.
 
 ```mermaid
 flowchart TD
     wf["ci_firmware-rk.yml"]
     refs["Pinned env refs\nTF-A\nOP-TEE OS\noptee_ftpm\nU-Boot\nEDK2\nEDK2 platforms\nms-tpm-20-ref\nmbedTLS"]
-    stmm["job: stmm\nbuild EDK2 StandaloneMM\nPlatformStandaloneMmRpmb"]
+    stmm["DHI job: stmm\nuser-scoped hardened builder\nbuild EDK2 StandaloneMM\nPlatformStandaloneMmRpmb"]
     stmm_out["artifact\nBL32_AP_MM-arch\nBL32_AP_MM.fd"]
-    optee["job: optee_fip\nbuild U-Boot BL33\nbuild OP-TEE TA dev kit\nbuild fTPM TA\nrebuild OP-TEE BL32 with Early TA and StMM"]
+    optee["DHI job: optee_fip\nuser-scoped hardened builder\nbuild U-Boot BL33\nbuild OP-TEE TA dev kit\nbuild fTPM TA\nrebuild OP-TEE BL32 with Early TA and StMM"]
     optee_out["artifact\nfip-flash-arch\nfip.bin\nflash.bin\nbl1.bin\nBL32_AP_MM.fd\ntee-*_v2.bin\nu-boot.bin\nfip-info.txt"]
-    qemu["job: qemu\ndownload fip-flash\nassemble flash.bin if needed\nboot qemu-system-aarch64"]
+    qemu["DHI job: qemu\nuser-scoped hardened builder\ndownload fip-flash\nassemble flash.bin if needed\nboot qemu-system-aarch64"]
     asserts["QEMU asserts\nfTPM Early TA loads\nTPM self-test marker\nno known failure signatures\nStMM SP loaded"]
     publish["job: firmware-publish in DHI container\ncheckout + user-scoped hardened builder\nmatrix: qemu-arm64, rock5b-rk3588, rockpro64-rk3399\nif workflow_dispatch + Docker_push=true"]
     fw_payload["/firmware payload\nboard MANIFEST.txt\nfip.bin flash.bin bl1.bin\nBL32_AP_MM.fd u-boot.bin tee bins"]

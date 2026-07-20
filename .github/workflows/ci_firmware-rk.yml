@@ -89,19 +89,52 @@ jobs:
         include:
           - arch: amd64
             runner: ubuntu-24.04
+            docker_arch: x86_64
+            buildx_arch: linux-amd64
           - arch: arm64
             runner: [self-hosted, Linux, ARM64, GPU]
+            docker_arch: aarch64
+            buildx_arch: linux-arm64
     runs-on: ${{ matrix.runner }}
+    container:
+      options: --privileged
+      volumes:
+        - /mnt:/mnt
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6 # auto-resolves to ${{ matrix.arch }}
     env:
       EDK2_REPO: https://github.com/yubi-OS/edk2.git
       EDK2_PLATFORMS_REPO: https://github.com/yubi-OS/edk2-platforms.git
       ACTIVE_PLATFORM: Platform/StandaloneMm/PlatformStandaloneMmPkg/PlatformStandaloneMmRpmb.dsc
     steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # PINNED.md
+
+      - name: Install docker CLI + buildx (${{ matrix.arch }})
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends git curl iptables nftables
+          wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-29.6.0.tgz"
+          wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.${{ matrix.buildx_arch }}"
+          tar xzf docker-29.6.0.tgz
+          mkdir -p /usr/libexec/docker/cli-plugins/
+          cp docker/* /usr/bin/
+          cp "buildx-v0.35.0.${{ matrix.buildx_arch }}" /usr/libexec/docker/cli-plugins/docker-buildx
+          chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
+          mkdir -p /mnt/docker
+          dockerd --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
+          for i in $(seq 1 30); do docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
+          docker -H unix:///var/run/ducker.sock buildx create --name hardened \
+            --driver docker-container \
+            --use
+
       - name: Install EDK2 build deps
         run: |
           set -euxo pipefail
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq \
+          apt-get update -qq
+          apt-get install -y -qq \
             build-essential uuid-dev iasl nasm \
             python3 python3-venv python3-pip \
             bison flex libssl-dev \
@@ -181,6 +214,8 @@ jobs:
         include:
           - arch: amd64
             runner: ubuntu-24.04
+            docker_arch: x86_64
+            buildx_arch: linux-amd64
             board: qemu-arm64
             board_title: QEMU ARM64 CI baseline
             build_kind: qemu
@@ -191,6 +226,8 @@ jobs:
             requires_rockchip_tpl: false
           - arch: arm64
             runner: [self-hosted, Linux, ARM64, GPU]
+            docker_arch: aarch64
+            buildx_arch: linux-arm64
             board: qemu-arm64
             board_title: QEMU ARM64 CI baseline
             build_kind: qemu
@@ -201,6 +238,8 @@ jobs:
             requires_rockchip_tpl: false
           - arch: amd64
             runner: ubuntu-24.04
+            docker_arch: x86_64
+            buildx_arch: linux-amd64
             board: rockpro64-rk3399
             board_title: ROCKPro64 / RK3399 supported secondary Path A
             build_kind: rockchip
@@ -211,6 +250,8 @@ jobs:
             requires_rockchip_tpl: false
           - arch: arm64
             runner: [self-hosted, Linux, ARM64, GPU]
+            docker_arch: aarch64
+            buildx_arch: linux-arm64
             board: rockpro64-rk3399
             board_title: ROCKPro64 / RK3399 supported secondary Path A
             build_kind: rockchip
@@ -221,6 +262,8 @@ jobs:
             requires_rockchip_tpl: false
           - arch: amd64
             runner: ubuntu-24.04
+            docker_arch: x86_64
+            buildx_arch: linux-amd64
             board: rock5b-rk3588
             board_title: Radxa ROCK 5B / RK3588 primary Path A
             build_kind: rockchip
@@ -231,6 +274,8 @@ jobs:
             requires_rockchip_tpl: true
           - arch: arm64
             runner: [self-hosted, Linux, ARM64, GPU]
+            docker_arch: aarch64
+            buildx_arch: linux-arm64
             board: rock5b-rk3588
             board_title: Radxa ROCK 5B / RK3588 primary Path A
             build_kind: rockchip
@@ -240,12 +285,41 @@ jobs:
             tfa_plat: rk3588
             requires_rockchip_tpl: true
     runs-on: ${{ matrix.runner }}
+    container:
+      options: --privileged
+      volumes:
+        - /mnt:/mnt
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6 # auto-resolves to ${{ matrix.arch }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # PINNED.md
+
+      - name: Install docker CLI + buildx (${{ matrix.arch }})
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends git curl iptables nftables
+          wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-29.6.0.tgz"
+          wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.${{ matrix.buildx_arch }}"
+          tar xzf docker-29.6.0.tgz
+          mkdir -p /usr/libexec/docker/cli-plugins/
+          cp docker/* /usr/bin/
+          cp "buildx-v0.35.0.${{ matrix.buildx_arch }}" /usr/libexec/docker/cli-plugins/docker-buildx
+          chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
+          mkdir -p /mnt/docker
+          dockerd --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
+          for i in $(seq 1 30); do docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
+          docker -H unix:///var/run/ducker.sock buildx create --name hardened \
+            --driver docker-container \
+            --use
+
       - name: Install full ARM64 firmware toolchain
         run: |
           set -euxo pipefail
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
+          apt-get update
+          apt-get install -y --no-install-recommends \
             build-essential \
             gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf \
             gcc-arm-none-eabi python3 python3-venv python3-dev \
@@ -565,17 +639,50 @@ jobs:
         include:
           - arch: amd64
             runner: ubuntu-24.04
+            docker_arch: x86_64
+            buildx_arch: linux-amd64
           - arch: arm64
             runner: [self-hosted, Linux, ARM64, GPU]
+            docker_arch: aarch64
+            buildx_arch: linux-arm64
     runs-on: ${{ matrix.runner }}
+    container:
+      options: --privileged
+      volumes:
+        - /mnt:/mnt
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6 # auto-resolves to ${{ matrix.arch }}
     env:
       BOOT_TIMEOUT: '180'
     steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # PINNED.md
+
+      - name: Install docker CLI + buildx (${{ matrix.arch }})
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends git curl iptables nftables
+          wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-29.6.0.tgz"
+          wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.${{ matrix.buildx_arch }}"
+          tar xzf docker-29.6.0.tgz
+          mkdir -p /usr/libexec/docker/cli-plugins/
+          cp docker/* /usr/bin/
+          cp "buildx-v0.35.0.${{ matrix.buildx_arch }}" /usr/libexec/docker/cli-plugins/docker-buildx
+          chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
+          mkdir -p /mnt/docker
+          dockerd --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
+          for i in $(seq 1 30); do docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
+          docker -H unix:///var/run/ducker.sock buildx create --name hardened \
+            --driver docker-container \
+            --use
+
       - name: Install QEMU + TPM tooling
         run: |
           set -euxo pipefail
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
+          apt-get update
+          apt-get install -y --no-install-recommends \
             qemu-system-arm qemu-utils tpm2-tools python3 coreutils ca-certificates ipxe-qemu || true
           qemu-system-aarch64 --version
 
