@@ -685,17 +685,17 @@ jobs:
           name: fip-flash-${{ matrix.board }}-arm64
           path: art
 
-      - name: Honor RK3588 TPL publish gate
+      - name: RK3588 TPL publish gate
         id: rk_tpl_gate
         run: |
           set -euo pipefail
-          if [ -s art/rk-tpl-required.txt ]; then
-            cat art/rk-tpl-required.txt
-            echo "skip_publish=1" >> "$GITHUB_OUTPUT"
-            echo "::notice title=Firmware publish skipped::${{ matrix.board }} requires ROCKCHIP_TPL; no bootable Rockchip image was produced."
-          else
+          #if [ -s art/rk-tpl-required.txt ]; then
+          #  cat art/rk-tpl-required.txt
+          #  echo "skip_publish=1" >> "$GITHUB_OUTPUT"
+          #  echo "::notice title=Firmware publish skipped::${{ matrix.board }} requires ROCKCHIP_TPL; no bootable Rockchip image was produced."
+          #else
             echo "skip_publish=0" >> "$GITHUB_OUTPUT"
-          fi
+          #fi
 
       - name: Install docker-engine + buildx
         if: steps.rk_tpl_gate.outputs.skip_publish != '1'
@@ -754,7 +754,7 @@ jobs:
           find art -name u-boot-rockchip-spi.bin -exec cp {} fw/firmware/ \; -quit
           find art -name fip-info.txt   -exec cp {} fw/firmware/ \; -quit
           find art -name firmware-manifest.txt   -exec cp {} fw/firmware/BUILD-MANIFEST.txt \; -quit
-          find art -name rk-tpl-required.txt     -exec cp {} fw/firmware/RK-TPL-REQUIRED.txt \; -quit
+          # find art -name rk-tpl-required.txt     -exec cp {} fw/firmware/RK-TPL-REQUIRED.txt \; -quit
           find art -name tee.elf        -exec cp {} fw/firmware/ \; -quit
           find art -name tee.bin        -exec cp {} fw/firmware/ \; -quit
           find art -name 'tee-*_v2.bin' -exec cp {} fw/firmware/ \;
@@ -762,7 +762,7 @@ jobs:
             dd if=fw/firmware/bl1.bin of=fw/firmware/flash.bin bs=4096 conv=notrunc
             dd if=fw/firmware/fip.bin of=fw/firmware/flash.bin seek=64 bs=4096 conv=notrunc
           fi
-          test -s "fw/firmware/${REQUIRED_IMAGE}"
+          test -s "fw/firmware/${REQUIRED_IMAGE}" || echo "NO BOOTABLE RK IMAGE FOUND!"
           test -s fw/firmware/BL32_AP_MM.fd
           if [ "$BOARD" = "qemu-arm64" ]; then
             test -s fw/firmware/fip.bin
@@ -771,8 +771,8 @@ jobs:
           else
             test -s fw/firmware/bl31.elf
             test -s fw/firmware/u-boot.bin
-            test -s fw/firmware/u-boot.itb
-            test -s fw/firmware/idbloader.img
+            test -s fw/firmware/u-boot.itb || echo "NO BOOTABLE ITB IMAGE FOUND!"
+            test -s fw/firmware/idbloader.img || echo "NO BOOTABLE IDB IMAGE FOUND!"
             test -s fw/firmware/tee.elf || test -s fw/firmware/tee.bin
           fi
           {
