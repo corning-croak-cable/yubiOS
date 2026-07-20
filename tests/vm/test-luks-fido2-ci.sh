@@ -73,7 +73,7 @@ bcvk ephemeral run --help 2>&1 | grep -q -- '--swu2f' || die "bcvk lacks --swu2f
 command -v swtpm  >/dev/null 2>&1 || skip "host swtpm not found; --swtpm may fail to attach a vTPM"
 
 # in-guest runner: ssh into the ephemeral VM and run a command, fail loudly on nonzero
-g() { bcvk ssh "$VMID" -- "$@"; }
+g() { bcvk_ssh "$VMID" "$@"; }
 
 # ---- boot the ephemeral VM with software TPM + software U2F ----
 log "boot ephemeral VM (--swtpm --swu2f)"

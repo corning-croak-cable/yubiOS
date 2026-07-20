@@ -15,7 +15,6 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/ci_pq_tls_verify.yml' # self-change trigger for validating workflow edits
-      - 'yubiOS-bake.hcl'
   workflow_dispatch:
     inputs:
       ci_callback:

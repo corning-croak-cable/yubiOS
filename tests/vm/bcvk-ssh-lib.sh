@@ -7,11 +7,34 @@ bcvk_podman_logs_tail() {
   podman logs --tail "$lines" "$vmid" 2>&1 || true
 }
 
+# bcvk's SSH transport is an ssh client inside the outer VM container. Keep
+# the probe and guest-command path here so callers do not accidentally use the
+# nonexistent top-level `bcvk ssh` command (the public CLI is nested under
+# `bcvk ephemeral`, and adds its own readiness wait around every invocation).
+bcvk_ssh() {
+  local vmid="$1"
+  shift
+
+  podman exec -- "$vmid" ssh \
+    -i /run/tmproot/var/lib/bcvk/ssh \
+    -o IdentitiesOnly=yes \
+    -o PasswordAuthentication=no \
+    -o KbdInteractiveAuthentication=no \
+    -o GSSAPIAuthentication=no \
+    -o StrictHostKeyChecking=no \
+    -o UserKnownHostsFile=/dev/null \
+    -o BatchMode=yes \
+    -o ConnectTimeout=2 \
+    -o ServerAliveInterval=60 \
+    -o LogLevel=ERROR \
+    -p 2222 root@127.0.0.1 -- "$@"
+}
+
 dump_bcvk_ssh_diagnostics() {
   local vmid="$1"
 
-  echo "--- bcvk ssh stderr (single probe) ---"
-  bcvk ssh "$vmid" -- true 2>&1 || true
+  echo "--- bcvk container SSH stderr (single probe) ---"
+  bcvk_ssh "$vmid" true 2>&1 || true
 
   echo "--- podman container state ---"
   podman inspect \
@@ -38,6 +61,29 @@ dump_bcvk_ssh_diagnostics() {
     else
       echo "no ss/netstat in outer container"
     fi
+    echo "qemu credential transport:"
+    qemu_pid="$(pgrep -o -f "[q]emu-system-" 2>/dev/null || true)"
+    if [ -n "$qemu_pid" ] && [ -r "/proc/$qemu_pid/cmdline" ]; then
+      qemu_cmdline="$(tr "\000" " " < "/proc/$qemu_pid/cmdline")"
+      case "$qemu_cmdline" in
+        *systemd.set_credential_binary=tmpfiles.extra:*)
+          echo "kernel-cmdline credential: present"
+          ;;
+        *)
+          echo "kernel-cmdline credential: absent"
+          ;;
+      esac
+      case "$qemu_cmdline" in
+        *io.systemd.credential.binary:tmpfiles.extra=*)
+          echo "SMBIOS credential: present"
+          ;;
+        *)
+          echo "SMBIOS credential: absent"
+          ;;
+      esac
+    else
+      echo "qemu process: unavailable"
+    fi
     echo "ssh -vvv probe:"
     ssh -vvv -i /run/tmproot/var/lib/bcvk/ssh \
       -o IdentitiesOnly=yes \
@@ -59,7 +105,7 @@ wait_for_bcvk_ssh() {
 
   [ "$tries" -gt 0 ] || tries=1
   while [ "$tries" -gt 0 ]; do
-    bcvk ssh "$vmid" -- true >/dev/null 2>&1 && return 0
+    bcvk_ssh "$vmid" true >/dev/null 2>&1 && return 0
     tries=$((tries - 1))
     sleep 2
   done

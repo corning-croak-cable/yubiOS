@@ -12,7 +12,7 @@
     <rect x="235" y="78" width="52" height="105" rx="26" stroke="#8dff36" stroke-width="7" transform="rotate(-29 261 130)"/>
   </g>
   <rect x="14" y="13" width="56" height="56" rx="14" fill="#ff1493" fill-opacity="0.13" stroke="#ff5ab8" stroke-opacity="0.5"/>
-  <image href="../../logo.png" x="18" y="17" width="48" height="48" preserveAspectRatio="xMidYMid slice" clip-path="url(#logoClip)"/>
+  <image href="../../../logo.png" x="18" y="17" width="48" height="48" preserveAspectRatio="xMidYMid slice" clip-path="url(#logoClip)"/>
   <text x="80" y="43" fill="#fbf7ff" font-family="Nimbus Sans, DejaVu Sans, sans-serif" font-size="25" font-weight="700" letter-spacing="-0.8">yubiOS</text>
   <text x="81" y="59" fill="#9e92aa" font-family="Nimbus Mono PS, DejaVu Sans Mono, monospace" font-size="7.5" letter-spacing="1">EXPERIMENTAL</text>
   <g font-family="Nimbus Sans, DejaVu Sans, sans-serif" font-weight="700" letter-spacing="-1.2">

@@ -8,7 +8,7 @@
   <rect width="728" height="90" fill="url(#bg)"/>
   <path d="M202 8C294 72 376 12 468 58S626 59 728 18" fill="none" stroke="url(#line)" stroke-opacity="0.20" stroke-width="12" filter="url(#glow)"/>
   <path d="M203 5C298 62 382 6 476 49S629 51 728 12" fill="none" stroke="#00e5ff" stroke-opacity="0.16" stroke-width="1" stroke-dasharray="5 8"/>
-  <image href="../../logo.png" x="14" y="13" width="64" height="64" preserveAspectRatio="xMidYMid slice" clip-path="url(#logoClip)"/>
+  <image href="../../../logo.png" x="14" y="13" width="64" height="64" preserveAspectRatio="xMidYMid slice" clip-path="url(#logoClip)"/>
   <text x="91" y="41" fill="#faf6ff" font-family="Nimbus Sans, DejaVu Sans, sans-serif" font-size="27" font-weight="700" letter-spacing="-0.8">yubiOS</text>
   <text x="92" y="60" fill="#a79bad" font-family="Nimbus Mono PS, DejaVu Sans Mono, monospace" font-size="8.5" letter-spacing="1">EXPERIMENTAL</text>
   <rect x="197" y="13" width="1" height="64" fill="#ffffff" fill-opacity="0.14"/>

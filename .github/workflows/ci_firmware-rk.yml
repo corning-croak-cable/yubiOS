@@ -12,7 +12,6 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/ci_firmware-rk.yml' # self-change trigger for validating workflow edits
-      - 'yubiOS-bake.hcl'
   workflow_dispatch:
     inputs:
       reason:
@@ -813,8 +812,9 @@ jobs:
           PUSH: 'true'
         run: |
           set -euxo pipefail
+          # Match the bare-runner installer pattern: the named builder was
+          # created by sudo and is root-scoped, so this client uses its default.
           docker -H unix:///var/run/ducker.sock buildx bake \
-            --builder hardened \
             --file yubiOS-bake.hcl \
             firmware
           docker -H unix:///var/run/ducker.sock logout

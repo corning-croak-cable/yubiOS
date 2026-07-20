@@ -12,7 +12,7 @@
   <path d="M0 118H543" stroke="#8b35ff" stroke-opacity="0.12"/><path d="M0 124H510" stroke="#00e5ff" stroke-opacity="0.08"/>
 
   <rect x="23" y="17" width="76" height="76" rx="19" fill="#ff1493" fill-opacity="0.12" stroke="#ff53b4" stroke-opacity="0.52"/>
-  <image href="../../logo.png" x="28" y="22" width="66" height="66" preserveAspectRatio="xMidYMid slice" clip-path="url(#logoClip)"/>
+  <image href="../../../logo.png" x="28" y="22" width="66" height="66" preserveAspectRatio="xMidYMid slice" clip-path="url(#logoClip)"/>
   <text x="116" y="60" fill="#fbf7ff" font-family="Nimbus Sans, DejaVu Sans, sans-serif" font-size="36" font-weight="700" letter-spacing="-1.2">yubiOS</text>
   <rect x="116" y="69" width="207" height="24" rx="12" fill="#170b1d" stroke="#ff1493" stroke-opacity="0.58"/>
   <circle cx="130" cy="81" r="3" fill="#89ff38" filter="url(#glow)"/>

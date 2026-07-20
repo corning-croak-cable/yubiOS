@@ -1,15 +1,18 @@
 # yubiOS Docker Buildx Bake graph
 #
 # This file is the single source of truth for container-image build settings
-# used by the non-ci_fork GitHub Actions workflows. GitHub Actions still owns
-# runner selection, host/KVM tests, source commits, and imagetools assembly;
-# Bake owns Dockerfiles, target dependencies, platforms, tags, outputs, labels,
-# and Docker Build Policy enforcement.
+# used by the non-ci_fork GitHub Actions workflows dispatched from ci.yml.
+# GitHub Actions still owns runner selection, Docker/Buildx installation and
+# active-builder selection, host/Podman/KVM tests, source commits, and
+# imagetools assembly. Bake owns Dockerfiles, target dependencies, platforms,
+# tags, outputs, labels, and Docker Build Policy enforcement.
 #
 # Docker primary references:
 #   https://docs.docker.com/build/bake/reference/
 #   https://docs.docker.com/build/bake/contexts/
 #   https://docs.docker.com/build/policies/usage/
+#   https://docs.docker.com/build/exporters/
+#   https://docs.docker.com/reference/cli/docker/buildx/create/
 
 variable "IMAGE" {
   type        = string
@@ -96,6 +99,18 @@ target "_source-metadata" {
   }
 }
 
+# Exporter selection is shared by every externally visible image. The active
+# builder is deliberately not modeled here: Buildx selects it from CLI/config
+# state, which differs between containerized jobs and the bare-runner artifact
+# jobs that install Docker themselves.
+target "_image-export" {
+  output = PUSH ? [
+    { type = "registry" },
+  ] : [
+    { type = "docker" },
+  ]
+}
+
 # Internal production image node. Keeping the unexported base separate means
 # the dev target can consume it through target: context dependency without ever
 # inheriting the production target's registry output or production tags.
@@ -108,17 +123,12 @@ target "_yubios-base" {
 }
 
 target "yubios" {
-  inherits = ["_yubios-base"]
+  inherits = ["_yubios-base", "_image-export"]
   description = "Build the native production yubiOS bootc image."
   tags = PUSH ? [
     ref("${GIT_SHA}-${ARCH}"),
   ] : [
     "yubios:ci-${ARCH}",
-  ]
-  output = PUSH ? [
-    { type = "registry" },
-  ] : [
-    { type = "docker" },
   ]
 }
 
@@ -149,7 +159,7 @@ group "yubios-ci" {
 }
 
 target "yubios-dev" {
-  inherits    = ["_policy", "_source-metadata"]
+  inherits    = ["_policy", "_source-metadata", "_image-export"]
   description = "Build the isolated swu2f development/test image."
   context     = "."
   contexts = {
@@ -161,11 +171,6 @@ target "yubios-dev" {
     ref("dev-${GIT_SHA}-${ARCH}"),
   ] : [
     "yubios:dev-${ARCH}",
-  ]
-  output = PUSH ? [
-    { type = "registry" },
-  ] : [
-    { type = "docker" },
   ]
 }
 
@@ -190,7 +195,7 @@ group "yubios-dev-ci" {
 }
 
 target "firmware" {
-  inherits    = ["_policy", "_source-metadata"]
+  inherits    = ["_policy", "_source-metadata", "_image-export"]
   description = "Package one prepared ARM64 board firmware payload as an OCI image."
   context     = FIRMWARE_CONTEXT
   dockerfile-inline = <<-DOCKERFILE
@@ -213,15 +218,10 @@ target "firmware" {
       ref("firmware-${GIT_SHA}"),
     ] : [],
   )
-  output = PUSH ? [
-    { type = "registry" },
-  ] : [
-    { type = "docker" },
-  ]
 }
 
 target "installer" {
-  inherits    = ["_policy", "_source-metadata"]
+  inherits    = ["_policy", "_source-metadata", "_image-export"]
   description = "Package the prepared mkosi disk/UKI installer payload as an OCI image."
   context     = INSTALLER_CONTEXT
   dockerfile-inline = <<-DOCKERFILE
@@ -236,11 +236,6 @@ target "installer" {
   tags = [
     ref("installer"),
     ref("installer-${GIT_SHA}"),
-  ]
-  output = PUSH ? [
-    { type = "registry" },
-  ] : [
-    { type = "docker" },
   ]
 }
 

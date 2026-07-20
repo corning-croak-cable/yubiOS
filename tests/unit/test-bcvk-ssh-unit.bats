@@ -5,6 +5,8 @@ SCRIPT="usr/lib/yubiOS/sshd-authorized-keys-bcvk.sh"
 CONF="usr/lib/yubiOS/sshd_config.d/10-yubiOS-bcvk-root-key.conf"
 VM_LIB="tests/vm/bcvk-ssh-lib.sh"
 CONTAINERFILE="Containerfile"
+VM_WORKFLOW=".github/workflows/ci_test-vm.yml"
+BCVK_ARM64_PATCH=".github/patches/bcvk-arm64-directboot-ssh.patch"
 
 setup() {
   [ -f "$SCRIPT" ] || SCRIPT="/usr/lib/yubiOS/sshd-authorized-keys-bcvk.sh"
@@ -67,5 +69,44 @@ setup() {
 @test "VM SSH helper prints verbose host-side ssh diagnostics on timeout" {
   [ -f "$VM_LIB" ] || skip "repo VM helper unavailable in installed image context"
   run grep -F 'ssh -vvv' "$VM_LIB"
+  [ "$status" -eq 0 ]
+  run grep -F 'kernel-cmdline credential: present' "$VM_LIB"
+  [ "$status" -eq 0 ]
+}
+
+@test "VM SSH helper uses bcvk container transport instead of nonexistent top-level CLI" {
+  [ -f "$VM_LIB" ] || skip "repo VM helper unavailable in installed image context"
+  run grep -F 'podman exec -- "$vmid" ssh' "$VM_LIB"
+  [ "$status" -eq 0 ]
+  run grep -F 'bcvk ssh "$vmid"' "$VM_LIB"
+  [ "$status" -ne 0 ]
+
+  for vm_test in tests/vm/test-luks-fido2-ci.sh tests/vm/test-fido2-enrollment.sh; do
+    run grep -F 'g() { bcvk_ssh "$VMID" "$@"; }' "$vm_test"
+    [ "$status" -eq 0 ]
+  done
+}
+
+@test "VM workflow preserves bcvk tmpfiles root SSH credential" {
+  [ -f "$VM_WORKFLOW" ] || skip "repo VM workflow unavailable in installed image context"
+  run grep -F 'io.systemd.credential.binary:tmpfiles.extra={encoded}' "$VM_WORKFLOW"
+  [ "$status" -eq 0 ]
+  run grep -F 'ssh.authorized_keys.root' "$VM_WORKFLOW"
+  [ "$status" -ne 0 ]
+}
+
+@test "ARM64 DirectBoot passes the bcvk public key through a kernel credential" {
+  [ -f "$VM_WORKFLOW" ] || skip "repo VM workflow unavailable in installed image context"
+  [ -f "$BCVK_ARM64_PATCH" ] || skip "repo bcvk patch unavailable in installed image context"
+
+  run grep -F '.github/patches/bcvk-arm64-directboot-ssh.patch' "$VM_WORKFLOW"
+  [ "$status" -eq 0 ]
+  run grep -F 'cargo test --release -p bcvk-qemu test_karg_for_root_ssh' "$VM_WORKFLOW"
+  [ "$status" -eq 0 ]
+  run grep -F 'cfg!(target_arch = "aarch64")' "$BCVK_ARM64_PATCH"
+  [ "$status" -eq 0 ]
+  run grep -F 'karg_for_root_ssh(&pubkey)' "$BCVK_ARM64_PATCH"
+  [ "$status" -eq 0 ]
+  run grep -F 'systemd.set_credential_binary=tmpfiles.extra:' "$BCVK_ARM64_PATCH"
   [ "$status" -eq 0 ]
 }

@@ -247,16 +247,22 @@ jobs:
           fi
           grep -Fq -- '"ed25519"' bcvk-src/crates/kit/src/ssh.rs \
             || { echo "::error::failed to apply bcvk ed25519 SSH key CI patch"; exit 1; }
-          # systemd already has a first-class root SSH credential. Prefer it to
-          # bcvk's tmpfiles.extra indirection so sshd auth depends on the booted
-          # guest provisioning /root/.ssh/authorized_keys, not on sshd reading
-          # the raw boot credential at login time.
-          if grep -Fq -- 'io.systemd.credential.binary:tmpfiles.extra={encoded}' bcvk-src/crates/bcvk-qemu/src/credentials.rs; then
-            perl -0pi -e 's/let k = key_to_root_tmpfiles_d\(pubkey\);\n    let encoded = data_encoding::BASE64.encode\(k.as_bytes\(\)\);\n    let r = format!\("io.systemd.credential.binary:tmpfiles.extra=\{encoded\}"\);/let encoded = data_encoding::BASE64.encode(pubkey.as_bytes());\n    let r = format!("io.systemd.credential.binary:ssh.authorized_keys.root={encoded}");/s' bcvk-src/crates/bcvk-qemu/src/credentials.rs
+          # ARM virt SMBIOS tables are published to the guest by firmware.
+          # bcvk DirectBoot bypasses firmware, so use systemd's documented
+          # kernel-command-line credential transport for this public key.
+          if ! grep -Fq -- 'ssh_credential_karg = None' bcvk-src/crates/kit/src/run_ephemeral.rs; then
+            git -C bcvk-src apply ../.github/patches/bcvk-arm64-directboot-ssh.patch \
+              || { echo "::error::failed to apply bcvk ARM64 DirectBoot SSH credential patch"; exit 1; }
           fi
-          grep -Fq -- 'ssh.authorized_keys.root' bcvk-src/crates/bcvk-qemu/src/credentials.rs \
-            || { echo "::error::failed to apply bcvk systemd root SSH credential CI patch"; exit 1; }
-          ( cd bcvk-src && cargo build --release )
+          grep -Fq -- 'karg_for_root_ssh(&pubkey)' bcvk-src/crates/kit/src/run_ephemeral.rs \
+            || { echo "::error::bcvk ARM64 DirectBoot SSH credential fallback unavailable"; exit 1; }
+          grep -Fq -- 'systemd.set_credential_binary=tmpfiles.extra:' bcvk-src/crates/bcvk-qemu/src/credentials.rs \
+            || { echo "::error::bcvk systemd kernel-command-line SSH credential unavailable"; exit 1; }
+          # Keep tmpfiles.extra as the payload on both transports so systemd-
+          # tmpfiles and the yubiOS root-only helper accept the same data.
+          grep -Fq -- 'io.systemd.credential.binary:tmpfiles.extra={encoded}' bcvk-src/crates/bcvk-qemu/src/credentials.rs \
+            || { echo "::error::bcvk no longer exposes the documented tmpfiles.extra root SSH credential path"; exit 1; }
+          ( cd bcvk-src && cargo test --release -p bcvk-qemu test_karg_for_root_ssh && cargo build --release )
           if [ ! -x bcvk-src/target/release/bcvk ]; then
             echo "skip=1" >> "$GITHUB_OUTPUT"
             echo "::warning::SKIP: bcvk failed to build from feat/swtpm-ci -- VM e2e not feasible (see cargo output above)"

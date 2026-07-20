@@ -56,7 +56,7 @@ need bcvk
 bcvk ephemeral run --help 2>&1 | grep -q -- '--swtpm' || die "bcvk lacks --swtpm; build branch feat/swtpm-ci"
 bcvk ephemeral run --help 2>&1 | grep -q -- '--swu2f' || die "bcvk lacks --swu2f; build branch feat/swtpm-ci"
 
-g() { bcvk ssh "$VMID" -- "$@"; }
+g() { bcvk_ssh "$VMID" "$@"; }
 
 # ---- boot ----
 log "boot ephemeral VM (--swtpm --swu2f)"
