@@ -643,6 +643,14 @@ jobs:
     needs: qemu
     if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
     runs-on: ubuntu-24.04
+    container:
+      options: --privileged
+      volumes:
+        - /mnt:/mnt
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6 # PINNED.md
     strategy:
       fail-fast: false
       matrix:
@@ -675,6 +683,9 @@ jobs:
             uboot_defconfig: rockpro64-rk3399_defconfig
             required_image: u-boot-rockchip.bin
     steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # PINNED.md
+
       - name: Clean firmware publish workspace
         run: rm -rf art fw
 
@@ -696,41 +707,28 @@ jobs:
             echo "skip_publish=0" >> "$GITHUB_OUTPUT"
           #fi
 
-      - name: Install docker-engine + buildx
+      - name: Install docker-engine + buildx (user-scoped hardened builder)
         if: steps.rk_tpl_gate.outputs.skip_publish != '1'
         run: |
           set -euxo pipefail
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq --no-install-recommends curl iptables nftables || true
-          # ubuntu-24.04 ships curl 8.5 without bundled wcurl; pin the upstream release.
-          curl --fail --location --silent --show-error \
-            --output "${RUNNER_TEMP}/wcurl" \
-            "https://github.com/curl/wcurl/releases/download/v2026.01.05/wcurl"
-          echo "180aaaa62b84e6a92bdebc7e31992c82b446ee72c37006d349c7882c5b54d1ae  ${RUNNER_TEMP}/wcurl" | sha256sum --check
-          sudo install -m 0755 "${RUNNER_TEMP}/wcurl" /usr/local/bin/wcurl
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends curl iptables nftables
           wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
           wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
           tar xzf docker-29.6.0.tgz
-          docker_bin="${RUNNER_TEMP}/docker-static/bin"
-          docker_plugins="${HOME}/.docker/cli-plugins"
-          mkdir -p "$docker_bin" "$docker_plugins"
-          sudo mkdir -p /mnt/docker /var/run
-          install -m 0755 docker/* "$docker_bin/"
-          install -m 0755 buildx-v0.35.0.linux-amd64 "$docker_plugins/docker-buildx"
-          echo "$docker_bin" >> "$GITHUB_PATH"
-          export PATH="$docker_bin:$PATH"
-          sudo env PATH="$docker_bin:$PATH" "$docker_bin/dockerd" \
-            --storage-driver=overlayfs \
-            --data-root=/mnt/docker \
-            --pidfile "${RUNNER_TEMP}/ducker.pid" \
-            -H unix:///var/run/ducker.sock &
+          mkdir -p /usr/libexec/docker/cli-plugins/ /mnt/docker
+          cp docker/* /usr/bin/
+          cp buildx-v0.35.0.linux-amd64 /usr/libexec/docker/cli-plugins/docker-buildx
+          chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
+          dockerd --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
           for _ in $(seq 1 30); do
-            sudo env PATH="$docker_bin:$PATH" "$docker_bin/docker" -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break
+            docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break
             sleep 1
           done
-          sudo env PATH="$docker_bin:$PATH" "$docker_bin/docker" -H unix:///var/run/ducker.sock buildx create --name hardened \
+          docker -H unix:///var/run/ducker.sock buildx create --name hardened \
             --driver docker-container \
             --use
+          docker -H unix:///var/run/ducker.sock buildx inspect --builder hardened --bootstrap
 
       - name: Assemble board-scoped /firmware payload
         if: steps.rk_tpl_gate.outputs.skip_publish != '1'
@@ -818,9 +816,8 @@ jobs:
           PUSH: 'true'
         run: |
           set -euxo pipefail
-          # Match the bare-runner installer pattern: the named builder was
-          # created by sudo and is root-scoped, so this client uses its default.
           docker -H unix:///var/run/ducker.sock buildx bake \
+            --builder hardened \
             --file yubiOS-bake.hcl \
             firmware
           docker -H unix:///var/run/ducker.sock logout

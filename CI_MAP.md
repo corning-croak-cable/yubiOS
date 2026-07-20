@@ -113,11 +113,11 @@ flowchart TD
 |---|---|---|---|
 | `yubiOS-ci.yml` | `yubios-ci` (`yubios` + `yubios-smoke`) | `yubios` | Containerized job creates and names user-scoped `hardened` builder |
 | `ci_dev_image.yml` | `yubios-dev-ci` (`yubios-dev` + `yubios-dev-smoke`) | `yubios-dev` | Containerized job creates and names user-scoped `hardened` builder |
-| `ci_firmware-rk.yml` | None unless publication is requested | `firmware` | Bare-runner Bake call follows the user default; it does not name the root-scoped builder created under `sudo` |
-| `ci_mkosi-installer.yml` | Host-side mkosi validation | `installer` | Bare-runner Bake call follows the same default-builder pattern as firmware |
+| `ci_firmware-rk.yml` | None unless publication is requested | `firmware` | Containerized job creates and names user-scoped `hardened` builder |
+| `ci_mkosi-installer.yml` | Host-side mkosi validation plus artifact handoff | `installer` | Containerized job creates and names user-scoped `hardened` builder |
 | `ci_pq_tls_verify.yml` | `pq-tls-verify` | None; output is `cacheonly` | Containerized job creates and names user-scoped `hardened` builder |
 
-Production and dev publication remains a two-stage operation: native runners publish immutable per-architecture tags through Bake, then existing `imagetools` jobs create the `<sha>`/`latest` and `dev-<sha>`/`dev` multi-architecture indexes. Firmware and installer targets publish directly with the registry exporter.
+Production and dev publication remains a two-stage operation: native runners publish immutable per-architecture tags through Bake, then existing `imagetools` jobs create the `<sha>`/`latest` and `dev-<sha>`/`dev` multi-architecture indexes. Firmware and installer targets publish directly with the registry exporter from privileged DHI container jobs that check out the policy-bound Bake definition and explicitly select their user-scoped `hardened` builders.
 
 ## ARM64/RK Firmware Integration
 
@@ -133,7 +133,7 @@ flowchart TD
     optee_out["artifact\nfip-flash-arch\nfip.bin\nflash.bin\nbl1.bin\nBL32_AP_MM.fd\ntee-*_v2.bin\nu-boot.bin\nfip-info.txt"]
     qemu["job: qemu\ndownload fip-flash\nassemble flash.bin if needed\nboot qemu-system-aarch64"]
     asserts["QEMU asserts\nfTPM Early TA loads\nTPM self-test marker\nno known failure signatures\nStMM SP loaded"]
-    publish["job: firmware-publish\nmatrix: qemu-arm64, rock5b-rk3588, rockpro64-rk3399\nif workflow_dispatch + Docker_push=true"]
+    publish["job: firmware-publish in DHI container\ncheckout + user-scoped hardened builder\nmatrix: qemu-arm64, rock5b-rk3588, rockpro64-rk3399\nif workflow_dispatch + Docker_push=true"]
     fw_payload["/firmware payload\nboard MANIFEST.txt\nfip.bin flash.bin bl1.bin\nBL32_AP_MM.fd u-boot.bin tee bins"]
     bake["Bake target: firmware\nstrict yubiOS.rego policy\nregistry exporter"]
     fw_registry["Docker Hub outputs\nfirmware[-sha] for QEMU compatibility\nfirmware-qemu-arm64[-sha]\nfirmware-rock5b-rk3588[-sha]\nfirmware-rockpro64-rk3399[-sha]"]
@@ -162,8 +162,9 @@ flowchart TD
     dev_out["per-arch dev-sha-arch\nimagetools -> dev-sha + dev"]
     vm["ci_test-vm.yml\nsudo Podman storage + bcvk\nARM64 DirectBoot credential"]
     vm_out["VM boot, LUKS/FIDO2, enrollment results\nexplicit loud skips"]
-    installer["ci_mkosi-installer.yml\nmkosi + SoftHSM PKCS#11 signing"]
-    installer_bake["Bake: installer\nregistry exporter on requested publish"]
+    installer["ci_mkosi-installer.yml bare build\nmkosi + SoftHSM PKCS#11 signing"]
+    installer_payload["prepared installer payload\nworkflow artifact handoff"]
+    installer_bake["DHI container publish job\nuser-scoped hardened builder\nBake: installer + registry exporter"]
     installer_out["installer\ninstaller-sha"]
     pq["ci_pq_tls_verify.yml"]
     pq_bake["Bake: pq-tls-verify\nno-cache + cacheonly"]
@@ -171,13 +172,13 @@ flowchart TD
 
     prod_wf --> prod_bake --> prod_out
     dev_wf --> dev_bake --> dev_out --> vm --> vm_out
-    installer --> installer_bake --> installer_out
+    installer --> installer_payload --> installer_bake --> installer_out
     pq --> pq_bake --> pq_out
 ```
 
 The VM lane intentionally remains outside Bake. bcvk hardcodes Podman for its privileged ephemeral container and reads from Podman's local image store, so the workflow pulls the selected image with `sudo podman`. Guest SSH runs from inside that outer container. For ARM64 DirectBoot, the public root key is delivered without firmware through systemd's kernel-command-line `tmpfiles.extra` credential path.
 
-The installer self-change push trigger validates mkosi without publishing. Only a `workflow_dispatch` with `Docker_push=true` packages the prepared `inst/installer` payload through the Bake `installer` target.
+The installer self-change push trigger validates mkosi without publishing. Only a `workflow_dispatch` with `Docker_push=true` uploads the prepared `inst/installer` payload, hands it to the containerized publish job, and packages it through the policy-bound Bake `installer` target.
 
 ## Optional Fork Component CI
 

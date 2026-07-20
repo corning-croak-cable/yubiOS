@@ -24,8 +24,9 @@ name: yubiOS mkosi-installer
 # 0mniteck/yubios:installer + installer-<sha> per ADR-022 — the same
 # one-repo/per-artifact-tag scheme as the firmware bundle.
 #
-# BARE runner: mkosi needs userns/uidmap plumbing and a writable /run that
-# the hardened dhi container doesn't provide.
+# The mkosi build stays on a bare runner because it needs userns/uidmap plumbing
+# and a writable /run. OCI publication is handed to a separate hardened DHI
+# container so Docker and the named Buildx builder share one user scope.
 
 on:
   push:
@@ -193,44 +194,62 @@ jobs:
           } > inst/installer/MANIFEST.txt
           ls -l inst/installer/
 
-      - name: Install docker-engine + buildx (pinned, own dockerd on ducker.sock)
+      - name: Upload prepared installer payload
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
+        with:
+          name: mkosi-installer-payload
+          path: inst/installer
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 1
+
+  installer-publish:
+    name: Publish installer OCI artifact
+    needs: build
+    if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
+    runs-on: ubuntu-24.04
+    container:
+      options: --privileged
+      volumes:
+        - /mnt:/mnt
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6 # PINNED.md
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # PINNED.md
+
+      - name: Download prepared installer payload
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
+        with:
+          name: mkosi-installer-payload
+          path: inst/installer
+
+      - name: Install docker-engine + buildx (user-scoped hardened builder)
         run: |
           set -euxo pipefail
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq --no-install-recommends curl iptables nftables || true
-          # ubuntu-24.04 ships curl 8.5 without bundled wcurl; pin the upstream release.
-          curl --fail --location --silent --show-error \
-            --output "${RUNNER_TEMP}/wcurl" \
-            "https://github.com/curl/wcurl/releases/download/v2026.01.05/wcurl"
-          echo "180aaaa62b84e6a92bdebc7e31992c82b446ee72c37006d349c7882c5b54d1ae  ${RUNNER_TEMP}/wcurl" | sha256sum --check
-          sudo install -m 0755 "${RUNNER_TEMP}/wcurl" /usr/local/bin/wcurl
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends curl iptables nftables
           wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
           wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
           tar xzf docker-29.6.0.tgz
-          docker_bin="${RUNNER_TEMP}/docker-static/bin"
-          docker_plugins="${HOME}/.docker/cli-plugins"
-          mkdir -p "$docker_bin" "$docker_plugins"
-          sudo mkdir -p /mnt/docker /var/run
-          install -m 0755 docker/* "$docker_bin/"
-          install -m 0755 buildx-v0.35.0.linux-amd64 "$docker_plugins/docker-buildx"
-          echo "$docker_bin" >> "$GITHUB_PATH"
-          export PATH="$docker_bin:$PATH"
-          sudo env PATH="$docker_bin:$PATH" "$docker_bin/dockerd" \
-            --storage-driver=overlayfs \
-            --data-root=/mnt/docker \
-            --pidfile "${RUNNER_TEMP}/ducker.pid" \
-            -H unix:///var/run/ducker.sock &
+          mkdir -p /usr/libexec/docker/cli-plugins/ /mnt/docker
+          cp docker/* /usr/bin/
+          cp buildx-v0.35.0.linux-amd64 /usr/libexec/docker/cli-plugins/docker-buildx
+          chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
+          dockerd --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
           for _ in $(seq 1 30); do
-            sudo env PATH="$docker_bin:$PATH" "$docker_bin/docker" -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break
+            docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break
             sleep 1
           done
-          sudo env PATH="$docker_bin:$PATH" "$docker_bin/docker" -H unix:///var/run/ducker.sock buildx create --name hardened \
+          docker -H unix:///var/run/ducker.sock buildx create --name hardened \
             --driver docker-container \
             --use
+          docker -H unix:///var/run/ducker.sock buildx inspect --builder hardened --bootstrap
 
       - name: Build and push installer OCI artifact through Bake
-        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
         env:
           GIT_SHA: ${{ github.sha }}
           INSTALLER_CONTEXT: inst
@@ -238,9 +257,8 @@ jobs:
         run: |
           set -euxo pipefail
           echo "${{ secrets.DOCKER }}" | docker -H unix:///var/run/ducker.sock login -u 0mniteck42 --password-stdin
-          # Match main's bare-runner pattern: the named builder was created by
-          # sudo and is root-scoped, so this user-scoped client uses its default.
           docker -H unix:///var/run/ducker.sock buildx bake \
+            --builder hardened \
             --file yubiOS-bake.hcl \
             installer
           docker -H unix:///var/run/ducker.sock logout
@@ -249,7 +267,7 @@ jobs:
   ci-callback:
     name: Callback to ci.yml orchestrator
     if: ${{ always() && github.event_name == 'workflow_dispatch' && inputs.ci_callback == true }}
-    needs: [build]
+    needs: [build, installer-publish]
     runs-on: ubuntu-24.04
     permissions:
       contents: read

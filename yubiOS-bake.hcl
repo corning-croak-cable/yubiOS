@@ -100,9 +100,9 @@ target "_source-metadata" {
 }
 
 # Exporter selection is shared by every externally visible image. The active
-# builder is deliberately not modeled here: Buildx selects it from CLI/config
-# state, which differs between containerized jobs and the bare-runner artifact
-# jobs that install Docker themselves.
+# builder is deliberately not modeled here: each containerized workflow job
+# creates a user-scoped `hardened` builder and selects it explicitly on the
+# Bake CLI, while this file continues to bind every image target to yubiOS.rego.
 target "_image-export" {
   output = PUSH ? [
     { type = "registry" },
