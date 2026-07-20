@@ -761,7 +761,7 @@ jobs:
             dd if=fw/firmware/bl1.bin of=fw/firmware/flash.bin bs=4096 conv=notrunc
             dd if=fw/firmware/fip.bin of=fw/firmware/flash.bin seek=64 bs=4096 conv=notrunc
           fi
-          test -s "fw/firmware/${REQUIRED_IMAGE}" || echo "NO BOOTABLE IMAGE FOUND!"
+          test -s "fw/firmware/${REQUIRED_IMAGE}" || echo "NO BOOTABLE RK IMAGE FOUND!"
           test -s fw/firmware/BL32_AP_MM.fd
           if [ "$BOARD" = "qemu-arm64" ]; then
             test -s fw/firmware/fip.bin
@@ -770,8 +770,8 @@ jobs:
           else
             test -s fw/firmware/bl31.elf
             test -s fw/firmware/u-boot.bin
-            test -s fw/firmware/u-boot.itb
-            test -s fw/firmware/idbloader.img
+            test -s fw/firmware/u-boot.itb || echo "NO BOOTABLE ITB IMAGE FOUND!"
+            test -s fw/firmware/idbloader.img || echo "NO BOOTABLE IDB IMAGE FOUND!"
             test -s fw/firmware/tee.elf || test -s fw/firmware/tee.bin
           fi
           {
