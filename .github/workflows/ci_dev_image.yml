@@ -101,7 +101,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
-      - name: Install docker-engine and docker-buildx (${{ matrix.arch }})
+      - name: Install docker CLI + buildx (${{ matrix.arch }})
         run: |
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends git curl iptables nftables
