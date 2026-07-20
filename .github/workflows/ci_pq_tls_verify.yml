@@ -82,9 +82,9 @@ jobs:
         run: |
           set -euo pipefail
           apt-get update -qq
-          apt-get install -y -qq --no-install-recommends wget iptables nftables
-          wget -q "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
-          wget -q "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
+          apt-get install -y -qq --no-install-recommends curl iptables nftables
+          wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
+          wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
           tar xzf docker-29.6.0.tgz
           mkdir -p /usr/libexec/docker/cli-plugins/ /mnt/docker
           cp docker/* /usr/bin/
