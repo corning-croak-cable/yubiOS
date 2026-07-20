@@ -3,6 +3,8 @@ name: yubiOS CI
 # Multi-arch CI: native matrix split across GitHub-hosted amd64 + arm64 runners.
 # Strategy 1 from the multi-arch research (native split, NOT QEMU) — every test
 # runs on real hardware for each arch, no emulation slowness/flakiness.
+# Docker build settings, target dependencies, tags, outputs, and strict
+# yubiOS.rego policy wiring live in yubiOS-bake.hcl.
 #
 # DEPLOY PRE-REQ: the `container.image` below must be the dhi.io/debian-base
 # *manifest-list (index)* digest, NOT a single-arch digest. A single-arch (amd64)
@@ -16,6 +18,7 @@ on:
     paths:
       - '.github/workflows/yubiOS-ci.yml'
       - 'Containerfile'
+      - 'yubiOS-bake.hcl'
       - 'yubiOS.rego'
       - 'usr/**'
       - 'tests/unit/**'
@@ -204,35 +207,32 @@ jobs:
         run: echo "${{ secrets.DOCKER }}" | docker -H unix:///var/run/ducker.sock login -u 0mniteck42 --password-stdin
 
       - name: Build OCI image (${{ matrix.arch }})
+        env:
+          ARCH: ${{ matrix.arch }}
+          PLATFORM: linux/${{ matrix.arch }}
+          GIT_SHA: ${{ github.sha }}
+          PUSH: 'false'
         run: |
           docker -H unix:///var/run/ducker.sock info
-          docker -H unix:///var/run/ducker.sock buildx build -f Containerfile \
-            --policy reset=true,strict=true,filename=yubiOS.rego \
-            --platform linux/${{ matrix.arch }} \
-            --load \
-            -t "yubios:ci-${{ matrix.arch }}" \
-            .
-
-      - name: Verify symlinks and scripts (${{ matrix.arch }})
-        run: |
-          docker -H unix:///var/run/ducker.sock run --rm "yubios:ci-${{ matrix.arch }}" sh -c \
-            'ls -la /usr/lib/yubiOS/ && ls -la /usr/bin/yubiOS-*'
-
-      - name: Verify PAM wiring (${{ matrix.arch }})
-        run: |
-          docker -H unix:///var/run/ducker.sock run --rm "yubios:ci-${{ matrix.arch }}" grep -q pam_u2f /etc/pam.d/sudo && echo "PAM OK"
+          docker -H unix:///var/run/ducker.sock buildx bake \
+            --builder hardened \
+            --file yubiOS-bake.hcl \
+            yubios-ci
 
       # Push each arch by a per-arch tag (no cross-job artifact needed — the merge
       # job combines these tags into one manifest list).
       - name: Push per-arch image (${{ matrix.arch }})
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
+        env:
+          ARCH: ${{ matrix.arch }}
+          PLATFORM: linux/${{ matrix.arch }}
+          GIT_SHA: ${{ github.sha }}
+          PUSH: 'true'
         run: |
-          docker -H unix:///var/run/ducker.sock buildx build -f Containerfile \
+          docker -H unix:///var/run/ducker.sock buildx bake \
             --builder hardened \
-            --platform linux/${{ matrix.arch }} \
-            --push \
-            -t "0mniteck/yubios:${{ github.sha }}-${{ matrix.arch }}" \
-            .
+            --file yubiOS-bake.hcl \
+            yubios
 
   # ── Combine the per-arch images into a single multi-arch manifest list.
   #    Uses the docker CLI (no new actions); only on a pushed dispatch. ──

@@ -66,55 +66,45 @@ jobs:
   pq-tls-verify:
     runs-on: ubuntu-24.04
     container:
+      options: --privileged
+      volumes:
+        - /mnt:/mnt
       credentials:
         username: 0mniteck42
         password: ${{ secrets.DOCKER }}
       image: docker://dhi.io/debian-base@sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6 # trixie-debian13-dev INDEX (manifest list)
     continue-on-error: true # non-blocking until this job has a stable track record (ADR-025)
     steps:
-      - name: Verify OpenSSL >= 3.5 and live PQ hybrid negotiation
-        run: |
-          set -euo pipefail
-          apt update && apt install curl -y
-          v="$(openssl version | awk '{print $2}')"
-          echo "openssl version: $v"
-          major="${v%%.*}"
-          minor="$(echo "$v" | cut -d. -f2)"
-          if [ "$major" -lt 3 ] || { [ "$major" -eq 3 ] && [ "$minor" -lt 5 ]; }; then
-            echo "::error::openssl $v < 3.5 -- X25519MLKEM768 default lost, see ADR-025"
-            exit 1
-          fi
-          group="$(curl -sv https://omniteck.com/ 2>&1 | grep -o 'SSL connection using[^\"]*' || true)"
-          echo "negotiated: $group"
-          case "$group" in
-            *MLKEM*)
-              echo "PQ hybrid group confirmed against omniteck.com" ;;
-            *)
-              echo "::error::no MLKEM group negotiated against the live TLS endpoint -- see ADR-025"
-              exit 1
-              ;;
-          esac
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # PINNED.md
 
-      - name: Report Go TLS floor visibility
+      - name: Install docker-engine + buildx
         run: |
           set -euo pipefail
-          if command -v go >/dev/null 2>&1; then
-            v="$(go version | awk '{print $3}' | sed 's/^go//')"
-            echo "go version: $v"
-            major="${v%%.*}"
-            minor="$(echo "$v" | cut -d. -f2)"
-            if [ "$major" -lt 1 ] || { [ "$major" -eq 1 ] && [ "$minor" -lt 24 ]; }; then
-              echo "::error::go $v < 1.24 -- Go TLS X25519MLKEM768 default may be missing, see ADR-025"
-              exit 1
-            fi
-            echo "Go TLS floor confirmed for installed Go toolchain."
-          else
-            echo "Go toolchain is not installed in this CI container."
-            echo "Checking the distro candidate so base-image bumps still show Go floor drift in logs."
-            apt update
-            apt-cache policy golang-go || true
-            echo "No first-party Go TLS client is built in this workflow; see SPEC.md section 9 and ADR-025."
-          fi
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends wget iptables nftables
+          wget -q "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
+          wget -q "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
+          tar xzf docker-29.6.0.tgz
+          mkdir -p /usr/libexec/docker/cli-plugins/ /mnt/docker
+          cp docker/* /usr/bin/
+          cp buildx-v0.35.0.linux-amd64 /usr/libexec/docker/cli-plugins/docker-buildx
+          chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
+          dockerd --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
+          for _ in $(seq 1 30); do docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
+          docker -H unix:///var/run/ducker.sock buildx create --name hardened \
+            --driver docker-container \
+            --use
+
+      - name: Verify PQ hybrid TLS through the policy-bound Bake target
+        run: |
+          set -euo pipefail
+          echo "${{ secrets.DOCKER }}" | docker -H unix:///var/run/ducker.sock login dhi.io -u 0mniteck42 --password-stdin
+          docker -H unix:///var/run/ducker.sock buildx bake \
+            --builder hardened \
+            --file yubiOS-bake.hcl \
+            pq-tls-verify
+          docker -H unix:///var/run/ducker.sock logout dhi.io
 
   ci-callback:
     name: Callback to ci.yml orchestrator

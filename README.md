@@ -147,6 +147,7 @@ yubiOS/
 ├── usr/lib/                        # OS overlay: bootc, dracut, PAM, repart, systemd, yubiOS scripts
 ├── Containerfile                   # production bootc image definition
 ├── Containerfile.dev               # TEST-only swu2f/dev image definition
+├── yubiOS-bake.hcl                 # non-fork Docker build graph, tags, outputs, and policy wiring
 ├── yubiOS.rego                     # Docker Build Policy gate for pins and registries
 ├── renovate.json                   # pinned digest tracking automation
 ├── AGENTS.md                       # repository guidance for coding agents

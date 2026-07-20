@@ -14,7 +14,8 @@ name: yubiOS dev/test image (swu2f, ADR-026)
 # wire this workflow's output into yubiOS-ci.yml's production push path.
 #
 # Same rootless-Docker-in-Docker pattern as yubiOS-ci.yml (ADR-014): dind on
-# dhi.io's hardened base, per-arch build + push, then a manifest-list merge.
+# dhi.io's hardened base, with the production->dev dependency, strict
+# yubiOS.rego policy, tags, and outputs defined in yubiOS-bake.hcl.
 
 on:
   push:
@@ -122,50 +123,30 @@ jobs:
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
         run: echo "${{ secrets.DOCKER }}" | docker -H unix:///var/run/ducker.sock login -u 0mniteck42 --password-stdin
 
-      - name: Build base yubiOS image (production Containerfile, local tag)
+      - name: Build and verify dev/test image (${{ matrix.arch }})
+        env:
+          ARCH: ${{ matrix.arch }}
+          PLATFORM: linux/${{ matrix.arch }}
+          GIT_SHA: ${{ github.sha }}
+          PUSH: 'false'
         run: |
-          docker -H unix:///var/run/ducker.sock buildx build -f Containerfile \
-            --policy reset=true,strict=true,filename=yubiOS.rego \
-            --platform linux/${{ matrix.arch }} \
-            --load \
-            -t "yubios:base-${{ matrix.arch }}" \
-            .
-
-      - name: Build dev/test image on top of it (Containerfile.dev, swu2f)
-        # Classic (non-buildx) docker build: the docker-container buildx driver runs an
-        # isolated BuildKit instance that can't resolve a local-only FROM tag (it tried
-        # to pull yubios:base-${{ matrix.arch }} from Docker Hub and got insufficient_scope).
-        # Plain `docker build` reads the daemon's own local image store directly, so it
-        # sees the base image --load just placed there.
-        run: |
-          docker -H unix:///var/run/ducker.sock build -f Containerfile.dev \
-            --build-arg BASE_IMAGE="yubios:base-${{ matrix.arch }}" \
-            -t "yubios:dev-${{ matrix.arch }}" \
-            .
-
-      - name: Verify passless is present (real regression gate)
-        run: |
-          docker -H unix:///var/run/ducker.sock run --rm "yubios:dev-${{ matrix.arch }}" \
-            sh -c 'command -v passless && passless --version' || \
-            { echo "::error::passless not found in dev image — swu2f layer 2 missing"; exit 1; }
+          docker -H unix:///var/run/ducker.sock buildx bake \
+            --builder hardened \
+            --file yubiOS-bake.hcl \
+            yubios-dev-ci
 
       - name: Push per-arch dev image (${{ matrix.arch }})
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
         env:
-          DEV_ARCH_TAG: 0mniteck/yubios:dev-${{ github.sha }}-${{ matrix.arch }}
-        # Tag the already-built local image and push with the classic client -- no need
-        # for buildx here, this is a single-arch image already resolved above.
+          ARCH: ${{ matrix.arch }}
+          PLATFORM: linux/${{ matrix.arch }}
+          GIT_SHA: ${{ github.sha }}
+          PUSH: 'true'
         run: |
-          set -euo pipefail
-          case "$DEV_ARCH_TAG" in
-            0mniteck/yubios:dev-*-amd64|0mniteck/yubios:dev-*-arm64) ;;
-            *)
-              echo "::error::dev/test per-arch publish attempted non-dev tag: $DEV_ARCH_TAG"
-              exit 1
-              ;;
-          esac
-          docker -H unix:///var/run/ducker.sock tag "yubios:dev-${{ matrix.arch }}" "$DEV_ARCH_TAG"
-          docker -H unix:///var/run/ducker.sock push "$DEV_ARCH_TAG"
+          docker -H unix:///var/run/ducker.sock buildx bake \
+            --builder hardened \
+            --file yubiOS-bake.hcl \
+            yubios-dev
 
   merge-manifest:
     needs: build

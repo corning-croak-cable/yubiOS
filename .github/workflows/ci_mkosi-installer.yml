@@ -19,9 +19,10 @@ name: yubiOS mkosi-installer
 # p11-kit indirection. Debug trail from the campaign: C_Initialize error 5
 # = softhsm can't read SOFTHSM2_CONF inside the sandbox.
 #
-# On green (push to main, or dispatch with Docker_push=true) the artifacts are
-# published as 0mniteck/yubios:installer + installer-<sha> per ADR-022 —
-# the same one-repo/per-artifact-tag scheme as the firmware bundle.
+# A push caused by this workflow file's self-trigger validates the mkosi path
+# without publishing. A dispatch with Docker_push=true publishes artifacts as
+# 0mniteck/yubios:installer + installer-<sha> per ADR-022 — the same
+# one-repo/per-artifact-tag scheme as the firmware bundle.
 #
 # BARE runner: mkosi needs userns/uidmap plumbing and a writable /run that
 # the hardened dhi container doesn't provide.
@@ -222,31 +223,20 @@ jobs:
             --driver docker-container \
             --use
 
-      - name: Build installer OCI artifact (FROM scratch)
+      - name: Build and push installer OCI artifact through Bake
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
-        run: |
-          set -euxo pipefail
-          cat > inst/Dockerfile <<'DOCKER'
-          FROM scratch
-          COPY installer/ /installer/
-          DOCKER
-          docker -H unix:///var/run/ducker.sock buildx build \
-            --label "org.opencontainers.image.title=yubiOS mkosi installer image" \
-            --label "org.opencontainers.image.description=DPS disk image + PKCS#11-signed UKI (minimal profile); installs the base system that runs the bootc images" \
-            --label "org.opencontainers.image.source=https://github.com/yubi-OS/yubiOS" \
-            --label "org.opencontainers.image.revision=${GITHUB_SHA}" \
-            --load \
-            -t "0mniteck/yubios:installer" \
-            -t "0mniteck/yubios:installer-${GITHUB_SHA}" \
-            inst
-
-      - name: Push installer tags
-        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
+        env:
+          GIT_SHA: ${{ github.sha }}
+          INSTALLER_CONTEXT: inst
+          PUSH: 'true'
         run: |
           set -euxo pipefail
           echo "${{ secrets.DOCKER }}" | docker -H unix:///var/run/ducker.sock login -u 0mniteck42 --password-stdin
-          docker -H unix:///var/run/ducker.sock push "0mniteck/yubios:installer"
-          docker -H unix:///var/run/ducker.sock push "0mniteck/yubios:installer-${GITHUB_SHA}"
+          # Match main's bare-runner pattern: the named builder was created by
+          # sudo and is root-scoped, so this user-scoped client uses its default.
+          docker -H unix:///var/run/ducker.sock buildx bake \
+            --file yubiOS-bake.hcl \
+            installer
           docker -H unix:///var/run/ducker.sock logout
           docker -H unix:///var/run/ducker.sock buildx imagetools inspect "0mniteck/yubios:installer"
 
