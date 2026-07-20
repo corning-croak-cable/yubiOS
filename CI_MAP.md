@@ -114,7 +114,7 @@ flowchart TD
 | `yubiOS-ci.yml` | `yubios-ci` (`yubios` + `yubios-smoke`) | `yubios` | Containerized job creates and names user-scoped `hardened` builder |
 | `ci_dev_image.yml` | `yubios-dev-ci` (`yubios-dev` + `yubios-dev-smoke`) | `yubios-dev` | Containerized job creates and names user-scoped `hardened` builder |
 | `ci_firmware-rk.yml` | None unless publication is requested | `firmware` | Every Stage 1–4 job uses the pinned DHI container and creates a user-scoped `hardened` builder |
-| `ci_mkosi-installer.yml` | Host-side mkosi validation plus artifact handoff | `installer` | Containerized job creates and names user-scoped `hardened` builder |
+| `ci_mkosi-installer.yml` | DHI-contained mkosi validation plus artifact handoff | `installer` | Every build and publication job uses the pinned DHI container and creates a user-scoped `hardened` builder |
 | `ci_pq_tls_verify.yml` | `pq-tls-verify` | None; output is `cacheonly` | Containerized job creates and names user-scoped `hardened` builder |
 
 Production and dev publication remains a two-stage operation: native runners publish immutable per-architecture tags through Bake, then existing `imagetools` jobs create the `<sha>`/`latest` and `dev-<sha>`/`dev` multi-architecture indexes. Firmware and installer targets publish directly with the registry exporter from privileged DHI container jobs that check out the policy-bound Bake definition and explicitly select their user-scoped `hardened` builders.
@@ -162,9 +162,9 @@ flowchart TD
     dev_out["per-arch dev-sha-arch\nimagetools -> dev-sha + dev"]
     vm["ci_test-vm.yml\nsudo Podman storage + bcvk\nARM64 DirectBoot credential"]
     vm_out["VM boot, LUKS/FIDO2, enrollment results\nexplicit loud skips"]
-    installer["ci_mkosi-installer.yml bare build\nmkosi + SoftHSM PKCS#11 signing"]
+    installer["ci_mkosi-installer.yml DHI build job\nuser-scoped hardened builder\nmkosi + SoftHSM PKCS#11 signing"]
     installer_payload["prepared installer payload\nworkflow artifact handoff"]
-    installer_bake["DHI container publish job\nuser-scoped hardened builder\nBake: installer + registry exporter"]
+    installer_bake["DHI publish job\nuser-scoped hardened builder\nBake: installer + registry exporter"]
     installer_out["installer\ninstaller-sha"]
     pq["ci_pq_tls_verify.yml"]
     pq_bake["Bake: pq-tls-verify\nno-cache + cacheonly"]

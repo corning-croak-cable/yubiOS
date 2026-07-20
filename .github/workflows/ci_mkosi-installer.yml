@@ -10,11 +10,11 @@ name: yubiOS mkosi-installer
 # the mock cert with sbverify before anything is published.
 #
 # HSM plumbing: mkosi's signing/validation sandbox does NOT carry sandbox
-# trees, but it bind-mounts host /run rw whenever the key source is not a
-# file (mkosi's designed path for host HSM daemons like pcscd). So the
-# SoftHSM conf + token store live at /run/yubios-hsm — the same absolute
-# path on the host (where the token is created) and inside the sandbox
-# (where systemd-sbsign signs through pkcs11-provider). The provider is
+# trees, but it bind-mounts the invoking environment's /run rw whenever the
+# key source is not a file (mkosi's designed path for HSM daemons like pcscd).
+# So the SoftHSM conf + token store live at /run/yubios-hsm — the same absolute
+# path in the DHI job container (where the token is created) and inside the
+# sandbox (where systemd-sbsign signs through pkcs11-provider). The provider is
 # pointed straight at libsofthsm2.so via PKCS11_PROVIDER_MODULE, skipping
 # p11-kit indirection. Debug trail from the campaign: C_Initialize error 5
 # = softhsm can't read SOFTHSM2_CONF inside the sandbox.
@@ -24,9 +24,9 @@ name: yubiOS mkosi-installer
 # 0mniteck/yubios:installer + installer-<sha> per ADR-022 — the same
 # one-repo/per-artifact-tag scheme as the firmware bundle.
 #
-# The mkosi build stays on a bare runner because it needs userns/uidmap plumbing
-# and a writable /run. OCI publication is handed to a separate hardened DHI
-# container so Docker and the named Buildx builder share one user scope.
+# Both the mkosi build and OCI publication run in privileged hardened DHI job
+# containers with writable /run and userns/uidmap plumbing. Each stage installs
+# Docker + Buildx and creates the named builder in the invoking user scope.
 
 on:
   push:
@@ -93,20 +93,52 @@ jobs:
   build:
     name: mkosi disk image — SoftHSM PKCS#11 signed UKI
     runs-on: ubuntu-24.04
+    defaults:
+      run:
+        shell: bash
+    container:
+      options: --privileged
+      volumes:
+        - /mnt:/mnt
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0 (PINNED.md)
 
-      - name: Install host deps + mkosi (yubi-OS fork @ main)
+      - name: Install docker CLI + buildx
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends git curl iptables nftables
+          wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
+          wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
+          tar xzf docker-29.6.0.tgz
+          mkdir -p /usr/libexec/docker/cli-plugins/
+          cp docker/* /usr/bin/
+          cp buildx-v0.35.0.linux-amd64 /usr/libexec/docker/cli-plugins/docker-buildx
+          chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
+          mkdir -p /mnt/docker
+          dockerd --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
+          for i in $(seq 1 30); do docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
+          docker -H unix:///var/run/ducker.sock buildx create --name hardened \
+            --driver docker-container \
+            --use
+
+      - name: Install mkosi build deps + mkosi (yubi-OS fork @ main)
         run: |
           set -euxo pipefail
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq softhsm2 sbsigntool zstd uidmap python3-pip debian-archive-keyring
-          sudo pip install --break-system-packages git+https://github.com/yubi-OS/mkosi.git@feature/yubiOS-profile
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends \
+            ca-certificates debian-archive-keyring findutils openssl procps \
+            python3-pip sbsigntool softhsm2 uidmap zstd
+          pip install --break-system-packages git+https://github.com/yubi-OS/mkosi.git@feature/yubiOS-profile
+          mkosi dependencies | xargs -r -d '\n' apt-get install -y -qq --no-install-recommends
           mkosi --version
-          # ubuntu 24.04 restricts unprivileged userns via AppArmor; mkosi's
-          # sandbox needs it. Harmless if already 0.
-          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+          # The Ubuntu 24.04 runner host may restrict unprivileged userns via
+          # AppArmor; the privileged DHI job container can relax it for mkosi.
+          sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
 
       - name: SoftHSM token in /run — mock of YubiKey PIV slot 9c
         run: |
@@ -114,26 +146,26 @@ jobs:
           # /run is bind-mounted into mkosi's signing sandbox at the same
           # absolute path, so conf + tokens created here are reachable by
           # systemd-sbsign inside the tools tree without any overlay tricks.
-          sudo mkdir -p /run/yubios-hsm/tokens
+          mkdir -p /run/yubios-hsm/tokens
           openssl req -x509 -newkey rsa:3072 -sha256 -days 365 -nodes \
             -subj "/CN=yubiOS CI Secure Boot (SoftHSM mock of PIV 9c)/" \
             -keyout sb.key -out mkosi.secure-boot.pem
           openssl pkcs8 -topk8 -nocrypt -in sb.key -out sb.p8
           printf 'directories.tokendir = /run/yubios-hsm/tokens\nobjectstore.backend = file\n' \
-            | sudo tee /run/yubios-hsm/softhsm2.conf
-          sudo SOFTHSM2_CONF=/run/yubios-hsm/softhsm2.conf \
+            | tee /run/yubios-hsm/softhsm2.conf
+          SOFTHSM2_CONF=/run/yubios-hsm/softhsm2.conf \
             softhsm2-util --init-token --free --label yubios-9c --pin 123456 --so-pin 123456
-          sudo SOFTHSM2_CONF=/run/yubios-hsm/softhsm2.conf \
+          SOFTHSM2_CONF=/run/yubios-hsm/softhsm2.conf \
             softhsm2-util --import sb.p8 --token yubios-9c --label piv-9c --id 9c --pin 123456
           shred -u sb.key sb.p8
-          sudo chmod -R a+rwX /run/yubios-hsm
+          chmod -R a+rwX /run/yubios-hsm
           printf 'pkcs11:token=yubios-9c;object=piv-9c;type=private?pin-value=123456' \
             > mkosi.secure-boot.pkcs11-uri
 
       - name: Build disk image (minimal profile, PKCS#11-signed UKI)
         run: |
           set -euxo pipefail
-          sudo mkosi \
+          mkosi \
             --distribution fedora \
             --release 45 \
             --profile minimal \
@@ -209,6 +241,9 @@ jobs:
     needs: build
     if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
     runs-on: ubuntu-24.04
+    defaults:
+      run:
+        shell: bash
     container:
       options: --privileged
       volumes:

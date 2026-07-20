@@ -39,7 +39,7 @@ The scope is the workflow chain that `ci.yml` currently dispatches. The standalo
 | `yubiOS-ci.yml` | `yubios-ci`, `yubios` | Native amd64/arm64 scheduling and final `imagetools` index assembly remain outside Bake. |
 | `ci_dev_image.yml` | `yubios-dev-ci`, `yubios-dev` | Native runner scheduling and final dev index assembly remain outside Bake. |
 | `ci_test-vm.yml` | None | bcvk's Podman image store, DirectBoot SSH credential transport, KVM, FUSE, and hardware-only exclusions are host evidence, not Docker image-build configuration. |
-| `ci_mkosi-installer.yml` | `installer` | SoftHSM, `/run`, user namespaces, mkosi, UKI verification, and payload preparation remain host operations; publication uses the pinned DHI container and user-scoped Buildx setup. |
+| `ci_mkosi-installer.yml` | `installer` | SoftHSM, `/run`, user namespaces, mkosi, UKI verification, and payload preparation remain Actions operations; both build and publication jobs use the pinned DHI container and user-scoped Buildx setup. |
 | `ci_pq_tls_verify.yml` | `pq-tls-verify` | GitHub keeps the check advisory and callback semantics; Bake owns the uncached live verification build. |
 
 ## Policy relationship
@@ -66,7 +66,7 @@ target "_policy" {
 - Confirmed firmware compatibility tags remain limited to the QEMU board target and board-scoped tags remain distinct.
 - Confirmed the installer retains `installer` and `installer-<sha>` tags.
 - Confirmed the shared `_image-export` inheritance preserves Docker output for local builds and registry output for explicit publication.
-- Reconciled the original branch through `main` commit `a95f185`; current firmware and artifact publication jobs now use the pinned DHI/user-scoped Buildx invocation pattern.
+- Reconciled the original branch through `main` commit `a95f185`; current firmware and installer stages now use the pinned DHI/user-scoped Buildx invocation pattern.
 - Parsed all edited workflow YAML and checked the patch for whitespace errors.
 
 No image was published and no KVM, QEMU firmware, mkosi, or live registry run is claimed by this static pass.
