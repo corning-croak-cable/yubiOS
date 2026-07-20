@@ -27,6 +27,10 @@ name: yubiOS mkosi-installer
 # the hardened dhi container doesn't provide.
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ci_mkosi-installer.yml' # self-change trigger for validating workflow edits
   workflow_dispatch:
     inputs:
       reason:
@@ -227,7 +231,6 @@ jobs:
           COPY installer/ /installer/
           DOCKER
           docker -H unix:///var/run/ducker.sock buildx build \
-            --builder hardened \
             --label "org.opencontainers.image.title=yubiOS mkosi installer image" \
             --label "org.opencontainers.image.description=DPS disk image + PKCS#11-signed UKI (minimal profile); installs the base system that runs the bootc images" \
             --label "org.opencontainers.image.source=https://github.com/yubi-OS/yubiOS" \
