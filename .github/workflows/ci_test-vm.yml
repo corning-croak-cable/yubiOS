@@ -247,12 +247,22 @@ jobs:
           fi
           grep -Fq -- '"ed25519"' bcvk-src/crates/kit/src/ssh.rs \
             || { echo "::error::failed to apply bcvk ed25519 SSH key CI patch"; exit 1; }
-          # Preserve bcvk's tmpfiles.extra credential path. systemd documents
-          # this exact SMBIOS mechanism for provisioning a QEMU guest's root
-          # authorized_keys, and the yubiOS root-only helper accepts it too.
+          # ARM virt SMBIOS tables are published to the guest by firmware.
+          # bcvk DirectBoot bypasses firmware, so use systemd's documented
+          # kernel-command-line credential transport for this public key.
+          if ! grep -Fq -- 'ssh_credential_karg = None' bcvk-src/crates/kit/src/run_ephemeral.rs; then
+            git -C bcvk-src apply ../.github/patches/bcvk-arm64-directboot-ssh.patch \
+              || { echo "::error::failed to apply bcvk ARM64 DirectBoot SSH credential patch"; exit 1; }
+          fi
+          grep -Fq -- 'karg_for_root_ssh(&pubkey)' bcvk-src/crates/kit/src/run_ephemeral.rs \
+            || { echo "::error::bcvk ARM64 DirectBoot SSH credential fallback unavailable"; exit 1; }
+          grep -Fq -- 'systemd.set_credential_binary=tmpfiles.extra:' bcvk-src/crates/bcvk-qemu/src/credentials.rs \
+            || { echo "::error::bcvk systemd kernel-command-line SSH credential unavailable"; exit 1; }
+          # Keep tmpfiles.extra as the payload on both transports so systemd-
+          # tmpfiles and the yubiOS root-only helper accept the same data.
           grep -Fq -- 'io.systemd.credential.binary:tmpfiles.extra={encoded}' bcvk-src/crates/bcvk-qemu/src/credentials.rs \
             || { echo "::error::bcvk no longer exposes the documented tmpfiles.extra root SSH credential path"; exit 1; }
-          ( cd bcvk-src && cargo build --release )
+          ( cd bcvk-src && cargo test --release -p bcvk-qemu test_karg_for_root_ssh && cargo build --release )
           if [ ! -x bcvk-src/target/release/bcvk ]; then
             echo "skip=1" >> "$GITHUB_OUTPUT"
             echo "::warning::SKIP: bcvk failed to build from feat/swtpm-ci -- VM e2e not feasible (see cargo output above)"

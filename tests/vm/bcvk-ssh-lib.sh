@@ -61,6 +61,29 @@ dump_bcvk_ssh_diagnostics() {
     else
       echo "no ss/netstat in outer container"
     fi
+    echo "qemu credential transport:"
+    qemu_pid="$(pgrep -o -f "[q]emu-system-" 2>/dev/null || true)"
+    if [ -n "$qemu_pid" ] && [ -r "/proc/$qemu_pid/cmdline" ]; then
+      qemu_cmdline="$(tr "\000" " " < "/proc/$qemu_pid/cmdline")"
+      case "$qemu_cmdline" in
+        *systemd.set_credential_binary=tmpfiles.extra:*)
+          echo "kernel-cmdline credential: present"
+          ;;
+        *)
+          echo "kernel-cmdline credential: absent"
+          ;;
+      esac
+      case "$qemu_cmdline" in
+        *io.systemd.credential.binary:tmpfiles.extra=*)
+          echo "SMBIOS credential: present"
+          ;;
+        *)
+          echo "SMBIOS credential: absent"
+          ;;
+      esac
+    else
+      echo "qemu process: unavailable"
+    fi
     echo "ssh -vvv probe:"
     ssh -vvv -i /run/tmproot/var/lib/bcvk/ssh \
       -o IdentitiesOnly=yes \
