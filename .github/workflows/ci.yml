@@ -166,7 +166,7 @@ jobs:
               next_file='ci_mkosi-installer.yml'
               callee_inputs=$(jq -n --arg reason "ci after yubiOS VM e2e (tests/vm)" --arg push "$INSTALLER_DOCKER_PUSH" '{reason: $reason, Docker_push: $push}')
               ;;
-            ci_mkosi-installer)
+            'yubiOS mkosi-installer')
               next_file='ci_pq_tls_verify.yml'
               callee_inputs='{}'
               ;;
