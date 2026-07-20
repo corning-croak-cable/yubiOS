@@ -247,15 +247,11 @@ jobs:
           fi
           grep -Fq -- '"ed25519"' bcvk-src/crates/kit/src/ssh.rs \
             || { echo "::error::failed to apply bcvk ed25519 SSH key CI patch"; exit 1; }
-          # systemd already has a first-class root SSH credential. Prefer it to
-          # bcvk's tmpfiles.extra indirection so sshd auth depends on the booted
-          # guest provisioning /root/.ssh/authorized_keys, not on sshd reading
-          # the raw boot credential at login time.
-          if grep -Fq -- 'io.systemd.credential.binary:tmpfiles.extra={encoded}' bcvk-src/crates/bcvk-qemu/src/credentials.rs; then
-            perl -0pi -e 's/let k = key_to_root_tmpfiles_d\(pubkey\);\n    let encoded = data_encoding::BASE64.encode\(k.as_bytes\(\)\);\n    let r = format!\("io.systemd.credential.binary:tmpfiles.extra=\{encoded\}"\);/let encoded = data_encoding::BASE64.encode(pubkey.as_bytes());\n    let r = format!("io.systemd.credential.binary:ssh.authorized_keys.root={encoded}");/s' bcvk-src/crates/bcvk-qemu/src/credentials.rs
-          fi
-          grep -Fq -- 'ssh.authorized_keys.root' bcvk-src/crates/bcvk-qemu/src/credentials.rs \
-            || { echo "::error::failed to apply bcvk systemd root SSH credential CI patch"; exit 1; }
+          # Preserve bcvk's tmpfiles.extra credential path. systemd documents
+          # this exact SMBIOS mechanism for provisioning a QEMU guest's root
+          # authorized_keys, and the yubiOS root-only helper accepts it too.
+          grep -Fq -- 'io.systemd.credential.binary:tmpfiles.extra={encoded}' bcvk-src/crates/bcvk-qemu/src/credentials.rs \
+            || { echo "::error::bcvk no longer exposes the documented tmpfiles.extra root SSH credential path"; exit 1; }
           ( cd bcvk-src && cargo build --release )
           if [ ! -x bcvk-src/target/release/bcvk ]; then
             echo "skip=1" >> "$GITHUB_OUTPUT"
