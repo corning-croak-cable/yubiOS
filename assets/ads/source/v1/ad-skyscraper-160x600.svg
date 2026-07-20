@@ -12,7 +12,7 @@
     <rect x="95" y="206" width="64" height="132" rx="32" stroke-width="9" transform="rotate(28 127 272)"/>
     <rect x="91" y="306" width="64" height="132" rx="32" stroke-width="9" transform="rotate(-28 123 372)"/>
   </g>
-  <image href="../../logo.png" x="36" y="30" width="88" height="88" preserveAspectRatio="xMidYMid slice" clip-path="url(#logoClip)"/>
+  <image href="../../../logo.png" x="36" y="30" width="88" height="88" preserveAspectRatio="xMidYMid slice" clip-path="url(#logoClip)"/>
   <text x="80" y="149" text-anchor="middle" fill="#faf6ff" font-family="Nimbus Sans, DejaVu Sans, sans-serif" font-size="30" font-weight="700" letter-spacing="-1">yubiOS</text>
   <rect x="28" y="163" width="104" height="22" rx="11" fill="#190b20" stroke="#ff1493" stroke-opacity="0.62"/>
   <circle cx="41" cy="174" r="3" fill="#89ff38"/>
@@ -30,4 +30,3 @@
   <rect x="18" y="549" width="124" height="31" rx="15.5" fill="#f6eff9"/>
   <text x="80" y="569" text-anchor="middle" fill="#13071a" font-family="Nimbus Sans, DejaVu Sans, sans-serif" font-size="9.5" font-weight="700">yubi-OS/yubiOS →</text>
 </svg>
-
