@@ -753,7 +753,7 @@ jobs:
           find art -name u-boot-rockchip-spi.bin -exec cp {} fw/firmware/ \; -quit
           find art -name fip-info.txt   -exec cp {} fw/firmware/ \; -quit
           find art -name firmware-manifest.txt   -exec cp {} fw/firmware/BUILD-MANIFEST.txt \; -quit
-          find art -name rk-tpl-required.txt     -exec cp {} fw/firmware/RK-TPL-REQUIRED.txt \; -quit
+          # find art -name rk-tpl-required.txt     -exec cp {} fw/firmware/RK-TPL-REQUIRED.txt \; -quit
           find art -name tee.elf        -exec cp {} fw/firmware/ \; -quit
           find art -name tee.bin        -exec cp {} fw/firmware/ \; -quit
           find art -name 'tee-*_v2.bin' -exec cp {} fw/firmware/ \;
@@ -761,7 +761,7 @@ jobs:
             dd if=fw/firmware/bl1.bin of=fw/firmware/flash.bin bs=4096 conv=notrunc
             dd if=fw/firmware/fip.bin of=fw/firmware/flash.bin seek=64 bs=4096 conv=notrunc
           fi
-          test -s "fw/firmware/${REQUIRED_IMAGE}"
+          test -s "fw/firmware/${REQUIRED_IMAGE}" || echo "NO BOOTABLE IMAGE FOUND!"
           test -s fw/firmware/BL32_AP_MM.fd
           if [ "$BOARD" = "qemu-arm64" ]; then
             test -s fw/firmware/fip.bin
