@@ -39,7 +39,7 @@ jobs:
           set -eu
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends \
-            curl iptables nftables passwd util-linux \
+            curl iptables nftables passwd procps util-linux \
             uidmap slirp4netns fuse-overlayfs
           wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-29.6.0.tgz"
           wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-rootless-extras-29.6.0.tgz"
@@ -66,6 +66,12 @@ jobs:
           install -d -m 0700 -o "$ROOTLESS_USER" -g "$ROOTLESS_USER" "$ROOTLESS_RUNTIME_DIR"
           chown "$ROOTLESS_USER:$ROOTLESS_USER" "$ROOTLESS_DATA_DIR"
           chmod 0700 "$ROOTLESS_DATA_DIR"
+
+          # Ubuntu 24.04 hosted runners restrict unprivileged user namespaces.
+          # The outer job container is privileged and the runner is ephemeral.
+          if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
+            sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          fi
 
           # DHI intentionally lacks a complete PAM login stack. Record the
           # original failure without making the diagnostic depend on PAM.
