@@ -1,10 +1,12 @@
 # yubiOS TODO
 
-Last reviewed: 2026-07-17
+Last reviewed: 2026-07-21
 Status: active task list
+Latest requested-run evidence review: [refs/ci-evidence-2026-07-21.md](refs/ci-evidence-2026-07-21.md), covering the complete logs of runs 29869480442, 29869503301, 29869527608, 29872130447, 29872433355, 29872832727, 29876111887, and 29876466349.
+Latest upstream progress review: [refs/systemd-upstream-progress-2026-07-21.md](refs/systemd-upstream-progress-2026-07-21.md).
 Latest targeted audit: [refs/systemd-v262-audit-2026-07-14.md](refs/systemd-v262-audit-2026-07-14.md).
 Latest broad research note: [refs/research-refresh-2026-07-11.md](refs/research-refresh-2026-07-11.md).
-Latest VM e2e evidence: [run 29717800734 / job 88274400949](https://github.com/yubi-OS/yubiOS/actions/runs/29717800734/job/88274400949), following [run 29702569137 / job 88234024219](https://github.com/yubi-OS/yubiOS/actions/runs/29702569137/job/88234024219) and [refs/vm-e2e-run-29525332901.md](refs/vm-e2e-run-29525332901.md).
+Latest VM e2e evidence: [run 29872832727](https://github.com/yubi-OS/yubiOS/actions/runs/29872832727); root SSH and the DirectBoot bootloader-update guard passed, while guest CTAP2 enumeration remained absent.
 Latest roadmap research pass: [refs/sectime-rk-secure-time-2026-07-17.md](refs/sectime-rk-secure-time-2026-07-17.md), [refs/frost-panfrost-lockout-2026-07-17.md](refs/frost-panfrost-lockout-2026-07-17.md), [refs/openwrt-deception-proof-plan-2026-07-17.md](refs/openwrt-deception-proof-plan-2026-07-17.md), and [refs/roadmap-promotion-gates-2026-07-17.md](refs/roadmap-promotion-gates-2026-07-17.md).
 Latest firmware workflow split: [refs/firmware-rk-workflow-2026-07-17.md](refs/firmware-rk-workflow-2026-07-17.md).
 
@@ -38,6 +40,8 @@ Use this map to keep [FUTURE.md](FUTURE.md) roadmap entries tied to active TODO 
 - [x] Record the 2026-07-16 VM e2e milestone from run 29525332901: [refs/vm-e2e-run-29525332901.md](refs/vm-e2e-run-29525332901.md).
 - [x] Switch the active install docs from `bootc install to-disk` to `bootc install to-filesystem --root-mount-spec=""` so DPS auto-discovery remains explicit.
 - [x] Keep future planning cycles dated and scoped under `refs/`: see the 2026-07-17 SecTime, Frost, OpenWrt, roadmap-gate, hardening, ARM64 board, and firmware workflow refs.
+- [x] Record the complete requested-run review separately from green/red workflow status: [refs/ci-evidence-2026-07-21.md](refs/ci-evidence-2026-07-21.md).
+- [x] Add a dated systemd-family upstream snapshot and area-scaled contributor map: [refs/systemd-upstream-progress-2026-07-21.md](refs/systemd-upstream-progress-2026-07-21.md) and [assets/upstream-contributor-bubbles.svg](assets/upstream-contributor-bubbles.svg).
 
 ## Current Roadmap Research Tasks
 
@@ -74,11 +78,13 @@ These items map [FUTURE.md](FUTURE.md) sections that were missing or only partia
 
 ## Current CI Tasks
 
-- [ ] Keep PQ TLS verification visible in CI for OpenSSL 3.5+ and Go 1.24+ defaults; when the repo toolchain reaches Go 1.26, include `SecP256r1MLKEM768` and `SecP384r1MLKEM1024` in accepted hybrid-group checks.
+- [ ] Keep PQ TLS verification visible in CI for OpenSSL 3.5+ and Go 1.24+ defaults; run 29876466349 negotiated TLS 1.3 `X25519MLKEM768`. When the repo toolchain reaches Go 1.26, include `SecP256r1MLKEM768` and `SecP384r1MLKEM1024` in accepted hybrid-group checks.
 - [ ] Keep the QEMU zstd EFI zboot workaround version-gated until runner QEMU contains upstream zstd EFI zboot loader support.
-- [ ] Validate the bcvk virtiofs-root `bootloader-update.service` skip on a fresh VM e2e run. The current fix inspects `/proc/mounts` because bcvk DirectBoot omits `root=`, `rootfstype=`, and `rootflags=` from the kernel command line.
-- [ ] Validate the bcvk root SSH key path on a fresh VM e2e run after the run-29717800734 fix. ARM64 DirectBoot now passes the generated public key through systemd's kernel-command-line credential transport because its firmware-less boot cannot publish QEMU's SMBIOS table; other architectures retain the SMBIOS transport.
-- [ ] Confirm `tests/vm/test-fido2-enrollment.sh` runs in the same VM workflow even when the earlier LUKS/FIDO2 boot step fails; `.github/workflows/ci_test-vm.yml` now keeps the existing gates but wraps the enrollment step in `always()`.
+- [x] Validate the bcvk virtiofs-root `bootloader-update.service` guard: run 29872832727 reached the guest assertions without the old DirectBoot/virtiofs failure.
+- [x] Validate the bcvk root SSH credential path: run 29872832727 authenticated and ran the ARM64 guest-side assertions.
+- [x] Confirm `tests/vm/test-fido2-enrollment.sh` still runs when token-dependent operations skip: run 29872832727 executed the enrollment-surface script after the passless layer found no CTAP2 device.
+- [ ] Make a swu2f CTAP2 token enumerate inside the ARM64 bcvk guest, then require the LUKS2 FIDO2, homed, and OpenSSH `ed25519-sk` operations to execute instead of skip.
+- [x] Add a native arm64 build/publish leg and multi-architecture manifest merge to `.github/workflows/ci_mkosi-installer.yml`; run 29876111887 proved only the amd64 path, and the workflow now stages both architectures before merging public tags.
 - [ ] Keep `dev`/`dev-<sha>` swu2f images isolated from production build and publish paths.
 - [ ] Treat old-sha workflow reruns as historical unless the workflow is rerun against current `main`.
 - [x] For workflow trigger edits, add narrow path-scoped push triggers only when required for validation.
@@ -90,6 +96,7 @@ These items map [FUTURE.md](FUTURE.md) sections that were missing or only partia
 
 - [x] Choose the first Path A board for production-root proof: Radxa ROCK 5B / RK3588 is primary; ROCKPro64 / RK3399 is supported secondary per ADR-029.
 - [ ] Rehearse ROTPK/fuse provisioning on sacrificial ROCK 5B hardware before production language.
+- [ ] Supply ROCK 5B builds with a licensed, immutable, checksum-verified RK3588 DDR/TPL blob and require `u-boot-rockchip.bin`; run 29869527608 published a diagnostic bundle without that bootable image.
 - [ ] Prove OP-TEE, StandaloneMM, RPMB-backed variables, fTPM NV, and U-Boot UEFI on ROCK 5B hardware first, then carry the supported-secondary evidence to ROCKPro64.
 - [ ] Record exact TF-A, OP-TEE, StandaloneMM/RPMB, and U-Boot config evidence for Path A, including `CFG_RPMB_FS`, `CONFIG_EFI_MM_COMM_TEE`, and `CONFIG_SUPPORT_EMMC_RPMB`.
 - [ ] Verify the same signed UKI boots across ARM64 and x86-64 paths.
@@ -115,7 +122,8 @@ These items map [FUTURE.md](FUTURE.md) sections that were missing or only partia
 ## Watch List
 
 - Run 29525332901 proved the ARM64 lane can boot the dev image to Fedora login with the pinned QEMU workaround; keep watching for runner QEMU refreshes before removing that workaround.
-- Run 29717800734 verified the corrected SSH transport and restored `tmpfiles.extra` payload, but both ARM64 guests rejected their generated key. QEMU exposes ARM `virt` SMBIOS tables through `fw_cfg` for firmware, while bcvk DirectBoot is firmware-less; the next run uses `systemd.set_credential_binary=` for this public key on aarch64.
+- Run 29872832727 retired the old root-SSH and DirectBoot bootloader-update blockers. Its remaining VM gap is narrower: passless starts, but no CTAP2 token enumerates, so token-dependent assertions skip.
+- Run 29869527608 proves the QEMU fTPM/StandaloneMM integration and board-specific compilation, but not physical-board behavior. ROCK 5B additionally lacks the required real DDR/TPL input and combined boot image.
 - `.github/workflows/ci_firmware-rk.yml` is now the orchestrated firmware lane. Keep `ci_test-int.yml` available for manual/historical comparison, but do not route the top-level `ci.yml` chain through its `yubiOS firmware` state.
 - systemd v262 removes `/run/boot-loader-entries/` support and the experimental `systemd-sysupdated` D-Bus API; the 2026-07-14 audit found no repo dependency, but future update UX should stay on UAPI.1/BLS and Varlink/systemd-sysupdate rather than removed interfaces or unaudited `updatectl` assumptions.
 - systemd v262 renames `systemd-sysupdate.service`/`.timer` to `systemd-sysupdate-update.service`/`.timer`; verify compatibility symlinks before adding units against the old names.
@@ -125,6 +133,7 @@ These items map [FUTURE.md](FUTURE.md) sections that were missing or only partia
 - LUO/KHO may matter for appliance/server deployments, but A/B reboot remains correct for the current desktop/laptop thesis.
 - U-Boot FIDO2/U2F console authentication remains idea-stage until USB HID, crypto, and recovery risks are audited.
 - ORAS artifact media types may replace `FROM scratch` carrier images when registry support and UX improve.
+- systemd v262 is active upstream work rather than the current pinned baseline; track credential-sealing compatibility, the sysupdate unit rename, cryptenroll's first-boot/Varlink work, and the FIDO2 zero-length-HMAC rejection in [refs/systemd-upstream-progress-2026-07-21.md](refs/systemd-upstream-progress-2026-07-21.md).
 
 ## Retired From Active TODO
 

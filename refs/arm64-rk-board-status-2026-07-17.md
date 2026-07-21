@@ -1,14 +1,14 @@
 # ARM64 RK board status: 2026-07-17
 
-Status: documentation complete; Path A hardware proof still required.
+Status: workflow evidence updated 2026-07-21; Path A hardware proof still required.
 
 ## Board matrix
 
 | Board | SoC | yubiOS role | Current status |
 |---|---|---|---|
-| Radxa ROCK 5B | RK3588 | Primary Path A board | Selected primary. Needs sacrificial ROTPK/fuse rehearsal, OP-TEE, StandaloneMM/RPMB variables, fTPM NV, U-Boot UEFI, and signed UKI proof before production language. |
-| ROCKPro64 | RK3399 | Supported secondary Path A board | Supported secondary. Follow after ROCK 5B proof; do not let it block primary Path A evidence. |
-| QEMU ARM64 virt | vexpress-qemu_armv8a | CI firmware baseline | Useful for fTPM/StMM build and QEMU boot assertions. It is not proof of RPMB-backed real hardware behavior. |
+| Radxa ROCK 5B | RK3588 | Primary Path A board | Run 29869527608 compiled board components but lacked the required real DDR/TPL input and combined `u-boot-rockchip.bin`. Needs that input plus sacrificial ROTPK/fuse, RPMB, fTPM NV, U-Boot UEFI, and signed-UKI proof. |
+| ROCKPro64 | RK3399 | Supported secondary Path A board | Run 29869527608 produced combined Rockchip images. Physical ROTPK/fuse, RPMB, fTPM NV, recovery, and signed-UKI evidence remain open. |
+| QEMU ARM64 virt | vexpress-qemu_armv8a | CI firmware baseline | Run 29869527608 passed fTPM/StandaloneMM boot assertions on both runner architectures. It is not proof of RPMB-backed real hardware behavior. |
 
 ## Path A vs Path B
 
@@ -31,4 +31,4 @@ ROCK 5B and ROCKPro64 stay Path B for production claims until the board-specific
 - `0mniteck/yubios:firmware-rockpro64-rk3399`
 - `0mniteck/yubios:firmware-rockpro64-rk3399-<sha>`
 
-Until real hardware lanes produce board-divergent firmware, board-scoped images are metadata/routing placeholders carrying the QEMU-validated payload and a manifest warning.
+The board tags now carry board-specific compile outputs. They remain pre-production: QEMU is the only boot-tested variant, ROCK 5B lacks a required firmware input, and ROCKPro64 has no retained physical-board proof. See [ci-evidence-2026-07-21.md](ci-evidence-2026-07-21.md).

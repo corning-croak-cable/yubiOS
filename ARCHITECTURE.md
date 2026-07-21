@@ -1,6 +1,6 @@
 # yubiOS Architecture
 
-Last reviewed: 2026-07-11
+Last reviewed: 2026-07-21
 Status: planning baseline for `main`; ARM64 is primary, x86-64 is secondary and supported.
 
 This document describes the current yubiOS architecture at the level needed for planning, review, and CI triage. Normative requirements live in [SPEC.md](SPEC.md), decisions live in [ADR.md](ADR.md), pinned inputs live in [PINNED.md](PINNED.md), and threat coverage lives in [MITIGATE.md](MITIGATE.md).
@@ -148,6 +148,64 @@ graph TD
     style SEAL fill:#ff1493,color:#fff
 ```
 
+## Workflow-Built ARM64 Firmware Variants
+
+`.github/workflows/ci_firmware-rk.yml` builds the same pinned secure-world components for three explicit variants on native amd64 and arm64 runners. StandaloneMM is built once per runner architecture, then each variant selects its own TF-A platform, OP-TEE flavor, and U-Boot defconfig. Only the QEMU variant executes the emulated fTPM boot assertions; compiling or publishing a board bundle is not physical-board proof.
+
+| Variant | Workflow inputs and principal output | Evidence from run 29869527608 | Promotion boundary |
+|---|---|---|---|
+| `qemu-arm64` | TF-A `PLAT=qemu`, OP-TEE `vexpress-qemu_armv8a`, `qemu_arm64_defconfig`; `flash.bin` | Both runner architectures found the fTPM Early TA, functional TPM, and StandaloneMM SP with no known failure signatures. | CI baseline only; volatile emulated storage is not RPMB or owner-owned hardware. |
+| `rock5b-rk3588` | TF-A `PLAT=rk3588`, OP-TEE `rockchip-rk3588`, `rock5b-rk3588_defconfig`; intended `u-boot-rockchip.bin` | Secure-world and U-Boot components compiled, but the log records no real RK3588 DDR/TPL blob and therefore no flashable `u-boot-rockchip.bin`. | Block publication/promotion as bootable firmware until a pinned, licensed, checksum-verified DDR/TPL input and real-board evidence exist. |
+| `rockpro64-rk3399` | TF-A `PLAT=rk3399`, OP-TEE `rockchip-rk3399`, `rockpro64-rk3399_defconfig`; `u-boot-rockchip.bin` and SPI image | Native build artifacts include the combined Rockchip U-Boot images plus OP-TEE, StandaloneMM, and fTPM inputs. | Still needs physical boot, RPMB-backed variable/fTPM NV, ROTPK, recovery, and signed-UKI evidence. |
+
+### QEMU ARM64 CI baseline
+
+The QEMU path is the integration oracle for component wiring. It assembles `bl1.bin`, `fip.bin`, OP-TEE, StandaloneMM, the fTPM Early TA, and U-Boot into `flash.bin`; Stage 3 then boots that image and checks the secure- and normal-world logs. Its compatibility tags are `firmware-qemu-arm64[-<sha>]` plus `firmware[-<sha>]`.
+
+```mermaid
+flowchart TD
+    S["Pinned TF-A + OP-TEE + U-Boot<br/>StandaloneMM + fTPM TA"]
+    F["QEMU flash.bin<br/>BL1 + FIP"]
+    Q["QEMU virt boot<br/>normal + secure logs"]
+    A["Assertions<br/>Early TA · TPM · StMM"]
+    O["firmware-qemu-arm64 OCI bundle"]
+
+    S --> F --> Q --> A --> O
+```
+
+### Radxa ROCK 5B / RK3588 primary Path A lane
+
+The workflow selects the RK3588 TF-A and OP-TEE platforms and the ROCK 5B U-Boot defconfig. U-Boot's RK3588 configuration requires an external DDR/TPL blob. In the reviewed run that input was absent, so `u-boot.bin` is useful diagnostic compile evidence but the expected combined `u-boot-rockchip.bin` was not produced. The current OCI bundle must not be described as flash-ready or as a Path A proof.
+
+```mermaid
+flowchart TD
+    P["Pinned RK3588 sources<br/>TF-A · OP-TEE · U-Boot"]
+    T{"Verified DDR/TPL<br/>ROCKCHIP_TPL present?"}
+    N["No: diagnostic bundle only<br/>no combined boot image"]
+    B["Yes: u-boot-rockchip.bin<br/>candidate for board test"]
+    H["ROCK 5B evidence<br/>ROTPK · RPMB · fTPM NV · signed UKI"]
+
+    P --> T
+    T -->|No, current run| N
+    T -->|Required next| B --> H
+```
+
+### ROCKPro64 / RK3399 supported secondary lane
+
+The RK3399 lane currently produces `idbloader.img`, `u-boot.itb`, `u-boot-rockchip.bin`, and `u-boot-rockchip-spi.bin` alongside TF-A, OP-TEE, StandaloneMM, and fTPM material. Those files establish a board-specific build shape; the `firmware-rockpro64-rk3399[-<sha>]` bundle remains pre-production until a physical board proves the secure-storage and owner-root chain.
+
+```mermaid
+flowchart TD
+    P["Pinned RK3399 sources<br/>TF-A · OP-TEE · U-Boot"]
+    B["Board bundle<br/>idbloader + ITB + combined images"]
+    F["firmware-rockpro64-rk3399 OCI"]
+    H["Physical ROCKPro64 boot"]
+    E["Path A evidence<br/>ROTPK · RPMB · fTPM NV · signed UKI"]
+
+    P --> B --> F
+    F --> H --> E
+```
+
 ### x86-64 Supported Path
 
 1. Owner-enrolled UEFI Secure Boot verifies systemd-boot and the signed UKI.
@@ -162,7 +220,7 @@ The project keeps both build paths active:
 |---|---|---|
 | bootc / OCI | `docker.io/0mniteck/yubios:latest`, `<sha>`, and test tags | Day-2 update stream and VM test source |
 | mkosi | signed UKI and disk image | Installer and image-level validation |
-| firmware OCI tags | `firmware`, `firmware-<sha>` | ARM64 secure-world bundle publication |
+| firmware OCI tags | `firmware-qemu-arm64`, `firmware-rock5b-rk3588`, `firmware-rockpro64-rk3399`, and per-commit variants | Variant-scoped ARM64 secure-world bundle publication |
 | dev OCI tags | `dev`, `dev-<sha>` | TEST-only swu2f-enabled boot validation image |
 
 ```mermaid
@@ -174,7 +232,7 @@ graph LR
     REG["docker.io/0mniteck/yubios\n:latest + immutable :commit-sha"]
 
     BASE -->|FROM digest-pinned| CF
-    CF -->|docker buildx build\n--policy strict=true\n--attest provenance,sbom| REGO
+    CF -->|docker buildx bake\nyubiOS-bake.hcl| REGO
     REGO -->|policy passes| OCI
     OCI --> REG
 
@@ -282,11 +340,12 @@ legacy packages| NS["systemd-nspawn\n\nExamples: Debian dev container\nRPM compa
 
 ## Current Research Notes
 
-The active planning note for this refresh is [refs/planning-cycle-2026-07-11.md](refs/planning-cycle-2026-07-11.md). It records the sources consulted, the inconsistencies found, and follow-up items for CI and hardware validation.
+The current evidence notes are [refs/ci-evidence-2026-07-21.md](refs/ci-evidence-2026-07-21.md) for the workflow state and [refs/systemd-upstream-progress-2026-07-21.md](refs/systemd-upstream-progress-2026-07-21.md) for the dated upstream snapshot. Historical planning context remains in [refs/planning-cycle-2026-07-11.md](refs/planning-cycle-2026-07-11.md).
 
 ## Open Edges
 
 - ARM64 Path A still needs real-board fuse/RPMB validation before being claimed as a production hardware route.
+- The ROCK 5B bundle additionally needs a pinned, verified RK3588 DDR/TPL input before it is flashable; a successful component compile is not a boot-image claim.
 - The zstd EFI zboot workaround should remain pinned and explicit until upstream QEMU behavior is available in the runner fleet.
 - PQ TLS is satisfied by current OpenSSL and Go defaults, but CI should keep asserting it so a future base digest does not silently regress.
 - The U-Boot FIDO2/U2F console gate remains idea-stage until the USB HID and recovery model are audited.

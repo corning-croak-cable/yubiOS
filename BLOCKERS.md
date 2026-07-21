@@ -1,6 +1,6 @@
 # yubiOS Blockers
 
-Last reviewed: 2026-07-17
+Last reviewed: 2026-07-21
 Status: active blocker register
 
 This file lists current blockers only. Historical blockers that were resolved by merged work should move into ADRs, refs, or PR history rather than staying in the active list.
@@ -10,12 +10,12 @@ This file lists current blockers only. Historical blockers that were resolved by
 | ID | Area | Blocker | Current next step |
 |---|---|---|---|
 | B-ARM64-PATHA | ARM64 hardware | Path A is not production until a real board proves ROTPK/fuse provisioning, OP-TEE, RPMB-backed StandaloneMM variables, fTPM NV, U-Boot UEFI, and signed UKI boot. Board roles are documented in [refs/arm64-rk-board-status-2026-07-17.md](refs/arm64-rk-board-status-2026-07-17.md). | Run a documented sacrificial ROCK 5B / RK3588 rehearsal before production language, then carry secondary evidence to ROCKPro64 / RK3399. |
-| B-VM-BOOTLOADER-UPDATE | VM CI | Runs 29525332901 and 29543974333 showed `bootloader-update.service` failing inside the bcvk guest. The first kernel-command-line guard missed because bcvk DirectBoot omits `rootfstype=virtiofs`; current `main` now detects bcvk by checking the live `/` mount type in `/proc/mounts`. | Validate a fresh VM e2e run on current `main`; retire this blocker only after the guest skips `bootloader-update.service` without failing real installed-system bootupd coverage. |
-| B-VM-SSH | VM CI | Run 29717800734 verified the in-container SSH transport reaches the guest but both ARM64 DirectBoot VMs still rejected their generated keys. bcvk supplied the key only through SMBIOS, while QEMU's ARM `virt` machine places those tables in `fw_cfg` for firmware to publish and DirectBoot bypasses firmware; the run's SMBIOS-injected journal channels were empty too. Current `main` patches bcvk to pass the public key through `systemd.set_credential_binary=` on aarch64 DirectBoot while retaining SMBIOS elsewhere. | Validate a fresh VM e2e run on current `main`; retire this blocker only after root public-key authentication succeeds and the guest assertions begin. |
+| B-RK3588-TPL | ROCK 5B firmware | Run 29869527608 compiled the RK3588 components but recorded that U-Boot requires a real external DDR/TPL blob. The bundle lacked the expected `u-boot-rockchip.bin`, so its green publish job is diagnostic packaging, not a flashable image. | Select a legally redistributable source, pin its immutable ref and checksum, fail closed when it is absent, and prove the resulting combined image on sacrificial ROCK 5B hardware. |
+| B-VM-CTAP2 | VM CI | Run 29872832727 reached the ARM64 guest, started the passless layer, and ran enrollment-surface checks, but no FIDO2 token enumerated. LUKS2 FIDO2, homed, and OpenSSH `ed25519-sk` operations therefore skipped. | Fix the bcvk/swu2f device path, assert token discovery before token-dependent tests, and retain logs proving each operation actually ran. |
 | B-QEMU-ZBOOT | VM CI | zstd EFI zboot still depends on a pinned QEMU workaround until runner QEMU carries the upstream fix; run 29525332901 proved the workaround is no longer the active failure for the ARM64 lane. | Keep the workaround explicit, keep the stale-cache skip, and revisit removal only after runner image refresh. |
 | B-PINS | Supply chain | Base-image digest changes require explicit [PINNED.md](PINNED.md) updates and package-floor checks. | Treat stale run-specific digests as historical evidence only. |
 | B-HARDENING-RUNTIME | systemd hardening | Static hardening audit is complete in [refs/systemd-hardening-audit-2026-07-17.md](refs/systemd-hardening-audit-2026-07-17.md), but runtime evidence still needs the target image/base to run the Bats unit checks and `systemd-analyze verify`. | Run the hardening tests in a target image/base before adding `RestrictFileSystemAccess=` or claiming runtime enforcement beyond the existing `RestrictFileSystems=~@network` enrollment control. |
-| B-REAL-FIDO2 | E2E unlock | swu2f/dev image proves software-authenticator flow; production confidence still needs real YubiKey hardware validation. | Validate the VM SSH/bootloader fixes, confirm enrollment-surface CI now runs after boot-step failures, and keep hardware-backed evidence as the production-confidence gate. |
+| B-REAL-FIDO2 | E2E unlock | SoftHSM and swu2f exercise interfaces, but production confidence still needs a physical YubiKey to validate FIDO2 unlock, homed, resident SSH keys, PAM presence, PIV signing, recovery, and failure handling. | First close B-VM-CTAP2 for deterministic software coverage, then retain a real-hardware evidence run as the production-confidence gate. |
 
 ## Not Current Blockers
 
@@ -25,7 +25,8 @@ These are no longer active blockers after the latest docs and CI work:
 - PQ TLS implementation is not waiting for future OpenSSL support. OpenSSL 3.5+ and Go 1.24+ provide default `X25519MLKEM768` behavior; the active work is verification and regression gating.
 - systemd v261 is not a future-only planning item in the docs. Current docs should describe completed v261 research as reviewed, while leaving specific implementation gates where evidence is still needed.
 - swu2f Layer 2 is no longer merely a planned concept; the `dev` image path is live for TEST-only VM validation.
-- The ARM64 VM e2e lane is no longer blocked at the pre-boot host/harness bring-up layer when the pinned QEMU workaround is active: recent runs reached a booted Fedora guest before failing on guest service/SSH reachability.
+- The ARM64 VM e2e lane is no longer blocked at the pre-boot host/harness or guest-SSH layer when the pinned QEMU workaround is active; the remaining software-authenticator gap is tracked as `B-VM-CTAP2`.
+- `B-VM-SSH` and `B-VM-BOOTLOADER-UPDATE` are retired by [run 29872832727](https://github.com/yubi-OS/yubiOS/actions/runs/29872832727): root public-key authentication succeeded, guest assertions ran, and the DirectBoot/virtiofs bootloader-update guard did not reproduce the old failure.
 - The hardening documentation audit is no longer pending as a static docs task; the remaining hardening blocker is runtime validation inside the target image/base.
 
 ## Inconsistency Log

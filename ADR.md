@@ -1,6 +1,6 @@
 # Architecture Decision Records - yubiOS
 
-Last reviewed: 2026-07-16
+Last reviewed: 2026-07-21
 
 ## ADR-001: YubiKey as TPM replacement
 
@@ -383,12 +383,12 @@ counters embedded in UKI filenames.
 
 **Context:** The build pipeline needs a rootless container build tool. Both Podman and
 Docker Buildx can build OCI images without root. The project already depends on Docker Buildx
-for Build Policies enforcement (`docker buildx build --policy ... --policy strict=true`)
+for Build Policies enforcement (`docker buildx bake --file yubiOS-bake.hcl ...`)
 per the OPA/Rego supply-chain strategy. Carrying two separate container runtimes -- Podman
 for builds, Docker Buildx for policy enforcement -- adds redundant tooling and an extra
 surface in the trust chain.
 
-**Decision:** Use rootless Docker Buildx (`docker buildx build`) as the sole container build
+**Decision:** Use rootless Docker Buildx as the sole container build
 runtime. Remove Podman from the build dependency chain.
 
 **Rationale:**
@@ -403,7 +403,7 @@ runtime. Remove Podman from the build dependency chain.
 - **daemonless trade-off accepted.** Docker requires a daemon (`dockerd`) or Docker-in-Docker
   in CI. This overhead is accepted in exchange for the unified toolchain above.
 
-**Migration:** Replace all `podman build` invocations with `docker buildx build` and
+**Migration:** Replace all `podman build` invocations with `docker buildx bake` targets and
 all `podman run` with `docker run`. The `Containerfile` syntax is identical.
 
 **Source:** https://docs.docker.com/build/policies/intro/
@@ -520,7 +520,7 @@ ConditionSecurity=measured-os
 **Decision:** Ship yubiOS as a multi-arch project. The trust chain above the UKI is architecturally identical on ARM64 and x86-64. ADR-023 later changed the platform priority: ARM64 is primary; x86-64 is supported secondary.
 
 **Build changes:**
-- docker buildx build --platform linux/amd64,linux/arm64 via QEMU emulation on amd64 runners.
+- Native amd64 and arm64 jobs invoke the shared `yubiOS-bake.hcl` graph, then merge per-architecture staging tags into multi-architecture manifests.
 - The fedora-bootc:45 base image is multi-arch.
 - bcvk native-to-disk works on ARM64 target hardware without modification once the corresponding runner/hardware path is live.
 
@@ -709,3 +709,46 @@ ConditionSecurity=measured-os
 - Board-specific tags are only needed for firmware once real-hardware payloads diverge from the current QEMU/CI firmware bundle. If that happens, use the existing `0mniteck/yubios` namespace with tags such as `firmware-rock5b-rk3588`, `firmware-rock5b-rk3588-<sha>`, `firmware-rockpro64-rk3399`, and `firmware-rockpro64-rk3399-<sha>`.
 
 **Consequences:** TODO.md should treat board selection as complete, then track evidence collection, sacrificial hardware provisioning, and workflow variant work separately. Documentation should avoid using generic RK3588 language when it means the ROCK 5B proof lane specifically.
+
+---
+
+## ADR-030: Reproducible, Policy-Gated Workflow Build Substrate
+
+**Date:** 2026-07-21
+**Status:** Accepted
+
+**Context:** Production, development, installer, and firmware workflows previously repeated enough setup that builder behavior, policy flags, output tags, or fetched tools could drift between lanes. The workflows also need a precise security description: their outer GitHub Actions job runs in a privileged Docker Hardened Image (DHI), while the inner Docker daemon and BuildKit builder run as an unprivileged user. A green build is not sufficient if an unpinned input can change underneath it or if a target silently bypasses policy.
+
+**Decision:** Standardize publish-capable workflow builds on all of the following as one indivisible pattern:
+
+1. Run the job inside the digest-pinned DHI base recorded in [PINNED.md](PINNED.md). The outer container is privileged only because nested container and image-build operations require it; this is the Docker-in-Docker boundary, not a claim that the entire stack is rootless.
+2. Install the checksum-pinned Docker CLI, rootless extras, and Buildx binaries, create a dedicated unprivileged `docker-rootless` account, and run `dockerd-rootless.sh` on its user-owned socket and data directory.
+3. Create and explicitly select the user-scoped Buildx builder named `hardened`. No workflow may rely on an ambient/default builder.
+4. Invoke targets through [yubiOS-bake.hcl](yubiOS-bake.hcl), not ad hoc `docker buildx build` commands. Bake owns contexts, platforms, tag families, outputs, provenance/SBOM settings, and the policy attachment shared by every image target.
+5. Keep [yubiOS.rego](yubiOS.rego) default-deny with `reset=true` and `strict=true`. The policy must reject unapproved registries and non-canonical external image references; every Bake target must inherit the common policy target.
+6. Pin GitHub Actions to full commit SHAs, container bases to OCI digests, source checkouts to immutable commit refs, and downloaded tools/blobs to a reviewed version plus checksum. [PINNED.md](PINNED.md) is the live manifest for those values. A workflow must fail rather than silently fall back to a moving tag, branch, unsigned download, faked firmware blob, or unverified alternate source.
+7. Build each supported architecture natively where a runner exists, publish architecture-qualified staging tags, and create the public multi-architecture tag only after every required leg succeeds.
+
+```mermaid
+flowchart TD
+    DHI["Digest-pinned DHI job container<br/>privileged outer boundary"]
+    RD["rootless dockerd<br/>unprivileged user + private socket"]
+    HB["named Buildx builder: hardened"]
+    BAKE["yubiOS-bake.hcl<br/>one target graph"]
+    POLICY["yubiOS.rego<br/>reset + strict + default deny"]
+    OUT["native per-arch artifacts<br/>then merged manifest"]
+
+    DHI --> RD --> HB --> BAKE
+    POLICY --> BAKE --> OUT
+```
+
+**Reproducibility rule:** Pinning and policy enforcement are necessary for bit-for-bit reproducibility, but they are not themselves proof of it. Package repository state, timestamps, compression, generated metadata, and attestations may still vary. A release may claim bit-for-bit reproducibility only after two isolated builds from the same declared inputs produce identical intended payload digests, with intentionally variable attestations compared separately and the evidence retained. Until that gate exists, the accurate claim is **pinned-input, policy-enforced builds designed for reproducibility**.
+
+**Enforcement and review:**
+
+- A new Bake target is incomplete until it inherits `_policy`, carries the required attestations, and has a policy-negative test or equivalent inspection path.
+- A source or download bump must update the pin and its verifier in the same change. Reviewers should reject a digest in prose that conflicts with `PINNED.md`.
+- Rootless-in-privileged-DHI reduces the privileges of the daemon and builder but does not erase the privileged outer-container risk. Secrets remain scoped to publish steps, and workflow permissions stay least-privilege.
+- Per-architecture staging tags are implementation artifacts. Board-neutral public tags are merged only after all required architectures pass; firmware remains board-scoped where payloads differ.
+
+**Evidence:** [refs/docker-bake-consolidation-2026-07-17.md](refs/docker-bake-consolidation-2026-07-17.md) and [refs/ci-evidence-2026-07-21.md](refs/ci-evidence-2026-07-21.md).

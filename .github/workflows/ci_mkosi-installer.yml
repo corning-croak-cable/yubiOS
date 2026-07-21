@@ -19,10 +19,10 @@ name: yubiOS mkosi-installer
 # p11-kit indirection. Debug trail from the campaign: C_Initialize error 5
 # = softhsm can't read SOFTHSM2_CONF inside the sandbox.
 #
-# A push caused by this workflow file's self-trigger validates the mkosi path
-# without publishing. A dispatch with Docker_push=true publishes artifacts as
-# 0mniteck/yubios:installer + installer-<sha> per ADR-022 — the same
-# one-repo/per-artifact-tag scheme as the firmware bundle.
+# A push caused by this workflow file's self-trigger validates both native
+# mkosi paths without publishing. A dispatch with Docker_push=true publishes
+# architecture-qualified staging images, then merges them as
+# 0mniteck/yubios:installer + installer-<sha> per ADR-022.
 #
 # Both the mkosi build and OCI publication run in privileged hardened DHI job
 # containers with writable /run and userns/uidmap plumbing. Each stage installs
@@ -91,8 +91,22 @@ permissions:
 
 jobs:
   build:
-    name: mkosi disk image — SoftHSM PKCS#11 signed UKI
-    runs-on: ubuntu-24.04
+    name: mkosi disk image — SoftHSM PKCS#11 signed UKI (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            mkosi_arch: x86-64
+            runner: ubuntu-24.04
+            docker_arch: x86_64
+            buildx_arch: linux-amd64
+          - arch: arm64
+            mkosi_arch: arm64
+            runner: ubuntu-24.04-arm
+            docker_arch: aarch64
+            buildx_arch: linux-arm64
+    runs-on: ${{ matrix.runner }}
     defaults:
       run:
         shell: bash
@@ -103,23 +117,39 @@ jobs:
       credentials:
         username: 0mniteck42
         password: ${{ secrets.DOCKER }}
-      image: docker://dhi.io/debian-base@sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6
+      image: docker://dhi.io/debian-base@sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6 # auto-resolves to ${{ matrix.arch }}
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0 (PINNED.md)
 
-      - name: Install docker CLI + buildx
+      - name: Install docker CLI + buildx (${{ matrix.arch }})
         run: |
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends \
             git curl iproute2 iptables nftables passwd procps util-linux \
             uidmap slirp4netns fuse-overlayfs
-          wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
-          wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-rootless-extras-29.6.0.tgz"
-          wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
-          printf '%s  %s\n' '42401384ef853dab0a1986a7990420e77d3ee2bc39e178f8817d27ba6c4403998b7aacf3c28c7172135cdeec281cd328a8f2af949b5f57db44a211a093cfd20b' docker-29.6.0.tgz | sha512sum --check --strict
-          printf '%s  %s\n' '184b583a0f325bef12feaf1ca175ff5ea4a65a168f2136eb1daf9c2ae646eecf02134ed65766c8800bd8eb03ac4d338d1e5d700248bc33632027b5b0b52de48a' docker-rootless-extras-29.6.0.tgz | sha512sum --check --strict
-          printf '%s  %s\n' '710f4f48a101af939c4a4cace5ca93ab8c1a1a9ae244a4ef73b2a900f228614472b635bd202fae383c851686d383a37cdeddf45e6d54b36cae8458826c272262' buildx-v0.35.0.linux-amd64 | sha512sum --check --strict
+          wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-29.6.0.tgz"
+          wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-rootless-extras-29.6.0.tgz"
+          wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.${{ matrix.buildx_arch }}"
+          case "${{ matrix.docker_arch }}" in
+            x86_64)
+              DOCKER_SHA512=42401384ef853dab0a1986a7990420e77d3ee2bc39e178f8817d27ba6c4403998b7aacf3c28c7172135cdeec281cd328a8f2af949b5f57db44a211a093cfd20b
+              ROOTLESS_SHA512=184b583a0f325bef12feaf1ca175ff5ea4a65a168f2136eb1daf9c2ae646eecf02134ed65766c8800bd8eb03ac4d338d1e5d700248bc33632027b5b0b52de48a
+              BUILDX_SHA512=710f4f48a101af939c4a4cace5ca93ab8c1a1a9ae244a4ef73b2a900f228614472b635bd202fae383c851686d383a37cdeddf45e6d54b36cae8458826c272262
+              ;;
+            aarch64)
+              DOCKER_SHA512=04713ac54030bed8b2c096280d034b02f5430ed73ba8bcc4a686f7bbbf4a3444eb027847e896cd9ee91c3237dbe1c25a4cfca43d1dcd922a1a10009c960ace0b
+              ROOTLESS_SHA512=37649acdaacc597c115d2f19b71a4729a0119c6debbba4b4af18da2fd497ac28f5691df13137b7fc59903551ab0e08868f4b976a9a5704e2b7958b3b5b0cc0af
+              BUILDX_SHA512=6dc0d4ed11a7bbd8148dab8897594d7050e7f3bc43e6d130e629aa443e50266e77beed8816737e5dc34b7d43617e7a4eef8121561042ef9a87479aea14383058
+              ;;
+            *)
+              echo "Unsupported Docker artifact architecture: ${{ matrix.docker_arch }}" >&2
+              exit 1
+              ;;
+          esac
+          printf '%s  %s\n' "$DOCKER_SHA512" docker-29.6.0.tgz | sha512sum --check --strict
+          printf '%s  %s\n' "$ROOTLESS_SHA512" docker-rootless-extras-29.6.0.tgz | sha512sum --check --strict
+          printf '%s  %s\n' "$BUILDX_SHA512" "buildx-v0.35.0.${{ matrix.buildx_arch }}" | sha512sum --check --strict
           tar xzf docker-29.6.0.tgz
           tar xzf docker-rootless-extras-29.6.0.tgz
           DOCKER_TOOLS_DIR="${RUNNER_TEMP}/docker-tools"
@@ -131,7 +161,7 @@ jobs:
           install -m 0755 docker/* "$DOCKER_TOOLS_DIR/bin/"
           install -m 0755 docker-rootless-extras/dockerd-rootless.sh "$DOCKER_TOOLS_DIR/bin/"
           install -m 0755 docker-rootless-extras/rootlesskit "$DOCKER_TOOLS_DIR/bin/"
-          install -m 0755 buildx-v0.35.0.linux-amd64 "$DOCKER_TOOLS_DIR/config/cli-plugins/docker-buildx"
+          install -m 0755 "buildx-v0.35.0.${{ matrix.buildx_arch }}" "$DOCKER_TOOLS_DIR/config/cli-plugins/docker-buildx"
           useradd --create-home --shell /bin/sh "$ROOTLESS_USER"
           printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subuid
           printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subgid
@@ -234,6 +264,7 @@ jobs:
           mkosi \
             --distribution fedora \
             --release 45 \
+            --architecture "${{ matrix.mkosi_arch }}" \
             --profile minimal \
             --package kernel \
             --package systemd-boot-unsigned \
@@ -279,6 +310,7 @@ jobs:
           cp mkosi.secure-boot.pem inst/installer/ci-secure-boot-cert.pem
           {
             echo "yubiOS mkosi installer image (minimal profile) — CI build"
+            echo "architecture=${{ matrix.arch }}"
             echo "yubios_commit=${GITHUB_SHA}"
             echo "workflow_run=${GITHUB_RUN_ID}"
             echo "mkosi_source=https://github.com/yubi-OS/mkosi@b2b1ea6ad59621a6f955e4cbceee72580a91889a (feature/yubiOS-profile provenance)"
@@ -296,17 +328,29 @@ jobs:
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
         with:
-          name: mkosi-installer-payload
+          name: mkosi-installer-payload-${{ matrix.arch }}
           path: inst/installer
           if-no-files-found: error
           compression-level: 0
           retention-days: 1
 
   installer-publish:
-    name: Publish installer OCI artifact
+    name: Publish installer OCI artifact (${{ matrix.arch }})
     needs: build
     if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
-    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+            docker_arch: x86_64
+            buildx_arch: linux-amd64
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            docker_arch: aarch64
+            buildx_arch: linux-arm64
+    runs-on: ${{ matrix.runner }}
     defaults:
       run:
         shell: bash
@@ -317,7 +361,7 @@ jobs:
       credentials:
         username: 0mniteck42
         password: ${{ secrets.DOCKER }}
-      image: docker://dhi.io/debian-base@sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6
+      image: docker://dhi.io/debian-base@sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6 # auto-resolves to ${{ matrix.arch }}
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # PINNED.md
@@ -325,21 +369,37 @@ jobs:
       - name: Download prepared installer payload
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
         with:
-          name: mkosi-installer-payload
+          name: mkosi-installer-payload-${{ matrix.arch }}
           path: inst/installer
 
-      - name: Install docker CLI + buildx
+      - name: Install docker CLI + buildx (${{ matrix.arch }})
         run: |
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends \
             git curl iproute2 iptables nftables passwd procps util-linux \
             uidmap slirp4netns fuse-overlayfs
-          wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
-          wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-rootless-extras-29.6.0.tgz"
-          wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
-          printf '%s  %s\n' '42401384ef853dab0a1986a7990420e77d3ee2bc39e178f8817d27ba6c4403998b7aacf3c28c7172135cdeec281cd328a8f2af949b5f57db44a211a093cfd20b' docker-29.6.0.tgz | sha512sum --check --strict
-          printf '%s  %s\n' '184b583a0f325bef12feaf1ca175ff5ea4a65a168f2136eb1daf9c2ae646eecf02134ed65766c8800bd8eb03ac4d338d1e5d700248bc33632027b5b0b52de48a' docker-rootless-extras-29.6.0.tgz | sha512sum --check --strict
-          printf '%s  %s\n' '710f4f48a101af939c4a4cace5ca93ab8c1a1a9ae244a4ef73b2a900f228614472b635bd202fae383c851686d383a37cdeddf45e6d54b36cae8458826c272262' buildx-v0.35.0.linux-amd64 | sha512sum --check --strict
+          wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-29.6.0.tgz"
+          wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-rootless-extras-29.6.0.tgz"
+          wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.${{ matrix.buildx_arch }}"
+          case "${{ matrix.docker_arch }}" in
+            x86_64)
+              DOCKER_SHA512=42401384ef853dab0a1986a7990420e77d3ee2bc39e178f8817d27ba6c4403998b7aacf3c28c7172135cdeec281cd328a8f2af949b5f57db44a211a093cfd20b
+              ROOTLESS_SHA512=184b583a0f325bef12feaf1ca175ff5ea4a65a168f2136eb1daf9c2ae646eecf02134ed65766c8800bd8eb03ac4d338d1e5d700248bc33632027b5b0b52de48a
+              BUILDX_SHA512=710f4f48a101af939c4a4cace5ca93ab8c1a1a9ae244a4ef73b2a900f228614472b635bd202fae383c851686d383a37cdeddf45e6d54b36cae8458826c272262
+              ;;
+            aarch64)
+              DOCKER_SHA512=04713ac54030bed8b2c096280d034b02f5430ed73ba8bcc4a686f7bbbf4a3444eb027847e896cd9ee91c3237dbe1c25a4cfca43d1dcd922a1a10009c960ace0b
+              ROOTLESS_SHA512=37649acdaacc597c115d2f19b71a4729a0119c6debbba4b4af18da2fd497ac28f5691df13137b7fc59903551ab0e08868f4b976a9a5704e2b7958b3b5b0cc0af
+              BUILDX_SHA512=6dc0d4ed11a7bbd8148dab8897594d7050e7f3bc43e6d130e629aa443e50266e77beed8816737e5dc34b7d43617e7a4eef8121561042ef9a87479aea14383058
+              ;;
+            *)
+              echo "Unsupported Docker artifact architecture: ${{ matrix.docker_arch }}" >&2
+              exit 1
+              ;;
+          esac
+          printf '%s  %s\n' "$DOCKER_SHA512" docker-29.6.0.tgz | sha512sum --check --strict
+          printf '%s  %s\n' "$ROOTLESS_SHA512" docker-rootless-extras-29.6.0.tgz | sha512sum --check --strict
+          printf '%s  %s\n' "$BUILDX_SHA512" "buildx-v0.35.0.${{ matrix.buildx_arch }}" | sha512sum --check --strict
           tar xzf docker-29.6.0.tgz
           tar xzf docker-rootless-extras-29.6.0.tgz
           DOCKER_TOOLS_DIR="${RUNNER_TEMP}/docker-tools"
@@ -351,7 +411,7 @@ jobs:
           install -m 0755 docker/* "$DOCKER_TOOLS_DIR/bin/"
           install -m 0755 docker-rootless-extras/dockerd-rootless.sh "$DOCKER_TOOLS_DIR/bin/"
           install -m 0755 docker-rootless-extras/rootlesskit "$DOCKER_TOOLS_DIR/bin/"
-          install -m 0755 buildx-v0.35.0.linux-amd64 "$DOCKER_TOOLS_DIR/config/cli-plugins/docker-buildx"
+          install -m 0755 "buildx-v0.35.0.${{ matrix.buildx_arch }}" "$DOCKER_TOOLS_DIR/config/cli-plugins/docker-buildx"
           useradd --create-home --shell /bin/sh "$ROOTLESS_USER"
           printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subuid
           printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subgid
@@ -402,6 +462,8 @@ jobs:
 
       - name: Build and push installer OCI artifact through Bake
         env:
+          ARCH: ${{ matrix.arch }}
+          PLATFORM: linux/${{ matrix.arch }}
           GIT_SHA: ${{ github.sha }}
           INSTALLER_CONTEXT: inst
           PUSH: 'true'
@@ -413,12 +475,119 @@ jobs:
             --file yubiOS-bake.hcl \
             installer
           docker -H unix:///run/docker-rootless/docker.sock logout
-          docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "0mniteck/yubios:installer"
+          docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "0mniteck/yubios:installer-${{ github.sha }}-${{ matrix.arch }}"
+
+  # Combine the two native staging images only after both publish legs pass.
+  merge-manifest:
+    name: Merge installer multi-arch manifest
+    needs: installer-publish
+    if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        shell: bash
+    container:
+      options: --privileged
+      volumes:
+        - /mnt:/mnt
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6
+    steps:
+      - name: Install docker CLI + buildx
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends \
+            git curl iproute2 iptables nftables passwd procps util-linux \
+            uidmap slirp4netns fuse-overlayfs
+          wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
+          wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-rootless-extras-29.6.0.tgz"
+          wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
+          printf '%s  %s\n' '42401384ef853dab0a1986a7990420e77d3ee2bc39e178f8817d27ba6c4403998b7aacf3c28c7172135cdeec281cd328a8f2af949b5f57db44a211a093cfd20b' docker-29.6.0.tgz | sha512sum --check --strict
+          printf '%s  %s\n' '184b583a0f325bef12feaf1ca175ff5ea4a65a168f2136eb1daf9c2ae646eecf02134ed65766c8800bd8eb03ac4d338d1e5d700248bc33632027b5b0b52de48a' docker-rootless-extras-29.6.0.tgz | sha512sum --check --strict
+          printf '%s  %s\n' '710f4f48a101af939c4a4cace5ca93ab8c1a1a9ae244a4ef73b2a900f228614472b635bd202fae383c851686d383a37cdeddf45e6d54b36cae8458826c272262' buildx-v0.35.0.linux-amd64 | sha512sum --check --strict
+          tar xzf docker-29.6.0.tgz
+          tar xzf docker-rootless-extras-29.6.0.tgz
+          DOCKER_TOOLS_DIR="${RUNNER_TEMP}/docker-tools"
+          ROOTLESS_USER=docker-rootless
+          ROOTLESS_RUNTIME_DIR=/run/docker-rootless
+          ROOTLESS_SOCKET="${ROOTLESS_RUNTIME_DIR}/docker.sock"
+          ROOTLESS_DATA_DIR="$(mktemp -d /mnt/docker-rootless.XXXXXX)"
+          mkdir -p "$DOCKER_TOOLS_DIR/bin" "$DOCKER_TOOLS_DIR/config/cli-plugins"
+          install -m 0755 docker/* "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 docker-rootless-extras/dockerd-rootless.sh "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 docker-rootless-extras/rootlesskit "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 buildx-v0.35.0.linux-amd64 "$DOCKER_TOOLS_DIR/config/cli-plugins/docker-buildx"
+          useradd --create-home --shell /bin/sh "$ROOTLESS_USER"
+          printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subuid
+          printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subgid
+          install -d -m 0700 -o "$ROOTLESS_USER" -g "$ROOTLESS_USER" "$ROOTLESS_RUNTIME_DIR"
+          chown "$ROOTLESS_USER:$ROOTLESS_USER" "$ROOTLESS_DATA_DIR"
+          chmod 0700 "$ROOTLESS_DATA_DIR"
+          if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
+            sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          fi
+          echo "$DOCKER_TOOLS_DIR/bin" >> "$GITHUB_PATH"
+          echo "DOCKER_CONFIG=$DOCKER_TOOLS_DIR/config" >> "$GITHUB_ENV"
+          export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
+          export DOCKER_CONFIG="$DOCKER_TOOLS_DIR/config"
+          export DOCKER_HOST="unix://${ROOTLESS_SOCKET}"
+          setpriv \
+            --reuid="$ROOTLESS_USER" \
+            --regid="$ROOTLESS_USER" \
+            --init-groups \
+            env \
+              HOME="/home/${ROOTLESS_USER}" \
+              USER="$ROOTLESS_USER" \
+              LOGNAME="$ROOTLESS_USER" \
+              XDG_RUNTIME_DIR="$ROOTLESS_RUNTIME_DIR" \
+              PATH="$DOCKER_TOOLS_DIR/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+              DOCKERD_ROOTLESS_ROOTLESSKIT_NET=slirp4netns \
+              dockerd-rootless.sh \
+                --data-root="$ROOTLESS_DATA_DIR" \
+                --storage-driver=fuse-overlayfs \
+                -H "unix://${ROOTLESS_SOCKET}" \
+            > "${RUNNER_TEMP}/dockerd-rootless.log" 2>&1 &
+          ROOTLESS_DOCKER_PID=$!
+          for i in $(seq 1 60); do
+            docker -H "unix://${ROOTLESS_SOCKET}" info >/dev/null 2>&1 && break
+            if ! kill -0 "$ROOTLESS_DOCKER_PID" 2>/dev/null; then
+              cat "${RUNNER_TEMP}/dockerd-rootless.log"
+              exit 1
+            fi
+            sleep 1
+          done
+          if ! docker -H "unix://${ROOTLESS_SOCKET}" info >/dev/null 2>&1; then
+            cat "${RUNNER_TEMP}/dockerd-rootless.log"
+            exit 1
+          fi
+          docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
+            --driver docker-container \
+            --use || true
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER }}" | docker -H unix:///run/docker-rootless/docker.sock login -u 0mniteck42 --password-stdin
+
+      - name: Create and push installer multi-arch manifest
+        run: |
+          docker -H unix:///run/docker-rootless/docker.sock buildx imagetools create \
+            -t "0mniteck/yubios:installer-${{ github.sha }}" \
+            -t "0mniteck/yubios:installer" \
+            "0mniteck/yubios:installer-${{ github.sha }}-amd64" \
+            "0mniteck/yubios:installer-${{ github.sha }}-arm64"
+
+      - name: Verify installer manifest list
+        run: docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "0mniteck/yubios:installer-${{ github.sha }}"
+
+      - name: Log out of Docker Hub
+        if: always()
+        run: docker -H unix:///run/docker-rootless/docker.sock logout || true
 
   ci-callback:
     name: Callback to ci.yml orchestrator
     if: ${{ always() && github.event_name == 'workflow_dispatch' && inputs.ci_callback == true }}
-    needs: [build, installer-publish]
+    needs: [build, installer-publish, merge-manifest]
     runs-on: ubuntu-24.04
     permissions:
       contents: read

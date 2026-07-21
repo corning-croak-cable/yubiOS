@@ -230,14 +230,15 @@ target "installer" {
     FROM scratch
     COPY installer/ /installer/
   DOCKERFILE
-  platforms = ["linux/amd64"]
+  platforms = [PLATFORM]
   labels = {
     "org.opencontainers.image.title"       = "yubiOS mkosi installer image"
     "org.opencontainers.image.description" = "DPS disk image + PKCS#11-signed UKI (minimal profile); installs the base system that runs the bootc images"
   }
-  tags = [
-    ref("installer"),
-    ref("installer-${GIT_SHA}"),
+  tags = PUSH ? [
+    ref("installer-${GIT_SHA}-${ARCH}"),
+  ] : [
+    "yubios:installer-${ARCH}",
   ]
 }
 

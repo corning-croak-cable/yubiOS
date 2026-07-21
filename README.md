@@ -73,16 +73,31 @@ For reproducible installs, pin the image by the digest produced by the latest gr
 
 Prepare and mount the target filesystems first, for example with `systemd-repart` or another installer that creates the yubiOS DPS layout. Mount the target root at `/mnt` and its boot filesystem at `/mnt/boot`, then install the image with `bootc install to-filesystem`:
 
-## Build from source, install to-filesystem, 1 step
+## Build from source with Bake, then install to-filesystem
 
 ```sh
-docker buildx build --load --policy reset=true,strict=true,filename=yubiOS.rego -t yubios:local . && \
+set -eu
+
+case "$(uname -m)" in
+  x86_64) export ARCH=amd64 PLATFORM=linux/amd64 ;;
+  aarch64|arm64) export ARCH=arm64 PLATFORM=linux/arm64 ;;
+  *) echo "unsupported build architecture: $(uname -m)" >&2; exit 1 ;;
+esac
+
+docker buildx inspect hardened >/dev/null 2>&1 || \
+  docker buildx create --name hardened --driver docker-container --use
+
+PUSH=false docker buildx bake \
+  --builder hardened \
+  --file yubiOS-bake.hcl \
+  yubios-ci
+
 docker run --rm --privileged --pid=host --ipc=host \
   --security-opt label=type:unconfined_t \
   -v /dev:/dev \
   -v /var/lib/containers:/var/lib/containers \
   -v /:/run/host \
-  yubios:local bootc install to-filesystem \
+  "yubios:ci-${ARCH}" bootc install to-filesystem \
     --bootloader=systemd \
     --root-mount-spec="" \
     --composefs-backend \
@@ -138,8 +153,11 @@ Each step is skippable and independently re-runnable. See [ONBOARDING.md](ONBOAR
 
 ```text
 yubiOS/
-├── .github/workflows/              # CI, manifest refresh, publish, VM/e2e, integration lanes
-├── assets/                         # logo and release/documentation assets
+├── .github/
+│   ├── workflows/                  # CI, refresh, publish, firmware, VM/e2e, integration lanes
+│   ├── patches/                    # pinned CI-only compatibility patches
+│   └── ISSUE_TEMPLATE/             # bug and feature intake templates
+├── assets/                         # logo, campaign media, README HTML, and contributor map
 ├── mkosi.conf                      # primary mkosi build definition
 ├── mkosi.conf.d/                   # desktop, minimal, Surface, Chipsec, and test profiles
 ├── refs/                           # dated research notes, planning cycles, implementation specs
@@ -152,6 +170,14 @@ yubiOS/
 ├── renovate.json                   # pinned digest tracking automation
 ├── AGENTS.md                       # repository guidance for coding agents
 ├── README.md                       # project overview, install, and source map
+├── CI_MAP.md                       # workflow topology, triggers, and artifact ownership
+├── CONTRIBUTING.md                 # contributor workflow and DCO expectations
+├── CODE_OF_CONDUCT.md              # community conduct and reporting rules
+├── SECURITY.md                     # vulnerability reporting policy
+├── MAINTAINER.md                   # maintainer responsibilities and release operations
+├── PLAN.md                         # implementation plan and sequencing
+├── OPTS.md                         # option and trade-off inventory
+├── THREAT_MODEL.md                 # assets, boundaries, adversaries, and residual risks
 ├── ADR.md                          # architecture decision records
 ├── ARCHITECTURE.md                 # trust chain and build pipeline diagrams
 ├── SPEC.md                         # normative project specification
@@ -163,7 +189,8 @@ yubiOS/
 ├── PR.md                           # public-relations campaign planning
 ├── PINNED.md                       # approved refs and digests
 ├── BLOCKERS.md                     # active dependency and blocker map
-└── TODO.md                         # active planning surface
+├── TODO.md                         # active planning surface
+└── LICENSE                         # LGPL-2.1 project license
 ```
 
 ## Requirements
@@ -179,7 +206,7 @@ yubiOS/
 ```mermaid
 graph TD
     BASE["quay.io/fedora/fedora-bootc:45\n@sha256 (pinned base — ADR-015)\ndigest in PINNED.md"]
-    CF["Containerfile\nrootless docker buildx\n--policy yubiOS.rego\n(supply-chain gate)"]
+    CF["Containerfile + yubiOS-bake.hcl\nrootless docker buildx bake\nyubiOS.rego strict policy"]
     MKOSI["mkosi --profile yubios\nUKI + dm-verity, signed via\nYubiKey PIV slot 9c (PKCS#11)"]
     OCI["multi-arch OCI image\nlinux/amd64 + linux/arm64"]
     CI["yubiOS-ci.yml . merge-manifest\nSLSA provenance + SBOM attested"]
@@ -216,6 +243,8 @@ graph TD
 
 ## Current research notes
 
+- Workflow evidence review: [refs/ci-evidence-2026-07-21.md](refs/ci-evidence-2026-07-21.md)
+- systemd-family upstream progress and contributor bubble map: [refs/systemd-upstream-progress-2026-07-21.md](refs/systemd-upstream-progress-2026-07-21.md)
 - Latest docs/research planning pass: [refs/planning-cycle-2026-07-11.md](refs/planning-cycle-2026-07-11.md)
 - Public-relations campaign: [PR.md](PR.md), with kickoff friend map at [refs/pr-friend-map-2026-07-17.md](refs/pr-friend-map-2026-07-17.md)
 - ARM64 zstd EFI zboot / bcvk DirectBoot: [refs/zstd-efi-zboot-bcvk.md](refs/zstd-efi-zboot-bcvk.md)

@@ -1,6 +1,6 @@
 # RK firmware workflow split: 2026-07-17
 
-Status: workflow/docs prepared; CI run intentionally not polled in this pass.
+Status: workflow live; complete-log evidence added 2026-07-21.
 
 ## Change
 
@@ -25,12 +25,16 @@ When `Docker_push=true`, the workflow publishes the original firmware tags plus 
 - `0mniteck/yubios:firmware-rockpro64-rk3399`
 - `0mniteck/yubios:firmware-rockpro64-rk3399-<sha>`
 
-The current board variants carry board metadata and manifest warnings while the payload remains QEMU-validated CI firmware. Real hardware lanes must replace those placeholders when RK3399/RK3588 payloads diverge.
+The variants now carry their own TF-A platform, OP-TEE flavor, U-Boot defconfig, and board-built payload. Run [29869527608](https://github.com/yubi-OS/yubiOS/actions/runs/29869527608) proved QEMU fTPM/StandaloneMM integration and board-specific compilation. It did **not** prove physical hardware:
+
+- `qemu-arm64` produced and boot-tested `flash.bin` on both runner architectures.
+- `rockpro64-rk3399` produced combined Rockchip U-Boot images, but still needs ROTPK, RPMB, fTPM NV, recovery, and signed-UKI evidence on a board.
+- `rock5b-rk3588` did not receive a real RK3588 DDR/TPL blob and therefore did not produce the required `u-boot-rockchip.bin`; its published bundle is diagnostic, not flash-ready.
 
 ## Callback chain
 
 `ci.yml` dispatches `ci_firmware-rk.yml` after `fetch-fedora-bootc-manifest` when `ci_fork_run=false`, and after `ci_fork_edk2` when the optional fork chain is enabled. On callback state `yubiOS RK firmware`, `ci.yml` continues to `yubiOS-ci.yml`.
 
-## Static validation
+## Validation
 
-The workflow YAML was parsed locally before commit. No main CI, QEMU, Docker push, or hardware validation was run in this pass.
+The original workflow YAML was parsed locally before commit. The later complete-log review is recorded in [ci-evidence-2026-07-21.md](ci-evidence-2026-07-21.md). No physical RK3399 or RK3588 hardware proof has been recorded.
