@@ -1,6 +1,6 @@
 # CI_MAP.md
 
-Regenerated from the `main` workflow shape at `7809d5c` on 2026-07-20 UTC.
+Regenerated from the `main` workflow shape at `a13e1e5` on 2026-07-20 UTC.
 
 This map treats `.github/workflows/*.yml` as the source of truth for events, runners, jobs, artifacts, and callback handoffs. `yubiOS-bake.hcl` is the source of truth for every Docker build in the non-`ci_fork*` chain dispatched by `ci.yml`. `PINNED.md` remains the source of truth for approved action SHAs and image digests.
 
@@ -269,3 +269,164 @@ sequenceDiagram
     W->>C: workflow_dispatch(state, completed_conclusion, original inputs)
     C->>C: stop on non-success, else dispatch next workflow
 ```
+
+## Non-Fork Workflow Step Tree
+
+The workflows below are listed in the non-fork dispatch order defined by `ci.yml`. Each job contains every declared `jobs.<job>.steps` entry in execution order. Matrix jobs are shown once; job and step `if` conditions still determine whether an entry runs for a particular event or matrix leg. GitHub-generated setup and cleanup operations are not declared workflow steps and are omitted.
+
+- Non-fork workflow chain
+  - [`ci.yml`](.github/workflows/ci.yml) — workflow: `CI`
+    - Job `dispatch-next` — `Dispatch next workflow from current state`
+      - Step 1: `Resolve and dispatch next workflow`
+  - [`fetch-dhi-manifest.yml`](.github/workflows/fetch-dhi-manifest.yml) — workflow: `fetch-dhi-manifest`
+    - Job `fetch` — `fetch`
+      - Step 1: `Checkout yubiOS for PINNED.md update`
+      - Step 2: `Fetch dhi.io Debian base manifest and update pinned refs`
+    - Job `ci-callback` — `Callback to ci.yml orchestrator`
+      - Step 1: `Report current state to ci.yml`
+  - [`fetch-fedora-bootc-manifest.yml`](.github/workflows/fetch-fedora-bootc-manifest.yml) — workflow: `fetch-fedora-bootc-manifest`
+    - Job `fetch` — `fetch`
+      - Step 1: `Checkout yubiOS for PINNED.md update`
+      - Step 2: `Fetch Fedora bootc manifest and update pinned refs`
+    - Job `ci-callback` — `Callback to ci.yml orchestrator`
+      - Step 1: `Report current state to ci.yml`
+  - [`ci_firmware-rk.yml`](.github/workflows/ci_firmware-rk.yml) — workflow: `yubiOS RK firmware`
+    - Job `stmm` — `Stage 1 - BL32_AP_MM.fd (StandaloneMM RPMB, AARCH64) ${{ matrix.arch }}`
+      - Step 1: `Checkout`
+      - Step 2: `Install docker CLI + buildx (${{ matrix.arch }})`
+      - Step 3: `Install EDK2 build deps`
+      - Step 4: `Clone edk2 + edk2-platforms`
+      - Step 5: `Resolve AARCH64 cross prefix`
+      - Step 6: `Build BaseTools`
+      - Step 7: `Build StandaloneMM RPMB platform`
+      - Step 8: `Stage BL32_AP_MM.fd`
+      - Step 9: `Upload BL32_AP_MM.fd`
+    - Job `optee_fip` — `Stage 2 - ${{ matrix.board }} OP-TEE/TF-A/U-Boot ${{ matrix.arch }}`
+      - Step 1: `Checkout`
+      - Step 2: `Install docker CLI + buildx (${{ matrix.arch }})`
+      - Step 3: `Install full ARM64 firmware toolchain`
+      - Step 4: `Download BL32_AP_MM.fd from stmm job`
+      - Step 5: `Clone U-Boot and stage yubiOS fTPM fragment`
+      - Step 6: `Build QEMU U-Boot BL33`
+      - Step 7: `Stage StMM artifact`
+      - Step 8: `Build OP-TEE TA dev kit`
+      - Step 9: `Build fTPM TA`
+      - Step 10: `Rebuild OP-TEE BL32 folding fTPM Early TA and StMM`
+      - Step 11: `Build TF-A trusted firmware`
+      - Step 12: `Verify FIP contents`
+      - Step 13: `Build Rockchip U-Boot board image`
+      - Step 14: `Write firmware artifact manifest`
+      - Step 15: `Upload fip + flash artifacts`
+    - Job `qemu` — `Stage 3 - QEMU fTPM e2e (${{ matrix.arch }})`
+      - Step 1: `Checkout`
+      - Step 2: `Install docker CLI + buildx (${{ matrix.arch }})`
+      - Step 3: `Install QEMU + TPM tooling`
+      - Step 4: `Clean QEMU artifact directory`
+      - Step 5: `Download fip/flash from optee_fip job`
+      - Step 6: `Resolve or assemble flash.bin`
+      - Step 7: `Boot stitched image under QEMU and assert fTPM markers`
+      - Step 8: `Loud skip when no bootable image exists`
+    - Job `firmware-publish` — `Stage 4 - Publish firmware bundle (${{ matrix.board }})`
+      - Step 1: `Checkout`
+      - Step 2: `Clean firmware publish workspace`
+      - Step 3: `Download firmware artifacts (native arm64 build)`
+      - Step 4: `RK3588 TPL publish gate`
+      - Step 5: `Install docker CLI + buildx`
+      - Step 6: `Assemble board-scoped /firmware payload`
+      - Step 7: `Log in to Docker Hub`
+      - Step 8: `Build and push firmware OCI artifact through Bake`
+      - Step 9: `Verify pushed board tag`
+    - Job `ci-callback` — `Callback to ci.yml orchestrator`
+      - Step 1: `Report current state to ci.yml`
+  - [`yubiOS-ci.yml`](.github/workflows/yubiOS-ci.yml) — workflow: `yubiOS CI`
+    - Job `shellcheck` — `shellcheck`
+      - Step 1: `Checkout`
+      - Step 2: `shellcheck`
+    - Job `hadolint` — `hadolint`
+      - Step 1: `Checkout`
+      - Step 2: `hadolint (Containerfile lint)`
+    - Job `unit-tests` — `unit-tests`
+      - Step 1: `Checkout`
+      - Step 2: `Install test dependencies`
+      - Step 3: `Run unit tests (${{ matrix.arch }})`
+    - Job `mkosi` — `mkosi`
+      - Step 1: `Checkout`
+      - Step 2: `Install mkosi (from yubi-OS fork)`
+      - Step 3: `Validate mkosi config (${{ matrix.arch }})`
+    - Job `build` — `build`
+      - Step 1: `Checkout`
+      - Step 2: `Install docker CLI + buildx (${{ matrix.arch }})`
+      - Step 3: `Log in to Docker Hub`
+      - Step 4: `Build OCI image (${{ matrix.arch }})`
+      - Step 5: `Push per-arch image (${{ matrix.arch }})`
+    - Job `merge-manifest` — `merge-manifest`
+      - Step 1: `Install docker CLI + buildx`
+      - Step 2: `Log in to Docker Hub`
+      - Step 3: `Create + push multi-arch manifest`
+      - Step 4: `Verify manifest list`
+    - Job `ci-callback` — `Callback to ci.yml orchestrator`
+      - Step 1: `Report current state to ci.yml`
+  - [`ci_dev_image.yml`](.github/workflows/ci_dev_image.yml) — workflow: `yubiOS dev/test image (swu2f, ADR-026)`
+    - Job `build` — `build`
+      - Step 1: `Checkout`
+      - Step 2: `Install docker CLI + buildx (${{ matrix.arch }})`
+      - Step 3: `Log in to Docker Hub`
+      - Step 4: `Build and verify dev/test image (${{ matrix.arch }})`
+      - Step 5: `Push per-arch dev image (${{ matrix.arch }})`
+    - Job `merge-manifest` — `merge-manifest`
+      - Step 1: `Install docker CLI + buildx`
+      - Step 2: `Log in to Docker Hub`
+      - Step 3: `Guard dev/test manifest tags`
+      - Step 4: `Create + push multi-arch dev manifest`
+      - Step 5: `Verify manifest list`
+    - Job `ci-callback` — `Callback to ci.yml orchestrator`
+      - Step 1: `Report current state to ci.yml`
+  - [`ci_test-vm.yml`](.github/workflows/ci_test-vm.yml) — workflow: `yubiOS VM e2e (tests/vm)`
+    - Job `lint-vm-scripts` — `lint-vm-scripts`
+      - Step 1: `Checkout`
+      - Step 2: `shellcheck + bash -n on tests/vm/*.sh`
+    - Job `vm-e2e` — `vm-e2e`
+      - Step 1: `Checkout`
+      - Step 2: `Free disk space (self-hosted rock1 persists disk across runs -- unlike hosted runners)`
+      - Step 3: `Install host deps (swtpm + qemu + fido2 + cryptsetup)`
+      - Step 4: `Install zstd-capable QEMU for ARM64 DirectBoot`
+      - Step 5: `Disk space before bcvk build (diagnostic)`
+      - Step 6: `Free disk space (pre-build -- kill stray containers from an aborted prior run)`
+      - Step 7: `Build bcvk @ feat/swtpm-ci (feasibility gate)`
+      - Step 8: `Disk space after bcvk build attempt (diagnostic)`
+      - Step 9: `Gate on KVM (bcvk hard-requires /dev/kvm; now real hardware on arm64 via self-hosted rock1)`
+      - Step 10: `Gate amd64 boot leg on platform-priority policy (ADR-023: ARM64 is primary)`
+      - Step 11: `Assert bcvk exposes --swtpm/--swu2f (real regression gate)`
+      - Step 12: `Free disk space (pre-pull -- reclaim space the cargo build just used)`
+      - Step 13: `Pull yubiOS image into podman storage (bcvk boots from local storage)`
+      - Step 14: `Relax AppArmor profiles for bcvk VM boot`
+      - Step 15: `Run tests/vm/test-luks-fido2-ci.sh (boot leg gated on image availability)`
+      - Step 16: `Run tests/vm/test-fido2-enrollment.sh (enrollment surface,`
+      - Step 17: `Free disk space (post-run -- leave rock1 clean for the next run)`
+      - Step 18: `Note hardware-only variant (lint-only in CI)`
+    - Job `ci-callback` — `Callback to ci.yml orchestrator`
+      - Step 1: `Report current state to ci.yml`
+  - [`ci_mkosi-installer.yml`](.github/workflows/ci_mkosi-installer.yml) — workflow: `yubiOS mkosi-installer`
+    - Job `build` — `mkosi disk image — SoftHSM PKCS#11 signed UKI`
+      - Step 1: `Checkout`
+      - Step 2: `Install docker CLI + buildx`
+      - Step 3: `Install mkosi build deps + mkosi (yubi-OS fork @ main)`
+      - Step 4: `SoftHSM token in /run — mock of YubiKey PIV slot 9c`
+      - Step 5: `Build disk image (minimal profile, PKCS#11-signed UKI)`
+      - Step 6: `Verify UKI is signed by the PKCS#11 (SoftHSM) key`
+      - Step 7: `Assemble /installer payload + MANIFEST`
+      - Step 8: `Upload prepared installer payload`
+    - Job `installer-publish` — `Publish installer OCI artifact`
+      - Step 1: `Checkout`
+      - Step 2: `Download prepared installer payload`
+      - Step 3: `Install docker CLI + buildx`
+      - Step 4: `Build and push installer OCI artifact through Bake`
+    - Job `ci-callback` — `Callback to ci.yml orchestrator`
+      - Step 1: `Report current state to ci.yml`
+  - [`ci_pq_tls_verify.yml`](.github/workflows/ci_pq_tls_verify.yml) — workflow: `PQ hybrid TLS verification (ADR-025)`
+    - Job `pq-tls-verify` — `pq-tls-verify`
+      - Step 1: `Checkout`
+      - Step 2: `Install docker CLI + buildx`
+      - Step 3: `Verify PQ hybrid TLS through the policy-bound Bake target`
+    - Job `ci-callback` — `Callback to ci.yml orchestrator`
+      - Step 1: `Report current state to ci.yml`
