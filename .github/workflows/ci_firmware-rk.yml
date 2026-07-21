@@ -145,7 +145,6 @@ jobs:
           fi
           echo "$DOCKER_TOOLS_DIR/bin" >> "$GITHUB_PATH"
           echo "DOCKER_CONFIG=$DOCKER_TOOLS_DIR/config" >> "$GITHUB_ENV"
-          echo "DOCKER_HOST=unix://${ROOTLESS_SOCKET}" >> "$GITHUB_ENV"
           export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
           export DOCKER_CONFIG="$DOCKER_TOOLS_DIR/config"
           export DOCKER_HOST="unix://${ROOTLESS_SOCKET}"
@@ -382,7 +381,6 @@ jobs:
           fi
           echo "$DOCKER_TOOLS_DIR/bin" >> "$GITHUB_PATH"
           echo "DOCKER_CONFIG=$DOCKER_TOOLS_DIR/config" >> "$GITHUB_ENV"
-          echo "DOCKER_HOST=unix://${ROOTLESS_SOCKET}" >> "$GITHUB_ENV"
           export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
           export DOCKER_CONFIG="$DOCKER_TOOLS_DIR/config"
           export DOCKER_HOST="unix://${ROOTLESS_SOCKET}"
@@ -797,7 +795,6 @@ jobs:
           fi
           echo "$DOCKER_TOOLS_DIR/bin" >> "$GITHUB_PATH"
           echo "DOCKER_CONFIG=$DOCKER_TOOLS_DIR/config" >> "$GITHUB_ENV"
-          echo "DOCKER_HOST=unix://${ROOTLESS_SOCKET}" >> "$GITHUB_ENV"
           export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
           export DOCKER_CONFIG="$DOCKER_TOOLS_DIR/config"
           export DOCKER_HOST="unix://${ROOTLESS_SOCKET}"
@@ -1004,7 +1001,6 @@ jobs:
           fi
           echo "$DOCKER_TOOLS_DIR/bin" >> "$GITHUB_PATH"
           echo "DOCKER_CONFIG=$DOCKER_TOOLS_DIR/config" >> "$GITHUB_ENV"
-          echo "DOCKER_HOST=unix://${ROOTLESS_SOCKET}" >> "$GITHUB_ENV"
           export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
           export DOCKER_CONFIG="$DOCKER_TOOLS_DIR/config"
           export DOCKER_HOST="unix://${ROOTLESS_SOCKET}"
