@@ -128,7 +128,7 @@ jobs:
           for i in $(seq 1 30); do docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
           docker -H unix:///var/run/ducker.sock buildx create --name hardened \
             --driver docker-container \
-            --use --node ${{ github.job }}${{ github.run_id }}
+            --use --node ${{ github.job }}${{ github.run_id }} --append
 
       - name: Install EDK2 build deps
         run: |
