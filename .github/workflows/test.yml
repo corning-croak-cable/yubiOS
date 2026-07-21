@@ -39,7 +39,7 @@ jobs:
           set -eu
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends \
-            curl iptables nftables passwd procps util-linux \
+            curl iproute2 iptables nftables passwd procps util-linux \
             uidmap slirp4netns fuse-overlayfs
           wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-29.6.0.tgz"
           wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-rootless-extras-29.6.0.tgz"
