@@ -121,9 +121,6 @@ jobs:
           docker -H unix:///var/run/ducker.sock buildx create --name hardened \
             --driver docker-container \
             --use || true
-          docker -H unix:///var/run/ducker.sock buildx create --name hardened \
-            --driver docker-container \
-            --use --node ${{ github.job }}${{ github.run_id }} --append || true
 
       - name: Log in to Docker Hub
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
@@ -190,9 +187,6 @@ jobs:
           docker -H unix:///var/run/ducker.sock buildx create --name hardened \
             --driver docker-container \
             --use || true
-          docker -H unix:///var/run/ducker.sock buildx create --name hardened \
-            --driver docker-container \
-            --use --node ${{ github.job }}${{ github.run_id }} --append || true
 
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER }}" | docker -H unix:///var/run/ducker.sock login -u 0mniteck42 --password-stdin

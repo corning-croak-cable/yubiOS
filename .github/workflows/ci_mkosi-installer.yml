@@ -128,9 +128,6 @@ jobs:
           docker -H unix:///var/run/ducker.sock buildx create --name hardened \
             --driver docker-container \
             --use || true
-          docker -H unix:///var/run/ducker.sock buildx create --name hardened \
-            --driver docker-container \
-            --use --node ${{ github.job }}${{ github.run_id }} --append || true
 
       - name: Install mkosi build deps + mkosi (yubi-OS fork @ main)
         run: |
@@ -300,9 +297,6 @@ jobs:
           docker -H unix:///var/run/ducker.sock buildx create --name hardened \
             --driver docker-container \
             --use || true
-          docker -H unix:///var/run/ducker.sock buildx create --name hardened \
-            --driver docker-container \
-            --use --node ${{ github.job }}${{ github.run_id }} --append || true
 
       - name: Build and push installer OCI artifact through Bake
         env:
