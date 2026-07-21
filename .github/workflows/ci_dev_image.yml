@@ -104,7 +104,7 @@ jobs:
       - name: Install docker CLI + buildx (${{ matrix.arch }})
         run: |
           apt-get update -qq
-          apt-get install -y -qq --no-install-recommends git curl iptables nftables
+          apt-get install -y -qq --no-install-recommends git curl iptables nftables rootlesskit uidmap
           wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-29.6.0.tgz"
           wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.${{ matrix.buildx_arch }}"
           tar xzf docker-29.6.0.tgz
@@ -116,7 +116,7 @@ jobs:
           echo "DOCKER_CONFIG=$DOCKER_TOOLS_DIR/config" >> "$GITHUB_ENV"
           export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
           export DOCKER_CONFIG="$DOCKER_TOOLS_DIR/config"
-          dockerd --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
+          dockerd --rootless --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
           for i in $(seq 1 30); do docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
           docker -H unix:///var/run/ducker.sock buildx create --name hardened \
             --driver docker-container \
@@ -170,7 +170,7 @@ jobs:
       - name: Install docker CLI + buildx
         run: |
           apt-get update -qq
-          apt-get install -y -qq --no-install-recommends git curl iptables nftables
+          apt-get install -y -qq --no-install-recommends git curl iptables nftables rootlesskit uidmap
           wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
           wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
           tar xzf docker-29.6.0.tgz
@@ -182,7 +182,7 @@ jobs:
           echo "DOCKER_CONFIG=$DOCKER_TOOLS_DIR/config" >> "$GITHUB_ENV"
           export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
           export DOCKER_CONFIG="$DOCKER_TOOLS_DIR/config"
-          dockerd --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
+          dockerd --rootless --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
           for i in $(seq 1 30); do docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
           docker -H unix:///var/run/ducker.sock buildx create --name hardened \
             --driver docker-container \
