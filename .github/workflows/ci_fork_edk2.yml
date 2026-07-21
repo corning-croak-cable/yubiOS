@@ -97,7 +97,7 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # see PINNED.md
         with:
           repository: yubi-OS/edk2
-          ref: feat/ci
+          ref: 9f13e2a137c97a2825f874b4321c3963ca87c747 # feat/ci
           submodules: recursive
 
       - name: Install EDK2 build deps

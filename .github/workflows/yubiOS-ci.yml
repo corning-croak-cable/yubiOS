@@ -153,7 +153,7 @@ jobs:
         run: |
           apt-get update -qq
           apt-get install -y -qq python3 python3-pip python3-pexpect git
-          pip install --break-system-packages git+https://github.com/yubi-OS/mkosi.git@feature/yubiOS-profile
+          pip install --break-system-packages git+https://github.com/yubi-OS/mkosi.git@b2b1ea6ad59621a6f955e4cbceee72580a91889a # feature/yubiOS-profile
       - name: Validate mkosi config (${{ matrix.arch }})
         run: mkosi summary
 
@@ -193,6 +193,25 @@ jobs:
           wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-29.6.0.tgz"
           wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-rootless-extras-29.6.0.tgz"
           wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.${{ matrix.buildx_arch }}"
+          case "${{ matrix.docker_arch }}" in
+            x86_64)
+              DOCKER_SHA512=42401384ef853dab0a1986a7990420e77d3ee2bc39e178f8817d27ba6c4403998b7aacf3c28c7172135cdeec281cd328a8f2af949b5f57db44a211a093cfd20b
+              ROOTLESS_SHA512=184b583a0f325bef12feaf1ca175ff5ea4a65a168f2136eb1daf9c2ae646eecf02134ed65766c8800bd8eb03ac4d338d1e5d700248bc33632027b5b0b52de48a
+              BUILDX_SHA512=710f4f48a101af939c4a4cace5ca93ab8c1a1a9ae244a4ef73b2a900f228614472b635bd202fae383c851686d383a37cdeddf45e6d54b36cae8458826c272262
+              ;;
+            aarch64)
+              DOCKER_SHA512=04713ac54030bed8b2c096280d034b02f5430ed73ba8bcc4a686f7bbbf4a3444eb027847e896cd9ee91c3237dbe1c25a4cfca43d1dcd922a1a10009c960ace0b
+              ROOTLESS_SHA512=37649acdaacc597c115d2f19b71a4729a0119c6debbba4b4af18da2fd497ac28f5691df13137b7fc59903551ab0e08868f4b976a9a5704e2b7958b3b5b0cc0af
+              BUILDX_SHA512=6dc0d4ed11a7bbd8148dab8897594d7050e7f3bc43e6d130e629aa443e50266e77beed8816737e5dc34b7d43617e7a4eef8121561042ef9a87479aea14383058
+              ;;
+            *)
+              echo "Unsupported Docker artifact architecture: ${{ matrix.docker_arch }}" >&2
+              exit 1
+              ;;
+          esac
+          printf '%s  %s\n' "$DOCKER_SHA512" docker-29.6.0.tgz | sha512sum --check --strict
+          printf '%s  %s\n' "$ROOTLESS_SHA512" docker-rootless-extras-29.6.0.tgz | sha512sum --check --strict
+          printf '%s  %s\n' "$BUILDX_SHA512" "buildx-v0.35.0.${{ matrix.buildx_arch }}" | sha512sum --check --strict
           tar xzf docker-29.6.0.tgz
           tar xzf docker-rootless-extras-29.6.0.tgz
           DOCKER_TOOLS_DIR="${RUNNER_TEMP}/docker-tools"
@@ -309,6 +328,9 @@ jobs:
           wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
           wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-rootless-extras-29.6.0.tgz"
           wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
+          printf '%s  %s\n' '42401384ef853dab0a1986a7990420e77d3ee2bc39e178f8817d27ba6c4403998b7aacf3c28c7172135cdeec281cd328a8f2af949b5f57db44a211a093cfd20b' docker-29.6.0.tgz | sha512sum --check --strict
+          printf '%s  %s\n' '184b583a0f325bef12feaf1ca175ff5ea4a65a168f2136eb1daf9c2ae646eecf02134ed65766c8800bd8eb03ac4d338d1e5d700248bc33632027b5b0b52de48a' docker-rootless-extras-29.6.0.tgz | sha512sum --check --strict
+          printf '%s  %s\n' '710f4f48a101af939c4a4cace5ca93ab8c1a1a9ae244a4ef73b2a900f228614472b635bd202fae383c851686d383a37cdeddf45e6d54b36cae8458826c272262' buildx-v0.35.0.linux-amd64 | sha512sum --check --strict
           tar xzf docker-29.6.0.tgz
           tar xzf docker-rootless-extras-29.6.0.tgz
           DOCKER_TOOLS_DIR="${RUNNER_TEMP}/docker-tools"

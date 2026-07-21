@@ -83,7 +83,7 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6.0.2 — see PINNED.md
         with:
           repository: yubi-OS/arm-trusted-firmware
-          ref: feat/ci
+          ref: f9e106415eb569ff9b19404e2c3f64167af08d21 # feat/ci
 
       - name: Install build dependencies
         run: |
@@ -141,7 +141,7 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6.0.2 — see PINNED.md
         with:
           repository: Mbed-TLS/mbedtls
-          ref: mbedtls-3.6.6
+          ref: 0bebf8b8c7f07abe3571ded48a11aa907a1ffb20 # mbedtls-3.6.6
           path: mbedtls
 
       - name: Build BL31 (EL3 monitor, SPD=opteed)

@@ -78,7 +78,7 @@ permissions:
 env:
   FTPM_UUID: bc50d971-d4c9-42c4-82cb-343fb7f37896
   OPTEE_OS_REPO: https://github.com/yubi-OS/optee_os
-  OPTEE_OS_REF: master
+  OPTEE_OS_REF: a8ac329662c021d4df9415dd54001ca6283cb53e # master
   MS_TPM_REPO: https://github.com/yubi-OS/ms-tpm-20-ref
   MS_TPM_REF: 98b60a44aba79b15fcce1c0d1e46cf5918400f6a
   OPTEE_PLATFORM: vexpress-qemu_armv8a
@@ -104,7 +104,7 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # see PINNED.md
         with:
           repository: yubi-OS/optee_ftpm
-          ref: feat/ci
+          ref: 28abbe7f33a96302cccf07b86b9ea46cf3dc278f # feat/ci
           path: optee_ftpm
 
       - name: Install OP-TEE + TA cross toolchains and build deps
@@ -119,7 +119,10 @@ jobs:
       - name: Build OP-TEE TA dev kit (C2 dependency, rebuilt inline)
         run: |
           set -eu
-          git clone --no-tags --depth 1 --branch "$OPTEE_OS_REF" "$OPTEE_OS_REPO" optee_os
+          git init -q optee_os
+          git -C optee_os remote add origin "$OPTEE_OS_REPO"
+          git -C optee_os fetch --depth 1 origin "$OPTEE_OS_REF"
+          git -C optee_os checkout --detach FETCH_HEAD
           make -C optee_os -j"$(nproc)" \
             PLATFORM="$OPTEE_PLATFORM" \
             CROSS_COMPILE64=aarch64-linux-gnu- \

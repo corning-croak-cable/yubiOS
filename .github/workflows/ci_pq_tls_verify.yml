@@ -87,6 +87,9 @@ jobs:
           wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
           wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-rootless-extras-29.6.0.tgz"
           wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
+          printf '%s  %s\n' '42401384ef853dab0a1986a7990420e77d3ee2bc39e178f8817d27ba6c4403998b7aacf3c28c7172135cdeec281cd328a8f2af949b5f57db44a211a093cfd20b' docker-29.6.0.tgz | sha512sum --check --strict
+          printf '%s  %s\n' '184b583a0f325bef12feaf1ca175ff5ea4a65a168f2136eb1daf9c2ae646eecf02134ed65766c8800bd8eb03ac4d338d1e5d700248bc33632027b5b0b52de48a' docker-rootless-extras-29.6.0.tgz | sha512sum --check --strict
+          printf '%s  %s\n' '710f4f48a101af939c4a4cace5ca93ab8c1a1a9ae244a4ef73b2a900f228614472b635bd202fae383c851686d383a37cdeddf45e6d54b36cae8458826c272262' buildx-v0.35.0.linux-amd64 | sha512sum --check --strict
           tar xzf docker-29.6.0.tgz
           tar xzf docker-rootless-extras-29.6.0.tgz
           DOCKER_TOOLS_DIR="${RUNNER_TEMP}/docker-tools"

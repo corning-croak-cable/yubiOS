@@ -88,7 +88,7 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # see PINNED.md
         with:
           repository: yubi-OS/bcvk
-          ref: feat/ci
+          ref: 6fe199c7304782f2bc01063c7f28075e402c5538 # feat/ci
 
       - name: Install build deps + Rust stable
         run: |
@@ -126,7 +126,7 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           repository: yubi-OS/bcvk
-          ref: feat/ci
+          ref: 6fe199c7304782f2bc01063c7f28075e402c5538 # feat/ci
       - name: Install build deps + Rust + clippy
         run: |
           sudo apt-get update -qq

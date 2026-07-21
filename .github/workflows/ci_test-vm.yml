@@ -225,8 +225,13 @@ jobs:
         id: bcvk
         run: |
           set +e
-          git clone --depth 1 -b feat/swtpm-ci https://github.com/yubi-OS/bcvk bcvk-src
-          if [ ! -d bcvk-src ]; then
+          BCVK_REF=c29246b1a1ea0114fcb92530298a364627f0cae0 # feat/swtpm-ci
+          git init -q bcvk-src &&
+            git -C bcvk-src remote add origin https://github.com/yubi-OS/bcvk &&
+            git -C bcvk-src fetch --depth 1 origin "$BCVK_REF" &&
+            git -C bcvk-src checkout --detach FETCH_HEAD
+          bcvk_fetch_rc=$?
+          if [ "$bcvk_fetch_rc" -ne 0 ]; then
             echo "skip=1" >> "$GITHUB_OUTPUT"
             echo "::warning::SKIP: could not clone yubi-OS/bcvk feat/swtpm-ci -- VM e2e not feasible on this runner"
             echo "### vm-e2e (${{ matrix.arch }}): SKIPPED -- bcvk source unavailable" >> "$GITHUB_STEP_SUMMARY"

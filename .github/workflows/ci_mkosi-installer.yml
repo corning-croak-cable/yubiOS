@@ -117,6 +117,9 @@ jobs:
           wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
           wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-rootless-extras-29.6.0.tgz"
           wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
+          printf '%s  %s\n' '42401384ef853dab0a1986a7990420e77d3ee2bc39e178f8817d27ba6c4403998b7aacf3c28c7172135cdeec281cd328a8f2af949b5f57db44a211a093cfd20b' docker-29.6.0.tgz | sha512sum --check --strict
+          printf '%s  %s\n' '184b583a0f325bef12feaf1ca175ff5ea4a65a168f2136eb1daf9c2ae646eecf02134ed65766c8800bd8eb03ac4d338d1e5d700248bc33632027b5b0b52de48a' docker-rootless-extras-29.6.0.tgz | sha512sum --check --strict
+          printf '%s  %s\n' '710f4f48a101af939c4a4cace5ca93ab8c1a1a9ae244a4ef73b2a900f228614472b635bd202fae383c851686d383a37cdeddf45e6d54b36cae8458826c272262' buildx-v0.35.0.linux-amd64 | sha512sum --check --strict
           tar xzf docker-29.6.0.tgz
           tar xzf docker-rootless-extras-29.6.0.tgz
           DOCKER_TOOLS_DIR="${RUNNER_TEMP}/docker-tools"
@@ -177,7 +180,7 @@ jobs:
             --driver docker-container \
             --use || true
 
-      - name: Install mkosi build deps + mkosi (yubi-OS fork @ main)
+      - name: Install mkosi build deps + mkosi (pinned yubi-OS fork)
         run: |
           set -euxo pipefail
           apt-get update -qq
@@ -186,7 +189,7 @@ jobs:
             python3-pip sbsigntool softhsm2 uidmap zstd
           mkosi_wheel_dir=$(mktemp -d)
           python3 -m pip wheel --no-deps --wheel-dir "$mkosi_wheel_dir" \
-            git+https://github.com/yubi-OS/mkosi.git@feature/yubiOS-profile
+            git+https://github.com/yubi-OS/mkosi.git@b2b1ea6ad59621a6f955e4cbceee72580a91889a # feature/yubiOS-profile
           python3 -m pip install --break-system-packages "$mkosi_wheel_dir"/mkosi-*.whl
           mkosi dependencies > "$mkosi_wheel_dir/dependencies"
           xargs -r -d '\n' apt-get install -y -qq --no-install-recommends \
@@ -278,7 +281,7 @@ jobs:
             echo "yubiOS mkosi installer image (minimal profile) — CI build"
             echo "yubios_commit=${GITHUB_SHA}"
             echo "workflow_run=${GITHUB_RUN_ID}"
-            echo "mkosi_source=https://github.com/yubi-OS/mkosi @ main (yubiOS profile merged via PR #2)"
+            echo "mkosi_source=https://github.com/yubi-OS/mkosi@b2b1ea6ad59621a6f955e4cbceee72580a91889a (feature/yubiOS-profile provenance)"
             echo "signing=UKI signed via SecureBootKeySource=provider:pkcs11 + systemd-sbsign"
             echo "NOTE: CI signing key is a SoftHSM mock of YubiKey PIV slot 9c."
             echo "Production images are signed with the real YubiKey (ADR-008); this"
@@ -334,6 +337,9 @@ jobs:
           wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
           wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-rootless-extras-29.6.0.tgz"
           wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
+          printf '%s  %s\n' '42401384ef853dab0a1986a7990420e77d3ee2bc39e178f8817d27ba6c4403998b7aacf3c28c7172135cdeec281cd328a8f2af949b5f57db44a211a093cfd20b' docker-29.6.0.tgz | sha512sum --check --strict
+          printf '%s  %s\n' '184b583a0f325bef12feaf1ca175ff5ea4a65a168f2136eb1daf9c2ae646eecf02134ed65766c8800bd8eb03ac4d338d1e5d700248bc33632027b5b0b52de48a' docker-rootless-extras-29.6.0.tgz | sha512sum --check --strict
+          printf '%s  %s\n' '710f4f48a101af939c4a4cace5ca93ab8c1a1a9ae244a4ef73b2a900f228614472b635bd202fae383c851686d383a37cdeddf45e6d54b36cae8458826c272262' buildx-v0.35.0.linux-amd64 | sha512sum --check --strict
           tar xzf docker-29.6.0.tgz
           tar xzf docker-rootless-extras-29.6.0.tgz
           DOCKER_TOOLS_DIR="${RUNNER_TEMP}/docker-tools"

@@ -92,7 +92,7 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6.0.2 — see PINNED.md
         with:
           repository: yubi-OS/ms-tpm-20-ref
-          ref: feat/ci
+          ref: db43de77e3951482e732b9dbd9cee92f29df1007 # feat/ci
 
       - name: Install build dependencies
         run: |
