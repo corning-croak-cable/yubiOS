@@ -80,12 +80,14 @@ function "ref" {
 }
 
 # Buildx evaluates this explicit policy for every target that can resolve a
-# source. reset+filename preserves the existing CLI contract, while strict
-# fails closed when the selected BuildKit daemon cannot evaluate policies.
+# source. cwd:// anchors the shared policy at the Bake invocation directory;
+# otherwise filenames resolve inside target contexts such as fw/ or inst/.
+# reset+filename preserves the existing CLI contract, while strict fails closed
+# when the selected BuildKit daemon cannot evaluate policies.
 target "_policy" {
   policy = [
     {
-      filename = "yubiOS.rego"
+      filename = "cwd://yubiOS.rego"
       reset    = true
       strict   = true
     },
