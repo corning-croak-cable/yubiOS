@@ -502,7 +502,7 @@ jobs:
             tfa_args+=(LD="$tfa_ld")
           fi
           if [ "$BUILD_KIND" = "qemu" ]; then
-            git clone --no-tags --branch "$MBEDTLS_REF" https://github.com/Mbed-TLS/mbedtls mbedtls
+            git clone --branch "$MBEDTLS_REF" https://github.com/Mbed-TLS/mbedtls mbedtls
             make -C arm-trusted-firmware -j"$(nproc)" \
               "${tfa_args[@]}" \
               SPD=opteed \
