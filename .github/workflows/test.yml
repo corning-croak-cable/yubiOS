@@ -81,6 +81,8 @@ jobs:
             echo 'runuser failed as observed; continuing with setpriv'
           fi
 
+          echo "$DOCKER_TOOLS_DIR/bin" >> "$GITHUB_PATH"
+          echo "DOCKER_CONFIG=$DOCKER_TOOLS_DIR/config" >> "$GITHUB_ENV"
           export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
           export DOCKER_CONFIG="$DOCKER_TOOLS_DIR/config"
           export DOCKER_HOST="unix://${ROOTLESS_SOCKET}"
@@ -119,3 +121,11 @@ jobs:
           grep -q 'name=rootless' /tmp/docker-security-options
           docker buildx create --name hardened --driver docker-container --use
           docker buildx inspect hardened
+
+      - name: Verify rootless Docker across the step boundary (${{ matrix.arch }})
+        run: |
+          set -eu
+          docker -H unix:///run/docker-rootless/docker.sock info \
+            --format '{{json .SecurityOptions}}' | tee /tmp/docker-security-options
+          grep -q 'name=rootless' /tmp/docker-security-options
+          docker -H unix:///run/docker-rootless/docker.sock buildx inspect hardened
