@@ -115,21 +115,63 @@ jobs:
       - name: Install docker CLI + buildx (${{ matrix.arch }})
         run: |
           apt-get update -qq
-          apt-get install -y -qq --no-install-recommends git curl iptables nftables rootlesskit uidmap
+          apt-get install -y -qq --no-install-recommends \
+            git curl iptables nftables passwd util-linux \
+            rootlesskit uidmap slirp4netns fuse-overlayfs
           wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-29.6.0.tgz"
+          wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-rootless-extras-29.6.0.tgz"
           wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.${{ matrix.buildx_arch }}"
           tar xzf docker-29.6.0.tgz
+          tar xzf docker-rootless-extras-29.6.0.tgz
           DOCKER_TOOLS_DIR="${RUNNER_TEMP}/docker-tools"
-          mkdir -p /mnt/docker "$DOCKER_TOOLS_DIR/bin" "$DOCKER_TOOLS_DIR/config/cli-plugins"
+          ROOTLESS_USER=docker-rootless
+          ROOTLESS_RUNTIME_DIR=/run/docker-rootless
+          ROOTLESS_SOCKET="${ROOTLESS_RUNTIME_DIR}/docker.sock"
+          ROOTLESS_DATA_DIR="$(mktemp -d /mnt/docker-rootless.XXXXXX)"
+          mkdir -p "$DOCKER_TOOLS_DIR/bin" "$DOCKER_TOOLS_DIR/config/cli-plugins"
           install -m 0755 docker/* "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 docker-rootless-extras/dockerd-rootless.sh "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 docker-rootless-extras/rootlesskit "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 docker-rootless-extras/rootlesskit "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 docker-rootless-extras/rootlesskit "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 docker-rootless-extras/rootlesskit "$DOCKER_TOOLS_DIR/bin/"
           install -m 0755 "buildx-v0.35.0.${{ matrix.buildx_arch }}" "$DOCKER_TOOLS_DIR/config/cli-plugins/docker-buildx"
+          useradd --create-home --shell /bin/sh "$ROOTLESS_USER"
+          printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subuid
+          printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subgid
+          install -d -m 0700 -o "$ROOTLESS_USER" -g "$ROOTLESS_USER" "$ROOTLESS_RUNTIME_DIR"
+          chown "$ROOTLESS_USER:$ROOTLESS_USER" "$ROOTLESS_DATA_DIR"
+          chmod 0700 "$ROOTLESS_DATA_DIR"
           echo "$DOCKER_TOOLS_DIR/bin" >> "$GITHUB_PATH"
           echo "DOCKER_CONFIG=$DOCKER_TOOLS_DIR/config" >> "$GITHUB_ENV"
+          echo "DOCKER_HOST=unix://${ROOTLESS_SOCKET}" >> "$GITHUB_ENV"
           export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
           export DOCKER_CONFIG="$DOCKER_TOOLS_DIR/config"
-          dockerd --rootless --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
-          for i in $(seq 1 30); do docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
-          docker -H unix:///var/run/ducker.sock buildx create --name hardened \
+          export DOCKER_HOST="unix://${ROOTLESS_SOCKET}"
+          runuser -u "$ROOTLESS_USER" -- env \
+            HOME="/home/${ROOTLESS_USER}" \
+            XDG_RUNTIME_DIR="$ROOTLESS_RUNTIME_DIR" \
+            PATH="$DOCKER_TOOLS_DIR/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+            DOCKERD_ROOTLESS_ROOTLESSKIT_NET=slirp4netns \
+            dockerd-rootless.sh \
+              --data-root="$ROOTLESS_DATA_DIR" \
+              --storage-driver=fuse-overlayfs \
+              -H "unix://${ROOTLESS_SOCKET}" \
+            > "${RUNNER_TEMP}/dockerd-rootless.log" 2>&1 &
+          ROOTLESS_DOCKER_PID=$!
+          for i in $(seq 1 60); do
+            docker -H "unix://${ROOTLESS_SOCKET}" info >/dev/null 2>&1 && break
+            if ! kill -0 "$ROOTLESS_DOCKER_PID" 2>/dev/null; then
+              cat "${RUNNER_TEMP}/dockerd-rootless.log"
+              exit 1
+            fi
+            sleep 1
+          done
+          if ! docker -H "unix://${ROOTLESS_SOCKET}" info >/dev/null 2>&1; then
+            cat "${RUNNER_TEMP}/dockerd-rootless.log"
+            exit 1
+          fi
+          docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
             --driver docker-container \
             --use || true
 
@@ -303,21 +345,59 @@ jobs:
       - name: Install docker CLI + buildx (${{ matrix.arch }})
         run: |
           apt-get update -qq
-          apt-get install -y -qq --no-install-recommends git curl iptables nftables rootlesskit uidmap
+          apt-get install -y -qq --no-install-recommends \
+            git curl iptables nftables passwd util-linux \
+            rootlesskit uidmap slirp4netns fuse-overlayfs
           wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-29.6.0.tgz"
+          wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-rootless-extras-29.6.0.tgz"
           wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.${{ matrix.buildx_arch }}"
           tar xzf docker-29.6.0.tgz
+          tar xzf docker-rootless-extras-29.6.0.tgz
           DOCKER_TOOLS_DIR="${RUNNER_TEMP}/docker-tools"
-          mkdir -p /mnt/docker "$DOCKER_TOOLS_DIR/bin" "$DOCKER_TOOLS_DIR/config/cli-plugins"
+          ROOTLESS_USER=docker-rootless
+          ROOTLESS_RUNTIME_DIR=/run/docker-rootless
+          ROOTLESS_SOCKET="${ROOTLESS_RUNTIME_DIR}/docker.sock"
+          ROOTLESS_DATA_DIR="$(mktemp -d /mnt/docker-rootless.XXXXXX)"
+          mkdir -p "$DOCKER_TOOLS_DIR/bin" "$DOCKER_TOOLS_DIR/config/cli-plugins"
           install -m 0755 docker/* "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 docker-rootless-extras/dockerd-rootless.sh "$DOCKER_TOOLS_DIR/bin/"
           install -m 0755 "buildx-v0.35.0.${{ matrix.buildx_arch }}" "$DOCKER_TOOLS_DIR/config/cli-plugins/docker-buildx"
+          useradd --create-home --shell /bin/sh "$ROOTLESS_USER"
+          printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subuid
+          printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subgid
+          install -d -m 0700 -o "$ROOTLESS_USER" -g "$ROOTLESS_USER" "$ROOTLESS_RUNTIME_DIR"
+          chown "$ROOTLESS_USER:$ROOTLESS_USER" "$ROOTLESS_DATA_DIR"
+          chmod 0700 "$ROOTLESS_DATA_DIR"
           echo "$DOCKER_TOOLS_DIR/bin" >> "$GITHUB_PATH"
           echo "DOCKER_CONFIG=$DOCKER_TOOLS_DIR/config" >> "$GITHUB_ENV"
+          echo "DOCKER_HOST=unix://${ROOTLESS_SOCKET}" >> "$GITHUB_ENV"
           export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
           export DOCKER_CONFIG="$DOCKER_TOOLS_DIR/config"
-          dockerd --rootless --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
-          for i in $(seq 1 30); do docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
-          docker -H unix:///var/run/ducker.sock buildx create --name hardened \
+          export DOCKER_HOST="unix://${ROOTLESS_SOCKET}"
+          runuser -u "$ROOTLESS_USER" -- env \
+            HOME="/home/${ROOTLESS_USER}" \
+            XDG_RUNTIME_DIR="$ROOTLESS_RUNTIME_DIR" \
+            PATH="$DOCKER_TOOLS_DIR/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+            DOCKERD_ROOTLESS_ROOTLESSKIT_NET=slirp4netns \
+            dockerd-rootless.sh \
+              --data-root="$ROOTLESS_DATA_DIR" \
+              --storage-driver=fuse-overlayfs \
+              -H "unix://${ROOTLESS_SOCKET}" \
+            > "${RUNNER_TEMP}/dockerd-rootless.log" 2>&1 &
+          ROOTLESS_DOCKER_PID=$!
+          for i in $(seq 1 60); do
+            docker -H "unix://${ROOTLESS_SOCKET}" info >/dev/null 2>&1 && break
+            if ! kill -0 "$ROOTLESS_DOCKER_PID" 2>/dev/null; then
+              cat "${RUNNER_TEMP}/dockerd-rootless.log"
+              exit 1
+            fi
+            sleep 1
+          done
+          if ! docker -H "unix://${ROOTLESS_SOCKET}" info >/dev/null 2>&1; then
+            cat "${RUNNER_TEMP}/dockerd-rootless.log"
+            exit 1
+          fi
+          docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
             --driver docker-container \
             --use || true
 
@@ -669,21 +749,59 @@ jobs:
       - name: Install docker CLI + buildx (${{ matrix.arch }})
         run: |
           apt-get update -qq
-          apt-get install -y -qq --no-install-recommends git curl iptables nftables rootlesskit uidmap
+          apt-get install -y -qq --no-install-recommends \
+            git curl iptables nftables passwd util-linux \
+            rootlesskit uidmap slirp4netns fuse-overlayfs
           wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-29.6.0.tgz"
+          wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-rootless-extras-29.6.0.tgz"
           wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.${{ matrix.buildx_arch }}"
           tar xzf docker-29.6.0.tgz
+          tar xzf docker-rootless-extras-29.6.0.tgz
           DOCKER_TOOLS_DIR="${RUNNER_TEMP}/docker-tools"
-          mkdir -p /mnt/docker "$DOCKER_TOOLS_DIR/bin" "$DOCKER_TOOLS_DIR/config/cli-plugins"
+          ROOTLESS_USER=docker-rootless
+          ROOTLESS_RUNTIME_DIR=/run/docker-rootless
+          ROOTLESS_SOCKET="${ROOTLESS_RUNTIME_DIR}/docker.sock"
+          ROOTLESS_DATA_DIR="$(mktemp -d /mnt/docker-rootless.XXXXXX)"
+          mkdir -p "$DOCKER_TOOLS_DIR/bin" "$DOCKER_TOOLS_DIR/config/cli-plugins"
           install -m 0755 docker/* "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 docker-rootless-extras/dockerd-rootless.sh "$DOCKER_TOOLS_DIR/bin/"
           install -m 0755 "buildx-v0.35.0.${{ matrix.buildx_arch }}" "$DOCKER_TOOLS_DIR/config/cli-plugins/docker-buildx"
+          useradd --create-home --shell /bin/sh "$ROOTLESS_USER"
+          printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subuid
+          printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subgid
+          install -d -m 0700 -o "$ROOTLESS_USER" -g "$ROOTLESS_USER" "$ROOTLESS_RUNTIME_DIR"
+          chown "$ROOTLESS_USER:$ROOTLESS_USER" "$ROOTLESS_DATA_DIR"
+          chmod 0700 "$ROOTLESS_DATA_DIR"
           echo "$DOCKER_TOOLS_DIR/bin" >> "$GITHUB_PATH"
           echo "DOCKER_CONFIG=$DOCKER_TOOLS_DIR/config" >> "$GITHUB_ENV"
+          echo "DOCKER_HOST=unix://${ROOTLESS_SOCKET}" >> "$GITHUB_ENV"
           export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
           export DOCKER_CONFIG="$DOCKER_TOOLS_DIR/config"
-          dockerd --rootless --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
-          for i in $(seq 1 30); do docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
-          docker -H unix:///var/run/ducker.sock buildx create --name hardened \
+          export DOCKER_HOST="unix://${ROOTLESS_SOCKET}"
+          runuser -u "$ROOTLESS_USER" -- env \
+            HOME="/home/${ROOTLESS_USER}" \
+            XDG_RUNTIME_DIR="$ROOTLESS_RUNTIME_DIR" \
+            PATH="$DOCKER_TOOLS_DIR/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+            DOCKERD_ROOTLESS_ROOTLESSKIT_NET=slirp4netns \
+            dockerd-rootless.sh \
+              --data-root="$ROOTLESS_DATA_DIR" \
+              --storage-driver=fuse-overlayfs \
+              -H "unix://${ROOTLESS_SOCKET}" \
+            > "${RUNNER_TEMP}/dockerd-rootless.log" 2>&1 &
+          ROOTLESS_DOCKER_PID=$!
+          for i in $(seq 1 60); do
+            docker -H "unix://${ROOTLESS_SOCKET}" info >/dev/null 2>&1 && break
+            if ! kill -0 "$ROOTLESS_DOCKER_PID" 2>/dev/null; then
+              cat "${RUNNER_TEMP}/dockerd-rootless.log"
+              exit 1
+            fi
+            sleep 1
+          done
+          if ! docker -H "unix://${ROOTLESS_SOCKET}" info >/dev/null 2>&1; then
+            cat "${RUNNER_TEMP}/dockerd-rootless.log"
+            exit 1
+          fi
+          docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
             --driver docker-container \
             --use || true
 
@@ -827,21 +945,59 @@ jobs:
         if: steps.rk_tpl_gate.outputs.skip_publish != '1'
         run: |
           apt-get update -qq
-          apt-get install -y -qq --no-install-recommends git curl iptables nftables rootlesskit uidmap
+          apt-get install -y -qq --no-install-recommends \
+            git curl iptables nftables passwd util-linux \
+            rootlesskit uidmap slirp4netns fuse-overlayfs
           wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
+          wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-rootless-extras-29.6.0.tgz"
           wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
           tar xzf docker-29.6.0.tgz
+          tar xzf docker-rootless-extras-29.6.0.tgz
           DOCKER_TOOLS_DIR="${RUNNER_TEMP}/docker-tools"
-          mkdir -p /mnt/docker "$DOCKER_TOOLS_DIR/bin" "$DOCKER_TOOLS_DIR/config/cli-plugins"
+          ROOTLESS_USER=docker-rootless
+          ROOTLESS_RUNTIME_DIR=/run/docker-rootless
+          ROOTLESS_SOCKET="${ROOTLESS_RUNTIME_DIR}/docker.sock"
+          ROOTLESS_DATA_DIR="$(mktemp -d /mnt/docker-rootless.XXXXXX)"
+          mkdir -p "$DOCKER_TOOLS_DIR/bin" "$DOCKER_TOOLS_DIR/config/cli-plugins"
           install -m 0755 docker/* "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 docker-rootless-extras/dockerd-rootless.sh "$DOCKER_TOOLS_DIR/bin/"
           install -m 0755 buildx-v0.35.0.linux-amd64 "$DOCKER_TOOLS_DIR/config/cli-plugins/docker-buildx"
+          useradd --create-home --shell /bin/sh "$ROOTLESS_USER"
+          printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subuid
+          printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subgid
+          install -d -m 0700 -o "$ROOTLESS_USER" -g "$ROOTLESS_USER" "$ROOTLESS_RUNTIME_DIR"
+          chown "$ROOTLESS_USER:$ROOTLESS_USER" "$ROOTLESS_DATA_DIR"
+          chmod 0700 "$ROOTLESS_DATA_DIR"
           echo "$DOCKER_TOOLS_DIR/bin" >> "$GITHUB_PATH"
           echo "DOCKER_CONFIG=$DOCKER_TOOLS_DIR/config" >> "$GITHUB_ENV"
+          echo "DOCKER_HOST=unix://${ROOTLESS_SOCKET}" >> "$GITHUB_ENV"
           export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
           export DOCKER_CONFIG="$DOCKER_TOOLS_DIR/config"
-          dockerd --rootless --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
-          for i in $(seq 1 30); do docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
-          docker -H unix:///var/run/ducker.sock buildx create --name hardened \
+          export DOCKER_HOST="unix://${ROOTLESS_SOCKET}"
+          runuser -u "$ROOTLESS_USER" -- env \
+            HOME="/home/${ROOTLESS_USER}" \
+            XDG_RUNTIME_DIR="$ROOTLESS_RUNTIME_DIR" \
+            PATH="$DOCKER_TOOLS_DIR/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+            DOCKERD_ROOTLESS_ROOTLESSKIT_NET=slirp4netns \
+            dockerd-rootless.sh \
+              --data-root="$ROOTLESS_DATA_DIR" \
+              --storage-driver=fuse-overlayfs \
+              -H "unix://${ROOTLESS_SOCKET}" \
+            > "${RUNNER_TEMP}/dockerd-rootless.log" 2>&1 &
+          ROOTLESS_DOCKER_PID=$!
+          for i in $(seq 1 60); do
+            docker -H "unix://${ROOTLESS_SOCKET}" info >/dev/null 2>&1 && break
+            if ! kill -0 "$ROOTLESS_DOCKER_PID" 2>/dev/null; then
+              cat "${RUNNER_TEMP}/dockerd-rootless.log"
+              exit 1
+            fi
+            sleep 1
+          done
+          if ! docker -H "unix://${ROOTLESS_SOCKET}" info >/dev/null 2>&1; then
+            cat "${RUNNER_TEMP}/dockerd-rootless.log"
+            exit 1
+          fi
+          docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
             --driver docker-container \
             --use || true
 
@@ -918,7 +1074,7 @@ jobs:
 
       - name: Log in to Docker Hub
         if: steps.rk_tpl_gate.outputs.skip_publish != '1'
-        run: echo "${{ secrets.DOCKER }}" | docker -H unix:///var/run/ducker.sock login -u 0mniteck42 --password-stdin
+        run: echo "${{ secrets.DOCKER }}" | docker -H unix:///run/docker-rootless/docker.sock login -u 0mniteck42 --password-stdin
 
       - name: Build and push firmware OCI artifact through Bake
         if: steps.rk_tpl_gate.outputs.skip_publish != '1'
@@ -931,17 +1087,17 @@ jobs:
           PUSH: 'true'
         run: |
           set -euxo pipefail
-          docker -H unix:///var/run/ducker.sock buildx bake \
+          docker -H unix:///run/docker-rootless/docker.sock buildx bake \
             --builder hardened \
             --file yubiOS-bake.hcl \
             firmware
-          docker -H unix:///var/run/ducker.sock logout
+          docker -H unix:///run/docker-rootless/docker.sock logout
 
       - name: Verify pushed board tag
         if: steps.rk_tpl_gate.outputs.skip_publish != '1'
         env:
           BOARD: ${{ matrix.board }}
-        run: docker -H unix:///var/run/ducker.sock buildx imagetools inspect "0mniteck/yubios:firmware-${BOARD}"
+        run: docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "0mniteck/yubios:firmware-${BOARD}"
 
   ci-callback:
     name: Callback to ci.yml orchestrator
