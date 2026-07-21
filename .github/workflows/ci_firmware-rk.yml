@@ -128,7 +128,7 @@ jobs:
           for i in $(seq 1 30); do docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
           docker -H unix:///var/run/ducker.sock buildx create --name hardened \
             --driver docker-container \
-            --use --append
+            --use --node ${{ github.job }}${{ github.run_id }}
 
       - name: Install EDK2 build deps
         run: |
@@ -313,7 +313,7 @@ jobs:
           for i in $(seq 1 30); do docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
           docker -H unix:///var/run/ducker.sock buildx create --name hardened \
             --driver docker-container \
-            --use --append
+            --use --node ${{ github.job }}${{ github.run_id }}
 
       - name: Install full ARM64 firmware toolchain
         run: |
@@ -676,7 +676,7 @@ jobs:
           for i in $(seq 1 30); do docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
           docker -H unix:///var/run/ducker.sock buildx create --name hardened \
             --driver docker-container \
-            --use --append
+            --use --node ${{ github.job }}${{ github.run_id }}
 
       - name: Install QEMU + TPM tooling
         run: |
@@ -831,7 +831,7 @@ jobs:
           for i in $(seq 1 30); do docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
           docker -H unix:///var/run/ducker.sock buildx create --name hardened \
             --driver docker-container \
-            --use --append
+            --use --node ${{ github.job }}${{ github.run_id }}
 
       - name: Assemble board-scoped /firmware payload
         if: steps.rk_tpl_gate.outputs.skip_publish != '1'
