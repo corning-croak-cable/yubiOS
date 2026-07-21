@@ -191,16 +191,22 @@ jobs:
           wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-29.6.0.tgz"
           wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.${{ matrix.buildx_arch }}"
           tar xzf docker-29.6.0.tgz
-          mkdir -p /usr/libexec/docker/cli-plugins/
-          cp docker/* /usr/bin/
-          cp "buildx-v0.35.0.${{ matrix.buildx_arch }}" /usr/libexec/docker/cli-plugins/docker-buildx
-          chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
-          mkdir -p /mnt/docker
+          DOCKER_TOOLS_DIR="${RUNNER_TEMP}/docker-tools"
+          mkdir -p /mnt/docker "$DOCKER_TOOLS_DIR/bin" "$DOCKER_TOOLS_DIR/config/cli-plugins"
+          install -m 0755 docker/* "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 "buildx-v0.35.0.${{ matrix.buildx_arch }}" "$DOCKER_TOOLS_DIR/config/cli-plugins/docker-buildx"
+          echo "$DOCKER_TOOLS_DIR/bin" >> "$GITHUB_PATH"
+          echo "DOCKER_CONFIG=$DOCKER_TOOLS_DIR/config" >> "$GITHUB_ENV"
+          export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
+          export DOCKER_CONFIG="$DOCKER_TOOLS_DIR/config"
           dockerd --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
           for i in $(seq 1 30); do docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
           docker -H unix:///var/run/ducker.sock buildx create --name hardened \
             --driver docker-container \
-            --use
+            --use || true
+          docker -H unix:///var/run/ducker.sock buildx create --name hardened \
+            --driver docker-container \
+            --use --node ${{ github.job }}${{ github.run_id }} --append || true
 
       - name: Log in to Docker Hub
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
@@ -256,16 +262,22 @@ jobs:
           wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
           wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
           tar xzf docker-29.6.0.tgz
-          mkdir -p /usr/libexec/docker/cli-plugins/
-          cp docker/* /usr/bin/
-          cp buildx-v0.35.0.linux-amd64 /usr/libexec/docker/cli-plugins/docker-buildx
-          chmod +x /usr/libexec/docker/cli-plugins/docker-buildx
-          mkdir -p /mnt/docker
+          DOCKER_TOOLS_DIR="${RUNNER_TEMP}/docker-tools"
+          mkdir -p /mnt/docker "$DOCKER_TOOLS_DIR/bin" "$DOCKER_TOOLS_DIR/config/cli-plugins"
+          install -m 0755 docker/* "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 buildx-v0.35.0.linux-amd64 "$DOCKER_TOOLS_DIR/config/cli-plugins/docker-buildx"
+          echo "$DOCKER_TOOLS_DIR/bin" >> "$GITHUB_PATH"
+          echo "DOCKER_CONFIG=$DOCKER_TOOLS_DIR/config" >> "$GITHUB_ENV"
+          export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
+          export DOCKER_CONFIG="$DOCKER_TOOLS_DIR/config"
           dockerd --storage-driver=overlayfs --data-root=/mnt/docker -H unix:///var/run/ducker.sock &
           for i in $(seq 1 30); do docker -H unix:///var/run/ducker.sock info >/dev/null 2>&1 && break; sleep 1; done
           docker -H unix:///var/run/ducker.sock buildx create --name hardened \
             --driver docker-container \
-            --use
+            --use || true
+          docker -H unix:///var/run/ducker.sock buildx create --name hardened \
+            --driver docker-container \
+            --use --node ${{ github.job }}${{ github.run_id }} --append || true
 
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER }}" | docker -H unix:///var/run/ducker.sock login -u 0mniteck42 --password-stdin
