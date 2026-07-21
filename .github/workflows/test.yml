@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/test.yml' # self-change trigger for validating workflow edits
+      - '.github/workflows/test.yml' # self-change trigger for cwd:// policy validation
   workflow_dispatch:
 
 permissions:
