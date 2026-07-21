@@ -116,8 +116,8 @@ jobs:
         run: |
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends \
-            git curl iptables nftables passwd util-linux \
-            rootlesskit uidmap slirp4netns fuse-overlayfs
+            git curl iproute2 iptables nftables passwd procps util-linux \
+            uidmap slirp4netns fuse-overlayfs
           wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-29.6.0.tgz"
           wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-rootless-extras-29.6.0.tgz"
           wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.${{ matrix.buildx_arch }}"
@@ -132,9 +132,6 @@ jobs:
           install -m 0755 docker/* "$DOCKER_TOOLS_DIR/bin/"
           install -m 0755 docker-rootless-extras/dockerd-rootless.sh "$DOCKER_TOOLS_DIR/bin/"
           install -m 0755 docker-rootless-extras/rootlesskit "$DOCKER_TOOLS_DIR/bin/"
-          install -m 0755 docker-rootless-extras/rootlesskit "$DOCKER_TOOLS_DIR/bin/"
-          install -m 0755 docker-rootless-extras/rootlesskit "$DOCKER_TOOLS_DIR/bin/"
-          install -m 0755 docker-rootless-extras/rootlesskit "$DOCKER_TOOLS_DIR/bin/"
           install -m 0755 "buildx-v0.35.0.${{ matrix.buildx_arch }}" "$DOCKER_TOOLS_DIR/config/cli-plugins/docker-buildx"
           useradd --create-home --shell /bin/sh "$ROOTLESS_USER"
           printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subuid
@@ -142,21 +139,31 @@ jobs:
           install -d -m 0700 -o "$ROOTLESS_USER" -g "$ROOTLESS_USER" "$ROOTLESS_RUNTIME_DIR"
           chown "$ROOTLESS_USER:$ROOTLESS_USER" "$ROOTLESS_DATA_DIR"
           chmod 0700 "$ROOTLESS_DATA_DIR"
+          # RootlessKit needs unprivileged user namespaces on Ubuntu 24.04.
+          if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
+            sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          fi
           echo "$DOCKER_TOOLS_DIR/bin" >> "$GITHUB_PATH"
           echo "DOCKER_CONFIG=$DOCKER_TOOLS_DIR/config" >> "$GITHUB_ENV"
           echo "DOCKER_HOST=unix://${ROOTLESS_SOCKET}" >> "$GITHUB_ENV"
           export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
           export DOCKER_CONFIG="$DOCKER_TOOLS_DIR/config"
           export DOCKER_HOST="unix://${ROOTLESS_SOCKET}"
-          runuser -u "$ROOTLESS_USER" -- env \
-            HOME="/home/${ROOTLESS_USER}" \
-            XDG_RUNTIME_DIR="$ROOTLESS_RUNTIME_DIR" \
-            PATH="$DOCKER_TOOLS_DIR/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
-            DOCKERD_ROOTLESS_ROOTLESSKIT_NET=slirp4netns \
-            dockerd-rootless.sh \
-              --data-root="$ROOTLESS_DATA_DIR" \
-              --storage-driver=fuse-overlayfs \
-              -H "unix://${ROOTLESS_SOCKET}" \
+          setpriv \
+            --reuid="$ROOTLESS_USER" \
+            --regid="$ROOTLESS_USER" \
+            --init-groups \
+            env \
+              HOME="/home/${ROOTLESS_USER}" \
+              USER="$ROOTLESS_USER" \
+              LOGNAME="$ROOTLESS_USER" \
+              XDG_RUNTIME_DIR="$ROOTLESS_RUNTIME_DIR" \
+              PATH="$DOCKER_TOOLS_DIR/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+              DOCKERD_ROOTLESS_ROOTLESSKIT_NET=slirp4netns \
+              dockerd-rootless.sh \
+                --data-root="$ROOTLESS_DATA_DIR" \
+                --storage-driver=fuse-overlayfs \
+                -H "unix://${ROOTLESS_SOCKET}" \
             > "${RUNNER_TEMP}/dockerd-rootless.log" 2>&1 &
           ROOTLESS_DOCKER_PID=$!
           for i in $(seq 1 60); do
@@ -346,8 +353,8 @@ jobs:
         run: |
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends \
-            git curl iptables nftables passwd util-linux \
-            rootlesskit uidmap slirp4netns fuse-overlayfs
+            git curl iproute2 iptables nftables passwd procps util-linux \
+            uidmap slirp4netns fuse-overlayfs
           wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-29.6.0.tgz"
           wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-rootless-extras-29.6.0.tgz"
           wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.${{ matrix.buildx_arch }}"
@@ -361,6 +368,7 @@ jobs:
           mkdir -p "$DOCKER_TOOLS_DIR/bin" "$DOCKER_TOOLS_DIR/config/cli-plugins"
           install -m 0755 docker/* "$DOCKER_TOOLS_DIR/bin/"
           install -m 0755 docker-rootless-extras/dockerd-rootless.sh "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 docker-rootless-extras/rootlesskit "$DOCKER_TOOLS_DIR/bin/"
           install -m 0755 "buildx-v0.35.0.${{ matrix.buildx_arch }}" "$DOCKER_TOOLS_DIR/config/cli-plugins/docker-buildx"
           useradd --create-home --shell /bin/sh "$ROOTLESS_USER"
           printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subuid
@@ -368,21 +376,31 @@ jobs:
           install -d -m 0700 -o "$ROOTLESS_USER" -g "$ROOTLESS_USER" "$ROOTLESS_RUNTIME_DIR"
           chown "$ROOTLESS_USER:$ROOTLESS_USER" "$ROOTLESS_DATA_DIR"
           chmod 0700 "$ROOTLESS_DATA_DIR"
+          # RootlessKit needs unprivileged user namespaces on Ubuntu 24.04.
+          if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
+            sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          fi
           echo "$DOCKER_TOOLS_DIR/bin" >> "$GITHUB_PATH"
           echo "DOCKER_CONFIG=$DOCKER_TOOLS_DIR/config" >> "$GITHUB_ENV"
           echo "DOCKER_HOST=unix://${ROOTLESS_SOCKET}" >> "$GITHUB_ENV"
           export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
           export DOCKER_CONFIG="$DOCKER_TOOLS_DIR/config"
           export DOCKER_HOST="unix://${ROOTLESS_SOCKET}"
-          runuser -u "$ROOTLESS_USER" -- env \
-            HOME="/home/${ROOTLESS_USER}" \
-            XDG_RUNTIME_DIR="$ROOTLESS_RUNTIME_DIR" \
-            PATH="$DOCKER_TOOLS_DIR/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
-            DOCKERD_ROOTLESS_ROOTLESSKIT_NET=slirp4netns \
-            dockerd-rootless.sh \
-              --data-root="$ROOTLESS_DATA_DIR" \
-              --storage-driver=fuse-overlayfs \
-              -H "unix://${ROOTLESS_SOCKET}" \
+          setpriv \
+            --reuid="$ROOTLESS_USER" \
+            --regid="$ROOTLESS_USER" \
+            --init-groups \
+            env \
+              HOME="/home/${ROOTLESS_USER}" \
+              USER="$ROOTLESS_USER" \
+              LOGNAME="$ROOTLESS_USER" \
+              XDG_RUNTIME_DIR="$ROOTLESS_RUNTIME_DIR" \
+              PATH="$DOCKER_TOOLS_DIR/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+              DOCKERD_ROOTLESS_ROOTLESSKIT_NET=slirp4netns \
+              dockerd-rootless.sh \
+                --data-root="$ROOTLESS_DATA_DIR" \
+                --storage-driver=fuse-overlayfs \
+                -H "unix://${ROOTLESS_SOCKET}" \
             > "${RUNNER_TEMP}/dockerd-rootless.log" 2>&1 &
           ROOTLESS_DOCKER_PID=$!
           for i in $(seq 1 60); do
@@ -750,8 +768,8 @@ jobs:
         run: |
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends \
-            git curl iptables nftables passwd util-linux \
-            rootlesskit uidmap slirp4netns fuse-overlayfs
+            git curl iproute2 iptables nftables passwd procps util-linux \
+            uidmap slirp4netns fuse-overlayfs
           wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-29.6.0.tgz"
           wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-rootless-extras-29.6.0.tgz"
           wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.${{ matrix.buildx_arch }}"
@@ -765,6 +783,7 @@ jobs:
           mkdir -p "$DOCKER_TOOLS_DIR/bin" "$DOCKER_TOOLS_DIR/config/cli-plugins"
           install -m 0755 docker/* "$DOCKER_TOOLS_DIR/bin/"
           install -m 0755 docker-rootless-extras/dockerd-rootless.sh "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 docker-rootless-extras/rootlesskit "$DOCKER_TOOLS_DIR/bin/"
           install -m 0755 "buildx-v0.35.0.${{ matrix.buildx_arch }}" "$DOCKER_TOOLS_DIR/config/cli-plugins/docker-buildx"
           useradd --create-home --shell /bin/sh "$ROOTLESS_USER"
           printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subuid
@@ -772,21 +791,31 @@ jobs:
           install -d -m 0700 -o "$ROOTLESS_USER" -g "$ROOTLESS_USER" "$ROOTLESS_RUNTIME_DIR"
           chown "$ROOTLESS_USER:$ROOTLESS_USER" "$ROOTLESS_DATA_DIR"
           chmod 0700 "$ROOTLESS_DATA_DIR"
+          # RootlessKit needs unprivileged user namespaces on Ubuntu 24.04.
+          if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
+            sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          fi
           echo "$DOCKER_TOOLS_DIR/bin" >> "$GITHUB_PATH"
           echo "DOCKER_CONFIG=$DOCKER_TOOLS_DIR/config" >> "$GITHUB_ENV"
           echo "DOCKER_HOST=unix://${ROOTLESS_SOCKET}" >> "$GITHUB_ENV"
           export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
           export DOCKER_CONFIG="$DOCKER_TOOLS_DIR/config"
           export DOCKER_HOST="unix://${ROOTLESS_SOCKET}"
-          runuser -u "$ROOTLESS_USER" -- env \
-            HOME="/home/${ROOTLESS_USER}" \
-            XDG_RUNTIME_DIR="$ROOTLESS_RUNTIME_DIR" \
-            PATH="$DOCKER_TOOLS_DIR/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
-            DOCKERD_ROOTLESS_ROOTLESSKIT_NET=slirp4netns \
-            dockerd-rootless.sh \
-              --data-root="$ROOTLESS_DATA_DIR" \
-              --storage-driver=fuse-overlayfs \
-              -H "unix://${ROOTLESS_SOCKET}" \
+          setpriv \
+            --reuid="$ROOTLESS_USER" \
+            --regid="$ROOTLESS_USER" \
+            --init-groups \
+            env \
+              HOME="/home/${ROOTLESS_USER}" \
+              USER="$ROOTLESS_USER" \
+              LOGNAME="$ROOTLESS_USER" \
+              XDG_RUNTIME_DIR="$ROOTLESS_RUNTIME_DIR" \
+              PATH="$DOCKER_TOOLS_DIR/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+              DOCKERD_ROOTLESS_ROOTLESSKIT_NET=slirp4netns \
+              dockerd-rootless.sh \
+                --data-root="$ROOTLESS_DATA_DIR" \
+                --storage-driver=fuse-overlayfs \
+                -H "unix://${ROOTLESS_SOCKET}" \
             > "${RUNNER_TEMP}/dockerd-rootless.log" 2>&1 &
           ROOTLESS_DOCKER_PID=$!
           for i in $(seq 1 60); do
@@ -946,8 +975,8 @@ jobs:
         run: |
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends \
-            git curl iptables nftables passwd util-linux \
-            rootlesskit uidmap slirp4netns fuse-overlayfs
+            git curl iproute2 iptables nftables passwd procps util-linux \
+            uidmap slirp4netns fuse-overlayfs
           wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
           wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-rootless-extras-29.6.0.tgz"
           wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
@@ -961,6 +990,7 @@ jobs:
           mkdir -p "$DOCKER_TOOLS_DIR/bin" "$DOCKER_TOOLS_DIR/config/cli-plugins"
           install -m 0755 docker/* "$DOCKER_TOOLS_DIR/bin/"
           install -m 0755 docker-rootless-extras/dockerd-rootless.sh "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 docker-rootless-extras/rootlesskit "$DOCKER_TOOLS_DIR/bin/"
           install -m 0755 buildx-v0.35.0.linux-amd64 "$DOCKER_TOOLS_DIR/config/cli-plugins/docker-buildx"
           useradd --create-home --shell /bin/sh "$ROOTLESS_USER"
           printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subuid
@@ -968,21 +998,31 @@ jobs:
           install -d -m 0700 -o "$ROOTLESS_USER" -g "$ROOTLESS_USER" "$ROOTLESS_RUNTIME_DIR"
           chown "$ROOTLESS_USER:$ROOTLESS_USER" "$ROOTLESS_DATA_DIR"
           chmod 0700 "$ROOTLESS_DATA_DIR"
+          # RootlessKit needs unprivileged user namespaces on Ubuntu 24.04.
+          if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
+            sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          fi
           echo "$DOCKER_TOOLS_DIR/bin" >> "$GITHUB_PATH"
           echo "DOCKER_CONFIG=$DOCKER_TOOLS_DIR/config" >> "$GITHUB_ENV"
           echo "DOCKER_HOST=unix://${ROOTLESS_SOCKET}" >> "$GITHUB_ENV"
           export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
           export DOCKER_CONFIG="$DOCKER_TOOLS_DIR/config"
           export DOCKER_HOST="unix://${ROOTLESS_SOCKET}"
-          runuser -u "$ROOTLESS_USER" -- env \
-            HOME="/home/${ROOTLESS_USER}" \
-            XDG_RUNTIME_DIR="$ROOTLESS_RUNTIME_DIR" \
-            PATH="$DOCKER_TOOLS_DIR/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
-            DOCKERD_ROOTLESS_ROOTLESSKIT_NET=slirp4netns \
-            dockerd-rootless.sh \
-              --data-root="$ROOTLESS_DATA_DIR" \
-              --storage-driver=fuse-overlayfs \
-              -H "unix://${ROOTLESS_SOCKET}" \
+          setpriv \
+            --reuid="$ROOTLESS_USER" \
+            --regid="$ROOTLESS_USER" \
+            --init-groups \
+            env \
+              HOME="/home/${ROOTLESS_USER}" \
+              USER="$ROOTLESS_USER" \
+              LOGNAME="$ROOTLESS_USER" \
+              XDG_RUNTIME_DIR="$ROOTLESS_RUNTIME_DIR" \
+              PATH="$DOCKER_TOOLS_DIR/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+              DOCKERD_ROOTLESS_ROOTLESSKIT_NET=slirp4netns \
+              dockerd-rootless.sh \
+                --data-root="$ROOTLESS_DATA_DIR" \
+                --storage-driver=fuse-overlayfs \
+                -H "unix://${ROOTLESS_SOCKET}" \
             > "${RUNNER_TEMP}/dockerd-rootless.log" 2>&1 &
           ROOTLESS_DOCKER_PID=$!
           for i in $(seq 1 60); do
