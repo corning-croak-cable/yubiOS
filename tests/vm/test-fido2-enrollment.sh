@@ -13,10 +13,10 @@
 #   4. SSH resident-key path— ssh-keygen -t ed25519-sk against the authenticator
 #                             (ADR-004; covers the #25 "SSH key generation" leg)
 #
-# Skip-tolerant like tests/vm/test-luks-fido2-ci.sh: CTAP2 legs SKIP (not fail)
-# when the image doesn't ship the Layer 2 authenticator (non-test images).
-# Production trust anchor remains the physical YubiKey (ADR-003/ADR-004);
-# swtpm/swu2f are TEST-ONLY. Hardware validation: tests/vm/test-luks-fido2.sh.
+# The software CTAP2 fixture, FIDO2 registration, and ed25519-sk key generation
+# are required assertions. Production trust remains the physical YubiKey
+# (ADR-003/ADR-004); swtpm/swu2f are TEST-ONLY. Hardware validation:
+# tests/vm/test-luks-fido2.sh.
 
 set -euo pipefail
 
@@ -91,46 +91,71 @@ fi
 
 # ---- 3. start the in-guest CTAP2 authenticator (swu2f Layer 2) ----
 log "swu2f Layer 2: start in-guest CTAP2 authenticator (passless)"
-CTAP2=0
-if g 'command -v passless >/dev/null'; then
-  g 'modprobe uhid 2>/dev/null || true'
-  g 'PASSLESS_E2E_AUTO_ACCEPT_UV=1 setsid passless --backend-type local \
-       >/var/log/passless-enroll.log 2>&1 < /dev/null & true'
-  for i in $(seq 1 15); do
-    g 'command -v fido2-token >/dev/null && fido2-token -L 2>/dev/null | grep -q .' && break
-    [[ "$i" -eq 15 ]] && skip "passless started but no FIDO2 token enumerated"
-    g 'sleep 1'
-  done
-  if g 'for d in $(fido2-token -L | cut -d: -f1); do fido2-token -I "$d" 2>/dev/null | grep -qi "hmac-secret" && exit 0; done; exit 1'; then
-    CTAP2=1
-    echo "CTAP2 hmac-secret authenticator up"
-  fi
-else
-  skip "passless not in image; CTAP2 enrollment legs need the TEST image (mkosi --profile test)"
+g 'command -v passless >/dev/null' \
+  || die "passless missing; enrollment e2e requires the TEST image built with mkosi --profile test"
+g 'command -v fido2-token >/dev/null' || die "fido2-token missing from TEST image"
+g 'command -v systemd-run >/dev/null' || die "systemd-run missing from TEST image"
+g 'set -eu
+   modprobe uhid
+   test -c /dev/uhid
+   rm -rf /run/passless-ci
+   install -d -m 0700 /run/passless-ci/storage /run/passless-ci/config
+   systemd-run --quiet --unit=passless-ci.service --property=Type=exec \
+     --setenv=HOME=/root \
+     --setenv=XDG_DATA_HOME=/run/passless-ci \
+     --setenv=XDG_CONFIG_HOME=/run/passless-ci/config \
+     --setenv=PASSLESS_E2E_AUTO_ACCEPT_UV=1 \
+     --setenv=PASSLESS_TEST_VENDOR_ID=0x15d9 \
+     --setenv=PASSLESS_TEST_PRODUCT_ID=0x0a37 \
+     --setenv=PASSLESS_LOG_STYLE=never \
+     /usr/bin/passless --backend-type local \
+       --local-path /run/passless-ci/storage -v' \
+  || die "failed to launch passless against the pre-created CI storage"
+
+if ! g 'set -eu
+        for _ in $(seq 1 30); do
+          udevadm settle 2>/dev/null || true
+          if fido2-token -L 2>/dev/null | tee /run/passless-ci/devices | grep -q .; then
+            cat /run/passless-ci/devices
+            exit 0
+          fi
+          systemctl is-active --quiet passless-ci.service || exit 1
+          sleep 1
+        done
+        exit 1'; then
+  g 'set +e
+     echo "--- passless service ---"
+     systemctl --no-pager --full status passless-ci.service
+     echo "--- passless journal ---"
+     journalctl -b --no-pager -u passless-ci.service -n 200
+     echo "--- UHID/hidraw devices ---"
+     ls -la /dev/uhid /dev/hidraw*
+     echo "--- recent kernel HID messages ---"
+     dmesg | grep -Ei "uhid|hidraw|fido" | tail -100
+     true' >&2 || true
+  die "passless did not enumerate a FIDO2 token inside the ARM64 guest"
 fi
+
+g 'for d in $(fido2-token -L | cut -d: -f1); do
+     fido2-token -I "$d" 2>/dev/null | tee /run/passless-ci/token-info
+     grep -qi "hmac-secret" /run/passless-ci/token-info && exit 0
+   done
+   exit 1' \
+  || die "enumerated swu2f token does not advertise CTAP2 hmac-secret"
+echo "CTAP2 hmac-secret authenticator up"
 
 # ---- 4. FIDO2 registration (the wizard's core primitive) ----
-if [[ "$CTAP2" -eq 1 ]]; then
-  log "pam-u2f: register a credential against the software authenticator"
-  g 'command -v pamu2fcfg >/dev/null' || die "pamu2fcfg missing from image"
-  g 'pamu2fcfg -u ci-enroll > /tmp/enroll_u2f_keys && test -s /tmp/enroll_u2f_keys' \
-    || die "pamu2fcfg registration against CTAP2 authenticator failed"
-  echo "FIDO2 registration OK"
-else
-  skip "FIDO2 registration — needs CTAP2 (Layer 2)"
-fi
+log "pam-u2f: register a credential against the software authenticator"
+g 'command -v pamu2fcfg >/dev/null' || die "pamu2fcfg missing from image"
+g 'pamu2fcfg -u ci-enroll > /tmp/enroll_u2f_keys && test -s /tmp/enroll_u2f_keys' \
+  || die "pamu2fcfg registration against CTAP2 authenticator failed"
+echo "FIDO2 registration OK"
 
 # ---- 5. SSH ed25519-sk keygen (ADR-004; #25 SSH leg) ----
-if [[ "$CTAP2" -eq 1 ]]; then
-  log "ssh-keygen: ed25519-sk keypair against the software authenticator"
-  if g 'ssh-keygen -t ed25519-sk -N "" -f /tmp/ci_sk_key </dev/null && test -s /tmp/ci_sk_key.pub'; then
-    g 'head -c 32 /tmp/ci_sk_key.pub'
-    echo "ed25519-sk keygen OK"
-  else
-    skip "ssh-keygen ed25519-sk failed — image openssh may lack the internal sk middleware for uhid tokens (hardware YubiKey path unaffected, ADR-004)"
-  fi
-else
-  skip "ssh ed25519-sk keygen — needs CTAP2 (Layer 2)"
-fi
+log "ssh-keygen: ed25519-sk keypair against the software authenticator"
+g 'ssh-keygen -t ed25519-sk -N "" -f /tmp/ci_sk_key </dev/null && test -s /tmp/ci_sk_key.pub' \
+  || die "ssh-keygen ed25519-sk failed against the enumerated CTAP2 authenticator"
+g 'head -c 32 /tmp/ci_sk_key.pub'
+echo "ed25519-sk keygen OK"
 
-log "PASS: enrollment surface verified (CTAP2 legs run when the TEST image ships passless)"
+log "PASS: enrollment surface + CTAP2 registration + OpenSSH ed25519-sk verified"

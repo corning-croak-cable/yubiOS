@@ -29,10 +29,9 @@
 #
 # The yubiOS TEST image (mkosi --profile test) ships `passless` (pando85/passless,
 # Rust; backend pando85/soft-fido2 implements hmac-secret) as that Layer 2
-# authenticator. When present, this test starts it and runs the LUKS2-FIDO2 +
-# homed-FIDO2 legs for real. When absent (e.g. a non-test image), it PROBES for a
-# CTAP2 hmac-secret authenticator and SKIPS (does not fail) those legs. pam-u2f +
-# swtpm legs always run.
+# authenticator. This CI script requires that test-only fixture and fails unless
+# the CTAP2 hmac-secret token, LUKS2 enrollment/unlock, and homed enrollment all
+# execute. Production images remain intentionally incompatible with this test.
 set -euo pipefail
 
 IMAGE="${YUBIOS_IMAGE:-./mkosi.output/yubiOS}"
@@ -120,69 +119,92 @@ fi
 # bcvk --swu2f only loads the uhid module (docs/swu2f.md); the CTAP2 hmac-secret
 # authenticator runs IN the guest. The TEST image (mkosi --profile test) ships
 # `passless`. Start it so /dev/uhid exposes a CTAP2 token for the probe + FIDO2 legs.
+#
+# passless v0.11.2's local backend opens /dev/uhid before initializing storage.
+# If the storage directory is absent, it asks a desktop notification daemon for
+# permission to create it and exits in a headless guest. Run 29872832727 hit that
+# path: passless briefly started, but no hidraw device survived to enumerate.
+# Pre-create an explicit ephemeral store and use a transient service so process
+# state and journal diagnostics remain observable over separate SSH commands.
 log "swu2f Layer 2: start in-guest CTAP2 authenticator (passless)"
-if g 'command -v passless >/dev/null'; then
-  g 'modprobe uhid 2>/dev/null || true'
-  g 'test -e /dev/uhid' || skip "/dev/uhid not present after modprobe uhid (bcvk --swu2f should provide it)"
-  # Debug build honors PASSLESS_E2E_AUTO_ACCEPT_UV: auto-approve user verification
-  # with no notification daemon (headless CI). `--backend-type local` is the
-  # testing-only filesystem backend (default is `pass`, which needs gpg). This is
-  # the upstream-documented e2e recipe (passless config.rs).
-  g 'PASSLESS_E2E_AUTO_ACCEPT_UV=1 setsid passless --backend-type local \
-       >/var/log/passless.log 2>&1 < /dev/null & true'
-  # wait for the virtual token to enumerate
-  for i in $(seq 1 15); do
-    g 'command -v fido2-token >/dev/null && fido2-token -L 2>/dev/null | grep -q .' && break
-    [[ "$i" -eq 15 ]] && skip "passless started but no FIDO2 token enumerated (see /var/log/passless.log)"
-    g 'sleep 1'
-  done
-else
-  skip "passless (swu2f Layer 2 CTAP2 authenticator) not in image; build with: mkosi --profile test build"
+g 'command -v passless >/dev/null' \
+  || die "passless missing; VM e2e requires the TEST image built with mkosi --profile test"
+g 'command -v fido2-token >/dev/null' || die "fido2-token missing from TEST image"
+g 'command -v systemd-run >/dev/null' || die "systemd-run missing from TEST image"
+g 'set -eu
+   modprobe uhid
+   test -c /dev/uhid
+   rm -rf /run/passless-ci
+   install -d -m 0700 /run/passless-ci/storage /run/passless-ci/config
+   systemd-run --quiet --unit=passless-ci.service --property=Type=exec \
+     --setenv=HOME=/root \
+     --setenv=XDG_DATA_HOME=/run/passless-ci \
+     --setenv=XDG_CONFIG_HOME=/run/passless-ci/config \
+     --setenv=PASSLESS_E2E_AUTO_ACCEPT_UV=1 \
+     --setenv=PASSLESS_TEST_VENDOR_ID=0x15d9 \
+     --setenv=PASSLESS_TEST_PRODUCT_ID=0x0a37 \
+     --setenv=PASSLESS_LOG_STYLE=never \
+     /usr/bin/passless --backend-type local \
+       --local-path /run/passless-ci/storage -v' \
+  || die "failed to launch passless against the pre-created CI storage"
+
+if ! g 'set -eu
+        for _ in $(seq 1 30); do
+          udevadm settle 2>/dev/null || true
+          if fido2-token -L 2>/dev/null | tee /run/passless-ci/devices | grep -q .; then
+            cat /run/passless-ci/devices
+            exit 0
+          fi
+          systemctl is-active --quiet passless-ci.service || exit 1
+          sleep 1
+        done
+        exit 1'; then
+  g 'set +e
+     echo "--- passless service ---"
+     systemctl --no-pager --full status passless-ci.service
+     echo "--- passless journal ---"
+     journalctl -b --no-pager -u passless-ci.service -n 200
+     echo "--- UHID/hidraw devices ---"
+     ls -la /dev/uhid /dev/hidraw*
+     echo "--- recent kernel HID messages ---"
+     dmesg | grep -Ei "uhid|hidraw|fido" | tail -100
+     true' >&2 || true
+  die "passless did not enumerate a FIDO2 token inside the ARM64 guest"
 fi
 
-# ---- CTAP2 capability probe (gates the FIDO2 hmac-secret legs) ----
+# ---- CTAP2 capability probe (required for the FIDO2 hmac-secret legs) ----
 log "probe: CTAP2 hmac-secret authenticator (swu2f Layer 2)"
-CTAP2=0
-if g 'command -v fido2-token >/dev/null' && \
-   g 'for d in $(fido2-token -L | cut -d: -f1); do fido2-token -I "$d" 2>/dev/null | grep -qi "hmac-secret" && exit 0; done; exit 1'; then
-  CTAP2=1
-  echo "CTAP2 hmac-secret authenticator found"
-else
-  skip "no CTAP2 hmac-secret authenticator found."
-  skip "LUKS2-FIDO2 + homed-FIDO2 legs need swu2f Layer 2 (in-guest /dev/uhid CTAP2 authenticator); build the TEST image (mkosi --profile test)."
-fi
+g 'for d in $(fido2-token -L | cut -d: -f1); do
+     fido2-token -I "$d" 2>/dev/null | tee /run/passless-ci/token-info
+     grep -qi "hmac-secret" /run/passless-ci/token-info && exit 0
+   done
+   exit 1' \
+  || die "enumerated swu2f token does not advertise CTAP2 hmac-secret"
+echo "CTAP2 hmac-secret authenticator found"
 
-# ---- LUKS2 FIDO2 unlock (CTAP2 only) ----
-if [[ "$CTAP2" -eq 1 ]]; then
-  log "LUKS2 FIDO2: enroll + reopen on a throwaway container"
-  g 'set -e
-     dd if=/dev/zero of=/tmp/t.luks bs=1M count=48 status=none
-     echo -n testpass | cryptsetup luksFormat --type luks2 -q /tmp/t.luks -
-     PASSWORD=testpass systemd-cryptenroll --fido2-device=auto \
-       --fido2-with-client-pin=no /tmp/t.luks
-     systemd-cryptsetup attach t_ci /tmp/t.luks - fido2-device=auto
-     cryptsetup status t_ci | grep -q "type:.*LUKS2"
-     systemd-cryptsetup detach t_ci' \
-    || die "LUKS2 FIDO2 enroll/unlock failed against CTAP2 authenticator"
-  echo "LUKS2 FIDO2 enroll + token unlock OK"
-else
-  skip "LUKS2 FIDO2 enroll/unlock — needs CTAP2 (Layer 2)"
-fi
+# ---- LUKS2 FIDO2 unlock (required) ----
+log "LUKS2 FIDO2: enroll + reopen on a throwaway container"
+g 'set -e
+   dd if=/dev/zero of=/tmp/t.luks bs=1M count=48 status=none
+   echo -n testpass | cryptsetup luksFormat --type luks2 -q /tmp/t.luks -
+   PASSWORD=testpass systemd-cryptenroll --fido2-device=auto \
+     --fido2-with-client-pin=no /tmp/t.luks
+   systemd-cryptsetup attach t_ci /tmp/t.luks - fido2-device=auto
+   cryptsetup status t_ci | grep -q "type:.*LUKS2"
+   systemd-cryptsetup detach t_ci' \
+  || die "LUKS2 FIDO2 enroll/unlock failed against CTAP2 authenticator"
+echo "LUKS2 FIDO2 enroll + token unlock OK"
 
 # ---- systemd-homed ----
 log "systemd-homed: service active"
 g 'systemctl is-active systemd-homed.service >/dev/null' || die "systemd-homed not active"
-if [[ "$CTAP2" -eq 1 ]]; then
-  log "systemd-homed: FIDO2-backed home create + authenticate"
-  g 'set -e
-     PASSWORD=ignored NEWPASSWORD= homectl create citest \
-       --storage=luks --fido2-device=auto
-     homectl inspect citest | grep -qi fido2
-     homectl remove citest' \
-    || die "homed FIDO2 home create/inspect failed"
-  echo "homed FIDO2 home OK"
-else
-  skip "homed FIDO2 home — needs CTAP2 (Layer 2)"
-fi
+log "systemd-homed: FIDO2-backed home create + authenticate"
+g 'set -e
+   PASSWORD=ignored NEWPASSWORD= homectl create citest \
+     --storage=luks --fido2-device=auto
+   homectl inspect citest | grep -qi fido2
+   homectl remove citest' \
+  || die "homed FIDO2 home create/inspect failed"
+echo "homed FIDO2 home OK"
 
-log "PASS: swtpm + swu2f legs verified (CTAP2 legs run when the TEST image ships the Layer 2 authenticator)"
+log "PASS: swtpm + swu2f CTAP2 + LUKS2 FIDO2 + homed FIDO2 verified"

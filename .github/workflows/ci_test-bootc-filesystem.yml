@@ -1,0 +1,186 @@
+name: bootc to-filesystem install e2e
+
+# Validate the destructive README install path only on disposable loopback
+# disks inside fresh GitHub-hosted VMs. The workflow prepares the DPS-aware
+# partitions externally, mounts root at /mnt and ESP at /mnt/boot, then invokes
+# the documented bootc command with --skip-finalize and an explicitly empty
+# --root-mount-spec so the generated boot configuration relies on DPS rather
+# than a root= kernel argument.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ci_test-bootc-filesystem.yml' # narrow self-change validation
+  workflow_dispatch:
+    inputs:
+      image:
+        description: 'Pullable yubiOS image to install; the run resolves and records its immutable digest.'
+        required: true
+        default: 'docker.io/0mniteck/yubios:latest'
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  install-to-filesystem:
+    name: install-to-filesystem (${{ matrix.arch }})
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+            machine: x86_64
+            root_type_guid: 4f68bce3-e8cd-4db1-96e7-fbcaf984b709
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            machine: aarch64
+            root_type_guid: b921b045-1df0-41c3-af44-4c6f280d3fae
+    runs-on: ${{ matrix.runner }}
+    env:
+      REQUESTED_IMAGE: ${{ inputs.image || 'docker.io/0mniteck/yubios:latest' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Assert README install contract
+        run: |
+          set -euo pipefail
+          grep -Fq -- 'bootc install to-filesystem' README.md
+          grep -Fq -- '--root-mount-spec=""' README.md
+          grep -Fq -- '--skip-finalize' README.md
+          grep -Fq -- '/run/host/mnt/' README.md
+
+      - name: Prepare fresh externally partitioned target at /mnt
+        id: disk
+        env:
+          ROOT_TYPE_GUID: ${{ matrix.root_type_guid }}
+        run: |
+          set -euo pipefail
+          test "$(uname -m)" = "${{ matrix.machine }}"
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends \
+            binutils dosfstools e2fsprogs fdisk util-linux
+
+          DISK_IMAGE="${RUNNER_TEMP}/yubios-bootc-to-filesystem-${{ matrix.arch }}.raw"
+          truncate -s 12G "$DISK_IMAGE"
+          LOOP_DEVICE="$(sudo losetup --find --show --partscan "$DISK_IMAGE")"
+          printf 'label: gpt\nsize=1G, type=c12a7328-f81f-11d2-ba4b-00a0c93ec93b, name=ESP\ntype=%s, name=yubiOS-root\n' \
+            "$ROOT_TYPE_GUID" | sudo sfdisk "$LOOP_DEVICE"
+          sudo partx --update "$LOOP_DEVICE" || true
+          sudo udevadm settle
+
+          ESP_PART="${LOOP_DEVICE}p1"
+          ROOT_PART="${LOOP_DEVICE}p2"
+          test -b "$ESP_PART"
+          test -b "$ROOT_PART"
+          sudo mkfs.vfat -F 32 -n EFI "$ESP_PART"
+          sudo mkfs.ext4 -F -L yubiOS-root "$ROOT_PART"
+          sudo mount "$ROOT_PART" /mnt
+          sudo install -d -m 0755 /mnt/boot
+          sudo mount "$ESP_PART" /mnt/boot
+
+          test "$(findmnt -nro SOURCE /mnt)" = "$ROOT_PART"
+          test "$(findmnt -nro SOURCE /mnt/boot)" = "$ESP_PART"
+          sudo sfdisk --dump "$LOOP_DEVICE"
+          findmnt --target /mnt
+          findmnt --target /mnt/boot
+
+          {
+            echo "disk_image=$DISK_IMAGE"
+            echo "loop_device=$LOOP_DEVICE"
+            echo "esp_part=$ESP_PART"
+            echo "root_part=$ROOT_PART"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Resolve image digest and install with the README command
+        env:
+          DOCKER_PASSWORD: ${{ secrets.DOCKER }}
+        run: |
+          set -euo pipefail
+          if [ -n "${DOCKER_PASSWORD:-}" ]; then
+            printf '%s' "$DOCKER_PASSWORD" | docker login \
+              --username 0mniteck42 --password-stdin docker.io
+          fi
+          docker pull "$REQUESTED_IMAGE"
+          RESOLVED_IMAGE="$(docker image inspect "$REQUESTED_IMAGE" \
+            --format '{{ index .RepoDigests 0 }}')"
+          test -n "$RESOLVED_IMAGE"
+          case "$RESOLVED_IMAGE" in
+            *@sha256:*) ;;
+            *) echo "::error::image did not resolve to an immutable digest: $RESOLVED_IMAGE"; exit 1 ;;
+          esac
+          echo "Installing immutable source: $RESOLVED_IMAGE"
+          sudo install -d -m 0755 /var/lib/containers
+
+          docker run --rm --privileged --pid=host --ipc=host \
+            --security-opt label=type:unconfined_t \
+            -v /var/lib/containers:/var/lib/containers \
+            -v /dev:/dev \
+            -v /:/run/host \
+            "$RESOLVED_IMAGE" \
+            bootc install to-filesystem \
+              --source-imgref="registry:${RESOLVED_IMAGE}" \
+              --bootloader=systemd \
+              --root-mount-spec="" \
+              --composefs-backend \
+              --skip-finalize \
+              /run/host/mnt/
+
+          echo "RESOLVED_IMAGE=$RESOLVED_IMAGE" >> "$GITHUB_ENV"
+
+      - name: Verify installed deployment and omitted root= argument
+        env:
+          ROOT_PART: ${{ steps.disk.outputs.root_part }}
+          ESP_PART: ${{ steps.disk.outputs.esp_part }}
+        run: |
+          set -euo pipefail
+          test "$(findmnt -nro SOURCE /mnt)" = "$ROOT_PART"
+          test "$(findmnt -nro SOURCE /mnt/boot)" = "$ESP_PART"
+          [ -d /mnt/ostree/repo ] || [ -d /mnt/composefs ]
+          [ -d /mnt/boot/loader ] || [ -d /mnt/boot/EFI/Linux ]
+
+          inspected=0
+          while IFS= read -r -d '' entry; do
+            inspected=1
+            echo "Inspecting BLS entry: $entry"
+            sudo sed -n '1,160p' "$entry"
+            if sudo grep -Eq '(^|[[:space:]])root=' "$entry"; then
+              echo "::error::root= unexpectedly present in $entry"
+              exit 1
+            fi
+          done < <(sudo find /mnt/boot -type f -path '*/loader/entries/*.conf' -print0)
+
+          while IFS= read -r -d '' uki; do
+            cmdline="$(mktemp)"
+            if sudo objcopy --dump-section ".cmdline=${cmdline}" "$uki" 2>/dev/null \
+              && [ -s "$cmdline" ]; then
+              inspected=1
+              echo "Inspecting UKI command line: $uki"
+              tr '\0' '\n' < "$cmdline"
+              if tr '\0' '\n' < "$cmdline" | grep -Eq '(^|[[:space:]])root='; then
+                echo "::error::root= unexpectedly present in $uki .cmdline"
+                exit 1
+              fi
+            fi
+            rm -f "$cmdline"
+          done < <(sudo find /mnt/boot -type f -iname '*.efi' -print0)
+
+          test "$inspected" -eq 1
+          echo "bootc to-filesystem installed $RESOLVED_IMAGE onto externally prepared mounts"
+          echo "Verified: --skip-finalize completed without unmounting /mnt and no root= was emitted"
+
+      - name: Detach disposable target
+        if: always()
+        env:
+          LOOP_DEVICE: ${{ steps.disk.outputs.loop_device }}
+        run: |
+          set +e
+          mountpoint -q /mnt/boot && sudo umount /mnt/boot
+          mountpoint -q /mnt && sudo umount /mnt
+          if [ -n "${LOOP_DEVICE:-}" ] && [ -b "$LOOP_DEVICE" ]; then
+            sudo losetup --detach "$LOOP_DEVICE"
+          fi

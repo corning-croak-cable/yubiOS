@@ -1,6 +1,6 @@
 # CI_MAP.md
 
-Regenerated from the `main` workflow shape at `a13e1e5` on 2026-07-20 UTC.
+Regenerated from the `main` workflow shape on 2026-07-22 UTC.
 
 This map treats `.github/workflows/*.yml` as the source of truth for events, runners, jobs, artifacts, and callback handoffs. `yubiOS-bake.hcl` is the source of truth for every Docker build in the non-`ci_fork*` chain dispatched by `ci.yml`. `PINNED.md` remains the source of truth for approved action SHAs and image digests.
 
@@ -12,13 +12,13 @@ This map treats `.github/workflows/*.yml` as the source of truth for events, run
 | `.github/workflows/fetch-dhi-manifest.yml` | DHI base digest refresh | `dhi.io/debian-base:trixie-debian13-dev`, `PINNED.md` | Updated DHI digest refs committed by workflow when drift exists |
 | `.github/workflows/fetch-fedora-bootc-manifest.yml` | Fedora bootc digest refresh | `quay.io/fedora/fedora-bootc:45`, `PINNED.md` | Updated Fedora bootc digest refs committed by workflow when drift exists |
 | `.github/workflows/ci_firmware-rk.yml` | Orchestrated ARM64/RK firmware integration and publish lane | yubi-OS firmware forks, pinned refs, board matrix, `yubiOS-bake.hcl` | `BL32_AP_MM.fd`, `fip.bin`, `flash.bin`, QEMU verification, optional original and board-scoped firmware tags through Bake |
-| `.github/workflows/ci_test-int.yml` | Legacy/manual ARM64 fTPM firmware integration reference | same firmware source family as the RK lane | manual QEMU firmware verification and optional historical `firmware` tags; no longer in the top-level `ci.yml` path |
 | `.github/workflows/yubiOS-ci.yml` | Production image build and publish | `Containerfile`, `yubiOS-bake.hcl`, `yubiOS.rego`, `usr/**`, unit tests | Bake build/smoke results; optional per-arch tags and multi-arch `0mniteck/yubios:<sha>` plus `latest` |
 | `.github/workflows/ci_dev_image.yml` | TEST-only image with software FIDO2 | `Containerfile.dev`, production target context, `yubiOS-bake.hcl`, `yubiOS.rego` | Bake build/smoke results; optional `0mniteck/yubios:dev-<sha>` and `dev` |
-| `.github/workflows/ci_test-vm.yml` | VM e2e tests | pullable yubiOS image, bcvk source, Podman storage, VM scripts | bcvk capability gate, DirectBoot SSH credential transport, VM enrollment results, callback state |
+| `.github/workflows/ci_test-vm.yml` | VM e2e tests | pullable TEST-only yubiOS image, bcvk source, Podman storage, VM scripts | bcvk capability gate, DirectBoot SSH credential transport, mandatory CTAP2/LUKS2/homed/ed25519-sk assertions, callback state |
 | `.github/workflows/ci_mkosi-installer.yml` | mkosi disk image and installer artifact | `mkosi.conf`, `mkosi.conf.d/**`, SoftHSM PKCS#11 mock, `yubiOS-bake.hcl` | signed UKI verification, `yubiOS.raw.zst`, optional installer tags through Bake |
 | `.github/workflows/ci_pq_tls_verify.yml` | PQ hybrid TLS drift check | `yubiOS-bake.hcl`, `yubiOS.rego`, pinned DHI base, live TLS endpoint | uncached, non-blocking Bake verification result |
-| `.github/workflows/test.yml` | Standalone self-hosted ARM64/KVM diagnostic | pullable yubiOS image, Podman, bcvk/QEMU host capabilities | QEMU kernel bind-mount diagnostics; not in the `ci.yml` chain |
+| `.github/workflows/ci_test-bootc-filesystem.yml` | Standalone fresh-VM `bootc install to-filesystem` e2e | resolved yubiOS image digest, disposable GPT disk, externally mounted `/mnt` and `/mnt/boot` | amd64/arm64 install proof, retained mounts under `--skip-finalize`, and boot-artifact proof that `root=` is omitted |
+| `.github/workflows/ci_test-rootless-docker.yml` | Standalone rootless Docker bootstrap validation | pinned Docker/Buildx downloads, pinned DHI container, amd64/arm64 matrix | rootless daemon and hardened Buildx builder verified across step boundaries |
 | `.github/workflows/ci_fork_*.yml` | Optional fork component checks | yubi-OS fork feature branches | component build/lint/test artifacts and callback state |
 
 The older `ci_int_stmm.yml`, `ci_int_optee_fip.yml`, and `ci_int_qemu.yml` lane names are not separate files on current `main`. Their StMM, OP-TEE/FIP, and QEMU stages are embedded in the firmware integration workflows.
@@ -148,7 +148,7 @@ flowchart TD
     publish --> cb
 ```
 
-`ci_test-int.yml` remains available for manual/historical comparison, but `ci.yml` no longer dispatches it and no longer waits for a `yubiOS firmware` callback state.
+The removed `ci_test-int.yml` workflow remains historical context only; `ci.yml` dispatches `ci_firmware-rk.yml` and waits for its `yubiOS RK firmware` callback state.
 
 ## Production, Dev, VM, Installer, and PQ Lanes
 
@@ -161,7 +161,7 @@ flowchart TD
     dev_bake["Bake: yubios-dev-ci / yubios-dev\nproduction target context + smoke"]
     dev_out["per-arch dev-sha-arch\nimagetools -> dev-sha + dev"]
     vm["ci_test-vm.yml\nsudo Podman storage + bcvk\nARM64 DirectBoot credential"]
-    vm_out["VM boot, LUKS/FIDO2, enrollment results\nexplicit loud skips"]
+    vm_out["VM boot + mandatory CTAP2 hmac-secret\nLUKS2, homed, pam-u2f, ed25519-sk"]
     installer["ci_mkosi-installer.yml DHI build job\nuser-scoped hardened builder\nmkosi + SoftHSM PKCS#11 signing"]
     installer_payload["prepared installer payload\nworkflow artifact handoff"]
     installer_bake["DHI publish job\nuser-scoped hardened builder\nBake: installer + registry exporter"]
@@ -176,7 +176,7 @@ flowchart TD
     pq --> pq_bake --> pq_out
 ```
 
-The VM lane intentionally remains outside Bake. bcvk hardcodes Podman for its privileged ephemeral container and reads from Podman's local image store, so the workflow pulls the selected image with `sudo podman`. Guest SSH runs from inside that outer container. For ARM64 DirectBoot, the public root key is delivered without firmware through systemd's kernel-command-line `tmpfiles.extra` credential path.
+The VM lane intentionally remains outside Bake. bcvk hardcodes Podman for its privileged ephemeral container and reads from Podman's local image store, so the workflow pulls the selected image with `sudo podman`. Guest SSH runs from inside that outer container. For ARM64 DirectBoot, the public root key is delivered without firmware through systemd's kernel-command-line `tmpfiles.extra` credential path. Once the TEST image boots, passless/CTAP2 enumeration and the LUKS2, homed, pam-u2f, and OpenSSH security-key operations are hard assertions rather than skip-tolerant coverage.
 
 The installer self-change push trigger validates mkosi without publishing. Only a `workflow_dispatch` with `Docker_push=true` uploads the prepared `inst/installer` payload, hands it to the containerized publish job, and packages it through the policy-bound Bake `installer` target.
 
@@ -208,7 +208,7 @@ The orchestrated path is `workflow_dispatch` driven. Narrow `push` triggers vali
 flowchart TD
     push_main["push to main"]
     yw_paths["yubiOS-ci.yml build inputs\nworkflow file\nContainerfile\nyubiOS-bake.hcl\nyubiOS.rego\nusr/** + tests/unit/** + mkosi.*"]
-    self_paths["workflow-only self-change paths\nfetch manifests\nfirmware + dev + VM + installer + PQ\nci_test-int + test.yml\nselected ci_fork files"]
+    self_paths["workflow-only self-change paths\nfetch manifests\nfirmware + dev + VM + installer + PQ\nbootc filesystem + rootless Docker tests\nselected ci_fork files"]
     dispatch_only["workflow_dispatch only\nci.yml\nremaining ci_fork workflows"]
     run_yw["run yubiOS-ci.yml"]
     run_self["run changed self-trigger workflow"]
@@ -233,6 +233,8 @@ flowchart TD
     installer["Installer OCI\ninstaller[-sha]"]
     pq["PQ TLS verification\ncacheonly result"]
     vm["Host/Podman/KVM evidence"]
+    install["Disposable-disk bootc evidence\nexternal mounts + no root="]
+    rootless["Rootless Docker evidence\ndaemon + hardened builder"]
     ci_logs["CI outputs\nartifacts, step summaries,\nexplicit skips, callback states"]
 
     source --> bake
@@ -250,6 +252,8 @@ flowchart TD
     installer --> ci_logs
     pq --> ci_logs
     vm --> ci_logs
+    install --> ci_logs
+    rootless --> ci_logs
 ```
 
 ## Callback Contract
@@ -430,3 +434,20 @@ The workflows below are listed in the non-fork dispatch order defined by `ci.yml
       - Step 3: `Verify PQ hybrid TLS through the policy-bound Bake target`
     - Job `ci-callback` — `Callback to ci.yml orchestrator`
       - Step 1: `Report current state to ci.yml`
+
+## Standalone Self-Triggered Validation Step Tree
+
+These workflows are deliberately outside the `ci.yml` callback chain. A push to `main` runs each one only when its own workflow file changes; maintainers can also dispatch either workflow manually.
+
+- [`ci_test-bootc-filesystem.yml`](.github/workflows/ci_test-bootc-filesystem.yml) — workflow: `bootc to-filesystem install e2e`
+  - Job `install-to-filesystem` — `install-to-filesystem (${{ matrix.arch }})`, native amd64/arm64 matrix on fresh hosted VMs
+    - Step 1: `Checkout`
+    - Step 2: `Assert README install contract`
+    - Step 3: `Prepare fresh externally partitioned target at /mnt`
+    - Step 4: `Resolve image digest and install with the README command`
+    - Step 5: `Verify installed deployment and omitted root= argument`
+    - Step 6: `Detach disposable target`
+- [`ci_test-rootless-docker.yml`](.github/workflows/ci_test-rootless-docker.yml) — workflow: `Rootless Docker bootstrap validation`
+  - Job `rootless-docker` — native amd64/arm64 matrix inside the pinned privileged DHI container
+    - Step 1: `Exercise rootless Docker bootstrap (${{ matrix.arch }})`
+    - Step 2: `Verify rootless Docker across the step boundary (${{ matrix.arch }})`

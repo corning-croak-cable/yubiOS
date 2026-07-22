@@ -1,10 +1,10 @@
-name: Rootless Docker bootstrap diagnostic
+name: Rootless Docker bootstrap validation
 
 on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/test.yml' # self-change trigger for cwd:// policy validation
+      - '.github/workflows/ci_test-rootless-docker.yml' # self-change trigger for cwd:// policy validation
   workflow_dispatch:
 
 permissions:
