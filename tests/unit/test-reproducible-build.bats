@@ -130,6 +130,10 @@ if '--resolve "$WORK_ROOT/a"' not in proof:
     failures.append("OCI proof does not resolve BuildKit's nested image descriptor")
 if "manifest_digest=$(jq -er '.manifests[0].digest'" in proof:
     failures.append("OCI proof still assumes the top-level descriptor is an image manifest")
+if ".created == $expected)" in proof or "fromdateiso8601" not in proof:
+    failures.append("OCI proof does not preserve valid inherited history timestamps")
+if 'org.opencontainers.image.created"] == $expected' not in proof:
+    failures.append("OCI proof does not verify its canonical creation annotation")
 if not re.search(
     r'target "_image-export"\s*\{.*?type\s*=\s*"provenance".*?disabled\s*=\s*!PUSH',
     bake,

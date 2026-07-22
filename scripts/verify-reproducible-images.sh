@@ -115,8 +115,17 @@ IFS=$'\t' read -r manifest_digest config_digest <<< "$resolved"
     die 'OCI descriptor resolver returned invalid digests'
 config="$WORK_ROOT/a/blobs/sha256/${config_digest#sha256:}"
 jq -e --arg expected "$SOURCE_DATE_ISO8601" \
-    '.created == $expected and all(.history[]?; .created == null or .created == $expected)' \
-    "$config" >/dev/null || die 'OCI config timestamps do not match SOURCE_DATE_EPOCH'
+    '.manifests[0].annotations["org.opencontainers.image.created"] == $expected' \
+    "$WORK_ROOT/a/index.json" >/dev/null || \
+    die 'OCI index creation annotation does not match SOURCE_DATE_EPOCH'
+jq -e --arg expected "$SOURCE_DATE_ISO8601" \
+    --argjson epoch "$SOURCE_DATE_EPOCH" '
+        def as_epoch: sub("\\.[0-9]+Z$"; "Z") | fromdateiso8601;
+        .created == $expected and
+        .config.Labels["org.opencontainers.image.created"] == $expected and
+        all(.history[]?; .created == null or ((.created | as_epoch) <= $epoch))
+    ' "$config" >/dev/null || \
+    die 'OCI config contains a creation timestamp newer than SOURCE_DATE_EPOCH'
 
 report=${REPRO_REPORT:-$repo_root/reproducibility.json}
 mkdir -p "$(dirname -- "$report")"
