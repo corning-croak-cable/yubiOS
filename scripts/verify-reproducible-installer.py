@@ -15,21 +15,29 @@ import sys
 
 REQUIRED_UNSIGNED = {
     "initrd.cpio.zst",
+    "root-filesystem.jsonl",
     "yubiOS.manifest",
-    "yubiOS.root-arm64.raw",
 }
 REQUIRED_EXCLUDED = {
     "ci-secure-boot-cert.pem",
     "yubiOS.efi",
     "yubiOS.esp.raw",
     "yubiOS.raw",
+    "yubiOS.root-arm64.raw",
 }
-SCOPE = "unsigned root partition, initrd, and package manifest"
+SCOPE = "canonical root filesystem, initrd, and package manifest"
 SIGNATURE_BOUNDARY = (
     "random SoftHSM certificate, UKI, ESP, and full disk wrapper"
 )
-EXCLUSION_REASON = (
+FILESYSTEM_BOUNDARY = (
+    "Btrfs block metadata with random device, chunk-tree, and root UUIDs"
+)
+SIGNED_EXCLUSION_REASON = (
     "random non-production SoftHSM key and signature-bearing installer envelope"
+)
+BTRFS_EXCLUSION_REASON = (
+    "Btrfs serialization includes per-mkfs UUIDs and root creation time; "
+    "canonical filesystem contents are compared instead"
 )
 
 
@@ -123,6 +131,7 @@ def metadata_errors(
         "mkosi_source": "b2b1ea6ad59621a6f955e4cbceee72580a91889a",
         "scope": SCOPE,
         "signature_boundary": SIGNATURE_BOUNDARY,
+        "filesystem_boundary": FILESYSTEM_BOUNDARY,
     }
     return [
         f"{label} metadata has {key}={metadata.get(key)!r}, expected {value!r}"
@@ -131,24 +140,76 @@ def metadata_errors(
     ]
 
 
-def verify_manifest_copy(
+def verify_retained_copy(
     root: Path,
     label: str,
     unsigned: dict[str, tuple[str, int]],
+    filename: str,
     errors: list[str],
 ) -> None:
-    path = root / "yubiOS.manifest"
+    path = root / filename
     if not path.is_file():
-        errors.append(f"{label} is missing the retained yubiOS.manifest")
+        errors.append(f"{label} is missing the retained {filename}")
         return
-    expected = unsigned.get("yubiOS.manifest")
+    expected = unsigned.get(filename)
     if expected is None:
         return
     observed = (sha256(path), path.stat().st_size)
     if observed != expected:
         errors.append(
-            f"{label} retained yubiOS.manifest does not match its component record"
+            f"{label} retained {filename} does not match its component record"
         )
+
+
+def filesystem_manifest_differences(primary: Path, rebuild: Path) -> list[str]:
+    def records(path: Path) -> tuple[dict[str, object], dict[str, dict[str, object]]]:
+        lines = path.read_text(errors="strict").splitlines()
+        if not lines:
+            raise ValueError(f"empty filesystem manifest: {path}")
+        header = json.loads(lines[0])
+        entries: dict[str, dict[str, object]] = {}
+        for line_number, line in enumerate(lines[1:], 2):
+            value = json.loads(line)
+            relative = value.get("path")
+            if not isinstance(relative, str) or relative in entries:
+                raise ValueError(
+                    f"invalid or duplicate path at {path}:{line_number}: {relative!r}"
+                )
+            entries[relative] = value
+        return header, entries
+
+    try:
+        primary_header, primary_records = records(primary)
+        rebuild_header, rebuild_records = records(rebuild)
+    except (OSError, UnicodeError, ValueError, json.JSONDecodeError) as error:
+        return [f"cannot diagnose root filesystem manifests: {error}"]
+
+    differences: list[str] = []
+    if primary_header != rebuild_header:
+        differences.append(
+            f"root filesystem manifest headers differ: "
+            f"primary {primary_header!r}, rebuild {rebuild_header!r}"
+        )
+    for relative in sorted(primary_records.keys() - rebuild_records.keys()):
+        differences.append(f"rebuild root filesystem is missing path: {relative}")
+    for relative in sorted(rebuild_records.keys() - primary_records.keys()):
+        differences.append(f"primary root filesystem is missing path: {relative}")
+    for relative in sorted(primary_records.keys() & rebuild_records.keys()):
+        primary_record = primary_records[relative]
+        rebuild_record = rebuild_records[relative]
+        if primary_record == rebuild_record:
+            continue
+        for field in sorted(primary_record.keys() | rebuild_record.keys()):
+            if primary_record.get(field) != rebuild_record.get(field):
+                differences.append(
+                    f"root filesystem differs at {relative}: {field} "
+                    f"(primary {primary_record.get(field)!r}, "
+                    f"rebuild {rebuild_record.get(field)!r})"
+                )
+                if len(differences) >= 50:
+                    differences.append("root filesystem diagnostics truncated after 50 differences")
+                    return differences
+    return differences
 
 
 def main() -> int:
@@ -180,10 +241,10 @@ def main() -> int:
         args.rebuild, "UNSIGNED-COMPONENTS", "rebuild", errors
     )
     primary_excluded = read_records(
-        args.primary, "EXCLUDED-SIGNED-COMPONENTS", "primary", errors
+        args.primary, "EXCLUDED-COMPONENTS", "primary", errors
     )
     rebuild_excluded = read_records(
-        args.rebuild, "EXCLUDED-SIGNED-COMPONENTS", "rebuild", errors
+        args.rebuild, "EXCLUDED-COMPONENTS", "rebuild", errors
     )
 
     require_exact_subjects(
@@ -208,8 +269,13 @@ def main() -> int:
             rebuild_metadata, "rebuild", "rebuild", source, epoch, seed
         )
     )
-    verify_manifest_copy(args.primary, "primary", primary_unsigned, errors)
-    verify_manifest_copy(args.rebuild, "rebuild", rebuild_unsigned, errors)
+    for filename in ("root-filesystem.jsonl", "yubiOS.manifest"):
+        verify_retained_copy(
+            args.primary, "primary", primary_unsigned, filename, errors
+        )
+        verify_retained_copy(
+            args.rebuild, "rebuild", rebuild_unsigned, filename, errors
+        )
 
     compared = []
     for subject in sorted(REQUIRED_UNSIGNED):
@@ -230,6 +296,12 @@ def main() -> int:
                 f"(primary {primary_record[0]}/{primary_record[1]}, "
                 f"rebuild {rebuild_record[0]}/{rebuild_record[1]})"
             )
+            if subject == "root-filesystem.jsonl":
+                errors.extend(
+                    filesystem_manifest_differences(
+                        args.primary / subject, args.rebuild / subject
+                    )
+                )
 
     excluded = []
     for subject in sorted(REQUIRED_EXCLUDED):
@@ -238,7 +310,9 @@ def main() -> int:
         excluded.append(
             {
                 "path": subject,
-                "reason": EXCLUSION_REASON,
+                "reason": BTRFS_EXCLUSION_REASON
+                if subject == "yubiOS.root-arm64.raw"
+                else SIGNED_EXCLUSION_REASON,
                 "primary_sha256": primary_record[0] if primary_record else None,
                 "primary_size": primary_record[1] if primary_record else None,
                 "rebuild_sha256": rebuild_record[0] if rebuild_record else None,

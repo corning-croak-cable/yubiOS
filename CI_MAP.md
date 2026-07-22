@@ -163,7 +163,7 @@ flowchart TD
     vm["ci_test-vm.yml\nfinal sudo Podman + bcvk VM e2e\nARM64 DirectBoot credential"]
     vm_out["VM boot + mandatory CTAP2 hmac-secret\nLUKS2, homed, pam-u2f, ed25519-sk"]
     installer["ci_mkosi-installer.yml DHI build job\namd64 + primary/rebuild arm64\nmkosi + SoftHSM PKCS#11 signing"]
-    installer_proof["installer-reproducibility\ncompare root partition + initrd + manifest\nrecord signed envelope"]
+    installer_proof["installer-reproducibility\ncompare canonical root tree + initrd + manifest\nrecord signed/Btrfs envelopes"]
     installer_evidence["30-day ARM64 JSON evidence"]
     installer_payload["prepared installer payload\nworkflow artifact handoff"]
     installer_bake["DHI publish job\nuser-scoped hardened builder\nBake: installer + registry exporter"]
@@ -182,7 +182,7 @@ flowchart TD
 
 The VM lane intentionally remains outside Bake. bcvk hardcodes Podman for its privileged ephemeral container and reads from Podman's local image store, so the workflow pulls the selected image with `sudo podman`. Guest SSH runs from inside that outer container. For ARM64 DirectBoot, the public root key is delivered without firmware through systemd's kernel-command-line `tmpfiles.extra` credential path. The TEST image pins passless v0.11.2 to an immutable commit and enables soft-fido2's implemented `hmac-secret` extension during the build. Once it boots, passless/CTAP2 enumeration and the LUKS2, homed, pam-u2f, and OpenSSH security-key operations are hard assertions rather than skip-tolerant coverage.
 
-The installer self-change push trigger runs amd64 plus two clean ARM64 mkosi builds without publishing. The blocking proof compares the root partition, initrd, and package manifest while recording the random signing envelope. Only a `workflow_dispatch` with `Docker_push=true` uploads the primary prepared `inst/installer` payload after that proof, hands it to the containerized publish job, and packages it through the policy-bound Bake `installer` target.
+The installer self-change push trigger runs amd64 plus two clean ARM64 mkosi builds without publishing. The blocking proof compares a canonical record of root filesystem bytes and intended metadata plus the initrd and package manifest, while recording the random signing envelope and Btrfs block serialization. Only a `workflow_dispatch` with `Docker_push=true` uploads the primary prepared `inst/installer` payload after that proof, hands it to the containerized publish job, and packages it through the policy-bound Bake `installer` target.
 
 ## Optional Fork Component CI
 

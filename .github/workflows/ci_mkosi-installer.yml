@@ -19,9 +19,10 @@ name: yubiOS mkosi-installer
 # p11-kit indirection. Debug trail from the campaign: C_Initialize error 5
 # = softhsm can't read SOFTHSM2_CONF inside the sandbox.
 #
-# A push caused by this workflow file's self-trigger validates both native
-# mkosi paths without publishing. A dispatch with Docker_push=true publishes
-# architecture-qualified staging images, then merges them as
+# A push caused by this workflow file's self-trigger validates amd64 plus two
+# clean ARM64 mkosi paths and compares their canonical unsigned subjects without
+# publishing. A dispatch with Docker_push=true publishes architecture-qualified
+# staging images only after that proof, then merges them as
 # 0mniteck/yubios:installer + installer-<sha> per ADR-022.
 #
 # Both the mkosi build and OCI publication run in privileged hardened DHI job
@@ -36,6 +37,7 @@ on:
       - 'mkosi.conf'
       - 'mkosi.conf.d/**'
       - 'mkosi.extra/**'
+      - 'scripts/lib/manifest-filesystem.py'
       - 'scripts/lib/reproducible-build.sh'
       - 'scripts/verify-reproducible-installer.py'
       - 'yubiOS-bake.hcl'
@@ -259,7 +261,7 @@ jobs:
           set -euxo pipefail
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends \
-            ca-certificates debian-archive-keyring findutils openssl procps \
+            btrfs-progs ca-certificates debian-archive-keyring findutils mount openssl procps \
             python3-pip sbsigntool softhsm2 uidmap zstd
           mkosi_wheel_dir=$(mktemp -d)
           python3 -m pip wheel --no-deps --wheel-dir "$mkosi_wheel_dir" \
@@ -393,6 +395,24 @@ jobs:
           test -s mkosi.output/initrd.cpio.zst
           test -s mkosi.output/yubiOS.manifest
 
+          mount_dir=$(mktemp -d)
+          mounted=false
+          cleanup_mount() {
+            if "$mounted"; then
+              umount "$mount_dir"
+            fi
+            rmdir "$mount_dir"
+          }
+          trap cleanup_mount EXIT
+          mount -o loop,ro "$root_image" "$mount_dir"
+          mounted=true
+          scripts/lib/manifest-filesystem.py "$mount_dir" \
+            > "$proof_dir/root-filesystem.jsonl"
+          umount "$mount_dir"
+          mounted=false
+          rmdir "$mount_dir"
+          trap - EXIT
+
           record_component() {
             local source=$1
             local subject=$2
@@ -405,7 +425,7 @@ jobs:
           {
             record_component mkosi.output/initrd.cpio.zst initrd.cpio.zst
             record_component mkosi.output/yubiOS.manifest yubiOS.manifest
-            record_component "$root_image" yubiOS.root-arm64.raw
+            record_component "$proof_dir/root-filesystem.jsonl" root-filesystem.jsonl
           } | LC_ALL=C sort -k3,3 > "$proof_dir/UNSIGNED-COMPONENTS"
           cp mkosi.output/yubiOS.manifest "$proof_dir/yubiOS.manifest"
 
@@ -414,7 +434,8 @@ jobs:
             record_component mkosi.output/yubiOS.efi yubiOS.efi
             record_component mkosi.output/yubiOS.esp.raw yubiOS.esp.raw
             record_component mkosi.output/yubiOS.raw yubiOS.raw
-          } | LC_ALL=C sort -k3,3 > "$proof_dir/EXCLUDED-SIGNED-COMPONENTS"
+            record_component "$root_image" yubiOS.root-arm64.raw
+          } | LC_ALL=C sort -k3,3 > "$proof_dir/EXCLUDED-COMPONENTS"
 
           {
             echo "architecture=${{ matrix.arch }}"
@@ -423,8 +444,9 @@ jobs:
             echo "source_date_epoch=${SOURCE_DATE_EPOCH}"
             echo "mkosi_seed=${YUBIOS_MKOSI_SEED}"
             echo "mkosi_source=b2b1ea6ad59621a6f955e4cbceee72580a91889a"
-            echo "scope=unsigned root partition, initrd, and package manifest"
+            echo "scope=canonical root filesystem, initrd, and package manifest"
             echo "signature_boundary=random SoftHSM certificate, UKI, ESP, and full disk wrapper"
+            echo "filesystem_boundary=Btrfs block metadata with random device, chunk-tree, and root UUIDs"
           } > "$proof_dir/METADATA.txt"
           source scripts/lib/reproducible-build.sh
           normalize_reproducible_tree "$proof_dir"

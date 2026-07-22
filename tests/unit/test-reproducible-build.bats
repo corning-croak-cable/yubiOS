@@ -178,6 +178,51 @@ PY
     [ "$status" -eq 0 ]
 }
 
+@test "filesystem manifest ignores inode allocation and captures intended metadata" {
+    trees="$BATS_TEST_TMPDIR/filesystems"
+    python3 - "$trees" <<'PY'
+import os
+import pathlib
+import sys
+
+root = pathlib.Path(sys.argv[1])
+epoch_ns = 1_700_000_000_000_000_000
+for variant in ("primary", "rebuild"):
+    tree = root / variant
+    if variant == "primary":
+        (tree / "etc").mkdir(parents=True)
+        (tree / "usr/share").mkdir(parents=True)
+        source = tree / "etc/config"
+        target = tree / "usr/share/config"
+    else:
+        (tree / "usr/share").mkdir(parents=True)
+        (tree / "etc").mkdir(parents=True)
+        source = tree / "usr/share/config"
+        target = tree / "etc/config"
+    source.write_bytes(b"configuration\n")
+    os.link(source, target)
+    os.setxattr(source, "user.yubios-test", b"metadata")
+    (tree / "bin").mkdir()
+    (tree / "bin/config").symlink_to("../etc/config")
+    for path in sorted(tree.rglob("*"), reverse=True):
+        os.utime(path, ns=(epoch_ns, epoch_ns), follow_symlinks=False)
+    os.utime(tree, ns=(epoch_ns, epoch_ns))
+PY
+
+    "$REPO_ROOT/scripts/lib/manifest-filesystem.py" "$trees/primary" \
+        > "$BATS_TEST_TMPDIR/primary.jsonl"
+    "$REPO_ROOT/scripts/lib/manifest-filesystem.py" "$trees/rebuild" \
+        > "$BATS_TEST_TMPDIR/rebuild.jsonl"
+    cmp "$BATS_TEST_TMPDIR/primary.jsonl" "$BATS_TEST_TMPDIR/rebuild.jsonl"
+    grep -q '"hardlink_to":"etc/config"' "$BATS_TEST_TMPDIR/primary.jsonl"
+    grep -q '"xattrs":{"user.yubios-test":"bWV0YWRhdGE="}' "$BATS_TEST_TMPDIR/primary.jsonl"
+
+    printf drift > "$trees/rebuild/etc/config"
+    "$REPO_ROOT/scripts/lib/manifest-filesystem.py" "$trees/rebuild" \
+        > "$BATS_TEST_TMPDIR/rebuild-drift.jsonl"
+    ! cmp -s "$BATS_TEST_TMPDIR/primary.jsonl" "$BATS_TEST_TMPDIR/rebuild-drift.jsonl"
+}
+
 @test "installer proof compares unsigned subjects and records the signing envelope" {
     configure_reproducible_build "$REPO_ROOT" HEAD arm64
     proof_root="$BATS_TEST_TMPDIR/installer-proof"
@@ -195,13 +240,19 @@ seed = sys.argv[4]
 
 unsigned = {
     "initrd.cpio.zst": b"initrd",
+    "root-filesystem.jsonl": (
+        b'{"kind":"yubiOS-root-filesystem-manifest","schema":1}\n'
+        + b'{"gid":0,"mode":"0644","mtime_ns":1,"path":"etc/config",'
+        + b'"sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",'
+        + b'"size":4,"type":"file","uid":0,"xattrs":{}}\n'
+    ),
     "yubiOS.manifest": b'{"packages": ["systemd"]}\n',
-    "yubiOS.root-arm64.raw": b"root-partition",
 }
 for variant in ("primary", "rebuild"):
     tree = root / variant
     tree.mkdir(parents=True)
     (tree / "yubiOS.manifest").write_bytes(unsigned["yubiOS.manifest"])
+    (tree / "root-filesystem.jsonl").write_bytes(unsigned["root-filesystem.jsonl"])
     (tree / "UNSIGNED-COMPONENTS").write_text(
         "".join(
             f"{hashlib.sha256(content).hexdigest()} {len(content)} {name}\n"
@@ -213,8 +264,9 @@ for variant in ("primary", "rebuild"):
         "yubiOS.efi": f"uki-{variant}".encode(),
         "yubiOS.esp.raw": f"esp-{variant}".encode(),
         "yubiOS.raw": f"disk-{variant}".encode(),
+        "yubiOS.root-arm64.raw": f"btrfs-{variant}".encode(),
     }
-    (tree / "EXCLUDED-SIGNED-COMPONENTS").write_text(
+    (tree / "EXCLUDED-COMPONENTS").write_text(
         "".join(
             f"{hashlib.sha256(content).hexdigest()} {len(content)} {name}\n"
             for name, content in sorted(excluded.items())
@@ -229,8 +281,9 @@ for variant in ("primary", "rebuild"):
                 f"source_date_epoch={epoch}",
                 f"mkosi_seed={seed}",
                 "mkosi_source=b2b1ea6ad59621a6f955e4cbceee72580a91889a",
-                "scope=unsigned root partition, initrd, and package manifest",
+                "scope=canonical root filesystem, initrd, and package manifest",
                 "signature_boundary=random SoftHSM certificate, UKI, ESP, and full disk wrapper",
+                "filesystem_boundary=Btrfs block metadata with random device, chunk-tree, and root UUIDs",
                 "",
             )
         )
@@ -248,27 +301,41 @@ report = json.load(open(sys.argv[1]))
 assert report["result"] == "match"
 assert report["isolated_builds"] == 2
 assert len(report["compared"]) == 3
-assert len(report["excluded"]) == 4
+assert len(report["excluded"]) == 5
 assert all(not item["matched"] for item in report["excluded"])
 PY
     [ "$status" -eq 0 ]
 
-    python3 - "$proof_root/rebuild/UNSIGNED-COMPONENTS" <<'PY'
+    python3 - "$proof_root/rebuild" <<'PY'
+import hashlib
 import pathlib
 import sys
 
-path = pathlib.Path(sys.argv[1])
-path.write_text(
-    path.read_text().replace(
-        next(line for line in path.read_text().splitlines() if line.endswith(" yubiOS.root-arm64.raw")),
-        f"{'0' * 64} 14 yubiOS.root-arm64.raw",
+root = pathlib.Path(sys.argv[1])
+manifest = root / "root-filesystem.jsonl"
+manifest.write_text(
+    manifest.read_text().replace(
+        "a" * 64,
+        "b" * 64,
+    )
+)
+components = root / "UNSIGNED-COMPONENTS"
+replacement = (
+    f"{hashlib.sha256(manifest.read_bytes()).hexdigest()} "
+    f"{manifest.stat().st_size} root-filesystem.jsonl"
+)
+components.write_text(
+    components.read_text().replace(
+        next(line for line in components.read_text().splitlines() if line.endswith(" root-filesystem.jsonl")),
+        replacement,
     )
 )
 PY
     run "$REPO_ROOT/scripts/verify-reproducible-installer.py" \
         "$proof_root/primary" "$proof_root/rebuild" "$report"
     [ "$status" -ne 0 ]
-    [[ "$output" == *"yubiOS.root-arm64.raw"* ]]
+    [[ "$output" == *"root-filesystem.jsonl"* ]]
+    [[ "$output" == *"root filesystem differs at etc/config: sha256"* ]]
     run python3 - "$report" <<'PY'
 import json
 import sys
@@ -301,6 +368,7 @@ bake = (root / "yubiOS-bake.hcl").read_text()
 proof = (root / "scripts/verify-reproducible-images.sh").read_text()
 firmware_proof = (root / "scripts/verify-reproducible-firmware.py").read_text()
 installer_proof = (root / "scripts/verify-reproducible-installer.py").read_text()
+filesystem_manifest = (root / "scripts/lib/manifest-filesystem.py").read_text()
 diagnostic = root / "scripts/lib/diagnose-oci-layout.py"
 containerfile = (root / "Containerfile").read_text()
 passless = (root / "mkosi.conf.d/test/install-swu2f-authenticator.sh").read_text()
@@ -415,12 +483,15 @@ if "repro-evidence/installer-arm64.json" not in installer_workflow:
     failures.append("installer workflow retains no ARM64 reproducibility evidence")
 if "scripts/verify-reproducible-installer.py" not in installer_workflow.split("workflow_dispatch:", 1)[0]:
     failures.append("installer verifier changes do not trigger the installer workflow")
-for subject in ("yubiOS.root-arm64.raw", "initrd.cpio.zst", "yubiOS.manifest"):
+for subject in ("root-filesystem.jsonl", "initrd.cpio.zst", "yubiOS.manifest"):
     if subject not in installer_proof:
         failures.append(f"installer proof omits unsigned subject: {subject}")
-for excluded in ("ci-secure-boot-cert.pem", "yubiOS.efi", "yubiOS.esp.raw", "yubiOS.raw"):
+for excluded in ("ci-secure-boot-cert.pem", "yubiOS.efi", "yubiOS.esp.raw", "yubiOS.raw", "yubiOS.root-arm64.raw"):
     if excluded not in installer_proof:
         failures.append(f"installer proof omits signed-envelope boundary: {excluded}")
+for metadata in ("mtime_ns", "xattrs", "hardlink_to", "sha256"):
+    if metadata not in filesystem_manifest:
+        failures.append(f"canonical filesystem manifest omits metadata: {metadata}")
 
 for relative in (
     ".github/workflows/ci_firmware-rk.yml",
