@@ -237,3 +237,45 @@ PY
 
     [ "$status" -eq 0 ]
 }
+
+@test "OCI diagnostics resolve BuildKit's nested platform index" {
+    run python3 - "$REPO_ROOT" "$BATS_TEST_TMPDIR" <<'PY'
+import hashlib
+import json
+import pathlib
+import runpy
+import sys
+
+root = pathlib.Path(sys.argv[1])
+layout = pathlib.Path(sys.argv[2]) / "oci"
+blobs = layout / "blobs" / "sha256"
+blobs.mkdir(parents=True)
+
+def put(value):
+    encoded = json.dumps(value, sort_keys=True, separators=(",", ":")).encode()
+    digest = hashlib.sha256(encoded).hexdigest()
+    (blobs / digest).write_bytes(encoded)
+    return {"digest": f"sha256:{digest}", "size": len(encoded)}
+
+config = {"architecture": "arm64", "os": "linux"}
+config_descriptor = put(config)
+manifest = {
+    "schemaVersion": 2,
+    "config": config_descriptor,
+    "layers": [],
+}
+manifest_descriptor = put(manifest)
+platform_index = {"schemaVersion": 2, "manifests": [manifest_descriptor]}
+platform_descriptor = put(platform_index)
+(layout / "index.json").write_text(
+    json.dumps({"schemaVersion": 2, "manifests": [platform_descriptor]})
+)
+
+namespace = runpy.run_path(str(root / "scripts/lib/diagnose-oci-layout.py"))
+_, resolved_manifest, resolved_config = namespace["resolve_image"](layout)
+assert resolved_manifest == manifest
+assert resolved_config == config
+PY
+
+    [ "$status" -eq 0 ]
+}

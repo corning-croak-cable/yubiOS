@@ -38,6 +38,18 @@ def resolve_image(layout: Path) -> tuple[Any, Any, Any]:
     if not manifests:
         die(f"{layout} has no image manifest")
     manifest = read_json(blob_path(layout, manifests[0]["digest"]))
+    # BUILDKIT_MULTI_PLATFORM=1 emits a top-level OCI index whose descriptor
+    # points to a second, platform-scoped index even for one architecture.
+    # Follow that single-image chain until the actual manifest is reached.
+    for _depth in range(8):
+        if "config" in manifest and "layers" in manifest:
+            break
+        manifests = manifest.get("manifests", [])
+        if not manifests:
+            die(f"{layout} descriptor chain has no image manifest")
+        manifest = read_json(blob_path(layout, manifests[0]["digest"]))
+    else:
+        die(f"{layout} descriptor chain is unexpectedly deep")
     config = read_json(blob_path(layout, manifest["config"]["digest"]))
     return index, manifest, config
 
