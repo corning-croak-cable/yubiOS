@@ -18,9 +18,20 @@ configure_reproducible_build() {
     local repository=${1:-.}
     local revision=${2:-HEAD}
     local architecture=${3:-${ARCH:-$(uname -m)}}
-    local canonical_epoch requested_epoch seed_hex timestamp
+    local canonical_epoch canonical_repository requested_epoch seed_hex timestamp
+    local -a repository_git
 
-    canonical_epoch=$(git -C "$repository" show -s --format=%ct "${revision}^{commit}") || {
+    canonical_repository=$(cd -- "$repository" && pwd -P) || {
+        reproducible_build_error "repository directory does not exist: ${repository}"
+        return 1
+    }
+    repository=$canonical_repository
+    # Actions mounts the host-owned checkout into rootful job containers. Trust
+    # only this explicit repository, and only for these read-only invocations,
+    # instead of persisting a wildcard or global safe.directory exception.
+    repository_git=(git -c "safe.directory=${repository}" -C "$repository")
+
+    canonical_epoch=$("${repository_git[@]}" show -s --format=%ct "${revision}^{commit}") || {
         reproducible_build_error "cannot resolve commit timestamp for ${revision}"
         return 1
     }
@@ -38,7 +49,7 @@ configure_reproducible_build() {
         return 1
     fi
 
-    GIT_SHA=$(git -C "$repository" rev-parse "${revision}^{commit}") || return 1
+    GIT_SHA=$("${repository_git[@]}" rev-parse "${revision}^{commit}") || return 1
     SOURCE_DATE_EPOCH=$canonical_epoch
     SOURCE_DATE_ISO8601=$(date -u --date="@${SOURCE_DATE_EPOCH}" '+%Y-%m-%dT%H:%M:%SZ')
     timestamp=$(date -u --date="@${SOURCE_DATE_EPOCH}" '+%Y-%m-%d %H:%M:%S UTC')

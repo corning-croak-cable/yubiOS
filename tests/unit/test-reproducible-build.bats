@@ -20,6 +20,15 @@ setup() {
     [ "$TF_A_BUILD_TIMESTAMP" = "$KBUILD_BUILD_TIMESTAMP" ]
 }
 
+@test "commit metadata resolves from an Actions checkout with different ownership" {
+    export GIT_TEST_ASSUME_DIFFERENT_OWNER=1
+
+    configure_reproducible_build "$REPO_ROOT" HEAD arm64
+
+    [ "$GIT_SHA" = "$(git -c safe.directory="$REPO_ROOT" -C "$REPO_ROOT" rev-parse HEAD)" ]
+    [[ "$SOURCE_DATE_EPOCH" =~ ^[0-9]+$ ]]
+}
+
 @test "a conflicting caller epoch is rejected" {
     SOURCE_DATE_EPOCH=1
     run configure_reproducible_build "$REPO_ROOT" HEAD amd64
