@@ -7,21 +7,36 @@ set -euo pipefail
 readonly DHI_IMAGE='dhi.io/debian-base@sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6'
 readonly DOCKER_VERSION='29.6.0'
 readonly BUILDX_VERSION='0.35.0'
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+readonly SCRIPT_DIR
+
+# shellcheck source=scripts/lib/local-build-installer.sh
+source "$SCRIPT_DIR/lib/local-build-installer.sh"
+# shellcheck source=scripts/lib/local-build-firmware.sh
+source "$SCRIPT_DIR/lib/local-build-firmware.sh"
 
 usage() {
     cat <<'EOF'
-Usage: scripts/build-local-images.sh [all|production|dev]
+Usage: scripts/build-local-images.sh [MODE]
 
-Build the native yubiOS CI image paths inside the pinned DHI container using
-a rootless Docker-in-Docker daemon and the hardened Buildx Bake builder.
+Build native yubiOS image and artifact paths inside the pinned DHI container
+using a rootless Docker-in-Docker daemon and the hardened Buildx Bake builder.
 
-  all         Build production and TEST-only dev images (default).
-  production  Build only the production image and smoke test.
-  dev         Build only the TEST-only swu2f image and smoke test.
+  all                          Build the complete ci.yml image set (default).
+  images                       Build production and TEST-only dev images.
+  production                   Build the production image and smoke test.
+  dev                          Build the TEST-only swu2f image and smoke test.
+  installer                    Build and package the native mkosi installer.
+  firmware                     Build, verify, and package all firmware boards.
+  firmware-qemu-arm64          Build only the QEMU ARM64 firmware path.
+  firmware-rockpro64-rk3399    Build only the ROCKPro64/RK3399 firmware path.
+  firmware-rock5b-rk3588       Build only the ROCK 5B/RK3588 firmware path.
 
-Set LOCAL_TAG to change the local tag suffix (default: local). For example,
+Set LOCAL_TAG to change the local tag prefix (default: local). For example,
 LOCAL_TAG=review scripts/build-local-images.sh production creates
-yubios:review.
+yubios:review. Installer and firmware tags use review-installer and
+review-firmware-<board>. Set ROCKCHIP_TPL to a real RK3588 DDR/TPL blob when a
+bootable ROCK 5B image is required.
 EOF
 }
 
@@ -32,7 +47,7 @@ die() {
 
 resolve_mode() {
     case "${1:-all}" in
-        all|production|dev)
+        all|images|production|dev|installer|firmware|firmware-qemu-arm64|firmware-rockpro64-rk3399|firmware-rock5b-rk3588)
             MODE=${1:-all}
             ;;
         -h|--help)
@@ -42,6 +57,80 @@ resolve_mode() {
         *)
             usage >&2
             die "unknown image path: $1"
+            ;;
+    esac
+}
+
+append_image_tag() {
+    IMAGE_TAGS+=("$1")
+}
+
+prepare_artifact_worktree() {
+    if [[ -n "${ARTIFACT_REPO:-}" ]]; then
+        return
+    fi
+    BUILD_WORK_ROOT=$(mktemp -d /mnt/yubios-local-work.XXXXXX)
+    ARTIFACT_REPO="$BUILD_WORK_ROOT/repo"
+    mkdir -p "$ARTIFACT_REPO"
+    cp -a --no-preserve=ownership /workspace/. "$ARTIFACT_REPO/"
+}
+
+build_local_core_images() {
+    local selection=$1
+    local -a bake_targets
+
+    case "$selection" in
+        images)
+            bake_targets=(yubios-ci yubios-dev-ci)
+            append_image_tag "yubios:${LOCAL_TAG}"
+            append_image_tag "yubios:dev-${LOCAL_TAG}"
+            ;;
+        production)
+            bake_targets=(yubios-ci)
+            append_image_tag "yubios:${LOCAL_TAG}"
+            ;;
+        dev)
+            bake_targets=(yubios-dev-ci)
+            append_image_tag "yubios:dev-${LOCAL_TAG}"
+            ;;
+        *)
+            die "unknown core image selection: $selection"
+            ;;
+    esac
+
+    cd /workspace
+    export PUSH=false
+    docker buildx bake \
+        --builder hardened \
+        --file yubiOS-bake.hcl \
+        "${bake_targets[@]}"
+}
+
+run_selected_builds() {
+    case "$1" in
+        all)
+            # Match the non-ci_fork image order in ci.yml.
+            build_local_firmware all
+            build_local_core_images images
+            build_local_installer
+            ;;
+        images|production|dev)
+            build_local_core_images "$1"
+            ;;
+        installer)
+            build_local_installer
+            ;;
+        firmware)
+            build_local_firmware all
+            ;;
+        firmware-qemu-arm64)
+            build_local_firmware qemu-arm64
+            ;;
+        firmware-rockpro64-rk3399)
+            build_local_firmware rockpro64-rk3399
+            ;;
+        firmware-rock5b-rk3588)
+            build_local_firmware rock5b-rk3588
             ;;
     esac
 }
@@ -103,26 +192,11 @@ run_inside_dhi() {
     local mode=$1
     local download_dir docker_tools_dir rootless_user rootless_runtime_dir
     local rootless_socket rootless_data_dir attempt image_tag
-    local -a bake_targets image_tags
+    local -a IMAGE_TAGS=()
 
     [[ "$(id -u)" -eq 0 ]] || die 'the DHI build container must start as root'
     [[ -e /workspace/.git ]] || die '/workspace is not a yubiOS checkout'
     [[ -d /output ]] || die '/output export mount is missing'
-
-    case "$mode" in
-        all)
-            bake_targets=(yubios-ci yubios-dev-ci)
-            image_tags=("yubios:${LOCAL_TAG}" "yubios:dev-${LOCAL_TAG}")
-            ;;
-        production)
-            bake_targets=(yubios-ci)
-            image_tags=("yubios:${LOCAL_TAG}")
-            ;;
-        dev)
-            bake_targets=(yubios-dev-ci)
-            image_tags=("yubios:dev-${LOCAL_TAG}")
-            ;;
-    esac
 
     apt-get update -qq
     apt-get install -y -qq --no-install-recommends \
@@ -201,22 +275,23 @@ run_inside_dhi() {
     docker buildx create --name hardened --driver docker-container --use
     docker buildx inspect hardened --bootstrap
 
-    cd /workspace
     export GIT_SHA PUSH=false
-    docker buildx bake \
-        --builder hardened \
-        --file yubiOS-bake.hcl \
-        "${bake_targets[@]}"
+    BUILD_WORK_ROOT=
+    ARTIFACT_REPO=
+    run_selected_builds "$mode"
 
-    for image_tag in "${image_tags[@]}"; do
+    ((${#IMAGE_TAGS[@]} > 0)) || die 'the selected path produced no local image tags'
+    for image_tag in "${IMAGE_TAGS[@]}"; do
         docker image inspect "$image_tag" >/dev/null
     done
-    docker image save --output /output/yubios-local-images.tar "${image_tags[@]}"
-    printf '%s\n' "${image_tags[@]}" > /output/yubios-local-tags
+    docker image save --output /output/yubios-local-images.tar "${IMAGE_TAGS[@]}"
+    printf '%s\n' "${IMAGE_TAGS[@]}" > /output/yubios-local-tags
 }
 
 run_on_host() {
     local mode=$1 repo_root output_dir revision image_tag
+    local use_rockchip_tpl=false
+    local -a docker_args
 
     # Ubuntu 26.04 is the supported host. The privileged outer container is
     # explicitly unconfined so the rootless daemon does not require changing
@@ -242,8 +317,17 @@ run_on_host() {
     HOST_OUTPUT_DIR=$output_dir
     trap host_cleanup EXIT
 
+    case "$mode" in
+        all|firmware|firmware-rock5b-rk3588) use_rockchip_tpl=true ;;
+    esac
+    if [[ "$use_rockchip_tpl" == true && -n "${ROCKCHIP_TPL:-}" ]]; then
+        [[ -f "$ROCKCHIP_TPL" && -r "$ROCKCHIP_TPL" ]] || \
+            die "ROCKCHIP_TPL is not a readable file: $ROCKCHIP_TPL"
+        cp -- "$ROCKCHIP_TPL" "$output_dir/rockchip-tpl.bin"
+    fi
+
     printf 'Building %s image path(s) for %s inside %s\n' "$mode" "$PLATFORM" "$DHI_IMAGE"
-    docker run --rm --pull=always --privileged \
+    docker_args=(run --rm --pull=always --privileged \
         --security-opt apparmor=unconfined \
         --volume /mnt \
         --mount "type=bind,src=${repo_root},dst=/workspace,readonly" \
@@ -251,9 +335,14 @@ run_on_host() {
         --workdir /workspace \
         --env YUBIOS_LOCAL_DHI=1 \
         --env "GIT_SHA=${revision}" \
-        --env "LOCAL_TAG=${LOCAL_TAG}" \
+        --env "LOCAL_TAG=${LOCAL_TAG}")
+    if [[ "$use_rockchip_tpl" == true && -n "${ROCKCHIP_TPL:-}" ]]; then
+        docker_args+=(--env ROCKCHIP_TPL=/output/rockchip-tpl.bin)
+    fi
+    docker_args+=( \
         "$DHI_IMAGE" \
-        /bin/bash /workspace/scripts/build-local-images.sh "$mode"
+        /bin/bash /workspace/scripts/build-local-images.sh "$mode")
+    docker "${docker_args[@]}"
 
     docker image load --input "$output_dir/yubios-local-images.tar"
     printf '\nLoaded local image tags:\n'
@@ -265,8 +354,8 @@ run_on_host() {
 MODE=all
 resolve_mode "${1:-all}"
 LOCAL_TAG=${LOCAL_TAG:-local}
-[[ "$LOCAL_TAG" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,119}$ ]] || \
-    die 'LOCAL_TAG must be a valid Docker tag suffix of at most 120 characters'
+[[ "$LOCAL_TAG" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,101}$ ]] || \
+    die 'LOCAL_TAG must be a valid Docker tag prefix of at most 102 characters'
 export LOCAL_TAG
 
 configure_architecture

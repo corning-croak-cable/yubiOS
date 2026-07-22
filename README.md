@@ -87,32 +87,54 @@ sudo usermod -aG docker "$USER"
 
 Membership in the `docker` group is root-equivalent. Sign out and back in once
 after changing group membership. From the repository root, run the local
-CI-parity entrypoint:
+CI-parity entrypoint. With no mode it follows the complete non-`ci_fork` image
+set in `ci.yml`: all firmware boards, production, TEST-only dev, and the native
+mkosi installer:
 
 ```sh
 ./scripts/build-local-images.sh
 ```
 
-The script runs the native production `yubios-ci` and TEST-only
-`yubios-dev-ci` Bake groups. It launches the [PINNED.md](PINNED.md) DHI image as
-a privileged outer container, installs the SHA-512-verified Docker 29.6.0
-rootless extras and Buildx 0.35.0 used by CI, starts a rootless
-Docker-in-Docker daemon, and selects the policy-bound `hardened` builder. It
-never pushes. The resulting images are transferred into the host Docker daemon
-as `yubios:local` and `yubios:dev-local`.
-
-Build only one path, or choose another local suffix, when needed:
+The complete build compiles the pinned EDK2/StandaloneMM, OP-TEE/fTPM, TF-A,
+and U-Boot firmware sources; runs the QEMU fTPM checks; builds and verifies the
+SoftHSM PKCS#11-signed mkosi UKI and disk payload; and runs the production/dev
+Bake smoke tests. It is resource intensive. Use `images` for the original,
+shorter production + dev pair or select one path:
 
 ```sh
+./scripts/build-local-images.sh images
 ./scripts/build-local-images.sh production
 ./scripts/build-local-images.sh dev
+./scripts/build-local-images.sh installer
+./scripts/build-local-images.sh firmware
+./scripts/build-local-images.sh firmware-qemu-arm64
+./scripts/build-local-images.sh firmware-rockpro64-rk3399
+ROCKCHIP_TPL=/path/to/real/rk3588-ddr-tpl.bin \
+  ./scripts/build-local-images.sh firmware-rock5b-rk3588
 LOCAL_TAG=review ./scripts/build-local-images.sh production
 ```
 
-`production` creates `yubios:<LOCAL_TAG>`; `dev` creates
-`yubios:dev-<LOCAL_TAG>`. Both paths retain their architecture-specific CI tags
-inside the disposable rootless daemon, while the local tags are loaded back
-into the host daemon for installation or inspection.
+Every mode launches the [PINNED.md](PINNED.md) DHI image as a privileged outer
+container, installs the SHA-512-verified Docker 29.6.0 rootless extras and
+Buildx 0.35.0 used by CI, starts a rootless Docker-in-Docker daemon, and selects
+the policy-bound `hardened` builder. Source refs used by the artifact paths are
+also pinned in `PINNED.md`. The entrypoint never logs in or pushes; it transfers
+only the selected local tags into the host Docker daemon.
+
+| Mode | Default host-loaded tags |
+|---|---|
+| `production` | `yubios:local` |
+| `dev` | `yubios:dev-local` |
+| `installer` | `yubios:local-installer` |
+| `firmware` | `yubios:local-firmware-qemu-arm64`, `yubios:local-firmware-rockpro64-rk3399`, `yubios:local-firmware-rock5b-rk3588` |
+
+`LOCAL_TAG=review` replaces the `local` portion of each name. Firmware builds
+always produce ARM64 payload images, using cross-compilation on an amd64 host.
+The RK3588 path needs a real external DDR/TPL blob for a bootable
+`u-boot-rockchip.bin`. Without `ROCKCHIP_TPL`, it mirrors the CI gate by
+packaging the built source-derived pieces and `RK-TPL-REQUIRED.txt`; do not
+flash that incomplete ROCK 5B tag. The TPL is copied into the disposable build
+container and removed with its temporary output directory.
 
 With the target filesystems already mounted at `/mnt` and `/mnt/boot`, install
 the locally built production image:
@@ -160,7 +182,7 @@ Every approved base image and GitHub Action SHA lives in [PINNED.md](PINNED.md).
 |---|---|
 | Production tags | `latest` plus immutable commit tags |
 | Test tags | `dev`, `dev-<sha>` for swu2f TEST-only images |
-| Local build tags | `yubios:local`, `yubios:dev-local`, or a chosen `LOCAL_TAG` suffix |
+| Local build tags | `yubios:local`, `yubios:dev-local`, `yubios:local-installer`, and board-scoped `yubios:local-firmware-*` |
 | Artifact tags | `installer`, `firmware` and per-commit variants |
 | Platforms | `linux/amd64`, `linux/arm64` |
 | Supply chain | SLSA build provenance + SBOM attestations |

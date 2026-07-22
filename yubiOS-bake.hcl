@@ -47,7 +47,7 @@ variable "PUSH" {
 variable "LOCAL_TAG" {
   type        = string
   default     = ""
-  description = "Optional suffix for host-loaded local production and dev tags."
+  description = "Optional prefix for host-loaded local image and artifact tags."
 }
 
 variable "FIRMWARE_CONTEXT" {
@@ -218,7 +218,7 @@ target "firmware" {
     "org.opencontainers.image.description" = "Board-specific TF-A + OP-TEE StMM/fTPM + U-Boot firmware for ${FIRMWARE_BOARD_TITLE}"
     "io.yubios.firmware.board"              = FIRMWARE_BOARD
   }
-  tags = concat(
+  tags = PUSH ? concat(
     [
       ref("firmware-${FIRMWARE_BOARD}"),
       ref("firmware-${FIRMWARE_BOARD}-${GIT_SHA}"),
@@ -226,6 +226,11 @@ target "firmware" {
     FIRMWARE_PUBLISH_ORIGINAL ? [
       ref("firmware"),
       ref("firmware-${GIT_SHA}"),
+    ] : [],
+  ) : concat(
+    ["yubios:firmware-${FIRMWARE_BOARD}"],
+    LOCAL_TAG != "" ? [
+      "yubios:${LOCAL_TAG}-firmware-${FIRMWARE_BOARD}",
     ] : [],
   )
 }
@@ -245,9 +250,10 @@ target "installer" {
   }
   tags = PUSH ? [
     ref("installer-${GIT_SHA}-${ARCH}"),
-  ] : [
-    "yubios:installer-${ARCH}",
-  ]
+  ] : concat(
+    ["yubios:installer-${ARCH}"],
+    LOCAL_TAG != "" ? ["yubios:${LOCAL_TAG}-installer"] : [],
+  )
 }
 
 # A live network verification must never be satisfied by an old RUN cache.
