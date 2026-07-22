@@ -117,6 +117,7 @@ for control in ("PASSLESS_BUILD_ROOT", "CARGO_INCREMENTAL=0", "--remap-path-pref
         failures.append(f"passless build lacks deterministic Rust control: {control}")
 for state in (
     "/var/log/dnf*",
+    "/var/cache/ldconfig/aux-cache",
     "/var/cache/libdnf5",
     "/usr/lib/sysimage/libdnf5/transaction_history.sqlite*",
 ):

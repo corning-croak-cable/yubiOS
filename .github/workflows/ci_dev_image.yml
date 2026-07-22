@@ -27,6 +27,7 @@ on:
       - 'Containerfile.dev'
       - 'mkosi.conf.d/test/install-swu2f-authenticator.sh'
       - 'scripts/lib/reproducible-build.sh'
+      - 'scripts/lib/diagnose-oci-layout.py'
       - 'scripts/verify-reproducible-images.sh'
       - 'yubiOS-bake.hcl'
   workflow_dispatch:

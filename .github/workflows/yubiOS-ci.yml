@@ -21,6 +21,7 @@ on:
       - 'Containerfile'
       - 'Containerfile.dev'
       - 'scripts/lib/reproducible-build.sh'
+      - 'scripts/lib/diagnose-oci-layout.py'
       - 'scripts/verify-reproducible-images.sh'
       - 'yubiOS-bake.hcl'
       - 'yubiOS.rego'
