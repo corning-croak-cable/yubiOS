@@ -56,9 +56,12 @@ RUN echo 'chipsec==1.13.16 --hash=sha256:63bed5ad4224402397817ea82b94c3a21736386
     PYTHONHASHSEED=0 python3 -m pip install --no-cache-dir --no-compile \
       --break-system-packages --require-hashes \
       -r /tmp/chipsec-requirements.txt && \
+    chipsec_site="$(PYTHONDONTWRITEBYTECODE=1 python3 -c \
+      'import sysconfig; print(sysconfig.get_path("platlib"))')" && \
+    test -d "${chipsec_site}/chipsec" && \
     PYTHONHASHSEED=0 python3 -m compileall -f -q -j 1 \
       --invalidation-mode=checked-hash \
-      /usr/local/lib/python*/site-packages/chipsec && \
+      "${chipsec_site}/chipsec" && \
     rm -rf /root/.cache /tmp/pip-* /tmp/chipsec-requirements.txt
 
 # ── Overlay yubiOS config tree ───────────────────────────────────────────

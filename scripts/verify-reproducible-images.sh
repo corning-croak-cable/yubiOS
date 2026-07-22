@@ -101,10 +101,8 @@ for run in a b; do
     ) > "$WORK_ROOT/$run.sums"
 done
 if ! diff -u "$WORK_ROOT/a.sums" "$WORK_ROOT/b.sums"; then
-    if command -v python3 >/dev/null 2>&1; then
-        python3 "$SCRIPT_DIR/lib/diagnose-oci-layout.py" \
-            "$WORK_ROOT/a" "$WORK_ROOT/b" || true
-    fi
+    python3 "$SCRIPT_DIR/lib/diagnose-oci-layout.py" \
+        "$WORK_ROOT/a" "$WORK_ROOT/b" || true
     die 'isolated OCI layouts differ'
 fi
 cmp "$WORK_ROOT/a/index.json" "$WORK_ROOT/b/index.json"

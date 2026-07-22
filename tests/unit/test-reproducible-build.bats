@@ -105,6 +105,8 @@ if (
     "--no-compile" not in containerfile
     or "--invalidation-mode=checked-hash" not in containerfile
     or "compileall -f -q -j 1" not in containerfile
+    or 'sysconfig.get_path("platlib")' not in containerfile
+    or "/usr/local/lib/python*/site-packages/chipsec" in containerfile
     or "--quiet" in containerfile
 ):
     failures.append("CHIPSEC install does not regenerate deterministic Python bytecode")
@@ -157,6 +159,12 @@ for relative, report in (
     text = (root / relative).read_text()
     if "if: matrix.arch == 'arm64'" not in text or report not in text:
         failures.append(f"{relative} does not gate reproducibility evidence on ARM64")
+    if not re.search(
+        r"Install docker CLI \+ buildx.*?apt-get install.*?python3.*?wcurl",
+        text,
+        re.S,
+    ):
+        failures.append(f"{relative} does not install the OCI diagnostic runtime")
     if "if: matrix.arch == 'amd64'" in text or report.replace("arm64", "amd64") in text:
         failures.append(f"{relative} still gates reproducibility evidence on amd64")
 

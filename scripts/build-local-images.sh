@@ -213,7 +213,7 @@ run_inside_dhi() {
     apt-get update -qq
     apt-get install -y -qq --no-install-recommends \
         ca-certificates curl fuse-overlayfs git iproute2 iptables jq nftables \
-        passwd procps slirp4netns uidmap util-linux
+        passwd procps python3 slirp4netns uidmap util-linux
     command -v wcurl >/dev/null 2>&1 || die 'the pinned DHI image does not provide wcurl'
     configure_reproducible_build /workspace "$GIT_SHA" "$ARCH"
 
