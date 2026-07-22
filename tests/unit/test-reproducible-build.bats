@@ -100,3 +100,56 @@ PY
 
     [ "$status" -eq 0 ]
 }
+
+@test "workflow jobs install git before checkout and reproducibility resolution" {
+    run python3 - "$REPO_ROOT" <<'PY'
+import pathlib
+import re
+import sys
+
+root = pathlib.Path(sys.argv[1])
+workflow_paths = (
+    ".github/workflows/yubiOS-ci.yml",
+    ".github/workflows/ci_dev_image.yml",
+    ".github/workflows/ci_test_pq_tls_verify.yml",
+    ".github/workflows/ci_mkosi-installer.yml",
+    ".github/workflows/ci_firmware-rk.yml",
+)
+install = "apt-get install -y -qq --no-install-recommends git"
+resolver = 'run: scripts/lib/reproducible-build.sh . "$GITHUB_SHA" "$ARCH" "$GITHUB_ENV"'
+failures = []
+resolver_jobs = 0
+
+for relative in workflow_paths:
+    text = (root / relative).read_text()
+    jobs = text.split("jobs:\n", 1)[1]
+    for match in re.finditer(r"(?ms)^  ([A-Za-z0-9_-]+):\n(.*?)(?=^  [A-Za-z0-9_-]+:\n|\Z)", jobs):
+        job_name, body = match.groups()
+        if resolver not in body:
+            continue
+        resolver_jobs += 1
+        positions = (body.find(install), body.find("uses: actions/checkout@"), body.find(resolver))
+        if not positions[0] < positions[1] < positions[2] or positions[0] < 0:
+            failures.append(f"{relative}:{job_name} must install git before checkout and resolution")
+
+unit_body = next(
+    match.group(2)
+    for match in re.finditer(
+        r"(?ms)^  ([A-Za-z0-9_-]+):\n(.*?)(?=^  [A-Za-z0-9_-]+:\n|\Z)",
+        (root / workflow_paths[0]).read_text().split("jobs:\n", 1)[1],
+    )
+    if match.group(1) == "unit-tests"
+)
+unit_positions = (unit_body.find(install), unit_body.find("uses: actions/checkout@"))
+if not unit_positions[0] < unit_positions[1] or unit_positions[0] < 0:
+    failures.append(f"{workflow_paths[0]}:unit-tests must install git before checkout")
+if resolver_jobs != 9:
+    failures.append(f"expected 9 resolver jobs, found {resolver_jobs}")
+
+if failures:
+    print("\n".join(failures), file=sys.stderr)
+    raise SystemExit(1)
+PY
+
+    [ "$status" -eq 0 ]
+}

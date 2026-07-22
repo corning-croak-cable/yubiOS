@@ -122,6 +122,11 @@ jobs:
       EDK2_PLATFORMS_REPO: https://github.com/yubi-OS/edk2-platforms.git
       ACTIVE_PLATFORM: Platform/StandaloneMm/PlatformStandaloneMmPkg/PlatformStandaloneMmRpmb.dsc
     steps:
+      - name: Install git for checkout and reproducibility
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends git
+
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # PINNED.md
 
@@ -383,6 +388,11 @@ jobs:
         password: ${{ secrets.DOCKER }}
       image: docker://dhi.io/debian-base@sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6 # auto-resolves to ${{ matrix.arch }}
     steps:
+      - name: Install git for checkout and reproducibility
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends git
+
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # PINNED.md
 
@@ -837,6 +847,11 @@ jobs:
     env:
       BOOT_TIMEOUT: '180'
     steps:
+      - name: Install git for checkout and reproducibility
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends git
+
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # PINNED.md
 
@@ -1046,6 +1061,11 @@ jobs:
             uboot_defconfig: rockpro64-rk3399_defconfig
             required_image: u-boot-rockchip.bin
     steps:
+      - name: Install git for checkout and reproducibility
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends git
+
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # PINNED.md
 
