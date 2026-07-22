@@ -133,8 +133,11 @@ daemons, exports canonical OCI layouts, and requires their manifest, config,
 and layer bytes to match. It also asserts that OCI config/history timestamps
 equal the source commit epoch. Successful JSON reports are written to
 `repro-evidence/`; the ARM64 CI lanes run the same gate and retain their reports.
-See [the reproducibility contract](refs/reproducible-builds-2026-07-22.md) for
-the signing, package-snapshot, EDK2, and RK3588 TPL boundaries.
+The firmware workflow separately rebuilds StandaloneMM and all three board
+paths on a second clean ARM64 lane, compares their unsigned components, and
+retains board-scoped JSON evidence. See [the reproducibility
+contract](refs/reproducible-builds-2026-07-22.md) for the QEMU TF-A signing,
+package-snapshot, and RK3588 TPL boundaries.
 
 | Mode | Default host-loaded tags |
 |---|---|

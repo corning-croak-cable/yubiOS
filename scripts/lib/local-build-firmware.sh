@@ -56,6 +56,9 @@ build_local_standalone_mm() {
         die 'the pinned edk2-platforms source is missing the StandaloneMM FDF'
 
     make -C "$stmm_root/edk2/BaseTools" -j"$(nproc)"
+    write_reproducible_edk2_stack_cookies \
+        "$stmm_root/Build/MmStandaloneRpmb/RELEASE_GCCNOLTO" \
+        "${LOCAL_EDK2_REF}:${LOCAL_EDK2_PLATFORMS_REF}:${LOCAL_STMM_PLATFORM}"
     (
         export WORKSPACE="$stmm_root"
         export PACKAGES_PATH="$stmm_root/edk2:$stmm_root/edk2-platforms"

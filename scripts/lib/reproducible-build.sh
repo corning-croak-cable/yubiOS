@@ -116,6 +116,51 @@ write_reproducible_github_env() {
     done
 }
 
+write_reproducible_edk2_stack_cookies() {
+    local build_directory=${1:-}
+    local identity=${2:-}
+
+    [[ -n "$build_directory" ]] || {
+        reproducible_build_error 'EDK2 build directory is required'
+        return 2
+    }
+    [[ -n "${GIT_SHA:-}" && -n "${SOURCE_DATE_EPOCH:-}" ]] || {
+        reproducible_build_error 'configure_reproducible_build must run before seeding EDK2 stack cookies'
+        return 1
+    }
+
+    mkdir -p "$build_directory"
+    python3 - "$build_directory" "$GIT_SHA" "$identity" "$SOURCE_DATE_EPOCH" <<'PY'
+import hashlib
+import json
+import os
+import pathlib
+import sys
+
+destination = pathlib.Path(sys.argv[1])
+source = sys.argv[2]
+identity = sys.argv[3]
+epoch = int(sys.argv[4])
+
+for bits in (32, 64):
+    values = []
+    for index in range(100):
+        material = (
+            f"yubiOS-edk2-stack-cookie-v1\0{source}\0{identity}\0{bits}\0{index}"
+        ).encode()
+        value = int.from_bytes(
+            hashlib.sha256(material).digest()[: bits // 8], "big"
+        )
+        if value == 0:
+            value = 1
+        values.append(value)
+
+    output = destination / f"StackCookieValues{bits}.json"
+    output.write_text(json.dumps(values, separators=(",", ":")) + "\n")
+    os.utime(output, (epoch, epoch))
+PY
+}
+
 normalize_reproducible_tree() {
     local root=$1
 

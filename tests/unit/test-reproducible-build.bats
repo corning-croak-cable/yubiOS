@@ -73,6 +73,111 @@ setup() {
     [ "$(stat -c %Y "$root/sub/file")" = "$SOURCE_DATE_EPOCH" ]
 }
 
+@test "EDK2 stack-cookie seeds are deterministic and identity scoped" {
+    configure_reproducible_build "$REPO_ROOT" HEAD arm64
+    first="$BATS_TEST_TMPDIR/first"
+    second="$BATS_TEST_TMPDIR/second"
+    different="$BATS_TEST_TMPDIR/different"
+
+    write_reproducible_edk2_stack_cookies "$first" edk2-platform
+    write_reproducible_edk2_stack_cookies "$second" edk2-platform
+    write_reproducible_edk2_stack_cookies "$different" other-platform
+
+    cmp "$first/StackCookieValues32.json" "$second/StackCookieValues32.json"
+    cmp "$first/StackCookieValues64.json" "$second/StackCookieValues64.json"
+    ! cmp -s "$first/StackCookieValues64.json" "$different/StackCookieValues64.json"
+    [ "$(stat -c %Y "$first/StackCookieValues64.json")" = "$SOURCE_DATE_EPOCH" ]
+
+    run python3 - "$first" <<'PY'
+import json
+import pathlib
+import sys
+
+root = pathlib.Path(sys.argv[1])
+for bits in (32, 64):
+    values = json.loads((root / f"StackCookieValues{bits}.json").read_text())
+    assert len(values) == 100
+    assert all(0 < value < 2**bits for value in values)
+PY
+    [ "$status" -eq 0 ]
+}
+
+@test "firmware proof compares unsigned components and records the QEMU envelope" {
+    configure_reproducible_build "$REPO_ROOT" HEAD arm64
+    proof_root="$BATS_TEST_TMPDIR/proof"
+    report="$BATS_TEST_TMPDIR/firmware-qemu-arm64.json"
+
+    python3 - "$proof_root" "$GIT_SHA" "$SOURCE_DATE_EPOCH" <<'PY'
+import pathlib
+import sys
+
+root = pathlib.Path(sys.argv[1])
+source = sys.argv[2]
+epoch = sys.argv[3]
+for variant in ("primary", "rebuild"):
+    tree = root / variant
+    files = {
+        "stmm/BL32_AP_MM.fd": b"stmm",
+        "firmware/BL32_AP_MM.fd": b"stmm",
+        "firmware/u-boot/u-boot.bin": b"uboot",
+        "firmware/optee_os/out/arm-plat-vexpress/core/tee-header_v2.bin": b"header",
+        "firmware/optee_os/out/arm-plat-vexpress/core/tee-pager_v2.bin": b"pager",
+        "firmware/optee_os/out/arm-plat-vexpress/core/tee-pageable_v2.bin": b"",
+        "firmware/optee_os/out/arm-plat-vexpress/core/tee.bin": b"tee-bin",
+        "firmware/optee_os/out/arm-plat-vexpress/core/tee.elf": b"tee-elf",
+        "firmware/arm-trusted-firmware/build/qemu/debug/fip.bin": f"fip-{variant}".encode(),
+        "firmware/arm-trusted-firmware/build/qemu/debug/bl1.bin": f"bl1-{variant}".encode(),
+        "firmware/arm-trusted-firmware/build/qemu/debug/bl31/bl31.elf": f"bl31-{variant}".encode(),
+        "firmware/fip-info.txt": f"certificate-{variant}".encode(),
+    }
+    manifest = "\n".join(
+        (
+            "yubiOS ARM64 firmware build artifact",
+            "board=qemu-arm64",
+            "arch=arm64",
+            f"yubios_commit={source}",
+            f"source_date_epoch={epoch}",
+            "signature_envelope=TF-A CREATE_KEYS=1; excluded from byte-for-byte proof",
+            "",
+        )
+    ).encode()
+    files["firmware/firmware-manifest.txt"] = manifest
+    for relative, content in files.items():
+        path = tree / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(content)
+PY
+
+    run "$REPO_ROOT/scripts/verify-reproducible-firmware.py" \
+        qemu-arm64 "$proof_root/primary" "$proof_root/rebuild" "$report"
+    [ "$status" -eq 0 ]
+    run python3 - "$report" <<'PY'
+import json
+import sys
+
+report = json.load(open(sys.argv[1]))
+assert report["result"] == "match"
+assert report["isolated_builds"] == 2
+assert report["compared"]
+assert report["excluded"]
+assert any(not item["matched"] for item in report["excluded"])
+PY
+    [ "$status" -eq 0 ]
+
+    printf drift > "$proof_root/rebuild/firmware/u-boot/u-boot.bin"
+    run "$REPO_ROOT/scripts/verify-reproducible-firmware.py" \
+        qemu-arm64 "$proof_root/primary" "$proof_root/rebuild" "$report"
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"firmware/u-boot/u-boot.bin"* ]]
+    run python3 - "$report" <<'PY'
+import json
+import sys
+
+assert json.load(open(sys.argv[1]))["result"] == "mismatch"
+PY
+    [ "$status" -eq 0 ]
+}
+
 @test "builder setup is pinned and reusable, ARM64 proof is enforced, and manifests are stable" {
     run python3 - "$REPO_ROOT" <<'PY'
 import pathlib
@@ -94,6 +199,7 @@ for relative in (
         failures.append(f"{relative} bypasses command-scoped safe-directory trust")
 bake = (root / "yubiOS-bake.hcl").read_text()
 proof = (root / "scripts/verify-reproducible-images.sh").read_text()
+firmware_proof = (root / "scripts/verify-reproducible-firmware.py").read_text()
 diagnostic = root / "scripts/lib/diagnose-oci-layout.py"
 containerfile = (root / "Containerfile").read_text()
 passless = (root / "mkosi.conf.d/test/install-swu2f-authenticator.sh").read_text()
@@ -178,6 +284,25 @@ for relative, report in (
     if "if: matrix.arch == 'amd64'" in text or report.replace("arm64", "amd64") in text:
         failures.append(f"{relative} still gates reproducibility evidence on amd64")
 
+firmware_workflow = (root / ".github/workflows/ci_firmware-rk.yml").read_text()
+if firmware_workflow.count("artifact_suffix: arm64-repro") != 4:
+    failures.append("firmware workflow does not rebuild StandaloneMM and all three boards on ARM64")
+if "write_reproducible_edk2_stack_cookies" not in firmware_workflow:
+    failures.append("firmware workflow does not preseed deterministic EDK2 stack cookies")
+if "write_reproducible_edk2_stack_cookies" not in (root / "scripts/lib/local-build-firmware.sh").read_text():
+    failures.append("local firmware path does not share deterministic EDK2 stack cookies")
+if "firmware-reproducibility:" not in firmware_workflow:
+    failures.append("firmware workflow has no blocking component comparison job")
+if "needs: [optee_fip, firmware-reproducibility]" not in firmware_workflow:
+    failures.append("QEMU verification is not blocked on firmware reproducibility")
+if 'repro-evidence/firmware-${{ matrix.board }}-arm64.json' not in firmware_workflow:
+    failures.append("firmware workflow retains no board-scoped ARM64 evidence")
+for board in ("qemu-arm64", "rockpro64-rk3399", "rock5b-rk3588"):
+    if board not in firmware_workflow:
+        failures.append(f"firmware proof matrix omits {board}")
+if "CREATE_KEYS=1" not in firmware_proof or "SIGNED_QEMU_REASON" not in firmware_proof:
+    failures.append("firmware proof does not preserve the QEMU signing boundary")
+
 for relative in (
     ".github/workflows/ci_firmware-rk.yml",
     ".github/workflows/ci_mkosi-installer.yml",
@@ -237,8 +362,8 @@ unit_body = next(
 unit_positions = (unit_body.find(install), unit_body.find("uses: actions/checkout@"))
 if not unit_positions[0] < unit_positions[1] or unit_positions[0] < 0:
     failures.append(f"{workflow_paths[0]}:unit-tests must install git before checkout")
-if resolver_jobs != 9:
-    failures.append(f"expected 9 resolver jobs, found {resolver_jobs}")
+if resolver_jobs != 10:
+    failures.append(f"expected 10 resolver jobs, found {resolver_jobs}")
 
 if failures:
     print("\n".join(failures), file=sys.stderr)

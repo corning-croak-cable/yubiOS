@@ -150,7 +150,7 @@ graph TD
 
 ## Workflow-Built ARM64 Firmware Variants
 
-`.github/workflows/ci_firmware-rk.yml` builds the same pinned secure-world components for three explicit variants on native amd64 and arm64 runners. StandaloneMM is built once per runner architecture, then each variant selects its own TF-A platform, OP-TEE flavor, and U-Boot defconfig. Only the QEMU variant executes the emulated fTPM boot assertions; compiling or publishing a board bundle is not physical-board proof.
+`.github/workflows/ci_firmware-rk.yml` builds the same pinned secure-world components for three explicit variants on native amd64 and arm64 runners. StandaloneMM is built once per runner architecture plus a second clean ARM64 time with deterministic EDK2 stack-cookie inputs; each variant then selects its own TF-A platform, OP-TEE flavor, and U-Boot defconfig and also receives a clean `arm64-repro` build. A blocking job compares the intended unsigned components and retains board-scoped evidence before QEMU runs. Only the QEMU variant executes the emulated fTPM boot assertions; its randomly generated TF-A certificate envelope is recorded but excluded from equality, and compiling or publishing a board bundle is not physical-board proof.
 
 | Variant | Workflow inputs and principal output | Evidence from run 29869527608 | Promotion boundary |
 |---|---|---|---|

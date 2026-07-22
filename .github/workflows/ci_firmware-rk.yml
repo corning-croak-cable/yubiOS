@@ -13,6 +13,7 @@ on:
     paths:
       - '.github/workflows/ci_firmware-rk.yml' # self-change trigger for validating workflow edits
       - 'scripts/lib/reproducible-build.sh'
+      - 'scripts/verify-reproducible-firmware.py'
       - 'yubiOS-bake.hcl'
   workflow_dispatch:
     inputs:
@@ -95,7 +96,7 @@ env:
 
 jobs:
   stmm:
-    name: Stage 1 - BL32_AP_MM.fd (StandaloneMM RPMB, AARCH64) ${{ matrix.arch }}
+    name: Stage 1 - BL32_AP_MM.fd (StandaloneMM RPMB, AARCH64) ${{ matrix.artifact_suffix }}
     strategy:
       fail-fast: false
       matrix:
@@ -104,10 +105,17 @@ jobs:
             runner: ubuntu-24.04
             docker_arch: x86_64
             buildx_arch: linux-amd64
+            artifact_suffix: amd64
           - arch: arm64
             runner: [self-hosted, Linux, ARM64, GPU]
             docker_arch: aarch64
             buildx_arch: linux-arm64
+            artifact_suffix: arm64
+          - arch: arm64
+            runner: [self-hosted, Linux, ARM64, GPU]
+            docker_arch: aarch64
+            buildx_arch: linux-arm64
+            artifact_suffix: arm64-repro
     runs-on: ${{ matrix.runner }}
     container:
       options: --privileged
@@ -279,9 +287,14 @@ jobs:
           sed -i 's@^#define MBEDTLS_AESCE_C@/* yubiOS CI: ARM AES-CE disabled under -mgeneral-regs-only */ // #define MBEDTLS_AESCE_C@' "$cfg"
           sed -i 's/ -Werror//g' Conf/tools_def.txt
           export GCCNOLTO_AARCH64_PREFIX="${{ steps.tc.outputs.prefix }}"
+          source "$GITHUB_WORKSPACE/scripts/lib/reproducible-build.sh"
+          write_reproducible_edk2_stack_cookies \
+            "$ws/Build/MmStandaloneRpmb/RELEASE_GCCNOLTO" \
+            "${EDK2_REF}:${EDK2_PLATFORMS_REF}:${ACTIVE_PLATFORM}"
           build -a AARCH64 -t GCCNOLTO -b RELEASE \
             -p "$ACTIVE_PLATFORM" \
-            -n "$(nproc)"
+            -n "$(nproc)" 2>&1 | tee "$ws/edk2-build.log"
+          ! grep -q 'Failed to get Stack Cookie Value List' "$ws/edk2-build.log"
 
       - name: Stage BL32_AP_MM.fd
         run: |
@@ -295,12 +308,12 @@ jobs:
       - name: Upload BL32_AP_MM.fd
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
         with:
-          name: BL32_AP_MM-${{ matrix.arch }}
+          name: BL32_AP_MM-${{ matrix.artifact_suffix }}
           path: artifacts/BL32_AP_MM.fd
           if-no-files-found: error
 
   optee_fip:
-    name: Stage 2 - ${{ matrix.board }} OP-TEE/TF-A/U-Boot ${{ matrix.arch }}
+    name: Stage 2 - ${{ matrix.board }} OP-TEE/TF-A/U-Boot ${{ matrix.artifact_suffix }}
     needs: stmm
     strategy:
       fail-fast: false
@@ -310,6 +323,7 @@ jobs:
             runner: ubuntu-24.04
             docker_arch: x86_64
             buildx_arch: linux-amd64
+            artifact_suffix: amd64
             board: qemu-arm64
             board_title: QEMU ARM64 CI baseline
             build_kind: qemu
@@ -322,6 +336,7 @@ jobs:
             runner: [self-hosted, Linux, ARM64, GPU]
             docker_arch: aarch64
             buildx_arch: linux-arm64
+            artifact_suffix: arm64
             board: qemu-arm64
             board_title: QEMU ARM64 CI baseline
             build_kind: qemu
@@ -334,6 +349,7 @@ jobs:
             runner: ubuntu-24.04
             docker_arch: x86_64
             buildx_arch: linux-amd64
+            artifact_suffix: amd64
             board: rockpro64-rk3399
             board_title: ROCKPro64 / RK3399 supported secondary Path A
             build_kind: rockchip
@@ -346,6 +362,7 @@ jobs:
             runner: [self-hosted, Linux, ARM64, GPU]
             docker_arch: aarch64
             buildx_arch: linux-arm64
+            artifact_suffix: arm64
             board: rockpro64-rk3399
             board_title: ROCKPro64 / RK3399 supported secondary Path A
             build_kind: rockchip
@@ -358,6 +375,7 @@ jobs:
             runner: ubuntu-24.04
             docker_arch: x86_64
             buildx_arch: linux-amd64
+            artifact_suffix: amd64
             board: rock5b-rk3588
             board_title: Radxa ROCK 5B / RK3588 primary Path A
             build_kind: rockchip
@@ -370,6 +388,46 @@ jobs:
             runner: [self-hosted, Linux, ARM64, GPU]
             docker_arch: aarch64
             buildx_arch: linux-arm64
+            artifact_suffix: arm64
+            board: rock5b-rk3588
+            board_title: Radxa ROCK 5B / RK3588 primary Path A
+            build_kind: rockchip
+            uboot_defconfig: rock5b-rk3588_defconfig
+            optee_platform: rockchip
+            optee_flavor: rk3588
+            tfa_plat: rk3588
+            requires_rockchip_tpl: true
+          - arch: arm64
+            runner: [self-hosted, Linux, ARM64, GPU]
+            docker_arch: aarch64
+            buildx_arch: linux-arm64
+            artifact_suffix: arm64-repro
+            board: qemu-arm64
+            board_title: QEMU ARM64 CI baseline
+            build_kind: qemu
+            uboot_defconfig: qemu_arm64_defconfig
+            optee_platform: vexpress-qemu_armv8a
+            optee_flavor: ''
+            tfa_plat: qemu
+            requires_rockchip_tpl: false
+          - arch: arm64
+            runner: [self-hosted, Linux, ARM64, GPU]
+            docker_arch: aarch64
+            buildx_arch: linux-arm64
+            artifact_suffix: arm64-repro
+            board: rockpro64-rk3399
+            board_title: ROCKPro64 / RK3399 supported secondary Path A
+            build_kind: rockchip
+            uboot_defconfig: rockpro64-rk3399_defconfig
+            optee_platform: rockchip
+            optee_flavor: rk3399
+            tfa_plat: rk3399
+            requires_rockchip_tpl: false
+          - arch: arm64
+            runner: [self-hosted, Linux, ARM64, GPU]
+            docker_arch: aarch64
+            buildx_arch: linux-arm64
+            artifact_suffix: arm64-repro
             board: rock5b-rk3588
             board_title: Radxa ROCK 5B / RK3588 primary Path A
             build_kind: rockchip
@@ -513,7 +571,7 @@ jobs:
       - name: Download BL32_AP_MM.fd from stmm job
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
         with:
-          name: BL32_AP_MM-${{ matrix.arch }}
+          name: BL32_AP_MM-${{ matrix.artifact_suffix }}
           path: stmm_artifact
 
       - name: Clone U-Boot and stage yubiOS fTPM fragment
@@ -797,7 +855,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
         with:
-          name: fip-flash-${{ matrix.board }}-${{ matrix.arch }}
+          name: fip-flash-${{ matrix.board }}-${{ matrix.artifact_suffix }}
           path: |
             arm-trusted-firmware/build/**/fip.bin
             arm-trusted-firmware/build/**/flash.bin
@@ -820,9 +878,81 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
 
+  firmware-reproducibility:
+    name: Stage 2 proof - ${{ matrix.board }} unsigned components (arm64)
+    needs: [stmm, optee_fip]
+    strategy:
+      fail-fast: false
+      matrix:
+        board: [qemu-arm64, rockpro64-rk3399, rock5b-rk3588]
+    runs-on: ubuntu-24.04
+    container:
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6
+    steps:
+      - name: Install git for checkout and reproducibility
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends git
+          apt-get install -y -qq --no-install-recommends python3
+
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # PINNED.md
+
+      - name: Resolve reproducible build environment
+        env:
+          ARCH: arm64
+        run: scripts/lib/reproducible-build.sh . "$GITHUB_SHA" "$ARCH" "$GITHUB_ENV"
+
+      - name: Clean firmware proof workspace
+        run: rm -rf proof repro-evidence
+
+      - name: Download primary StandaloneMM artifact
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
+        with:
+          name: BL32_AP_MM-arm64
+          path: proof/primary/stmm
+
+      - name: Download rebuilt StandaloneMM artifact
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
+        with:
+          name: BL32_AP_MM-arm64-repro
+          path: proof/rebuild/stmm
+
+      - name: Download primary board artifact
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
+        with:
+          name: fip-flash-${{ matrix.board }}-arm64
+          path: proof/primary/firmware
+
+      - name: Download rebuilt board artifact
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
+        with:
+          name: fip-flash-${{ matrix.board }}-arm64-repro
+          path: proof/rebuild/firmware
+
+      - name: Prove two clean firmware component builds match
+        run: |
+          python3 scripts/verify-reproducible-firmware.py \
+            "${{ matrix.board }}" \
+            proof/primary \
+            proof/rebuild \
+            "repro-evidence/firmware-${{ matrix.board }}-arm64.json"
+
+      - name: Retain firmware reproducibility evidence
+        if: always()
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
+        with:
+          name: reproducibility-firmware-${{ matrix.board }}-arm64-${{ github.sha }}
+          path: repro-evidence/firmware-${{ matrix.board }}-arm64.json
+          if-no-files-found: error
+          retention-days: 30
+
   qemu:
     name: Stage 3 - QEMU fTPM e2e (${{ matrix.arch }})
-    needs: optee_fip
+    needs: [optee_fip, firmware-reproducibility]
     strategy:
       fail-fast: false
       matrix:
@@ -1276,7 +1406,7 @@ jobs:
   ci-callback:
     name: Callback to ci.yml orchestrator
     if: ${{ always() && github.event_name == 'workflow_dispatch' && inputs.ci_callback == true }}
-    needs: [stmm, optee_fip, qemu, firmware-publish]
+    needs: [stmm, optee_fip, firmware-reproducibility, qemu, firmware-publish]
     runs-on: ubuntu-24.04
     permissions:
       contents: read

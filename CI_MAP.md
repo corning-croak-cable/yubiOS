@@ -11,7 +11,7 @@ This map treats `.github/workflows/*.yml` as the source of truth for events, run
 | `.github/workflows/ci.yml` | Top-level state machine | callback state, target ref, four publish flags, fork gate, TEST gate, VM image | Dispatches the next workflow in the ordered chain |
 | `.github/workflows/fetch-dhi-manifest.yml` | DHI base digest refresh | `dhi.io/debian-base:trixie-debian13-dev`, `PINNED.md` | Updated DHI digest refs committed by workflow when drift exists |
 | `.github/workflows/fetch-fedora-bootc-manifest.yml` | Fedora bootc digest refresh | `quay.io/fedora/fedora-bootc:45`, `PINNED.md` | Updated Fedora bootc digest refs committed by workflow when drift exists |
-| `.github/workflows/ci_firmware-rk.yml` | Orchestrated ARM64/RK firmware integration and publish lane | yubi-OS firmware forks, pinned refs, board matrix, `yubiOS-bake.hcl` | `BL32_AP_MM.fd`, `fip.bin`, `flash.bin`, QEMU verification, optional original and board-scoped firmware tags through Bake |
+| `.github/workflows/ci_firmware-rk.yml` | Orchestrated ARM64/RK firmware integration, reproducibility, and publish lane | yubi-OS firmware forks, pinned refs, primary/rebuild ARM64 board matrices, `yubiOS-bake.hcl` | `BL32_AP_MM.fd`, `fip.bin`, `flash.bin`, board-scoped unsigned-component equality reports, QEMU verification, optional original and board-scoped firmware tags through Bake |
 | `.github/workflows/yubiOS-ci.yml` | Production image build and publish | `Containerfile`, `yubiOS-bake.hcl`, `yubiOS.rego`, `usr/**`, unit tests | Bake build/smoke results; optional per-arch tags and multi-arch `0mniteck/yubios:<sha>` plus `latest` |
 | `.github/workflows/ci_dev_image.yml` | TEST-only image with software FIDO2 | `Containerfile.dev`, production target context, `yubiOS-bake.hcl`, `yubiOS.rego` | Bake build/smoke results; optional `0mniteck/yubios:dev-<sha>` and `dev` |
 | `.github/workflows/ci_mkosi-installer.yml` | mkosi disk image and installer artifact | `mkosi.conf`, `mkosi.conf.d/**`, SoftHSM PKCS#11 mock, `yubiOS-bake.hcl` | signed UKI verification, `yubiOS.raw.zst`, optional installer tags through Bake |
@@ -100,7 +100,7 @@ flowchart TD
 |---|---|---|---|
 | `yubiOS-ci.yml` | `yubios-ci` (`yubios` + `yubios-smoke`) | `yubios` | Containerized job creates `hardened` with the digest-pinned BuildKit daemon |
 | `ci_dev_image.yml` | `yubios-dev-ci` (`yubios-dev` + `yubios-dev-smoke`) | `yubios-dev` | Containerized job creates `hardened` with the digest-pinned BuildKit daemon |
-| `ci_firmware-rk.yml` | None unless publication is requested | `firmware` | Every Stage 1–4 job uses the pinned DHI and digest-pinned BuildKit daemon |
+| `ci_firmware-rk.yml` | None unless publication is requested | `firmware` | Build/publish jobs use the pinned DHI and digest-pinned BuildKit daemon; the DHI comparison job consumes retained build artifacts without another image build |
 | `ci_mkosi-installer.yml` | DHI-contained mkosi validation plus artifact handoff | `installer` | Every build and publication job uses the pinned DHI and digest-pinned BuildKit daemon |
 | `ci_test_pq_tls_verify.yml` | `pq-tls-verify` | None; output is `cacheonly` | Containerized job creates `hardened` with the digest-pinned BuildKit daemon |
 
@@ -109,22 +109,27 @@ Production and dev publication remains a two-stage operation: native runners pub
 Every material target receives the source commit epoch and deterministic Bake
 exporter contract. The ARM64 production and dev jobs additionally build their
 real subject twice with isolated no-cache builders, compare canonical OCI
-layouts, assert config/history timestamps, and retain JSON evidence. Installer
-and firmware record the same epoch and normalize payload handoffs, while their
-random test-signing envelopes remain explicitly outside byte equality.
+layouts, assert config/history timestamps, and retain JSON evidence. Firmware
+preseeds deterministic EDK2 stack cookies, rebuilds StandaloneMM and every board
+in a second clean ARM64 job, compares the intended unsigned components, and
+retains one report per board. Installer signatures, QEMU's random TF-A signing
+envelope, and the external-TPL-dependent RK3588 final image remain explicitly
+outside byte equality.
 
 ## ARM64/RK Firmware Integration
 
-`ci_firmware-rk.yml` is the orchestrated firmware lane. Every build, verification, and publication stage runs in the pinned multi-arch DHI container and installs Docker/Buildx through the shared `wcurl` pattern, creating a user-scoped `hardened` builder. The workflow preserves the firmware integration shape, prepares one board payload per matrix entry, then invokes the Bake `firmware` target with `PUSH=true` when publication is requested. The QEMU board retains the compatibility `firmware` tags; every publishable board receives board-scoped tags.
+`ci_firmware-rk.yml` is the orchestrated firmware lane. Every stage runs in the pinned multi-arch DHI container. Build, QEMU, and publication stages install Docker/Buildx through the shared `wcurl` pattern and create a user-scoped `hardened` builder; the comparison stage needs only Python and the retained artifacts. The workflow preserves the firmware integration shape and adds clean `arm64-repro` StandaloneMM and per-board jobs. A blocking comparison records exact unsigned-component equality before QEMU executes. Publication then prepares one board payload per matrix entry and invokes the Bake `firmware` target with `PUSH=true` when requested. The QEMU board retains the compatibility `firmware` tags; every publishable board receives board-scoped tags.
 
 ```mermaid
 flowchart TD
     wf["ci_firmware-rk.yml"]
     refs["Pinned env refs\nTF-A\nOP-TEE OS\noptee_ftpm\nU-Boot\nEDK2\nEDK2 platforms\nms-tpm-20-ref\nmbedTLS"]
-    stmm["DHI job: stmm\nuser-scoped hardened builder\nbuild EDK2 StandaloneMM\nPlatformStandaloneMmRpmb"]
-    stmm_out["artifact\nBL32_AP_MM-arch\nBL32_AP_MM.fd"]
-    optee["DHI job: optee_fip\nuser-scoped hardened builder\nbuild U-Boot BL33\nbuild OP-TEE TA dev kit\nbuild fTPM TA\nrebuild OP-TEE BL32 with Early TA and StMM"]
-    optee_out["artifact\nfip-flash-arch\nfip.bin\nflash.bin\nbl1.bin\nBL32_AP_MM.fd\ntee-*_v2.bin\nu-boot.bin\nfip-info.txt"]
+    stmm["DHI job: stmm\namd64 + primary/rebuild arm64\ndeterministic EDK2 stack cookies\nbuild StandaloneMM RPMB"]
+    stmm_out["artifacts\nBL32_AP_MM-amd64\nBL32_AP_MM-arm64\nBL32_AP_MM-arm64-repro"]
+    optee["DHI job: optee_fip\namd64 + primary/rebuild arm64\nU-Boot + OP-TEE/fTPM + TF-A\nQEMU, RK3399, RK3588"]
+    optee_out["board artifacts\nfip-flash-board-suffix\nBL32 + OP-TEE + U-Boot + TF-A"]
+    proof["job: firmware-reproducibility\ncompare intended unsigned bytes\nrecord QEMU signing boundary\nrecord RK3588 TPL boundary"]
+    evidence["30-day JSON evidence\none ARM64 report per board"]
     qemu["DHI job: qemu\nuser-scoped hardened builder\ndownload fip-flash\nassemble flash.bin if needed\nboot qemu-system-aarch64"]
     asserts["QEMU asserts\nfTPM Early TA loads\nTPM self-test marker\nno known failure signatures\nStMM SP loaded"]
     publish["job: firmware-publish in DHI container\ncheckout + user-scoped hardened builder\nmatrix: qemu-arm64, rock5b-rk3588, rockpro64-rk3399\nif workflow_dispatch + Docker_push=true"]
@@ -134,10 +139,11 @@ flowchart TD
     cb["ci-callback to ci.yml\nstate=yubiOS RK firmware"]
 
     wf --> refs
-    refs --> stmm --> stmm_out --> optee --> optee_out --> qemu --> asserts
-    optee_out --> publish --> fw_payload --> bake --> fw_registry
+    refs --> stmm --> stmm_out --> optee --> optee_out --> proof --> evidence
+    proof --> qemu --> asserts --> publish --> fw_payload --> bake --> fw_registry
     stmm --> cb
     optee --> cb
+    proof --> cb
     qemu --> cb
     publish --> cb
 ```
@@ -291,51 +297,70 @@ The exact dispatch order is defined by the state-machine graph above. The detail
     - Job `ci-callback` — `Callback to ci.yml orchestrator`
       - Step 1: `Report current state to ci.yml`
   - [`ci_firmware-rk.yml`](.github/workflows/ci_firmware-rk.yml) — workflow: `yubiOS RK firmware`
-    - Job `stmm` — `Stage 1 - BL32_AP_MM.fd (StandaloneMM RPMB, AARCH64) ${{ matrix.arch }}`
-      - Step 1: `Checkout`
-      - Step 2: `Install docker CLI + buildx (${{ matrix.arch }})`
-      - Step 3: `Install EDK2 build deps`
-      - Step 4: `Clone edk2 + edk2-platforms`
-      - Step 5: `Resolve AARCH64 cross prefix`
-      - Step 6: `Build BaseTools`
-      - Step 7: `Build StandaloneMM RPMB platform`
-      - Step 8: `Stage BL32_AP_MM.fd`
-      - Step 9: `Upload BL32_AP_MM.fd`
-    - Job `optee_fip` — `Stage 2 - ${{ matrix.board }} OP-TEE/TF-A/U-Boot ${{ matrix.arch }}`
-      - Step 1: `Checkout`
-      - Step 2: `Install docker CLI + buildx (${{ matrix.arch }})`
-      - Step 3: `Install full ARM64 firmware toolchain`
-      - Step 4: `Download BL32_AP_MM.fd from stmm job`
-      - Step 5: `Clone U-Boot and stage yubiOS fTPM fragment`
-      - Step 6: `Build QEMU U-Boot BL33`
-      - Step 7: `Stage StMM artifact`
-      - Step 8: `Build OP-TEE TA dev kit`
-      - Step 9: `Build fTPM TA`
-      - Step 10: `Rebuild OP-TEE BL32 folding fTPM Early TA and StMM`
-      - Step 11: `Build TF-A trusted firmware`
-      - Step 12: `Verify FIP contents`
-      - Step 13: `Build Rockchip U-Boot board image`
-      - Step 14: `Write firmware artifact manifest`
-      - Step 15: `Upload fip + flash artifacts`
+    - Job `stmm` — `Stage 1 - BL32_AP_MM.fd (StandaloneMM RPMB, AARCH64) ${{ matrix.artifact_suffix }}`
+      - Step 1: `Install git for checkout and reproducibility`
+      - Step 2: `Checkout`
+      - Step 3: `Resolve reproducible build environment`
+      - Step 4: `Install docker CLI + buildx (${{ matrix.arch }})`
+      - Step 5: `Install EDK2 build deps`
+      - Step 6: `Clone edk2 + edk2-platforms`
+      - Step 7: `Resolve AARCH64 cross prefix`
+      - Step 8: `Build BaseTools`
+      - Step 9: `Build StandaloneMM RPMB platform`
+      - Step 10: `Stage BL32_AP_MM.fd`
+      - Step 11: `Upload BL32_AP_MM.fd`
+    - Job `optee_fip` — `Stage 2 - ${{ matrix.board }} OP-TEE/TF-A/U-Boot ${{ matrix.artifact_suffix }}`
+      - Step 1: `Install git for checkout and reproducibility`
+      - Step 2: `Checkout`
+      - Step 3: `Resolve reproducible build environment`
+      - Step 4: `Install docker CLI + buildx (${{ matrix.arch }})`
+      - Step 5: `Install full ARM64 firmware toolchain`
+      - Step 6: `Download BL32_AP_MM.fd from stmm job`
+      - Step 7: `Clone U-Boot and stage yubiOS fTPM fragment`
+      - Step 8: `Build QEMU U-Boot BL33`
+      - Step 9: `Stage StMM artifact`
+      - Step 10: `Build OP-TEE TA dev kit`
+      - Step 11: `Build fTPM TA`
+      - Step 12: `Rebuild OP-TEE BL32 folding fTPM Early TA and StMM`
+      - Step 13: `Build TF-A trusted firmware`
+      - Step 14: `Verify FIP contents`
+      - Step 15: `Build Rockchip U-Boot board image`
+      - Step 16: `Write firmware artifact manifest`
+      - Step 17: `Upload fip + flash artifacts`
+    - Job `firmware-reproducibility` — `Stage 2 proof - ${{ matrix.board }} unsigned components (arm64)`
+      - Step 1: `Install git for checkout and reproducibility`
+      - Step 2: `Checkout`
+      - Step 3: `Resolve reproducible build environment`
+      - Step 4: `Clean firmware proof workspace`
+      - Step 5: `Download primary StandaloneMM artifact`
+      - Step 6: `Download rebuilt StandaloneMM artifact`
+      - Step 7: `Download primary board artifact`
+      - Step 8: `Download rebuilt board artifact`
+      - Step 9: `Prove two clean firmware component builds match`
+      - Step 10: `Retain firmware reproducibility evidence`
     - Job `qemu` — `Stage 3 - QEMU fTPM e2e (${{ matrix.arch }})`
-      - Step 1: `Checkout`
-      - Step 2: `Install docker CLI + buildx (${{ matrix.arch }})`
-      - Step 3: `Install QEMU + TPM tooling`
-      - Step 4: `Clean QEMU artifact directory`
-      - Step 5: `Download fip/flash from optee_fip job`
-      - Step 6: `Resolve or assemble flash.bin`
-      - Step 7: `Boot stitched image under QEMU and assert fTPM markers`
-      - Step 8: `Loud skip when no bootable image exists`
+      - Step 1: `Install git for checkout and reproducibility`
+      - Step 2: `Checkout`
+      - Step 3: `Resolve reproducible build environment`
+      - Step 4: `Install docker CLI + buildx (${{ matrix.arch }})`
+      - Step 5: `Install QEMU + TPM tooling`
+      - Step 6: `Clean QEMU artifact directory`
+      - Step 7: `Download fip/flash from optee_fip job`
+      - Step 8: `Resolve or assemble flash.bin`
+      - Step 9: `Boot stitched image under QEMU and assert fTPM markers`
+      - Step 10: `Loud skip when no bootable image exists`
     - Job `firmware-publish` — `Stage 4 - Publish firmware bundle (${{ matrix.board }})`
-      - Step 1: `Checkout`
-      - Step 2: `Clean firmware publish workspace`
-      - Step 3: `Download firmware artifacts (native arm64 build)`
-      - Step 4: `RK3588 TPL publish gate`
-      - Step 5: `Install docker CLI + buildx`
-      - Step 6: `Assemble board-scoped /firmware payload`
-      - Step 7: `Log in to Docker Hub`
-      - Step 8: `Build and push firmware OCI artifact through Bake`
-      - Step 9: `Verify pushed board tag`
+      - Step 1: `Install git for checkout and reproducibility`
+      - Step 2: `Checkout`
+      - Step 3: `Resolve reproducible build environment`
+      - Step 4: `Clean firmware publish workspace`
+      - Step 5: `Download firmware artifacts (native arm64 build)`
+      - Step 6: `RK3588 TPL publish gate`
+      - Step 7: `Install docker CLI + buildx`
+      - Step 8: `Assemble board-scoped /firmware payload`
+      - Step 9: `Log in to Docker Hub`
+      - Step 10: `Build and push firmware OCI artifact through Bake`
+      - Step 11: `Verify pushed board tag`
     - Job `ci-callback` — `Callback to ci.yml orchestrator`
       - Step 1: `Report current state to ci.yml`
   - [`yubiOS-ci.yml`](.github/workflows/yubiOS-ci.yml) — workflow: `yubiOS CI`
