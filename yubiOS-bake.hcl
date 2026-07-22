@@ -128,7 +128,8 @@ target "_source-metadata" {
 
 # BuildKit's Dockerfile frontend consumes SOURCE_DATE_EPOCH and
 # BUILDKIT_MULTI_PLATFORM. The former fixes image config/history timestamps;
-# exporter rewrite-timestamp below also clamps layer-member mtimes.
+# exporter rewrite-timestamp below also clamps layer-member mtimes. Export
+# targets override multi-platform mode where their format requires it.
 target "_reproducible" {
   args = {
     SOURCE_DATE_EPOCH       = SOURCE_DATE_EPOCH
@@ -141,6 +142,21 @@ target "_reproducible" {
 # creates a user-scoped `hardened` builder and selects it explicitly on the
 # Bake CLI, while this file continues to bind every image target to yubiOS.rego.
 target "_image-export" {
+  # Attestations are stored as additional manifests in an image index. Keep
+  # provenance on registry exports, but disable it for Docker exports because
+  # the local Docker image store accepts only a single image manifest.
+  attest = [
+    {
+      type     = "provenance"
+      disabled = !PUSH
+    },
+  ]
+  # Even with one requested platform, BUILDKIT_MULTI_PLATFORM=1 returns a
+  # manifest-list result that the Docker exporter cannot load. Registry output
+  # supports that result and retains the deterministic multi-platform mode.
+  args = {
+    BUILDKIT_MULTI_PLATFORM = PUSH ? "1" : "0"
+  }
   output = PUSH ? [
     {
       type                  = "registry"
@@ -164,6 +180,11 @@ target "_image-export" {
 }
 
 target "_repro-export" {
+  # OCI layouts support the deterministic manifest-list result used by the
+  # isolated two-build comparison, even though those builds never push.
+  args = {
+    BUILDKIT_MULTI_PLATFORM = "1"
+  }
   output = [
     {
       type                  = "oci"

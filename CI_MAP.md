@@ -60,7 +60,9 @@ Four hidden targets provide the shared contract:
 
 - `_policy` loads exactly one `yubiOS.rego` policy with `reset=true` and `strict=true`;
 - `_source-metadata` supplies the source and revision OCI labels;
-- `_image-export` selects Docker output when `PUSH=false` and registry output when `PUSH=true`; and
+- `_image-export` selects Docker output with provenance and BuildKit manifest-list
+  mode disabled when `PUSH=false` (the local image store accepts only a single
+  image manifest), and registry output with both retained when `PUSH=true`; and
 - `_yubios-base` defines the pinned production `Containerfile` build consumed by production and dev targets.
 
 ```mermaid

@@ -10,7 +10,7 @@ setup() {
 @test "environment is derived from the selected commit" {
     configure_reproducible_build "$REPO_ROOT" HEAD amd64
 
-    [ "$SOURCE_DATE_EPOCH" = "$(git -C "$REPO_ROOT" show -s --format=%ct HEAD)" ]
+    [ "$SOURCE_DATE_EPOCH" = "$(git -c safe.directory="$REPO_ROOT" -C "$REPO_ROOT" show -s --format=%ct HEAD)" ]
     [ "$SOURCE_DATE_ISO8601" = "$(date -u --date="@$SOURCE_DATE_EPOCH" '+%Y-%m-%dT%H:%M:%SZ')" ]
     [[ "$YUBIOS_MKOSI_SEED" =~ ^[0-9a-f]{8}-[0-9a-f]{4}-5[0-9a-f]{3}-a[0-9a-f]{3}-[0-9a-f]{12}$ ]]
     [ "$TZ" = UTC ]
@@ -73,6 +73,25 @@ files = [
     root / "scripts/verify-reproducible-images.sh",
 ]
 failures = []
+bake = (root / "yubiOS-bake.hcl").read_text()
+if not re.search(
+    r'target "_image-export"\s*\{.*?type\s*=\s*"provenance".*?disabled\s*=\s*!PUSH',
+    bake,
+    re.S,
+):
+    failures.append("Docker exports do not disable provenance while registry exports retain it")
+if not re.search(
+    r'target "_image-export"\s*\{.*?BUILDKIT_MULTI_PLATFORM\s*=\s*PUSH\s*\?\s*"1"\s*:\s*"0"',
+    bake,
+    re.S,
+):
+    failures.append("Docker exports do not disable BuildKit manifest-list output")
+if not re.search(
+    r'target "_repro-export"\s*\{.*?BUILDKIT_MULTI_PLATFORM\s*=\s*"1"',
+    bake,
+    re.S,
+):
+    failures.append("OCI reproducibility exports do not retain deterministic multi-platform mode")
 for path in files:
     text = path.read_text()
     for match in re.finditer(r"buildx create(?P<body>.{0,400}?)--use", text, re.S):
