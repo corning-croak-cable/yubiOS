@@ -89,17 +89,16 @@ These items map [FUTURE.md](FUTURE.md) sections that were missing or only partia
 - [ ] Treat old-sha workflow reruns as historical unless the workflow is rerun against current `main`.
 - [x] For workflow trigger edits, add narrow path-scoped push triggers only when required for validation.
 - [x] Keep Docker Build Policy wiring centralized in `yubiOS-bake.hcl`: every build target inherits the explicit `yubiOS.rego` filename with `reset=true` and `strict=true`, without relying on automatic `Dockerfile.rego` loading. See [refs/docker-bake-consolidation-2026-07-17.md](refs/docker-bake-consolidation-2026-07-17.md).
-- [x] Add board variant fields to real-hardware firmware workflows before hardware lanes land: `rock5b-rk3588` as the primary/default Path A variant and `rockpro64-rk3399` as the supported secondary variant. See `.github/workflows/ci_firmware-rk.yml` and [refs/firmware-rk-workflow-2026-07-17.md](refs/firmware-rk-workflow-2026-07-17.md).
+- [x] Add board variant fields to real-hardware firmware workflows before hardware lanes land: `rock5b-rk3588` as the Path A variant and `rockpro64-rk3399` as another Path A variant. See `.github/workflows/ci_firmware-rk.yml` and [refs/firmware-rk-workflow-2026-07-17.md](refs/firmware-rk-workflow-2026-07-17.md).
 - [ ] Validate the documented `bootc install to-filesystem` path on a fresh VM or disposable disk, including external partition preparation, mounted `/mnt`, `--skip-finalize`, and omitted `root=` via `--root-mount-spec=""`.
 
 ## Current ARM64 Tasks
 
-- [x] Choose the first Path A board for production-root proof: Radxa ROCK 5B / RK3588 is primary; ROCKPro64 / RK3399 is supported secondary per ADR-029.
-- [ ] Rehearse ROTPK/fuse provisioning on sacrificial ROCK 5B hardware before production language.
-- [ ] Supply ROCK 5B builds with a licensed, immutable, checksum-verified RK3588 DDR/TPL blob and require `u-boot-rockchip.bin`; run 29869527608 published a diagnostic bundle without that bootable image.
-- [ ] Prove OP-TEE, StandaloneMM, RPMB-backed variables, fTPM NV, and U-Boot UEFI on ROCK 5B hardware first, then carry the supported-secondary evidence to ROCKPro64.
+- [x] Choose the first Path A board for production-root proof: Radxa ROCK 5B / RK3588 is on pause; ROCKPro64 / RK3399 is supported per ADR-029.
+- [ ] Rehearse ROTPK/fuse provisioning on sacrificial hardware before production language.
+- [ ] Prove OP-TEE, StandaloneMM, RPMB-backed variables, fTPM NV, and U-Boot UEFI on ROCKPro64 hardware first, then carry the supported evidence to ROCK 5B.
 - [ ] Record exact TF-A, OP-TEE, StandaloneMM/RPMB, and U-Boot config evidence for Path A, including `CFG_RPMB_FS`, `CONFIG_EFI_MM_COMM_TEE`, and `CONFIG_SUPPORT_EMMC_RPMB`.
-- [ ] Verify the same signed UKI boots across ARM64 and x86-64 paths.
+- [ ] Supply ROCK 5B builds with a licensed, immutable, checksum-verified RK3588 DDR/TPL blob and require `u-boot-rockchip.bin`; run 29869527608 published a diagnostic bundle without that bootable image.
 - [x] Document Path A vs Path B status per board, starting with `rock5b-rk3588` and `rockpro64-rk3399`: [refs/arm64-rk-board-status-2026-07-17.md](refs/arm64-rk-board-status-2026-07-17.md).
 
 ## Current Security Tasks
