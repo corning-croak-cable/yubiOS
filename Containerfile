@@ -18,9 +18,9 @@ ARG SOURCE_DATE_EPOCH
 # pam-u2f:         PAM module for FIDO2/U2F; requires >= 1.3.1 (CVE-2025-23013)
 #                  Source: https://www.yubico.com/support/security-advisories/ysa-2025-01/
 # pcsc-lite:       PC/SC daemon; needed for PIV/CCID interface
-# Fedora 45's DNF5 predates deterministic transaction-history ordering and
-# timestamps. RPM itself honors SOURCE_DATE_EPOCH, so suppress DNF's mutable
-# audit database while retaining the installed RPM database as image state.
+# Fedora 45's DNF5 emits mutable cache, log, and transaction-history state.
+# RPM itself honors SOURCE_DATE_EPOCH, so remove DNF's audit state while
+# retaining the installed RPM database as runnable image state.
 RUN dnf -y --setopt=history_record=false install \
       libfido2 \
       yubikey-manager \
@@ -39,7 +39,14 @@ RUN dnf -y --setopt=history_record=false install \
       python3-devel \
       gcc \
       osslsigncode && \
-    dnf clean all
+    dnf clean all && \
+    rm -rf \
+      /var/cache/dnf \
+      /var/cache/libdnf5 \
+      /var/log/dnf* \
+      /var/log/hawkey.log \
+      /var/log/libdnf* \
+      /usr/lib/sysimage/libdnf5/transaction_history.sqlite*
 
 # ── First-boot firmware validation (ADR-024) ─────────────────────────────
 # CHIPSEC is distributed from PyPI rather than Fedora repos. Pin the source
@@ -49,9 +56,10 @@ RUN echo 'chipsec==1.13.16 --hash=sha256:63bed5ad4224402397817ea82b94c3a21736386
     PYTHONHASHSEED=0 python3 -m pip install --no-cache-dir --no-compile \
       --break-system-packages --require-hashes \
       -r /tmp/chipsec-requirements.txt && \
-    PYTHONHASHSEED=0 python3 -m compileall --invalidation-mode=checked-hash -q \
+    PYTHONHASHSEED=0 python3 -m compileall -f -q -j 1 \
+      --invalidation-mode=checked-hash \
       /usr/local/lib/python*/site-packages/chipsec && \
-    rm /tmp/chipsec-requirements.txt
+    rm -rf /root/.cache /tmp/pip-* /tmp/chipsec-requirements.txt
 
 # ── Overlay yubiOS config tree ───────────────────────────────────────────
 COPY usr/ /usr/

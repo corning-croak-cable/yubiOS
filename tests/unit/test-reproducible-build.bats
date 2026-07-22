@@ -94,6 +94,7 @@ for relative in (
         failures.append(f"{relative} bypasses command-scoped safe-directory trust")
 bake = (root / "yubiOS-bake.hcl").read_text()
 proof = (root / "scripts/verify-reproducible-images.sh").read_text()
+diagnostic = root / "scripts/lib/diagnose-oci-layout.py"
 containerfile = (root / "Containerfile").read_text()
 passless = (root / "mkosi.conf.d/test/install-swu2f-authenticator.sh").read_text()
 if '--allow "fs.write=$output"' not in proof:
@@ -102,7 +103,8 @@ if "--setopt=history_record=false" not in containerfile:
     failures.append("production package install records nondeterministic DNF history")
 if (
     "--no-compile" not in containerfile
-    or "--invalidation-mode=checked-hash -q" not in containerfile
+    or "--invalidation-mode=checked-hash" not in containerfile
+    or "compileall -f -q -j 1" not in containerfile
     or "--quiet" in containerfile
 ):
     failures.append("CHIPSEC install does not regenerate deterministic Python bytecode")
@@ -111,6 +113,15 @@ if passless.count("--setopt=history_record=false") < 2:
 for control in ("PASSLESS_BUILD_ROOT", "CARGO_INCREMENTAL=0", "--remap-path-prefix"):
     if control not in passless:
         failures.append(f"passless build lacks deterministic Rust control: {control}")
+for state in (
+    "/var/log/dnf*",
+    "/var/cache/libdnf5",
+    "/usr/lib/sysimage/libdnf5/transaction_history.sqlite*",
+):
+    if state not in containerfile or state not in passless:
+        failures.append(f"package-manager state is not removed from both image layers: {state}")
+if not diagnostic.is_file() or "diagnose-oci-layout.py" not in proof:
+    failures.append("OCI mismatch does not emit layer-level diagnostics")
 if not re.search(
     r'target "_image-export"\s*\{.*?type\s*=\s*"provenance".*?disabled\s*=\s*!PUSH',
     bake,

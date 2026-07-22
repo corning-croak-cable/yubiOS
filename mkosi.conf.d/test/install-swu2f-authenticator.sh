@@ -42,6 +42,20 @@ fi
 # the test image stays close to the production package surface.
 readonly BUILD_DEPS=(git cargo rust gcc systemd-devel tpm2-tss-devel)
 
+clean_package_manager_state() {
+    # DNF5 can emit wall-clock log/history state even when history_record=false.
+    # Neither is part of the runnable image contract, and retaining it makes
+    # otherwise identical container layers differ by build wall clock. The RPM
+    # database remains intact.
+    rm -rf \
+        /var/cache/dnf \
+        /var/cache/libdnf5 \
+        /var/log/dnf* \
+        /var/log/hawkey.log \
+        /var/log/libdnf* \
+        /usr/lib/sysimage/libdnf5/transaction_history.sqlite*
+}
+
 # Defensive: dnf5 can leave a stale package-cache lock file behind in a
 # committed container layer (the PID that held it is long gone by the time a
 # derived image runs this script). dnf5 checks for file existence, not a live
@@ -113,6 +127,7 @@ install -Dm0644 "${src}/contrib/modules-load.d/fido.conf" /usr/lib/modules-load.
 
 dnf -y --setopt=history_record=false remove "${BUILD_DEPS[@]}" || true
 dnf -y clean all || true
+clean_package_manager_state
 
 /usr/bin/passless --version || true
 echo "install-swu2f-authenticator: passless ${PASSLESS_TAG} (${PASSLESS_COMMIT}) installed with hmac-secret (TEST-ONLY swu2f Layer 2)"

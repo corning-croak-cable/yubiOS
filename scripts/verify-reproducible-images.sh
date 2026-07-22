@@ -100,7 +100,13 @@ for run in a b; do
         find . -type f -print0 | LC_ALL=C sort -z | xargs -0r sha256sum
     ) > "$WORK_ROOT/$run.sums"
 done
-diff -u "$WORK_ROOT/a.sums" "$WORK_ROOT/b.sums"
+if ! diff -u "$WORK_ROOT/a.sums" "$WORK_ROOT/b.sums"; then
+    if command -v python3 >/dev/null 2>&1; then
+        python3 "$SCRIPT_DIR/lib/diagnose-oci-layout.py" \
+            "$WORK_ROOT/a" "$WORK_ROOT/b" || true
+    fi
+    die 'isolated OCI layouts differ'
+fi
 cmp "$WORK_ROOT/a/index.json" "$WORK_ROOT/b/index.json"
 
 manifest_digest=$(jq -er '.manifests[0].digest' "$WORK_ROOT/a/index.json")
