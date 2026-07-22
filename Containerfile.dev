@@ -23,6 +23,8 @@
 ARG BASE_IMAGE=yubios-base
 FROM ${BASE_IMAGE}
 
+ARG SOURCE_DATE_EPOCH
+
 COPY mkosi.conf.d/test/install-swu2f-authenticator.sh /tmp/install-swu2f-authenticator.sh
 RUN chmod +x /tmp/install-swu2f-authenticator.sh && \
     /tmp/install-swu2f-authenticator.sh && \

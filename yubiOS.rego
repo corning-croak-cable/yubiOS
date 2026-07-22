@@ -33,7 +33,8 @@ allow if input.local
 # ── Rule 2: approved + digest-pinned ─────────────────────────────────────────
 # FROM must be from an approved registry AND pinned to an immutable digest.
 # Mutable tags (:latest, :42) are rejected — tag reassignment is a supply chain
-# attack vector. Pin to @sha256:... to guarantee bit-for-bit reproducibility.
+# attack vector. Pin to @sha256:... for repeatable input selection; two clean
+# builds and payload comparison are still required to prove reproducibility.
 #
 # To pin quay.io/fedora/fedora-bootc:
 #   skopeo inspect --format '{{.Digest}}' docker://quay.io/fedora/fedora-bootc:latest

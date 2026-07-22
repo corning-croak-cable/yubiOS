@@ -1,0 +1,11 @@
+# The core image graph needs only these tracked inputs. Excluding CI downloads,
+# local evidence, and the Git database keeps the context independent of the
+# runner workspace while still allowing the production and dev Dockerfiles.
+**
+!Containerfile
+!Containerfile.dev
+!usr/
+!usr/**
+!mkosi.conf.d/
+!mkosi.conf.d/test/
+!mkosi.conf.d/test/install-swu2f-authenticator.sh

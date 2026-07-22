@@ -38,7 +38,7 @@ create_local_installer_signing_token() {
     rm -rf /run/yubios-hsm
     mkdir -p /run/yubios-hsm/tokens
     openssl req -x509 -newkey rsa:3072 -sha256 -days 365 -nodes \
-        -subj '/CN=yubiOS local Secure Boot (SoftHSM mock of PIV 9c)/' \
+        -subj '/CN=yubiOS reproducibility test Secure Boot (non-production)/' \
         -keyout sb.key -out mkosi.secure-boot.pem
     openssl pkcs8 -topk8 -nocrypt -in sb.key -out sb.p8
     printf 'directories.tokendir = /run/yubios-hsm/tokens\nobjectstore.backend = file\n' \
@@ -66,10 +66,13 @@ build_local_installer() {
     esac
 
     cd "$ARTIFACT_REPO" || die "cannot enter artifact worktree: $ARTIFACT_REPO"
-    rm -rf inst mkosi.output
+    rm -rf inst mkosi.output mkosi.cache
     create_local_installer_signing_token
 
     mkosi \
+        --source-date-epoch "$SOURCE_DATE_EPOCH" \
+        --seed "$YUBIOS_MKOSI_SEED" \
+        --incremental=no \
         --distribution fedora \
         --release 45 \
         --architecture "$mkosi_arch" \
@@ -101,24 +104,28 @@ build_local_installer() {
     mkdir -p inst/installer
     raw=mkosi.output/yubiOS.raw
     [[ -s "$raw" ]] || die 'mkosi produced no yubiOS.raw disk image'
-    zstd -T0 -8 --force -o "inst/installer/$(basename "$raw").zst" "$raw"
+    zstd -T1 -8 --force -o "inst/installer/$(basename "$raw").zst" "$raw"
     find mkosi.output -maxdepth 1 -name '*.efi' -type f -exec cp {} inst/installer/ \;
     find mkosi.output -maxdepth 1 -name '*manifest*' -type f -exec cp {} inst/installer/ \;
     cp mkosi.secure-boot.pem inst/installer/ci-secure-boot-cert.pem
     {
-        printf '%s\n' 'yubiOS mkosi installer image (minimal profile) — local CI-parity build'
+        printf '%s\n' 'yubiOS mkosi installer image (minimal profile)'
         printf 'architecture=%s\n' "$ARCH"
         printf 'yubios_commit=%s\n' "$GIT_SHA"
-        printf '%s\n' 'workflow_run=local'
+        printf 'source_date_epoch=%s\n' "$SOURCE_DATE_EPOCH"
+        printf 'mkosi_seed=%s\n' "$YUBIOS_MKOSI_SEED"
         printf 'mkosi_source=https://github.com/yubi-OS/mkosi@%s (feature/yubiOS-profile provenance)\n' "$LOCAL_MKOSI_REF"
         printf '%s\n' 'signing=UKI signed via SecureBootKeySource=provider:pkcs11 + systemd-sbsign'
-        printf '%s\n' 'NOTE: Local signing key is a SoftHSM mock of YubiKey PIV slot 9c.'
+        printf '%s\n' 'signature_envelope=random non-production SoftHSM key; excluded from byte-for-byte proof'
+        printf '%s\n' 'NOTE: Signing key is a SoftHSM mock of YubiKey PIV slot 9c.'
         printf '%s\n' 'Production images are signed with the real YubiKey (ADR-008); this'
         printf '%s\n' 'image validates the build + PKCS#11 signing path, not a production key.'
         printf '%s\n' 'Install flow (ADR-022): write this image to disk, boot; the installed'
         printf '%s\n' 'system tracks 0mniteck/yubios:latest via bootc. ARM64 targets flash'
         printf '%s\n' '0mniteck/yubios:firmware first (secure world) per ADR-018/019/020.'
     } > inst/installer/MANIFEST.txt
+    normalize_reproducible_tree inst/installer
+    write_reproducible_checksums inst/installer
 
     export INSTALLER_CONTEXT=inst PUSH=false
     docker buildx bake \

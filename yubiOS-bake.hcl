@@ -50,6 +50,24 @@ variable "LOCAL_TAG" {
   description = "Optional prefix for host-loaded local image and artifact tags."
 }
 
+variable "SOURCE_DATE_EPOCH" {
+  type        = string
+  default     = "0"
+  description = "Canonical source commit timestamp propagated to supported builders."
+}
+
+variable "SOURCE_DATE_ISO8601" {
+  type        = string
+  default     = "1970-01-01T00:00:00Z"
+  description = "RFC3339 form of SOURCE_DATE_EPOCH for OCI creation metadata."
+}
+
+variable "REPRO_DEST" {
+  type        = string
+  default     = "repro.oci"
+  description = "Directory destination for the cache-isolated OCI reproduction target."
+}
+
 variable "FIRMWARE_CONTEXT" {
   type        = string
   default     = "fw"
@@ -102,8 +120,19 @@ target "_policy" {
 
 target "_source-metadata" {
   labels = {
+    "org.opencontainers.image.created"  = SOURCE_DATE_ISO8601
     "org.opencontainers.image.source"   = "https://github.com/yubi-OS/yubiOS"
     "org.opencontainers.image.revision" = GIT_SHA
+  }
+}
+
+# BuildKit's Dockerfile frontend consumes SOURCE_DATE_EPOCH and
+# BUILDKIT_MULTI_PLATFORM. The former fixes image config/history timestamps;
+# exporter rewrite-timestamp below also clamps layer-member mtimes.
+target "_reproducible" {
+  args = {
+    SOURCE_DATE_EPOCH       = SOURCE_DATE_EPOCH
+    BUILDKIT_MULTI_PLATFORM = "1"
   }
 }
 
@@ -113,9 +142,40 @@ target "_source-metadata" {
 # Bake CLI, while this file continues to bind every image target to yubiOS.rego.
 target "_image-export" {
   output = PUSH ? [
-    { type = "registry" },
+    {
+      type                  = "registry"
+      rewrite-timestamp     = true
+      compression           = "gzip"
+      compression-level     = 6
+      force-compression     = true
+      oci-mediatypes        = true
+      compatibility-version = "20"
+    },
   ] : [
-    { type = "docker" },
+    {
+      type                  = "docker"
+      rewrite-timestamp     = true
+      compression           = "gzip"
+      compression-level     = 6
+      force-compression     = true
+      compatibility-version = "20"
+    },
+  ]
+}
+
+target "_repro-export" {
+  output = [
+    {
+      type                  = "oci"
+      dest                  = REPRO_DEST
+      tar                   = false
+      rewrite-timestamp     = true
+      compression           = "gzip"
+      compression-level     = 6
+      force-compression     = true
+      oci-mediatypes        = true
+      compatibility-version = "20"
+    },
   ]
 }
 
@@ -123,7 +183,7 @@ target "_image-export" {
 # the dev target can consume it through target: context dependency without ever
 # inheriting the production target's registry output or production tags.
 target "_yubios-base" {
-  inherits   = ["_policy", "_source-metadata"]
+  inherits   = ["_policy", "_source-metadata", "_reproducible"]
   context    = "."
   dockerfile = "Containerfile"
   platforms  = [PLATFORM]
@@ -142,7 +202,7 @@ target "yubios" {
 }
 
 target "yubios-smoke" {
-  inherits    = ["_policy"]
+  inherits    = ["_policy", "_reproducible"]
   description = "Verify production scripts, symlinks, and PAM wiring in-build."
   context     = "."
   contexts = {
@@ -167,8 +227,14 @@ group "yubios-ci" {
   targets     = ["yubios", "yubios-smoke"]
 }
 
+target "yubios-repro" {
+  inherits    = ["yubios", "_repro-export"]
+  description = "Export production yubiOS as a canonical OCI layout for two-build comparison."
+  tags        = []
+}
+
 target "yubios-dev" {
-  inherits    = ["_policy", "_source-metadata", "_image-export"]
+  inherits    = ["_policy", "_source-metadata", "_reproducible", "_image-export"]
   description = "Build the isolated swu2f development/test image."
   context     = "."
   contexts = {
@@ -185,7 +251,7 @@ target "yubios-dev" {
 }
 
 target "yubios-dev-smoke" {
-  inherits    = ["_policy"]
+  inherits    = ["_policy", "_reproducible"]
   description = "Fail if the TEST-only passless authenticator is absent."
   context     = "."
   contexts = {
@@ -204,8 +270,14 @@ group "yubios-dev-ci" {
   targets     = ["yubios-dev", "yubios-dev-smoke"]
 }
 
+target "yubios-dev-repro" {
+  inherits    = ["yubios-dev", "_repro-export"]
+  description = "Export TEST-only yubiOS dev as a canonical OCI layout for two-build comparison."
+  tags        = []
+}
+
 target "firmware" {
-  inherits    = ["_policy", "_source-metadata", "_image-export"]
+  inherits    = ["_policy", "_source-metadata", "_reproducible", "_image-export"]
   description = "Package one prepared ARM64 board firmware payload as an OCI image."
   context     = FIRMWARE_CONTEXT
   dockerfile-inline = <<-DOCKERFILE
@@ -236,7 +308,7 @@ target "firmware" {
 }
 
 target "installer" {
-  inherits    = ["_policy", "_source-metadata", "_image-export"]
+  inherits    = ["_policy", "_source-metadata", "_reproducible", "_image-export"]
   description = "Package the prepared mkosi disk/UKI installer payload as an OCI image."
   context     = INSTALLER_CONTEXT
   dockerfile-inline = <<-DOCKERFILE
@@ -258,7 +330,7 @@ target "installer" {
 
 # A live network verification must never be satisfied by an old RUN cache.
 target "pq-tls-verify" {
-  inherits    = ["_policy"]
+  inherits    = ["_policy", "_reproducible"]
   description = "Verify the OpenSSL 3.5+ PQ hybrid TLS default against the live endpoint."
   context     = "."
   dockerfile-inline = <<-DOCKERFILE

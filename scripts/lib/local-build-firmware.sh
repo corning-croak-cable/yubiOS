@@ -242,7 +242,13 @@ build_local_trusted_firmware() {
         grep -q -- '-Wall -Os -nostdlib' "$m0_makefile"
     fi
 
-    tfa_args=(CROSS_COMPILE="$FW_AARCH64_PREFIX" PLAT="$FW_TFA_PLAT" ARCH=aarch64)
+    tfa_args=(
+        CROSS_COMPILE="$FW_AARCH64_PREFIX"
+        PLAT="$FW_TFA_PLAT"
+        ARCH=aarch64
+        BUILD_MESSAGE_TIMESTAMP="\"${TF_A_BUILD_TIMESTAMP}\""
+        BUILD_STRING="$TF_A_BUILD_STRING"
+    )
     if [[ "$FW_TFA_PLAT" == rk3399 ]]; then
         tfa_ld="${FW_AARCH64_PREFIX}ld.bfd"
         [[ -n "$FW_AARCH64_PREFIX" ]] || tfa_ld=ld.bfd
@@ -351,7 +357,7 @@ write_local_firmware_build_manifest() {
             printf '%s\n' 'rockchip_tpl_provided=false'
         fi
         printf 'yubios_commit=%s\n' "$GIT_SHA"
-        printf '%s\n' 'workflow_run=local'
+        printf 'source_date_epoch=%s\n' "$SOURCE_DATE_EPOCH"
         printf 'tfa_ref=%s\n' "$LOCAL_TFA_REF"
         printf 'optee_os_ref=%s\n' "$LOCAL_OPTEE_OS_REF"
         printf 'optee_ftpm_ref=%s\n' "$LOCAL_OPTEE_FTPM_REF"
@@ -360,6 +366,9 @@ write_local_firmware_build_manifest() {
         printf 'edk2_platforms_ref=%s\n' "$LOCAL_EDK2_PLATFORMS_REF"
         printf 'ms_tpm_ref=%s\n' "$LOCAL_MS_TPM_REF"
         printf 'ftpm_uuid=%s\n' "$LOCAL_FTPM_UUID"
+        if [[ "$FW_BUILD_KIND" == qemu ]]; then
+            printf '%s\n' 'signature_envelope=TF-A CREATE_KEYS=1; excluded from byte-for-byte proof'
+        fi
     } > "$FW_BUILD_ROOT/firmware-manifest.txt"
 }
 
@@ -426,7 +435,7 @@ assemble_local_firmware_payload() {
         printf 'board=%s\n' "$FW_BOARD"
         printf 'board_title=%s\n' "$FW_BOARD_TITLE"
         printf 'yubios_commit=%s\n' "$GIT_SHA"
-        printf '%s\n' 'workflow_run=local'
+        printf 'source_date_epoch=%s\n' "$SOURCE_DATE_EPOCH"
         printf 'tfa_ref=%s\n' "$LOCAL_TFA_REF"
         printf 'optee_os_ref=%s (feat/stmm-volatile-storage-ci)\n' "$LOCAL_OPTEE_OS_REF"
         printf 'optee_ftpm_ref=%s (feat/volatile-nv-ci)\n' "$LOCAL_OPTEE_FTPM_REF"
@@ -441,7 +450,15 @@ assemble_local_firmware_payload() {
         printf 'uboot_defconfig=%s\n' "$FW_UBOOT_DEFCONFIG"
         printf 'required_image=%s\n' "$FW_REQUIRED_IMAGE"
         printf 'storage_note=%s\n' "$FW_STORAGE_NOTE"
+        if [[ "$FW_BUILD_KIND" == qemu ]]; then
+            printf '%s\n' 'signature_envelope=TF-A CREATE_KEYS=1; excluded from byte-for-byte proof'
+        fi
+        if [[ -n "${ROCKCHIP_TPL:-}" ]]; then
+            printf 'rockchip_tpl_sha256=%s\n' "$(sha256sum "$ROCKCHIP_TPL" | cut -d' ' -f1)"
+        fi
     } > "$payload/MANIFEST.txt"
+    normalize_reproducible_tree "$payload"
+    write_reproducible_checksums "$payload"
     FW_PAYLOAD=$payload
 }
 
@@ -470,6 +487,7 @@ package_local_firmware_image() {
     rm -rf "$ARTIFACT_REPO/fw"
     mkdir -p "$ARTIFACT_REPO/fw/firmware"
     cp -a "$FW_PAYLOAD/." "$ARTIFACT_REPO/fw/firmware/"
+    normalize_reproducible_tree "$ARTIFACT_REPO/fw/firmware"
     cd "$ARTIFACT_REPO" || die "cannot enter artifact worktree: $ARTIFACT_REPO"
     export FIRMWARE_CONTEXT=fw
     export FIRMWARE_BOARD="$FW_BOARD"

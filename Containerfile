@@ -1,9 +1,14 @@
 # yubiOS — FIDO2-first immutable OS image (Fedora base)
-# Build: ARCH=amd64 PLATFORM=linux/amd64 docker buildx bake -f yubiOS-bake.hcl yubios-ci
+# Build: use scripts/build-local-images.sh or initialize
+# scripts/lib/reproducible-build.sh before invoking Bake directly.
 # Source: bootc design https://github.com/bootc-dev/bootc
 # Source: particleos ethos https://github.com/systemd/particleos
 
 FROM quay.io/fedora/fedora-bootc:45@sha256:9153b0fc9db4c7008c1c33d0795a2666a8eb43bb6fc407f9a21ed0d28a6dc2db
+
+# BuildKit also consumes this special argument for OCI timestamps. Declaring it
+# makes the same canonical epoch visible to package/build tools in RUN steps.
+ARG SOURCE_DATE_EPOCH
 
 # ── YubiKey and FIDO2 stack ──────────────────────────────────────────────
 # libfido2:       FIDO2/CTAP2 library; used by systemd-cryptenroll, OpenSSH, pam-u2f

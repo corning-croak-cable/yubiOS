@@ -723,8 +723,8 @@ ConditionSecurity=measured-os
 
 1. Run the job inside the digest-pinned DHI base recorded in [PINNED.md](PINNED.md). The outer container is privileged only because nested container and image-build operations require it; this is the Docker-in-Docker boundary, not a claim that the entire stack is rootless.
 2. Install the checksum-pinned Docker CLI, rootless extras, and Buildx binaries, create a dedicated unprivileged `docker-rootless` account, and run `dockerd-rootless.sh` on its user-owned socket and data directory.
-3. Create and explicitly select the user-scoped Buildx builder named `hardened`. No workflow may rely on an ambient/default builder.
-4. Invoke targets through [yubiOS-bake.hcl](yubiOS-bake.hcl), not ad hoc `docker buildx build` commands. Bake owns contexts, platforms, tag families, outputs, provenance/SBOM settings, and the policy attachment shared by every image target.
+3. Create and explicitly select the user-scoped Buildx builder named `hardened`. No workflow may rely on an ambient/default builder, and the BuildKit daemon image must be pinned independently from the Buildx client.
+4. Invoke targets through [yubiOS-bake.hcl](yubiOS-bake.hcl), not ad hoc `docker buildx build` commands. Bake owns contexts, platforms, tag families, deterministic exporter settings, subject metadata, and the policy attachment shared by every image target. Provenance/SBOM attestations are verified as a separate envelope around the subject image.
 5. Keep [yubiOS.rego](yubiOS.rego) default-deny with `reset=true` and `strict=true`. The policy must reject unapproved registries and non-canonical external image references; every Bake target must inherit the common policy target.
 6. Pin GitHub Actions to full commit SHAs, container bases to OCI digests, source checkouts to immutable commit refs, and downloaded tools/blobs to a reviewed version plus checksum. [PINNED.md](PINNED.md) is the live manifest for those values. A workflow must fail rather than silently fall back to a moving tag, branch, unsigned download, faked firmware blob, or unverified alternate source.
 7. Build each supported architecture natively where a runner exists, publish architecture-qualified staging tags, and create the public multi-architecture tag only after every required leg succeeds.
@@ -742,13 +742,13 @@ flowchart TD
     POLICY --> BAKE --> OUT
 ```
 
-**Reproducibility rule:** Pinning and policy enforcement are necessary for bit-for-bit reproducibility, but they are not themselves proof of it. Package repository state, timestamps, compression, generated metadata, and attestations may still vary. A release may claim bit-for-bit reproducibility only after two isolated builds from the same declared inputs produce identical intended payload digests, with intentionally variable attestations compared separately and the evidence retained. Until that gate exists, the accurate claim is **pinned-input, policy-enforced builds designed for reproducibility**.
+**Reproducibility rule:** Pinning and policy enforcement are necessary for bit-for-bit reproducibility, but they are not themselves proof of it. Package repository state, timestamps, compression, generated metadata, and attestations may still vary. A release may claim bit-for-bit reproducibility only after two isolated builds from the same declared inputs produce identical intended payload digests, with intentionally variable attestations compared separately and the evidence retained. Production and TEST-only dev OCI subjects now enforce that gate on ARM64, the project's primary architecture. Installer and firmware signing envelopes remain outside the claim until the documented random-signature and package-closure blockers are resolved.
 
 **Enforcement and review:**
 
-- A new Bake target is incomplete until it inherits `_policy`, carries the required attestations, and has a policy-negative test or equivalent inspection path.
+- A new Bake target is incomplete until it inherits `_policy` and `_reproducible`, declares its attestation boundary, and has a policy-negative test or equivalent inspection path.
 - A source or download bump must update the pin and its verifier in the same change. Reviewers should reject a digest in prose that conflicts with `PINNED.md`.
 - Rootless-in-privileged-DHI reduces the privileges of the daemon and builder but does not erase the privileged outer-container risk. Secrets remain scoped to publish steps, and workflow permissions stay least-privilege.
 - Per-architecture staging tags are implementation artifacts. Board-neutral public tags are merged only after all required architectures pass; firmware remains board-scoped where payloads differ.
 
-**Evidence:** [refs/docker-bake-consolidation-2026-07-17.md](refs/docker-bake-consolidation-2026-07-17.md) and [refs/ci-evidence-2026-07-21.md](refs/ci-evidence-2026-07-21.md).
+**Evidence:** [refs/docker-bake-consolidation-2026-07-17.md](refs/docker-bake-consolidation-2026-07-17.md), [refs/ci-evidence-2026-07-21.md](refs/ci-evidence-2026-07-21.md), and [refs/reproducible-builds-2026-07-22.md](refs/reproducible-builds-2026-07-22.md).

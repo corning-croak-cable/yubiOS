@@ -12,6 +12,8 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/ci_firmware-rk.yml' # self-change trigger for validating workflow edits
+      - 'scripts/lib/reproducible-build.sh'
+      - 'yubiOS-bake.hcl'
   workflow_dispatch:
     inputs:
       reason:
@@ -80,6 +82,7 @@ permissions:
   actions: write
 
 env:
+  BUILDKIT_IMAGE: docker.io/moby/buildkit:v0.31.2@sha256:2f5adac4ecd194d9f8c10b7b5d7bceb5186853db1b26e5abd3a657af0b7e26ec
   TFA_REF: f9e106415eb569ff9b19404e2c3f64167af08d21
   OPTEE_OS_REF: 440b10c3f9b1c8501f2550e282ae071bb5424972 # feat/stmm-volatile-storage-ci
   OPTEE_FTPM_REF: 5e09cdbe1bcb1bc3bcf4875ebafb4e1a1154417c # feat/volatile-nv-ci
@@ -121,6 +124,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # PINNED.md
+
+      - name: Resolve reproducible build environment
+        env:
+          ARCH: ${{ matrix.arch }}
+        run: scripts/lib/reproducible-build.sh . "$GITHUB_SHA" "$ARCH" "$GITHUB_ENV"
 
       - name: Install docker CLI + buildx (${{ matrix.arch }})
         run: |
@@ -208,6 +216,7 @@ jobs:
           fi
           docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
             --driver docker-container \
+            --driver-opt "image=${BUILDKIT_IMAGE}" \
             --use || true
 
       - name: Install EDK2 build deps
@@ -377,6 +386,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # PINNED.md
 
+      - name: Resolve reproducible build environment
+        env:
+          ARCH: ${{ matrix.arch }}
+        run: scripts/lib/reproducible-build.sh . "$GITHUB_SHA" "$ARCH" "$GITHUB_ENV"
+
       - name: Install docker CLI + buildx (${{ matrix.arch }})
         run: |
           apt-get update -qq
@@ -463,6 +477,7 @@ jobs:
           fi
           docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
             --driver docker-container \
+            --driver-opt "image=${BUILDKIT_IMAGE}" \
             --use || true
 
       - name: Install full ARM64 firmware toolchain
@@ -629,7 +644,13 @@ jobs:
           fi
           CROSS=""
           [ "$(uname -m)" = "x86_64" ] && CROSS="aarch64-linux-gnu-"
-          tfa_args=(CROSS_COMPILE="${CROSS}" PLAT="$TFA_PLAT" ARCH=aarch64)
+          tfa_args=(
+            CROSS_COMPILE="${CROSS}"
+            PLAT="$TFA_PLAT"
+            ARCH=aarch64
+            BUILD_MESSAGE_TIMESTAMP="\"${TF_A_BUILD_TIMESTAMP}\""
+            BUILD_STRING="$TF_A_BUILD_STRING"
+          )
           if [ "$TFA_PLAT" = "rk3399" ]; then
             tfa_ld="${CROSS}ld.bfd"
             if [ -z "$CROSS" ]; then
@@ -745,7 +766,7 @@ jobs:
               echo "rockchip_tpl_provided=false"
             fi
             echo "yubios_commit=${GITHUB_SHA}"
-            echo "workflow_run=${GITHUB_RUN_ID}"
+            echo "source_date_epoch=${SOURCE_DATE_EPOCH}"
             echo "tfa_ref=${TFA_REF}"
             echo "optee_os_ref=${OPTEE_OS_REF}"
             echo "optee_ftpm_ref=${OPTEE_FTPM_REF}"
@@ -754,6 +775,12 @@ jobs:
             echo "edk2_platforms_ref=${EDK2_PLATFORMS_REF}"
             echo "ms_tpm_ref=${MS_TPM_REF}"
             echo "ftpm_uuid=${FTPM_UUID}"
+            if [ "$BUILD_KIND" = "qemu" ]; then
+              echo "signature_envelope=TF-A CREATE_KEYS=1; excluded from byte-for-byte proof"
+            fi
+            if [ -n "${ROCKCHIP_TPL:-}" ]; then
+              echo "rockchip_tpl_sha256=$(sha256sum "$ROCKCHIP_TPL" | cut -d' ' -f1)"
+            fi
           } > firmware-manifest.txt
 
       - name: Upload fip + flash artifacts
@@ -812,6 +839,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # PINNED.md
+
+      - name: Resolve reproducible build environment
+        env:
+          ARCH: ${{ matrix.arch }}
+        run: scripts/lib/reproducible-build.sh . "$GITHUB_SHA" "$ARCH" "$GITHUB_ENV"
 
       - name: Install docker CLI + buildx (${{ matrix.arch }})
         run: |
@@ -899,6 +931,7 @@ jobs:
           fi
           docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
             --driver docker-container \
+            --driver-opt "image=${BUILDKIT_IMAGE}" \
             --use || true
 
       - name: Install QEMU + TPM tooling
@@ -1016,6 +1049,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # PINNED.md
 
+      - name: Resolve reproducible build environment
+        env:
+          ARCH: arm64
+        run: scripts/lib/reproducible-build.sh . "$GITHUB_SHA" "$ARCH" "$GITHUB_ENV"
+
       - name: Clean firmware publish workspace
         run: rm -rf art fw
 
@@ -1108,6 +1146,7 @@ jobs:
           fi
           docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
             --driver docker-container \
+            --driver-opt "image=${BUILDKIT_IMAGE}" \
             --use || true
 
       - name: Assemble board-scoped /firmware payload
@@ -1123,6 +1162,7 @@ jobs:
           REQUIRED_IMAGE: ${{ matrix.required_image }}
         run: |
           set -euxo pipefail
+          source scripts/lib/reproducible-build.sh
           rm -rf fw
           mkdir -p fw/firmware
           find art -name fip.bin        -exec cp {} fw/firmware/ \; -quit
@@ -1163,7 +1203,7 @@ jobs:
             echo "board=${BOARD}"
             echo "board_title=${BOARD_TITLE}"
             echo "yubios_commit=${GITHUB_SHA}"
-            echo "workflow_run=${GITHUB_RUN_ID}"
+            echo "source_date_epoch=${SOURCE_DATE_EPOCH}"
             echo "tfa_ref=${TFA_REF}"
             echo "optee_os_ref=${OPTEE_OS_REF} (feat/stmm-volatile-storage-ci)"
             echo "optee_ftpm_ref=${OPTEE_FTPM_REF} (feat/volatile-nv-ci)"
@@ -1178,7 +1218,12 @@ jobs:
             echo "uboot_defconfig=${UBOOT_DEFCONFIG}"
             echo "required_image=${REQUIRED_IMAGE}"
             echo "storage_note=${STORAGE_NOTE}"
+            if [ "$BOARD" = "qemu-arm64" ]; then
+              echo "signature_envelope=TF-A CREATE_KEYS=1; excluded from byte-for-byte proof"
+            fi
           } > fw/firmware/MANIFEST.txt
+          normalize_reproducible_tree fw/firmware
+          write_reproducible_checksums fw/firmware
           ls -l fw/firmware/
 
       - name: Log in to Docker Hub
