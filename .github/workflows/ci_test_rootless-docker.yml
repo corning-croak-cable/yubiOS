@@ -194,7 +194,7 @@ jobs:
           docker info --format '{{json .SecurityOptions}}' | tee /tmp/docker-security-options
           grep -q 'name=rootless' /tmp/docker-security-options
           docker buildx create --name hardened --driver docker-container \
-            --driver-opt "image=${BUILDKIT_IMAGE}" --use
+            --driver-opt "image=${BUILDKIT_IMAGE}" --use || true
           docker buildx inspect hardened
 
       - name: Verify rootless Docker across the step boundary (${{ matrix.arch }})

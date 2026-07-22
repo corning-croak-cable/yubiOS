@@ -105,7 +105,7 @@ flowchart TD
 Production and dev publication remains a two-stage operation: native runners publish immutable per-architecture tags through Bake, then existing `imagetools` jobs create the `<sha>`/`latest` and `dev-<sha>`/`dev` multi-architecture indexes. Firmware and installer targets publish directly with the registry exporter from privileged DHI container jobs that check out the policy-bound Bake definition and explicitly select their user-scoped `hardened` builders.
 
 Every material target receives the source commit epoch and deterministic Bake
-exporter contract. The amd64 production and dev jobs additionally build their
+exporter contract. The ARM64 production and dev jobs additionally build their
 real subject twice with isolated no-cache builders, compare canonical OCI
 layouts, assert config/history timestamps, and retain JSON evidence. Installer
 and firmware record the same epoch and normalize payload handoffs, while their

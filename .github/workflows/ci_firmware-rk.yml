@@ -217,7 +217,7 @@ jobs:
           docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
             --driver docker-container \
             --driver-opt "image=${BUILDKIT_IMAGE}" \
-            --use
+            --use || true
 
       - name: Install EDK2 build deps
         run: |
@@ -478,7 +478,7 @@ jobs:
           docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
             --driver docker-container \
             --driver-opt "image=${BUILDKIT_IMAGE}" \
-            --use
+            --use || true
 
       - name: Install full ARM64 firmware toolchain
         run: |
@@ -932,7 +932,7 @@ jobs:
           docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
             --driver docker-container \
             --driver-opt "image=${BUILDKIT_IMAGE}" \
-            --use
+            --use || true
 
       - name: Install QEMU + TPM tooling
         run: |
@@ -1147,7 +1147,7 @@ jobs:
           docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
             --driver docker-container \
             --driver-opt "image=${BUILDKIT_IMAGE}" \
-            --use
+            --use || true
 
       - name: Assemble board-scoped /firmware payload
         if: steps.rk_tpl_gate.outputs.skip_publish != '1'

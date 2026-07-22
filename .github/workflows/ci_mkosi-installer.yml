@@ -232,7 +232,7 @@ jobs:
           docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
             --driver docker-container \
             --driver-opt "image=${BUILDKIT_IMAGE}" \
-            --use
+            --use || true
 
       - name: Install mkosi build deps + mkosi (pinned yubi-OS fork)
         run: |
@@ -497,7 +497,7 @@ jobs:
           docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
             --driver docker-container \
             --driver-opt "image=${BUILDKIT_IMAGE}" \
-            --use
+            --use || true
 
       - name: Build and push installer OCI artifact through Bake
         env:
@@ -607,7 +607,7 @@ jobs:
           docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
             --driver docker-container \
             --driver-opt "image=${BUILDKIT_IMAGE}" \
-            --use
+            --use || true
 
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER }}" | docker -H unix:///run/docker-rootless/docker.sock login -u 0mniteck42 --password-stdin

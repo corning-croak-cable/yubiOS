@@ -72,7 +72,7 @@ for index in 0 1; do
         --name "$builder" \
         --driver docker-container \
         --driver-opt "image=${YUBIOS_BUILDKIT_IMAGE}" \
-        --use
+        --use || true
     docker buildx inspect "$builder" --bootstrap
 
     ARCH=$architecture \

@@ -51,7 +51,7 @@ setup() {
     [ "$(stat -c %Y "$root/sub/file")" = "$SOURCE_DATE_EPOCH" ]
 }
 
-@test "every docker-container builder is digest pinned and payload manifests are stable" {
+@test "builder setup is pinned and reusable, ARM64 proof is enforced, and manifests are stable" {
     run python3 - "$REPO_ROOT" <<'PY'
 import pathlib
 import re
@@ -70,6 +70,19 @@ for path in files:
         body = match.group("body")
         if "--driver docker-container" in body and "--driver-opt" not in body:
             failures.append(f"{path.relative_to(root)} has an unpinned builder")
+        line = text[match.end():].splitlines()[0]
+        if "|| true" not in line:
+            failures.append(f"{path.relative_to(root)} has a non-idempotent builder create")
+
+for relative, report in (
+    (".github/workflows/yubiOS-ci.yml", "production-arm64.json"),
+    (".github/workflows/ci_dev_image.yml", "dev-arm64.json"),
+):
+    text = (root / relative).read_text()
+    if "if: matrix.arch == 'arm64'" not in text or report not in text:
+        failures.append(f"{relative} does not gate reproducibility evidence on ARM64")
+    if "if: matrix.arch == 'amd64'" in text or report.replace("arm64", "amd64") in text:
+        failures.append(f"{relative} still gates reproducibility evidence on amd64")
 
 for relative in (
     ".github/workflows/ci_firmware-rk.yml",

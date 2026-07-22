@@ -742,7 +742,7 @@ flowchart TD
     POLICY --> BAKE --> OUT
 ```
 
-**Reproducibility rule:** Pinning and policy enforcement are necessary for bit-for-bit reproducibility, but they are not themselves proof of it. Package repository state, timestamps, compression, generated metadata, and attestations may still vary. A release may claim bit-for-bit reproducibility only after two isolated builds from the same declared inputs produce identical intended payload digests, with intentionally variable attestations compared separately and the evidence retained. Production and TEST-only dev OCI subjects now enforce that gate on amd64. Installer and firmware signing envelopes remain outside the claim until the documented random-signature and package-closure blockers are resolved.
+**Reproducibility rule:** Pinning and policy enforcement are necessary for bit-for-bit reproducibility, but they are not themselves proof of it. Package repository state, timestamps, compression, generated metadata, and attestations may still vary. A release may claim bit-for-bit reproducibility only after two isolated builds from the same declared inputs produce identical intended payload digests, with intentionally variable attestations compared separately and the evidence retained. Production and TEST-only dev OCI subjects now enforce that gate on ARM64, the project's primary architecture. Installer and firmware signing envelopes remain outside the claim until the documented random-signature and package-closure blockers are resolved.
 
 **Enforcement and review:**
 

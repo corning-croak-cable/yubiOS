@@ -286,7 +286,7 @@ run_inside_dhi() {
     docker info >/dev/null 2>&1 || die 'rootless Docker did not become ready within 60 seconds'
 
     docker buildx create --name hardened --driver docker-container \
-        --driver-opt "image=${YUBIOS_BUILDKIT_IMAGE}" --use
+        --driver-opt "image=${YUBIOS_BUILDKIT_IMAGE}" --use || true
     docker buildx inspect hardened --bootstrap
 
     export GIT_SHA PUSH=false

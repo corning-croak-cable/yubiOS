@@ -213,7 +213,7 @@ jobs:
           docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
             --driver docker-container \
             --driver-opt "image=${BUILDKIT_IMAGE}" \
-            --use
+            --use || true
 
       - name: Log in to Docker Hub
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
@@ -232,17 +232,17 @@ jobs:
             yubios-dev-ci
 
       - name: Prove two clean dev OCI builds match
-        if: matrix.arch == 'amd64'
+        if: matrix.arch == 'arm64'
         env:
-          REPRO_REPORT: repro-evidence/dev-amd64.json
+          REPRO_REPORT: repro-evidence/dev-arm64.json
         run: scripts/verify-reproducible-images.sh dev
 
       - name: Retain dev reproducibility evidence
-        if: matrix.arch == 'amd64'
+        if: matrix.arch == 'arm64'
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
         with:
-          name: reproducibility-dev-amd64-${{ github.sha }}
-          path: repro-evidence/dev-amd64.json
+          name: reproducibility-dev-arm64-${{ github.sha }}
+          path: repro-evidence/dev-arm64.json
           if-no-files-found: error
           retention-days: 30
 
@@ -346,7 +346,7 @@ jobs:
           docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
             --driver docker-container \
             --driver-opt "image=${BUILDKIT_IMAGE}" \
-            --use
+            --use || true
 
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER }}" | docker -H unix:///run/docker-rootless/docker.sock login -u 0mniteck42 --password-stdin

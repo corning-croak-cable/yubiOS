@@ -169,7 +169,7 @@ jobs:
           docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
             --driver docker-container \
             --driver-opt "image=${BUILDKIT_IMAGE}" \
-            --use
+            --use || true
 
       - name: Verify PQ hybrid TLS through the policy-bound Bake target
         run: |
