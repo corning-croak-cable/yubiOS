@@ -14,7 +14,7 @@ This map treats `.github/workflows/*.yml` as the source of truth for events, run
 | `.github/workflows/ci_firmware-rk.yml` | Orchestrated ARM64/RK firmware integration, reproducibility, and publish lane | yubi-OS firmware forks, pinned refs, primary/rebuild ARM64 board matrices, `yubiOS-bake.hcl` | `BL32_AP_MM.fd`, `fip.bin`, `flash.bin`, board-scoped unsigned-component equality reports, QEMU verification, optional original and board-scoped firmware tags through Bake |
 | `.github/workflows/yubiOS-ci.yml` | Production image build and publish | `Containerfile`, `yubiOS-bake.hcl`, `yubiOS.rego`, `usr/**`, unit tests | Bake build/smoke results; optional per-arch tags and multi-arch `0mniteck/yubios:<sha>` plus `latest` |
 | `.github/workflows/ci_dev_image.yml` | TEST-only image with software FIDO2 | `Containerfile.dev`, production target context, `yubiOS-bake.hcl`, `yubiOS.rego` | Bake build/smoke results; optional `0mniteck/yubios:dev-<sha>` and `dev` |
-| `.github/workflows/ci_mkosi-installer.yml` | mkosi disk image and installer artifact | `mkosi.conf`, `mkosi.conf.d/**`, SoftHSM PKCS#11 mock, `yubiOS-bake.hcl` | signed UKI verification, `yubiOS.raw.zst`, optional installer tags through Bake |
+| `.github/workflows/ci_mkosi-installer.yml` | mkosi disk image, ARM64 reproducibility proof, and installer artifact | `mkosi.conf`, `mkosi.conf.d/**`, primary/rebuild ARM64 jobs, SoftHSM PKCS#11 mock, `yubiOS-bake.hcl` | signed UKI verification, unsigned-subject equality report, `yubiOS.raw.zst`, optional installer tags through Bake |
 | `.github/workflows/ci_test_rootless-docker.yml` | Optional pre-image rootless Docker bootstrap validation | pinned Docker/Buildx downloads, pinned DHI container, amd64/arm64 matrix | rootless daemon and hardened Buildx builder verified across step boundaries, callback state |
 | `.github/workflows/ci_test_bootc-filesystem.yml` | Optional pre-image fresh-VM `bootc install to-filesystem` e2e | resolved yubiOS image digest, disposable GPT disk, externally mounted `/mnt` and `/mnt/boot` | amd64/arm64 install proof, retained mounts under `--skip-finalize`, proof that `root=` is omitted, callback state |
 | `.github/workflows/ci_test_pq_tls_verify.yml` | Optional pre-image PQ hybrid TLS drift check | `yubiOS-bake.hcl`, `yubiOS.rego`, pinned DHI base, live TLS endpoint | uncached, non-blocking Bake verification result, callback state |
@@ -101,7 +101,7 @@ flowchart TD
 | `yubiOS-ci.yml` | `yubios-ci` (`yubios` + `yubios-smoke`) | `yubios` | Containerized job creates `hardened` with the digest-pinned BuildKit daemon |
 | `ci_dev_image.yml` | `yubios-dev-ci` (`yubios-dev` + `yubios-dev-smoke`) | `yubios-dev` | Containerized job creates `hardened` with the digest-pinned BuildKit daemon |
 | `ci_firmware-rk.yml` | None unless publication is requested | `firmware` | Build/publish jobs use the pinned DHI and digest-pinned BuildKit daemon; the DHI comparison job consumes retained build artifacts without another image build |
-| `ci_mkosi-installer.yml` | DHI-contained mkosi validation plus artifact handoff | `installer` | Every build and publication job uses the pinned DHI and digest-pinned BuildKit daemon |
+| `ci_mkosi-installer.yml` | DHI-contained mkosi validation, ARM64 comparison, and artifact handoff | `installer` | Build and publication jobs use the pinned DHI and digest-pinned BuildKit daemon; the DHI proof job compares retained component records without another image build |
 | `ci_test_pq_tls_verify.yml` | `pq-tls-verify` | None; output is `cacheonly` | Containerized job creates `hardened` with the digest-pinned BuildKit daemon |
 
 Production and dev publication remains a two-stage operation: native runners publish immutable per-architecture tags through Bake, then existing `imagetools` jobs create the `<sha>`/`latest` and `dev-<sha>`/`dev` multi-architecture indexes. Firmware and installer targets publish directly with the registry exporter from privileged DHI container jobs that check out the policy-bound Bake definition and explicitly select their user-scoped `hardened` builders.
@@ -162,7 +162,9 @@ flowchart TD
     dev_out["per-arch dev-sha-arch\nimagetools -> dev-sha + dev"]
     vm["ci_test-vm.yml\nfinal sudo Podman + bcvk VM e2e\nARM64 DirectBoot credential"]
     vm_out["VM boot + mandatory CTAP2 hmac-secret\nLUKS2, homed, pam-u2f, ed25519-sk"]
-    installer["ci_mkosi-installer.yml DHI build job\nuser-scoped hardened builder\nmkosi + SoftHSM PKCS#11 signing"]
+    installer["ci_mkosi-installer.yml DHI build job\namd64 + primary/rebuild arm64\nmkosi + SoftHSM PKCS#11 signing"]
+    installer_proof["installer-reproducibility\ncompare root partition + initrd + manifest\nrecord signed envelope"]
+    installer_evidence["30-day ARM64 JSON evidence"]
     installer_payload["prepared installer payload\nworkflow artifact handoff"]
     installer_bake["DHI publish job\nuser-scoped hardened builder\nBake: installer + registry exporter"]
     installer_out["installer\ninstaller-sha"]
@@ -173,13 +175,14 @@ flowchart TD
     pq_out["non-blocking PQ TLS result"]
 
     prod_wf --> prod_bake --> prod_out
-    dev_wf --> dev_bake --> dev_out --> installer --> installer_payload --> installer_bake --> installer_out --> vm --> vm_out
+    dev_wf --> dev_bake --> dev_out --> installer --> installer_proof --> installer_evidence
+    installer_proof --> installer_payload --> installer_bake --> installer_out --> vm --> vm_out
     rootless --> bootc --> pq --> pq_bake --> pq_out
 ```
 
 The VM lane intentionally remains outside Bake. bcvk hardcodes Podman for its privileged ephemeral container and reads from Podman's local image store, so the workflow pulls the selected image with `sudo podman`. Guest SSH runs from inside that outer container. For ARM64 DirectBoot, the public root key is delivered without firmware through systemd's kernel-command-line `tmpfiles.extra` credential path. The TEST image pins passless v0.11.2 to an immutable commit and enables soft-fido2's implemented `hmac-secret` extension during the build. Once it boots, passless/CTAP2 enumeration and the LUKS2, homed, pam-u2f, and OpenSSH security-key operations are hard assertions rather than skip-tolerant coverage.
 
-The installer self-change push trigger validates mkosi without publishing. Only a `workflow_dispatch` with `Docker_push=true` uploads the prepared `inst/installer` payload, hands it to the containerized publish job, and packages it through the policy-bound Bake `installer` target.
+The installer self-change push trigger runs amd64 plus two clean ARM64 mkosi builds without publishing. The blocking proof compares the root partition, initrd, and package manifest while recording the random signing envelope. Only a `workflow_dispatch` with `Docker_push=true` uploads the primary prepared `inst/installer` payload after that proof, hands it to the containerized publish job, and packages it through the policy-bound Bake `installer` target.
 
 ## Optional Fork Component CI
 
@@ -438,22 +441,36 @@ The exact dispatch order is defined by the state-machine graph above. The detail
     - Job `ci-callback` — `Callback to ci.yml orchestrator`
       - Step 1: `Report current state to ci.yml`
   - [`ci_mkosi-installer.yml`](.github/workflows/ci_mkosi-installer.yml) — workflow: `yubiOS mkosi-installer`
-    - Job `build` — `mkosi disk image — SoftHSM PKCS#11 signed UKI`
-      - Step 1: `Checkout`
-      - Step 2: `Resolve reproducible build environment`
-      - Step 3: `Install docker CLI + buildx`
-      - Step 4: `Install mkosi build deps + mkosi (yubi-OS fork @ main)`
-      - Step 5: `SoftHSM token in /run — mock of YubiKey PIV slot 9c`
-      - Step 6: `Build disk image (minimal profile, PKCS#11-signed UKI)`
-      - Step 7: `Verify UKI is signed by the PKCS#11 (SoftHSM) key`
-      - Step 8: `Assemble /installer payload + MANIFEST`
-      - Step 9: `Upload prepared installer payload`
-    - Job `installer-publish` — `Publish installer OCI artifact`
-      - Step 1: `Checkout`
-      - Step 2: `Resolve reproducible build environment`
-      - Step 3: `Download prepared installer payload`
-      - Step 4: `Install docker CLI + buildx`
-      - Step 5: `Build and push installer OCI artifact through Bake`
+    - Job `build` — `mkosi disk image — SoftHSM PKCS#11 signed UKI (${{ matrix.artifact_suffix }})`
+      - Step 1: `Install git for checkout and reproducibility`
+      - Step 2: `Checkout`
+      - Step 3: `Resolve reproducible build environment`
+      - Step 4: `Install docker CLI + buildx (${{ matrix.arch }})`
+      - Step 5: `Install mkosi build deps + mkosi (pinned yubi-OS fork)`
+      - Step 6: `SoftHSM token in /run — mock of YubiKey PIV slot 9c`
+      - Step 7: `Build disk image (minimal profile, PKCS#11-signed UKI)`
+      - Step 8: `Verify UKI is signed by the PKCS#11 (SoftHSM) key`
+      - Step 9: `Assemble /installer payload + MANIFEST`
+      - Step 10: `Record unsigned installer subjects and signing boundary`
+      - Step 11: `Upload installer reproducibility subject`
+      - Step 12: `Upload prepared installer payload`
+    - Job `installer-reproducibility` — `Prove unsigned mkosi installer subjects (arm64)`
+      - Step 1: `Install git for checkout and reproducibility`
+      - Step 2: `Checkout`
+      - Step 3: `Resolve reproducible build environment`
+      - Step 4: `Install verification runtime`
+      - Step 5: `Download primary installer subject`
+      - Step 6: `Download rebuilt installer subject`
+      - Step 7: `Prove two clean unsigned installer builds match`
+      - Step 8: `Retain installer reproducibility evidence`
+    - Job `installer-publish` — `Publish installer OCI artifact (${{ matrix.arch }})`
+      - Step 1: `Install git for checkout and reproducibility`
+      - Step 2: `Checkout`
+      - Step 3: `Resolve reproducible build environment`
+      - Step 4: `Download prepared installer payload`
+      - Step 5: `Install docker CLI + buildx (${{ matrix.arch }})`
+      - Step 6: `Build and push installer OCI artifact through Bake`
+    - Job `merge-manifest` — `Merge installer multi-arch manifest`
     - Job `ci-callback` — `Callback to ci.yml orchestrator`
       - Step 1: `Report current state to ci.yml`
   - [`ci_test_pq_tls_verify.yml`](.github/workflows/ci_test_pq_tls_verify.yml) — workflow: `TEST - PQ hybrid TLS verification (ADR-025)`

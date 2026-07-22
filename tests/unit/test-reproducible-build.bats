@@ -178,6 +178,106 @@ PY
     [ "$status" -eq 0 ]
 }
 
+@test "installer proof compares unsigned subjects and records the signing envelope" {
+    configure_reproducible_build "$REPO_ROOT" HEAD arm64
+    proof_root="$BATS_TEST_TMPDIR/installer-proof"
+    report="$BATS_TEST_TMPDIR/installer-arm64.json"
+
+    python3 - "$proof_root" "$GIT_SHA" "$SOURCE_DATE_EPOCH" "$YUBIOS_MKOSI_SEED" <<'PY'
+import hashlib
+import pathlib
+import sys
+
+root = pathlib.Path(sys.argv[1])
+source = sys.argv[2]
+epoch = sys.argv[3]
+seed = sys.argv[4]
+
+unsigned = {
+    "initrd.cpio.zst": b"initrd",
+    "yubiOS.manifest": b'{"packages": ["systemd"]}\n',
+    "yubiOS.root-arm64.raw": b"root-partition",
+}
+for variant in ("primary", "rebuild"):
+    tree = root / variant
+    tree.mkdir(parents=True)
+    (tree / "yubiOS.manifest").write_bytes(unsigned["yubiOS.manifest"])
+    (tree / "UNSIGNED-COMPONENTS").write_text(
+        "".join(
+            f"{hashlib.sha256(content).hexdigest()} {len(content)} {name}\n"
+            for name, content in sorted(unsigned.items())
+        )
+    )
+    excluded = {
+        "ci-secure-boot-cert.pem": f"certificate-{variant}".encode(),
+        "yubiOS.efi": f"uki-{variant}".encode(),
+        "yubiOS.esp.raw": f"esp-{variant}".encode(),
+        "yubiOS.raw": f"disk-{variant}".encode(),
+    }
+    (tree / "EXCLUDED-SIGNED-COMPONENTS").write_text(
+        "".join(
+            f"{hashlib.sha256(content).hexdigest()} {len(content)} {name}\n"
+            for name, content in sorted(excluded.items())
+        )
+    )
+    (tree / "METADATA.txt").write_text(
+        "\n".join(
+            (
+                "architecture=arm64",
+                f"build_variant={variant}",
+                f"yubios_commit={source}",
+                f"source_date_epoch={epoch}",
+                f"mkosi_seed={seed}",
+                "mkosi_source=b2b1ea6ad59621a6f955e4cbceee72580a91889a",
+                "scope=unsigned root partition, initrd, and package manifest",
+                "signature_boundary=random SoftHSM certificate, UKI, ESP, and full disk wrapper",
+                "",
+            )
+        )
+    )
+PY
+
+    run "$REPO_ROOT/scripts/verify-reproducible-installer.py" \
+        "$proof_root/primary" "$proof_root/rebuild" "$report"
+    [ "$status" -eq 0 ]
+    run python3 - "$report" <<'PY'
+import json
+import sys
+
+report = json.load(open(sys.argv[1]))
+assert report["result"] == "match"
+assert report["isolated_builds"] == 2
+assert len(report["compared"]) == 3
+assert len(report["excluded"]) == 4
+assert all(not item["matched"] for item in report["excluded"])
+PY
+    [ "$status" -eq 0 ]
+
+    python3 - "$proof_root/rebuild/UNSIGNED-COMPONENTS" <<'PY'
+import pathlib
+import sys
+
+path = pathlib.Path(sys.argv[1])
+path.write_text(
+    path.read_text().replace(
+        next(line for line in path.read_text().splitlines() if line.endswith(" yubiOS.root-arm64.raw")),
+        f"{'0' * 64} 14 yubiOS.root-arm64.raw",
+    )
+)
+PY
+    run "$REPO_ROOT/scripts/verify-reproducible-installer.py" \
+        "$proof_root/primary" "$proof_root/rebuild" "$report"
+    [ "$status" -ne 0 ]
+    [[ "$output" == *"yubiOS.root-arm64.raw"* ]]
+    run python3 - "$report" <<'PY'
+import json
+import sys
+
+assert json.load(open(sys.argv[1]))["result"] == "mismatch"
+PY
+    [ "$status" -eq 0 ]
+}
+
 @test "builder setup is pinned and reusable, ARM64 proof is enforced, and manifests are stable" {
     run python3 - "$REPO_ROOT" <<'PY'
 import pathlib
@@ -200,6 +300,7 @@ for relative in (
 bake = (root / "yubiOS-bake.hcl").read_text()
 proof = (root / "scripts/verify-reproducible-images.sh").read_text()
 firmware_proof = (root / "scripts/verify-reproducible-firmware.py").read_text()
+installer_proof = (root / "scripts/verify-reproducible-installer.py").read_text()
 diagnostic = root / "scripts/lib/diagnose-oci-layout.py"
 containerfile = (root / "Containerfile").read_text()
 passless = (root / "mkosi.conf.d/test/install-swu2f-authenticator.sh").read_text()
@@ -303,6 +404,24 @@ for board in ("qemu-arm64", "rockpro64-rk3399", "rock5b-rk3588"):
 if "CREATE_KEYS=1" not in firmware_proof or "SIGNED_QEMU_REASON" not in firmware_proof:
     failures.append("firmware proof does not preserve the QEMU signing boundary")
 
+installer_workflow = (root / ".github/workflows/ci_mkosi-installer.yml").read_text()
+if installer_workflow.count("proof_variant: rebuild") != 1:
+    failures.append("installer workflow does not run a second clean ARM64 mkosi build")
+if "installer-reproducibility:" not in installer_workflow:
+    failures.append("installer workflow has no blocking unsigned-subject comparison job")
+if "needs: [build, installer-reproducibility]" not in installer_workflow:
+    failures.append("installer publication is not blocked on installer reproducibility")
+if "repro-evidence/installer-arm64.json" not in installer_workflow:
+    failures.append("installer workflow retains no ARM64 reproducibility evidence")
+if "scripts/verify-reproducible-installer.py" not in installer_workflow.split("workflow_dispatch:", 1)[0]:
+    failures.append("installer verifier changes do not trigger the installer workflow")
+for subject in ("yubiOS.root-arm64.raw", "initrd.cpio.zst", "yubiOS.manifest"):
+    if subject not in installer_proof:
+        failures.append(f"installer proof omits unsigned subject: {subject}")
+for excluded in ("ci-secure-boot-cert.pem", "yubiOS.efi", "yubiOS.esp.raw", "yubiOS.raw"):
+    if excluded not in installer_proof:
+        failures.append(f"installer proof omits signed-envelope boundary: {excluded}")
+
 for relative in (
     ".github/workflows/ci_firmware-rk.yml",
     ".github/workflows/ci_mkosi-installer.yml",
@@ -362,8 +481,8 @@ unit_body = next(
 unit_positions = (unit_body.find(install), unit_body.find("uses: actions/checkout@"))
 if not unit_positions[0] < unit_positions[1] or unit_positions[0] < 0:
     failures.append(f"{workflow_paths[0]}:unit-tests must install git before checkout")
-if resolver_jobs != 10:
-    failures.append(f"expected 10 resolver jobs, found {resolver_jobs}")
+if resolver_jobs != 11:
+    failures.append(f"expected 11 resolver jobs, found {resolver_jobs}")
 
 if failures:
     print("\n".join(failures), file=sys.stderr)

@@ -219,7 +219,7 @@ The project keeps both build paths active:
 | Path | Output | Purpose |
 |---|---|---|
 | bootc / OCI | `docker.io/0mniteck/yubios:latest`, `<sha>`, and test tags | Day-2 update stream and VM test source |
-| mkosi | signed UKI and disk image | Installer and image-level validation |
+| mkosi | signed UKI and disk image | Installer validation plus retained ARM64 unsigned-subject equality evidence |
 | firmware OCI tags | `firmware-qemu-arm64`, `firmware-rock5b-rk3588`, `firmware-rockpro64-rk3399`, and per-commit variants | Variant-scoped ARM64 secure-world bundle publication |
 | dev OCI tags | `dev`, `dev-<sha>` | TEST-only swu2f-enabled boot validation image |
 

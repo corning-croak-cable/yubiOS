@@ -37,6 +37,7 @@ on:
       - 'mkosi.conf.d/**'
       - 'mkosi.extra/**'
       - 'scripts/lib/reproducible-build.sh'
+      - 'scripts/verify-reproducible-installer.py'
       - 'yubiOS-bake.hcl'
   workflow_dispatch:
     inputs:
@@ -109,7 +110,7 @@ env:
 
 jobs:
   build:
-    name: mkosi disk image — SoftHSM PKCS#11 signed UKI (${{ matrix.arch }})
+    name: mkosi disk image — SoftHSM PKCS#11 signed UKI (${{ matrix.artifact_suffix }})
     strategy:
       fail-fast: false
       matrix:
@@ -119,11 +120,25 @@ jobs:
             runner: ubuntu-24.04
             docker_arch: x86_64
             buildx_arch: linux-amd64
+            artifact_suffix: amd64
+            proof_variant: none
+            publish: true
           - arch: arm64
             mkosi_arch: arm64
             runner: ubuntu-24.04-arm
             docker_arch: aarch64
             buildx_arch: linux-arm64
+            artifact_suffix: arm64
+            proof_variant: primary
+            publish: true
+          - arch: arm64
+            mkosi_arch: arm64
+            runner: ubuntu-24.04-arm
+            docker_arch: aarch64
+            buildx_arch: linux-arm64
+            artifact_suffix: arm64-repro
+            proof_variant: rebuild
+            publish: false
     runs-on: ${{ matrix.runner }}
     defaults:
       run:
@@ -362,19 +377,141 @@ jobs:
           write_reproducible_checksums inst/installer
           ls -l inst/installer/
 
-      - name: Upload prepared installer payload
-        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
+      - name: Record unsigned installer subjects and signing boundary
+        if: matrix.proof_variant != 'none'
+        env:
+          BUILD_VARIANT: ${{ matrix.proof_variant }}
+        run: |
+          set -euxo pipefail
+          proof_dir=installer-repro
+          rm -rf "$proof_dir"
+          mkdir -p "$proof_dir"
+
+          root_image=$(find mkosi.output -maxdepth 1 -type f -name 'yubiOS.root-*.raw' -print)
+          test "$(printf '%s\n' "$root_image" | sed '/^$/d' | wc -l)" -eq 1
+          test -s "$root_image"
+          test -s mkosi.output/initrd.cpio.zst
+          test -s mkosi.output/yubiOS.manifest
+
+          record_component() {
+            local source=$1
+            local subject=$2
+            printf '%s %s %s\n' \
+              "$(sha256sum "$source" | cut -d ' ' -f 1)" \
+              "$(stat -c %s "$source")" \
+              "$subject"
+          }
+
+          {
+            record_component mkosi.output/initrd.cpio.zst initrd.cpio.zst
+            record_component mkosi.output/yubiOS.manifest yubiOS.manifest
+            record_component "$root_image" yubiOS.root-arm64.raw
+          } | LC_ALL=C sort -k3,3 > "$proof_dir/UNSIGNED-COMPONENTS"
+          cp mkosi.output/yubiOS.manifest "$proof_dir/yubiOS.manifest"
+
+          {
+            record_component mkosi.secure-boot.pem ci-secure-boot-cert.pem
+            record_component mkosi.output/yubiOS.efi yubiOS.efi
+            record_component mkosi.output/yubiOS.esp.raw yubiOS.esp.raw
+            record_component mkosi.output/yubiOS.raw yubiOS.raw
+          } | LC_ALL=C sort -k3,3 > "$proof_dir/EXCLUDED-SIGNED-COMPONENTS"
+
+          {
+            echo "architecture=${{ matrix.arch }}"
+            echo "build_variant=${BUILD_VARIANT}"
+            echo "yubios_commit=${GITHUB_SHA}"
+            echo "source_date_epoch=${SOURCE_DATE_EPOCH}"
+            echo "mkosi_seed=${YUBIOS_MKOSI_SEED}"
+            echo "mkosi_source=b2b1ea6ad59621a6f955e4cbceee72580a91889a"
+            echo "scope=unsigned root partition, initrd, and package manifest"
+            echo "signature_boundary=random SoftHSM certificate, UKI, ESP, and full disk wrapper"
+          } > "$proof_dir/METADATA.txt"
+          source scripts/lib/reproducible-build.sh
+          normalize_reproducible_tree "$proof_dir"
+
+      - name: Upload installer reproducibility subject
+        if: matrix.proof_variant != 'none'
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
         with:
-          name: mkosi-installer-payload-${{ matrix.arch }}
+          name: mkosi-installer-repro-${{ matrix.proof_variant }}
+          path: installer-repro
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 1
+
+      - name: Upload prepared installer payload
+        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true && matrix.publish == true
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
+        with:
+          name: mkosi-installer-payload-${{ matrix.artifact_suffix }}
           path: inst/installer
           if-no-files-found: error
           compression-level: 0
           retention-days: 1
 
+  installer-reproducibility:
+    name: Prove unsigned mkosi installer subjects (arm64)
+    needs: build
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        shell: bash
+    container:
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6
+    steps:
+      - name: Install git for checkout and reproducibility
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends git
+
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0 (PINNED.md)
+
+      - name: Resolve reproducible build environment
+        env:
+          ARCH: arm64
+        run: scripts/lib/reproducible-build.sh . "$GITHUB_SHA" "$ARCH" "$GITHUB_ENV"
+
+      - name: Install verification runtime
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends python3
+
+      - name: Download primary installer subject
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
+        with:
+          name: mkosi-installer-repro-primary
+          path: installer-repro/primary
+
+      - name: Download rebuilt installer subject
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
+        with:
+          name: mkosi-installer-repro-rebuild
+          path: installer-repro/rebuild
+
+      - name: Prove two clean unsigned installer builds match
+        run: |
+          scripts/verify-reproducible-installer.py \
+            installer-repro/primary \
+            installer-repro/rebuild \
+            repro-evidence/installer-arm64.json
+
+      - name: Retain installer reproducibility evidence
+        if: always()
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
+        with:
+          name: reproducibility-installer-arm64
+          path: repro-evidence/installer-arm64.json
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+
   installer-publish:
     name: Publish installer OCI artifact (${{ matrix.arch }})
-    needs: build
+    needs: [build, installer-reproducibility]
     if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
     strategy:
       fail-fast: false
@@ -640,7 +777,7 @@ jobs:
   ci-callback:
     name: Callback to ci.yml orchestrator
     if: ${{ always() && github.event_name == 'workflow_dispatch' && inputs.ci_callback == true }}
-    needs: [build, installer-publish, merge-manifest]
+    needs: [build, installer-reproducibility, installer-publish, merge-manifest]
     runs-on: ubuntu-24.04
     permissions:
       contents: read
