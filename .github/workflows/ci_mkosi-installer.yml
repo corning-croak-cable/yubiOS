@@ -33,6 +33,11 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/ci_mkosi-installer.yml' # self-change trigger for validating workflow edits
+      - 'mkosi.conf'
+      - 'mkosi.conf.d/**'
+      - 'mkosi.extra/**'
+      - 'scripts/lib/reproducible-build.sh'
+      - 'yubiOS-bake.hcl'
   workflow_dispatch:
     inputs:
       reason:
@@ -99,6 +104,9 @@ permissions:
   contents: read
   actions: write
 
+env:
+  BUILDKIT_IMAGE: docker.io/moby/buildkit:v0.31.2@sha256:2f5adac4ecd194d9f8c10b7b5d7bceb5186853db1b26e5abd3a657af0b7e26ec
+
 jobs:
   build:
     name: mkosi disk image — SoftHSM PKCS#11 signed UKI (${{ matrix.arch }})
@@ -131,6 +139,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0 (PINNED.md)
+
+      - name: Resolve reproducible build environment
+        env:
+          ARCH: ${{ matrix.arch }}
+        run: scripts/lib/reproducible-build.sh . "$GITHUB_SHA" "$ARCH" "$GITHUB_ENV"
 
       - name: Install docker CLI + buildx (${{ matrix.arch }})
         run: |
@@ -218,7 +231,8 @@ jobs:
           fi
           docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
             --driver docker-container \
-            --use || true
+            --driver-opt "image=${BUILDKIT_IMAGE}" \
+            --use
 
       - name: Install mkosi build deps + mkosi (pinned yubi-OS fork)
         run: |
@@ -254,7 +268,7 @@ jobs:
           # systemd-sbsign inside the tools tree without any overlay tricks.
           mkdir -p /run/yubios-hsm/tokens
           openssl req -x509 -newkey rsa:3072 -sha256 -days 365 -nodes \
-            -subj "/CN=yubiOS CI Secure Boot (SoftHSM mock of PIV 9c)/" \
+            -subj "/CN=yubiOS reproducibility test Secure Boot (non-production)/" \
             -keyout sb.key -out mkosi.secure-boot.pem
           openssl pkcs8 -topk8 -nocrypt -in sb.key -out sb.p8
           printf 'directories.tokendir = /run/yubios-hsm/tokens\nobjectstore.backend = file\n' \
@@ -271,7 +285,11 @@ jobs:
       - name: Build disk image (minimal profile, PKCS#11-signed UKI)
         run: |
           set -euxo pipefail
+          rm -rf inst mkosi.output mkosi.cache
           mkosi \
+            --source-date-epoch "$SOURCE_DATE_EPOCH" \
+            --seed "$YUBIOS_MKOSI_SEED" \
+            --incremental=no \
             --distribution fedora \
             --release 45 \
             --architecture "${{ matrix.mkosi_arch }}" \
@@ -308,30 +326,35 @@ jobs:
       - name: Assemble /installer payload + MANIFEST
         run: |
           set -euxo pipefail
+          source scripts/lib/reproducible-build.sh
           mkdir -p inst/installer
           # The full disk image is ImageId.raw (yubiOS.raw); *.esp.raw and
           # *.root-*.raw are SplitArtifacts partition splits — don't ship those
           # as the installer payload.
           raw=mkosi.output/yubiOS.raw
           test -s "$raw"
-          zstd -T0 -8 --force -o "inst/installer/$(basename "$raw").zst" "$raw"
+          zstd -T1 -8 --force -o "inst/installer/$(basename "$raw").zst" "$raw"
           find mkosi.output -maxdepth 1 -name '*.efi' -type f -exec cp {} inst/installer/ \;
           find mkosi.output -maxdepth 1 -name '*manifest*' -type f -exec cp {} inst/installer/ \; || true
           cp mkosi.secure-boot.pem inst/installer/ci-secure-boot-cert.pem
           {
-            echo "yubiOS mkosi installer image (minimal profile) — CI build"
+            echo "yubiOS mkosi installer image (minimal profile)"
             echo "architecture=${{ matrix.arch }}"
             echo "yubios_commit=${GITHUB_SHA}"
-            echo "workflow_run=${GITHUB_RUN_ID}"
+            echo "source_date_epoch=${SOURCE_DATE_EPOCH}"
+            echo "mkosi_seed=${YUBIOS_MKOSI_SEED}"
             echo "mkosi_source=https://github.com/yubi-OS/mkosi@b2b1ea6ad59621a6f955e4cbceee72580a91889a (feature/yubiOS-profile provenance)"
             echo "signing=UKI signed via SecureBootKeySource=provider:pkcs11 + systemd-sbsign"
-            echo "NOTE: CI signing key is a SoftHSM mock of YubiKey PIV slot 9c."
+            echo "signature_envelope=random non-production SoftHSM key; excluded from byte-for-byte proof"
+            echo "NOTE: Signing key is a SoftHSM mock of YubiKey PIV slot 9c."
             echo "Production images are signed with the real YubiKey (ADR-008); this"
             echo "image validates the build + PKCS#11 signing path, not a production key."
             echo "Install flow (ADR-022): write this image to disk, boot; the installed"
             echo "system tracks 0mniteck/yubios:latest via bootc. ARM64 targets flash"
             echo "0mniteck/yubios:firmware first (secure world) per ADR-018/019/020."
           } > inst/installer/MANIFEST.txt
+          normalize_reproducible_tree inst/installer
+          write_reproducible_checksums inst/installer
           ls -l inst/installer/
 
       - name: Upload prepared installer payload
@@ -375,6 +398,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # PINNED.md
+
+      - name: Resolve reproducible build environment
+        env:
+          ARCH: ${{ matrix.arch }}
+        run: scripts/lib/reproducible-build.sh . "$GITHUB_SHA" "$ARCH" "$GITHUB_ENV"
 
       - name: Download prepared installer payload
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
@@ -468,7 +496,8 @@ jobs:
           fi
           docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
             --driver docker-container \
-            --use || true
+            --driver-opt "image=${BUILDKIT_IMAGE}" \
+            --use
 
       - name: Build and push installer OCI artifact through Bake
         env:
@@ -479,6 +508,9 @@ jobs:
           PUSH: 'true'
         run: |
           set -euxo pipefail
+          source scripts/lib/reproducible-build.sh
+          (cd inst/installer && sha256sum --check --strict SHA256SUMS)
+          normalize_reproducible_tree inst/installer
           echo "${{ secrets.DOCKER }}" | docker -H unix:///run/docker-rootless/docker.sock login -u 0mniteck42 --password-stdin
           docker -H unix:///run/docker-rootless/docker.sock buildx bake \
             --builder hardened \
@@ -574,7 +606,8 @@ jobs:
           fi
           docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
             --driver docker-container \
-            --use || true
+            --driver-opt "image=${BUILDKIT_IMAGE}" \
+            --use
 
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER }}" | docker -H unix:///run/docker-rootless/docker.sock login -u 0mniteck42 --password-stdin

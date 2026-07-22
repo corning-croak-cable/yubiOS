@@ -10,6 +10,8 @@ readonly BUILDX_VERSION='0.35.0'
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
 readonly SCRIPT_DIR
 
+# shellcheck source=scripts/lib/reproducible-build.sh
+source "$SCRIPT_DIR/lib/reproducible-build.sh"
 # shellcheck source=scripts/lib/local-build-installer.sh
 source "$SCRIPT_DIR/lib/local-build-installer.sh"
 # shellcheck source=scripts/lib/local-build-firmware.sh
@@ -31,6 +33,8 @@ using a rootless Docker-in-Docker daemon and the hardened Buildx Bake builder.
   firmware-qemu-arm64          Build only the QEMU ARM64 firmware path.
   firmware-rockpro64-rk3399    Build only the ROCKPro64/RK3399 firmware path.
   firmware-rock5b-rk3588       Build only the ROCK 5B/RK3588 firmware path.
+  repro-production             Prove two clean production OCI layouts match.
+  repro-dev                    Prove two clean TEST-only dev OCI layouts match.
 
 Set LOCAL_TAG to change the local tag prefix (default: local). For example,
 LOCAL_TAG=review scripts/build-local-images.sh production creates
@@ -47,7 +51,7 @@ die() {
 
 resolve_mode() {
     case "${1:-all}" in
-        all|images|production|dev|installer|firmware|firmware-qemu-arm64|firmware-rockpro64-rk3399|firmware-rock5b-rk3588)
+        all|images|production|dev|installer|firmware|firmware-qemu-arm64|firmware-rockpro64-rk3399|firmware-rock5b-rk3588|repro-production|repro-dev)
             MODE=${1:-all}
             ;;
         -h|--help)
@@ -132,6 +136,14 @@ run_selected_builds() {
         firmware-rock5b-rk3588)
             build_local_firmware rock5b-rk3588
             ;;
+        repro-production)
+            REPRO_REPORT="/output/reproducibility-production-${ARCH}.json" \
+                /workspace/scripts/verify-reproducible-images.sh production
+            ;;
+        repro-dev)
+            REPRO_REPORT="/output/reproducibility-dev-${ARCH}.json" \
+                /workspace/scripts/verify-reproducible-images.sh dev
+            ;;
     esac
 }
 
@@ -200,9 +212,10 @@ run_inside_dhi() {
 
     apt-get update -qq
     apt-get install -y -qq --no-install-recommends \
-        ca-certificates curl fuse-overlayfs git iproute2 iptables nftables \
+        ca-certificates curl fuse-overlayfs git iproute2 iptables jq nftables \
         passwd procps slirp4netns uidmap util-linux
     command -v wcurl >/dev/null 2>&1 || die 'the pinned DHI image does not provide wcurl'
+    configure_reproducible_build /workspace "$GIT_SHA" "$ARCH"
 
     download_dir=$(mktemp -d)
     docker_tools_dir=/opt/yubios-docker-tools
@@ -272,7 +285,8 @@ run_inside_dhi() {
     done
     docker info >/dev/null 2>&1 || die 'rootless Docker did not become ready within 60 seconds'
 
-    docker buildx create --name hardened --driver docker-container --use
+    docker buildx create --name hardened --driver docker-container \
+        --driver-opt "image=${YUBIOS_BUILDKIT_IMAGE}" --use
     docker buildx inspect hardened --bootstrap
 
     export GIT_SHA PUSH=false
@@ -280,6 +294,11 @@ run_inside_dhi() {
     ARTIFACT_REPO=
     run_selected_builds "$mode"
 
+    if [[ "$mode" == repro-production || "$mode" == repro-dev ]]; then
+        compgen -G '/output/reproducibility-*.json' >/dev/null || \
+            die 'the reproducibility proof produced no evidence report'
+        return
+    fi
     ((${#IMAGE_TAGS[@]} > 0)) || die 'the selected path produced no local image tags'
     for image_tag in "${IMAGE_TAGS[@]}"; do
         docker image inspect "$image_tag" >/dev/null
@@ -343,6 +362,14 @@ run_on_host() {
         "$DHI_IMAGE" \
         /bin/bash /workspace/scripts/build-local-images.sh "$mode")
     docker "${docker_args[@]}"
+
+    if [[ "$mode" == repro-production || "$mode" == repro-dev ]]; then
+        mkdir -p "$repo_root/repro-evidence"
+        cp -- "$output_dir"/reproducibility-*.json "$repo_root/repro-evidence/"
+        printf '\nReproducibility evidence:\n'
+        printf '  %s\n' "$repo_root"/repro-evidence/reproducibility-*.json
+        return
+    fi
 
     docker image load --input "$output_dir/yubios-local-images.tar"
     printf '\nLoaded local image tags:\n'

@@ -67,7 +67,11 @@ yubiOS currently publishes a pre-launch multi-arch [bootc](https://github.com/bo
 docker pull 0mniteck/yubios:latest
 ```
 
-For reproducible installs, pin the image by the digest produced by the latest green `yubiOS-ci.yml` publish for the intended release. Do not treat a run-specific digest in an old PR or research note as evergreen.
+For repeatable artifact selection, pin the image by the digest produced by the
+latest green `yubiOS-ci.yml` publish for the intended release. A pinned digest
+does not by itself prove the image was reproducibly built; the CI two-build
+evidence described below does. Do not treat a run-specific digest in an old PR
+or research note as evergreen.
 
 > **Warning:** yubiOS is groundwork / work in progress. The install flows below can destroy data on the target disk. Test on disposable hardware or a VM, back up recovery material first, and use the current [TODO.md](TODO.md), [BLOCKERS.md](BLOCKERS.md), and [PR.md](PR.md) before treating any image as safe for broader use.
 
@@ -112,6 +116,8 @@ shorter production + dev pair or select one path:
 ROCKCHIP_TPL=/path/to/real/rk3588-ddr-tpl.bin \
   ./scripts/build-local-images.sh firmware-rock5b-rk3588
 LOCAL_TAG=review ./scripts/build-local-images.sh production
+./scripts/build-local-images.sh repro-production
+./scripts/build-local-images.sh repro-dev
 ```
 
 Every mode launches the [PINNED.md](PINNED.md) DHI image as a privileged outer
@@ -120,6 +126,15 @@ Buildx 0.35.0 used by CI, starts a rootless Docker-in-Docker daemon, and selects
 the policy-bound `hardened` builder. Source refs used by the artifact paths are
 also pinned in `PINNED.md`. The entrypoint never logs in or pushes; it transfers
 only the selected local tags into the host Docker daemon.
+
+The `repro-production` and `repro-dev` modes are proof runs rather than image
+loads. Each performs two no-cache builds with separate digest-pinned BuildKit
+daemons, exports canonical OCI layouts, and requires their manifest, config,
+and layer bytes to match. It also asserts that OCI config/history timestamps
+equal the source commit epoch. Successful JSON reports are written to
+`repro-evidence/`; the amd64 CI lanes run the same gate and retain their reports.
+See [the reproducibility contract](refs/reproducible-builds-2026-07-22.md) for
+the signing, package-snapshot, EDK2, and RK3588 TPL boundaries.
 
 | Mode | Default host-loaded tags |
 |---|---|

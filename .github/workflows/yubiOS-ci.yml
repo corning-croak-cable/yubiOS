@@ -17,12 +17,17 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/yubiOS-ci.yml'
+      - '.dockerignore'
       - 'Containerfile'
+      - 'Containerfile.dev'
+      - 'scripts/lib/reproducible-build.sh'
+      - 'scripts/verify-reproducible-images.sh'
       - 'yubiOS-bake.hcl'
       - 'yubiOS.rego'
       - 'usr/**'
       - 'tests/unit/**'
       - 'mkosi.*'
+      - 'mkosi.extra/**'
   workflow_dispatch:
     inputs:
       Docker_push:
@@ -85,6 +90,9 @@ permissions:
   contents: read
   actions: write
 
+env:
+  BUILDKIT_IMAGE: docker.io/moby/buildkit:v0.31.2@sha256:2f5adac4ecd194d9f8c10b7b5d7bceb5186853db1b26e5abd3a657af0b7e26ec
+
 jobs:
   # ── Arch-neutral lint (run once on amd64; linting shell/Dockerfile text is
   #    architecture-independent, so matrixing would just burn a second runner). ──
@@ -102,7 +110,8 @@ jobs:
         run: |
           apt-get update -qq
           apt-get install -y -qq shellcheck
-          find usr/lib/yubiOS -name '*.sh' | xargs shellcheck --source-path=usr/lib/yubiOS
+          find usr/lib/yubiOS scripts -name '*.sh' -print0 | \
+            xargs -0 shellcheck --source-path=usr/lib/yubiOS --source-path=scripts
 
   hadolint:
     runs-on: ubuntu-24.04
@@ -194,11 +203,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
+      - name: Resolve reproducible build environment
+        env:
+          ARCH: ${{ matrix.arch }}
+        run: scripts/lib/reproducible-build.sh . "$GITHUB_SHA" "$ARCH" "$GITHUB_ENV"
+
       - name: Install docker CLI + buildx (${{ matrix.arch }})
         run: |
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends \
-            git curl iproute2 iptables nftables passwd procps util-linux \
+            git curl iproute2 iptables jq nftables passwd procps util-linux \
             uidmap slirp4netns fuse-overlayfs
           wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-29.6.0.tgz"
           wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-rootless-extras-29.6.0.tgz"
@@ -280,7 +294,8 @@ jobs:
           fi
           docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
             --driver docker-container \
-            --use || true
+            --driver-opt "image=${BUILDKIT_IMAGE}" \
+            --use
 
       - name: Log in to Docker Hub
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
@@ -298,6 +313,21 @@ jobs:
             --builder hardened \
             --file yubiOS-bake.hcl \
             yubios-ci
+
+      - name: Prove two clean production OCI builds match
+        if: matrix.arch == 'amd64'
+        env:
+          REPRO_REPORT: repro-evidence/production-amd64.json
+        run: scripts/verify-reproducible-images.sh production
+
+      - name: Retain production reproducibility evidence
+        if: matrix.arch == 'amd64'
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
+        with:
+          name: reproducibility-production-amd64-${{ github.sha }}
+          path: repro-evidence/production-amd64.json
+          if-no-files-found: error
+          retention-days: 30
 
       # Push each arch by a per-arch tag (no cross-job artifact needed — the merge
       # job combines these tags into one manifest list).
@@ -399,7 +429,8 @@ jobs:
           fi
           docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
             --driver docker-container \
-            --use || true
+            --driver-opt "image=${BUILDKIT_IMAGE}" \
+            --use
 
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER }}" | docker -H unix:///run/docker-rootless/docker.sock login -u 0mniteck42 --password-stdin

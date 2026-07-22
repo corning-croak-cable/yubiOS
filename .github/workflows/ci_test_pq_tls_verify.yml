@@ -15,6 +15,8 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/ci_test_pq_tls_verify.yml' # self-change trigger for validating workflow edits
+      - 'scripts/lib/reproducible-build.sh'
+      - 'yubiOS-bake.hcl'
   workflow_dispatch:
     inputs:
       ci_callback:
@@ -72,6 +74,9 @@ permissions:
   contents: read
   actions: write
 
+env:
+  BUILDKIT_IMAGE: docker.io/moby/buildkit:v0.31.2@sha256:2f5adac4ecd194d9f8c10b7b5d7bceb5186853db1b26e5abd3a657af0b7e26ec
+
 jobs:
   pq-tls-verify:
     runs-on: ubuntu-24.04
@@ -87,6 +92,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # PINNED.md
+
+      - name: Resolve reproducible build environment
+        env:
+          ARCH: amd64
+        run: scripts/lib/reproducible-build.sh . "$GITHUB_SHA" "$ARCH" "$GITHUB_ENV"
 
       - name: Install docker CLI + buildx
         run: |
@@ -158,7 +168,8 @@ jobs:
           fi
           docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
             --driver docker-container \
-            --use || true
+            --driver-opt "image=${BUILDKIT_IMAGE}" \
+            --use
 
       - name: Verify PQ hybrid TLS through the policy-bound Bake target
         run: |

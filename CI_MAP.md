@@ -96,13 +96,20 @@ flowchart TD
 
 | Workflow | CI target/group | Explicit publication target | Builder ownership |
 |---|---|---|---|
-| `yubiOS-ci.yml` | `yubios-ci` (`yubios` + `yubios-smoke`) | `yubios` | Containerized job creates and names user-scoped `hardened` builder |
-| `ci_dev_image.yml` | `yubios-dev-ci` (`yubios-dev` + `yubios-dev-smoke`) | `yubios-dev` | Containerized job creates and names user-scoped `hardened` builder |
-| `ci_firmware-rk.yml` | None unless publication is requested | `firmware` | Every Stage 1–4 job uses the pinned DHI container and creates a user-scoped `hardened` builder |
-| `ci_mkosi-installer.yml` | DHI-contained mkosi validation plus artifact handoff | `installer` | Every build and publication job uses the pinned DHI container and creates a user-scoped `hardened` builder |
-| `ci_test_pq_tls_verify.yml` | `pq-tls-verify` | None; output is `cacheonly` | Containerized job creates and names user-scoped `hardened` builder |
+| `yubiOS-ci.yml` | `yubios-ci` (`yubios` + `yubios-smoke`) | `yubios` | Containerized job creates `hardened` with the digest-pinned BuildKit daemon |
+| `ci_dev_image.yml` | `yubios-dev-ci` (`yubios-dev` + `yubios-dev-smoke`) | `yubios-dev` | Containerized job creates `hardened` with the digest-pinned BuildKit daemon |
+| `ci_firmware-rk.yml` | None unless publication is requested | `firmware` | Every Stage 1–4 job uses the pinned DHI and digest-pinned BuildKit daemon |
+| `ci_mkosi-installer.yml` | DHI-contained mkosi validation plus artifact handoff | `installer` | Every build and publication job uses the pinned DHI and digest-pinned BuildKit daemon |
+| `ci_test_pq_tls_verify.yml` | `pq-tls-verify` | None; output is `cacheonly` | Containerized job creates `hardened` with the digest-pinned BuildKit daemon |
 
 Production and dev publication remains a two-stage operation: native runners publish immutable per-architecture tags through Bake, then existing `imagetools` jobs create the `<sha>`/`latest` and `dev-<sha>`/`dev` multi-architecture indexes. Firmware and installer targets publish directly with the registry exporter from privileged DHI container jobs that check out the policy-bound Bake definition and explicitly select their user-scoped `hardened` builders.
+
+Every material target receives the source commit epoch and deterministic Bake
+exporter contract. The amd64 production and dev jobs additionally build their
+real subject twice with isolated no-cache builders, compare canonical OCI
+layouts, assert config/history timestamps, and retain JSON evidence. Installer
+and firmware record the same epoch and normalize payload handoffs, while their
+random test-signing envelopes remain explicitly outside byte equality.
 
 ## ARM64/RK Firmware Integration
 
@@ -346,10 +353,13 @@ The exact dispatch order is defined by the state-machine graph above. The detail
       - Step 3: `Validate mkosi config (${{ matrix.arch }})`
     - Job `build` — `build`
       - Step 1: `Checkout`
-      - Step 2: `Install docker CLI + buildx (${{ matrix.arch }})`
-      - Step 3: `Log in to Docker Hub`
-      - Step 4: `Build OCI image (${{ matrix.arch }})`
-      - Step 5: `Push per-arch image (${{ matrix.arch }})`
+      - Step 2: `Resolve reproducible build environment`
+      - Step 3: `Install docker CLI + buildx (${{ matrix.arch }})`
+      - Step 4: `Log in to Docker Hub`
+      - Step 5: `Build OCI image (${{ matrix.arch }})`
+      - Step 6: `Prove two clean production OCI builds match`
+      - Step 7: `Retain production reproducibility evidence`
+      - Step 8: `Push per-arch image (${{ matrix.arch }})`
     - Job `merge-manifest` — `merge-manifest`
       - Step 1: `Install docker CLI + buildx`
       - Step 2: `Log in to Docker Hub`
@@ -360,10 +370,13 @@ The exact dispatch order is defined by the state-machine graph above. The detail
   - [`ci_dev_image.yml`](.github/workflows/ci_dev_image.yml) — workflow: `yubiOS dev/test image (swu2f, ADR-026)`
     - Job `build` — `build`
       - Step 1: `Checkout`
-      - Step 2: `Install docker CLI + buildx (${{ matrix.arch }})`
-      - Step 3: `Log in to Docker Hub`
-      - Step 4: `Build and verify dev/test image (${{ matrix.arch }})`
-      - Step 5: `Push per-arch dev image (${{ matrix.arch }})`
+      - Step 2: `Resolve reproducible build environment`
+      - Step 3: `Install docker CLI + buildx (${{ matrix.arch }})`
+      - Step 4: `Log in to Docker Hub`
+      - Step 5: `Build and verify dev/test image (${{ matrix.arch }})`
+      - Step 6: `Prove two clean dev OCI builds match`
+      - Step 7: `Retain dev reproducibility evidence`
+      - Step 8: `Push per-arch dev image (${{ matrix.arch }})`
     - Job `merge-manifest` — `merge-manifest`
       - Step 1: `Install docker CLI + buildx`
       - Step 2: `Log in to Docker Hub`
@@ -400,25 +413,28 @@ The exact dispatch order is defined by the state-machine graph above. The detail
   - [`ci_mkosi-installer.yml`](.github/workflows/ci_mkosi-installer.yml) — workflow: `yubiOS mkosi-installer`
     - Job `build` — `mkosi disk image — SoftHSM PKCS#11 signed UKI`
       - Step 1: `Checkout`
-      - Step 2: `Install docker CLI + buildx`
-      - Step 3: `Install mkosi build deps + mkosi (yubi-OS fork @ main)`
-      - Step 4: `SoftHSM token in /run — mock of YubiKey PIV slot 9c`
-      - Step 5: `Build disk image (minimal profile, PKCS#11-signed UKI)`
-      - Step 6: `Verify UKI is signed by the PKCS#11 (SoftHSM) key`
-      - Step 7: `Assemble /installer payload + MANIFEST`
-      - Step 8: `Upload prepared installer payload`
+      - Step 2: `Resolve reproducible build environment`
+      - Step 3: `Install docker CLI + buildx`
+      - Step 4: `Install mkosi build deps + mkosi (yubi-OS fork @ main)`
+      - Step 5: `SoftHSM token in /run — mock of YubiKey PIV slot 9c`
+      - Step 6: `Build disk image (minimal profile, PKCS#11-signed UKI)`
+      - Step 7: `Verify UKI is signed by the PKCS#11 (SoftHSM) key`
+      - Step 8: `Assemble /installer payload + MANIFEST`
+      - Step 9: `Upload prepared installer payload`
     - Job `installer-publish` — `Publish installer OCI artifact`
       - Step 1: `Checkout`
-      - Step 2: `Download prepared installer payload`
-      - Step 3: `Install docker CLI + buildx`
-      - Step 4: `Build and push installer OCI artifact through Bake`
+      - Step 2: `Resolve reproducible build environment`
+      - Step 3: `Download prepared installer payload`
+      - Step 4: `Install docker CLI + buildx`
+      - Step 5: `Build and push installer OCI artifact through Bake`
     - Job `ci-callback` — `Callback to ci.yml orchestrator`
       - Step 1: `Report current state to ci.yml`
   - [`ci_test_pq_tls_verify.yml`](.github/workflows/ci_test_pq_tls_verify.yml) — workflow: `TEST - PQ hybrid TLS verification (ADR-025)`
     - Job `pq-tls-verify` — `pq-tls-verify`
       - Step 1: `Checkout`
-      - Step 2: `Install docker CLI + buildx`
-      - Step 3: `Verify PQ hybrid TLS through the policy-bound Bake target`
+      - Step 2: `Resolve reproducible build environment`
+      - Step 3: `Install docker CLI + buildx`
+      - Step 4: `Verify PQ hybrid TLS through the policy-bound Bake target`
     - Job `ci-callback` — `Callback to ci.yml orchestrator`
       - Step 1: `Report current state to ci.yml`
 

@@ -62,6 +62,9 @@ permissions:
   contents: read
   actions: write
 
+env:
+  BUILDKIT_IMAGE: docker.io/moby/buildkit:v0.31.2@sha256:2f5adac4ecd194d9f8c10b7b5d7bceb5186853db1b26e5abd3a657af0b7e26ec
+
 jobs:
   rootless-docker:
     strategy:
@@ -190,7 +193,8 @@ jobs:
 
           docker info --format '{{json .SecurityOptions}}' | tee /tmp/docker-security-options
           grep -q 'name=rootless' /tmp/docker-security-options
-          docker buildx create --name hardened --driver docker-container --use
+          docker buildx create --name hardened --driver docker-container \
+            --driver-opt "image=${BUILDKIT_IMAGE}" --use
           docker buildx inspect hardened
 
       - name: Verify rootless Docker across the step boundary (${{ matrix.arch }})

@@ -113,6 +113,10 @@ These items map [FUTURE.md](FUTURE.md) sections that were missing or only partia
 ## Current Supply-Chain Tasks
 
 - [ ] Update [PINNED.md](PINNED.md) for every base-image/tool digest change.
+- [x] Pin the BuildKit daemon independently, derive `SOURCE_DATE_EPOCH` from the source commit, clamp OCI/layer timestamps, and enforce two isolated OCI-layout builds for production and dev: [refs/reproducible-builds-2026-07-22.md](refs/reproducible-builds-2026-07-22.md).
+- [ ] Replace live Fedora/Debian repository resolution with immutable snapshots plus exact package/toolchain closure before claiming later rebuildability.
+- [ ] Split installer and TF-A signed envelopes from canonical unsigned payloads (or introduce clearly public fixed CI-only fixtures) before making their full-byte equality blocking.
+- [ ] Make pinned EDK2 stack-cookie generation deterministic and approve a checksum-pinned RK3588 DDR/TPL input before firmware equality can cover those paths.
 - [ ] Verify package floors after digest bumps: systemd target, pam-u2f >= 1.3.1, OpenSSL 3.5+, and Go 1.24+ where relevant.
 - [x] Keep production, installer, firmware, and dev/test artifacts clearly labeled and non-overlapping: [refs/firmware-rk-workflow-2026-07-17.md](refs/firmware-rk-workflow-2026-07-17.md).
 - [ ] Preserve provenance/SBOM expectations for published artifacts.

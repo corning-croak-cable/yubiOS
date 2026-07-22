@@ -1,0 +1,4 @@
+# Local two-build evidence is generated from committed inputs and retained by CI
+# as a workflow artifact; it is not itself a source input.
+repro-evidence/
+reproducibility.json

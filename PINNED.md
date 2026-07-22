@@ -1,6 +1,6 @@
 # PINNED.md - yubiOS approved refs & digests
 
-_Last reviewed: 2026-07-21 during the workflow download and GitHub ref audit._
+_Last reviewed: 2026-07-22 during the reproducible-build substrate audit._
 
 All GitHub Actions, external GitHub source refs, container image references, and directly downloaded workflow artifacts used across the yubi-OS org must appear here before being added to any workflow or Containerfile. Non-pinned refs such as mutable tags and branch names are not permitted.
 
@@ -66,6 +66,7 @@ Dynamic refs such as `github.sha`, `github.ref_name`, `target_ref`, and `ci_chai
 
 | Image | Pinned Digest | Notes |
 |-------|---------------|-------|
+| `docker.io/moby/buildkit:v0.31.2` (multi-arch INDEX) | `sha256:2f5adac4ecd194d9f8c10b7b5d7bceb5186853db1b26e5abd3a657af0b7e26ec` | BuildKit daemon used by every `docker-container` Buildx builder. Buildx 0.35.0 is only the client and does not pin this daemon implicitly. |
 | `dhi.io/debian-base` (multi-arch INDEX) | `sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6` | **Canonical for workflows + Containerfile `FROM` where DHI is used.** OCI image index for `trixie-debian13-dev`; auto-resolves per runner arch. |
 | child `linux/amd64` | `sha256:d33cf549d45223143a9c10670403cd52f422518b9f7b934b2b2abf4d73653399` | Resolved automatically; do not pin directly unless an amd64-only job requires it. |
 | child `linux/arm64` | `sha256:beac2c1f3d82cf1ae889f2a6ffdbc21eba293e5fa690a2615b9716d8beb7d4a0` | Resolved automatically. |
