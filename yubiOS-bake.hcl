@@ -44,6 +44,12 @@ variable "PUSH" {
   description = "Use registry output and immutable publish tags when true."
 }
 
+variable "LOCAL_TAG" {
+  type        = string
+  default     = ""
+  description = "Optional suffix for host-loaded local production and dev tags."
+}
+
 variable "FIRMWARE_CONTEXT" {
   type        = string
   default     = "fw"
@@ -129,9 +135,10 @@ target "yubios" {
   description = "Build the native production yubiOS bootc image."
   tags = PUSH ? [
     ref("${GIT_SHA}-${ARCH}"),
-  ] : [
-    "yubios:ci-${ARCH}",
-  ]
+  ] : concat(
+    ["yubios:ci-${ARCH}"],
+    LOCAL_TAG != "" ? ["yubios:${LOCAL_TAG}"] : [],
+  )
 }
 
 target "yubios-smoke" {
@@ -171,9 +178,10 @@ target "yubios-dev" {
   platforms  = [PLATFORM]
   tags = PUSH ? [
     ref("dev-${GIT_SHA}-${ARCH}"),
-  ] : [
-    "yubios:dev-${ARCH}",
-  ]
+  ] : concat(
+    ["yubios:dev-${ARCH}"],
+    LOCAL_TAG != "" ? ["yubios:dev-${LOCAL_TAG}"] : [],
+  )
 }
 
 target "yubios-dev-smoke" {

@@ -75,29 +75,55 @@ Prepare and mount the target filesystems first, for example with `systemd-repart
 
 ## Build from source with Bake, then install to-filesystem
 
+The supported local build host is Ubuntu 26.04. Install the distro Docker
+engine, enable it, and grant your user access to its socket:
+
 ```sh
-set -eu
+sudo apt-get update
+sudo apt-get install -y docker.io git
+sudo systemctl enable --now docker
+sudo usermod -aG docker "$USER"
+```
 
-case "$(uname -m)" in
-  x86_64) export ARCH=amd64 PLATFORM=linux/amd64 ;;
-  aarch64|arm64) export ARCH=arm64 PLATFORM=linux/arm64 ;;
-  *) echo "unsupported build architecture: $(uname -m)" >&2; exit 1 ;;
-esac
+Membership in the `docker` group is root-equivalent. Sign out and back in once
+after changing group membership. From the repository root, run the local
+CI-parity entrypoint:
 
-docker buildx inspect hardened >/dev/null 2>&1 || \
-  docker buildx create --name hardened --driver docker-container --use
+```sh
+./scripts/build-local-images.sh
+```
 
-PUSH=false docker buildx bake \
-  --builder hardened \
-  --file yubiOS-bake.hcl \
-  yubios-ci
+The script runs the native production `yubios-ci` and TEST-only
+`yubios-dev-ci` Bake groups. It launches the [PINNED.md](PINNED.md) DHI image as
+a privileged outer container, installs the SHA-512-verified Docker 29.6.0
+rootless extras and Buildx 0.35.0 used by CI, starts a rootless
+Docker-in-Docker daemon, and selects the policy-bound `hardened` builder. It
+never pushes. The resulting images are transferred into the host Docker daemon
+as `yubios:local` and `yubios:dev-local`.
 
+Build only one path, or choose another local suffix, when needed:
+
+```sh
+./scripts/build-local-images.sh production
+./scripts/build-local-images.sh dev
+LOCAL_TAG=review ./scripts/build-local-images.sh production
+```
+
+`production` creates `yubios:<LOCAL_TAG>`; `dev` creates
+`yubios:dev-<LOCAL_TAG>`. Both paths retain their architecture-specific CI tags
+inside the disposable rootless daemon, while the local tags are loaded back
+into the host daemon for installation or inspection.
+
+With the target filesystems already mounted at `/mnt` and `/mnt/boot`, install
+the locally built production image:
+
+```sh
 docker run --rm --privileged --pid=host --ipc=host \
   --security-opt label=type:unconfined_t \
   -v /dev:/dev \
   -v /var/lib/containers:/var/lib/containers \
   -v /:/run/host \
-  "yubios:ci-${ARCH}" bootc install to-filesystem \
+  yubios:local bootc install to-filesystem \
     --bootloader=systemd \
     --root-mount-spec="" \
     --composefs-backend \
@@ -134,6 +160,7 @@ Every approved base image and GitHub Action SHA lives in [PINNED.md](PINNED.md).
 |---|---|
 | Production tags | `latest` plus immutable commit tags |
 | Test tags | `dev`, `dev-<sha>` for swu2f TEST-only images |
+| Local build tags | `yubios:local`, `yubios:dev-local`, or a chosen `LOCAL_TAG` suffix |
 | Artifact tags | `installer`, `firmware` and per-commit variants |
 | Platforms | `linux/amd64`, `linux/arm64` |
 | Supply chain | SLSA build provenance + SBOM attestations |
@@ -161,6 +188,7 @@ yubiOS/
 ├── mkosi.conf                      # primary mkosi build definition
 ├── mkosi.conf.d/                   # desktop, minimal, Surface, Chipsec, and test profiles
 ├── refs/                           # dated research notes, planning cycles, implementation specs
+├── scripts/                        # local CI-parity image build entrypoints
 ├── tests/                          # unit, VM, PKCS#11, FIDO2, UKI, and policy verification tests
 ├── usr/lib/                        # OS overlay: bootc, dracut, PAM, repart, systemd, yubiOS scripts
 ├── Containerfile                   # production bootc image definition
