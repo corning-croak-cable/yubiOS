@@ -43,6 +43,7 @@ Workflows use the immutable commit in the third column. Branches and tags are re
 |------------|---------------------|---------------|---------------|
 | `docker/buildx` | `v0.35.0` | `a319e5b15052cf6557ceb666eb8ff6e32380b782` | Buildx release assets; payloads are additionally pinned by SHA-512 above. |
 | `Mbed-TLS/mbedtls` | `mbedtls-3.6.6` | `0bebf8b8c7f07abe3571ded48a11aa907a1ffb20` | TF-A trusted-board-boot dependency. |
+| `pando85/passless` | `v0.11.2` | `b67ccdf22e18cf21bcd140e03d22af413342d605` | TEST-image in-guest CTAP2 authenticator; yubiOS enables soft-fido2's implemented `hmac-secret` extension at build time. |
 | `qemu/qemu` | upstream commit | `3a18e8a25992d1643707e2cebdd6e9bb2bd7d3b9` | ARM64 zstd-capable DirectBoot QEMU. |
 | `yubi-OS/arm-trusted-firmware` | `feat/ci` | `f9e106415eb569ff9b19404e2c3f64167af08d21` | TF-A fork CI and firmware assembly. |
 | `yubi-OS/bcvk` | `feat/ci` | `6fe199c7304782f2bc01063c7f28075e402c5538` | bcvk fork validation. |

@@ -8,17 +8,17 @@ This map treats `.github/workflows/*.yml` as the source of truth for events, run
 
 | Workflow file | Role | Main inputs | Main outputs |
 |---|---|---|---|
-| `.github/workflows/ci.yml` | Top-level state machine | callback state, target ref, four publish flags, fork gate, VM image | Dispatches the next workflow in the ordered chain |
+| `.github/workflows/ci.yml` | Top-level state machine | callback state, target ref, four publish flags, fork gate, TEST gate, VM image | Dispatches the next workflow in the ordered chain |
 | `.github/workflows/fetch-dhi-manifest.yml` | DHI base digest refresh | `dhi.io/debian-base:trixie-debian13-dev`, `PINNED.md` | Updated DHI digest refs committed by workflow when drift exists |
 | `.github/workflows/fetch-fedora-bootc-manifest.yml` | Fedora bootc digest refresh | `quay.io/fedora/fedora-bootc:45`, `PINNED.md` | Updated Fedora bootc digest refs committed by workflow when drift exists |
 | `.github/workflows/ci_firmware-rk.yml` | Orchestrated ARM64/RK firmware integration and publish lane | yubi-OS firmware forks, pinned refs, board matrix, `yubiOS-bake.hcl` | `BL32_AP_MM.fd`, `fip.bin`, `flash.bin`, QEMU verification, optional original and board-scoped firmware tags through Bake |
 | `.github/workflows/yubiOS-ci.yml` | Production image build and publish | `Containerfile`, `yubiOS-bake.hcl`, `yubiOS.rego`, `usr/**`, unit tests | Bake build/smoke results; optional per-arch tags and multi-arch `0mniteck/yubios:<sha>` plus `latest` |
 | `.github/workflows/ci_dev_image.yml` | TEST-only image with software FIDO2 | `Containerfile.dev`, production target context, `yubiOS-bake.hcl`, `yubiOS.rego` | Bake build/smoke results; optional `0mniteck/yubios:dev-<sha>` and `dev` |
-| `.github/workflows/ci_test-vm.yml` | VM e2e tests | pullable TEST-only yubiOS image, bcvk source, Podman storage, VM scripts | bcvk capability gate, DirectBoot SSH credential transport, mandatory CTAP2/LUKS2/homed/ed25519-sk assertions, callback state |
 | `.github/workflows/ci_mkosi-installer.yml` | mkosi disk image and installer artifact | `mkosi.conf`, `mkosi.conf.d/**`, SoftHSM PKCS#11 mock, `yubiOS-bake.hcl` | signed UKI verification, `yubiOS.raw.zst`, optional installer tags through Bake |
-| `.github/workflows/ci_pq_tls_verify.yml` | PQ hybrid TLS drift check | `yubiOS-bake.hcl`, `yubiOS.rego`, pinned DHI base, live TLS endpoint | uncached, non-blocking Bake verification result |
-| `.github/workflows/ci_test-bootc-filesystem.yml` | Standalone fresh-VM `bootc install to-filesystem` e2e | resolved yubiOS image digest, disposable GPT disk, externally mounted `/mnt` and `/mnt/boot` | amd64/arm64 install proof, retained mounts under `--skip-finalize`, and boot-artifact proof that `root=` is omitted |
-| `.github/workflows/ci_test-rootless-docker.yml` | Standalone rootless Docker bootstrap validation | pinned Docker/Buildx downloads, pinned DHI container, amd64/arm64 matrix | rootless daemon and hardened Buildx builder verified across step boundaries |
+| `.github/workflows/ci_test_rootless-docker.yml` | Optional pre-image rootless Docker bootstrap validation | pinned Docker/Buildx downloads, pinned DHI container, amd64/arm64 matrix | rootless daemon and hardened Buildx builder verified across step boundaries, callback state |
+| `.github/workflows/ci_test_bootc-filesystem.yml` | Optional pre-image fresh-VM `bootc install to-filesystem` e2e | resolved yubiOS image digest, disposable GPT disk, externally mounted `/mnt` and `/mnt/boot` | amd64/arm64 install proof, retained mounts under `--skip-finalize`, proof that `root=` is omitted, callback state |
+| `.github/workflows/ci_test_pq_tls_verify.yml` | Optional pre-image PQ hybrid TLS drift check | `yubiOS-bake.hcl`, `yubiOS.rego`, pinned DHI base, live TLS endpoint | uncached, non-blocking Bake verification result, callback state |
+| `.github/workflows/ci_test-vm.yml` | Final VM e2e test when `ci_test_run=true` | pullable TEST-only yubiOS image, bcvk source, Podman storage, VM scripts | bcvk capability gate, DirectBoot SSH credential transport, mandatory CTAP2/LUKS2/homed/ed25519-sk assertions, callback state |
 | `.github/workflows/ci_fork_*.yml` | Optional fork component checks | yubi-OS fork feature branches | component build/lint/test artifacts and callback state |
 
 The older `ci_int_stmm.yml`, `ci_int_optee_fip.yml`, and `ci_int_qemu.yml` lane names are not separate files on current `main`. Their StMM, OP-TEE/FIP, and QEMU stages are embedded in the firmware integration workflows.
@@ -29,43 +29,28 @@ The older `ci_int_stmm.yml`, `ci_int_optee_fip.yml`, and `ci_int_qemu.yml` lane 
 
 ```mermaid
 flowchart TD
-    user["Manual workflow_dispatch\n.github/workflows/ci.yml\nstate=start"]
-    ci_start["ci.yml\nDispatch next workflow"]
-    dhi["fetch-dhi-manifest.yml"]
-    fedora["fetch-fedora-bootc-manifest.yml"]
+    start["ci.yml state=start"]
+    refresh["Refresh pinned DHI and Fedora digests"]
     fork_gate{"ci_fork_run?"}
-    forks["Optional ci_fork_* chain\nmkosi -> bcvk -> TF-A -> OP-TEE OS -> ms-tpm -> optee_ftpm -> U-Boot -> EDK2"]
-    firmware["ci_firmware-rk.yml\nARM64/RK firmware integration"]
-    prod["yubiOS-ci.yml\nproduction image CI"]
-    dev["ci_dev_image.yml\ntest image with passless"]
-    vm["ci_test-vm.yml\nbcvk VM e2e"]
-    installer["ci_mkosi-installer.yml\nsigned installer artifact"]
-    pq["ci_pq_tls_verify.yml\nPQ hybrid TLS check"]
+    forks["ci_fork_* chain"]
+    test_gate{"ci_test_run?"}
+    tests["Pre-image TEST chain\nrootless Docker -> bootc filesystem -> PQ TLS"]
+    images["Image/artifact chain\nfirmware -> production -> dev -> installer"]
+    vm_gate{"ci_test_run?"}
+    vm["ci_test-vm.yml\nVM e2e runs last"]
     done["Ordered CI chain complete"]
 
-    user --> ci_start
-    ci_start --> dhi
-    dhi -. "callback: state=fetch-dhi-manifest" .-> ci_start
-    ci_start --> fedora
-    fedora -. "callback: state=fetch-fedora-bootc-manifest" .-> ci_start
-    ci_start --> fork_gate
-    fork_gate -- "true" --> forks
-    forks -. "callback after each fork workflow" .-> ci_start
-    fork_gate -- "false" --> firmware
-    forks --> firmware
-    firmware -. "callback: state=yubiOS RK firmware" .-> ci_start
-    ci_start --> prod
-    prod -. "callback: state=yubiOS CI" .-> ci_start
-    ci_start --> dev
-    dev -. "callback: state=yubiOS dev/test image (swu2f, ADR-026)" .-> ci_start
-    ci_start --> vm
-    vm -. "callback: state=yubiOS VM e2e (tests/vm)" .-> ci_start
-    ci_start --> installer
-    installer -. "callback: state=yubiOS mkosi-installer" .-> ci_start
-    ci_start --> pq
-    pq -. "callback: state=PQ hybrid TLS verification (ADR-025)" .-> ci_start
-    ci_start --> done
+    start --> refresh --> fork_gate
+    fork_gate -- "true" --> forks --> test_gate
+    fork_gate -- "false" --> test_gate
+    test_gate -- "true" --> tests --> images
+    test_gate -- "false" --> images
+    images --> vm_gate
+    vm_gate -- "true" --> vm --> done
+    vm_gate -- "false" --> done
 ```
+
+Every child returns to the `ci.yml` dispatcher between nodes. Both `ci_fork_run` and `ci_test_run` are carried through every callback, so the fork branch, pre-image TEST branch, and final VM decision remain stable for the full chain.
 
 ## Canonical Docker Bake Graph
 
@@ -115,7 +100,7 @@ flowchart TD
 | `ci_dev_image.yml` | `yubios-dev-ci` (`yubios-dev` + `yubios-dev-smoke`) | `yubios-dev` | Containerized job creates and names user-scoped `hardened` builder |
 | `ci_firmware-rk.yml` | None unless publication is requested | `firmware` | Every Stage 1–4 job uses the pinned DHI container and creates a user-scoped `hardened` builder |
 | `ci_mkosi-installer.yml` | DHI-contained mkosi validation plus artifact handoff | `installer` | Every build and publication job uses the pinned DHI container and creates a user-scoped `hardened` builder |
-| `ci_pq_tls_verify.yml` | `pq-tls-verify` | None; output is `cacheonly` | Containerized job creates and names user-scoped `hardened` builder |
+| `ci_test_pq_tls_verify.yml` | `pq-tls-verify` | None; output is `cacheonly` | Containerized job creates and names user-scoped `hardened` builder |
 
 Production and dev publication remains a two-stage operation: native runners publish immutable per-architecture tags through Bake, then existing `imagetools` jobs create the `<sha>`/`latest` and `dev-<sha>`/`dev` multi-architecture indexes. Firmware and installer targets publish directly with the registry exporter from privileged DHI container jobs that check out the policy-bound Bake definition and explicitly select their user-scoped `hardened` builders.
 
@@ -150,7 +135,7 @@ flowchart TD
 
 The removed `ci_test-int.yml` workflow remains historical context only; `ci.yml` dispatches `ci_firmware-rk.yml` and waits for its `yubiOS RK firmware` callback state.
 
-## Production, Dev, VM, Installer, and PQ Lanes
+## TEST, Production, Dev, Installer, and Final VM Lanes
 
 ```mermaid
 flowchart TD
@@ -160,29 +145,30 @@ flowchart TD
     dev_wf["ci_dev_image.yml\nTEST-only swu2f/passless"]
     dev_bake["Bake: yubios-dev-ci / yubios-dev\nproduction target context + smoke"]
     dev_out["per-arch dev-sha-arch\nimagetools -> dev-sha + dev"]
-    vm["ci_test-vm.yml\nsudo Podman storage + bcvk\nARM64 DirectBoot credential"]
+    vm["ci_test-vm.yml\nfinal sudo Podman + bcvk VM e2e\nARM64 DirectBoot credential"]
     vm_out["VM boot + mandatory CTAP2 hmac-secret\nLUKS2, homed, pam-u2f, ed25519-sk"]
     installer["ci_mkosi-installer.yml DHI build job\nuser-scoped hardened builder\nmkosi + SoftHSM PKCS#11 signing"]
     installer_payload["prepared installer payload\nworkflow artifact handoff"]
     installer_bake["DHI publish job\nuser-scoped hardened builder\nBake: installer + registry exporter"]
     installer_out["installer\ninstaller-sha"]
-    pq["ci_pq_tls_verify.yml"]
+    rootless["ci_test_rootless-docker.yml\nrootless daemon + hardened builder"]
+    bootc["ci_test_bootc-filesystem.yml\nexternal mounts + no root="]
+    pq["ci_test_pq_tls_verify.yml"]
     pq_bake["Bake: pq-tls-verify\nno-cache + cacheonly"]
     pq_out["non-blocking PQ TLS result"]
 
     prod_wf --> prod_bake --> prod_out
-    dev_wf --> dev_bake --> dev_out --> vm --> vm_out
-    installer --> installer_payload --> installer_bake --> installer_out
-    pq --> pq_bake --> pq_out
+    dev_wf --> dev_bake --> dev_out --> installer --> installer_payload --> installer_bake --> installer_out --> vm --> vm_out
+    rootless --> bootc --> pq --> pq_bake --> pq_out
 ```
 
-The VM lane intentionally remains outside Bake. bcvk hardcodes Podman for its privileged ephemeral container and reads from Podman's local image store, so the workflow pulls the selected image with `sudo podman`. Guest SSH runs from inside that outer container. For ARM64 DirectBoot, the public root key is delivered without firmware through systemd's kernel-command-line `tmpfiles.extra` credential path. Once the TEST image boots, passless/CTAP2 enumeration and the LUKS2, homed, pam-u2f, and OpenSSH security-key operations are hard assertions rather than skip-tolerant coverage.
+The VM lane intentionally remains outside Bake. bcvk hardcodes Podman for its privileged ephemeral container and reads from Podman's local image store, so the workflow pulls the selected image with `sudo podman`. Guest SSH runs from inside that outer container. For ARM64 DirectBoot, the public root key is delivered without firmware through systemd's kernel-command-line `tmpfiles.extra` credential path. The TEST image pins passless v0.11.2 to an immutable commit and enables soft-fido2's implemented `hmac-secret` extension during the build. Once it boots, passless/CTAP2 enumeration and the LUKS2, homed, pam-u2f, and OpenSSH security-key operations are hard assertions rather than skip-tolerant coverage.
 
 The installer self-change push trigger validates mkosi without publishing. Only a `workflow_dispatch` with `Docker_push=true` uploads the prepared `inst/installer` payload, hands it to the containerized publish job, and packages it through the policy-bound Bake `installer` target.
 
 ## Optional Fork Component CI
 
-When `ci_fork_run=true`, `ci.yml` runs component workflows before firmware integration. They validate yubi-OS fork feature branches but do not stitch a full firmware image; stitching happens in `ci_firmware-rk.yml`.
+When `ci_fork_run=true`, `ci.yml` runs component workflows before the optional pre-image TEST chain and firmware integration. They validate yubi-OS fork feature branches but do not stitch a full firmware image; stitching happens in `ci_firmware-rk.yml`.
 
 ```mermaid
 flowchart TD
@@ -195,9 +181,10 @@ flowchart TD
     ftpm["ci_fork_optee-ftpm.yml"]
     uboot["ci_fork_u-boot.yml"]
     edk2["ci_fork_edk2.yml"]
+    tests["Optional ci_test_* pre-image chain"]
     firmware["ci_firmware-rk.yml"]
 
-    start --> mkosi --> bcvk --> tfa --> optee --> ms --> ftpm --> uboot --> edk2 --> firmware
+    start --> mkosi --> bcvk --> tfa --> optee --> ms --> ftpm --> uboot --> edk2 --> tests --> firmware
 ```
 
 ## Push Triggers and Self-Change Validation
@@ -258,7 +245,7 @@ flowchart TD
 
 ## Callback Contract
 
-Every orchestrated child workflow accepts the same internal callback fields. The child workflow computes an aggregate result from `needs`, then dispatches `ci.yml` so the state machine can proceed. `state` is the workflow display name from `github.workflow`, not necessarily the filename; for example, the installer reports `yubiOS mkosi-installer`, which is the exact state matched by current `ci.yml`.
+Every orchestrated child workflow accepts the same internal callback fields, including the carried `ci_fork_run` and `ci_test_run` choices. The child workflow computes an aggregate result from `needs`, then dispatches `ci.yml` so the state machine can proceed. `state` is the workflow display name from `github.workflow`, not necessarily the filename; for example, the installer reports `yubiOS mkosi-installer`, which is the exact state matched by current `ci.yml`.
 
 ```mermaid
 sequenceDiagram
@@ -274,11 +261,11 @@ sequenceDiagram
     C->>C: stop on non-success, else dispatch next workflow
 ```
 
-## Non-Fork Workflow Step Tree
+## Workflow Job and Step Tree
 
-The workflows below are listed in the non-fork dispatch order defined by `ci.yml`. Each job contains every declared `jobs.<job>.steps` entry in execution order. Matrix jobs are shown once; job and step `if` conditions still determine whether an entry runs for a particular event or matrix leg. GitHub-generated setup and cleanup operations are not declared workflow steps and are omitted.
+The exact dispatch order is defined by the state-machine graph above. The detailed job trees below are grouped by lane for readability. Each job contains every declared `jobs.<job>.steps` entry in execution order. Matrix jobs are shown once; job and step `if` conditions still determine whether an entry runs for a particular event or matrix leg. GitHub-generated setup and cleanup operations are not declared workflow steps and are omitted.
 
-- Non-fork workflow chain
+- Workflow details
   - [`ci.yml`](.github/workflows/ci.yml) — workflow: `CI`
     - Job `dispatch-next` — `Dispatch next workflow from current state`
       - Step 1: `Resolve and dispatch next workflow`
@@ -427,7 +414,7 @@ The workflows below are listed in the non-fork dispatch order defined by `ci.yml
       - Step 4: `Build and push installer OCI artifact through Bake`
     - Job `ci-callback` — `Callback to ci.yml orchestrator`
       - Step 1: `Report current state to ci.yml`
-  - [`ci_pq_tls_verify.yml`](.github/workflows/ci_pq_tls_verify.yml) — workflow: `PQ hybrid TLS verification (ADR-025)`
+  - [`ci_test_pq_tls_verify.yml`](.github/workflows/ci_test_pq_tls_verify.yml) — workflow: `TEST - PQ hybrid TLS verification (ADR-025)`
     - Job `pq-tls-verify` — `pq-tls-verify`
       - Step 1: `Checkout`
       - Step 2: `Install docker CLI + buildx`
@@ -435,13 +422,13 @@ The workflows below are listed in the non-fork dispatch order defined by `ci.yml
     - Job `ci-callback` — `Callback to ci.yml orchestrator`
       - Step 1: `Report current state to ci.yml`
 
-## Standalone Self-Triggered Validation Step Tree
+## Pre-Image TEST Workflow Detail and Self-Change Evidence
 
-These workflows are deliberately outside the `ci.yml` callback chain. A push to `main` runs each one only when its own workflow file changes; maintainers can also dispatch either workflow manually.
+When `ci_test_run=true`, these workflows run after the optional `ci_fork_*` chain and before any image build. Their narrow push triggers remain: a push to `main` runs each workflow only when its own file changes, without activating its callback. Maintainers can also dispatch each workflow manually.
 
 Initial self-change evidence is green: [bootc install run 29884493346](https://github.com/yubi-OS/yubiOS/actions/runs/29884493346) passed the amd64 and arm64 disposable-disk legs, and [rootless Docker run 29884493340](https://github.com/yubi-OS/yubiOS/actions/runs/29884493340) passed both architecture legs.
 
-- [`ci_test-bootc-filesystem.yml`](.github/workflows/ci_test-bootc-filesystem.yml) — workflow: `bootc to-filesystem install e2e`
+- [`ci_test_bootc-filesystem.yml`](.github/workflows/ci_test_bootc-filesystem.yml) — workflow: `TEST - bootc to-filesystem install e2e`
   - Job `install-to-filesystem` — `install-to-filesystem (${{ matrix.arch }})`, native amd64/arm64 matrix on fresh hosted VMs
     - Step 1: `Checkout`
     - Step 2: `Assert README install contract`
@@ -449,7 +436,11 @@ Initial self-change evidence is green: [bootc install run 29884493346](https://g
     - Step 4: `Resolve image digest and install with the README command`
     - Step 5: `Verify installed deployment and omitted root= argument`
     - Step 6: `Detach disposable target`
-- [`ci_test-rootless-docker.yml`](.github/workflows/ci_test-rootless-docker.yml) — workflow: `Rootless Docker bootstrap validation`
+  - Job `ci-callback` — `Callback to ci.yml orchestrator`
+    - Step 1: `Report current state to ci.yml`
+- [`ci_test_rootless-docker.yml`](.github/workflows/ci_test_rootless-docker.yml) — workflow: `TEST - Rootless Docker bootstrap validation`
   - Job `rootless-docker` — native amd64/arm64 matrix inside the pinned privileged DHI container
     - Step 1: `Exercise rootless Docker bootstrap (${{ matrix.arch }})`
     - Step 2: `Verify rootless Docker across the step boundary (${{ matrix.arch }})`
+  - Job `ci-callback` — `Callback to ci.yml orchestrator`
+    - Step 1: `Report current state to ci.yml`

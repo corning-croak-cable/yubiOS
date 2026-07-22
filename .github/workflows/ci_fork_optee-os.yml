@@ -59,6 +59,16 @@ on:
         required: false
         default: false
         type: boolean
+      ci_fork_run:
+        description: 'Internal: fork workflow flag carried by ci.yml.'
+        required: false
+        default: false
+        type: boolean
+      ci_test_run:
+        description: 'Internal: TEST workflow flag carried by ci.yml.'
+        required: false
+        default: false
+        type: boolean
       ci_vm_image:
         description: 'Internal: VM image ref carried by ci.yml.'
         required: false
@@ -156,6 +166,8 @@ jobs:
           CI_DEV_DOCKER_PUSH: ${{ inputs.ci_Dev_Docker_push }}
           CI_FIRMWARE_DOCKER_PUSH: ${{ inputs.ci_Firmware_Docker_push }}
           CI_INSTALLER_DOCKER_PUSH: ${{ inputs.ci_Installer_Docker_push }}
+          CI_FORK_RUN: ${{ inputs.ci_fork_run }}
+          CI_TEST_RUN: ${{ inputs.ci_test_run }}
           CI_VM_IMAGE: ${{ inputs.ci_vm_image }}
         run: |
           set -euo pipefail
@@ -169,8 +181,10 @@ jobs:
             --arg Dev_Docker_push "$CI_DEV_DOCKER_PUSH" \
             --arg Firmware_Docker_push "$CI_FIRMWARE_DOCKER_PUSH" \
             --arg Installer_Docker_push "$CI_INSTALLER_DOCKER_PUSH" \
+            --arg ci_fork_run "$CI_FORK_RUN" \
+            --arg ci_test_run "$CI_TEST_RUN" \
             --arg vm_image "$CI_VM_IMAGE" \
-            '{ref: $ref, inputs: {state: $state, completed_conclusion: $completed_conclusion, reason: $reason, target_ref: $ref, Docker_push: $Docker_push, Dev_Docker_push: $Dev_Docker_push, Firmware_Docker_push: $Firmware_Docker_push, Installer_Docker_push: $Installer_Docker_push, vm_image: $vm_image}}')
+            '{ref: $ref, inputs: {state: $state, completed_conclusion: $completed_conclusion, reason: $reason, target_ref: $ref, Docker_push: $Docker_push, Dev_Docker_push: $Dev_Docker_push, Firmware_Docker_push: $Firmware_Docker_push, Installer_Docker_push: $Installer_Docker_push, ci_fork_run: $ci_fork_run, ci_test_run: $ci_test_run, vm_image: $vm_image}}')
           curl -fsS -X POST \
             -H "Authorization: Bearer ${GH_TOKEN}" \
             -H "Accept: application/vnd.github+json" \

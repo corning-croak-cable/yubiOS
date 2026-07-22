@@ -23,11 +23,13 @@
 #
 # NOTE: passless DEVELOPMENT.md carries a stale `arunanshub/passless` clone URL;
 # the live, maintained repo is `pando85/passless` (same author as the
-# pando85/soft-fido2 backend). We pin a release tag for reproducibility.
+# pando85/soft-fido2 backend). The tag is retained as provenance, while the
+# fetched source is pinned to the tag's immutable commit (see PINNED.md).
 set -euo pipefail
 
-PASSLESS_REPO="${PASSLESS_REPO:-https://github.com/pando85/passless.git}"
-PASSLESS_TAG="${PASSLESS_TAG:-v0.11.2}"
+readonly PASSLESS_REPO="https://github.com/pando85/passless.git"
+readonly PASSLESS_TAG="v0.11.2"
+readonly PASSLESS_COMMIT="b67ccdf22e18cf21bcd140e03d22af413342d605"
 
 if ! command -v dnf >/dev/null 2>&1; then
     echo "install-swu2f-authenticator: dnf not found in image build root" >&2
@@ -67,7 +69,24 @@ fi
 src="$(mktemp -d)"
 cargo_home="$(mktemp -d)"
 trap 'rm -rf "$src" "$cargo_home"' EXIT
-git clone --depth 1 --branch "${PASSLESS_TAG}" "${PASSLESS_REPO}" "${src}"
+git init "${src}"
+git -C "${src}" remote add origin "${PASSLESS_REPO}"
+git -C "${src}" fetch --depth 1 origin "${PASSLESS_COMMIT}"
+git -C "${src}" checkout --detach FETCH_HEAD
+test "$(git -C "${src}" rev-parse HEAD)" = "${PASSLESS_COMMIT}"
+
+# passless v0.11.2 uses soft-fido2 0.13.0, whose hmac-secret makeCredential and
+# getAssertion paths are complete, but passless advertises only credProtect in
+# GetInfo. Enable the implemented extension in this TEST-only build so systemd-
+# cryptenroll and systemd-homed can request it. Keep this exact-source assertion
+# loud: an upstream layout/config change must be reviewed rather than patched
+# silently at the wrong location.
+authenticator_rs="${src}/cmd/passless/src/authenticator.rs"
+grep -Fq '.extensions(vec!["credProtect".to_string()])' "${authenticator_rs}"
+sed -i 's/\.extensions(vec!\["credProtect"\.to_string()\])/.extensions(vec!["credProtect".to_string(), "hmac-secret".to_string()])/' \
+    "${authenticator_rs}"
+grep -Fq '.extensions(vec!["credProtect".to_string(), "hmac-secret".to_string()])' \
+    "${authenticator_rs}"
 
 # The real failure this build hit was NOT dnf (dnf completes cleanly, 113/113):
 # cargo's own cache dir ($CARGO_HOME, defaults to /root/.cargo when running as
@@ -91,4 +110,4 @@ dnf -y remove ${BUILD_DEPS} || true
 dnf -y clean all || true
 
 /usr/bin/passless --version || true
-echo "install-swu2f-authenticator: passless ${PASSLESS_TAG} installed (TEST-ONLY swu2f Layer 2)"
+echo "install-swu2f-authenticator: passless ${PASSLESS_TAG} (${PASSLESS_COMMIT}) installed with hmac-secret (TEST-ONLY swu2f Layer 2)"

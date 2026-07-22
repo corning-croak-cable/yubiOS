@@ -40,7 +40,7 @@ The scope is the workflow chain that `ci.yml` currently dispatches. The standalo
 | `ci_dev_image.yml` | `yubios-dev-ci`, `yubios-dev` | Native runner scheduling and final dev index assembly remain outside Bake. |
 | `ci_test-vm.yml` | None | bcvk's Podman image store, DirectBoot SSH credential transport, KVM, FUSE, and hardware-only exclusions are host evidence, not Docker image-build configuration. |
 | `ci_mkosi-installer.yml` | `installer` | SoftHSM, `/run`, user namespaces, mkosi, UKI verification, and payload preparation remain Actions operations; both build and publication jobs use the pinned DHI container and user-scoped Buildx setup. |
-| `ci_pq_tls_verify.yml` | `pq-tls-verify` | GitHub keeps the check advisory and callback semantics; Bake owns the uncached live verification build. |
+| `ci_test_pq_tls_verify.yml` | `pq-tls-verify` | GitHub keeps the check advisory and callback semantics; Bake owns the uncached live verification build. |
 
 ## Policy relationship
 

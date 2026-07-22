@@ -64,8 +64,13 @@ on:
         required: true
         default: false
         type: boolean
+      ci_test_run:
+        description: 'Run the ci_test_* validation workflows and the final VM e2e?'
+        required: true
+        default: false
+        type: boolean
       vm_image:
-        description: 'Pullable yubiOS OCI image ref for ci_test-vm.yml.'
+        description: 'Pullable yubiOS OCI image ref for the final ci_test-vm.yml run.'
         required: true
         default: 'docker.io/0mniteck/yubios:dev'
         type: string
@@ -92,6 +97,7 @@ jobs:
           FIRMWARE_DOCKER_PUSH: ${{ inputs.Firmware_Docker_push }}
           INSTALLER_DOCKER_PUSH: ${{ inputs.Installer_Docker_push }}
           CI_FORK_RUN: ${{ inputs.ci_fork_run }}
+          CI_TEST_RUN: ${{ inputs.ci_test_run }}
           VM_IMAGE: ${{ inputs.vm_image }}
         run: |
           set -euo pipefail
@@ -116,6 +122,8 @@ jobs:
               if [ "$CI_FORK_RUN" = "true" ]; then
                 next_file='ci_fork_mkosi.yml'
                 callee_inputs=$(jq -n --arg reason "ci after fetch-fedora-bootc-manifest" '{reason: $reason}')
+              elif [ "$CI_TEST_RUN" = "true" ]; then
+                next_file='ci_test_rootless-docker.yml'
               else
                 next_file='ci_firmware-rk.yml'
                 callee_inputs=$(jq -n --arg reason "ci after fetch-fedora-bootc-manifest" --arg push "$FIRMWARE_DOCKER_PUSH" '{reason: $reason, Docker_push: $push}')
@@ -150,8 +158,22 @@ jobs:
               callee_inputs=$(jq -n --arg reason "ci after ci_fork_u-boot" '{reason: $reason}')
               ;;
             ci_fork_edk2)
+              if [ "$CI_TEST_RUN" = "true" ]; then
+                next_file='ci_test_rootless-docker.yml'
+              else
+                next_file='ci_firmware-rk.yml'
+                callee_inputs=$(jq -n --arg reason "ci after ci_fork_edk2" --arg push "$FIRMWARE_DOCKER_PUSH" '{reason: $reason, Docker_push: $push}')
+              fi
+              ;;
+            'TEST - Rootless Docker bootstrap validation')
+              next_file='ci_test_bootc-filesystem.yml'
+              ;;
+            'TEST - bootc to-filesystem install e2e')
+              next_file='ci_test_pq_tls_verify.yml'
+              ;;
+            'TEST - PQ hybrid TLS verification (ADR-025)')
               next_file='ci_firmware-rk.yml'
-              callee_inputs=$(jq -n --arg reason "ci after ci_fork_edk2" --arg push "$FIRMWARE_DOCKER_PUSH" '{reason: $reason, Docker_push: $push}')
+              callee_inputs=$(jq -n --arg reason "ci after TEST workflows" --arg push "$FIRMWARE_DOCKER_PUSH" '{reason: $reason, Docker_push: $push}')
               ;;
             'yubiOS RK firmware')
               next_file='yubiOS-ci.yml'
@@ -162,18 +184,19 @@ jobs:
               callee_inputs=$(jq -n --arg push "$DEV_DOCKER_PUSH" '{Docker_push: $push}')
               ;;
             'yubiOS dev/test image (swu2f, ADR-026)')
-              next_file='ci_test-vm.yml'
-              callee_inputs=$(jq -n --arg image "$VM_IMAGE" '{image: $image}')
-              ;;
-            'yubiOS VM e2e (tests/vm)')
               next_file='ci_mkosi-installer.yml'
-              callee_inputs=$(jq -n --arg reason "ci after yubiOS VM e2e (tests/vm)" --arg push "$INSTALLER_DOCKER_PUSH" '{reason: $reason, Docker_push: $push}')
+              callee_inputs=$(jq -n --arg reason "ci after yubiOS dev/test image" --arg push "$INSTALLER_DOCKER_PUSH" '{reason: $reason, Docker_push: $push}')
               ;;
             'yubiOS mkosi-installer')
-              next_file='ci_pq_tls_verify.yml'
-              callee_inputs='{}'
+              if [ "$CI_TEST_RUN" = "true" ]; then
+                next_file='ci_test-vm.yml'
+                callee_inputs=$(jq -n --arg image "$VM_IMAGE" '{image: $image}')
+              else
+                echo 'Ordered CI chain complete (TEST workflows disabled).'
+                exit 0
+              fi
               ;;
-            'PQ hybrid TLS verification (ADR-025)')
+            'yubiOS VM e2e (tests/vm)')
               echo 'Ordered CI chain complete.'
               exit 0
               ;;
@@ -191,8 +214,10 @@ jobs:
             --arg ci_Dev_Docker_push "$DEV_DOCKER_PUSH" \
             --arg ci_Firmware_Docker_push "$FIRMWARE_DOCKER_PUSH" \
             --arg ci_Installer_Docker_push "$INSTALLER_DOCKER_PUSH" \
+            --arg ci_fork_run "$CI_FORK_RUN" \
+            --arg ci_test_run "$CI_TEST_RUN" \
             --arg ci_vm_image "$VM_IMAGE" \
-            '{ci_callback: $ci_callback, ci_chain_ref: $ci_chain_ref, ci_reason: $ci_reason, ci_Docker_push: $ci_Docker_push, ci_Dev_Docker_push: $ci_Dev_Docker_push, ci_Firmware_Docker_push: $ci_Firmware_Docker_push, ci_Installer_Docker_push: $ci_Installer_Docker_push, ci_vm_image: $ci_vm_image}')
+            '{ci_callback: $ci_callback, ci_chain_ref: $ci_chain_ref, ci_reason: $ci_reason, ci_Docker_push: $ci_Docker_push, ci_Dev_Docker_push: $ci_Dev_Docker_push, ci_Firmware_Docker_push: $ci_Firmware_Docker_push, ci_Installer_Docker_push: $ci_Installer_Docker_push, ci_fork_run: $ci_fork_run, ci_test_run: $ci_test_run, ci_vm_image: $ci_vm_image}')
           inputs_json=$(jq -n --argjson a "$callee_inputs" --argjson b "$common_inputs" '$a + $b')
           payload=$(jq -n --arg ref "$REF" --argjson inputs "$inputs_json" '{ref: $ref, inputs: $inputs}')
 
