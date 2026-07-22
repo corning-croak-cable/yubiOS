@@ -83,7 +83,7 @@ build_local_core_images() {
         images)
             bake_targets=(yubios-ci yubios-dev-ci)
             append_image_tag "yubios:${LOCAL_TAG}"
-            append_image_tag "yubios:dev-${LOCAL_TAG}"
+            append_image_tag "yubios:${LOCAL_TAG}-dev"
             ;;
         production)
             bake_targets=(yubios-ci)
@@ -91,7 +91,7 @@ build_local_core_images() {
             ;;
         dev)
             bake_targets=(yubios-dev-ci)
-            append_image_tag "yubios:dev-${LOCAL_TAG}"
+            append_image_tag "yubios:${LOCAL_TAG}-dev"
             ;;
         *)
             die "unknown core image selection: $selection"

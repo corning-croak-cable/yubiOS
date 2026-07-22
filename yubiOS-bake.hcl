@@ -180,7 +180,7 @@ target "yubios-dev" {
     ref("dev-${GIT_SHA}-${ARCH}"),
   ] : concat(
     ["yubios:dev-${ARCH}"],
-    LOCAL_TAG != "" ? ["yubios:dev-${LOCAL_TAG}"] : [],
+    LOCAL_TAG != "" ? ["yubios:${LOCAL_TAG}-dev"] : [],
   )
 }
 

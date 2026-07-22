@@ -124,7 +124,7 @@ only the selected local tags into the host Docker daemon.
 | Mode | Default host-loaded tags |
 |---|---|
 | `production` | `yubios:local` |
-| `dev` | `yubios:dev-local` |
+| `dev` | `yubios:local-dev` |
 | `installer` | `yubios:local-installer` |
 | `firmware` | `yubios:local-firmware-qemu-arm64`, `yubios:local-firmware-rockpro64-rk3399`, `yubios:local-firmware-rock5b-rk3588` |
 
@@ -182,7 +182,7 @@ Every approved base image and GitHub Action SHA lives in [PINNED.md](PINNED.md).
 |---|---|
 | Production tags | `latest` plus immutable commit tags |
 | Test tags | `dev`, `dev-<sha>` for swu2f TEST-only images |
-| Local build tags | `yubios:local`, `yubios:dev-local`, `yubios:local-installer`, and board-scoped `yubios:local-firmware-*` |
+| Local build tags | `yubios:local`, `yubios:local-dev`, `yubios:local-installer`, and board-scoped `yubios:local-firmware-*` |
 | Artifact tags | `installer`, `firmware` and per-commit variants |
 | Platforms | `linux/amd64`, `linux/arm64` |
 | Supply chain | SLSA build provenance + SBOM attestations |
