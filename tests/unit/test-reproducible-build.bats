@@ -100,7 +100,11 @@ if '--allow "fs.write=$output"' not in proof:
     failures.append("OCI proof does not authorize its exact Bake output directory")
 if "--setopt=history_record=false" not in containerfile:
     failures.append("production package install records nondeterministic DNF history")
-if "--no-compile" not in containerfile or "--invalidation-mode=checked-hash" not in containerfile:
+if (
+    "--no-compile" not in containerfile
+    or "--invalidation-mode=checked-hash -q" not in containerfile
+    or "--quiet" in containerfile
+):
     failures.append("CHIPSEC install does not regenerate deterministic Python bytecode")
 if passless.count("--setopt=history_record=false") < 2:
     failures.append("passless build records nondeterministic DNF transactions")

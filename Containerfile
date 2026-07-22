@@ -49,7 +49,7 @@ RUN echo 'chipsec==1.13.16 --hash=sha256:63bed5ad4224402397817ea82b94c3a21736386
     PYTHONHASHSEED=0 python3 -m pip install --no-cache-dir --no-compile \
       --break-system-packages --require-hashes \
       -r /tmp/chipsec-requirements.txt && \
-    PYTHONHASHSEED=0 python3 -m compileall --invalidation-mode=checked-hash --quiet \
+    PYTHONHASHSEED=0 python3 -m compileall --invalidation-mode=checked-hash -q \
       /usr/local/lib/python*/site-packages/chipsec && \
     rm /tmp/chipsec-requirements.txt
 
