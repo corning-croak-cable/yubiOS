@@ -43,10 +43,10 @@ fi
 readonly BUILD_DEPS=(git cargo rust gcc systemd-devel tpm2-tss-devel)
 
 clean_package_manager_state() {
-    # DNF5 can emit wall-clock log/history state even when history_record=false,
-    # and package scriptlets refresh ldconfig's filesystem-order-dependent
-    # auxiliary cache. None is part of the runnable image contract. The RPM
-    # database and /etc/ld.so.cache remain intact.
+    # DNF5 can emit wall-clock log/history state and repository countme data
+    # even when history_record=false, and package scriptlets refresh ldconfig's
+    # filesystem-order-dependent auxiliary cache. None is part of the runnable
+    # image contract. The RPM database and /etc/ld.so.cache remain intact.
     rm -rf \
         /var/cache/dnf \
         /var/cache/ldconfig/aux-cache \
@@ -54,6 +54,7 @@ clean_package_manager_state() {
         /var/log/dnf* \
         /var/log/hawkey.log \
         /var/log/libdnf* \
+        /var/lib/dnf/repos \
         /usr/lib/sysimage/libdnf5/transaction_history.sqlite*
 }
 

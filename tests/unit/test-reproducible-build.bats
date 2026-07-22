@@ -119,12 +119,17 @@ for state in (
     "/var/log/dnf*",
     "/var/cache/ldconfig/aux-cache",
     "/var/cache/libdnf5",
+    "/var/lib/dnf/repos",
     "/usr/lib/sysimage/libdnf5/transaction_history.sqlite*",
 ):
     if state not in containerfile or state not in passless:
         failures.append(f"package-manager state is not removed from both image layers: {state}")
 if not diagnostic.is_file() or "diagnose-oci-layout.py" not in proof:
     failures.append("OCI mismatch does not emit layer-level diagnostics")
+if '--resolve "$WORK_ROOT/a"' not in proof:
+    failures.append("OCI proof does not resolve BuildKit's nested image descriptor")
+if "manifest_digest=$(jq -er '.manifests[0].digest'" in proof:
+    failures.append("OCI proof still assumes the top-level descriptor is an image manifest")
 if not re.search(
     r'target "_image-export"\s*\{.*?type\s*=\s*"provenance".*?disabled\s*=\s*!PUSH',
     bake,
@@ -245,6 +250,7 @@ import hashlib
 import json
 import pathlib
 import runpy
+import subprocess
 import sys
 
 root = pathlib.Path(sys.argv[1])
@@ -276,6 +282,18 @@ namespace = runpy.run_path(str(root / "scripts/lib/diagnose-oci-layout.py"))
 _, resolved_manifest, resolved_config = namespace["resolve_image"](layout)
 assert resolved_manifest == manifest
 assert resolved_config == config
+resolved = subprocess.run(
+    [
+        sys.executable,
+        str(root / "scripts/lib/diagnose-oci-layout.py"),
+        "--resolve",
+        str(layout),
+    ],
+    check=True,
+    text=True,
+    stdout=subprocess.PIPE,
+).stdout.strip()
+assert resolved == f"{manifest_descriptor['digest']}\t{config_descriptor['digest']}"
 PY
 
     [ "$status" -eq 0 ]

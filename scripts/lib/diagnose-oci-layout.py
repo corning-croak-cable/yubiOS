@@ -32,12 +32,13 @@ def blob_path(layout: Path, digest: str) -> Path:
     return layout / "blobs" / algorithm / value
 
 
-def resolve_image(layout: Path) -> tuple[Any, Any, Any]:
+def resolve_image_descriptors(layout: Path) -> tuple[Any, str, Any, str, Any]:
     index = read_json(layout / "index.json")
     manifests = index.get("manifests", [])
     if not manifests:
         die(f"{layout} has no image manifest")
-    manifest = read_json(blob_path(layout, manifests[0]["digest"]))
+    descriptor = manifests[0]
+    manifest = read_json(blob_path(layout, descriptor["digest"]))
     # BUILDKIT_MULTI_PLATFORM=1 emits a top-level OCI index whose descriptor
     # points to a second, platform-scoped index even for one architecture.
     # Follow that single-image chain until the actual manifest is reached.
@@ -47,10 +48,19 @@ def resolve_image(layout: Path) -> tuple[Any, Any, Any]:
         manifests = manifest.get("manifests", [])
         if not manifests:
             die(f"{layout} descriptor chain has no image manifest")
-        manifest = read_json(blob_path(layout, manifests[0]["digest"]))
+        descriptor = manifests[0]
+        manifest = read_json(blob_path(layout, descriptor["digest"]))
     else:
         die(f"{layout} descriptor chain is unexpectedly deep")
-    config = read_json(blob_path(layout, manifest["config"]["digest"]))
+    config_digest = manifest["config"]["digest"]
+    config = read_json(blob_path(layout, config_digest))
+    return index, descriptor["digest"], manifest, config_digest, config
+
+
+def resolve_image(layout: Path) -> tuple[Any, Any, Any]:
+    index, _manifest_digest, manifest, _config_digest, config = (
+        resolve_image_descriptors(layout)
+    )
     return index, manifest, config
 
 
@@ -136,8 +146,17 @@ def print_layer_diff(index: int, a_path: Path, b_path: Path) -> None:
 
 
 def main() -> int:
+    if len(sys.argv) == 3 and sys.argv[1] == "--resolve":
+        _, manifest_digest, _, config_digest, _ = resolve_image_descriptors(
+            Path(sys.argv[2])
+        )
+        print(f"{manifest_digest}\t{config_digest}")
+        return 0
     if len(sys.argv) != 3:
-        die(f"usage: {Path(sys.argv[0]).name} A_LAYOUT B_LAYOUT")
+        die(
+            f"usage: {Path(sys.argv[0]).name} A_LAYOUT B_LAYOUT | "
+            f"--resolve LAYOUT"
+        )
     a_layout, b_layout = map(Path, sys.argv[1:])
     a_index, a_manifest, a_config = resolve_image(a_layout)
     b_index, b_manifest, b_config = resolve_image(b_layout)

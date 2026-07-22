@@ -18,7 +18,8 @@ ARG SOURCE_DATE_EPOCH
 # pam-u2f:         PAM module for FIDO2/U2F; requires >= 1.3.1 (CVE-2025-23013)
 #                  Source: https://www.yubico.com/support/security-advisories/ysa-2025-01/
 # pcsc-lite:       PC/SC daemon; needed for PIV/CCID interface
-# Fedora 45's DNF5 emits mutable cache, log, and transaction-history state;
+# Fedora 45's DNF5 emits mutable cache, log, repository countme, and
+# transaction-history state;
 # package scriptlets also refresh ldconfig's regenerable auxiliary cache in
 # filesystem-dependent order. RPM itself honors SOURCE_DATE_EPOCH, so remove
 # those caches while retaining the installed RPM and runtime linker databases.
@@ -48,6 +49,7 @@ RUN dnf -y --setopt=history_record=false install \
       /var/log/dnf* \
       /var/log/hawkey.log \
       /var/log/libdnf* \
+      /var/lib/dnf/repos \
       /usr/lib/sysimage/libdnf5/transaction_history.sqlite*
 
 # ── First-boot firmware validation (ADR-024) ─────────────────────────────

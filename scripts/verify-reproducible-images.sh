@@ -41,6 +41,7 @@ esac
 
 command -v docker >/dev/null 2>&1 || die 'docker is required'
 command -v jq >/dev/null 2>&1 || die 'jq is required'
+command -v python3 >/dev/null 2>&1 || die 'python3 is required'
 docker buildx version >/dev/null 2>&1 || die 'docker buildx is required'
 
 repo_root=$(cd -- "$SCRIPT_DIR/.." && pwd -P)
@@ -107,13 +108,15 @@ if ! diff -u "$WORK_ROOT/a.sums" "$WORK_ROOT/b.sums"; then
 fi
 cmp "$WORK_ROOT/a/index.json" "$WORK_ROOT/b/index.json"
 
-manifest_digest=$(jq -er '.manifests[0].digest' "$WORK_ROOT/a/index.json")
-manifest="$WORK_ROOT/a/blobs/sha256/${manifest_digest#sha256:}"
-config_digest=$(jq -er '.config.digest' "$manifest")
+resolved=$(python3 "$SCRIPT_DIR/lib/diagnose-oci-layout.py" \
+    --resolve "$WORK_ROOT/a") || die 'cannot resolve OCI image descriptors'
+IFS=$'\t' read -r manifest_digest config_digest <<< "$resolved"
+[[ $manifest_digest == sha256:* && $config_digest == sha256:* ]] || \
+    die 'OCI descriptor resolver returned invalid digests'
 config="$WORK_ROOT/a/blobs/sha256/${config_digest#sha256:}"
 jq -e --arg expected "$SOURCE_DATE_ISO8601" \
     '.created == $expected and all(.history[]?; .created == null or .created == $expected)' \
-    "$config" >/dev/null
+    "$config" >/dev/null || die 'OCI config timestamps do not match SOURCE_DATE_EPOCH'
 
 report=${REPRO_REPORT:-$repo_root/reproducibility.json}
 mkdir -p "$(dirname -- "$report")"
