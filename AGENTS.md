@@ -54,7 +54,7 @@ Use the multi-arch OCI index digest from [PINNED.md](PINNED.md):
 ```sh
 docker pull dhi.io/debian-base:trixie-debian13-dev@sha256:<PINNED_INDEX_DIGEST>
 source scripts/lib/reproducible-build.sh
-configure_reproducible_build . HEAD amd64
+configure_reproducible_build . HEAD arm64
 ARCH=amd64 PLATFORM=linux/amd64 \
   docker buildx bake --file yubiOS-bake.hcl yubios-ci
 ```
