@@ -7,6 +7,7 @@ Latest upstream progress review: [refs/systemd-upstream-progress-2026-07-21.md](
 Latest targeted audit: [refs/systemd-v262-audit-2026-07-14.md](refs/systemd-v262-audit-2026-07-14.md).
 Latest broad research note: [refs/research-refresh-2026-07-11.md](refs/research-refresh-2026-07-11.md).
 Latest VM e2e evidence: [run 29872832727](https://github.com/yubi-OS/yubiOS/actions/runs/29872832727); root SSH and the DirectBoot bootloader-update guard passed, while guest CTAP2 enumeration remained absent.
+Latest bootc install evidence: [run 29884493346](https://github.com/yubi-OS/yubiOS/actions/runs/29884493346); native amd64 and arm64 fresh-runner legs installed digest `sha256:22140ef11deebac5643544434af1263368b72fa791fe53e98add677bbcadc08e` onto externally prepared DPS partitions, retained `/mnt` under `--skip-finalize`, and emitted no `root=` in the generated BLS entries.
 Latest roadmap research pass: [refs/sectime-rk-secure-time-2026-07-17.md](refs/sectime-rk-secure-time-2026-07-17.md), [refs/frost-panfrost-lockout-2026-07-17.md](refs/frost-panfrost-lockout-2026-07-17.md), [refs/openwrt-deception-proof-plan-2026-07-17.md](refs/openwrt-deception-proof-plan-2026-07-17.md), and [refs/roadmap-promotion-gates-2026-07-17.md](refs/roadmap-promotion-gates-2026-07-17.md).
 Latest firmware workflow split: [refs/firmware-rk-workflow-2026-07-17.md](refs/firmware-rk-workflow-2026-07-17.md).
 
@@ -90,7 +91,7 @@ These items map [FUTURE.md](FUTURE.md) sections that were missing or only partia
 - [x] For workflow trigger edits, add narrow path-scoped push triggers only when required for validation.
 - [x] Keep Docker Build Policy wiring centralized in `yubiOS-bake.hcl`: every build target inherits the explicit `yubiOS.rego` filename with `reset=true` and `strict=true`, without relying on automatic `Dockerfile.rego` loading. See [refs/docker-bake-consolidation-2026-07-17.md](refs/docker-bake-consolidation-2026-07-17.md).
 - [x] Add board variant fields to real-hardware firmware workflows before hardware lanes land: `rock5b-rk3588` as the Path A variant and `rockpro64-rk3399` as another Path A variant. See `.github/workflows/ci_firmware-rk.yml` and [refs/firmware-rk-workflow-2026-07-17.md](refs/firmware-rk-workflow-2026-07-17.md).
-- [ ] Validate the documented `bootc install to-filesystem` path on a fresh VM or disposable disk, including external partition preparation, mounted `/mnt`, `--skip-finalize`, and omitted `root=` via `--root-mount-spec=""`.
+- [x] Validate the documented `bootc install to-filesystem` path on a fresh VM or disposable disk, including external partition preparation, mounted `/mnt`, `--skip-finalize`, and omitted `root=` via `--root-mount-spec=""`: [run 29884493346](https://github.com/yubi-OS/yubiOS/actions/runs/29884493346) passed on native amd64 and arm64.
 
 ## Current ARM64 Tasks
 

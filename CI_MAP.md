@@ -439,6 +439,8 @@ The workflows below are listed in the non-fork dispatch order defined by `ci.yml
 
 These workflows are deliberately outside the `ci.yml` callback chain. A push to `main` runs each one only when its own workflow file changes; maintainers can also dispatch either workflow manually.
 
+Initial self-change evidence is green: [bootc install run 29884493346](https://github.com/yubi-OS/yubiOS/actions/runs/29884493346) passed the amd64 and arm64 disposable-disk legs, and [rootless Docker run 29884493340](https://github.com/yubi-OS/yubiOS/actions/runs/29884493340) passed both architecture legs.
+
 - [`ci_test-bootc-filesystem.yml`](.github/workflows/ci_test-bootc-filesystem.yml) — workflow: `bootc to-filesystem install e2e`
   - Job `install-to-filesystem` — `install-to-filesystem (${{ matrix.arch }})`, native amd64/arm64 matrix on fresh hosted VMs
     - Step 1: `Checkout`
