@@ -1,6 +1,6 @@
 # yubiOS TODO
 
-Last reviewed: 2026-07-21
+Last reviewed: 2026-07-22
 Status: active task list
 Latest requested-run evidence review: [refs/ci-evidence-2026-07-21.md](refs/ci-evidence-2026-07-21.md), covering the complete logs of runs 29869480442, 29869503301, 29869527608, 29872130447, 29872433355, 29872832727, 29876111887, and 29876466349.
 Latest upstream progress review: [refs/systemd-upstream-progress-2026-07-21.md](refs/systemd-upstream-progress-2026-07-21.md).
@@ -8,6 +8,7 @@ Latest targeted audit: [refs/systemd-v262-audit-2026-07-14.md](refs/systemd-v262
 Latest broad research note: [refs/research-refresh-2026-07-11.md](refs/research-refresh-2026-07-11.md).
 Latest VM e2e evidence: [run 29872832727](https://github.com/yubi-OS/yubiOS/actions/runs/29872832727); root SSH and the DirectBoot bootloader-update guard passed, while guest CTAP2 enumeration remained absent.
 Latest bootc install evidence: [run 29884493346](https://github.com/yubi-OS/yubiOS/actions/runs/29884493346); native amd64 and arm64 fresh-runner legs installed digest `sha256:22140ef11deebac5643544434af1263368b72fa791fe53e98add677bbcadc08e` onto externally prepared DPS partitions, retained `/mnt` under `--skip-finalize`, and emitted no `root=` in the generated BLS entries.
+Latest composefs audit: [refs/bootc-composefs-sealed-flow-2026-07-22.md](refs/bootc-composefs-sealed-flow-2026-07-22.md); the current install evidence is strict fs-verity through an unsealed BLS entry, while the sealed target requires a signed UKI that authenticates the composefs digest.
 Latest roadmap research pass: [refs/sectime-rk-secure-time-2026-07-17.md](refs/sectime-rk-secure-time-2026-07-17.md), [refs/frost-panfrost-lockout-2026-07-17.md](refs/frost-panfrost-lockout-2026-07-17.md), [refs/openwrt-deception-proof-plan-2026-07-17.md](refs/openwrt-deception-proof-plan-2026-07-17.md), and [refs/roadmap-promotion-gates-2026-07-17.md](refs/roadmap-promotion-gates-2026-07-17.md).
 Latest firmware workflow split: [refs/firmware-rk-workflow-2026-07-17.md](refs/firmware-rk-workflow-2026-07-17.md).
 
@@ -43,6 +44,8 @@ Use this map to keep [FUTURE.md](FUTURE.md) roadmap entries tied to active TODO 
 - [x] Keep future planning cycles dated and scoped under `refs/`: see the 2026-07-17 SecTime, Frost, OpenWrt, roadmap-gate, hardening, ARM64 board, and firmware workflow refs.
 - [x] Record the complete requested-run review separately from green/red workflow status: [refs/ci-evidence-2026-07-21.md](refs/ci-evidence-2026-07-21.md).
 - [x] Add a dated systemd-family upstream snapshot and area-scaled contributor map: [refs/systemd-upstream-progress-2026-07-21.md](refs/systemd-upstream-progress-2026-07-21.md) and [assets/upstream-contributor-bubbles.svg](assets/upstream-contributor-bubbles.svg).
+- [x] Audit the attached EROFS/bootc proposal against released bootc and composefs behavior, correct the practical split/ukify flow, and separate native bootc composefs from the mkosi dm-verity path: [refs/bootc-composefs-sealed-flow-2026-07-22.md](refs/bootc-composefs-sealed-flow-2026-07-22.md).
+- [ ] Reconcile the remaining composefs/dm-verity conflation in normative ADR, SPEC, threat-model, and mitigation text after the two build paths and migration policy are approved.
 
 ## Current Roadmap Research Tasks
 
@@ -92,6 +95,8 @@ These items map [FUTURE.md](FUTURE.md) sections that were missing or only partia
 - [x] Keep Docker Build Policy wiring centralized in `yubiOS-bake.hcl`: every build target inherits the explicit `yubiOS.rego` filename with `reset=true` and `strict=true`, without relying on automatic `Dockerfile.rego` loading. See [refs/docker-bake-consolidation-2026-07-17.md](refs/docker-bake-consolidation-2026-07-17.md).
 - [x] Add board variant fields to real-hardware firmware workflows before hardware lanes land: `rock5b-rk3588` as the Path A variant and `rockpro64-rk3399` as another Path A variant. See `.github/workflows/ci_firmware-rk.yml` and [refs/firmware-rk-workflow-2026-07-17.md](refs/firmware-rk-workflow-2026-07-17.md).
 - [x] Validate the documented `bootc install to-filesystem` path on a fresh VM or disposable disk, including external partition preparation, mounted `/mnt`, `--skip-finalize`, and omitted `root=` via `--root-mount-spec=""`: [run 29884493346](https://github.com/yubi-OS/yubiOS/actions/runs/29884493346) passed on native amd64 and arm64.
+- [x] Strengthen the external-image `to-filesystem` smoke so it requires an ext4 `verity` feature, the composefs repository instead of an ostree fallback, measurable EROFS metadata images, a rejected protected-object write, and a strict digest-bound BLS entry classified as unsealed.
+- [ ] Promote a sealed composefs lane only after the pinned base exposes the released v1.16.4 split/ukify capabilities; build and sign the exact rootfs UKI, boot it with Secure Boot on both architectures, assert UKI composefs status, and retain a negative tamper-boot proof.
 
 ## Current ARM64 Tasks
 

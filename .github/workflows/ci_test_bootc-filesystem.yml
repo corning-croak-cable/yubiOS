@@ -1,11 +1,10 @@
 name: TEST - bootc to-filesystem install e2e
 
 # Validate the destructive README install path only on disposable loopback
-# disks inside fresh GitHub-hosted VMs. The workflow prepares the DPS-aware
-# partitions externally, mounts root at /mnt and ESP at /mnt/boot, then invokes
-# the documented bootc command with --skip-finalize and an explicitly empty
-# --root-mount-spec so the generated boot configuration relies on DPS rather
-# than a root= kernel argument.
+# disks inside fresh GitHub-hosted VMs. This is an external published-image
+# regression smoke: the orchestrator runs it before the production image build.
+# It proves a strict fs-verity composefs repository and an unsealed traditional
+# BLS deployment; a separate Secure Boot VM lane is required to prove sealing.
 
 on:
   push:
@@ -114,7 +113,7 @@ jobs:
           test "$(uname -m)" = "${{ matrix.machine }}"
           sudo apt-get update -qq
           sudo apt-get install -y -qq --no-install-recommends \
-            binutils dosfstools e2fsprogs fdisk util-linux
+            binutils dosfstools e2fsprogs erofs-utils fdisk fsverity jq util-linux
 
           DISK_IMAGE="${RUNNER_TEMP}/yubios-bootc-to-filesystem-${{ matrix.arch }}.raw"
           truncate -s 12G "$DISK_IMAGE"
@@ -129,7 +128,10 @@ jobs:
           test -b "$ESP_PART"
           test -b "$ROOT_PART"
           sudo mkfs.vfat -F 32 -n EFI "$ESP_PART"
-          sudo mkfs.ext4 -F -L yubiOS-root "$ROOT_PART"
+          sudo mkfs.ext4 -F -O verity -L yubiOS-root "$ROOT_PART"
+          sudo tune2fs -l "$ROOT_PART" | \
+            sed -n 's/^Filesystem features:[[:space:]]*//p' | \
+            tr ' ' '\n' | grep -qx verity
           sudo mount "$ROOT_PART" /mnt
           sudo install -d -m 0755 /mnt/boot
           sudo mount "$ESP_PART" /mnt/boot
@@ -167,6 +169,37 @@ jobs:
           echo "Installing immutable source: $RESOLVED_IMAGE"
           sudo install -d -m 0755 /var/lib/containers
 
+          docker run --rm "$RESOLVED_IMAGE" bash -euxo pipefail -c '
+            bootc --version
+            bootc install to-filesystem --help | grep -F -- --composefs-backend
+            bootc install to-filesystem --help | grep -F -- --allow-missing-verity
+            test -x /usr/lib/bootc/initramfs-setup
+            test -x /usr/lib/dracut/modules.d/51bootc/module-setup.sh
+
+            found_initramfs=0
+            for initramfs in /usr/lib/modules/*/initramfs.img; do
+              test -e "$initramfs" || continue
+              found_initramfs=1
+              listing="$(mktemp)"
+              lsinitrd "$initramfs" > "$listing"
+              grep -Fq bootc-root-setup.service "$listing"
+              grep -Fq usr/lib/bootc/initramfs-setup "$listing"
+              rm -f "$listing"
+            done
+            test "$found_initramfs" -eq 1
+
+            if bootc container split-kernel-and-rootfs --help >/dev/null 2>&1; then
+              echo "sealed-build split capability: present"
+            else
+              echo "sealed-build split capability: absent; install remains BLS/unsealed"
+            fi
+            if bootc container ukify --help >/dev/null 2>&1; then
+              echo "sealed-build ukify capability: present"
+            else
+              echo "sealed-build ukify capability: absent"
+            fi
+          '
+
           docker run --rm --privileged --pid=host --ipc=host \
             --security-opt label=type:unconfined_t \
             -v /var/lib/containers:/var/lib/containers \
@@ -183,7 +216,7 @@ jobs:
 
           echo "RESOLVED_IMAGE=$RESOLVED_IMAGE" >> "$GITHUB_ENV"
 
-      - name: Verify installed deployment and omitted root= argument
+      - name: Verify strict composefs repository and unsealed BLS deployment
         env:
           ROOT_PART: ${{ steps.disk.outputs.root_part }}
           ESP_PART: ${{ steps.disk.outputs.esp_part }}
@@ -191,38 +224,110 @@ jobs:
           set -euo pipefail
           test "$(findmnt -nro SOURCE /mnt)" = "$ROOT_PART"
           test "$(findmnt -nro SOURCE /mnt/boot)" = "$ESP_PART"
-          [ -d /mnt/ostree/repo ] || [ -d /mnt/composefs ]
-          [ -d /mnt/boot/loader ] || [ -d /mnt/boot/EFI/Linux ]
+          for directory in objects images streams; do
+            sudo test -d "/mnt/composefs/${directory}"
+          done
+          sudo test -d /mnt/state/deploy
+          sudo test ! -d /mnt/ostree/repo
+          sudo test -d /mnt/boot/loader/entries
 
-          inspected=0
+          if sudo test -f /mnt/composefs/meta.json; then
+            sudo jq -e \
+              '.algorithm | type == "string" and startswith("fsverity-sha512-")' \
+              /mnt/composefs/meta.json
+          fi
+
+          image_count=0
+          tamper_target=''
+          tamper_measurement=''
+          while IFS= read -r -d '' image_link; do
+            image_count=$((image_count + 1))
+            image_digest="${image_link##*/}"
+            if ! [[ "$image_digest" =~ ^[0-9a-f]{128}$ ]]; then
+              echo "::error::unexpected composefs image name: $image_digest"
+              exit 1
+            fi
+
+            image_target="$(sudo readlink -f "$image_link")"
+            case "$image_target" in
+              /mnt/composefs/objects/*) ;;
+              *) echo "::error::image escaped the composefs object store: $image_target"; exit 1 ;;
+            esac
+
+            measurement="$(sudo fsverity measure "$image_target")"
+            measured_digest="${measurement%% *}"
+            measured_digest="${measured_digest#sha512:}"
+            test "$measured_digest" = "$image_digest"
+            sudo dump.erofs -s "$image_target" >/dev/null
+
+            if [ -z "$tamper_target" ]; then
+              tamper_target="$image_target"
+              tamper_measurement="$measurement"
+            fi
+          done < <(sudo find /mnt/composefs/images -maxdepth 1 -type l -print0)
+
+          test "$image_count" -gt 0
+          test -n "$tamper_target"
+          if printf X | sudo dd of="$tamper_target" bs=1 count=1 conv=notrunc status=none 2>tamper.err; then
+            echo "::error::fs-verity-protected composefs image accepted a write"
+            exit 1
+          fi
+          cat tamper.err
+          test "$(sudo fsverity measure "$tamper_target")" = "$tamper_measurement"
+
+          bls_count=0
+          composefs_digest=''
           while IFS= read -r -d '' entry; do
-            inspected=1
+            bls_count=$((bls_count + 1))
             echo "Inspecting BLS entry: $entry"
             sudo sed -n '1,160p' "$entry"
-            if sudo grep -Eq '(^|[[:space:]])root=' "$entry"; then
+
+            options="$(sudo awk '$1 == "options" {sub(/^options[[:space:]]+/, ""); print}' "$entry")"
+            if grep -Eq '(^|[[:space:]])root=' <<<"$options"; then
               echo "::error::root= unexpectedly present in $entry"
               exit 1
             fi
+            if grep -Eq '(^|[[:space:]])composefs(\.digest)?=\?' <<<"$options"; then
+              echo "::error::optional fs-verity marker present in $entry"
+              exit 1
+            fi
+
+            if [[ " $options " =~ [[:space:]]composefs=([0-9a-f]{128})[[:space:]] ]]; then
+              entry_digest="${BASH_REMATCH[1]}"
+            else
+              echo "::error::strict legacy composefs=<sha512> argument absent in $entry"
+              exit 1
+            fi
+            sudo test -L "/mnt/composefs/images/${entry_digest}"
+
+            linux_path="$(sudo awk '$1 == "linux" {print $2}' "$entry")"
+            initrd_path="$(sudo awk '$1 == "initrd" {print $2}' "$entry")"
+            case "$linux_path" in
+              */bootc_composefs-"${entry_digest}"/vmlinuz) ;;
+              *) echo "::error::kernel path is not bound to composefs digest: $linux_path"; exit 1 ;;
+            esac
+            case "$initrd_path" in
+              */bootc_composefs-"${entry_digest}"/initrd) ;;
+              *) echo "::error::initramfs path is not bound to composefs digest: $initrd_path"; exit 1 ;;
+            esac
+            composefs_digest="$entry_digest"
           done < <(sudo find /mnt/boot -type f -path '*/loader/entries/*.conf' -print0)
 
-          while IFS= read -r -d '' uki; do
-            cmdline="$(mktemp)"
-            if sudo objcopy --dump-section ".cmdline=${cmdline}" "$uki" 2>/dev/null \
-              && [ -s "$cmdline" ]; then
-              inspected=1
-              echo "Inspecting UKI command line: $uki"
-              tr '\0' '\n' < "$cmdline"
-              if tr '\0' '\n' < "$cmdline" | grep -Eq '(^|[[:space:]])root='; then
-                echo "::error::root= unexpectedly present in $uki .cmdline"
-                exit 1
-              fi
-            fi
-            rm -f "$cmdline"
-          done < <(sudo find /mnt/boot -type f -iname '*.efi' -print0)
+          test "$bls_count" -gt 0
+          test -n "$composefs_digest"
+          echo "SEAL_STATE=unsealed-bls" >> "$GITHUB_ENV"
 
-          test "$inspected" -eq 1
+          {
+            echo '### bootc composefs install evidence'
+            echo "- Source: \`${RESOLVED_IMAGE}\`"
+            echo "- Metadata images verified: ${image_count}"
+            echo "- Deployment digest: \`${composefs_digest}\`"
+            echo '- fs-verity: enforced; protected-object write rejected'
+            echo '- Seal state: **unsealed BLS** (no signed UKI/Secure Boot boot proof)'
+          } >> "$GITHUB_STEP_SUMMARY"
+
           echo "bootc to-filesystem installed $RESOLVED_IMAGE onto externally prepared mounts"
-          echo "Verified: --skip-finalize completed without unmounting /mnt and no root= was emitted"
+          echo "Verified: strict composefs repository, EROFS metadata, fs-verity, and no root= argument"
 
       - name: Detach disposable target
         if: always()

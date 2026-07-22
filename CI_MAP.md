@@ -16,7 +16,7 @@ This map treats `.github/workflows/*.yml` as the source of truth for events, run
 | `.github/workflows/ci_dev_image.yml` | TEST-only image with software FIDO2 | `Containerfile.dev`, production target context, `yubiOS-bake.hcl`, `yubiOS.rego` | Bake build/smoke results; optional `0mniteck/yubios:dev-<sha>` and `dev` |
 | `.github/workflows/ci_mkosi-installer.yml` | mkosi disk image, ARM64 reproducibility proof, and installer artifact | `mkosi.conf`, `mkosi.conf.d/**`, `mkosi.finalize`, primary/rebuild ARM64 jobs, SoftHSM PKCS#11 mock, `yubiOS-bake.hcl` | signed UKI verification, canonical unsigned-root equality report with signed boot envelopes recorded separately, `yubiOS.raw.zst`, optional installer tags through Bake |
 | `.github/workflows/ci_test_rootless-docker.yml` | Optional pre-image rootless Docker bootstrap validation | pinned Docker/Buildx downloads, pinned DHI container, amd64/arm64 matrix | rootless daemon and hardened Buildx builder verified across step boundaries, callback state |
-| `.github/workflows/ci_test_bootc-filesystem.yml` | Optional pre-image fresh-VM `bootc install to-filesystem` e2e | resolved yubiOS image digest, disposable GPT disk, externally mounted `/mnt` and `/mnt/boot` | amd64/arm64 install proof, retained mounts under `--skip-finalize`, proof that `root=` is omitted, callback state |
+| `.github/workflows/ci_test_bootc-filesystem.yml` | Optional pre-image external-image composefs regression smoke | resolved yubiOS image digest, disposable GPT disk, ext4 `verity` target, externally mounted `/mnt` and `/mnt/boot` | amd64/arm64 strict fs-verity composefs repository proof, EROFS metadata validation, unsealed BLS classification, omitted `root=`, callback state |
 | `.github/workflows/ci_test_pq_tls_verify.yml` | Optional pre-image PQ hybrid TLS drift check | `yubiOS-bake.hcl`, `yubiOS.rego`, pinned DHI base, live TLS endpoint | uncached, non-blocking Bake verification result, callback state |
 | `.github/workflows/ci_test-vm.yml` | Final VM e2e test when `ci_test_run=true` | pullable TEST-only yubiOS image, bcvk source, Podman storage, VM scripts | bcvk capability gate, DirectBoot SSH credential transport, mandatory CTAP2/LUKS2/homed/ed25519-sk assertions, callback state |
 | `.github/workflows/ci_fork_*.yml` | Optional fork component checks | yubi-OS fork feature branches | component build/lint/test artifacts and callback state |
@@ -169,7 +169,7 @@ flowchart TD
     installer_bake["DHI publish job\nuser-scoped hardened builder\nBake: installer + registry exporter"]
     installer_out["installer\ninstaller-sha"]
     rootless["ci_test_rootless-docker.yml\nrootless daemon + hardened builder"]
-    bootc["ci_test_bootc-filesystem.yml\nexternal mounts + no root="]
+    bootc["ci_test_bootc-filesystem.yml\nstrict composefs + unsealed BLS"]
     pq["ci_test_pq_tls_verify.yml"]
     pq_bake["Bake: pq-tls-verify\nno-cache + cacheonly"]
     pq_out["non-blocking PQ TLS result"]
@@ -486,15 +486,19 @@ The exact dispatch order is defined by the state-machine graph above. The detail
 
 When `ci_test_run=true`, these workflows run after the optional `ci_fork_*` chain and before any image build. Their narrow push triggers remain: a push to `main` runs each workflow only when its own file changes, without activating its callback. Maintainers can also dispatch each workflow manually.
 
-Initial self-change evidence is green: [bootc install run 29884493346](https://github.com/yubi-OS/yubiOS/actions/runs/29884493346) passed the amd64 and arm64 disposable-disk legs, and [rootless Docker run 29884493340](https://github.com/yubi-OS/yubiOS/actions/runs/29884493340) passed both architecture legs.
+Initial self-change evidence is green: [bootc install run 29884493346](https://github.com/yubi-OS/yubiOS/actions/runs/29884493346) passed the amd64 and arm64 disposable-disk legs, and [rootless Docker run 29884493340](https://github.com/yubi-OS/yubiOS/actions/runs/29884493340) passed both architecture legs. The bootc run generated raw kernel/initramfs BLS entries with a strict `composefs=<128-hex digest>` and no `root=`. It is therefore evidence for enforced fs-verity through an unsealed BLS deployment, not for a signed-UKI seal.
+
+The bootc filesystem workflow runs before the production build and resolves a
+published image tag to an immutable digest. It is deliberately classified as
+an external-image regression smoke, not a test of the checked-out commit.
 
 - [`ci_test_bootc-filesystem.yml`](.github/workflows/ci_test_bootc-filesystem.yml) — workflow: `TEST - bootc to-filesystem install e2e`
   - Job `install-to-filesystem` — `install-to-filesystem (${{ matrix.arch }})`, native amd64/arm64 matrix on fresh hosted VMs
     - Step 1: `Checkout`
     - Step 2: `Assert README install contract`
-    - Step 3: `Prepare fresh externally partitioned target at /mnt`
-    - Step 4: `Resolve image digest and install with the README command`
-    - Step 5: `Verify installed deployment and omitted root= argument`
+    - Step 3: `Prepare fresh externally partitioned target at /mnt` with ext4 `verity`
+    - Step 4: `Resolve image digest and install with the README command`, reporting bootc sealed-build capabilities and checking the shipped initramfs
+    - Step 5: `Verify strict composefs repository and unsealed BLS deployment`, including EROFS parsing, fs-verity measurement, rejected tamper, digest-bound BLS paths, and omitted `root=`
     - Step 6: `Detach disposable target`
   - Job `ci-callback` — `Callback to ci.yml orchestrator`
     - Step 1: `Report current state to ci.yml`
