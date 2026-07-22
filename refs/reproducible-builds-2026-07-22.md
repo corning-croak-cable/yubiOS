@@ -21,7 +21,7 @@ cannot silently assign a different `SOURCE_DATE_EPOCH` to the same revision.
 | OCI metadata | Bake passes `SOURCE_DATE_EPOCH` and `BUILDKIT_MULTI_PLATFORM`, fixes the OCI `created` label, clamps layer mtimes with `rewrite-timestamp`, and fixes compression/exporter compatibility settings. | Pinned Buildx `bake --print`; the two-build proof requires the final config and index annotation to equal the commit time and permits inherited history only when it is no newer than that epoch. |
 | Core contexts | `.dockerignore` admits only the production/dev Dockerfiles and their required tracked inputs. | Runner downloads and workspace debris cannot enter the image context. |
 | Production/dev proof | `scripts/verify-reproducible-images.sh` builds the real target twice with separate pinned builders, no cache, and no default attestations, then compares the complete OCI-layout Merkle content. Bake output access is explicitly limited to each run's temporary directory; generated DNF cache, history, log, and repository-counting state plus the ldconfig auxiliary cache are removed, Python bytecode uses single-worker checked-hash compilation, and Rust debug paths are remapped. A mismatch prints config and layer-member diagnostics before failing. | Blocking ARM64 steps in `yubiOS-ci.yml` and `ci_dev_image.yml`; JSON evidence is retained for 30 days. |
-| mkosi installer | Commit epoch, architecture-scoped deterministic seed, no incremental cache, Dracut reproducible mode, fixed zstd worker count, normalized payload metadata, and sorted SHA-256 records. | `ci_mkosi-installer.yml` runs a second clean ARM64 build and requires an exact canonical manifest of root filesystem bytes, modes, ownership, mtimes, hardlinks, symlinks, devices, and xattrs plus exact initrd and package-manifest digests before publication. JSON evidence is retained for 30 days; the random SoftHSM envelope and Btrfs block serialization are recorded separately. |
+| mkosi installer | Commit epoch, architecture-scoped deterministic seed, no incremental cache, Dracut reproducible mode, fixed zstd worker count, normalized payload metadata, sorted SHA-256 records, and finalize-time removal of `ldconfig`'s regenerable auxiliary cache. | `ci_mkosi-installer.yml` runs a second clean ARM64 build and requires an exact canonical manifest of unsigned root filesystem bytes, modes, ownership, mtimes, hardlinks, symlinks, devices, and xattrs plus exact initrd and package-manifest digests before publication. The root-resident signed systemd-boot path and metadata remain in that manifest, but its SoftHSM-bound content hash is retained with the other signature envelopes. JSON evidence is retained for 30 days; Btrfs block serialization is also recorded separately. |
 | Firmware | Commit epoch reaches EDK2, U-Boot, and OP-TEE; TF-A receives an explicit timestamp and build string; EDK2 receives commit- and platform-scoped deterministic stack-cookie lists; prepared payload metadata is normalized and checksummed. | `ci_firmware-rk.yml` runs a second clean ARM64 StandaloneMM and per-board build, blocks QEMU on exact unsigned-component equality, and retains one JSON report per board for 30 days. QEMU TF-A signing bytes and an absent RK3588 TPL are recorded as explicit boundaries. |
 
 The proof compares an unpacked OCI layout rather than `docker image save` or a
@@ -35,8 +35,11 @@ already-proven image.
 The following bytes are not yet allowed to support a reproducibility claim:
 
 - The installer creates a fresh non-production SoftHSM RSA key and certificate.
-  The certificate, signed UKI, ESP, and complete disk wrapper are recorded in
-  both builds but excluded from equality. Btrfs 7.0 additionally generates
+  The certificate, root-resident signed systemd-boot binary, signed UKI, ESP,
+  and complete disk wrapper are recorded in both builds but excluded from
+  equality. The systemd-boot path, mode, ownership, mtime, size, and xattrs
+  remain equality subjects; only its key-bound content differs. Btrfs 7.0
+  additionally generates
   separate device, chunk-tree, and root UUIDs and stamps the root item at mkfs
   time, so the raw partition serialization is also recorded rather than used as
   an equality oracle. Its canonical file bytes and intended POSIX/xattr

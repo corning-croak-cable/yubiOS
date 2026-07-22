@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+: "${BUILDROOT:?mkosi must provide BUILDROOT to finalize scripts}"
+
+# ldconfig regenerates this optimization cache. Its hash-table serialization is
+# not stable across otherwise identical package transactions, and the runtime
+# linker uses /etc/ld.so.cache rather than this auxiliary cache.
+rm -f -- "$BUILDROOT/var/cache/ldconfig/aux-cache"

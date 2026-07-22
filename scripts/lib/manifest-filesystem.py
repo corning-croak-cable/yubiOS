@@ -9,7 +9,7 @@ import base64
 import hashlib
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import stat
 import sys
 
@@ -17,6 +17,16 @@ import sys
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Record filesystem contents and intended POSIX metadata."
+    )
+    parser.add_argument(
+        "--exclude-content",
+        action="append",
+        default=[],
+        metavar="RELATIVE_PATH",
+        help=(
+            "retain a regular file's path and metadata while declaring its "
+            "signature-bearing content outside the equality subject"
+        ),
     )
     parser.add_argument("root", type=Path)
     return parser.parse_args()
@@ -76,13 +86,38 @@ def read_xattrs(path: Path) -> dict[str, str]:
     return values
 
 
+def normalize_content_exclusions(values: list[str]) -> set[str]:
+    exclusions: set[str] = set()
+    for value in values:
+        relative = PurePosixPath(value)
+        if (
+            not value
+            or relative.is_absolute()
+            or str(relative) != value
+            or ".." in relative.parts
+            or value in exclusions
+        ):
+            raise ValueError(f"invalid or duplicate content exclusion: {value!r}")
+        exclusions.add(value)
+    return exclusions
+
+
 def main() -> int:
     args = parse_args()
     root = args.root.resolve()
     if not root.is_dir():
         raise SystemExit(f"filesystem root does not exist: {root}")
 
+    content_exclusions = normalize_content_exclusions(args.exclude_content)
     entries = collect(root)
+    by_relative = {relative: status for relative, _path, status in entries}
+    for relative in sorted(content_exclusions, key=os.fsencode):
+        status = by_relative.get(relative)
+        if status is None:
+            raise ValueError(f"content exclusion does not exist: {relative}")
+        if not stat.S_ISREG(status.st_mode):
+            raise ValueError(f"content exclusion is not a regular file: {relative}")
+
     hardlinks: dict[tuple[int, int], list[str]] = {}
     for relative, _path, status in entries:
         if stat.S_ISREG(status.st_mode) and status.st_nlink > 1:
@@ -95,7 +130,11 @@ def main() -> int:
 
     print(
         json.dumps(
-            {"kind": "yubiOS-root-filesystem-manifest", "schema": 1},
+            {
+                "content_exclusions": sorted(content_exclusions, key=os.fsencode),
+                "kind": "yubiOS-root-filesystem-manifest",
+                "schema": 2,
+            },
             sort_keys=True,
             separators=(",", ":"),
         )
@@ -113,15 +152,18 @@ def main() -> int:
         }
         if kind == "file":
             identity = (status.st_dev, status.st_ino)
-            digest = digest_cache.get(identity)
-            if digest is None:
-                digest = sha256(path)
-                digest_cache[identity] = digest
-            record["sha256"] = digest
             record["size"] = status.st_size
             first = hardlink_first.get(identity)
             if first is not None and first != relative:
                 record["hardlink_to"] = first
+            if relative in content_exclusions:
+                record["content_compared"] = False
+            else:
+                digest = digest_cache.get(identity)
+                if digest is None:
+                    digest = sha256(path)
+                    digest_cache[identity] = digest
+                record["sha256"] = digest
         elif kind == "symlink":
             record["target"] = os.readlink(path)
         elif kind in {"char-device", "block-device"}:
@@ -134,6 +176,6 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-    except OSError as error:
+    except (OSError, ValueError) as error:
         print(f"filesystem-manifest: {error}", file=sys.stderr)
         raise SystemExit(1) from error

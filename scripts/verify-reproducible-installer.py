@@ -20,14 +20,21 @@ REQUIRED_UNSIGNED = {
 }
 REQUIRED_EXCLUDED = {
     "ci-secure-boot-cert.pem",
+    "systemd-bootaa64.efi.signed",
     "yubiOS.efi",
     "yubiOS.esp.raw",
     "yubiOS.raw",
     "yubiOS.root-arm64.raw",
 }
-SCOPE = "canonical root filesystem, initrd, and package manifest"
+SIGNED_ROOT_PATH = "usr/lib/systemd/boot/efi/systemd-bootaa64.efi.signed"
+EXPECTED_FILESYSTEM_HEADER = {
+    "content_exclusions": [SIGNED_ROOT_PATH],
+    "kind": "yubiOS-root-filesystem-manifest",
+    "schema": 2,
+}
+SCOPE = "canonical unsigned root filesystem content, initrd, and package manifest"
 SIGNATURE_BOUNDARY = (
-    "random SoftHSM certificate, UKI, ESP, and full disk wrapper"
+    "random SoftHSM certificate, signed root bootloader, UKI, ESP, and full disk wrapper"
 )
 FILESYSTEM_BOUNDARY = (
     "Btrfs block metadata with random device, chunk-tree, and root UUIDs"
@@ -161,26 +168,63 @@ def verify_retained_copy(
         )
 
 
+def filesystem_manifest_records(
+    path: Path,
+) -> tuple[dict[str, object], dict[str, dict[str, object]]]:
+    lines = path.read_text(errors="strict").splitlines()
+    if not lines:
+        raise ValueError(f"empty filesystem manifest: {path}")
+    header = json.loads(lines[0])
+    if not isinstance(header, dict):
+        raise ValueError(f"filesystem manifest header is not an object: {path}")
+    entries: dict[str, dict[str, object]] = {}
+    for line_number, line in enumerate(lines[1:], 2):
+        value = json.loads(line)
+        if not isinstance(value, dict):
+            raise ValueError(f"entry is not an object at {path}:{line_number}")
+        relative = value.get("path")
+        if not isinstance(relative, str) or relative in entries:
+            raise ValueError(
+                f"invalid or duplicate path at {path}:{line_number}: {relative!r}"
+            )
+        entries[relative] = value
+    return header, entries
+
+
+def validate_filesystem_manifest(path: Path, label: str, errors: list[str]) -> None:
+    try:
+        header, entries = filesystem_manifest_records(path)
+    except (OSError, UnicodeError, ValueError, json.JSONDecodeError) as error:
+        errors.append(f"cannot validate {label} root filesystem manifest: {error}")
+        return
+
+    if header != EXPECTED_FILESYSTEM_HEADER:
+        errors.append(
+            f"{label} root filesystem manifest has header {header!r}, "
+            f"expected {EXPECTED_FILESYSTEM_HEADER!r}"
+        )
+    signed = entries.get(SIGNED_ROOT_PATH)
+    if signed is None:
+        errors.append(
+            f"{label} root filesystem is missing signed path: {SIGNED_ROOT_PATH}"
+        )
+    elif (
+        signed.get("type") != "file"
+        or signed.get("content_compared") is not False
+        or "sha256" in signed
+    ):
+        errors.append(
+            f"{label} signed root bootloader is not an explicit content exclusion"
+        )
+    if "var/cache/ldconfig/aux-cache" in entries:
+        errors.append(f"{label} root filesystem retains ldconfig's auxiliary cache")
+
+
 def filesystem_manifest_differences(primary: Path, rebuild: Path) -> list[str]:
-    def records(path: Path) -> tuple[dict[str, object], dict[str, dict[str, object]]]:
-        lines = path.read_text(errors="strict").splitlines()
-        if not lines:
-            raise ValueError(f"empty filesystem manifest: {path}")
-        header = json.loads(lines[0])
-        entries: dict[str, dict[str, object]] = {}
-        for line_number, line in enumerate(lines[1:], 2):
-            value = json.loads(line)
-            relative = value.get("path")
-            if not isinstance(relative, str) or relative in entries:
-                raise ValueError(
-                    f"invalid or duplicate path at {path}:{line_number}: {relative!r}"
-                )
-            entries[relative] = value
-        return header, entries
 
     try:
-        primary_header, primary_records = records(primary)
-        rebuild_header, rebuild_records = records(rebuild)
+        primary_header, primary_records = filesystem_manifest_records(primary)
+        rebuild_header, rebuild_records = filesystem_manifest_records(rebuild)
     except (OSError, UnicodeError, ValueError, json.JSONDecodeError) as error:
         return [f"cannot diagnose root filesystem manifests: {error}"]
 
@@ -276,6 +320,12 @@ def main() -> int:
         verify_retained_copy(
             args.rebuild, "rebuild", rebuild_unsigned, filename, errors
         )
+    validate_filesystem_manifest(
+        args.primary / "root-filesystem.jsonl", "primary", errors
+    )
+    validate_filesystem_manifest(
+        args.rebuild / "root-filesystem.jsonl", "rebuild", errors
+    )
 
     compared = []
     for subject in sorted(REQUIRED_UNSIGNED):

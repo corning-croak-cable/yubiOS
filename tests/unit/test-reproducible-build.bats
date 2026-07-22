@@ -204,23 +204,62 @@ for variant in ("primary", "rebuild"):
     os.setxattr(source, "user.yubios-test", b"metadata")
     (tree / "bin").mkdir()
     (tree / "bin/config").symlink_to("../etc/config")
+    signed = tree / "usr/lib/systemd/boot/efi/systemd-bootaa64.efi.signed"
+    signed.parent.mkdir(parents=True)
+    signed.write_bytes(f"signature-{variant}".encode())
     for path in sorted(tree.rglob("*"), reverse=True):
         os.utime(path, ns=(epoch_ns, epoch_ns), follow_symlinks=False)
     os.utime(tree, ns=(epoch_ns, epoch_ns))
 PY
 
-    "$REPO_ROOT/scripts/lib/manifest-filesystem.py" "$trees/primary" \
+    "$REPO_ROOT/scripts/lib/manifest-filesystem.py" \
+        --exclude-content usr/lib/systemd/boot/efi/systemd-bootaa64.efi.signed \
+        "$trees/primary" \
         > "$BATS_TEST_TMPDIR/primary.jsonl"
-    "$REPO_ROOT/scripts/lib/manifest-filesystem.py" "$trees/rebuild" \
+    "$REPO_ROOT/scripts/lib/manifest-filesystem.py" \
+        --exclude-content usr/lib/systemd/boot/efi/systemd-bootaa64.efi.signed \
+        "$trees/rebuild" \
         > "$BATS_TEST_TMPDIR/rebuild.jsonl"
     cmp "$BATS_TEST_TMPDIR/primary.jsonl" "$BATS_TEST_TMPDIR/rebuild.jsonl"
     grep -q '"hardlink_to":"etc/config"' "$BATS_TEST_TMPDIR/primary.jsonl"
     grep -q '"xattrs":{"user.yubios-test":"bWV0YWRhdGE="}' "$BATS_TEST_TMPDIR/primary.jsonl"
+    run python3 - "$BATS_TEST_TMPDIR/primary.jsonl" <<'PY'
+import json
+import sys
+
+records = [json.loads(line) for line in open(sys.argv[1])]
+assert records[0] == {
+    "content_exclusions": ["usr/lib/systemd/boot/efi/systemd-bootaa64.efi.signed"],
+    "kind": "yubiOS-root-filesystem-manifest",
+    "schema": 2,
+}
+signed = next(
+    record for record in records[1:]
+    if record["path"] == "usr/lib/systemd/boot/efi/systemd-bootaa64.efi.signed"
+)
+assert signed["content_compared"] is False
+assert "sha256" not in signed
+PY
+    [ "$status" -eq 0 ]
 
     printf drift > "$trees/rebuild/etc/config"
-    "$REPO_ROOT/scripts/lib/manifest-filesystem.py" "$trees/rebuild" \
+    "$REPO_ROOT/scripts/lib/manifest-filesystem.py" \
+        --exclude-content usr/lib/systemd/boot/efi/systemd-bootaa64.efi.signed \
+        "$trees/rebuild" \
         > "$BATS_TEST_TMPDIR/rebuild-drift.jsonl"
     ! cmp -s "$BATS_TEST_TMPDIR/primary.jsonl" "$BATS_TEST_TMPDIR/rebuild-drift.jsonl"
+}
+
+@test "mkosi finalizer removes only the regenerable ldconfig auxiliary cache" {
+    buildroot="$BATS_TEST_TMPDIR/buildroot"
+    mkdir -p "$buildroot/var/cache/ldconfig" "$buildroot/etc"
+    printf unstable > "$buildroot/var/cache/ldconfig/aux-cache"
+    printf runtime > "$buildroot/etc/ld.so.cache"
+
+    BUILDROOT="$buildroot" "$REPO_ROOT/mkosi.finalize"
+
+    [ ! -e "$buildroot/var/cache/ldconfig/aux-cache" ]
+    [ "$(cat "$buildroot/etc/ld.so.cache")" = runtime ]
 }
 
 @test "installer proof compares unsigned subjects and records the signing envelope" {
@@ -241,10 +280,14 @@ seed = sys.argv[4]
 unsigned = {
     "initrd.cpio.zst": b"initrd",
     "root-filesystem.jsonl": (
-        b'{"kind":"yubiOS-root-filesystem-manifest","schema":1}\n'
+        b'{"content_exclusions":["usr/lib/systemd/boot/efi/systemd-bootaa64.efi.signed"],'
+        + b'"kind":"yubiOS-root-filesystem-manifest","schema":2}\n'
         + b'{"gid":0,"mode":"0644","mtime_ns":1,"path":"etc/config",'
         + b'"sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",'
         + b'"size":4,"type":"file","uid":0,"xattrs":{}}\n'
+        + b'{"content_compared":false,"gid":0,"mode":"0644","mtime_ns":1,'
+        + b'"path":"usr/lib/systemd/boot/efi/systemd-bootaa64.efi.signed",'
+        + b'"size":999,"type":"file","uid":0,"xattrs":{}}\n'
     ),
     "yubiOS.manifest": b'{"packages": ["systemd"]}\n',
 }
@@ -261,6 +304,7 @@ for variant in ("primary", "rebuild"):
     )
     excluded = {
         "ci-secure-boot-cert.pem": f"certificate-{variant}".encode(),
+        "systemd-bootaa64.efi.signed": f"bootloader-{variant}".encode(),
         "yubiOS.efi": f"uki-{variant}".encode(),
         "yubiOS.esp.raw": f"esp-{variant}".encode(),
         "yubiOS.raw": f"disk-{variant}".encode(),
@@ -281,8 +325,8 @@ for variant in ("primary", "rebuild"):
                 f"source_date_epoch={epoch}",
                 f"mkosi_seed={seed}",
                 "mkosi_source=b2b1ea6ad59621a6f955e4cbceee72580a91889a",
-                "scope=canonical root filesystem, initrd, and package manifest",
-                "signature_boundary=random SoftHSM certificate, UKI, ESP, and full disk wrapper",
+                "scope=canonical unsigned root filesystem content, initrd, and package manifest",
+                "signature_boundary=random SoftHSM certificate, signed root bootloader, UKI, ESP, and full disk wrapper",
                 "filesystem_boundary=Btrfs block metadata with random device, chunk-tree, and root UUIDs",
                 "",
             )
@@ -301,7 +345,7 @@ report = json.load(open(sys.argv[1]))
 assert report["result"] == "match"
 assert report["isolated_builds"] == 2
 assert len(report["compared"]) == 3
-assert len(report["excluded"]) == 5
+assert len(report["excluded"]) == 6
 assert all(not item["matched"] for item in report["excluded"])
 PY
     [ "$status" -eq 0 ]
@@ -369,6 +413,7 @@ proof = (root / "scripts/verify-reproducible-images.sh").read_text()
 firmware_proof = (root / "scripts/verify-reproducible-firmware.py").read_text()
 installer_proof = (root / "scripts/verify-reproducible-installer.py").read_text()
 filesystem_manifest = (root / "scripts/lib/manifest-filesystem.py").read_text()
+installer_finalizer = (root / "mkosi.finalize").read_text()
 diagnostic = root / "scripts/lib/diagnose-oci-layout.py"
 containerfile = (root / "Containerfile").read_text()
 passless = (root / "mkosi.conf.d/test/install-swu2f-authenticator.sh").read_text()
@@ -481,17 +526,23 @@ if "needs: [build, installer-reproducibility]" not in installer_workflow:
     failures.append("installer publication is not blocked on installer reproducibility")
 if "repro-evidence/installer-arm64.json" not in installer_workflow:
     failures.append("installer workflow retains no ARM64 reproducibility evidence")
-if "scripts/verify-reproducible-installer.py" not in installer_workflow.split("workflow_dispatch:", 1)[0]:
-    failures.append("installer verifier changes do not trigger the installer workflow")
+installer_triggers = installer_workflow.split("workflow_dispatch:", 1)[0]
+for triggered in ("scripts/verify-reproducible-installer.py", "mkosi.finalize"):
+    if triggered not in installer_triggers:
+        failures.append(f"installer input does not trigger its workflow: {triggered}")
 for subject in ("root-filesystem.jsonl", "initrd.cpio.zst", "yubiOS.manifest"):
     if subject not in installer_proof:
         failures.append(f"installer proof omits unsigned subject: {subject}")
-for excluded in ("ci-secure-boot-cert.pem", "yubiOS.efi", "yubiOS.esp.raw", "yubiOS.raw", "yubiOS.root-arm64.raw"):
+for excluded in ("ci-secure-boot-cert.pem", "systemd-bootaa64.efi.signed", "yubiOS.efi", "yubiOS.esp.raw", "yubiOS.raw", "yubiOS.root-arm64.raw"):
     if excluded not in installer_proof:
         failures.append(f"installer proof omits signed-envelope boundary: {excluded}")
-for metadata in ("mtime_ns", "xattrs", "hardlink_to", "sha256"):
+for metadata in ("mtime_ns", "xattrs", "hardlink_to", "sha256", "content_exclusions", "content_compared"):
     if metadata not in filesystem_manifest:
         failures.append(f"canonical filesystem manifest omits metadata: {metadata}")
+if "/var/cache/ldconfig/aux-cache" not in installer_finalizer:
+    failures.append("mkosi finalizer retains nondeterministic ldconfig auxiliary cache")
+if "--exclude-content \"$signed_root\"" not in installer_workflow:
+    failures.append("installer manifest does not isolate the signed root bootloader")
 
 for relative in (
     ".github/workflows/ci_firmware-rk.yml",

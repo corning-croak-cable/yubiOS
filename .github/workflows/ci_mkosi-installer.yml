@@ -37,6 +37,7 @@ on:
       - 'mkosi.conf'
       - 'mkosi.conf.d/**'
       - 'mkosi.extra/**'
+      - 'mkosi.finalize'
       - 'scripts/lib/manifest-filesystem.py'
       - 'scripts/lib/reproducible-build.sh'
       - 'scripts/verify-reproducible-installer.py'
@@ -395,6 +396,15 @@ jobs:
           test -s mkosi.output/initrd.cpio.zst
           test -s mkosi.output/yubiOS.manifest
 
+          record_component() {
+            local source=$1
+            local subject=$2
+            printf '%s %s %s\n' \
+              "$(sha256sum "$source" | cut -d ' ' -f 1)" \
+              "$(stat -c %s "$source")" \
+              "$subject"
+          }
+
           mount_dir=$(mktemp -d)
           mounted=false
           cleanup_mount() {
@@ -406,21 +416,18 @@ jobs:
           trap cleanup_mount EXIT
           mount -o loop,ro "$root_image" "$mount_dir"
           mounted=true
-          scripts/lib/manifest-filesystem.py "$mount_dir" \
+          signed_root=usr/lib/systemd/boot/efi/systemd-bootaa64.efi.signed
+          test -s "$mount_dir/$signed_root"
+          signed_root_record=$(record_component \
+            "$mount_dir/$signed_root" systemd-bootaa64.efi.signed)
+          scripts/lib/manifest-filesystem.py \
+            --exclude-content "$signed_root" \
+            "$mount_dir" \
             > "$proof_dir/root-filesystem.jsonl"
           umount "$mount_dir"
           mounted=false
           rmdir "$mount_dir"
           trap - EXIT
-
-          record_component() {
-            local source=$1
-            local subject=$2
-            printf '%s %s %s\n' \
-              "$(sha256sum "$source" | cut -d ' ' -f 1)" \
-              "$(stat -c %s "$source")" \
-              "$subject"
-          }
 
           {
             record_component mkosi.output/initrd.cpio.zst initrd.cpio.zst
@@ -431,6 +438,7 @@ jobs:
 
           {
             record_component mkosi.secure-boot.pem ci-secure-boot-cert.pem
+            printf '%s\n' "$signed_root_record"
             record_component mkosi.output/yubiOS.efi yubiOS.efi
             record_component mkosi.output/yubiOS.esp.raw yubiOS.esp.raw
             record_component mkosi.output/yubiOS.raw yubiOS.raw
@@ -444,8 +452,8 @@ jobs:
             echo "source_date_epoch=${SOURCE_DATE_EPOCH}"
             echo "mkosi_seed=${YUBIOS_MKOSI_SEED}"
             echo "mkosi_source=b2b1ea6ad59621a6f955e4cbceee72580a91889a"
-            echo "scope=canonical root filesystem, initrd, and package manifest"
-            echo "signature_boundary=random SoftHSM certificate, UKI, ESP, and full disk wrapper"
+            echo "scope=canonical unsigned root filesystem content, initrd, and package manifest"
+            echo "signature_boundary=random SoftHSM certificate, signed root bootloader, UKI, ESP, and full disk wrapper"
             echo "filesystem_boundary=Btrfs block metadata with random device, chunk-tree, and root UUIDs"
           } > "$proof_dir/METADATA.txt"
           source scripts/lib/reproducible-build.sh

@@ -136,10 +136,11 @@ equal the source commit epoch. Successful JSON reports are written to
 The firmware workflow separately rebuilds StandaloneMM and all three board
 paths on a second clean ARM64 lane, compares their unsigned components, and
 retains board-scoped JSON evidence. The installer workflow likewise rebuilds
-the ARM64 mkosi image from a clean job, compares a canonical root-filesystem
-record plus the initrd and package manifest, and records the random SoftHSM
-certificate, signed UKI, ESP, Btrfs block serialization, and full-disk wrapper
-as separate envelopes. See [the
+the ARM64 mkosi image from a clean job, removes the regenerable `ldconfig`
+auxiliary cache, and compares a canonical unsigned root-filesystem record plus
+the initrd and package manifest. The random SoftHSM certificate, root-resident
+signed systemd-boot binary, signed UKI, ESP, Btrfs block serialization, and
+full-disk wrapper are recorded as separate envelopes. See [the
 reproducibility contract](refs/reproducible-builds-2026-07-22.md) for the
 installer/TF-A signing, package-snapshot, and RK3588 TPL boundaries.
 
