@@ -93,6 +93,20 @@ for relative in (
     if 'git -C "$repo_root"' in (root / relative).read_text():
         failures.append(f"{relative} bypasses command-scoped safe-directory trust")
 bake = (root / "yubiOS-bake.hcl").read_text()
+proof = (root / "scripts/verify-reproducible-images.sh").read_text()
+containerfile = (root / "Containerfile").read_text()
+passless = (root / "mkosi.conf.d/test/install-swu2f-authenticator.sh").read_text()
+if '--allow "fs.write=$output"' not in proof:
+    failures.append("OCI proof does not authorize its exact Bake output directory")
+if "--setopt=history_record=false" not in containerfile:
+    failures.append("production package install records nondeterministic DNF history")
+if "--no-compile" not in containerfile or "--invalidation-mode=checked-hash" not in containerfile:
+    failures.append("CHIPSEC install does not regenerate deterministic Python bytecode")
+if passless.count("--setopt=history_record=false") < 2:
+    failures.append("passless build records nondeterministic DNF transactions")
+for control in ("PASSLESS_BUILD_ROOT", "CARGO_INCREMENTAL=0", "--remap-path-prefix"):
+    if control not in passless:
+        failures.append(f"passless build lacks deterministic Rust control: {control}")
 if not re.search(
     r'target "_image-export"\s*\{.*?type\s*=\s*"provenance".*?disabled\s*=\s*!PUSH',
     bake,

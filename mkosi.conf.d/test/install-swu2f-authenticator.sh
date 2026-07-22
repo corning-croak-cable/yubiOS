@@ -30,6 +30,7 @@ set -euo pipefail
 readonly PASSLESS_REPO="https://github.com/pando85/passless.git"
 readonly PASSLESS_TAG="v0.11.2"
 readonly PASSLESS_COMMIT="b67ccdf22e18cf21bcd140e03d22af413342d605"
+readonly PASSLESS_BUILD_ROOT="/tmp/yubios-passless-build"
 
 if ! command -v dnf >/dev/null 2>&1; then
     echo "install-swu2f-authenticator: dnf not found in image build root" >&2
@@ -39,7 +40,7 @@ fi
 # soft-fido2 needs libudev (UHID) + libtss2 (TPM backend feature) headers; the
 # rest is the Rust toolchain + git. Installed transiently, removed afterwards so
 # the test image stays close to the production package surface.
-BUILD_DEPS="git cargo rust gcc systemd-devel tpm2-tss-devel"
+readonly BUILD_DEPS=(git cargo rust gcc systemd-devel tpm2-tss-devel)
 
 # Defensive: dnf5 can leave a stale package-cache lock file behind in a
 # committed container layer (the PID that held it is long gone by the time a
@@ -54,7 +55,7 @@ BUILD_DEPS="git cargo rust gcc systemd-devel tpm2-tss-devel"
 install_ok=0
 for attempt in 1 2 3 4 5; do
   rm -f /var/cache/dnf/*.lock /var/cache/dnf/*.pid /run/dnf5.lock /run/dnf.lock 2>/dev/null || true
-  if dnf -y install ${BUILD_DEPS}; then
+  if dnf -y --setopt=history_record=false install "${BUILD_DEPS[@]}"; then
     install_ok=1
     break
   fi
@@ -66,9 +67,11 @@ if [ "${install_ok}" -ne 1 ]; then
   exit 1
 fi
 
-src="$(mktemp -d)"
-cargo_home="$(mktemp -d)"
-trap 'rm -rf "$src" "$cargo_home"' EXIT
+src="${PASSLESS_BUILD_ROOT}/src"
+cargo_home="${PASSLESS_BUILD_ROOT}/cargo-home"
+rm -rf "${PASSLESS_BUILD_ROOT}"
+mkdir -p "${src}" "${cargo_home}"
+trap 'rm -rf "${PASSLESS_BUILD_ROOT}"' EXIT
 git init "${src}"
 git -C "${src}" remote add origin "${PASSLESS_REPO}"
 git -C "${src}" fetch --depth 1 origin "${PASSLESS_COMMIT}"
@@ -95,6 +98,8 @@ grep -Fq '.extensions(vec!["credProtect".to_string(), "hmac-secret".to_string()]
 # non-directory entry in the base image/build overlay. Sidestep it entirely by
 # pointing CARGO_HOME at a throwaway directory we know is clean.
 export CARGO_HOME="${cargo_home}"
+export CARGO_INCREMENTAL=0
+export RUSTFLAGS="--remap-path-prefix=${src}=/usr/src/passless --remap-path-prefix=${cargo_home}=/usr/src/cargo-home"
 
 # `cargo install --debug` => debug profile (debug_assertions on) => the
 # PASSLESS_E2E_AUTO_ACCEPT_UV path compiles in. --root /usr installs to /usr/bin.
@@ -106,7 +111,7 @@ install -Dm0644 "${src}/contrib/sysusers.d/passless.conf" /usr/lib/sysusers.d/pa
 install -Dm0644 "${src}/contrib/udev/90-passless.rules"   /usr/lib/udev/rules.d/90-passless.rules
 install -Dm0644 "${src}/contrib/modules-load.d/fido.conf" /usr/lib/modules-load.d/yubiOS-swu2f-uhid.conf
 
-dnf -y remove ${BUILD_DEPS} || true
+dnf -y --setopt=history_record=false remove "${BUILD_DEPS[@]}" || true
 dnf -y clean all || true
 
 /usr/bin/passless --version || true

@@ -85,6 +85,7 @@ for index in 0 1; do
     PUSH=false \
     BUILDX_NO_DEFAULT_ATTESTATIONS=1 \
         docker buildx bake \
+            --allow "fs.write=$output" \
             --builder "$builder" \
             --file "$repo_root/yubiOS-bake.hcl" \
             --no-cache \

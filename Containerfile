@@ -18,7 +18,10 @@ ARG SOURCE_DATE_EPOCH
 # pam-u2f:         PAM module for FIDO2/U2F; requires >= 1.3.1 (CVE-2025-23013)
 #                  Source: https://www.yubico.com/support/security-advisories/ysa-2025-01/
 # pcsc-lite:       PC/SC daemon; needed for PIV/CCID interface
-RUN dnf install -y \
+# Fedora 45's DNF5 predates deterministic transaction-history ordering and
+# timestamps. RPM itself honors SOURCE_DATE_EPOCH, so suppress DNF's mutable
+# audit database while retaining the installed RPM database as image state.
+RUN dnf -y --setopt=history_record=false install \
       libfido2 \
       yubikey-manager \
       yubico-piv-tool \
@@ -43,8 +46,11 @@ RUN dnf install -y \
 # release and hash so the first-boot firmware checker is reproducible.
 RUN echo 'chipsec==1.13.16 --hash=sha256:63bed5ad4224402397817ea82b94c3a21736386a04ff778c003704bd6dfdbca3' \
       > /tmp/chipsec-requirements.txt && \
-    python3 -m pip install --no-cache-dir --break-system-packages --require-hashes \
+    PYTHONHASHSEED=0 python3 -m pip install --no-cache-dir --no-compile \
+      --break-system-packages --require-hashes \
       -r /tmp/chipsec-requirements.txt && \
+    PYTHONHASHSEED=0 python3 -m compileall --invalidation-mode=checked-hash --quiet \
+      /usr/local/lib/python*/site-packages/chipsec && \
     rm /tmp/chipsec-requirements.txt
 
 # ── Overlay yubiOS config tree ───────────────────────────────────────────
