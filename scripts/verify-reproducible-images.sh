@@ -44,8 +44,9 @@ command -v jq >/dev/null 2>&1 || die 'jq is required'
 docker buildx version >/dev/null 2>&1 || die 'docker buildx is required'
 
 repo_root=$(cd -- "$SCRIPT_DIR/.." && pwd -P)
-revision=$(git -C "$repo_root" rev-parse HEAD)
-if ! git -C "$repo_root" diff --quiet || ! git -C "$repo_root" diff --cached --quiet; then
+revision=$(reproducible_git "$repo_root" rev-parse HEAD)
+if ! reproducible_git "$repo_root" diff --quiet || \
+    ! reproducible_git "$repo_root" diff --cached --quiet; then
     die 'tracked files are dirty; reproducibility proof requires a clean revision'
 fi
 

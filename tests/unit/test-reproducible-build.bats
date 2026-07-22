@@ -29,6 +29,19 @@ setup() {
     [[ "$SOURCE_DATE_EPOCH" =~ ^[0-9]+$ ]]
 }
 
+@test "checkout preflight Git operations trust a different owner" {
+    export GIT_TEST_ASSUME_DIFFERENT_OWNER=1
+
+    run reproducible_git "$REPO_ROOT" rev-parse "HEAD^{commit}"
+    [ "$status" -eq 0 ]
+    [ "$output" = "$(git -c safe.directory="$REPO_ROOT" -C "$REPO_ROOT" rev-parse HEAD)" ]
+
+    run reproducible_git "$REPO_ROOT" diff --quiet
+    [ "$status" -eq 0 ]
+    run reproducible_git "$REPO_ROOT" diff --cached --quiet
+    [ "$status" -eq 0 ]
+}
+
 @test "a conflicting caller epoch is rejected" {
     SOURCE_DATE_EPOCH=1
     run configure_reproducible_build "$REPO_ROOT" HEAD amd64
@@ -73,6 +86,12 @@ files = [
     root / "scripts/verify-reproducible-images.sh",
 ]
 failures = []
+for relative in (
+    "scripts/build-local-images.sh",
+    "scripts/verify-reproducible-images.sh",
+):
+    if 'git -C "$repo_root"' in (root / relative).read_text():
+        failures.append(f"{relative} bypasses command-scoped safe-directory trust")
 bake = (root / "yubiOS-bake.hcl").read_text()
 if not re.search(
     r'target "_image-export"\s*\{.*?type\s*=\s*"provenance".*?disabled\s*=\s*!PUSH',

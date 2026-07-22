@@ -327,8 +327,8 @@ run_on_host() {
 
     repo_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
     [[ -f "$repo_root/yubiOS-bake.hcl" ]] || die 'could not locate yubiOS-bake.hcl'
-    revision=$(git -C "$repo_root" rev-parse HEAD)
-    if [[ -n "$(git -C "$repo_root" status --porcelain)" ]]; then
+    revision=$(reproducible_git "$repo_root" rev-parse HEAD)
+    if [[ -n "$(reproducible_git "$repo_root" status --porcelain)" ]]; then
         printf 'warning: building a dirty checkout; OCI revision remains %s\n' "$revision" >&2
     fi
 

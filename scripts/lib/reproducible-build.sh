@@ -14,24 +14,40 @@ reproducible_build_error() {
     return 1
 }
 
+reproducible_git() {
+    local repository=${1:-}
+    local canonical_repository
+
+    if (($# < 2)); then
+        reproducible_build_error 'repository and Git arguments are required'
+        return 2
+    fi
+    shift
+    canonical_repository=$(cd -- "$repository" && pwd -P) || {
+        reproducible_build_error "repository directory does not exist: ${repository}"
+        return 1
+    }
+
+    # Actions and the local DHI runner mount a checkout owned by the host into
+    # a rootful container. Trust only the canonical repository supplied by the
+    # caller, and only for this Git invocation.
+    command git -c "safe.directory=${canonical_repository}" \
+        -C "$canonical_repository" "$@"
+}
+
 configure_reproducible_build() {
     local repository=${1:-.}
     local revision=${2:-HEAD}
     local architecture=${3:-${ARCH:-$(uname -m)}}
     local canonical_epoch canonical_repository requested_epoch seed_hex timestamp
-    local -a repository_git
 
     canonical_repository=$(cd -- "$repository" && pwd -P) || {
         reproducible_build_error "repository directory does not exist: ${repository}"
         return 1
     }
     repository=$canonical_repository
-    # Actions mounts the host-owned checkout into rootful job containers. Trust
-    # only this explicit repository, and only for these read-only invocations,
-    # instead of persisting a wildcard or global safe.directory exception.
-    repository_git=(git -c "safe.directory=${repository}" -C "$repository")
-
-    canonical_epoch=$("${repository_git[@]}" show -s --format=%ct "${revision}^{commit}") || {
+    canonical_epoch=$(reproducible_git "$repository" \
+        show -s --format=%ct "${revision}^{commit}") || {
         reproducible_build_error "cannot resolve commit timestamp for ${revision}"
         return 1
     }
@@ -49,7 +65,8 @@ configure_reproducible_build() {
         return 1
     fi
 
-    GIT_SHA=$("${repository_git[@]}" rev-parse "${revision}^{commit}") || return 1
+    GIT_SHA=$(reproducible_git "$repository" \
+        rev-parse "${revision}^{commit}") || return 1
     SOURCE_DATE_EPOCH=$canonical_epoch
     SOURCE_DATE_ISO8601=$(date -u --date="@${SOURCE_DATE_EPOCH}" '+%Y-%m-%dT%H:%M:%SZ')
     timestamp=$(date -u --date="@${SOURCE_DATE_EPOCH}" '+%Y-%m-%d %H:%M:%S UTC')
