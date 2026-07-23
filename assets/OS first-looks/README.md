@@ -3,13 +3,18 @@
 These 3840 x 2160 PNGs are design explorations, not screenshots of a shipped
 interface and not proof of implemented behavior. The repository currently has a
 GNOME-on-Wayland desktop profile; these images explore how that profile could
-communicate yubiOS identity and owner-held trust.
+communicate yubiOS identity and owner-held trust. Each original is preserved
+alongside purpose-built light- and dark-mode variants.
 
-| File | Concept |
-|---|---|
-| `yubios-gnome-overview-concept-4k.png` | GNOME Activities overview with a yubiOS wallpaper and restrained shell chrome. |
-| `yubios-owner-key-enrollment-concept-4k.png` | Four-step owner-key enrollment for Secure Boot, disk unlock, SSH, and login/sudo. |
-| `yubios-system-trust-concept-4k.png` | Settings-style firmware, boot-image, and owner-key status view. |
+| Original | Light mode | Dark mode | Concept |
+|---|---|---|---|
+| `yubios-gnome-overview-concept-4k.png` | `yubios-gnome-overview-concept-4k-light.png` | `yubios-gnome-overview-concept-4k-dark.png` | GNOME Activities overview with a yubiOS wallpaper and restrained shell chrome. |
+| `yubios-owner-key-enrollment-concept-4k.png` | `yubios-owner-key-enrollment-concept-4k-light.png` | `yubios-owner-key-enrollment-concept-4k-dark.png` | Four-step owner-key enrollment for Secure Boot, disk unlock, SSH, and login/sudo. |
+| `yubios-system-trust-concept-4k.png` | `yubios-system-trust-concept-4k-light.png` | `yubios-system-trust-concept-4k-dark.png` | Settings-style firmware, boot-image, and owner-key status view. |
+
+The theme variants retain the same task hierarchy and evidence-bounded status
+language while adapting shell chrome, surface hierarchy, wallpaper luminance,
+icon contrast, and text contrast for their intended viewing mode.
 
 The token shown in the enrollment concept is deliberately generic and
 unbranded. The concepts do not imply affiliation with or endorsement by Yubico,

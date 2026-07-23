@@ -1,10 +1,10 @@
 # Visual-generation prompts - 2026-07-22
 
-The built-in OpenAI image-generation tool created the native compositions.
-ImageMagick exported the selected logo concepts at 2048 x 2048 and the wide
-assets at 3840 x 2160. The maintainer-supplied images were style, palette,
-texture, composition, and mood references; they were not checked into this
-repository by this change.
+The built-in OpenAI image-generation tool created the native compositions and
+their purpose-built light- and dark-mode variants. ImageMagick exported the
+selected logo concepts at 2048 x 2048 and the wide assets at 3840 x 2160. The
+maintainer-supplied images were style, palette, texture, composition, and mood
+references; they were not checked into this repository by this change.
 
 ## Logo concepts
 
@@ -179,3 +179,154 @@ Color palette: near-black, bottle green, ultraviolet, cyan, hot-pink and ember-r
 Constraints: no text, no letters, no logo, no watermark, no faces, no people, no skull imagery, no recognizable building; high-resolution desktop wallpaper.
 Avoid: horror, muddy blacks, noisy full-frame glitch, hard checkerboard seams, cyberpunk city cliché.
 ```
+
+## Light- and dark-mode variant prompt set
+
+Each original repository image was the sole edit target for its two variants.
+The built-in image-generation tool used the following parameterized prompt
+shape; the asset-specific direction and invariants below complete the prompt.
+
+```text
+Use case: precise-object-edit (lighting-weather where the change is explicitly time-of-day)
+Asset type: yubiOS <asset>, <light-mode or dark-mode> variant
+Input image: edit target; preserve the existing composition exactly.
+Primary request: <theme direction below>
+Constraints: <asset invariants below>; no added or removed subject matter; no text or watermark except the exact existing UI labels listed below.
+```
+
+### Logo theme variants
+
+Shared invariants: preserve the symbol geometry, silhouette, proportions,
+centered placement, generous margins, analog texture, and square composition;
+no redesign, added or removed elements, text, letters, watermark, or mockup.
+
+#### Linked bloom
+
+- Light: replace black with a warm off-white to pale cool-gray ground; rebalance
+  magenta, violet, cyan, acid-green, and cream slightly darker and richer so
+  every ring, petal, keyhole, and grain-texture edge remains legible.
+- Dark: use a subtly textured deep navy-black ground; lift violet and cyan
+  midtones, control the cream highlight, and sharpen separation among petals,
+  ring segments, and keyhole without neon clipping.
+- Additional invariant: preserve every ring connection and the keyhole.
+
+#### Owner orbit
+
+- Light: replace black with a soft warm-white to pale cool-gray ground; deepen
+  the cyan orbital ring, violet, magenta, and blue petals, and acid-green core
+  for crisp light-theme contrast while retaining screen-print grain.
+- Dark: use a deep blue-black ground; refine edge contrast around the orbital
+  ring and three petals, retain the acid-green center, and moderate highlights
+  for comfortable low-light use.
+- Additional invariants: preserve the circular geometry, three interlocking
+  petals, and central owner-held core.
+
+#### Trust tree
+
+- Light: replace navy-black with warm off-white to very pale blue-gray; deepen
+  cyan roots and trunk, violet and magenta canopy, acid-green accents, and the
+  warm center so fine branches retain their etched texture.
+- Dark: use a deep blue-black ground with subtle tonal depth; lift cyan roots
+  and violet canopy midtones, control magenta and acid-green accents, and
+  protect the warm center from clipping.
+- Additional invariants: preserve the vertically symmetric root-to-bloom
+  geometry and exactly three joining branch paths.
+
+### OS first-look theme variants
+
+Shared invariants: preserve 16:9 framing, layout, spacing, UI hierarchy, and
+existing subject placement; render only the listed text with no spelling
+changes or extra copy; no redesign, new widgets, third-party logos, or
+watermark.
+
+#### GNOME overview
+
+- Light: shift the mountain-halo wallpaper toward bright dawn with pale cyan
+  and lavender sky, controlled magenta halo, and readable terrain; use
+  restrained light Adwaita-like shell surfaces with dark icons and text.
+- Dark: deepen the blue-black sky and terrain, reduce clipping in the magenta
+  halo and snow, and improve separation of the top bar, workspace thumbnails,
+  dash, and icons.
+- Text: `"Activities"`, `"Jul 22  18:42"`.
+- Additional invariants: preserve mountain and halo placement, top bar,
+  workspace thumbnails, dash location, and icon positions; no macOS or Windows
+  styling.
+
+#### Owner-key enrollment
+
+- Light: use a soft off-white centered window, pale cool-gray secondary
+  surfaces, dark navy text, a high-contrast progress rail, and the same
+  restrained magenta action button; brighten the blurred bloom-circuit
+  wallpaper without making it busy.
+- Dark: use richer blue-black surface hierarchy, improve text and progress-rail
+  contrast, control the magenta button glow, and keep the generic token clearly
+  separated without harsh highlights.
+- Text: `"Set up owner key"`, `"Secure Boot"`, `"Disk unlock"`, `"SSH"`,
+  `"Login & sudo"`, `"Touch your security key"`, `"Continue"`.
+- Additional invariants: preserve the centered window, four-step progress rail,
+  generic unbranded token, touch indicator, and button; no product logo,
+  password field, or cloud prompt.
+
+#### System Trust
+
+- Light: use warm off-white main surfaces, pale cool-gray navigation and cards,
+  dark navy text, restrained blue selection, and accessible green verified
+  dots; brighten the wallpaper into pale cyan, lavender, and soft blue.
+- Dark: deepen the blue-black surface hierarchy, improve card and navigation
+  separation, preserve accessible green verified dots, and moderate neon
+  highlights.
+- Text: `"System Trust"`, `"Firmware"`, `"Boot image"`, `"Owner key"`,
+  `"Verified"`, `"Details"`.
+- Additional invariants: preserve left navigation, three connected status
+  cards, icons, verified dots, and details pane; no invented measurements,
+  shield, or padlock.
+
+### Wallpaper theme variants
+
+Shared invariants: preserve 16:9 framing, each composition's calm UI space and
+major geometry, and its analog or painterly texture; no text, logo, watermark,
+people, product, or UI.
+
+#### Aurora ridge
+
+- Light: transform pre-dawn into luminous high-altitude dawn with a pale
+  cyan-to-lavender sky, softly sunlit snow, warm blush terrain, and a restrained
+  magenta-gold halo behind dark light-theme UI.
+- Dark: use a navy-black pre-dawn sky, controlled violet terrain, cool cyan snow
+  edges, and a restrained magenta-cyan halo with no clipped neon.
+- Additional invariants: preserve the panorama, mountain silhouette, low
+  horizon, halo placement, and calm upper-left and upper-center; no buildings
+  or flags.
+
+#### Owner rings
+
+- Light: use pearlescent pale cyan, lavender, soft blue, warm off-white, and
+  restrained magenta inside the painted-glass waves, with enough cool-gray
+  depth to retain ring separation.
+- Dark: use midnight navy and indigo around controlled cyan and lavender rings,
+  restrained magenta at the owner-held core, and tiny acid-green accents.
+- Additional invariants: preserve the primary ring slightly right of center,
+  nested geometry, tactile texture, and low-detail left side; no literal eye or
+  portal.
+
+#### Living root
+
+- Light: use a pale blue-white paper-grain field with deeper cyan circuit-roots,
+  violet and magenta petals, emerald-to-acid-green edges, and a warm restrained
+  core.
+- Dark: use a subtly textured blue-black field; clarify cyan roots, violet and
+  magenta petals, emerald edge light, and the warm core without clipping.
+- Additional invariants: preserve the bloom low and right of center, branching
+  river/root geometry, painterly motion, calm upper third, and left-side
+  negative space; no hardware or insects.
+
+#### Nocturne bands
+
+- Light: recast the scene as bright overcast abstract architecture with pale
+  mineral-gray and cool blue space, charcoal-to-indigo bands, and sparse cyan,
+  magenta, violet, and acid-green pigment pulses.
+- Dark: use near-black and deep bottle-green space, blue-black bands with
+  readable edges, and sparse cyan, ultraviolet, hot-pink, and ember pulses.
+- Additional invariants: preserve sweeping stacked bands from lower-left to
+  upper-right, depth, quiet central and top areas, and the concealed bloom-like
+  pulse; no recognizable building, faces, or skulls.
