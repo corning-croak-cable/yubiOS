@@ -110,7 +110,7 @@ jobs:
               sudo mv /etc/kernel/postinst.d/kdump-tools.ci-disabled /etc/kernel/postinst.d/kdump-tools
             fi
             for tool in flash-kernel update-initramfs; do
-              if [ -e "/usr/sbin/${tool}.distrib" ]; then
+              if sudo dpkg-divert --list "/usr/sbin/${tool}" | grep -q .; then
                 sudo rm -f "/usr/sbin/${tool}"
                 sudo dpkg-divert --quiet --rename --remove "/usr/sbin/${tool}" || true
               fi
@@ -127,11 +127,13 @@ jobs:
               sudo mv /etc/kernel/postinst.d/kdump-tools /etc/kernel/postinst.d/kdump-tools.ci-disabled
             fi
             for tool in update-initramfs flash-kernel; do
-              if [ -x "/usr/sbin/${tool}" ] && [ ! -e "/usr/sbin/${tool}.distrib" ]; then
+              if ! sudo dpkg-divert --list "/usr/sbin/${tool}" | grep -q .; then
                 sudo dpkg-divert --quiet --local --rename --add "/usr/sbin/${tool}"
-                printf '#!/bin/sh\nexit 0\n' | sudo tee "/usr/sbin/${tool}" >/dev/null
-                sudo chmod 0755 "/usr/sbin/${tool}"
               fi
+              # Recreate the shim even when a prior interrupted job left the
+              # diversion registered with the original in *.distrib.
+              printf '#!/bin/sh\nexit 0\n' | sudo tee "/usr/sbin/${tool}" >/dev/null
+              sudo chmod 0755 "/usr/sbin/${tool}"
             done
           fi
 
