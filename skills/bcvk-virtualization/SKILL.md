@@ -1,0 +1,214 @@
+---
+name: bcvk-virtualization
+description: "Uses bcvk (bootc virtualization kit) for ephemeral VM testing, disk image creation, and hardware-in-the-loop testing of yubiOS. Use when running a bootc image as a VM, flashing to disk, testing FIDO2 enrollment in a VM, adding YubiKey USB passthrough to QEMU, or writing bcvk-based CI workflows. Triggers on: bcvk, ephemeral VM, bootc VM, bootc install, native-to-disk, virtiofs, QEMU YubiKey."
+---
+
+# bcvk Virtualization
+
+## Overview
+
+bcvk (bootc-dev/bcvk) is a Rust toolkit that runs bootc container images as ephemeral or persistent VMs using QEMU + virtiofsd, without root privileges. It's the primary dev/test loop for yubiOS.
+
+**Stack**: podman (orchestration) + QEMU + virtiofsd + bootc image as rootfs.
+
+---
+
+## Command Decision Matrix
+
+| Use case | Command |
+|---|---|
+| Dev/test loop — try a new image | `bcvk ephemeral run <image>` |
+| Build a disk image for cloud/VM import | `bcvk to-disk <image> <out.img>` |
+| Flash yubiOS to USB/NVMe (bare metal) | `bcvk native-to-disk <image> <device>` |
+| Persistent VM (libvirt) | `bcvk libvirt run --name <name> <image>` |
+| Upgrade a running VM | `bootc switch <new-image>` (inside VM) |
+
+---
+
+## Ephemeral VMs
+
+```bash
+# Run a bootc image as a short-lived VM (unprivileged)
+bcvk ephemeral run quay.io/fedora/fedora-bootc:42
+
+# With SSH port forwarding
+bcvk ephemeral run --ssh-port 2222 dhi.io/yubi-OS/yubiOS:latest
+
+# Detached (background)
+bcvk ephemeral run --detach dhi.io/yubi-OS/yubiOS:latest
+
+# SSH into a running ephemeral VM
+bcvk ssh <vm-id>
+```
+
+The VM disappears on stop. No disk persistence. Fast iteration.
+
+---
+
+## Disk Image Creation (to-disk)
+
+bcvk boots an ephemeral VM and runs `bootc install to-disk` inside it.
+
+```bash
+# Default (raw)
+bcvk to-disk dhi.io/yubi-OS/yubiOS:latest yubiOS.img
+
+# qcow2 with custom size
+bcvk to-disk --format qcow2 --disk-size 20G \
+  dhi.io/yubi-OS/yubiOS:latest yubiOS.qcow2
+
+# btrfs filesystem
+bcvk to-disk --filesystem btrfs \
+  dhi.io/yubi-OS/yubiOS:latest yubiOS.img
+```
+
+---
+
+## Native-to-Disk (bare metal flash)
+
+`bcvk native-to-disk` uses a privileged podman container to call `bootc install to-disk` directly — no QEMU, no virtiofsd. Faster. Works without KVM.
+
+```bash
+# Flash to /dev/sda (interactive confirmation required)
+bcvk native-to-disk dhi.io/yubi-OS/yubiOS:latest /dev/sda
+
+# Non-interactive (CI/scripts)
+bcvk native-to-disk --yes dhi.io/yubi-OS/yubiOS:latest /dev/sda
+
+# Rootless-constrained environments
+bcvk native-to-disk --rootful dhi.io/yubi-OS/yubiOS:latest /dev/sda
+```
+
+Safety: validates block device, checks `/proc/mounts` for mounted partitions, prints model+size, requires "yes" before writing.
+
+---
+
+## Libvirt (Persistent VMs)
+
+```bash
+# Create and start a persistent VM
+bcvk libvirt run --name yubiOS-dev \
+  --memory 4G --cpus 4 \
+  dhi.io/yubi-OS/yubiOS:latest
+
+# List managed VMs
+bcvk libvirt list
+
+# SSH into persistent VM
+bcvk libvirt ssh yubiOS-dev
+
+# Stop/start
+bcvk libvirt stop yubiOS-dev
+bcvk libvirt start yubiOS-dev
+```
+
+---
+
+## YubiKey USB Passthrough (FIDO2 in VMs)
+
+QEMU supports FIDO2/U2F passthrough via the `u2f-passthru` device. bcvk doesn't wire this automatically — pass extra QEMU args.
+
+```bash
+# Find YubiKey hidraw device
+ls /dev/hidraw*
+udevadm info /dev/hidraw0 | grep -i yubico
+
+# Pass to bcvk ephemeral VM
+bcvk ephemeral run \
+  --extra-qemu-args="-device u2f-passthru,hidraw=/dev/hidraw0" \
+  dhi.io/yubi-OS/yubiOS:latest
+```
+
+For libvirt, add a USB hostdev to the domain XML:
+```xml
+<hostdev mode='subsystem' type='usb' managed='yes'>
+  <source>
+    <vendor id='0x1050'/>   <!-- Yubico -->
+    <product id='0x0407'/>  <!-- YubiKey 5 -->
+  </source>
+</hostdev>
+```
+
+---
+
+## FIDO2 Software Emulator (CI without hardware)
+
+```yaml
+# GitHub Actions
+- name: Load USB/IP modules
+  run: |
+    sudo modprobe vhci-hcd
+    sudo modprobe usbip-core
+
+- name: Start virtual-fido emulator
+  run: |
+    go install github.com/standard-library/virtual-fido/cmd/virtual-fido@latest
+    sudo ~/go/bin/virtual-fido &
+    sleep 2
+
+- name: Verify FIDO2 device visible
+  run: fido2-token -L
+```
+
+Use `virtual-fido` (Go, USB/IP) for LUKS2 + PAM U2F tests.
+Use `softfido` (Rust, SoftHSM) for PKCS#11 Secure Boot signing in CI.
+
+---
+
+## LUKS + TPM / FIDO2 Gotcha
+
+`bootc install to-disk` with LUKS + TPM enrollment **fails in VMs** due to PCR mismatches (virtual TPM PCR values don't match real hardware). Two-stage workaround:
+
+1. Install with temporary passphrase
+2. Post-boot on real hardware: `systemd-cryptenroll --fido2-device=auto /dev/sda3`
+
+For CI: skip TPM enrollment; test FIDO2 path with `virtual-fido` and `systemd-cryptenroll --fido2-device=auto /tmp/test.luks`.
+
+---
+
+## CI Example
+
+```yaml
+jobs:
+  test-yubiOS:
+    runs-on: ubuntu-latest
+    container:
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:9415967aa0ed8adea8b5c048994259d1982026dca143d0303c7bbe0e11ed67d3
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+
+      - name: Build OCI image
+        run: mkosi build
+
+      - name: Test ephemeral VM boot
+        run: bcvk ephemeral run --timeout 60 ./mkosi.output/yubiOS
+
+      - name: Run FIDO2 enrollment test
+        run: |
+          sudo modprobe vhci-hcd
+          sudo ~/go/bin/virtual-fido &
+          sleep 2
+          bats tests/integration/fido2/
+```
+
+---
+
+## Code Quality Rules (from bcvk REVIEW.md)
+
+- Table-driven unit tests (not one test per case)
+- Split parsers from I/O (parsers accept `&str`, separate fn reads from disk)
+- Strict assertions, not just "didn't crash"
+- AI attribution: `Assisted-by: Sauna (claude-sonnet-4-6)`
+- No `Signed-off-by` on AI-generated commits — human must add after review
+
+---
+
+## References
+
+- https://github.com/bootc-dev/bcvk
+- https://www.qemu.org/docs/master/system/devices/usb-u2f.html
+- https://github.com/standard-library/virtual-fido
+- https://github.com/bootc-dev/bootc
