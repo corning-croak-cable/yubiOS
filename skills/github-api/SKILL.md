@@ -1,0 +1,286 @@
+---
+name: github-api
+description: 'GitHub REST API patterns for the yubi-OS org. Covers the four operations used constantly: (1) Git Data API — committing files without cloning (blob→tree→commit→ref chain); (2) Contents API — reading and writing single files via base64; (3) Issues/PRs/Labels API — creating issues, draft PRs, labels, and posting comments; (4) Repos/Orgs/Forks — forking repos, listing org repos, fetching branch SHAs. Use when making any GitHub API call: pushing code, creating branches, filing issues, opening PRs, reading files, or forking repos. The `workflow` scope constraint is resolved for yubi-OS — use the SU fine-grained PAT. Triggers on: GitHub API, REST API github, git blob, git tree, git commit API, create branch, create PR, create issue, draft PR, fork repo, contents API, PUT file github, GitHub token.'
+---
+
+# GitHub REST API (yubi-OS patterns)
+
+Source: https://docs.github.com/en/rest
+
+## Auth
+
+All requests use a Personal Access Token (PAT) as a Bearer token:
+
+```typescript
+const h = {
+  Authorization: 'Bearer PLACEHOLDER_TOKEN',
+  Accept: 'application/vnd.github.v3+json',
+  'Content-Type': 'application/json',
+};
+const base = 'https://api.github.com/repos/yubi-OS/yubiOS';
+```
+
+**Token scope note:** The default `github` connected account (classic PAT) lacks the
+`workflow` scope and 403s on any `.github/workflows/*.yml` write. Use the "yubi-OS SU
+(fine-grained)" connection (`conn_fNLu9cx2iEZ2`, has `Workflows: Write`) instead — it
+edits `.github/workflows/` directly via either pattern below. No staging needed.
+
+---
+
+## Pattern 1 — Commit files without cloning (Git Data API)
+
+The most-used pattern in this project. Five steps: get current tree SHA → create
+blobs → create new tree → create commit → update branch ref.
+
+```typescript
+// 0. Get main branch tip
+const mainRef = await gh(`/git/ref/heads/main`);
+const mainSHA = mainRef.object.sha;
+const mainCommit = await gh(`/git/commits/${mainSHA}`);
+const mainTreeSHA = mainCommit.tree.sha;
+
+// 1. Create a blob for each changed file
+const blobSha = async (content: string) => {
+  const r = await ghPost('/git/blobs', { content, encoding: 'utf-8' });
+  return r.sha;
+};
+
+// 2. Create a new tree (base_tree = existing SHA, add/replace files)
+const newTree = await ghPost('/git/trees', {
+  base_tree: mainTreeSHA,
+  tree: [
+    { path: 'Containerfile', mode: '100644', type: 'blob', sha: await blobSha(newContent) },
+    { path: 'README.md',     mode: '100644', type: 'blob', sha: await blobSha(readmeContent) },
+  ],
+});
+
+// 3. Create the commit
+const newCommit = await ghPost('/git/commits', {
+  message: 'feat: update base image digest (ADR-016)',
+  tree: newTree.sha,
+  parents: [mainSHA],
+});
+
+// 4. Update the branch ref (fast-forward only — use force: false)
+await ghPatch('/git/refs/heads/main', { sha: newCommit.sha, force: false });
+
+// 5. Or create a new branch:
+await ghPost('/git/refs', { ref: 'refs/heads/feat/v261-base-image', sha: mainSHA });
+// Then update it after commit:
+await ghPatch('/git/refs/heads/feat/v261-base-image', { sha: newCommit.sha });
+```
+
+Docs: https://docs.github.com/en/rest/git/blobs
+      https://docs.github.com/en/rest/git/trees
+      https://docs.github.com/en/rest/git/commits
+      https://docs.github.com/en/rest/git/refs
+
+---
+
+## Pattern 2 — Read / write a single file (Contents API)
+
+Simpler than the Git Data pattern for single-file edits. The SHA is the **blob SHA**
+of the current file (from the `sha` field in the GET response), required for PUT.
+
+```typescript
+// Read a file
+const res = await fetch(`${base}/contents/Containerfile`, { headers: h });
+const d = await res.json();
+const content = Buffer.from(d.content, 'base64').toString('utf-8');
+const fileSHA = d.sha;   // blob SHA — required for updates
+
+// Write / update a file
+await fetch(`${base}/contents/Containerfile`, {
+  method: 'PUT', headers: h,
+  body: JSON.stringify({
+    message: 'chore: bump base image digest',
+    content: Buffer.from(newContent).toString('base64'),
+    sha: fileSHA,          // omit for new files (creates)
+    branch: 'feat/v261',   // optional — defaults to the repo default branch
+  }),
+});
+```
+
+Docs: https://docs.github.com/en/rest/repos/contents
+
+**When to use Contents vs Git Data:**
+- Contents API: 1–2 files, simple edits. Clean, but limited to one file per call.
+- Git Data API: 3+ files in one atomic commit, or complex tree changes. More verbose
+  but required for multi-file commits without multiple round trips.
+
+---
+
+## Pattern 3 — Issues
+
+```typescript
+// Create an issue
+const issue = await fetch(`${base}/issues`, {
+  method: 'POST', headers: h,
+  body: JSON.stringify({
+    title: 'bump fedora-bootc:45 digest (ADR-016)',
+    body: '## What\n\nUpdate `FROM` digest in Containerfile...',
+    labels: ['phase-0', 'adr', 'build'],
+  }),
+}).then(r => r.json());
+console.log(`Created #${issue.number}`);
+
+// Post a comment on an issue
+await fetch(`${base}/issues/${issue.number}/comments`, {
+  method: 'POST', headers: h,
+  body: JSON.stringify({ body: '✅ Digest found: `sha256:6a60ff82...`' }),
+});
+
+// List open issues
+const issues = await fetch(`${base}/issues?state=open&per_page=50`, { headers: h })
+  .then(r => r.json());
+```
+
+Docs: https://docs.github.com/en/rest/issues/issues
+      https://docs.github.com/en/rest/issues/comments
+
+---
+
+## Pattern 4 — Pull Requests
+
+```typescript
+// Create a draft PR
+const pr = await fetch(`${base}/pulls`, {
+  method: 'POST', headers: h,
+  body: JSON.stringify({
+    title: 'feat(base-image): bump fedora-bootc:45 digest (ADR-016)',
+    head: 'feat/v261-base-image',   // source branch
+    base: 'main',                   // target branch
+    body: 'Closes #14\n\nBumps the FROM digest...',
+    draft: true,
+  }),
+}).then(r => r.json());
+console.log(`PR #${pr.number}: ${pr.html_url}`);
+
+// List open PRs
+const prs = await fetch(`${base}/pulls?state=open&per_page=50`, { headers: h })
+  .then(r => r.json());
+```
+
+Docs: https://docs.github.com/en/rest/pulls/pulls
+
+---
+
+## Pattern 5 — Labels
+
+```typescript
+// Create a label
+await fetch(`${base}/labels`, {
+  method: 'POST', headers: h,
+  body: JSON.stringify({
+    name: 'phase-0',
+    color: 'f59e0b',
+    description: 'Required for Phase 0 launch',
+  }),
+});
+// 422 = already exists — safe to ignore
+```
+
+Docs: https://docs.github.com/en/rest/issues/labels
+
+---
+
+## Pattern 6 — Forks and Org repos
+
+```typescript
+// Fork a repo into the org
+await fetch('https://api.github.com/repos/OP-TEE/optee_os/forks', {
+  method: 'POST', headers: h,
+  body: JSON.stringify({ organization: 'yubi-OS', default_branch_only: false }),
+});
+
+// List all org repos
+const repos = await fetch('https://api.github.com/orgs/yubi-OS/repos?per_page=50&type=all', { headers: h })
+  .then(r => r.json());
+repos.forEach((r: any) => console.log(r.name, r.fork ? `← ${r.parent?.full_name}` : ''));
+```
+
+Docs: https://docs.github.com/en/rest/repos/forks
+      https://docs.github.com/en/rest/orgs/repos
+
+---
+
+## Pattern 7 — Get file from a specific branch
+
+```typescript
+// Fetch from a branch (not just default branch):
+const res = await fetch(
+  `${base}/contents/usr/lib/systemd/system/yubiOS-enroll.service?ref=feat/v261-measured-os`,
+  { headers: h }
+);
+const d = await res.json();
+const content = Buffer.from(d.content, 'base64').toString('utf-8');
+```
+
+---
+
+## Pattern 8 — Commit history for a specific file
+
+```typescript
+const commits = await fetch(`${base}/commits?path=AGENTS.md&per_page=5`, { headers: h })
+  .then(r => r.json());
+commits.forEach((c: any) =>
+  console.log(c.sha.substring(0, 12), c.commit.author.date, c.commit.message.split('\n')[0])
+);
+```
+
+Docs: https://docs.github.com/en/rest/commits/commits
+
+---
+
+## Rate limiting
+
+```typescript
+// Check rate limit status:
+const rl = await fetch('https://api.github.com/rate_limit', { headers: h }).then(r => r.json());
+console.log(`Core: ${rl.resources.core.remaining}/${rl.resources.core.limit}`);
+// Rate limit: 5000 req/hr for authenticated requests (PAT)
+// Git Data API (blobs/trees/commits) counts against this
+// Add 200ms delays between batch calls to avoid 429s
+```
+
+---
+
+## Error handling
+
+```typescript
+const res = await fetch(`${base}/contents/DOES_NOT_EXIST`, { headers: h });
+if (res.status === 404) { console.log('file not found'); }
+if (res.status === 409) { console.log('conflict — SHA mismatch on PUT, re-fetch file first'); }
+if (res.status === 422) { console.log('validation error — label already exists or other issue'); }
+const d = await res.json();
+if (!d.sha && !d.commit) { console.error('unexpected response:', JSON.stringify(d).substring(0, 200)); }
+```
+
+---
+
+## yubi-OS org constants
+
+```typescript
+const OWNER = 'yubi-OS';
+const REPO  = 'yubiOS';
+const BASE  = `https://api.github.com/repos/${OWNER}/${REPO}`;
+// Default branch: main
+// Default token: personal access token for corning-croak-cable (no workflow scope)
+// For .github/workflows/*.yml writes: use conn_fNLu9cx2iEZ2 ("yubi-OS SU (fine-grained)")
+// instead — it has Workflows: Write and edits workflow files directly, no staging.
+```
+
+---
+
+## References
+
+- REST API overview: https://docs.github.com/en/rest
+- Git Data (blobs/trees/commits/refs): https://docs.github.com/en/rest/git
+- Contents API: https://docs.github.com/en/rest/repos/contents
+- Issues: https://docs.github.com/en/rest/issues
+- Pull Requests: https://docs.github.com/en/rest/pulls
+- Labels: https://docs.github.com/en/rest/issues/labels
+- Forks: https://docs.github.com/en/rest/repos/forks
+- Orgs repos: https://docs.github.com/en/rest/orgs/repos
+- Commits: https://docs.github.com/en/rest/commits/commits
+- Rate limiting: https://docs.github.com/en/rest/rate-limit/rate-limit

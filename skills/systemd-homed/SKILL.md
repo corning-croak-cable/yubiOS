@@ -1,0 +1,209 @@
+---
+name: systemd-homed
+description: 'Creates, manages, and migrates systemd-homed home directories for yubiOS. Use when creating LUKS2-encrypted homes, enrolling YubiKey FIDO2 or PKCS#11/PIV authentication, configuring PAM for homed users, managing home migration between machines, or wiring suspend/resume key protection. Triggers on: systemd-homed, homectl, home directory encryption, FIDO2 home, YubiKey home unlock, pam_systemd_home, portable home, LUKS2 home.'
+---
+
+# systemd-homed
+
+## Overview
+
+systemd-homed manages portable, self-contained home directories — each home
+embeds the user's full JSON record in its own LUKS2 volume. Account and home
+directory are the same object. No `/etc/passwd`; users synthesized via NSS.
+
+**yubiOS use case**: LUKS2 home + YubiKey FIDO2 unlock. Key material lives
+on the YubiKey; the host stores only a random salt. No YubiKey → no login.
+
+---
+
+## Create a LUKS2 Home with FIDO2
+
+```bash
+# Full yubiOS pattern — FIDO2 PIN + touch required, recovery key first
+homectl create jenny \
+  --storage=luks \
+  --fs-type=btrfs \
+  --disk-size=20G \
+  --member-of=wheel \
+  --recovery-key \
+  --fido2-device=auto \
+  --fido2-with-client-pin=yes \
+  --fido2-with-user-presence=yes
+```
+
+Store the recovery key offline before removing passphrase.
+
+---
+
+## Enroll FIDO2 on an Existing Home
+
+```bash
+homectl authenticate jenny \
+  --fido2-device=auto \
+  --fido2-with-client-pin=yes \
+  --fido2-with-user-presence=yes
+
+# Update/replace recovery key (v259+)
+homectl update jenny --recovery-key=
+```
+
+---
+
+## PKCS#11 / PIV (YubiKey slot 9c)
+
+```bash
+# List available PIV tokens
+homectl create jenny --pkcs11-token-uri=list
+
+# Auto-select single token
+homectl create jenny --pkcs11-token-uri=auto
+
+# Explicit PIV slot 9c
+homectl create jenny \
+  --pkcs11-token-uri="pkcs11:manufacturer=piv_II;id=%9c;type=private"
+```
+
+PIV advantage: token identity visible before auth — can determine login
+username from plugged-in YubiKey. FIDO2 cannot do this.
+
+---
+
+## Inspect and Manage
+
+```bash
+# Human summary
+homectl inspect jenny
+
+# Full JSON record
+homectl inspect jenny --json=pretty
+
+# List all homed users
+homectl list
+
+# Change password (also re-keys LUKS volume)
+homectl passwd jenny
+
+# Resize LUKS volume
+homectl resize jenny 30G
+
+# Add to auxiliary group
+homectl update jenny --member-of=wheel,docker
+```
+
+---
+
+## Migration Between Machines
+
+```bash
+# 1. Copy source public key to target (authorizes the migrated home)
+scp /var/lib/systemd/home/local.public \
+    root@target:/var/lib/systemd/home/source-host.public
+
+# 2. Copy the home file
+scp /home/jenny.home root@target:/home/jenny.home
+
+# 3. On target: rescan (SIGUSR1 since v258) or restart homed
+kill -USR1 $(systemctl show -P MainPID systemd-homed)
+
+# 4. Activate
+homectl activate jenny
+
+# Re-sign on target (removes original signature, local key takes over)
+homectl inspect jenny -EE | homectl create -i-
+```
+
+---
+
+## PAM Configuration
+
+```
+# /etc/pam.d/system-auth
+-auth [success=done authtok_err=bad perm_denied=bad maxtries=bad default=ignore] pam_systemd_home.so
+auth      sufficient  pam_unix.so
+
+-account [success=done authtok_expired=bad new_authtok_reqd=bad maxtries=bad acct_expired=bad default=ignore] pam_systemd_home.so
+account   required    pam_unix.so
+
+-password sufficient  pam_systemd_home.so
+password  sufficient  pam_unix.so sha512 shadow try_first_pass
+
+# suspend=1: forget key material on system suspend (graphical sessions only)
+-session  optional    pam_systemd_home.so suspend=1
+-session  optional    pam_systemd.so
+session   required    pam_unix.so
+```
+
+`suspend=1` erases key material from RAM on suspend. Home stays locked until
+re-auth on resume. Requires the display manager / lock screen to re-auth via
+PAM. TTY sessions will hang on resume until another session re-auths.
+
+---
+
+## homed.conf
+
+```ini
+# /etc/systemd/homed.conf.d/yubiOS.conf
+[Home]
+DefaultStorage=luks
+DefaultFileSystemType=btrfs
+```
+
+---
+
+## Home Areas (v258+)
+
+Secondary `$HOME` subdirs within one home — useful when sharing a home
+between host/VM but wanting separate session configs.
+
+```bash
+# Create an area
+mkdir -p ~/Areas/dev
+
+# Login to area (at login prompt, append %area to username)
+# username: jenny%dev
+
+# via run0
+run0 --area=dev
+
+# Set default in user record
+homectl update jenny --default-area=dev
+```
+
+---
+
+## Signing Keys
+
+| File | Purpose |
+|---|---|
+| `/var/lib/systemd/home/local.private` | Signs local user records (back this up) |
+| `/var/lib/systemd/home/local.public` | Matching public key |
+| `/var/lib/systemd/home/*.public` | Trusted keys from other hosts |
+
+```bash
+# v258+ D-Bus management
+homectl list-signing-keys
+homectl add-signing-key /path/to/remote.public --key-name=remote.public
+```
+
+---
+
+## yubiOS Checklist
+
+- [ ] `systemd-homed.service` enabled in image
+- [ ] `homed.conf`: `DefaultStorage=luks`, `DefaultFileSystemType=btrfs`
+- [ ] PAM wired with `pam_systemd_home.so` in all four stacks (auth/account/password/session)
+- [ ] `suspend=1` on graphical session PAM entry
+- [ ] Recovery key generated offline before enrolling FIDO2
+- [ ] FIDO2: `--fido2-with-client-pin=yes --fido2-with-user-presence=yes`
+- [ ] `local.public` backed up; `local.private` stored securely
+
+---
+
+## References
+
+- https://www.man7.org/linux/man-pages/man8/systemd-homed.8.html
+- https://www.man7.org/linux/man-pages/man1/homectl.1.html
+- https://www.man7.org/linux/man-pages/man5/homed.conf.5.html
+- https://www.man7.org/linux/man-pages/man8/pam_systemd_home.8.html
+- https://systemd.io/HOME_DIRECTORY
+- Deep research doc: documents/knowledge/deep-research/systemd-homed.md
