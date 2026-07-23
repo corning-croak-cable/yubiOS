@@ -48,6 +48,7 @@ clean_package_manager_state() {
     # filesystem-order-dependent auxiliary cache. None is part of the runnable
     # image contract. The RPM database and /etc/ld.so.cache remain intact.
     rm -rf \
+        /run/dnf \
         /var/cache/dnf \
         /var/cache/ldconfig/aux-cache \
         /var/cache/libdnf5 \
@@ -55,6 +56,7 @@ clean_package_manager_state() {
         /var/log/hawkey.log \
         /var/log/libdnf* \
         /var/lib/dnf/repos \
+        /var/lib/dnf/system-repo.lock \
         /usr/lib/sysimage/libdnf5/transaction_history.sqlite*
 }
 

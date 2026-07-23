@@ -43,6 +43,7 @@ RUN dnf -y --setopt=history_record=false install \
       osslsigncode && \
     dnf clean all && \
     rm -rf \
+      /run/dnf \
       /var/cache/dnf \
       /var/cache/ldconfig/aux-cache \
       /var/cache/libdnf5 \
@@ -50,6 +51,7 @@ RUN dnf -y --setopt=history_record=false install \
       /var/log/hawkey.log \
       /var/log/libdnf* \
       /var/lib/dnf/repos \
+      /var/lib/dnf/system-repo.lock \
       /usr/lib/sysimage/libdnf5/transaction_history.sqlite*
 
 # ── First-boot firmware validation (ADR-024) ─────────────────────────────

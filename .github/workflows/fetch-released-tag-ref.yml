@@ -89,13 +89,14 @@ jobs:
         run: |
           set -euo pipefail
 
-          # fork|upstream|stable-tag-regex. edk2-platforms intentionally uses
-          # its latest pre-removal compatibility tag because that repository
-          # does not publish EDK2-style stable release tags.
+          # fork|upstream|stable-tag-regex. StandaloneMM was removed after
+          # edk2-stable202602, so EDK2 and the edk2-platforms pre-removal
+          # compatibility snapshot intentionally form a bounded release pair.
+          # edk2-platforms does not publish EDK2-style stable release tags.
           fork_specs=(
             'arm-trusted-firmware|ARM-software/arm-trusted-firmware|^v[0-9]+\.[0-9]+(\.[0-9]+)?$'
             'bcvk|bootc-dev/bcvk|^v[0-9]+\.[0-9]+\.[0-9]+$'
-            'edk2|tianocore/edk2|^edk2-stable[0-9]{6}(\.[0-9]+)?$'
+            'edk2|tianocore/edk2|^edk2-stable202602(\.[0-9]+)?$'
             'edk2-platforms|tianocore/edk2-platforms|^[0-9]{6,8}-before-platform-removals$'
             'mkosi|systemd/mkosi|^v[0-9]+(\.[0-9]+){0,2}$'
             'ms-tpm-20-ref|microsoft/ms-tpm-20-ref|^v[0-9]+\.[0-9]+r[0-9]+$'

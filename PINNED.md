@@ -42,7 +42,10 @@ fork, never the mutable tag. `fetch-released-tag-ref.yml` resolves the newest
 stable upstream tag in each configured release family, peels annotated tags,
 and proves that both the release commit and approved source commit can be
 fetched from the fork with complete trees. When those commits are equal, the
-workflow rolls every textual use automatically. When a yubiOS-specific source
+workflow rolls every textual use automatically. EDK2 is bounded to
+`edk2-stable202602`, the newest stable release that still provides the
+StandaloneMM `ArmBaseLib` consumed by the paired pre-removal edk2-platforms
+snapshot. When a yubiOS-specific source
 commit extends the release, the workflow preserves it and requires the newest
 release to remain its ancestor; this prevents a refresh from silently removing
 bcvk device support, the mkosi profile, or OP-TEE volatile test storage. The
@@ -53,7 +56,7 @@ project does not publish EDK2-style stable release tags.
 |-----------------|-----------------|----------------------------|------------------------|----------------------|---------------|
 | `yubi-OS/arm-trusted-firmware` | `ARM-software/arm-trusted-firmware` | `v2.15.0` | `da738d5eae93af342fdc4995dd3c05acb4c9d757` | `da738d5eae93af342fdc4995dd3c05acb4c9d757` | TF-A component validation and firmware assembly. |
 | `yubi-OS/bcvk` | `bootc-dev/bcvk` | `v0.18.0` | `2d86c4cb3c82db57814558bd577d97a2ac6174ca` | `c29246b1a1ea0114fcb92530298a364627f0cae0` | Release plus yubiOS swtpm/swu2f support; component validation and VM harness. |
-| `yubi-OS/edk2` | `tianocore/edk2` | `edk2-stable202605` | `b03a21a63e3bd001f52c527e5a57feddb53a690b` | `b03a21a63e3bd001f52c527e5a57feddb53a690b` | EDK2 component validation and StandaloneMM firmware build. |
+| `yubi-OS/edk2` | `tianocore/edk2` | `edk2-stable202602` | `b7a715f7c03c45c6b4575bf88596bfd79658b8ce` | `b7a715f7c03c45c6b4575bf88596bfd79658b8ce` | Newest stable EDK2 release compatible with the StandaloneMM pre-removal platform snapshot; component validation and firmware build. |
 | `yubi-OS/edk2-platforms` | `tianocore/edk2-platforms` | `20260316-before-platform-removals` | `cc384840c440415a091623a7658112fedc416094` | `cc384840c440415a091623a7658112fedc416094` | StandaloneMM platform build compatibility snapshot. |
 | `yubi-OS/mkosi` | `systemd/mkosi` | `v26` | `84af20892b61c8e177e391f997ded8b4cb5514f2` | `b2b1ea6ad59621a6f955e4cbceee72580a91889a` | Release plus yubiOS profile; component validation, summary, and installer build. |
 | `yubi-OS/ms-tpm-20-ref` | `microsoft/ms-tpm-20-ref` | `v1.83r1` | `ee21db0a941decd3cac67925ea3310873af60ab3` | `ee21db0a941decd3cac67925ea3310873af60ab3` | TPM reference validation and fTPM firmware build. |
