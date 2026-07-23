@@ -90,7 +90,7 @@ env:
   UBOOT_REF: ece349ade2973e220f524ce59e59711cc919263f # release ref; see PINNED.md
   EDK2_REF: b7a715f7c03c45c6b4575bf88596bfd79658b8ce # compatible release ref; see PINNED.md
   EDK2_PLATFORMS_REF: cc384840c440415a091623a7658112fedc416094 # compatibility ref; see PINNED.md
-  MS_TPM_REF: ee21db0a941decd3cac67925ea3310873af60ab3 # release ref; see PINNED.md
+  MS_TPM_REF: 98b60a44aba79b15fcce1c0d1e46cf5918400f6a # release ref; see PINNED.md
   FTPM_UUID: bc50d971-d4c9-42c4-82cb-343fb7f37896
   MBEDTLS_REF: 0bebf8b8c7f07abe3571ded48a11aa907a1ffb20 # mbedtls-3.6.6
 
