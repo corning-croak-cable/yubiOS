@@ -1,9 +1,5 @@
-> **Archived research snapshot** synced from the assistant knowledge base (`documents/github-yubios-KS9n5GAT/knowledge/`) on 2026-07-23. May predate current specs — treat `PINNED.md` and the dated `refs/*` notes as the live source of truth; this is background research context only.
-
----
-
 # systemd Reference: exec/unit/service/directives
-_Refreshed: June 23, 2026 — Sources: man7.org systemd v260_
+_Refreshed: June 23, 2026 — Sources: man7.org systemd v260 — v261 additions appended 2026-07-23, see bottom section_
 
 ## Man Page Map
 
@@ -248,3 +244,24 @@ WantedBy=multi-user.target
 PrivateDevices=no
 BindReadOnlyPaths=/dev/hidraw0 /dev/hidraw1 /dev/hidraw2
 ```
+
+---
+
+## v261 Additions (2026-07-23 refresh — supersedes v260 baseline above)
+
+systemd v261 shipped 2026-06-19. New directives/behavior since v260, confirmed against the v261 release notes/NEWS:
+
+| Directive | Section | What it does | yubiOS relevance |
+|---|---|---|---|
+| `RestrictFileSystemAccess=` | systemd.exec | BPF-LSM restriction: only execute binaries on a signed, dm-verity-protected filesystem | Distinct from the existing `RestrictFileSystems=` (filesystem-*type* limiter) already used on enrollment units — do not conflate. Tracked as B-HARDENING-RUNTIME in yubiOS BLOCKERS.md: static audit done, runtime evidence (Bats + `systemd-analyze verify`) still pending before adoption |
+| `CPUSetPartition=` | systemd.resource-control | cgroup cpuset partition type: `root`, `isolated`, `member` | Not yet used by yubiOS units |
+| `FileDescriptorStorePreserve=on-success` | systemd.service | New option value: only preserve the FD store when the unit stops successfully | Relevant if any yubiOS daemon uses FD store handoff across restarts |
+| `CPUPressureWatch=`, `CPUPressureThresholdSec=`, `IOPressureWatch=`, `IOPressureThresholdSec=` | systemd.resource-control | Per-unit CPU/IO PSI (pressure stall information) notifications | Useful for CI runner health signals, not yet wired |
+| `ConditionFraction=` | systemd.unit | Staged rollout gating via machine-ID hash against a percentage | Could gate progressive rollout of new yubiOS images |
+| `ConditionMachineTag=` | systemd.unit | Key off tags set in /etc/machine-info | Could be used for board-scoped units (e.g. rock5b-rk3588 vs rockpro64-rk3399 tags) |
+
+**Breaking/compat change:** several `io.systemd.Unit` Varlink fields moved from plain strings to enums, with wire values changing from dash/plus forms to underscore forms (e.g. `tty-force` → `tty_force`, `kmsg+console` → `kmsg_console`). Affected enums: `ExecInputType`, `ExecOutputType`, `ProtectHome`, `CGroupController`, `CollectMode`, `EmergencyAction`, `JobMode`. Audit any yubiOS tooling that talks to systemd over Varlink for these wire-value strings.
+
+**New component (not a directive):** `systemd-sysinstall` — a textual OS installer wrapping `systemd-repart`, `bootctl link`, `bootctl install`, and `systemd-creds`. yubiOS TODO.md keeps this watch-list only; repart/bootc remains the install baseline.
+
+Sources: https://github.com/systemd/systemd/releases/tag/v261, https://raw.githubusercontent.com/systemd/systemd/main/NEWS, https://freedesktop.org/software/systemd/man/latest/systemd.exec.html, https://freedesktop.org/software/systemd/man/latest/systemd.service.html, https://freedesktop.org/software/systemd/man/latest/systemd.unit.html
