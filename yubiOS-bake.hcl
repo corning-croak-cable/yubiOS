@@ -224,14 +224,19 @@ target "yubios" {
 
 target "yubios-smoke" {
   inherits    = ["_policy", "_reproducible"]
-  description = "Verify production scripts, symlinks, and PAM wiring in-build."
+  description = "Verify production bootc, dracut, scripts, symlinks, and PAM wiring in-build."
   context     = "."
   contexts = {
     yubios-base = "target:_yubios-base"
   }
   dockerfile-inline = <<-DOCKERFILE
     FROM yubios-base
-    RUN test -x /usr/lib/yubiOS/enroll-sb-wrapper.sh && \
+    RUN bootc container lint --fatal-warnings && \
+        test -x /usr/lib/bootc/initramfs-setup && \
+        test -x /usr/lib/dracut/modules.d/51bootc/module-setup.sh && \
+        grep -Fq 'add_dracutmodules+=" bootc "' /usr/lib/dracut.conf.d/51-yubiOS-composefs.conf && \
+        ! grep -Eq '^add_dracutmodules\+="[^"]*(composefs|dm-verity)' /usr/lib/dracut.conf.d/51-yubiOS-composefs.conf && \
+        test -x /usr/lib/yubiOS/enroll-sb-wrapper.sh && \
         test -L /usr/bin/yubiOS-enroll-sb && \
         test -L /usr/bin/yubiOS-enroll-luks && \
         test -L /usr/bin/yubiOS-enroll-pam && \

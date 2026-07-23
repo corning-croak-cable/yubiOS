@@ -1,6 +1,6 @@
 # yubiOS Blockers
 
-Last reviewed: 2026-07-21
+Last reviewed: 2026-07-22
 Status: active blocker register
 
 This file lists current blockers only. Historical blockers that were resolved by merged work should move into ADRs, refs, or PR history rather than staying in the active list.
@@ -16,6 +16,7 @@ This file lists current blockers only. Historical blockers that were resolved by
 | B-PINS | Supply chain | Base-image digest changes require explicit [PINNED.md](PINNED.md) updates and package-floor checks. | Treat stale run-specific digests as historical evidence only. |
 | B-HARDENING-RUNTIME | systemd hardening | Static hardening audit is complete in [refs/systemd-hardening-audit-2026-07-17.md](refs/systemd-hardening-audit-2026-07-17.md), but runtime evidence still needs the target image/base to run the Bats unit checks and `systemd-analyze verify`. | Run the hardening tests in a target image/base before adding `RestrictFileSystemAccess=` or claiming runtime enforcement beyond the existing `RestrictFileSystems=~@network` enrollment control. |
 | B-REAL-FIDO2 | E2E unlock | SoftHSM and swu2f exercise interfaces, but production confidence still needs a physical YubiKey to validate FIDO2 unlock, homed, resident SSH keys, PAM presence, PIV signing, recovery, and failure handling. | First close B-VM-CTAP2 for deterministic software coverage, then retain a real-hardware evidence run as the production-confidence gate. |
+| B-BOOTC-SEAL | bootc composefs | The pinned Fedora bootc image records bootc 1.16.3, which lacks `container split-kernel-and-rootfs`; run 29884493346 proves strict fs-verity through a mutable BLS digest anchor, not a sealed UKI or Secure Boot boot. | Pin a base with v1.16.4-equivalent split/ukify capabilities, keep `/kernel` outside the digested final rootfs, sign systemd-boot and the exact-rootfs UKI through the protected signing boundary, then require Secure Boot and negative tamper boots on amd64 and arm64. See [refs/bootc-composefs-sealed-flow-2026-07-22.md](refs/bootc-composefs-sealed-flow-2026-07-22.md). |
 
 ## Not Current Blockers
 
@@ -27,6 +28,9 @@ These are no longer active blockers after the latest docs and CI work:
 - swu2f Layer 2 is no longer merely a planned concept; the `dev` image path is live for TEST-only VM validation.
 - The ARM64 VM e2e lane is no longer blocked at the pre-boot host/harness or guest-SSH layer when the pinned QEMU workaround is active; the remaining software-authenticator gap is tracked as `B-VM-CTAP2`.
 - `B-VM-SSH` and `B-VM-BOOTLOADER-UPDATE` are retired by [run 29872832727](https://github.com/yubi-OS/yubiOS/actions/runs/29872832727): root public-key authentication succeeded, guest assertions ran, and the DirectBoot/virtiofs bootloader-update guard did not reproduce the old failure.
+- Strict composefs fs-verity is not itself blocked: the offline install lane can
+  and does test it. `B-BOOTC-SEAL` is the narrower authenticity gap between a
+  mutable BLS digest anchor and a signed UKI plus Secure Boot chain.
 - The hardening documentation audit is no longer pending as a static docs task; the remaining hardening blocker is runtime validation inside the target image/base.
 
 ## Inconsistency Log

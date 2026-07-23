@@ -1,6 +1,6 @@
 # yubiOS Architecture
 
-Last reviewed: 2026-07-21
+Last reviewed: 2026-07-22
 Status: planning baseline for `main`; ARM64 is primary, x86-64 is secondary and supported.
 
 This document describes the current yubiOS architecture at the level needed for planning, review, and CI triage. Normative requirements live in [SPEC.md](SPEC.md), decisions live in [ADR.md](ADR.md), pinned inputs live in [PINNED.md](PINNED.md), and threat coverage lives in [MITIGATE.md](MITIGATE.md).
@@ -67,8 +67,8 @@ graph TD
     FW["⬛ UEFI Firmware\nSecureBoot db"]
     SDB["🔷 systemd-boot\n(UEFI PE signed via PIV)"]
     UKI["📦 Unified Kernel Image\n.linux + .initrd + .cmdline\n.pcrsig + .pcrpkey"]
-    VERITY["🔒 /usr partition\ndm-verity squashfs\nMerkle tree on every read"]
-    LUKS["🔐 root filesystem\nLUKS2 btrfs\nFIDO2 hmac-secret enrolled"]
+    CFS["🔒 composefs deployment\nEROFS metadata + fs-verity objects\n/etc + /var from writable /state"]
+    BACKING["🔐 physical sysroot\next4/Btrfs with fs-verity\noptionally inside LUKS2"]
     HOMED["🏠 systemd-homed\nper-user LUKS2 btrfs\nFIDO2 per user"]
     YK["🔑 YubiKey 5\nPhysical possession required"]
     PCR["PCR 11 (TPM/fTPM, if present)\nboot phases measured\ninitrd-enter to complete"]
@@ -76,17 +76,25 @@ graph TD
     FW ---|validates + measures| SDB
     SDB ---|picks newest UKI\nvalidates PE signature| UKI
     UKI ---|measures into PCR 11| PCR
-    UKI ---|usrhash= in cmdline| VERITY
-    UKI ---|initrd unlocks| LUKS
-    LUKS ---|FIDO2 PIN + touch| YK
+    UKI ---|signed composefs= digest| CFS
+    CFS ---|stored on| BACKING
+    UKI ---|initrd unlocks| BACKING
+    BACKING ---|FIDO2 PIN + touch| YK
     HOMED ---|FIDO2 PIN + touch| YK
     FW -.-|UKI signed via PIV slot 9c| YK
 
     style YK fill:#ff1493,color:#fff
-    style VERITY fill:#0d6e0d,color:#fff
-    style LUKS fill:#0d6e0d,color:#fff
+    style CFS fill:#0d6e0d,color:#fff
+    style BACKING fill:#0d6e0d,color:#fff
     style HOMED fill:#0d6e0d,color:#fff
 ```
+
+This diagram is the sealed bootc target. Native bootc composefs uses
+fs-verity-protected files and an EROFS metadata image inside a writable
+physical sysroot; it does not use a dm-verity EROFS root partition. The
+separate mkosi/systemd-repart image path may use dm-verity for fixed partition
+images. The current `to-filesystem` workflow validates strict fs-verity through
+a traditional BLS entry and is therefore still an unsealed boot proof.
 
 ### ARM64 Primary Path
 
@@ -95,7 +103,9 @@ graph TD
 3. OP-TEE hosts StandaloneMM and the fTPM trusted application; RPMB backs secure variables and TPM NV state on production boards.
 4. U-Boot provides UEFI services, Secure Boot variable handling, and measured boot into the fTPM.
 5. systemd-boot loads the same signed UKI used on x86-64.
-6. `/usr` is immutable and verified through composefs, erofs, and dm-verity.
+6. In the sealed bootc target, the signed UKI binds the composefs digest and
+   the bootc initramfs assembles the verified root from EROFS metadata and
+   fs-verity objects. The separate mkosi path retains its dm-verity model.
 7. Root, swap, and user homes unlock through YubiKey FIDO2 plus recovery material.
 
 ```mermaid
@@ -223,6 +233,75 @@ The project keeps both build paths active:
 | firmware OCI tags | `firmware-qemu-arm64`, `firmware-rock5b-rk3588`, `firmware-rockpro64-rk3399`, and per-commit variants | Variant-scoped ARM64 secure-world bundle publication |
 | dev OCI tags | `dev`, `dev-<sha>` | TEST-only swu2f-enabled boot validation image |
 
+### Practical bootc composefs build flow
+
+The current published yubiOS image carries bootc 1.16.3 and a traditional
+kernel/initramfs layout. The existing install workflow therefore proves a
+strict composefs repository through an **unsealed BLS entry**. The production
+sealed target starts when the pinned base provides the released bootc v1.16.4
+split capability and the repository has a Secure Boot VM proof.
+
+The practical sealed build has four isolation boundaries:
+
+1. Build and policy-check the exact rootfs, then run
+   `bootc container lint --fatal-warnings`.
+2. Move the raw kernel and initramfs out with
+   `bootc container split-kernel-and-rootfs --rootfs / --output /kernel`.
+3. Derive a clean final-rootfs stage with neither `/kernel` nor raw
+   `vmlinuz`/`initramfs.img`. Mount that tree at `/target` and the separate
+   kernel-artifact tree at `/kernel` in a tools/signing stage.
+4. Have bootc compute the composefs digest and pass it to `ukify`; sign the
+   resulting UKI through the protected signing boundary and copy only the UKI
+   into `/boot/EFI/Linux/` in the final image.
+
+```sh
+mapfile -t kernel_versions < <(
+  find /kernel -mindepth 1 -maxdepth 1 -type d -printf '%f\n'
+)
+test "${#kernel_versions[@]}" -eq 1
+kver="${kernel_versions[0]}"
+
+bootc container ukify \
+  --rootfs /target \
+  --kernel-dir "/kernel/${kver}" \
+  -- \
+  --output "/out/${kver}.efi" \
+  --signtool systemd-sbsign \
+  --secureboot-private-key /run/secrets/secureboot_key \
+  --secureboot-certificate /run/secrets/secureboot_cert
+```
+
+`--kernel-dir` belongs to bootc; everything after `--`, including `--output`,
+belongs to `ukify`. `/target` must be the same clean rootfs that becomes the
+final image. Every rootfs change produces a new composefs digest, so the UKI
+must be regenerated and re-signed. Signing keys enter only as protected build
+secrets or through external signing infrastructure.
+
+```mermaid
+flowchart TD
+    R["Policy-gated rootfs\nraw kernel + initramfs"]
+    S["Split artifacts\nclean rootfs + /kernel"]
+    U["bootc container ukify\nembed composefs digest"]
+    F["Final OCI\nsigned UKI only"]
+    I["to-filesystem\next4/Btrfs + ESP"]
+    B["bootc-root-setup\nverify and assemble root"]
+
+    R --> S --> U --> F --> I --> B
+```
+
+The installer prepares a writable ext4 filesystem with the `verity` feature
+or a suitable Btrfs filesystem plus an ESP, then runs
+`bootc install to-filesystem`. The installed physical sysroot contains
+`/composefs/{images,objects,streams}` and `/state/deploy`: EROFS describes the
+immutable metadata, fs-verity authenticates the metadata and content objects,
+and writable `/etc` and `/var` state is assembled from `/state`. A signed
+systemd-boot and signed UKI authenticate the digest anchor. Full promotion
+also requires a Secure Boot boot test and a negative tamper test; offline
+installation alone cannot prove the seal.
+
+The command audit, current version gap, and promotion contract are recorded in
+[the 2026-07-22 composefs research note](refs/bootc-composefs-sealed-flow-2026-07-22.md).
+
 ```mermaid
 graph LR
     BASE["fedora-bootc:45\ndigest-pinned, see PINNED.md"]
@@ -249,7 +328,7 @@ graph LR
 
 ```mermaid
 graph LR
-    subgraph SHIP["Shipped image — 2 partitions"]
+    subgraph SHIP["Separate mkosi/DDI partitioned image path"]
         ESP["1 ESP\nvFAT /efi\nsystemd-boot + UKI"]
         USRA["2 /usr A\nerofs ro\ndm-verity + PKCS7 sig\nyubiOS_0.x"]
         VERTA["3 /usr A verity\nMerkle tree"]
@@ -340,7 +419,7 @@ legacy packages| NS["systemd-nspawn\n\nExamples: Debian dev container\nRPM compa
 
 ## Current Research Notes
 
-The current evidence notes are [refs/ci-evidence-2026-07-21.md](refs/ci-evidence-2026-07-21.md) for the workflow state and [refs/systemd-upstream-progress-2026-07-21.md](refs/systemd-upstream-progress-2026-07-21.md) for the dated upstream snapshot. Historical planning context remains in [refs/planning-cycle-2026-07-11.md](refs/planning-cycle-2026-07-11.md).
+The current evidence notes are [refs/bootc-composefs-sealed-flow-2026-07-22.md](refs/bootc-composefs-sealed-flow-2026-07-22.md) for the composefs build and seal boundary, [refs/ci-evidence-2026-07-21.md](refs/ci-evidence-2026-07-21.md) for the broader workflow state, and [refs/systemd-upstream-progress-2026-07-21.md](refs/systemd-upstream-progress-2026-07-21.md) for the dated upstream snapshot. Historical planning context remains in [refs/planning-cycle-2026-07-11.md](refs/planning-cycle-2026-07-11.md).
 
 ## Open Edges
 
@@ -348,4 +427,8 @@ The current evidence notes are [refs/ci-evidence-2026-07-21.md](refs/ci-evidence
 - The ROCK 5B bundle additionally needs a pinned, verified RK3588 DDR/TPL input before it is flashable; a successful component compile is not a boot-image claim.
 - The zstd EFI zboot workaround should remain pinned and explicit until upstream QEMU behavior is available in the runner fleet.
 - PQ TLS is satisfied by current OpenSSL and Go defaults, but CI should keep asserting it so a future base digest does not silently regress.
+- Sealed bootc composefs promotion remains gated on a pinned base with the
+  v1.16.4 split/ukify capabilities, protected UKI signing, Secure Boot boot
+  evidence, and a negative fs-verity tamper test. The current BLS lane is
+  strict but unsealed.
 - The U-Boot FIDO2/U2F console gate remains idea-stage until the USB HID and recovery model are audited.
