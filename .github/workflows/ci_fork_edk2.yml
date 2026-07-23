@@ -124,7 +124,9 @@ jobs:
           fi
 
       - name: Build BaseTools
-        run: make -C BaseTools -j"$(nproc)"
+        # Serialize the VfrCompile multi-target generator; parallel execution
+        # can expose partially generated PCCTS headers on ARM64.
+        run: make -C BaseTools -j1
 
       - name: Build StandaloneMmPkg (AARCH64, GCC, RELEASE)
         run: |

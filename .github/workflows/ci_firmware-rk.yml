@@ -277,7 +277,10 @@ jobs:
           fi
 
       - name: Build BaseTools
-        run: make -C "$UEFI_WS/edk2/BaseTools" -j"$(nproc)"
+        # EDK2's VfrCompile generator uses an ordinary multi-target rule; a
+        # parallel BaseTools build can run it more than once and consume
+        # partially generated PCCTS headers on ARM64.
+        run: make -C "$UEFI_WS/edk2/BaseTools" -j1
 
       - name: Build StandaloneMM RPMB platform
         run: |

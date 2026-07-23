@@ -60,7 +60,9 @@ build_local_standalone_mm() {
     [[ -f "$stmm_root/edk2-platforms/${LOCAL_STMM_PLATFORM%.dsc}.fdf" ]] || \
         die 'the pinned edk2-platforms source is missing the StandaloneMM FDF'
 
-    make -C "$stmm_root/edk2/BaseTools" -j"$(nproc)"
+    # VfrCompile generates several PCCTS outputs from one ordinary multi-target
+    # rule, which is unsafe under parallel make on ARM64.
+    make -C "$stmm_root/edk2/BaseTools" -j1
     write_reproducible_edk2_stack_cookies \
         "$stmm_root/Build/MmStandaloneRpmb/RELEASE_GCCNOLTO" \
         "${LOCAL_EDK2_REF}:${LOCAL_EDK2_PLATFORMS_REF}:${LOCAL_STMM_PLATFORM}"
