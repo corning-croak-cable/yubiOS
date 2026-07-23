@@ -1,3 +1,7 @@
+_Refreshed: 2026-07-23 (renamed from refs/sbsign-pkcs11-validate.md, no date suffix previously)_
+
+Cross-checked 2026-07-23 against refs/mkosi-bcvk-fork-status-2026-07-23.md: mkosi upstream (v27) confirms native support for `SecureBootKeySource=engine:pkcs11` / `provider:pkcs11` via `systemd-sbsign`, matching this file's validation shape exactly. No drift found — yubiOS's implementation is aligned with current upstream mkosi capability.
+
 # systemd-sbsign PKCS#11 validation
 
 Status: validation path documented and wired for the yubiOS signing flow. A physical YubiKey remains required for final production signing validation.
