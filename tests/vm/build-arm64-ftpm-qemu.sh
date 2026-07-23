@@ -14,7 +14,7 @@ WORK="${WORK:-$PWD/arm64-ftpm-f0}"
 JOBS="${JOBS:-$(nproc)}"
 
 # --- Pinned sources (supply chain: fold into Renovate per ADR-015) ---
-MSTPM_REF="98b60a44aba79b15fcce1c0d1e46cf5918400f6a"   # ms-tpm-20-ref commit optee_ftpm expects
+MSTPM_REF="ee21db0a941decd3cac67925ea3310873af60ab3"   # ms-tpm-20-ref commit optee_ftpm expects
 FTPM_UUID="bc50d971-d4c9-42c4-82cb-343fb7f37896"        # fTPM TA UUID
 # OP-TEE qemu_v8 manifest pins TF-A / OP-TEE OS / U-Boot / Linux as a coherent set.
 OPTEE_MANIFEST_REF="${OPTEE_MANIFEST_REF:-4.5.0}"        # pin the OP-TEE release manifest tag

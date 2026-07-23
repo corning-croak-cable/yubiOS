@@ -266,7 +266,7 @@ jobs:
             python3-pip sbsigntool softhsm2 uidmap zstd
           mkosi_wheel_dir=$(mktemp -d)
           python3 -m pip wheel --no-deps --wheel-dir "$mkosi_wheel_dir" \
-            git+https://github.com/yubi-OS/mkosi.git@b2b1ea6ad59621a6f955e4cbceee72580a91889a # feature/yubiOS-profile
+            git+https://github.com/yubi-OS/mkosi.git@b2b1ea6ad59621a6f955e4cbceee72580a91889a # release-descendant ref; see PINNED.md
           python3 -m pip install --break-system-packages "$mkosi_wheel_dir"/mkosi-*.whl
           mkosi dependencies > "$mkosi_wheel_dir/dependencies"
           xargs -r -d '\n' apt-get install -y -qq --no-install-recommends \
@@ -366,7 +366,7 @@ jobs:
             echo "yubios_commit=${GITHUB_SHA}"
             echo "source_date_epoch=${SOURCE_DATE_EPOCH}"
             echo "mkosi_seed=${YUBIOS_MKOSI_SEED}"
-            echo "mkosi_source=https://github.com/yubi-OS/mkosi@b2b1ea6ad59621a6f955e4cbceee72580a91889a (feature/yubiOS-profile provenance)"
+            echo "mkosi_source=https://github.com/yubi-OS/mkosi@b2b1ea6ad59621a6f955e4cbceee72580a91889a (approved source; release provenance in PINNED.md)"
             echo "signing=UKI signed via SecureBootKeySource=provider:pkcs11 + systemd-sbsign"
             echo "signature_envelope=random non-production SoftHSM key; excluded from byte-for-byte proof"
             echo "NOTE: Signing key is a SoftHSM mock of YubiKey PIV slot 9c."

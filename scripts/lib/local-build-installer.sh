@@ -114,7 +114,7 @@ build_local_installer() {
         printf 'yubios_commit=%s\n' "$GIT_SHA"
         printf 'source_date_epoch=%s\n' "$SOURCE_DATE_EPOCH"
         printf 'mkosi_seed=%s\n' "$YUBIOS_MKOSI_SEED"
-        printf 'mkosi_source=https://github.com/yubi-OS/mkosi@%s (feature/yubiOS-profile provenance)\n' "$LOCAL_MKOSI_REF"
+        printf 'mkosi_source=https://github.com/yubi-OS/mkosi@%s (approved source; release provenance in PINNED.md)\n' "$LOCAL_MKOSI_REF"
         printf '%s\n' 'signing=UKI signed via SecureBootKeySource=provider:pkcs11 + systemd-sbsign'
         printf '%s\n' 'signature_envelope=random non-production SoftHSM key; excluded from byte-for-byte proof'
         printf '%s\n' 'NOTE: Signing key is a SoftHSM mock of YubiKey PIV slot 9c.'

@@ -4,13 +4,13 @@
 # paths in .github/workflows/ci_firmware-rk.yml. This file is sourced by
 # scripts/build-local-images.sh after the pinned DHI/rootless Docker bootstrap.
 
-readonly LOCAL_TFA_REF='f9e106415eb569ff9b19404e2c3f64167af08d21'
+readonly LOCAL_TFA_REF='da738d5eae93af342fdc4995dd3c05acb4c9d757'
 readonly LOCAL_OPTEE_OS_REF='440b10c3f9b1c8501f2550e282ae071bb5424972'
 readonly LOCAL_OPTEE_FTPM_REF='5e09cdbe1bcb1bc3bcf4875ebafb4e1a1154417c'
-readonly LOCAL_UBOOT_REF='ef2ab32418943c161d0889af24375a52b14e10f9'
-readonly LOCAL_EDK2_REF='9f13e2a137c97a2825f874b4321c3963ca87c747'
-readonly LOCAL_EDK2_PLATFORMS_REF='4e1e7a4e64470ef7eefeaa1021c86763ab28beee'
-readonly LOCAL_MS_TPM_REF='98b60a44aba79b15fcce1c0d1e46cf5918400f6a'
+readonly LOCAL_UBOOT_REF='ece349ade2973e220f524ce59e59711cc919263f'
+readonly LOCAL_EDK2_REF='b03a21a63e3bd001f52c527e5a57feddb53a690b'
+readonly LOCAL_EDK2_PLATFORMS_REF='cc384840c440415a091623a7658112fedc416094'
+readonly LOCAL_MS_TPM_REF='ee21db0a941decd3cac67925ea3310873af60ab3'
 readonly LOCAL_MBEDTLS_REF='0bebf8b8c7f07abe3571ded48a11aa907a1ffb20'
 readonly LOCAL_FTPM_UUID='bc50d971-d4c9-42c4-82cb-343fb7f37896'
 readonly LOCAL_STMM_PLATFORM='Platform/StandaloneMm/PlatformStandaloneMmPkg/PlatformStandaloneMmRpmb.dsc'
@@ -36,8 +36,12 @@ install_local_firmware_dependencies() {
 clone_local_pinned_source() {
     local repository=$1 ref=$2 destination=$3
 
-    git clone --no-tags "$repository" "$destination"
-    git -C "$destination" checkout "$ref"
+    git init -q "$destination"
+    git -C "$destination" remote add origin "$repository"
+    git -C "$destination" fetch -q --depth=1 origin "$ref"
+    git -C "$destination" checkout --detach FETCH_HEAD
+    [[ "$(git -C "$destination" rev-parse HEAD)" == "$ref" ]] || \
+        die "fetched source does not match pinned ref: $repository@$ref"
 }
 
 build_local_standalone_mm() {
@@ -45,10 +49,11 @@ build_local_standalone_mm() {
 
     stmm_root="$FIRMWARE_ROOT/stmm"
     mkdir -p "$stmm_root"
-    git clone --filter=tree:0 https://github.com/yubi-OS/edk2.git "$stmm_root/edk2"
-    git -C "$stmm_root/edk2" checkout "$LOCAL_EDK2_REF"
-    git clone --filter=tree:0 https://github.com/yubi-OS/edk2-platforms.git "$stmm_root/edk2-platforms"
-    git -C "$stmm_root/edk2-platforms" checkout "$LOCAL_EDK2_PLATFORMS_REF"
+    clone_local_pinned_source \
+        https://github.com/yubi-OS/edk2.git "$LOCAL_EDK2_REF" "$stmm_root/edk2"
+    clone_local_pinned_source \
+        https://github.com/yubi-OS/edk2-platforms.git \
+        "$LOCAL_EDK2_PLATFORMS_REF" "$stmm_root/edk2-platforms"
     git -C "$stmm_root/edk2" submodule update --init --recursive
     [[ -f "$stmm_root/edk2-platforms/$LOCAL_STMM_PLATFORM" ]] || \
         die 'the pinned edk2-platforms source is missing the StandaloneMM DSC'
@@ -440,8 +445,8 @@ assemble_local_firmware_payload() {
         printf 'yubios_commit=%s\n' "$GIT_SHA"
         printf 'source_date_epoch=%s\n' "$SOURCE_DATE_EPOCH"
         printf 'tfa_ref=%s\n' "$LOCAL_TFA_REF"
-        printf 'optee_os_ref=%s (feat/stmm-volatile-storage-ci)\n' "$LOCAL_OPTEE_OS_REF"
-        printf 'optee_ftpm_ref=%s (feat/volatile-nv-ci)\n' "$LOCAL_OPTEE_FTPM_REF"
+        printf 'optee_os_ref=%s (approved source; release provenance in PINNED.md)\n' "$LOCAL_OPTEE_OS_REF"
+        printf 'optee_ftpm_ref=%s (approved source; release provenance in PINNED.md)\n' "$LOCAL_OPTEE_FTPM_REF"
         printf 'uboot_ref=%s\n' "$LOCAL_UBOOT_REF"
         printf 'edk2_ref=%s\n' "$LOCAL_EDK2_REF"
         printf 'edk2_platforms_ref=%s\n' "$LOCAL_EDK2_PLATFORMS_REF"

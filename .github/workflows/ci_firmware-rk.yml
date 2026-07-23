@@ -84,13 +84,13 @@ permissions:
 
 env:
   BUILDKIT_IMAGE: docker.io/moby/buildkit:v0.31.2@sha256:2f5adac4ecd194d9f8c10b7b5d7bceb5186853db1b26e5abd3a657af0b7e26ec
-  TFA_REF: f9e106415eb569ff9b19404e2c3f64167af08d21
-  OPTEE_OS_REF: 440b10c3f9b1c8501f2550e282ae071bb5424972 # feat/stmm-volatile-storage-ci
-  OPTEE_FTPM_REF: 5e09cdbe1bcb1bc3bcf4875ebafb4e1a1154417c # feat/volatile-nv-ci
-  UBOOT_REF: ef2ab32418943c161d0889af24375a52b14e10f9
-  EDK2_REF: 9f13e2a137c97a2825f874b4321c3963ca87c747
-  EDK2_PLATFORMS_REF: 4e1e7a4e64470ef7eefeaa1021c86763ab28beee
-  MS_TPM_REF: 98b60a44aba79b15fcce1c0d1e46cf5918400f6a
+  TFA_REF: da738d5eae93af342fdc4995dd3c05acb4c9d757 # release ref; see PINNED.md
+  OPTEE_OS_REF: 440b10c3f9b1c8501f2550e282ae071bb5424972 # release-descendant ref; see PINNED.md
+  OPTEE_FTPM_REF: 5e09cdbe1bcb1bc3bcf4875ebafb4e1a1154417c # release-descendant ref; see PINNED.md
+  UBOOT_REF: ece349ade2973e220f524ce59e59711cc919263f # release ref; see PINNED.md
+  EDK2_REF: b03a21a63e3bd001f52c527e5a57feddb53a690b # release ref; see PINNED.md
+  EDK2_PLATFORMS_REF: cc384840c440415a091623a7658112fedc416094 # compatibility ref; see PINNED.md
+  MS_TPM_REF: ee21db0a941decd3cac67925ea3310873af60ab3 # release ref; see PINNED.md
   FTPM_UUID: bc50d971-d4c9-42c4-82cb-343fb7f37896
   MBEDTLS_REF: 0bebf8b8c7f07abe3571ded48a11aa907a1ffb20 # mbedtls-3.6.6
 
@@ -249,10 +249,20 @@ jobs:
           rm -rf "$ws"
           mkdir -p "$ws"
           echo "UEFI_WS=$ws" >> "$GITHUB_ENV"
-          git clone --filter=tree:0 "$EDK2_REPO" "$ws/edk2"
-          git -C "$ws/edk2" checkout "$EDK2_REF"
-          git clone --filter=tree:0 "$EDK2_PLATFORMS_REPO" "$ws/edk2-platforms"
-          git -C "$ws/edk2-platforms" checkout "$EDK2_PLATFORMS_REF"
+
+          fetch_ref() {
+            repo_url=$1
+            ref=$2
+            destination=$3
+            git init -q "$destination"
+            git -C "$destination" remote add origin "$repo_url"
+            git -C "$destination" fetch -q --depth=1 --filter=tree:0 origin "$ref"
+            git -C "$destination" checkout --detach FETCH_HEAD
+            test "$(git -C "$destination" rev-parse HEAD)" = "$ref"
+          }
+
+          fetch_ref "$EDK2_REPO" "$EDK2_REF" "$ws/edk2"
+          fetch_ref "$EDK2_PLATFORMS_REPO" "$EDK2_PLATFORMS_REF" "$ws/edk2-platforms"
           git -C "$ws/edk2" submodule update --init --recursive
           test -f "$ws/edk2-platforms/$ACTIVE_PLATFORM"
           test -f "$ws/edk2-platforms/${ACTIVE_PLATFORM%.dsc}.fdf"
@@ -578,8 +588,11 @@ jobs:
         run: |
           set -euxo pipefail
           rm -rf u-boot
-          git clone --no-tags https://github.com/yubi-OS/u-boot u-boot
-          git -C u-boot checkout "$UBOOT_REF"
+          git init -q u-boot
+          git -C u-boot remote add origin https://github.com/yubi-OS/u-boot
+          git -C u-boot fetch -q --depth=1 origin "$UBOOT_REF"
+          git -C u-boot checkout --detach FETCH_HEAD
+          test "$(git -C u-boot rev-parse HEAD)" = "$UBOOT_REF"
           cat > u-boot/yubios_ftpm.config <<'EOF'
           CONFIG_TEE=y
           CONFIG_OPTEE=y
@@ -626,8 +639,11 @@ jobs:
         run: |
           set -euxo pipefail
           rm -rf optee_os
-          git clone --no-tags https://github.com/yubi-OS/optee_os optee_os
-          git -C optee_os checkout "$OPTEE_OS_REF"
+          git init -q optee_os
+          git -C optee_os remote add origin https://github.com/yubi-OS/optee_os
+          git -C optee_os fetch -q --depth=1 origin "$OPTEE_OS_REF"
+          git -C optee_os checkout --detach FETCH_HEAD
+          test "$(git -C optee_os rev-parse HEAD)" = "$OPTEE_OS_REF"
           optee_args=(PLATFORM="$OPTEE_PLATFORM")
           if [ -n "$OPTEE_FLAVOR" ]; then
             optee_args+=(PLATFORM_FLAVOR="$OPTEE_FLAVOR")
@@ -649,10 +665,16 @@ jobs:
         run: |
           set -euxo pipefail
           rm -rf optee_ftpm ms-tpm-20-ref
-          git clone --no-tags https://github.com/yubi-OS/optee_ftpm optee_ftpm
-          git -C optee_ftpm checkout "$OPTEE_FTPM_REF"
-          git clone --no-tags https://github.com/yubi-OS/ms-tpm-20-ref ms-tpm-20-ref
-          git -C ms-tpm-20-ref checkout "$MS_TPM_REF"
+          git init -q optee_ftpm
+          git -C optee_ftpm remote add origin https://github.com/yubi-OS/optee_ftpm
+          git -C optee_ftpm fetch -q --depth=1 origin "$OPTEE_FTPM_REF"
+          git -C optee_ftpm checkout --detach FETCH_HEAD
+          test "$(git -C optee_ftpm rev-parse HEAD)" = "$OPTEE_FTPM_REF"
+          git init -q ms-tpm-20-ref
+          git -C ms-tpm-20-ref remote add origin https://github.com/yubi-OS/ms-tpm-20-ref
+          git -C ms-tpm-20-ref fetch -q --depth=1 origin "$MS_TPM_REF"
+          git -C ms-tpm-20-ref checkout --detach FETCH_HEAD
+          test "$(git -C ms-tpm-20-ref rev-parse HEAD)" = "$MS_TPM_REF"
           make -C optee_ftpm -j"$(nproc)" \
             CFG_FTPM_VOLATILE_NV=y \
             TA_DEV_KIT_DIR="$TA_DEV_KIT_DIR" \
@@ -703,8 +725,11 @@ jobs:
         run: |
           set -euxo pipefail
           rm -rf arm-trusted-firmware mbedtls
-          git clone --no-tags https://github.com/yubi-OS/arm-trusted-firmware arm-trusted-firmware
-          git -C arm-trusted-firmware checkout "$TFA_REF"
+          git init -q arm-trusted-firmware
+          git -C arm-trusted-firmware remote add origin https://github.com/yubi-OS/arm-trusted-firmware
+          git -C arm-trusted-firmware fetch -q --depth=1 origin "$TFA_REF"
+          git -C arm-trusted-firmware checkout --detach FETCH_HEAD
+          test "$(git -C arm-trusted-firmware rev-parse HEAD)" = "$TFA_REF"
           if [ "$TFA_PLAT" = "rk3399" ]; then
             m0_makefile=arm-trusted-firmware/plat/rockchip/rk3399/drivers/m0/Makefile
             sed -i 's/-Wall -O3 -nostdlib/-Wall -Os -nostdlib/' "$m0_makefile"
@@ -1355,8 +1380,8 @@ jobs:
             echo "yubios_commit=${GITHUB_SHA}"
             echo "source_date_epoch=${SOURCE_DATE_EPOCH}"
             echo "tfa_ref=${TFA_REF}"
-            echo "optee_os_ref=${OPTEE_OS_REF} (feat/stmm-volatile-storage-ci)"
-            echo "optee_ftpm_ref=${OPTEE_FTPM_REF} (feat/volatile-nv-ci)"
+            echo "optee_os_ref=${OPTEE_OS_REF} (release provenance in PINNED.md)"
+            echo "optee_ftpm_ref=${OPTEE_FTPM_REF} (release provenance in PINNED.md)"
             echo "uboot_ref=${UBOOT_REF}"
             echo "edk2_ref=${EDK2_REF}"
             echo "edk2_platforms_ref=${EDK2_PLATFORMS_REF}"

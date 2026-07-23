@@ -1,7 +1,6 @@
-# PORTED from yubi-OS/bcvk .github/workflows/ci_test.yml (feat/ci).
-# Fork default branches are kept identical to upstream; all yubi-OS changes
-# live on feat/feature branches and all CI runs from this repo via
-# workflow_dispatch only (org policy, July 8 2026).
+# Component CI adapted from the former yubi-OS/bcvk ci_test.yml. The checkout
+# is an immutable yubiOS extension of the current upstream release;
+# fetch-released-tag-ref verifies its release ancestry and exact fetchability.
 name: ci_fork_bcvk
 
 # Multi-arch native CI for the yubiOS bcvk fork. Rust test + clippy run on both
@@ -98,7 +97,7 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # see PINNED.md
         with:
           repository: yubi-OS/bcvk
-          ref: 6fe199c7304782f2bc01063c7f28075e402c5538 # feat/ci
+          ref: c29246b1a1ea0114fcb92530298a364627f0cae0 # release-descendant ref; see PINNED.md
 
       - name: Install build deps + Rust stable
         run: |
@@ -136,7 +135,7 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
         with:
           repository: yubi-OS/bcvk
-          ref: 6fe199c7304782f2bc01063c7f28075e402c5538 # feat/ci
+          ref: c29246b1a1ea0114fcb92530298a364627f0cae0 # release-descendant ref; see PINNED.md
       - name: Install build deps + Rust + clippy
         run: |
           sudo apt-get update -qq

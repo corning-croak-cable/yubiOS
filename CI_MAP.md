@@ -1,6 +1,6 @@
 # CI_MAP.md
 
-Regenerated from the `main` workflow shape on 2026-07-22 UTC.
+Regenerated from the `main` workflow shape on 2026-07-23 UTC.
 
 This map treats `.github/workflows/*.yml` as the source of truth for events, runners, jobs, artifacts, and callback handoffs. `yubiOS-bake.hcl` is the source of truth for every Docker build in the non-`ci_fork*` chain dispatched by `ci.yml`. `PINNED.md` remains the source of truth for approved action SHAs and image digests.
 
@@ -11,6 +11,7 @@ This map treats `.github/workflows/*.yml` as the source of truth for events, run
 | `.github/workflows/ci.yml` | Top-level state machine | callback state, target ref, four publish flags, fork gate, TEST gate, VM image | Dispatches the next workflow in the ordered chain |
 | `.github/workflows/fetch-dhi-manifest.yml` | DHI base digest refresh | `dhi.io/debian-base:trixie-debian13-dev`, `PINNED.md` | Updated DHI digest refs committed by workflow when drift exists |
 | `.github/workflows/fetch-fedora-bootc-manifest.yml` | Fedora bootc digest refresh | `quay.io/fedora/fedora-bootc:45`, `PINNED.md` | Updated Fedora bootc digest refs committed by workflow when drift exists |
+| `.github/workflows/fetch-released-tag-ref.yml` | yubi-OS fork release-ref refresh | Nine fork/upstream mappings, stable-tag families, `PINNED.md` | Peeled release commits verified from each fork; all approved textual pins committed together when drift exists |
 | `.github/workflows/ci_firmware-rk.yml` | Orchestrated ARM64/RK firmware integration, reproducibility, and publish lane | yubi-OS firmware forks, pinned refs, primary/rebuild ARM64 board matrices, `yubiOS-bake.hcl` | `BL32_AP_MM.fd`, `fip.bin`, `flash.bin`, board-scoped unsigned-component equality reports, QEMU verification, optional original and board-scoped firmware tags through Bake |
 | `.github/workflows/yubiOS-ci.yml` | Production image build and publish | `Containerfile`, `yubiOS-bake.hcl`, `yubiOS.rego`, `usr/**`, unit tests | Bake build/smoke results; optional per-arch tags and multi-arch `0mniteck/yubios:<sha>` plus `latest` |
 | `.github/workflows/ci_dev_image.yml` | TEST-only image with software FIDO2 | `Containerfile.dev`, production target context, `yubiOS-bake.hcl`, `yubiOS.rego` | Bake build/smoke results; optional `0mniteck/yubios:dev-<sha>` and `dev` |
@@ -19,7 +20,7 @@ This map treats `.github/workflows/*.yml` as the source of truth for events, run
 | `.github/workflows/ci_test_bootc-filesystem.yml` | Optional pre-image external-image composefs regression smoke | resolved yubiOS image digest, disposable GPT disk, ext4 `verity` target, externally mounted `/mnt` and `/mnt/boot` | amd64/arm64 strict fs-verity composefs repository proof, EROFS metadata validation, unsealed BLS classification, omitted `root=`, callback state |
 | `.github/workflows/ci_test_pq_tls_verify.yml` | Optional pre-image PQ hybrid TLS drift check | `yubiOS-bake.hcl`, `yubiOS.rego`, pinned DHI base, live TLS endpoint | uncached, non-blocking Bake verification result, callback state |
 | `.github/workflows/ci_test-vm.yml` | Final VM e2e test when `ci_test_run=true` | pullable TEST-only yubiOS image, bcvk source, Podman storage, VM scripts | bcvk capability gate, DirectBoot SSH credential transport, mandatory CTAP2/LUKS2/homed/ed25519-sk assertions, callback state |
-| `.github/workflows/ci_fork_*.yml` | Optional fork component checks | yubi-OS fork feature branches | component build/lint/test artifacts and callback state |
+| `.github/workflows/ci_fork_*.yml` | Optional fork component checks | immutable yubi-OS release or approved release-descendant commits | component build/lint/test artifacts and callback state |
 
 The older `ci_int_stmm.yml`, `ci_int_optee_fip.yml`, and `ci_int_qemu.yml` lane names are not separate files on current `main`. Their StMM, OP-TEE/FIP, and QEMU stages are embedded in the firmware integration workflows.
 
@@ -30,7 +31,7 @@ The older `ci_int_stmm.yml`, `ci_int_optee_fip.yml`, and `ci_int_qemu.yml` lane 
 ```mermaid
 flowchart TD
     start["ci.yml state=start"]
-    refresh["Refresh pinned DHI and Fedora digests"]
+    refresh["Refresh pinned DHI/Fedora digests\nand yubi-OS release refs"]
     fork_gate{"ci_fork_run?"}
     forks["ci_fork_* chain"]
     test_gate{"ci_test_run?"}
@@ -50,7 +51,7 @@ flowchart TD
     vm_gate -- "false" --> done
 ```
 
-Every child returns to the `ci.yml` dispatcher between nodes. Both `ci_fork_run` and `ci_test_run` are carried through every callback, so the fork branch, pre-image TEST branch, and final VM decision remain stable for the full chain.
+Every child returns to the `ci.yml` dispatcher between nodes. The refresh phase runs `fetch-dhi-manifest.yml`, `fetch-fedora-bootc-manifest.yml`, and `fetch-released-tag-ref.yml` in that order. Both `ci_fork_run` and `ci_test_run` are carried through every callback, so the fork branch, pre-image TEST branch, and final VM decision remain stable for the full chain.
 
 ## Canonical Docker Bake Graph
 
@@ -186,11 +187,11 @@ The installer self-change push trigger runs amd64 plus two clean ARM64 mkosi bui
 
 ## Optional Fork Component CI
 
-When `ci_fork_run=true`, `ci.yml` runs component workflows before the optional pre-image TEST chain and firmware integration. They validate yubi-OS fork feature branches but do not stitch a full firmware image; stitching happens in `ci_firmware-rk.yml`.
+When `ci_fork_run=true`, `ci.yml` runs component workflows before the optional pre-image TEST chain and firmware integration. They validate immutable release or approved release-descendant commits fetched from yubi-OS forks but do not stitch a full firmware image; stitching happens in `ci_firmware-rk.yml`.
 
 ```mermaid
 flowchart TD
-    start["ci.yml after Fedora digest refresh"]
+    start["ci.yml after fork release-ref refresh"]
     mkosi["ci_fork_mkosi.yml"]
     bcvk["ci_fork_bcvk.yml"]
     tfa["ci_fork_arm-trusted-firmware.yml"]
@@ -213,7 +214,7 @@ The orchestrated path is `workflow_dispatch` driven. Narrow `push` triggers vali
 flowchart TD
     push_main["push to main"]
     yw_paths["yubiOS-ci.yml build inputs\nworkflow file\nContainerfile\nyubiOS-bake.hcl\nyubiOS.rego\nusr/** + tests/unit/** + mkosi.*"]
-    self_paths["workflow-only self-change paths\nfetch manifests\nfirmware + dev + VM + installer + PQ\nbootc filesystem + rootless Docker tests\nselected ci_fork files"]
+    self_paths["workflow-only self-change paths\nfetch manifests + release refs\nfirmware + dev + VM + installer + PQ\nbootc filesystem + rootless Docker tests\nselected ci_fork files"]
     dispatch_only["workflow_dispatch only\nci.yml\nremaining ci_fork workflows"]
     run_yw["run yubiOS-ci.yml"]
     run_self["run changed self-trigger workflow"]
@@ -297,6 +298,12 @@ The exact dispatch order is defined by the state-machine graph above. The detail
     - Job `fetch` — `fetch`
       - Step 1: `Checkout yubiOS for PINNED.md update`
       - Step 2: `Fetch Fedora bootc manifest and update pinned refs`
+    - Job `ci-callback` — `Callback to ci.yml orchestrator`
+      - Step 1: `Report current state to ci.yml`
+  - [`fetch-released-tag-ref.yml`](.github/workflows/fetch-released-tag-ref.yml) — workflow: `fetch-released-tag-ref`
+    - Job `fetch-release-refs` — `Resolve upstream releases and verify fork refs`
+      - Step 1: `Checkout yubiOS for fork-ref updates`
+      - Step 2: `Fetch release tags, verify fork objects, and update pins`
     - Job `ci-callback` — `Callback to ci.yml orchestrator`
       - Step 1: `Report current state to ci.yml`
   - [`ci_firmware-rk.yml`](.github/workflows/ci_firmware-rk.yml) — workflow: `yubiOS RK firmware`
@@ -426,7 +433,7 @@ The exact dispatch order is defined by the state-machine graph above. The detail
       - Step 4: `Install zstd-capable QEMU for ARM64 DirectBoot`
       - Step 5: `Disk space before bcvk build (diagnostic)`
       - Step 6: `Free disk space (pre-build -- kill stray containers from an aborted prior run)`
-      - Step 7: `Build bcvk @ feat/swtpm-ci (feasibility gate)`
+      - Step 7: `Build bcvk @ pinned source (feasibility gate)`
       - Step 8: `Disk space after bcvk build attempt (diagnostic)`
       - Step 9: `Gate on KVM (bcvk hard-requires /dev/kvm; now real hardware on arm64 via self-hosted rock1)`
       - Step 10: `Gate amd64 boot leg on platform-priority policy (ADR-023: ARM64 is primary)`

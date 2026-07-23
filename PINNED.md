@@ -1,8 +1,8 @@
 # PINNED.md - yubiOS approved refs & digests
 
-_Last reviewed: 2026-07-22 during the reproducible-build substrate audit._
+_Last reviewed: 2026-07-23 during the upstream release-ref audit._
 
-All GitHub Actions, external GitHub source refs, container image references, and directly downloaded workflow artifacts used across the yubi-OS org must appear here before being added to any workflow or Containerfile. Non-pinned refs such as mutable tags and branch names are not permitted.
+All GitHub Actions, internal yubi-OS fork refs, external GitHub source refs, container image references, and directly downloaded workflow artifacts used across the yubi-OS org must appear here before being added to any workflow or Containerfile. Non-pinned refs such as mutable tags and branch names are not permitted.
 
 **This file is the single source of truth.** AGENTS.md, ADRs, research notes, and workflows may point here, but they should not duplicate the live digest list.
 
@@ -35,6 +35,32 @@ Every `wcurl` payload is verified with GNU `sha512sum --check --strict` before i
 | `https://download.docker.com/linux/static/stable/aarch64/docker-rootless-extras-29.6.0.tgz` | `linux/arm64` | `37649acdaacc597c115d2f19b71a4729a0119c6debbba4b4af18da2fd497ac28f5691df13137b7fc59903551ab0e08868f4b976a9a5704e2b7958b3b5b0cc0af` |
 | `https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-arm64` | `linux/arm64` | `6dc0d4ed11a7bbd8148dab8897594d7050e7f3bc43e6d130e629aa443e50266e77beed8816737e5dc34b7d43617e7a4eef8121561042ef9a87479aea14383058` |
 
+## Internal yubi-OS Fork Refs
+
+CI consumes the immutable source commit in the fifth column from the yubi-OS
+fork, never the mutable tag. `fetch-released-tag-ref.yml` resolves the newest
+stable upstream tag in each configured release family, peels annotated tags,
+and proves that both the release commit and approved source commit can be
+fetched from the fork with complete trees. When those commits are equal, the
+workflow rolls every textual use automatically. When a yubiOS-specific source
+commit extends the release, the workflow preserves it and requires the newest
+release to remain its ancestor; this prevents a refresh from silently removing
+bcvk device support, the mkosi profile, or OP-TEE volatile test storage. The
+EDK2-platforms row uses its upstream pre-removal compatibility tag because that
+project does not publish EDK2-style stable release tags.
+
+| Fork repository | Upstream source | Upstream release/reference | Release commit in fork | Pinned source commit | Workflow role |
+|-----------------|-----------------|----------------------------|------------------------|----------------------|---------------|
+| `yubi-OS/arm-trusted-firmware` | `ARM-software/arm-trusted-firmware` | `v2.15.0` | `da738d5eae93af342fdc4995dd3c05acb4c9d757` | `da738d5eae93af342fdc4995dd3c05acb4c9d757` | TF-A component validation and firmware assembly. |
+| `yubi-OS/bcvk` | `bootc-dev/bcvk` | `v0.18.0` | `2d86c4cb3c82db57814558bd577d97a2ac6174ca` | `c29246b1a1ea0114fcb92530298a364627f0cae0` | Release plus yubiOS swtpm/swu2f support; component validation and VM harness. |
+| `yubi-OS/edk2` | `tianocore/edk2` | `edk2-stable202605` | `b03a21a63e3bd001f52c527e5a57feddb53a690b` | `b03a21a63e3bd001f52c527e5a57feddb53a690b` | EDK2 component validation and StandaloneMM firmware build. |
+| `yubi-OS/edk2-platforms` | `tianocore/edk2-platforms` | `20260316-before-platform-removals` | `cc384840c440415a091623a7658112fedc416094` | `cc384840c440415a091623a7658112fedc416094` | StandaloneMM platform build compatibility snapshot. |
+| `yubi-OS/mkosi` | `systemd/mkosi` | `v26` | `84af20892b61c8e177e391f997ded8b4cb5514f2` | `b2b1ea6ad59621a6f955e4cbceee72580a91889a` | Release plus yubiOS profile; component validation, summary, and installer build. |
+| `yubi-OS/ms-tpm-20-ref` | `microsoft/ms-tpm-20-ref` | `v1.83r1` | `ee21db0a941decd3cac67925ea3310873af60ab3` | `ee21db0a941decd3cac67925ea3310873af60ab3` | TPM reference validation and fTPM firmware build. |
+| `yubi-OS/optee_ftpm` | `OP-TEE/optee_ftpm` | `4.10.0` | `a09269b15de635e1816fe832e26adfbfb44c5455` | `5e09cdbe1bcb1bc3bcf4875ebafb4e1a1154417c` | Release plus yubiOS volatile NV support; component validation and TA build. |
+| `yubi-OS/optee_os` | `OP-TEE/optee_os` | `4.10.0` | `753afbbee1682f5d16fd30e87b31058a4fd4f4b8` | `440b10c3f9b1c8501f2550e282ae071bb5424972` | Release plus yubiOS volatile StMM storage; component validation, TA dev kit, and BL32 build. |
+| `yubi-OS/u-boot` | `u-boot/u-boot` | `v2026.07` | `ece349ade2973e220f524ce59e59711cc919263f` | `ece349ade2973e220f524ce59e59711cc919263f` | U-Boot component validation and firmware BL33 build. |
+
 ## External GitHub Source Refs
 
 Workflows use the immutable commit in the third column. Branches and tags are retained only as provenance labels for maintainers.
@@ -45,20 +71,6 @@ Workflows use the immutable commit in the third column. Branches and tags are re
 | `Mbed-TLS/mbedtls` | `mbedtls-3.6.6` | `0bebf8b8c7f07abe3571ded48a11aa907a1ffb20` | TF-A trusted-board-boot dependency. |
 | `pando85/passless` | `v0.11.2` | `b67ccdf22e18cf21bcd140e03d22af413342d605` | TEST-image in-guest CTAP2 authenticator; yubiOS enables soft-fido2's implemented `hmac-secret` extension at build time. |
 | `qemu/qemu` | upstream commit | `3a18e8a25992d1643707e2cebdd6e9bb2bd7d3b9` | ARM64 zstd-capable DirectBoot QEMU. |
-| `yubi-OS/arm-trusted-firmware` | `feat/ci` | `f9e106415eb569ff9b19404e2c3f64167af08d21` | TF-A fork CI and firmware assembly. |
-| `yubi-OS/bcvk` | `feat/ci` | `6fe199c7304782f2bc01063c7f28075e402c5538` | bcvk fork validation. |
-| `yubi-OS/bcvk` | `feat/swtpm-ci` | `c29246b1a1ea0114fcb92530298a364627f0cae0` | VM end-to-end test harness. |
-| `yubi-OS/edk2` | `feat/ci` | `9f13e2a137c97a2825f874b4321c3963ca87c747` | EDK2 fork CI and StandaloneMM firmware build. |
-| `yubi-OS/edk2-platforms` | firmware integration commit | `4e1e7a4e64470ef7eefeaa1021c86763ab28beee` | StandaloneMM platform build. |
-| `yubi-OS/mkosi` | `feature/yubiOS-profile` | `b2b1ea6ad59621a6f955e4cbceee72580a91889a` | mkosi fork CI, production summary, and installer build. |
-| `yubi-OS/ms-tpm-20-ref` | `feat/ci` | `db43de77e3951482e732b9dbd9cee92f29df1007` | TPM reference fork validation. |
-| `yubi-OS/ms-tpm-20-ref` | firmware integration commit | `98b60a44aba79b15fcce1c0d1e46cf5918400f6a` | fTPM and firmware builds. |
-| `yubi-OS/optee_ftpm` | `feat/ci` | `28abbe7f33a96302cccf07b86b9ea46cf3dc278f` | fTPM fork validation. |
-| `yubi-OS/optee_ftpm` | `feat/volatile-nv-ci` | `5e09cdbe1bcb1bc3bcf4875ebafb4e1a1154417c` | Firmware fTPM TA build. |
-| `yubi-OS/optee_os` | `feat/ci` | `cc1847276821220facbffec13812c1888b44e6cb` | OP-TEE fork validation. |
-| `yubi-OS/optee_os` | `master` | `a8ac329662c021d4df9415dd54001ca6283cb53e` | OP-TEE TA dev-kit dependency for fTPM fork validation. |
-| `yubi-OS/optee_os` | `feat/stmm-volatile-storage-ci` | `440b10c3f9b1c8501f2550e282ae071bb5424972` | Firmware BL32 build. |
-| `yubi-OS/u-boot` | `feat/ci` | `ef2ab32418943c161d0889af24375a52b14e10f9` | U-Boot fork CI and firmware BL33 build. |
 
 Dynamic refs such as `github.sha`, `github.ref_name`, `target_ref`, and `ci_chain_ref` select commits within `yubi-OS/yubiOS` for the triggering run and the internal workflow chain. They are runtime identities, not external dependency refs; the default `actions/checkout` behavior checks out the triggering commit.
 
@@ -90,5 +102,5 @@ Dynamic refs such as `github.sha`, `github.ref_name`, `target_ref`, and `ci_chai
 - For multi-arch jobs, reference the OCI index digest so it auto-resolves per runner architecture; do not pin a single-arch child in a matrix job.
 - Mutable tags such as `:latest`, `:main`, or branch refs are rejected by `yubiOS.rego` and AGENTS.md policy.
 - To add or roll a ref: obtain the digest, update this file, update repo references to the old digest, update `yubiOS.rego` if a new registry is introduced, and open a PR.
-- Use `fetch-dhi-manifest` for `dhi.io/debian-base` and `fetch-fedora-bootc-manifest` for `quay.io/fedora/fedora-bootc:45`.
+- Use `fetch-released-tag-ref` for yubi-OS fork release refs, `fetch-dhi-manifest` for `dhi.io/debian-base`, and `fetch-fedora-bootc-manifest` for `quay.io/fedora/fedora-bootc:45`.
 - Digests are verified at build time by the explicit `yubiOS.rego` `target.policy` inherited from `yubiOS-bake.hcl` (`reset=true`, `strict=true`).

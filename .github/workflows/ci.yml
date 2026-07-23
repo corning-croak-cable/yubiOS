@@ -119,14 +119,18 @@ jobs:
               callee_inputs=$(jq -n --arg reason "ci after fetch-dhi-manifest" '{reason: $reason}')
               ;;
             fetch-fedora-bootc-manifest)
+              next_file='fetch-released-tag-ref.yml'
+              callee_inputs=$(jq -n --arg reason "ci after fetch-fedora-bootc-manifest" '{reason: $reason}')
+              ;;
+            fetch-released-tag-ref)
               if [ "$CI_FORK_RUN" = "true" ]; then
                 next_file='ci_fork_mkosi.yml'
-                callee_inputs=$(jq -n --arg reason "ci after fetch-fedora-bootc-manifest" '{reason: $reason}')
+                callee_inputs=$(jq -n --arg reason "ci after fetch-released-tag-ref" '{reason: $reason}')
               elif [ "$CI_TEST_RUN" = "true" ]; then
                 next_file='ci_test_rootless-docker.yml'
               else
                 next_file='ci_firmware-rk.yml'
-                callee_inputs=$(jq -n --arg reason "ci after fetch-fedora-bootc-manifest" --arg push "$FIRMWARE_DOCKER_PUSH" '{reason: $reason, Docker_push: $push}')
+                callee_inputs=$(jq -n --arg reason "ci after fetch-released-tag-ref" --arg push "$FIRMWARE_DOCKER_PUSH" '{reason: $reason, Docker_push: $push}')
               fi
               ;;
             ci_fork_mkosi)

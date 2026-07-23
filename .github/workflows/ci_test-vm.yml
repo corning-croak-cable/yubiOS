@@ -4,7 +4,7 @@ name: yubiOS VM e2e (tests/vm)
 #
 # Two scripts live in tests/vm/:
 #   * test-luks-fido2-ci.sh  -- hardware-FREE e2e: drives `bcvk ephemeral run
-#     --swtpm --swu2f` (canonical bcvk branch feat/swtpm-ci) and runs assertions
+#     --swtpm --swu2f` (pinned bcvk release descendant) and runs assertions
 #     in-guest. It is deliberately skip-tolerant: pam-u2f + swtpm legs run; the
 #     LUKS2-FIDO2 + homed-FIDO2 legs SKIP (not fail) unless a CTAP2 hmac-secret
 #     authenticator (swu2f Layer 2, shipped only in the mkosi --profile test
@@ -231,11 +231,11 @@ jobs:
           sudo podman system prune -af --volumes || true
           df -h "$PWD" || true
 
-      - name: Build bcvk @ feat/swtpm-ci (feasibility gate)
+      - name: Build bcvk @ pinned source (feasibility gate)
         id: bcvk
         run: |
           set +e
-          BCVK_REF=c29246b1a1ea0114fcb92530298a364627f0cae0 # feat/swtpm-ci
+          BCVK_REF=c29246b1a1ea0114fcb92530298a364627f0cae0 # release-descendant ref; see PINNED.md
           git init -q bcvk-src &&
             git -C bcvk-src remote add origin https://github.com/yubi-OS/bcvk &&
             git -C bcvk-src fetch --depth 1 origin "$BCVK_REF" &&
@@ -243,7 +243,7 @@ jobs:
           bcvk_fetch_rc=$?
           if [ "$bcvk_fetch_rc" -ne 0 ]; then
             echo "skip=1" >> "$GITHUB_OUTPUT"
-            echo "::warning::SKIP: could not clone yubi-OS/bcvk feat/swtpm-ci -- VM e2e not feasible on this runner"
+            echo "::warning::SKIP: could not fetch pinned yubi-OS/bcvk source -- VM e2e not feasible on this runner"
             echo "### vm-e2e (${{ matrix.arch }}): SKIPPED -- bcvk source unavailable" >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
@@ -280,7 +280,7 @@ jobs:
           ( cd bcvk-src && cargo test --release -p bcvk-qemu test_karg_for_root_ssh && cargo build --release )
           if [ ! -x bcvk-src/target/release/bcvk ]; then
             echo "skip=1" >> "$GITHUB_OUTPUT"
-            echo "::warning::SKIP: bcvk failed to build from feat/swtpm-ci -- VM e2e not feasible (see cargo output above)"
+            echo "::warning::SKIP: pinned bcvk source failed to build -- VM e2e not feasible (see cargo output above)"
             echo "### vm-e2e (${{ matrix.arch }}): SKIPPED -- bcvk build failed" >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
@@ -327,9 +327,9 @@ jobs:
         if: steps.bcvk.outputs.skip == '0'
         run: |
           bcvk ephemeral run --help 2>&1 | grep -q -- '--swtpm' \
-            || { echo "::error::bcvk feat/swtpm-ci missing --swtpm flag"; exit 1; }
+            || { echo "::error::pinned bcvk source missing --swtpm flag"; exit 1; }
           bcvk ephemeral run --help 2>&1 | grep -q -- '--swu2f' \
-            || { echo "::error::bcvk feat/swtpm-ci missing --swu2f flag"; exit 1; }
+            || { echo "::error::pinned bcvk source missing --swu2f flag"; exit 1; }
           echo "bcvk exposes --swtpm and --swu2f"
 
       # NOT converted to docker: bcvk (crates/kit/src/run_ephemeral.rs,
@@ -391,7 +391,7 @@ jobs:
             echo "::warning::SKIP: no yubiOS image available (no workflow_dispatch 'image' input, no mkosi.output/yubiOS). VM boot + LUKS2-FIDO2 + homed legs NOT exercised."
             {
               echo "### vm-e2e (${{ matrix.arch }}): VM boot leg SKIPPED (explicit)"
-              echo "- bcvk built from feat/swtpm-ci and exposes \`--swtpm\`/\`--swu2f\` OK"
+              echo "- bcvk built from the pinned source and exposes \`--swtpm\`/\`--swu2f\` OK"
               echo "- swtpm / qemu / fido2-tools / cryptsetup installed OK"
               echo "- **Skipped:** VM boot + LUKS2-FIDO2 + systemd-homed legs -- needs a built yubiOS test image (\`mkosi --profile test\`) or a \`workflow_dispatch\` \`image\` input."
               echo "- To run the full e2e: dispatch this workflow with \`image\` set to a pullable yubiOS OCI ref, or build the test image into \`./mkosi.output/yubiOS\` first."

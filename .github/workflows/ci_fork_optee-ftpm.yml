@@ -1,7 +1,6 @@
-# PORTED from yubi-OS/optee_ftpm .github/workflows/ci_test.yml (feat/ci).
-# Fork default branches are kept identical to upstream; all yubi-OS changes
-# live on feat/feature branches and all CI runs from this repo via
-# workflow_dispatch only (org policy, July 8 2026).
+# Component CI adapted from the former yubi-OS/optee_ftpm ci_test.yml. The
+# checkout is an immutable yubiOS extension of the current upstream release;
+# fetch-released-tag-ref verifies its release ancestry and exact fetchability.
 name: ci_fork_optee_ftpm
 
 # yubiOS fTPM Trusted Application fork CI — task T3 / C3 of #35.
@@ -10,7 +9,7 @@ name: ci_fork_optee_ftpm
 # by OP-TEE/optee_ftpm, TA UUID bc50d971-d4c9-42c4-82cb-343fb7f37896) as a 64-bit
 # OP-TEE TA against the OP-TEE user-TA dev kit produced by the optee_os fork CI
 # (task C2). To keep this CI self-contained and reproducible it rebuilds that dev
-# kit inline from yubi-OS/optee_os@master (PLATFORM=vexpress-qemu_armv8a, the same
+# kit inline from the pinned yubi-OS/optee_os source (PLATFORM=vexpress-qemu_armv8a, the same
 # CFG_RPMB_FS=y CFG_REE_FS=n CFG_EARLY_TA=y flags C2 proved green) and pins
 # ms-tpm-20-ref at the commit optee_ftpm expects.
 #
@@ -84,15 +83,15 @@ on:
 
 permissions:
   contents: read
+  actions: write
 
 env:
   FTPM_UUID: bc50d971-d4c9-42c4-82cb-343fb7f37896
   OPTEE_OS_REPO: https://github.com/yubi-OS/optee_os
-  OPTEE_OS_REF: a8ac329662c021d4df9415dd54001ca6283cb53e # master
+  OPTEE_OS_REF: 440b10c3f9b1c8501f2550e282ae071bb5424972 # release-descendant ref; see PINNED.md
   MS_TPM_REPO: https://github.com/yubi-OS/ms-tpm-20-ref
-  MS_TPM_REF: 98b60a44aba79b15fcce1c0d1e46cf5918400f6a
+  MS_TPM_REF: ee21db0a941decd3cac67925ea3310873af60ab3 # release ref; see PINNED.md
   OPTEE_PLATFORM: vexpress-qemu_armv8a
-  actions: write
 
 jobs:
   build-ftpm-ta:
@@ -114,7 +113,7 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # see PINNED.md
         with:
           repository: yubi-OS/optee_ftpm
-          ref: 28abbe7f33a96302cccf07b86b9ea46cf3dc278f # feat/ci
+          ref: 5e09cdbe1bcb1bc3bcf4875ebafb4e1a1154417c # release-descendant ref; see PINNED.md
           path: optee_ftpm
 
       - name: Install OP-TEE + TA cross toolchains and build deps

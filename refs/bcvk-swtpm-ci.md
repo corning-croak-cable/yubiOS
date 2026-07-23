@@ -1,6 +1,6 @@
 # bcvk swtpm CI
 
-Status: yubiOS-side integration documented; canonical bcvk implementation remains in `yubi-OS/bcvk@feat/swtpm-ci`.
+Status: yubiOS-side integration documented; CI consumes the immutable yubi-OS/bcvk release-descendant commit recorded in `PINNED.md`.
 
 ## Goal
 

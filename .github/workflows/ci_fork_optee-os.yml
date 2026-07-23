@@ -1,7 +1,6 @@
-# PORTED from yubi-OS/optee_os .github/workflows/ci_test.yml (feat/ci).
-# Fork default branches are kept identical to upstream; all yubi-OS changes
-# live on feat/feature branches and all CI runs from this repo via
-# workflow_dispatch only (org policy, July 8 2026).
+# Component CI adapted from the former yubi-OS/optee_os ci_test.yml. The
+# checkout is an immutable yubiOS extension of the current upstream release;
+# fetch-released-tag-ref verifies its release ancestry and exact fetchability.
 name: ci_fork_optee_os
 
 # yubiOS OP-TEE (BL32) fork CI — task T2 / C2 of #35.
@@ -100,7 +99,7 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # see PINNED.md
         with:
           repository: yubi-OS/optee_os
-          ref: cc1847276821220facbffec13812c1888b44e6cb # feat/ci
+          ref: 440b10c3f9b1c8501f2550e282ae071bb5424972 # release-descendant ref; see PINNED.md
 
       - name: Install OP-TEE build deps + cross toolchains
         run: |

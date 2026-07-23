@@ -1,20 +1,15 @@
-# PORTED from yubi-OS/edk2 .github/workflows/ci_test.yml (feat/ci).
-# Fork default branches are kept identical to upstream; all yubi-OS changes
-# live on feat/feature branches and all CI runs from this repo via
-# workflow_dispatch only (org policy, July 8 2026).
+# Component CI adapted from the former yubi-OS/edk2 ci_test.yml. The checkout
+# is the immutable current upstream release commit mirrored by the fork;
+# fetch-released-tag-ref verifies and refreshes it.
 name: ci_fork_edk2
 
 # yubiOS fork CI for EDK2 (#35 ARM64 fTPM stack, component C6 / StandaloneMM).
 #
 # GROUNDING NOTE (truth-or-silence, see knowledge/arm64-ftpm-build-graph.md):
-# The task names `PlatformStandaloneMmRpmb.dsc` -> `BL32_AP_MM.fd`. That platform
-# DSC lives in the SEPARATE `edk2-platforms` repo (Platform/StandaloneMm/...),
-# which is NOT present in the yubi-OS org. This fork (parent tianocore/edk2)
-# ships the StandaloneMM CORE package `StandaloneMmPkg/StandaloneMmPkg.dsc`
-# (verified on master: PLATFORM_NAME=StandaloneMm, SUPPORTED_ARCHITECTURES=AARCH64|X64).
-# So this fork-CI proves the StandaloneMM core cross-compiles for AARCH64 in
-# isolation (test.ci first). Producing the RPMB platform FD (BL32_AP_MM.fd) is an
-# integration-time step once edk2-platforms is added to the org — tracked for INT.
+# `PlatformStandaloneMmRpmb.dsc` lives in the separate yubi-OS/edk2-platforms
+# fork. This component workflow proves the EDK2 StandaloneMM core cross-compiles
+# for AARCH64 in isolation; ci_firmware-rk.yml combines the two pinned forks to
+# produce `BL32_AP_MM.fd`.
 #
 # BARE runner (no dhi container): the EDK2 C BaseTools + AARCH64 cross toolchain
 # need a full host libc/crt*.o that the hardened dhi base intentionally omits
@@ -107,7 +102,7 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # see PINNED.md
         with:
           repository: yubi-OS/edk2
-          ref: 9f13e2a137c97a2825f874b4321c3963ca87c747 # feat/ci
+          ref: b03a21a63e3bd001f52c527e5a57feddb53a690b # release ref; see PINNED.md
           submodules: recursive
 
       - name: Install EDK2 build deps

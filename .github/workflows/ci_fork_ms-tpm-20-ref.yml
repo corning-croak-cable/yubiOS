@@ -1,8 +1,6 @@
-# PORTED from yubi-OS/ms-tpm-20-ref .github/workflows/ci_test.yml (feat/ci).
-# Fork default branches are kept identical to upstream; all yubi-OS changes
-# live on feat/feature branches and all orchestrated CI runs from this repo via
-# workflow_dispatch (org policy, July 8 2026), with a narrow self-change trigger
-# for validating this workflow file.
+# Component CI adapted from the former yubi-OS/ms-tpm-20-ref ci_test.yml. The
+# checkout is the immutable current upstream release commit mirrored by the
+# fork; fetch-released-tag-ref verifies and refreshes it.
 name: ci_fork_ms-tpm-20-ref
 
 # Component CI for the yubiOS ARM64 fTPM stack (#35, task C4).
@@ -102,7 +100,7 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6.0.2 — see PINNED.md
         with:
           repository: yubi-OS/ms-tpm-20-ref
-          ref: db43de77e3951482e732b9dbd9cee92f29df1007 # feat/ci
+          ref: ee21db0a941decd3cac67925ea3310873af60ab3 # release ref; see PINNED.md
 
       - name: Install build dependencies
         run: |

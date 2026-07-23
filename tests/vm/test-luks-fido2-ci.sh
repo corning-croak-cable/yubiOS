@@ -9,11 +9,11 @@
 #
 # Closes #20 (test spec). Relates to #33, #9. yubiOS#25 (swu2f), yubi-OS/bcvk#3 (swtpm).
 #
-# === bcvk dependency (never merged, referenced like the mkosi fork) ===
-# The --swtpm / --swu2f flags live on the canonical bcvk branch:
-#     https://github.com/yubi-OS/bcvk  branch: feat/swtpm-ci
-# Build that bcvk and put it on PATH before running this test, e.g.:
-#     git clone -b feat/swtpm-ci https://github.com/yubi-OS/bcvk
+# === bcvk dependency ===
+# Build the immutable yubi-OS/bcvk release-descendant commit in PINNED.md and put
+# it on PATH before running this test, e.g.:
+#     git init bcvk && git -C bcvk remote add origin https://github.com/yubi-OS/bcvk
+#     git -C bcvk fetch --depth=1 origin <PINNED_SHA> && git -C bcvk checkout --detach FETCH_HEAD
 #     (cd bcvk && cargo build --release)
 #     export PATH="$PWD/bcvk/target/release:$PATH"
 # Runner host also needs: swtpm + swtpm-tools (for --swtpm). For the optional swu2f
@@ -67,8 +67,8 @@ trap cleanup EXIT
 # ---- host preflight ----
 log "host preflight"
 need bcvk
-bcvk ephemeral run --help 2>&1 | grep -q -- '--swtpm' || die "bcvk lacks --swtpm; build branch feat/swtpm-ci"
-bcvk ephemeral run --help 2>&1 | grep -q -- '--swu2f' || die "bcvk lacks --swu2f; build branch feat/swtpm-ci"
+bcvk ephemeral run --help 2>&1 | grep -q -- '--swtpm' || die "pinned bcvk source lacks --swtpm"
+bcvk ephemeral run --help 2>&1 | grep -q -- '--swu2f' || die "pinned bcvk source lacks --swu2f"
 command -v swtpm  >/dev/null 2>&1 || skip "host swtpm not found; --swtpm may fail to attach a vTPM"
 
 # in-guest runner: ssh into the ephemeral VM and run a command, fail loudly on nonzero

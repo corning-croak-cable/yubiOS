@@ -12,7 +12,7 @@ Build a reproducible QEMU `virt` ARM64 boot chain that brings up `/dev/tpm0` bac
 |---|---|---|
 | BL1/BL2/BL31 | TF-A | `PLAT=qemu ARCH=aarch64 SPD=opteed` |
 | BL32 (S-EL1) | OP-TEE OS | `PLATFORM=vexpress-qemu_armv8a` on QEMU `virt` |
-| S-EL0 TA | ms-tpm-20-ref fTPM, Early TA | UUID `bc50d971-d4c9-42c4-82cb-343fb7f37896`; ms-tpm-20-ref @ `98b60a44aba79b15fcce1c0d1e46cf5918400f6a` |
+| S-EL0 TA | ms-tpm-20-ref fTPM, Early TA | UUID `bc50d971-d4c9-42c4-82cb-343fb7f37896`; ms-tpm-20-ref @ `ee21db0a941decd3cac67925ea3310873af60ab3` |
 | BL33 (NS) | U-Boot, UEFI mode | `CONFIG_TPM2_FTPM_TEE=y`, `CONFIG_MEASURED_BOOT=y`, `CONFIG_EFI_LOADER=y` |
 | OS | Linux | `CONFIG_TEE=y CONFIG_OPTEE=y CONFIG_TCG_TPM=y CONFIG_TCG_FTPM_TEE=m` |
 

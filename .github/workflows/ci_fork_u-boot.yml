@@ -1,7 +1,6 @@
-# PORTED from yubi-OS/u-boot .github/workflows/ci_test.yml (feat/ci).
-# Fork default branches are kept identical to upstream; all yubi-OS changes
-# live on feat/feature branches and all CI runs from this repo via
-# workflow_dispatch only (org policy, July 8 2026).
+# Component CI adapted from the former yubi-OS/u-boot ci_test.yml. The checkout
+# is the immutable current upstream release commit mirrored by the fork;
+# fetch-released-tag-ref verifies and refreshes it.
 name: ci_fork_u-boot
 
 # Component CI for the yubiOS ARM64 fTPM stack (#35, task C5).
@@ -98,7 +97,7 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6.0.2 — see PINNED.md
         with:
           repository: yubi-OS/u-boot
-          ref: ef2ab32418943c161d0889af24375a52b14e10f9 # feat/ci
+          ref: ece349ade2973e220f524ce59e59711cc919263f # release ref; see PINNED.md
 
       - name: Install build dependencies
         run: |

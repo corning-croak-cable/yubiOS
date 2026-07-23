@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # FIDO2 enrollment-surface e2e for yubiOS CI — NO physical hardware (#9, #25).
 #
-# Boots yubiOS in a bcvk ephemeral VM (--swtpm --swu2f, canonical bcvk branch
-# feat/swtpm-ci — never merged, referenced like the mkosi fork) and exercises the
+# Boots yubiOS in a bcvk ephemeral VM (`--swtpm --swu2f`) using the immutable
+# yubi-OS/bcvk release-descendant commit in PINNED.md and exercises the
 # enrollment stack end-to-end with the in-guest software CTAP2 authenticator
 # (passless, shipped by `mkosi --profile test`, see PR #40):
 #
@@ -53,8 +53,8 @@ trap cleanup EXIT
 # ---- host preflight ----
 log "host preflight"
 need bcvk
-bcvk ephemeral run --help 2>&1 | grep -q -- '--swtpm' || die "bcvk lacks --swtpm; build branch feat/swtpm-ci"
-bcvk ephemeral run --help 2>&1 | grep -q -- '--swu2f' || die "bcvk lacks --swu2f; build branch feat/swtpm-ci"
+bcvk ephemeral run --help 2>&1 | grep -q -- '--swtpm' || die "pinned bcvk source lacks --swtpm"
+bcvk ephemeral run --help 2>&1 | grep -q -- '--swu2f' || die "pinned bcvk source lacks --swu2f"
 
 g() { bcvk_ssh "$VMID" "$@"; }
 

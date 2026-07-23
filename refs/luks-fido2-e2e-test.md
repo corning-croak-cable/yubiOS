@@ -27,7 +27,7 @@ The host/harness wins from that run are now evidence-backed:
 - real ARM64 KVM was available on `rock1`;
 - `/dev/fuse` was present for virtiofsd/bwrap paths;
 - pinned QEMU commit `3a18e8a25992d1643707e2cebdd6e9bb2bd7d3b9` booted the zstd EFI zboot image path;
-- `yubi-OS/bcvk@feat/swtpm-ci` built and exposed `--swtpm` plus `--swu2f`;
+- the immutable yubi-OS/bcvk release descendant in `PINNED.md` built and exposed `--swtpm` plus `--swu2f`;
 - the yubiOS image was pulled into podman storage for bcvk;
 - AppArmor profile relaxation completed before boot.
 
@@ -41,4 +41,4 @@ The active failure moved inside the guest: `bootloader-update.service` failed du
 
 ## bcvk dependency
 
-`--swtpm` and `--swu2f` live on the canonical bcvk branch `yubi-OS/bcvk@feat/swtpm-ci`. bcvk is referenced by yubiOS CI and is not merged into this repository.
+`--swtpm` and `--swu2f` are required from the immutable yubi-OS/bcvk release-descendant commit in `PINNED.md`. bcvk is referenced by yubiOS CI and is not merged into this repository.
