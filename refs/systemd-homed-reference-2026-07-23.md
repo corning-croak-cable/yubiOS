@@ -1,9 +1,5 @@
-> **Archived research snapshot** synced from the assistant knowledge base (`documents/github-yubios-KS9n5GAT/knowledge/`) on 2026-07-23. May predate current specs — treat `PINNED.md` and the dated `refs/*` notes as the live source of truth; this is background research context only.
-
----
-
 # systemd-homed Reference
-_Sources: man7.org (systemd 260~devel), deep research — May 10, 2026_
+_Sources: man7.org (systemd 260~devel), deep research — May 10, 2026 — v261 updates appended 2026-07-23, see bottom section_
 
 ## What it is
 
@@ -175,7 +171,7 @@ homectl create jenny --fido2-credential-algorithm=es256
 ```
 
 **Limitation (current)**: only one FIDO2 device per home at a time.
-Issue #28893 tracks multi-key support.
+Issue #28893 tracks multi-key support — **confirmed still open, no movement as of 2026-07-23, see update below**.
 
 ---
 
@@ -289,3 +285,12 @@ All PEM format. Records are signed with Ed25519.
 - `man pam_systemd_home` — https://www.man7.org/linux/man-pages/man8/pam_systemd_home.8.html
 - https://systemd.io/HOME_DIRECTORY
 - https://systemd.io/USER_RECORD
+
+---
+
+## v261 Updates (2026-07-23 refresh)
+
+- **New**: `homectl --birth-date=YYYY-MM-DD` sets the JSON user record's new optional `birthDate` field (ISO 8601 calendar date, earliest representable year 1900; empty string resets/unsets). Added in v261. Cosmetic for yubiOS today, no action needed.
+- **Still open, no movement**: systemd issue **#28893** ("Allow multiple FIDO2 devices for a given home directory w/ systemd-homed") remains open since 2023 with no merged fix or maintainer commitment as of this refresh. **This is the concrete upstream limitation behind yubiOS's "only one FIDO2 device per home at a time" note below** — still true, still worth documenting as a known constraint for yubiOS's backup-YubiKey enrollment story (yubiOS's own `yubiOS-enroll-backup` script works around this at the LUKS2/cryptenroll layer, not at the homed layer — verify that workaround still applies if homed-based homes are ever adopted for interactive users).
+
+Sources: https://github.com/systemd/systemd/releases/tag/v261, https://github.com/systemd/systemd/issues/28893, https://man7.org/linux/man-pages/man1/homectl.1.html, https://systemd.io/USER_RECORD/
