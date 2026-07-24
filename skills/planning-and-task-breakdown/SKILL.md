@@ -224,4 +224,4 @@ Before starting implementation, confirm:
 
 ## See Also
 
-Acceptance criteria are per-task and answer "did we build the right thing?". They sit on top of the project-wide Definition of Done, the standing bar every task clears before it counts as done. See `references/definition-of-done.md`.
+Acceptance criteria are per-task and answer "did we build the right thing?". They sit on top of the project-wide Definition of Done, the standing bar every task clears before it counts as done: tests pass, no regressions, behavior verified at runtime, docs updated.

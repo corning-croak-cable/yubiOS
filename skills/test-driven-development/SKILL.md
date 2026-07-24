@@ -344,7 +344,7 @@ This separation ensures the test is written without knowledge of the fix, making
 
 ## See Also
 
-For detailed testing patterns, examples, and anti-patterns across frameworks, see `references/testing-patterns.md`.
+Apply the testing patterns and anti-patterns described above across whichever framework the project uses.
 
 ## Common Rationalizations
 

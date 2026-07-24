@@ -74,7 +74,7 @@ If you can't name the trust boundaries for a feature, you're not ready to secure
 
 ## OWASP Top 10 Prevention Patterns
 
-These are prevention patterns, not a ranking. For the 2021 ordering, see the quick-reference table in `references/security-checklist.md`.
+These are prevention patterns, not a ranking; treat the OWASP Top 10 categories above as the checklist itself.
 
 ### Injection (SQL, NoSQL, OS Command)
 
@@ -419,7 +419,7 @@ container.textContent = await llm.reply(userMessage);
 ```
 ## See Also
 
-For detailed security checklists and pre-commit verification steps, see `references/security-checklist.md`.
+Use the OWASP Top 10 categories above as the pre-commit security checklist.
 
 ## Common Rationalizations
 

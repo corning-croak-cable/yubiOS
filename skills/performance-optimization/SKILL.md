@@ -314,7 +314,7 @@ npx lhci autorun
 
 ## See Also
 
-For detailed performance checklists, optimization commands, and anti-pattern reference, see `references/performance-checklist.md`.
+Treat the optimization workflow and anti-patterns above as the checklist for pre-commit performance review.
 
 
 ## Common Rationalizations
