@@ -140,7 +140,7 @@ jobs:
           echo "--- pruning podman storage from prior runs (root-owned, since bcvk/vm-e2e now runs under sudo) ---"
           sudo podman system prune -af --volumes || true
           echo "--- removing leftover bcvk-src clone + cargo target from a prior run ---"
-          sudo rm -rf "${GITHUB_WORKSPACE}/bcvk-src" || true
+          sudo rm -rf /opt/bcvk-src || true
           echo "--- cleaning apt cache ---"
           sudo apt-get clean || true
           df -h "$PWD" || true
@@ -181,9 +181,11 @@ jobs:
           # with zstd), so bcvk's DirectBoot path fails before the guest starts.
           # Build only qemu-system-aarch64 from that pinned upstream commit and
           # prepend it to PATH for bcvk. rock1 is self-hosted and persistent, so
-          # keep /opt/qemu-zstd as a local cache between runs.
+          # keep /opt/qemu-zstd as a local cache between runs (binary + source,
+          # both under /opt so they survive between jobs on this runner).
           QEMU_ZSTD_COMMIT=3a18e8a25992d1643707e2cebdd6e9bb2bd7d3b9
           QEMU_PREFIX=/opt/qemu-zstd/${QEMU_ZSTD_COMMIT}
+          QEMU_SRC=/opt/qemu-zstd-src
           if [ ! -x "${QEMU_PREFIX}/bin/qemu-system-aarch64" ]; then
             sudo apt-get update -qq
             sudo apt-get install -y -qq --no-install-recommends \
@@ -191,13 +193,15 @@ jobs:
               libglib2.0-dev libpixman-1-dev zlib1g-dev libzstd-dev \
               libslirp-dev libusb-1.0-0-dev libudev-dev libaio-dev \
               libcap-ng-dev libattr1-dev
-            rm -rf /tmp/qemu-zstd-src
+            sudo rm -rf "${QEMU_SRC}"
+            sudo mkdir -p "${QEMU_SRC}"
+            sudo chown "$(id -u):$(id -g)" "${QEMU_SRC}"
             git clone --filter=blob:none --depth 1 \
-              https://github.com/qemu/qemu.git /tmp/qemu-zstd-src
-            git -C /tmp/qemu-zstd-src fetch --depth 1 origin "${QEMU_ZSTD_COMMIT}"
-            git -C /tmp/qemu-zstd-src checkout --detach "${QEMU_ZSTD_COMMIT}"
+              https://github.com/qemu/qemu.git "${QEMU_SRC}"
+            git -C "${QEMU_SRC}" fetch --depth 1 origin "${QEMU_ZSTD_COMMIT}"
+            git -C "${QEMU_SRC}" checkout --detach "${QEMU_ZSTD_COMMIT}"
             (
-              cd /tmp/qemu-zstd-src
+              cd "${QEMU_SRC}"
               ./configure \
                 --prefix="${QEMU_PREFIX}" \
                 --target-list=aarch64-softmmu \
@@ -206,7 +210,7 @@ jobs:
               ninja -C build qemu-system-aarch64
               sudo ninja -C build install
             )
-            rm -rf /tmp/qemu-zstd-src
+            sudo rm -rf "${QEMU_SRC}"
           fi
           sudo mkdir -p "${QEMU_PREFIX}/bcvk-bin"
           sudo tee "${QEMU_PREFIX}/bcvk-bin/qemu-system-aarch64" >/dev/null <<EOF
@@ -236,69 +240,86 @@ jobs:
         run: |
           set +e
           BCVK_REF=c29246b1a1ea0114fcb92530298a364627f0cae0 # release-descendant ref; see PINNED.md
-          git init -q bcvk-src &&
-            git -C bcvk-src remote add origin https://github.com/yubi-OS/bcvk &&
-            git -C bcvk-src fetch --depth 1 origin "$BCVK_REF" &&
-            git -C bcvk-src checkout --detach FETCH_HEAD
+          # rock1 is self-hosted and persistent -- cache the built binary under
+          # /opt keyed by the pinned commit, same pattern as qemu-zstd above.
+          BCVK_PREFIX="/opt/bcvk/${BCVK_REF}"
+          BCVK_SRC=/opt/bcvk-src
+          if [ -x "${BCVK_PREFIX}/bin/bcvk" ]; then
+            echo "skip=0" >> "$GITHUB_OUTPUT"
+            echo "${BCVK_PREFIX}/bin" >> "$GITHUB_PATH"
+            echo "### vm-e2e (${{ matrix.arch }}): bcvk cache HIT at ${BCVK_PREFIX} -- build skipped" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          sudo rm -rf "$BCVK_SRC"
+          sudo mkdir -p "$BCVK_SRC"
+          sudo chown "$(id -u):$(id -g)" "$BCVK_SRC"
+          git init -q "$BCVK_SRC" &&
+            git -C "$BCVK_SRC" remote add origin https://github.com/yubi-OS/bcvk &&
+            git -C "$BCVK_SRC" fetch --depth 1 origin "$BCVK_REF" &&
+            git -C "$BCVK_SRC" checkout --detach FETCH_HEAD
           bcvk_fetch_rc=$?
           if [ "$bcvk_fetch_rc" -ne 0 ]; then
             echo "skip=1" >> "$GITHUB_OUTPUT"
             echo "::warning::SKIP: could not fetch pinned yubi-OS/bcvk source -- VM e2e not feasible on this runner"
             echo "### vm-e2e (${{ matrix.arch }}): SKIPPED -- bcvk source unavailable" >> "$GITHUB_STEP_SUMMARY"
+            sudo rm -rf "$BCVK_SRC"
             exit 0
           fi
-          if ! grep -Fq -- 'cmd.arg("--privileged")' bcvk-src/crates/kit/src/run_ephemeral.rs; then
-            perl -0pi -e 's/(    cmd\.args\(\[\n        \/\/ Needed to create nested containers)/    cmd.arg("--privileged");\n    \/\/ Ubuntu rootful Podman needs the fully privileged profile for bcvk\n    \/\/ to bind-mount the extracted kernel inside its bwrap namespace.\n\n$1/' bcvk-src/crates/kit/src/run_ephemeral.rs
+          if ! grep -Fq -- 'cmd.arg("--privileged")' "$BCVK_SRC/crates/kit/src/run_ephemeral.rs"; then
+            perl -0pi -e 's/(    cmd\.args\(\[\n        \/\/ Needed to create nested containers)/    cmd.arg("--privileged");\n    \/\/ Ubuntu rootful Podman needs the fully privileged profile for bcvk\n    \/\/ to bind-mount the extracted kernel inside its bwrap namespace.\n\n$1/' "$BCVK_SRC/crates/kit/src/run_ephemeral.rs"
           fi
-          grep -Fq -- 'cmd.arg("--privileged")' bcvk-src/crates/kit/src/run_ephemeral.rs \
+          grep -Fq -- 'cmd.arg("--privileged")' "$BCVK_SRC/crates/kit/src/run_ephemeral.rs" \
             || { echo "::error::failed to apply bcvk privileged-container CI patch"; exit 1; }
-          if ! grep -Fq -- '--cap-add CAP_SYS_ADMIN' bcvk-src/crates/kit/scripts/entrypoint.sh; then
-            perl -0pi -e 's/(bwrap --as-pid-1 --unshare-pid)/$1 --cap-add CAP_SYS_ADMIN/' bcvk-src/crates/kit/scripts/entrypoint.sh
+          if ! grep -Fq -- '--cap-add CAP_SYS_ADMIN' "$BCVK_SRC/crates/kit/scripts/entrypoint.sh"; then
+            perl -0pi -e 's/(bwrap --as-pid-1 --unshare-pid)/$1 --cap-add CAP_SYS_ADMIN/' "$BCVK_SRC/crates/kit/scripts/entrypoint.sh"
           fi
-          grep -Fq -- '--cap-add CAP_SYS_ADMIN' bcvk-src/crates/kit/scripts/entrypoint.sh \
+          grep -Fq -- '--cap-add CAP_SYS_ADMIN' "$BCVK_SRC/crates/kit/scripts/entrypoint.sh" \
             || { echo "::error::failed to apply bcvk bwrap CAP_SYS_ADMIN CI patch"; exit 1; }
-          if grep -Fq -- '"rsa"' bcvk-src/crates/kit/src/ssh.rs; then
-            perl -0pi -e 's/"-t",\n\s+"rsa",\n\s+"-b",\n\s+"4096",\s+\/\/ Use 4096-bit RSA for security/"-t",\n            "ed25519",/s' bcvk-src/crates/kit/src/ssh.rs
+          if grep -Fq -- '"rsa"' "$BCVK_SRC/crates/kit/src/ssh.rs"; then
+            perl -0pi -e 's/"-t",\n\s+"rsa",\n\s+"-b",\n\s+"4096",\s+\/\/ Use 4096-bit RSA for security/"-t",\n            "ed25519",/s' "$BCVK_SRC/crates/kit/src/ssh.rs"
           fi
-          grep -Fq -- '"ed25519"' bcvk-src/crates/kit/src/ssh.rs \
+          grep -Fq -- '"ed25519"' "$BCVK_SRC/crates/kit/src/ssh.rs" \
             || { echo "::error::failed to apply bcvk ed25519 SSH key CI patch"; exit 1; }
           # ARM virt SMBIOS tables are published to the guest by firmware.
           # bcvk DirectBoot bypasses firmware, so use systemd's documented
           # kernel-command-line credential transport for this public key.
-          if ! grep -Fq -- 'ssh_credential_karg = None' bcvk-src/crates/kit/src/run_ephemeral.rs; then
-            git -C bcvk-src apply ../.github/patches/bcvk-arm64-directboot-ssh.patch \
+          if ! grep -Fq -- 'ssh_credential_karg = None' "$BCVK_SRC/crates/kit/src/run_ephemeral.rs"; then
+            git -C "$BCVK_SRC" apply "$GITHUB_WORKSPACE/.github/patches/bcvk-arm64-directboot-ssh.patch" \
               || { echo "::error::failed to apply bcvk ARM64 DirectBoot SSH credential patch"; exit 1; }
           fi
-          grep -Fq -- 'karg_for_root_ssh(&pubkey)' bcvk-src/crates/kit/src/run_ephemeral.rs \
+          grep -Fq -- 'karg_for_root_ssh(&pubkey)' "$BCVK_SRC/crates/kit/src/run_ephemeral.rs" \
             || { echo "::error::bcvk ARM64 DirectBoot SSH credential fallback unavailable"; exit 1; }
-          grep -Fq -- 'systemd.set_credential_binary=tmpfiles.extra:' bcvk-src/crates/bcvk-qemu/src/credentials.rs \
+          grep -Fq -- 'systemd.set_credential_binary=tmpfiles.extra:' "$BCVK_SRC/crates/bcvk-qemu/src/credentials.rs" \
             || { echo "::error::bcvk systemd kernel-command-line SSH credential unavailable"; exit 1; }
           # Keep tmpfiles.extra as the payload on both transports so systemd-
           # tmpfiles and the yubiOS root-only helper accept the same data.
-          grep -Fq -- 'io.systemd.credential.binary:tmpfiles.extra={encoded}' bcvk-src/crates/bcvk-qemu/src/credentials.rs \
+          grep -Fq -- 'io.systemd.credential.binary:tmpfiles.extra={encoded}' "$BCVK_SRC/crates/bcvk-qemu/src/credentials.rs" \
             || { echo "::error::bcvk no longer exposes the documented tmpfiles.extra root SSH credential path"; exit 1; }
-          ( cd bcvk-src && cargo test --release -p bcvk-qemu test_karg_for_root_ssh && cargo build --release )
-          if [ ! -x bcvk-src/target/release/bcvk ]; then
+          ( cd "$BCVK_SRC" && cargo test --release -p bcvk-qemu test_karg_for_root_ssh && cargo build --release )
+          if [ ! -x "$BCVK_SRC/target/release/bcvk" ]; then
             echo "skip=1" >> "$GITHUB_OUTPUT"
             echo "::warning::SKIP: pinned bcvk source failed to build -- VM e2e not feasible (see cargo output above)"
             echo "### vm-e2e (${{ matrix.arch }}): SKIPPED -- bcvk build failed" >> "$GITHUB_STEP_SUMMARY"
+            sudo rm -rf "$BCVK_SRC"
             exit 0
           fi
-          BCVK_BIN_DIR="${RUNNER_TEMP:-/tmp}/bcvk-bin"
-          mkdir -p "$BCVK_BIN_DIR" || { echo "::error::failed to create bcvk bin dir"; exit 1; }
-          cp bcvk-src/target/release/bcvk "$BCVK_BIN_DIR/bcvk" || { echo "::error::failed to stage bcvk binary"; exit 1; }
-          chmod 0755 "$BCVK_BIN_DIR/bcvk"
-          echo "$BCVK_BIN_DIR" >> "$GITHUB_PATH"
+          sudo mkdir -p "${BCVK_PREFIX}/bin"
+          sudo cp "$BCVK_SRC/target/release/bcvk" "${BCVK_PREFIX}/bin/bcvk" || { echo "::error::failed to stage bcvk binary"; exit 1; }
+          sudo chmod 0755 "${BCVK_PREFIX}/bin/bcvk"
+          echo "${BCVK_PREFIX}/bin" >> "$GITHUB_PATH"
           echo "skip=0" >> "$GITHUB_OUTPUT"
+          echo "### vm-e2e (${{ matrix.arch }}): bcvk built and cached at ${BCVK_PREFIX}" >> "$GITHUB_STEP_SUMMARY"
           # Reclaim space immediately before the large image pull. Keep only the
-          # bcvk binary; rock1 has a small root disk and hit 69 MB free after pull.
-          rm -rf bcvk-src ~/.cargo/registry ~/.cargo/git ~/.cargo/.package-cache 2>/dev/null || true
+          # cached bcvk binary under /opt; rock1 has a small root disk and hit
+          # 69 MB free after pull.
+          rm -rf ~/.cargo/registry ~/.cargo/git ~/.cargo/.package-cache 2>/dev/null || true
+          sudo rm -rf "$BCVK_SRC"
 
       - name: Disk space after bcvk build attempt (diagnostic)
         if: always()
         run: |
           df -h "$PWD" /tmp || true
-          du -sh bcvk-src 2>/dev/null || true
+          du -sh /opt/bcvk-src 2>/dev/null || true
           du -sh ~/.cargo 2>/dev/null || true
 
       - name: Gate on KVM (bcvk hard-requires /dev/kvm; now real hardware on arm64 via self-hosted rock1)
@@ -478,7 +499,7 @@ jobs:
           fi
           sudo podman ps -aq | xargs -r sudo podman rm -f || true
           sudo podman system prune -af --volumes || true
-          sudo rm -rf "${GITHUB_WORKSPACE}/bcvk-src" || true
+          sudo rm -rf /opt/bcvk-src || true
           df -h "$PWD" || true
 
       - name: Note hardware-only variant (lint-only in CI)
