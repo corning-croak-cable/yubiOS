@@ -362,15 +362,15 @@ jobs:
       # workflow and in tests/vm/*.sh (pull / rm / logs) exists to interoperate
       # with that hardcoded dependency, not because we chose podman ourselves.
       - name: Free disk space (pre-pull -- reclaim space the cargo build just used)
-        if: steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1' && inputs.image != ''
+        if: steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1'
         run: |
           sudo podman system prune -af --volumes || true
           df -h "$PWD" || true
 
       - name: Pull yubiOS image into podman storage (bcvk boots from local storage)
-        if: steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1' && inputs.image != ''
+        if: steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1'
         run: |
-          sudo podman pull "${{ inputs.image }}"
+          sudo podman pull "${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}"
           sudo podman images | head -5
 
       - name: Relax AppArmor profiles for bcvk VM boot
@@ -404,7 +404,7 @@ jobs:
         if: steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1'
         timeout-minutes: 5
         env:
-          YUBIOS_IMAGE: ${{ inputs.image }}
+          YUBIOS_IMAGE: ${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}
           YUBIOS_SSH_WAIT_SECS: ${{ matrix.arch == 'arm64' && '900' || '300' }}
           BCVK_EPHEMERAL_EXTRA_ARGS: >-
             ${{ matrix.arch == 'arm64' && format('--ro-bind {0}:qemu-zstd --ro-bind /lib/aarch64-linux-gnu:host-lib --ro-bind /usr/lib/aarch64-linux-gnu:host-usrlib --env PATH=/run/host-mounts/qemu-zstd/bcvk-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env LD_LIBRARY_PATH=/run/host-mounts/host-lib:/run/host-mounts/host-usrlib:/run/host-mounts/qemu-zstd/lib --log-dir=journal,console=/tmp/yubios-vm-e2e-logs', steps.qemu-zstd.outputs.qemu_prefix) || '' }}
@@ -452,7 +452,7 @@ jobs:
         timeout-minutes: 5
         if: ${{ always() && steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1' }}
         env:
-          YUBIOS_IMAGE: ${{ inputs.image }}
+          YUBIOS_IMAGE: ${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}
           YUBIOS_SSH_WAIT_SECS: ${{ matrix.arch == 'arm64' && '900' || '300' }}
           BCVK_EPHEMERAL_EXTRA_ARGS: >-
             ${{ matrix.arch == 'arm64' && format('--ro-bind {0}:qemu-zstd --ro-bind /lib/aarch64-linux-gnu:host-lib --ro-bind /usr/lib/aarch64-linux-gnu:host-usrlib --env PATH=/run/host-mounts/qemu-zstd/bcvk-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env LD_LIBRARY_PATH=/run/host-mounts/host-lib:/run/host-mounts/host-usrlib:/run/host-mounts/qemu-zstd/lib --log-dir=journal,console=/tmp/yubios-vm-e2e-logs', steps.qemu-zstd.outputs.qemu_prefix) || '' }}
