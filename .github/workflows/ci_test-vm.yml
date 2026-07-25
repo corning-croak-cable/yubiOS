@@ -595,7 +595,7 @@ jobs:
           sudo rm -rf /opt/bcvk-src || true
           df -h "$PWD" || true
 
-      - name: Note hardware-only variant (lint-only here; see vm-hw-yubikey-passthrough job for the gated execution path)
+      - name: Note hardware-only variant (runs above when dispatched with hw_device, else lint-only)
         run: |
           echo "### vm-e2e (${{ matrix.arch }}) -- INFO: tests/vm/test-luks-fido2.sh needs a physical YubiKey + spare block device + root; the hardware leg above runs it for real when dispatched with hw_device set, otherwise it is lint-only (yubiOS#9, yubiOS#20)." >> "$GITHUB_STEP_SUMMARY"
 
