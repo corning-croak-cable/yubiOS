@@ -129,9 +129,9 @@ This file lists the main upstream sources used by the yubiOS docs. Prefer primar
 ## yubiOS Internal References
 
 - Planning cycle for this refresh: [refs/planning-cycle-2026-07-11.md](../refs/planning-cycle-2026-07-11.md)
-- v261 base-image research: [refs/v261-base-image.md](../refs/v261-base-image.md)
-- ARM64 fTPM planning: [refs/arm64-ftpm-phase-f0.md](../refs/arm64-ftpm-phase-f0.md)
-- zstd EFI zboot planning: [refs/zstd-efi-zboot-bcvk.md](../refs/zstd-efi-zboot-bcvk.md)
-- swtpm CI planning: [refs/bcvk-swtpm-ci.md](../refs/bcvk-swtpm-ci.md)
-- LUKS FIDO2 E2E planning: [refs/luks-fido2-e2e-test.md](../refs/luks-fido2-e2e-test.md)
-- PKCS#11 signing validation: [refs/sbsign-pkcs11-validate.md](../refs/sbsign-pkcs11-validate.md)
+- v261 base-image research: [refs/v261-base-image.md](../refs/v261-base-image-bump-2026-07-23.md)
+- ARM64 fTPM planning: [refs/arm64-ftpm-phase-f0.md](../refs/arm64-ftpm-phase-f0-2026-07-23.md)
+- zstd EFI zboot planning: [refs/zstd-efi-zboot-bcvk.md](../refs/arm64-zstd-efi-zboot-bcvk-2026-07-23.md)
+- swtpm CI planning: [refs/bcvk-swtpm-ci.md](../refs/bcvk-swtpm-ci-2026-07-23.md)
+- LUKS FIDO2 E2E planning: [refs/luks-fido2-e2e-test.md](../refs/luks-fido2-e2e-test-2026-07-23.md)
+- PKCS#11 signing validation: [refs/sbsign-pkcs11-validate.md](../refs/sbsign-pkcs11-validate-2026-07-23.md)

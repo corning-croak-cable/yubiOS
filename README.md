@@ -320,9 +320,9 @@ graph TD
 - systemd-family upstream progress and contributor bubble map: [refs/systemd-upstream-progress-2026-07-21.md](refs/systemd-upstream-progress-2026-07-21.md)
 - Latest docs/research planning pass: [refs/planning-cycle-2026-07-11.md](refs/planning-cycle-2026-07-11.md)
 - Public-relations campaign: [PR.md](docs/PR.md), with kickoff friend map at [refs/pr-friend-map-2026-07-17.md](refs/pr-friend-map-2026-07-17.md)
-- ARM64 zstd EFI zboot / bcvk DirectBoot: [refs/zstd-efi-zboot-bcvk.md](refs/zstd-efi-zboot-bcvk.md)
-- LUKS2 FIDO2 e2e coverage: [refs/luks-fido2-e2e-test.md](refs/luks-fido2-e2e-test.md)
-- ARM64 fTPM Phase F0: [refs/arm64-ftpm-phase-f0.md](refs/arm64-ftpm-phase-f0.md)
-- systemd v261 base-image history: [refs/v261-base-image.md](refs/v261-base-image.md)
+- ARM64 zstd EFI zboot / bcvk DirectBoot: [refs/zstd-efi-zboot-bcvk.md](refs/arm64-zstd-efi-zboot-bcvk-2026-07-23.md)
+- LUKS2 FIDO2 e2e coverage: [refs/luks-fido2-e2e-test.md](refs/luks-fido2-e2e-test-2026-07-23.md)
+- ARM64 fTPM Phase F0: [refs/arm64-ftpm-phase-f0.md](refs/arm64-ftpm-phase-f0-2026-07-23.md)
+- systemd v261 base-image history: [refs/v261-base-image.md](refs/v261-base-image-bump-2026-07-23.md)
 
 All decisions are recorded in [ADR.md](docs/ADR.md), with source-backed research in [refs/](refs/).
