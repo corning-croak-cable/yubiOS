@@ -1,7 +1,7 @@
-diff --git a/crates/bcvk-qemu/src/credentials.rs b/crates/bcvk-qemu/src/credentials.rs
+diff --git a/a/crates/bcvk-qemu/src/credentials.rs b/b/crates/bcvk-qemu/src/credentials.rs
 index 385f7bb..e5f84ee 100644
---- a/crates/bcvk-qemu/src/credentials.rs
-+++ b/crates/bcvk-qemu/src/credentials.rs
+--- a/a/crates/bcvk-qemu/src/credentials.rs
++++ b/b/crates/bcvk-qemu/src/credentials.rs
 @@ -241,6 +241,13 @@ mod tests {
          assert_eq!(smbios_cred_for_root_ssh(STUBKEY).unwrap(), expected);
      }
@@ -16,11 +16,11 @@ index 385f7bb..e5f84ee 100644
      #[test]
      fn test_guest_path_to_unit_name() {
          assert_eq!(guest_path_to_unit_name("/mnt/data"), "mnt-data.mount");
-diff --git a/crates/bcvk-qemu/src/lib.rs b/crates/bcvk-qemu/src/lib.rs
-index 858d5dc..d7df826 100644
---- a/crates/bcvk-qemu/src/lib.rs
-+++ b/crates/bcvk-qemu/src/lib.rs
-@@ -50,8 +50,8 @@ mod virtiofsd;
+diff --git a/a/crates/bcvk-qemu/src/lib.rs b/b/crates/bcvk-qemu/src/lib.rs
+index 8f9583a..8832561 100644
+--- a/a/crates/bcvk-qemu/src/lib.rs
++++ b/b/crates/bcvk-qemu/src/lib.rs
+@@ -51,8 +51,8 @@ mod virtiofsd;
  
  pub use credentials::{
      generate_virtiofs_mount_unit, guest_path_to_unit_name, key_to_root_tmpfiles_d,
@@ -31,10 +31,10 @@ index 858d5dc..d7df826 100644
  };
  
  pub use qemu::{
-diff --git a/crates/kit/src/credentials.rs b/crates/kit/src/credentials.rs
+diff --git a/a/crates/kit/src/credentials.rs b/b/crates/kit/src/credentials.rs
 index 41328ad..26d4de0 100644
---- a/crates/kit/src/credentials.rs
-+++ b/crates/kit/src/credentials.rs
+--- a/a/crates/kit/src/credentials.rs
++++ b/b/crates/kit/src/credentials.rs
 @@ -8,5 +8,6 @@
  // Re-export credential functions from bcvk-qemu that are used within kit
  pub use bcvk_qemu::{
@@ -43,11 +43,11 @@ index 41328ad..26d4de0 100644
 +    karg_for_root_ssh, smbios_cred_for_root_ssh, smbios_creds_for_storage_opts,
 +    storage_opts_tmpfiles_d_lines,
  };
-diff --git a/crates/kit/src/run_ephemeral.rs b/crates/kit/src/run_ephemeral.rs
-index de03837..d7e35c9 100644
---- a/crates/kit/src/run_ephemeral.rs
-+++ b/crates/kit/src/run_ephemeral.rs
-@@ -1679,13 +1679,20 @@ StandardOutput=file:/dev/virtio-ports/executestatus
+diff --git a/a/crates/kit/src/run_ephemeral.rs b/b/crates/kit/src/run_ephemeral.rs
+index 2e41ff5..3f200c7 100644
+--- a/a/crates/kit/src/run_ephemeral.rs
++++ b/b/crates/kit/src/run_ephemeral.rs
+@@ -1699,13 +1699,20 @@ StandardOutput=file:/dev/virtio-ports/executestatus
      let vsock_force_disabled = std::env::var("BCVK_DEBUG").as_deref() == Ok("disable-vsock");
      let vsock_enabled = !vsock_force_disabled && qemu_config.enable_vsock().is_ok();
  
@@ -71,8 +71,8 @@ index de03837..d7e35c9 100644
 +        }
      }
  
-     // Build kernel command line for direct boot.
-@@ -1724,6 +1731,10 @@ StandardOutput=file:/dev/virtio-ports/executestatus
+     // YubiKey USB passthrough
+@@ -1753,6 +1760,10 @@ StandardOutput=file:/dev/virtio-ports/executestatus
          kernel_cmdline.push("ignition.platform.id=qemu".to_string());
      }
  
