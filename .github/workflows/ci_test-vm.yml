@@ -476,12 +476,27 @@ jobs:
       # self-hosted ARM64 rock1 board; the --swtpm leg runs on either arch and exercises
       # the software-TPM path, but the script's OP-TEE check can't pass there -- that
       # specific, known mismatch is treated as an explicit SKIP, not a failure.
+      # -- Phase F0 done-condition: fTPM /dev/tpm0 + PCR-extend (verify-tpm0-pcr-extend.sh). --
+      # Runs INSIDE a freshly booted guest (the script assumes /dev/tpm0 is already up),
+      # so unlike the self-contained tests/vm/*.sh scripts below, this workflow does the
+      # boot + copy + exec + cleanup itself. Real fTPM only exists via OP-TEE on the
+      # self-hosted ARM64 rock1 board; the --swtpm leg runs on either arch and exercises
+      # the software-TPM path, but the script's OP-TEE check can't pass there -- that
+      # specific, known mismatch is treated as an explicit SKIP, not a failure.
+      #
+      # bcvk here needs the SAME rootful podman used by the other boot legs in this job
+      # (see "Pull yubiOS image into podman storage": sudo podman pull). Running bcvk as
+      # the plain runner user can't see that image in root's podman storage --
+      # `Error: <image>: image not known` (exit 125), the failure this fixes. Match the
+      # existing test-luks-fido2-ci.sh pattern: sudo env "PATH=$PATH" ... bash <script>.
       - name: Run tests/vm/verify-tpm0-pcr-extend.sh (real /dev/tpm, hardware fTPM)
         if: matrix.arch == 'arm64' && steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1'
         timeout-minutes: 5
         env:
           YUBIOS_IMAGE: ${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}
         run: |
+          set -euo pipefail
+          cat > /tmp/verify-tpm0-real.sh <<'SCRIPT'
           set -euo pipefail
           . tests/vm/bcvk-ssh-lib.sh
           VMID=""
@@ -491,7 +506,10 @@ jobs:
           [ -n "$VMID" ] || { echo "::error::bcvk ephemeral run returned no VM id (real /dev/tpm boot)"; exit 1; }
           wait_for_bcvk_ssh "$VMID" 300 || { echo "::error::guest unreachable over ssh (real /dev/tpm boot)"; exit 1; }
           SCRIPT_B64="$(base64 -w0 tests/vm/verify-tpm0-pcr-extend.sh)"
-          bcvk_ssh "$VMID" bash -c "echo ${SCRIPT_B64} | base64 -d > /tmp/verify-tpm0-pcr-extend.sh && chmod +x /tmp/verify-tpm0-pcr-extend.sh && /tmp/verify-tpm0-pcr-extend.sh" \
+          bcvk_ssh "$VMID" bash -c "echo ${SCRIPT_B64} | base64 -d > /tmp/verify-tpm0-pcr-extend.sh && chmod +x /tmp/verify-tpm0-pcr-extend.sh && /tmp/verify-tpm0-pcr-extend.sh"
+          SCRIPT
+          chmod +x /tmp/verify-tpm0-real.sh
+          sudo env "PATH=$PATH" "YUBIOS_IMAGE=${YUBIOS_IMAGE}" bash /tmp/verify-tpm0-real.sh \
             || { echo "::error::verify-tpm0-pcr-extend.sh failed against real hardware /dev/tpm0"; exit 1; }
           echo "### vm-e2e (${{ matrix.arch }}) -- PASS: verify-tpm0-pcr-extend.sh, real hardware /dev/tpm0 (fTPM)" >> "$GITHUB_STEP_SUMMARY"
 
@@ -502,6 +520,8 @@ jobs:
           YUBIOS_IMAGE: ${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}
         run: |
           set -euo pipefail
+          cat > /tmp/verify-tpm0-swtpm.sh <<'SCRIPT'
+          set -euo pipefail
           . tests/vm/bcvk-ssh-lib.sh
           VMID=""
           cleanup() { [ -n "$VMID" ] && podman rm -f "$VMID" >/dev/null 2>&1 || true; }
@@ -510,8 +530,11 @@ jobs:
           [ -n "$VMID" ] || { echo "::error::bcvk ephemeral run returned no VM id (--swtpm boot)"; exit 1; }
           wait_for_bcvk_ssh "$VMID" 300 || { echo "::error::guest unreachable over ssh (--swtpm boot)"; exit 1; }
           SCRIPT_B64="$(base64 -w0 tests/vm/verify-tpm0-pcr-extend.sh)"
+          bcvk_ssh "$VMID" bash -c "echo ${SCRIPT_B64} | base64 -d > /tmp/verify-tpm0-pcr-extend.sh && chmod +x /tmp/verify-tpm0-pcr-extend.sh && /tmp/verify-tpm0-pcr-extend.sh"
+          SCRIPT
+          chmod +x /tmp/verify-tpm0-swtpm.sh
           set +e
-          OUTPUT="$(bcvk_ssh "$VMID" bash -c "echo ${SCRIPT_B64} | base64 -d > /tmp/verify-tpm0-pcr-extend.sh && chmod +x /tmp/verify-tpm0-pcr-extend.sh && /tmp/verify-tpm0-pcr-extend.sh" 2>&1)"
+          OUTPUT="$(sudo env "PATH=$PATH" "YUBIOS_IMAGE=${YUBIOS_IMAGE}" bash /tmp/verify-tpm0-swtpm.sh 2>&1)"
           rc=$?
           set -e
           echo "$OUTPUT"
