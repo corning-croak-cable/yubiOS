@@ -2,18 +2,6 @@
 # Applied during: bootc install to-filesystem
 # Schema verified from: https://github.com/bootc-dev/bootc/blob/main/crates/lib/src/install/config.rs
 
-[install.filesystem.root]
-# ext4 matches the yubiOS convention already used by the to-filesystem CI lane
-# (ci_test_bootc-filesystem.yml formats it with -O verity), which composefs
-# fs-verity needs. xfs verity support is newer and thinner; btrfs is unneeded
-# complexity for a single-root layout. Confirmed the fedora-bootc base ships
-# NO default here -- Fedora-based bootc images have none (only CentOS-based
-# images default to xfs) -- so `bootc install to-disk` errored 'No root
-# filesystem specified' with nothing to fall back on (yubiOS#9, yubiOS#20,
-# run 30152891747). This file is the only usr/lib/bootc/install/*.toml in the
-# repo, so there is no other config to conflict with.
-type = "ext4"
-
 [install]
 # systemd-boot: works natively on standard UEFI, no GRUB needed.
 bootloader = "systemd"
@@ -28,3 +16,15 @@ discoverable-partitions = true
 block = ["direct"]
 
 # No match-architectures: applies to both x86-64 and aarch64.
+
+[install.filesystem.root]
+# ext4 matches the yubiOS convention already used by the to-filesystem CI lane
+# (ci_test_bootc-filesystem.yml formats it with -O verity), which composefs
+# fs-verity needs. xfs verity support is newer and thinner; btrfs is unneeded
+# complexity for a single-root layout. Confirmed the fedora-bootc base ships
+# NO default here -- Fedora-based bootc images have none (only CentOS-based
+# images default to xfs) -- so `bootc install to-disk` errored 'No root
+# filesystem specified' with nothing to fall back on (yubiOS#9, yubiOS#20,
+# run 30152891747). This file is the only usr/lib/bootc/install/*.toml in the
+# repo, so there is no other config to conflict with.
+type = "ext4"
