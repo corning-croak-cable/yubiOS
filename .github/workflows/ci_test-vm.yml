@@ -479,7 +479,7 @@ jobs:
           chmod +x tests/vm/test-luks-fido2.sh
           echo "Running test-luks-fido2.sh against $HW_DEVICE with image $HW_IMAGE (physical YubiKey required -- touch when prompted)"
           set +e
-          sudo env "PATH=$PATH" bash tests/vm/test-luks-fido2.sh "$HW_DEVICE" "$HW_IMAGE"
+          sudo env "PATH=$PATH:/usr/sbin:/sbin" bash tests/vm/test-luks-fido2.sh "$HW_DEVICE" "$HW_IMAGE"
           rc=$?
           set -e
           if [ "$rc" -ne 0 ]; then
