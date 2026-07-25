@@ -410,6 +410,59 @@ jobs:
           fi
           echo "### vm-e2e (arm64): AppArmor profiles relaxed for bcvk VM boot (unpriv_bwrap + swtpm when loaded)" >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Precondition -- physical YubiKey attached (USB vendor 0x1050)
+        id: yubikey
+        run: |
+          if lsusb 2>/dev/null | grep -qi '1050:'; then
+            echo "present=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=0" >> "$GITHUB_OUTPUT"
+            echo "::warning::SKIP: no physical YubiKey detected on this runner (lsusb has no vendor 1050 device). vm-hw-yubikey-passthrough cannot run without real hardware."
+            echo "### vm-hw-yubikey-passthrough: SKIPPED -- no physical YubiKey attached to this runner" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Precondition -- target device exists, is a block device, and is not the runner's root disk
+        id: device
+        if: steps.yubikey.outputs.present == '1'
+        env:
+          HW_DEVICE: ${{ inputs.hw_device }}
+        run: |
+          set -euo pipefail
+          if [ ! -b "$HW_DEVICE" ]; then
+            echo "ok=0" >> "$GITHUB_OUTPUT"
+            echo "::warning::SKIP: $HW_DEVICE is not a block device on this runner."
+            echo "### vm-hw-yubikey-passthrough: SKIPPED -- $HW_DEVICE is not a block device" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          root_src="$(findmnt -no SOURCE / || true)"
+          root_disk="$(lsblk -no PKNAME "$root_src" 2>/dev/null || true)"
+          target_disk="$(basename "$HW_DEVICE")"
+          if [ -n "$root_disk" ] && { [ "$root_disk" = "$target_disk" ] || [ "$(basename "$root_src")" = "$target_disk" ]; }; then
+            echo "ok=0" >> "$GITHUB_OUTPUT"
+            echo "::error::REFUSING: $HW_DEVICE resolves to this runner's own root disk ($root_src). Never wiping the host."
+            exit 1
+          fi
+          echo "ok=1" >> "$GITHUB_OUTPUT"
+
+      - name: Run tests/vm/test-luks-fido2.sh (DESTRUCTIVE -- wipes ${{ inputs.hw_device }})
+        if: steps.yubikey.outputs.present == '1' && steps.device.outputs.ok == '1'
+        timeout-minutes: 10
+        env:
+          HW_DEVICE: ${{ inputs.hw_device }}
+          HW_IMAGE: ${{ inputs.hw_image != '' && inputs.hw_image || (inputs.image || 'docker.io/0mniteck/yubios:dev') }}
+        run: |
+          chmod +x tests/vm/test-luks-fido2.sh
+          echo "Running test-luks-fido2.sh against device $HW_DEVICE with image $HW_IMAGE (physical YubiKey required -- touch when prompted)"
+          set +e
+          sudo env "PATH=$PATH" bash tests/vm/test-luks-fido2.sh "$HW_DEVICE" "$HW_IMAGE"
+          rc=$?
+          set -e
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::test-luks-fido2.sh failed (rc=$rc) against $HW_DEVICE"
+            exit "$rc"
+          fi
+          echo "### vm-hw-yubikey-passthrough: PASS -- real-hardware LUKS2 FIDO2 enrollment against $HW_DEVICE (yubiOS#9, yubiOS#20)" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Run tests/vm/test-luks-fido2-ci.sh (boot leg gated on image availability)
         if: steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1'
         timeout-minutes: 5
@@ -516,7 +569,6 @@ jobs:
         run: |
           echo "tests/vm/test-luks-fido2.sh needs a physical YubiKey + spare block device + root; lint-only in THIS job. See the vm-hw-yubikey-passthrough job below for the explicit workflow_dispatch-gated path that actually executes it (yubiOS#9, yubiOS#20)." >> "$GITHUB_STEP_SUMMARY"
 
-
   # -- Hardware YubiKey passthrough (yubiOS#9, yubiOS#20). --
   # tests/vm/test-luks-fido2.sh needs a PHYSICAL YubiKey + a spare block device + root;
   # it flashes the device via `bcvk native-to-disk` then unlocks LUKS2 with a real
@@ -532,66 +584,6 @@ jobs:
   # explicit non-empty hw_device input, and fails closed (skips loudly, never silently)
   # if no physical YubiKey is attached, no block device is present at that path, or the
   # device looks like the runner's own root disk.
-  vm-hw-yubikey-passthrough:
-    needs: lint-vm-scripts
-    if: github.event_name == 'workflow_dispatch' && inputs.hw_device != ''
-    runs-on: [self-hosted, Linux, ARM64, KVM]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-
-      - name: Precondition -- physical YubiKey attached (USB vendor 0x1050)
-        id: yubikey
-        run: |
-          if lsusb 2>/dev/null | grep -qi '1050:'; then
-            echo "present=1" >> "$GITHUB_OUTPUT"
-          else
-            echo "present=0" >> "$GITHUB_OUTPUT"
-            echo "::warning::SKIP: no physical YubiKey detected on this runner (lsusb has no vendor 1050 device). vm-hw-yubikey-passthrough cannot run without real hardware."
-            echo "### vm-hw-yubikey-passthrough: SKIPPED -- no physical YubiKey attached to this runner" >> "$GITHUB_STEP_SUMMARY"
-          fi
-
-      - name: Precondition -- target device exists, is a block device, and is not the runner's root disk
-        id: device
-        if: steps.yubikey.outputs.present == '1'
-        env:
-          HW_DEVICE: ${{ inputs.hw_device }}
-        run: |
-          set -euo pipefail
-          if [ ! -b "$HW_DEVICE" ]; then
-            echo "ok=0" >> "$GITHUB_OUTPUT"
-            echo "::warning::SKIP: $HW_DEVICE is not a block device on this runner."
-            echo "### vm-hw-yubikey-passthrough: SKIPPED -- $HW_DEVICE is not a block device" >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
-          root_src="$(findmnt -no SOURCE / || true)"
-          root_disk="$(lsblk -no PKNAME "$root_src" 2>/dev/null || true)"
-          target_disk="$(basename "$HW_DEVICE")"
-          if [ -n "$root_disk" ] && { [ "$root_disk" = "$target_disk" ] || [ "$(basename "$root_src")" = "$target_disk" ]; }; then
-            echo "ok=0" >> "$GITHUB_OUTPUT"
-            echo "::error::REFUSING: $HW_DEVICE resolves to this runner's own root disk ($root_src). Never wiping the host."
-            exit 1
-          fi
-          echo "ok=1" >> "$GITHUB_OUTPUT"
-
-      - name: Run tests/vm/test-luks-fido2.sh (DESTRUCTIVE -- wipes ${{ inputs.hw_device }})
-        if: steps.yubikey.outputs.present == '1' && steps.device.outputs.ok == '1'
-        timeout-minutes: 10
-        env:
-          HW_DEVICE: ${{ inputs.hw_device }}
-          HW_IMAGE: ${{ inputs.hw_image != '' && inputs.hw_image || (inputs.image || 'docker.io/0mniteck/yubios:dev') }}
-        run: |
-          chmod +x tests/vm/test-luks-fido2.sh
-          echo "Running test-luks-fido2.sh against device $HW_DEVICE with image $HW_IMAGE (physical YubiKey required -- touch when prompted)"
-          set +e
-          sudo env "PATH=$PATH" bash tests/vm/test-luks-fido2.sh "$HW_DEVICE" "$HW_IMAGE"
-          rc=$?
-          set -e
-          if [ "$rc" -ne 0 ]; then
-            echo "::error::test-luks-fido2.sh failed (rc=$rc) against $HW_DEVICE"
-            exit "$rc"
-          fi
-          echo "### vm-hw-yubikey-passthrough: PASS -- real-hardware LUKS2 FIDO2 enrollment against $HW_DEVICE (yubiOS#9, yubiOS#20)" >> "$GITHUB_STEP_SUMMARY"
 
   ci-callback:
     name: Callback to ci.yml orchestrator
