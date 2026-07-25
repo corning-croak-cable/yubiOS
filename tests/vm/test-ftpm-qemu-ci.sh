@@ -33,6 +33,12 @@ FTPM_LINUX_PAYLOAD="${FTPM_LINUX_PAYLOAD:-0}"
 FTPM_UUID="${FTPM_UUID:-bc50d971-d4c9-42c4-82cb-343fb7f37896}"
 BOOT_TIMEOUT="${BOOT_TIMEOUT:-180}"
 LINUX_BOOT_TIMEOUT="${LINUX_BOOT_TIMEOUT:-900}"
+# Run 30165202571 (#120) failed here: `bcvk to-disk` made no progress for 26
+# minutes and the step's own timeout-minutes killed the whole job, so the script
+# never reached its own SKIP contract and produced no diagnosis. Every long
+# operation in Stage B now has its own budget, and blowing that budget is a loud
+# 77 SKIP naming the budget -- not a dead job.
+TO_DISK_TIMEOUT="${TO_DISK_TIMEOUT:-900}"
 WORK="${WORK:-${PWD}/ftpm-qemu-ci}"
 LOG_DIR="${LOG_DIR:-/tmp/yubios-ftpm-logs}"
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
@@ -44,8 +50,10 @@ need() { command -v "$1" >/dev/null 2>&1 || die "missing host tool: $1"; }
 
 CID=""
 QEMU_PID=""
+HEARTBEAT_PID=""
 cleanup() {
   [[ -n "$QEMU_PID" ]] && kill "$QEMU_PID" 2>/dev/null || true
+  [[ -n "$HEARTBEAT_PID" ]] && kill "$HEARTBEAT_PID" 2>/dev/null || true
   [[ -n "$CID" ]] && podman rm -f "$CID" >/dev/null 2>&1 || true
 }
 trap cleanup EXIT
@@ -62,10 +70,13 @@ log "extract firmware from ${FIRMWARE_IMAGE}"
   while true; do sleep 30; echo "... still pulling ${FIRMWARE_IMAGE} ($(date -u +%H:%M:%S))"; done
 ) &
 HEARTBEAT_PID=$!
-podman pull "$FIRMWARE_IMAGE" >/dev/null
-PULL_RC=$?
+# `set -e` aborts on the failing command before any `$?` capture, so the rc has to
+# be taken inside a guarded block or the error path below is dead code.
+PULL_RC=0
+podman pull "$FIRMWARE_IMAGE" >/dev/null || PULL_RC=$?
 kill "$HEARTBEAT_PID" 2>/dev/null || true
 wait "$HEARTBEAT_PID" 2>/dev/null || true
+HEARTBEAT_PID=""
 [[ "$PULL_RC" -eq 0 ]] || die "cannot pull ${FIRMWARE_IMAGE}"
 CID="$(podman create "$FIRMWARE_IMAGE" /bin/true)"
 [[ -n "$CID" ]] || die "podman create returned no container id"
@@ -143,12 +154,19 @@ rm -f "$DISK"
   while true; do sleep 30; echo "... still running bcvk to-disk for ${YUBIOS_IMAGE} ($(date -u +%H:%M:%S))"; done
 ) &
 HEARTBEAT_PID=$!
-bcvk to-disk --disk-size 20G "$YUBIOS_IMAGE" "$DISK"
-TO_DISK_RC=$?
+# Bounded, and rc captured without tripping `set -e` (see TO_DISK_TIMEOUT above).
+TO_DISK_RC=0
+timeout --foreground -k 30 "$TO_DISK_TIMEOUT" \
+  bcvk to-disk --disk-size 20G "$YUBIOS_IMAGE" "$DISK" || TO_DISK_RC=$?
 kill "$HEARTBEAT_PID" 2>/dev/null || true
 wait "$HEARTBEAT_PID" 2>/dev/null || true
+HEARTBEAT_PID=""
+if [[ "$TO_DISK_RC" -eq 124 || "$TO_DISK_RC" -eq 137 ]]; then
+  skip "bcvk to-disk made no progress within ${TO_DISK_TIMEOUT}s installing ${YUBIOS_IMAGE} and was killed. That is the run-#120 signature: the installer VM hangs, most likely on the same ARM64 zstd EFI zboot kernel bcvk cannot DirectBoot (the other bcvk legs in ci_test-vm.yml SKIP on it explicitly). Give this step a zstd-capable QEMU on PATH, or raise TO_DISK_TIMEOUT if the board is merely slow."
+  exit 77
+fi
 if [[ "$TO_DISK_RC" -ne 0 ]]; then
-  skip "bcvk to-disk could not install ${YUBIOS_IMAGE}; Stage B payload unavailable."
+  skip "bcvk to-disk could not install ${YUBIOS_IMAGE} (rc=${TO_DISK_RC}); Stage B payload unavailable."
   exit 77
 fi
 test -s "$DISK" || { skip "bcvk to-disk produced no disk image."; exit 77; }
