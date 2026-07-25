@@ -9,7 +9,11 @@ name: yubiOS dev/test image (swu2f, ADR-026)
 # a real, pullable yubiOS image so the LUKS2-FIDO2 + systemd-homed + enrollment
 # boot legs actually run instead of loud-skipping for lack of an image.
 #
-# TEST-ONLY: this image ships `passless`, a software FIDO2 authenticator.
+# TEST-ONLY: this image ships `passless`, a software FIDO2 authenticator, AND a
+# serial/tty getty with ROOT AUTOLOGIN so CI can drive the guest over the serial
+# console when SSH is not reachable -- the fTPM chain in ci_test-vm.yml's
+# ftpm-qemu job boots under U-Boot, where bcvk's SSH credential karg never
+# applies. Root autologin is a total local-access bypass of pam_u2f (ADR-003).
 # NEVER treat `dev`/`dev-<sha>` as production-equivalent to `latest`. Never
 # wire this workflow's output into yubiOS-ci.yml's production push path.
 #

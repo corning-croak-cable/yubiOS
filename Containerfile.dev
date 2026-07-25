@@ -30,5 +30,50 @@ RUN chmod +x /tmp/install-swu2f-authenticator.sh && \
     /tmp/install-swu2f-authenticator.sh && \
     rm -f /tmp/install-swu2f-authenticator.sh
 
+# ── TEST-ONLY: serial-console root autologin ──────────────────────
+# Gives CI a route INTO the guest when SSH is not reachable. The fTPM chain
+# (ci_test-vm.yml ftpm-qemu -> tests/vm/test-ftpm-qemu-ci.sh) boots this image
+# under TF-A + OP-TEE + U-Boot, where bcvk's kernel-cmdline SSH credential never
+# applies: U-Boot owns the boot, /etc is transient, root has no password, and no
+# network is configured. A serial getty with root autologin is the only remaining
+# way to execute tests/vm/verify-tpm0-pcr-extend.sh (checks 3-5: TPM2_Startup,
+# PCR read, PCR extend) inside that guest.
+#
+# Drop-ins live under /usr/lib, not /etc, so they survive bootc's /etc 3-way
+# merge (see the bootc filesystem rules: prefer /usr for non-machine-local
+# config). ExecStart is cleared first because a drop-in appends to the unit's
+# existing ExecStart rather than replacing it.
+#
+# NEVER in production. Root autologin on a console is a total local-access
+# bypass of pam_u2f (ADR-003). This exists only in Containerfile.dev, which only
+# ci_dev_image.yml builds and only ever tags :dev / :dev-<sha> (ADR-026).
+RUN install -Dm644 /dev/stdin /usr/lib/systemd/system/serial-getty@.service.d/10-yubiOS-test-autologin.conf <<'EOF'
+[Service]
+ExecStart=
+ExecStart=-/sbin/agetty -o '-p -- \\u' --autologin root --keep-baud 115200,57600,38400,9600 - $TERM
+EOF
+
+RUN install -Dm644 /dev/stdin /usr/lib/systemd/system/getty@.service.d/10-yubiOS-test-autologin.conf <<'EOF'
+[Service]
+ExecStart=
+ExecStart=-/sbin/agetty -o '-p -- \\u' --autologin root --noclear - $TERM
+EOF
+
+# systemd-getty-generator only spawns a serial getty for the console= karg, and
+# under U-Boot we do not control the cmdline. Wire both consoles unconditionally:
+# ttyAMA0 is the QEMU virt ARM64 console, ttyS0 the amd64 one. The unit BindsTo
+# its dev-%i.device, so the one whose tty is absent simply never starts.
+RUN install -d /usr/lib/systemd/system/getty.target.wants && \
+    ln -sf ../serial-getty@.service \
+      /usr/lib/systemd/system/getty.target.wants/serial-getty@ttyAMA0.service && \
+    ln -sf ../serial-getty@.service \
+      /usr/lib/systemd/system/getty.target.wants/serial-getty@ttyS0.service
+
+# Fail the build if the drop-ins did not land where systemd will read them.
+RUN test -s /usr/lib/systemd/system/serial-getty@.service.d/10-yubiOS-test-autologin.conf && \
+    test -s /usr/lib/systemd/system/getty@.service.d/10-yubiOS-test-autologin.conf && \
+    grep -q -- "--autologin root" \
+      /usr/lib/systemd/system/serial-getty@.service.d/10-yubiOS-test-autologin.conf && \
+    test -L /usr/lib/systemd/system/getty.target.wants/serial-getty@ttyAMA0.service
 LABEL yubiOS.image.kind="dev-test"
-LABEL yubiOS.image.warning="TEST-ONLY: ships the passless swu2f software FIDO2 authenticator. Never use in production. See ADR-003, ADR-026."
+LABEL yubiOS.image.warning="TEST-ONLY: ships the passless swu2f software FIDO2 authenticator AND serial/tty root autologin (local-access bypass of pam_u2f). Never use in production. See ADR-003, ADR-026."
