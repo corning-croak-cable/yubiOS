@@ -249,7 +249,7 @@ jobs:
         id: bcvk
         run: |
           set +e
-          BCVK_REF=c29246b1a1ea0114fcb92530298a364627f0cae0 # release-descendant ref; see PINNED.md
+          BCVK_REF=45be63ddf7516ae82fd97b80ba92bd87ccc3a916 # yubios branch (bcvk PR #1+#2+#7 combined); see PINNED.md
           # rock1 is self-hosted and persistent -- cache the built binary under
           # /opt keyed by the pinned commit, same pattern as qemu-zstd above.
           BCVK_PREFIX="/opt/bcvk/${BCVK_REF}"
