@@ -7,7 +7,7 @@
 **FIDO2-first immutable OS — HSM/U2F as the root of trust**
 
 [![License: LGPL-2.1](https://img.shields.io/badge/license-LGPL--2.1-magenta?style=flat-square)](LICENSE)
-[![Status: Groundwork](https://img.shields.io/badge/status-groundwork-blueviolet?style=flat-square)](TODO.md)
+[![Status: Groundwork](https://img.shields.io/badge/status-groundwork-blueviolet?style=flat-square)](docs/TODO.md)
 [![YubiKey 5](https://img.shields.io/badge/YubiKey-5%20series-ff1493?style=flat-square)](https://www.yubico.com)
 [![FIDO2](https://img.shields.io/badge/FIDO2-hidraw-purple?style=flat-square)](https://fidoalliance.org)
 
@@ -57,7 +57,7 @@ YubiKey 5
 - OATH via hidraw: application 2FA
 ```
 
-Secure Boot signing uses PIV/CCID, not hidraw. Full rationale: [ADR-002](ADR.md#adr-002-secure-boot-signing-via-piv-ccid-not-fido2-hidraw).
+Secure Boot signing uses PIV/CCID, not hidraw. Full rationale: [ADR-002](docs/ADR.md#adr-002-secure-boot-signing-via-piv-ccid-not-fido2-hidraw).
 
 ## Get yubiOS
 
@@ -73,7 +73,7 @@ does not by itself prove the image was reproducibly built; the CI two-build
 evidence described below does. Do not treat a run-specific digest in an old PR
 or research note as evergreen.
 
-> **Warning:** yubiOS is groundwork / work in progress. The install flows below can destroy data on the target disk. Test on disposable hardware or a VM, back up recovery material first, and use the current [TODO.md](TODO.md), [BLOCKERS.md](BLOCKERS.md), and [PR.md](PR.md) before treating any image as safe for broader use.
+> **Warning:** yubiOS is groundwork / work in progress. The install flows below can destroy data on the target disk. Test on disposable hardware or a VM, back up recovery material first, and use the current [TODO.md](docs/TODO.md), [BLOCKERS.md](docs/BLOCKERS.md), and [PR.md](docs/PR.md) before treating any image as safe for broader use.
 
 Prepare and mount the target filesystems first, for example with `systemd-repart` or another installer that creates the yubiOS DPS layout. Mount the target root at `/mnt` and its boot filesystem at `/mnt/boot`, then install the image with `bootc install to-filesystem`:
 
@@ -219,7 +219,7 @@ On first boot `yubiOS-enroll.service` runs on tty1 and walks through:
 3. SSH resident key generation through `ed25519-sk`.
 4. sudo/login registration through pam-u2f.
 
-Each step is skippable and independently re-runnable. See [ONBOARDING.md](ONBOARDING.md).
+Each step is skippable and independently re-runnable. See [ONBOARDING.md](docs/ONBOARDING.md).
 
 ## Repo layout
 
@@ -319,10 +319,10 @@ graph TD
 - Workflow evidence review: [refs/ci-evidence-2026-07-21.md](refs/ci-evidence-2026-07-21.md)
 - systemd-family upstream progress and contributor bubble map: [refs/systemd-upstream-progress-2026-07-21.md](refs/systemd-upstream-progress-2026-07-21.md)
 - Latest docs/research planning pass: [refs/planning-cycle-2026-07-11.md](refs/planning-cycle-2026-07-11.md)
-- Public-relations campaign: [PR.md](PR.md), with kickoff friend map at [refs/pr-friend-map-2026-07-17.md](refs/pr-friend-map-2026-07-17.md)
+- Public-relations campaign: [PR.md](docs/PR.md), with kickoff friend map at [refs/pr-friend-map-2026-07-17.md](refs/pr-friend-map-2026-07-17.md)
 - ARM64 zstd EFI zboot / bcvk DirectBoot: [refs/zstd-efi-zboot-bcvk.md](refs/zstd-efi-zboot-bcvk.md)
 - LUKS2 FIDO2 e2e coverage: [refs/luks-fido2-e2e-test.md](refs/luks-fido2-e2e-test.md)
 - ARM64 fTPM Phase F0: [refs/arm64-ftpm-phase-f0.md](refs/arm64-ftpm-phase-f0.md)
 - systemd v261 base-image history: [refs/v261-base-image.md](refs/v261-base-image.md)
 
-All decisions are recorded in [ADR.md](ADR.md), with source-backed research in [refs/](refs/).
+All decisions are recorded in [ADR.md](docs/ADR.md), with source-backed research in [refs/](refs/).

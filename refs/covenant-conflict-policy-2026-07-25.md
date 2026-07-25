@@ -59,7 +59,7 @@ require breaking a specific covenant commitment," not a vibe check.
    opens a GitHub issue or PR comment citing the specific covenant clause
    (e.g. "conflicts with covenant §2, not-allowed: telemetry-by-default").
 2. If the conflict is confirmed, it's logged the same way an active blocker is —
-   as an entry in [BLOCKERS.md](../BLOCKERS.md) if it's blocking a specific piece
+   as an entry in [BLOCKERS.md](../docs/BLOCKERS.md) if it's blocking a specific piece
    of work, or as an ADR if it's a standing architectural tension, so it's visible
    in the same place contributors already check per AGENTS.md's session-start
    reading order.

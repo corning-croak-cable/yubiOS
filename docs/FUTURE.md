@@ -7,7 +7,7 @@ This file tracks future work that is not yet the normative baseline. Active requ
 
 ## Near-Term Planning Cycle
 
-The current evidence refresh is [refs/ci-evidence-2026-07-21.md](refs/ci-evidence-2026-07-21.md), paired with the systemd-family progress snapshot in [refs/systemd-upstream-progress-2026-07-21.md](refs/systemd-upstream-progress-2026-07-21.md). The earlier planning baseline remains [refs/planning-cycle-2026-07-11.md](refs/planning-cycle-2026-07-11.md).
+The current evidence refresh is [refs/ci-evidence-2026-07-21.md](../refs/ci-evidence-2026-07-21.md), paired with the systemd-family progress snapshot in [refs/systemd-upstream-progress-2026-07-21.md](../refs/systemd-upstream-progress-2026-07-21.md). The earlier planning baseline remains [refs/planning-cycle-2026-07-11.md](../refs/planning-cycle-2026-07-11.md).
 
 ## Milestone F: ARM64 Owner-Owned Root Of Trust
 
@@ -75,7 +75,7 @@ Evidence needed before promotion:
 ## Milestone Docs: Prevent Snapshot Drift
 
 - Add dated planning notes under `refs/` for each substantial research cycle.
-- Avoid hardcoding run-specific image digests outside [PINNED.md](PINNED.md) unless the text clearly marks them as historical evidence.
+- Avoid hardcoding run-specific image digests outside [PINNED.md](../PINNED.md) unless the text clearly marks them as historical evidence.
 - Keep `RestrictFileSystems=` and `RestrictFileSystemAccess=` distinct in all hardening docs.
 - Prefer primary upstream sources in [CITATION.md](CITATION.md), then link repo-specific evidence from ADRs and refs.
 
@@ -83,7 +83,7 @@ Evidence needed before promotion:
 
 Goal: research an OpenWrt project or package that turns a WireGuard-protected LAN into a deliberate "needle in the haystack" environment for SSH discovery attempts. The package should expose many low-risk decoy SSH endpoints, slow enumeration with tarpits where safe, and notify the owner when an agent or attacker probes for the real host.
 
-Current fit analysis: [refs/endlessh-openwrt-fit-2026-07-17.md](refs/endlessh-openwrt-fit-2026-07-17.md).
+Current fit analysis: [refs/endlessh-openwrt-fit-2026-07-17.md](../refs/endlessh-openwrt-fit-2026-07-17.md).
 
 Research shape:
 

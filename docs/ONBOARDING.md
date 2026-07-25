@@ -6,11 +6,11 @@ This guide gets a contributor or early tester oriented without requiring them to
 
 ## Read First
 
-1. [README.md](README.md) for the project overview and install shape.
+1. [README.md](../README.md) for the project overview and install shape.
 2. [SPEC.md](SPEC.md) for normative requirements.
-3. [PINNED.md](PINNED.md) for the live base-image and tool pins.
+3. [PINNED.md](../PINNED.md) for the live base-image and tool pins.
 4. [ADR.md](ADR.md) when you need the why behind a decision.
-5. [refs/planning-cycle-2026-07-11.md](refs/planning-cycle-2026-07-11.md) for the latest research-cycle corrections.
+5. [refs/planning-cycle-2026-07-11.md](../refs/planning-cycle-2026-07-11.md) for the latest research-cycle corrections.
 
 ## Local Requirements
 
@@ -51,7 +51,7 @@ Use the exact command shape documented by the current bootc release and yubiOS w
 
 - Treat ARM64 as primary for mission-critical hardware-root planning.
 - Keep x86-64 support working, but do not let x86-specific VM behavior override ARM64 trust-chain priorities.
-- Do not copy old workflow-run digests into docs as current pins. Update [PINNED.md](PINNED.md) instead.
+- Do not copy old workflow-run digests into docs as current pins. Update [PINNED.md](../PINNED.md) instead.
 - Keep `RestrictFileSystems=` and `RestrictFileSystemAccess=` distinct when writing systemd hardening notes.
 - Make a dated `refs/` note for substantial research cycles.
 

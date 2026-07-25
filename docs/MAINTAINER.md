@@ -59,5 +59,5 @@ Do not let historical run output, old PR notes, or stale TODO fragments override
 ## Release Hygiene
 
 - A release or publish path must cite the branch, commit, workflow run, and artifact/tag.
-- Digest bumps should update [PINNED.md](PINNED.md) and include evidence that required package floors still hold.
+- Digest bumps should update [PINNED.md](../PINNED.md) and include evidence that required package floors still hold.
 - New artifacts need explicit production/test classification before publication.

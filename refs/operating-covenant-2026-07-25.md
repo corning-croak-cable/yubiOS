@@ -4,7 +4,7 @@
 
 ## Why this exists
 
-This covenant is the public commitment layer that sits on top of [MISSION.md](../MISSION.md).
+This covenant is the public commitment layer that sits on top of [MISSION.md](../docs/MISSION.md).
 MISSION.md states the design principles ("no trust anchors you don't control," "don't be
 evil," "if a feature ever needs a security exception to exist, it gets cut"). This
 document turns those principles into concrete, checkable commitments about what stays

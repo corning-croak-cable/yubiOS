@@ -1,7 +1,7 @@
 # endlessh OpenWrt fit analysis: 2026-07-17
 
 Status: research note for [issue #87](https://github.com/yubi-OS/yubiOS/issues/87)
-Scope: evaluate how [`skeeto/endlessh`](https://github.com/skeeto/endlessh) fits the OpenWrt WireGuard SSH deception LAN roadmap in [FUTURE.md](../FUTURE.md).
+Scope: evaluate how [`skeeto/endlessh`](https://github.com/skeeto/endlessh) fits the OpenWrt WireGuard SSH deception LAN roadmap in [FUTURE.md](../docs/FUTURE.md).
 
 ## Research query plan
 

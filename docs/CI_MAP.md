@@ -55,7 +55,7 @@ Every child returns to the `ci.yml` dispatcher between nodes. The refresh phase 
 
 ## Canonical Docker Bake Graph
 
-The merged `yubiOS-bake.hcl` replaces workflow-local `docker build` and `docker buildx build` commands in every non-fork workflow dispatched by `ci.yml`. GitHub Actions still owns event handling, runner selection, Docker/Buildx installation, active-builder selection, artifact transfer, host/Podman/KVM work, and final multi-architecture index assembly. The design rationale and Docker primary-source trail are recorded in [the Bake consolidation note](refs/docker-bake-consolidation-2026-07-17.md).
+The merged `yubiOS-bake.hcl` replaces workflow-local `docker build` and `docker buildx build` commands in every non-fork workflow dispatched by `ci.yml`. GitHub Actions still owns event handling, runner selection, Docker/Buildx installation, active-builder selection, artifact transfer, host/Podman/KVM work, and final multi-architecture index assembly. The design rationale and Docker primary-source trail are recorded in [the Bake consolidation note](../refs/docker-bake-consolidation-2026-07-17.md).
 
 Four hidden targets provide the shared contract:
 
@@ -285,28 +285,28 @@ sequenceDiagram
 The exact dispatch order is defined by the state-machine graph above. The detailed job trees below are grouped by lane for readability. Each job contains every declared `jobs.<job>.steps` entry in execution order. Matrix jobs are shown once; job and step `if` conditions still determine whether an entry runs for a particular event or matrix leg. GitHub-generated setup and cleanup operations are not declared workflow steps and are omitted.
 
 - Workflow details
-  - [`ci.yml`](.github/workflows/ci.yml) — workflow: `CI`
+  - [`ci.yml`](../.github/workflows/ci.yml) — workflow: `CI`
     - Job `dispatch-next` — `Dispatch next workflow from current state`
       - Step 1: `Resolve and dispatch next workflow`
-  - [`fetch-dhi-manifest.yml`](.github/workflows/fetch-dhi-manifest.yml) — workflow: `fetch-dhi-manifest`
+  - [`fetch-dhi-manifest.yml`](../.github/workflows/fetch-dhi-manifest.yml) — workflow: `fetch-dhi-manifest`
     - Job `fetch` — `fetch`
       - Step 1: `Checkout yubiOS for PINNED.md update`
       - Step 2: `Fetch dhi.io Debian base manifest and update pinned refs`
     - Job `ci-callback` — `Callback to ci.yml orchestrator`
       - Step 1: `Report current state to ci.yml`
-  - [`fetch-fedora-bootc-manifest.yml`](.github/workflows/fetch-fedora-bootc-manifest.yml) — workflow: `fetch-fedora-bootc-manifest`
+  - [`fetch-fedora-bootc-manifest.yml`](../.github/workflows/fetch-fedora-bootc-manifest.yml) — workflow: `fetch-fedora-bootc-manifest`
     - Job `fetch` — `fetch`
       - Step 1: `Checkout yubiOS for PINNED.md update`
       - Step 2: `Fetch Fedora bootc manifest and update pinned refs`
     - Job `ci-callback` — `Callback to ci.yml orchestrator`
       - Step 1: `Report current state to ci.yml`
-  - [`fetch-released-tag-ref.yml`](.github/workflows/fetch-released-tag-ref.yml) — workflow: `fetch-released-tag-ref`
+  - [`fetch-released-tag-ref.yml`](../.github/workflows/fetch-released-tag-ref.yml) — workflow: `fetch-released-tag-ref`
     - Job `fetch-release-refs` — `Resolve upstream releases and verify fork refs`
       - Step 1: `Checkout yubiOS for fork-ref updates`
       - Step 2: `Fetch release tags, verify fork objects, and update pins`
     - Job `ci-callback` — `Callback to ci.yml orchestrator`
       - Step 1: `Report current state to ci.yml`
-  - [`ci_firmware-rk.yml`](.github/workflows/ci_firmware-rk.yml) — workflow: `yubiOS RK firmware`
+  - [`ci_firmware-rk.yml`](../.github/workflows/ci_firmware-rk.yml) — workflow: `yubiOS RK firmware`
     - Job `stmm` — `Stage 1 - BL32_AP_MM.fd (StandaloneMM RPMB, AARCH64) ${{ matrix.artifact_suffix }}`
       - Step 1: `Install git for checkout and reproducibility`
       - Step 2: `Checkout`
@@ -373,7 +373,7 @@ The exact dispatch order is defined by the state-machine graph above. The detail
       - Step 11: `Verify pushed board tag`
     - Job `ci-callback` — `Callback to ci.yml orchestrator`
       - Step 1: `Report current state to ci.yml`
-  - [`yubiOS-ci.yml`](.github/workflows/yubiOS-ci.yml) — workflow: `yubiOS CI`
+  - [`yubiOS-ci.yml`](../.github/workflows/yubiOS-ci.yml) — workflow: `yubiOS CI`
     - Job `shellcheck` — `shellcheck`
       - Step 1: `Checkout`
       - Step 2: `shellcheck`
@@ -404,7 +404,7 @@ The exact dispatch order is defined by the state-machine graph above. The detail
       - Step 4: `Verify manifest list`
     - Job `ci-callback` — `Callback to ci.yml orchestrator`
       - Step 1: `Report current state to ci.yml`
-  - [`ci_dev_image.yml`](.github/workflows/ci_dev_image.yml) — workflow: `yubiOS dev/test image (swu2f, ADR-026)`
+  - [`ci_dev_image.yml`](../.github/workflows/ci_dev_image.yml) — workflow: `yubiOS dev/test image (swu2f, ADR-026)`
     - Job `build` — `build`
       - Step 1: `Checkout`
       - Step 2: `Resolve reproducible build environment`
@@ -422,7 +422,7 @@ The exact dispatch order is defined by the state-machine graph above. The detail
       - Step 5: `Verify manifest list`
     - Job `ci-callback` — `Callback to ci.yml orchestrator`
       - Step 1: `Report current state to ci.yml`
-  - [`ci_test-vm.yml`](.github/workflows/ci_test-vm.yml) — workflow: `yubiOS VM e2e (tests/vm)`
+  - [`ci_test-vm.yml`](../.github/workflows/ci_test-vm.yml) — workflow: `yubiOS VM e2e (tests/vm)`
     - Job `lint-vm-scripts` — `lint-vm-scripts`
       - Step 1: `Checkout`
       - Step 2: `shellcheck + bash -n on tests/vm/*.sh`
@@ -447,7 +447,7 @@ The exact dispatch order is defined by the state-machine graph above. The detail
       - Step 18: `Note hardware-only variant (lint-only in CI)`
     - Job `ci-callback` — `Callback to ci.yml orchestrator`
       - Step 1: `Report current state to ci.yml`
-  - [`ci_mkosi-installer.yml`](.github/workflows/ci_mkosi-installer.yml) — workflow: `yubiOS mkosi-installer`
+  - [`ci_mkosi-installer.yml`](../.github/workflows/ci_mkosi-installer.yml) — workflow: `yubiOS mkosi-installer`
     - Job `build` — `mkosi disk image — SoftHSM PKCS#11 signed UKI (${{ matrix.artifact_suffix }})`
       - Step 1: `Install git for checkout and reproducibility`
       - Step 2: `Checkout`
@@ -480,7 +480,7 @@ The exact dispatch order is defined by the state-machine graph above. The detail
     - Job `merge-manifest` — `Merge installer multi-arch manifest`
     - Job `ci-callback` — `Callback to ci.yml orchestrator`
       - Step 1: `Report current state to ci.yml`
-  - [`ci_test_pq_tls_verify.yml`](.github/workflows/ci_test_pq_tls_verify.yml) — workflow: `TEST - PQ hybrid TLS verification (ADR-025)`
+  - [`ci_test_pq_tls_verify.yml`](../.github/workflows/ci_test_pq_tls_verify.yml) — workflow: `TEST - PQ hybrid TLS verification (ADR-025)`
     - Job `pq-tls-verify` — `pq-tls-verify`
       - Step 1: `Checkout`
       - Step 2: `Resolve reproducible build environment`
@@ -499,7 +499,7 @@ The bootc filesystem workflow runs before the production build and resolves a
 published image tag to an immutable digest. It is deliberately classified as
 an external-image regression smoke, not a test of the checked-out commit.
 
-- [`ci_test_bootc-filesystem.yml`](.github/workflows/ci_test_bootc-filesystem.yml) — workflow: `TEST - bootc to-filesystem install e2e`
+- [`ci_test_bootc-filesystem.yml`](../.github/workflows/ci_test_bootc-filesystem.yml) — workflow: `TEST - bootc to-filesystem install e2e`
   - Job `install-to-filesystem` — `install-to-filesystem (${{ matrix.arch }})`, native amd64/arm64 matrix on fresh hosted VMs
     - Step 1: `Checkout`
     - Step 2: `Assert README install contract`
@@ -509,7 +509,7 @@ an external-image regression smoke, not a test of the checked-out commit.
     - Step 6: `Detach disposable target`
   - Job `ci-callback` — `Callback to ci.yml orchestrator`
     - Step 1: `Report current state to ci.yml`
-- [`ci_test_rootless-docker.yml`](.github/workflows/ci_test_rootless-docker.yml) — workflow: `TEST - Rootless Docker bootstrap validation`
+- [`ci_test_rootless-docker.yml`](../.github/workflows/ci_test_rootless-docker.yml) — workflow: `TEST - Rootless Docker bootstrap validation`
   - Job `rootless-docker` — native amd64/arm64 matrix inside the pinned privileged DHI container
     - Step 1: `Exercise rootless Docker bootstrap (${{ matrix.arch }})`
     - Step 2: `Verify rootless Docker across the step boundary (${{ matrix.arch }})`

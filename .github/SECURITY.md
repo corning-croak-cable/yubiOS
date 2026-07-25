@@ -15,7 +15,7 @@ yubiOS does not yet have a production-supported release. Published images and do
 | `dev` and `dev-<sha>` image tags | No production support | TEST-only software-authenticator images. Do not use for production or security claims. |
 | Historical PR/run artifacts | Not supported | Use only as dated evidence unless current docs explicitly promote them. |
 
-Security-relevant project status lives in [BLOCKERS.md](BLOCKERS.md), [MITIGATE.md](MITIGATE.md), [THREAT_MODEL.md](THREAT_MODEL.md), [TODO.md](TODO.md), and [PR.md](PR.md).
+Security-relevant project status lives in [BLOCKERS.md](../docs/BLOCKERS.md), [MITIGATE.md](../docs/MITIGATE.md), [THREAT_MODEL.md](../docs/THREAT_MODEL.md), [TODO.md](../docs/TODO.md), and [PR.md](../docs/PR.md).
 
 ## Reporting a Vulnerability
 

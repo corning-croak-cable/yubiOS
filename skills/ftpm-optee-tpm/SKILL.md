@@ -7,7 +7,7 @@ description: 'Build and integrate a firmware TPM 2.0 for yubiOS on ARM64: the Mi
 
 ## When to use
 
-The post-launch ARM64 project ([FUTURE.md](https://github.com/yubi-OS/yubiOS/blob/main/FUTURE.md))
+The post-launch ARM64 project ([FUTURE.md](https://github.com/yubi-OS/yubiOS/blob/main/docs/FUTURE.md))
 gives yubiOS a TPM 2.0 it **owns** on ARM64 hardware that has no discrete TPM.
 This skill covers the TPM itself (the OP-TEE Trusted Application). The firmware
 stack that hosts it (TF-A, OP-TEE OS, U-Boot) is the sibling skill

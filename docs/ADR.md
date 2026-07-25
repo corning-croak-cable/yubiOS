@@ -418,7 +418,7 @@ all `podman run` with `docker run`. The `Containerfile` syntax is identical.
 **Context:** The Containerfile previously used `quay.io/fedora/fedora-bootc:latest` -- a
 mutable tag that silently pulls different content on each build.
 
-**Decision:** Pin the base image by digest and use [PINNED.md](PINNED.md) as the live source of truth for the current digest.
+**Decision:** Pin the base image by digest and use [PINNED.md](../PINNED.md) as the live source of truth for the current digest.
 
 **Rationale:**
 - **Reproducibility.** A SHA256 digest is content-addressed and immutable.
@@ -432,9 +432,9 @@ mutable tag that silently pulls different content on each build.
 - Never revert to a mutable tag (`:latest`, `:45`) without a digest suffix.
 - When Fedora 46 is released and stable, open a separate ADR amendment to bump the major version.
 
-**Amendment (2026-07-07):** Historical digests in this ADR are not current pins. Do not copy digests from ADR text; [PINNED.md](PINNED.md) is the single source of truth.
+**Amendment (2026-07-07):** Historical digests in this ADR are not current pins. Do not copy digests from ADR text; [PINNED.md](../PINNED.md) is the single source of truth.
 
-**Amendment (2026-07-11):** The planning cycle removed old README/TODO language that treated run-specific digests as evergreen. Future docs should cite [PINNED.md](PINNED.md) rather than embedding digest examples unless they are explicitly marked as historical evidence.
+**Amendment (2026-07-11):** The planning cycle removed old README/TODO language that treated run-specific digests as evergreen. Future docs should cite [PINNED.md](../PINNED.md) rather than embedding digest examples unless they are explicitly marked as historical evidence.
 
 ---
 
@@ -506,7 +506,7 @@ ConditionSecurity=measured-os
 | `FileDescriptorStorePreserve=yes` | 261 |
 | `RestrictFileSystems=` | Existing `systemd.exec(5)` control; requires BPF LSM support for enforcement |
 
-**Immediate action after 2026-07-11 review:** Keep [PINNED.md](PINNED.md) as the package-floor source, add `ConditionSecurity=measured-os` where the corresponding service exists, and schedule a unit-hardening audit that treats `RestrictFileSystems=` and `RestrictFileSystemAccess=` as separate controls.
+**Immediate action after 2026-07-11 review:** Keep [PINNED.md](../PINNED.md) as the package-floor source, add `ConditionSecurity=measured-os` where the corresponding service exists, and schedule a unit-hardening audit that treats `RestrictFileSystems=` and `RestrictFileSystemAccess=` as separate controls.
 
 ---
 
@@ -675,7 +675,7 @@ ConditionSecurity=measured-os
 
 **Context:** A docs and research planning cycle reviewed current repo markdown, recent merged PRs, and upstream sources for systemd v261, OpenSSL 3.5, Go 1.24, bootc installation, and QEMU zstd EFI zboot. The review found repeated stale statements across docs.
 
-**Decision:** Use [refs/planning-cycle-2026-07-11.md](refs/planning-cycle-2026-07-11.md) as the evidence log for this cycle and update the docs around four consistency rules:
+**Decision:** Use [refs/planning-cycle-2026-07-11.md](../refs/planning-cycle-2026-07-11.md) as the evidence log for this cycle and update the docs around four consistency rules:
 
 1. `PINNED.md` is the live source for current image/tool digests.
 2. ARM64 is primary; x86-64 is supported secondary.
@@ -684,7 +684,7 @@ ConditionSecurity=measured-os
 
 **Consequences:** Future planning cycles should add dated refs and then update the source-of-truth docs that repeat the affected claims. Do not leave resolved blockers in `BLOCKERS.md` or active tasks in `TODO.md` merely for historical context.
 
-**Sources:** [refs/planning-cycle-2026-07-11.md](refs/planning-cycle-2026-07-11.md), [CITATION.md](CITATION.md).
+**Sources:** [refs/planning-cycle-2026-07-11.md](../refs/planning-cycle-2026-07-11.md), [CITATION.md](CITATION.md).
 
 ---
 
@@ -721,12 +721,12 @@ ConditionSecurity=measured-os
 
 **Decision:** Standardize publish-capable workflow builds on all of the following as one indivisible pattern:
 
-1. Run the job inside the digest-pinned DHI base recorded in [PINNED.md](PINNED.md). The outer container is privileged only because nested container and image-build operations require it; this is the Docker-in-Docker boundary, not a claim that the entire stack is rootless.
+1. Run the job inside the digest-pinned DHI base recorded in [PINNED.md](../PINNED.md). The outer container is privileged only because nested container and image-build operations require it; this is the Docker-in-Docker boundary, not a claim that the entire stack is rootless.
 2. Install the checksum-pinned Docker CLI, rootless extras, and Buildx binaries, create a dedicated unprivileged `docker-rootless` account, and run `dockerd-rootless.sh` on its user-owned socket and data directory.
 3. Create and explicitly select the user-scoped Buildx builder named `hardened`. No workflow may rely on an ambient/default builder, and the BuildKit daemon image must be pinned independently from the Buildx client.
-4. Invoke targets through [yubiOS-bake.hcl](yubiOS-bake.hcl), not ad hoc `docker buildx build` commands. Bake owns contexts, platforms, tag families, deterministic exporter settings, subject metadata, and the policy attachment shared by every image target. Provenance/SBOM attestations are verified as a separate envelope around the subject image.
-5. Keep [yubiOS.rego](yubiOS.rego) default-deny with `reset=true` and `strict=true`. The policy must reject unapproved registries and non-canonical external image references; every Bake target must inherit the common policy target.
-6. Pin GitHub Actions to full commit SHAs, container bases to OCI digests, source checkouts to immutable commit refs, and downloaded tools/blobs to a reviewed version plus checksum. [PINNED.md](PINNED.md) is the live manifest for those values. A workflow must fail rather than silently fall back to a moving tag, branch, unsigned download, faked firmware blob, or unverified alternate source.
+4. Invoke targets through [yubiOS-bake.hcl](../yubiOS-bake.hcl), not ad hoc `docker buildx build` commands. Bake owns contexts, platforms, tag families, deterministic exporter settings, subject metadata, and the policy attachment shared by every image target. Provenance/SBOM attestations are verified as a separate envelope around the subject image.
+5. Keep [yubiOS.rego](../yubiOS.rego) default-deny with `reset=true` and `strict=true`. The policy must reject unapproved registries and non-canonical external image references; every Bake target must inherit the common policy target.
+6. Pin GitHub Actions to full commit SHAs, container bases to OCI digests, source checkouts to immutable commit refs, and downloaded tools/blobs to a reviewed version plus checksum. [PINNED.md](../PINNED.md) is the live manifest for those values. A workflow must fail rather than silently fall back to a moving tag, branch, unsigned download, faked firmware blob, or unverified alternate source.
 7. Build each supported architecture natively where a runner exists, publish architecture-qualified staging tags, and create the public multi-architecture tag only after every required leg succeeds.
 
 ```mermaid
@@ -751,4 +751,4 @@ flowchart TD
 - Rootless-in-privileged-DHI reduces the privileges of the daemon and builder but does not erase the privileged outer-container risk. Secrets remain scoped to publish steps, and workflow permissions stay least-privilege.
 - Per-architecture staging tags are implementation artifacts. Board-neutral public tags are merged only after all required architectures pass; firmware remains board-scoped where payloads differ.
 
-**Evidence:** [refs/docker-bake-consolidation-2026-07-17.md](refs/docker-bake-consolidation-2026-07-17.md), [refs/ci-evidence-2026-07-21.md](refs/ci-evidence-2026-07-21.md), and [refs/reproducible-builds-2026-07-22.md](refs/reproducible-builds-2026-07-22.md).
+**Evidence:** [refs/docker-bake-consolidation-2026-07-17.md](../refs/docker-bake-consolidation-2026-07-17.md), [refs/ci-evidence-2026-07-21.md](../refs/ci-evidence-2026-07-21.md), and [refs/reproducible-builds-2026-07-22.md](../refs/reproducible-builds-2026-07-22.md).
