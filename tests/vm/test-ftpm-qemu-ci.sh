@@ -58,7 +58,15 @@ mkdir -p "$WORK" "$LOG_DIR"
 
 # ---- source the firmware from the published OCI artifact ----
 log "extract firmware from ${FIRMWARE_IMAGE}"
-podman pull "$FIRMWARE_IMAGE" >/dev/null || die "cannot pull ${FIRMWARE_IMAGE}"
+(
+  while true; do sleep 30; echo "... still pulling ${FIRMWARE_IMAGE} ($(date -u +%H:%M:%S))"; done
+) &
+HEARTBEAT_PID=$!
+podman pull "$FIRMWARE_IMAGE" >/dev/null
+PULL_RC=$?
+kill "$HEARTBEAT_PID" 2>/dev/null || true
+wait "$HEARTBEAT_PID" 2>/dev/null || true
+[[ "$PULL_RC" -eq 0 ]] || die "cannot pull ${FIRMWARE_IMAGE}"
 CID="$(podman create "$FIRMWARE_IMAGE" /bin/true)"
 [[ -n "$CID" ]] || die "podman create returned no container id"
 rm -rf "${WORK}/firmware"
@@ -131,7 +139,15 @@ test -s "${SCRIPT_DIR}/verify-tpm0-pcr-extend.sh" \
 
 DISK="${WORK}/yubios-ftpm.raw"
 rm -f "$DISK"
-if ! bcvk to-disk --disk-size 20G "$YUBIOS_IMAGE" "$DISK"; then
+(
+  while true; do sleep 30; echo "... still running bcvk to-disk for ${YUBIOS_IMAGE} ($(date -u +%H:%M:%S))"; done
+) &
+HEARTBEAT_PID=$!
+bcvk to-disk --disk-size 20G "$YUBIOS_IMAGE" "$DISK"
+TO_DISK_RC=$?
+kill "$HEARTBEAT_PID" 2>/dev/null || true
+wait "$HEARTBEAT_PID" 2>/dev/null || true
+if [[ "$TO_DISK_RC" -ne 0 ]]; then
   skip "bcvk to-disk could not install ${YUBIOS_IMAGE}; Stage B payload unavailable."
   exit 77
 fi

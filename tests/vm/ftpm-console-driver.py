@@ -63,7 +63,20 @@ def main() -> int:
         buf.extend(data)
         return True
 
-    def wait_for(needle: bytes, until: float) -> bool:
+    last_beat = time.time()
+
+    def wait_for(needle: bytes, until: float, label: str) -> bool:
+        nonlocal last_beat
+        while time.time() < until:
+            if needle in buf:
+                return True
+            if not pump():
+                return False
+            if time.time() - last_beat > 30:
+                remaining = int(until - time.time())
+                print(f"\n... still waiting for {label} ({remaining}s left)", file=sys.stderr)
+                last_beat = time.time()
+        return needle in buf
         while time.time() < until:
             if needle in buf:
                 return True
@@ -78,6 +91,14 @@ def main() -> int:
     # sitting at a prompt there is nothing left to print on its own.
     got_prompt = False
     while time.time() < deadline and not got_prompt:
+        pump()
+        if any(m in buf for m in PROMPT_MARKERS):
+            got_prompt = True
+            break
+        if time.time() - last_beat > 30:
+            remaining = int(deadline - time.time())
+            print(f"\n... still waiting for a shell prompt ({remaining}s left)", file=sys.stderr)
+            last_beat = time.time()
         pump()
         if any(m in buf for m in PROMPT_MARKERS):
             got_prompt = True
@@ -116,7 +137,7 @@ def main() -> int:
         f"echo {RC_MARKER.decode()}$?"
     )
 
-    if not wait_for(RC_MARKER, deadline):
+    if not wait_for(RC_MARKER, deadline, "the in-guest script's exit code"):
         print("\nSKIP: in-guest script never reported an exit code", file=sys.stderr)
         return SKIP
 
