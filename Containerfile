@@ -34,6 +34,7 @@ RUN dnf -y --setopt=history_record=false install \
       pcsc-lite-ccid \
       tpm2-tools \
       tpm2-tss \
+      bootupd \
       cryptsetup \
       openssh-clients \
       openssh-server \
