@@ -19,7 +19,7 @@ description: >-
 ## When to use
 
 Read this when working on the **post-launch ARM64 root-of-trust project**
-([FUTURE.md](https://github.com/yubi-OS/yubiOS/blob/main/FUTURE.md)). This skill
+([FUTURE.md](https://github.com/yubi-OS/yubiOS/blob/main/docs/FUTURE.md)). This skill
 covers the firmware/bootloader layers. The fTPM Trusted Application itself is in
 the sibling skill `ftpm-optee-tpm`.
 

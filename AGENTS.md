@@ -9,7 +9,7 @@ Warning: rate-limit GitHub API calls to avoid lockout. Batch independent reads, 
 1. Read this file first, then [PINNED.md](PINNED.md), then the task-specific docs or workflow files.
 2. Import any explicitly provided `SESSION_*.zip` artifacts before relying on old cache state.
 3. Re-scan relevant knowledge and skills for drift. Use `skill-creator` guidance when improving agent skill files, but do not copy full skill bodies into repo docs.
-4. Reassess [TODO.md](TODO.md), [BLOCKERS.md](BLOCKERS.md), and `refs/` notes when a planning or research task updates project state.
+4. Reassess [TODO.md](docs/TODO.md), [BLOCKERS.md](docs/BLOCKERS.md), and `refs/` notes when a planning or research task updates project state.
 
 ## Repository overview
 

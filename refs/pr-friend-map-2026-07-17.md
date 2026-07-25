@@ -6,7 +6,7 @@ Research date: 2026-07-17 UTC, which is 2026-07-16 PDT for the user context.
 
 Campaign mode: pre-launch, proof-first, build in public
 
-Related files: [PR.md](../PR.md), [refs/pr-campaign-research-2026-07-16.md](pr-campaign-research-2026-07-16.md), [TODO.md](../TODO.md), [BLOCKERS.md](../BLOCKERS.md), [SECURITY.md](../SECURITY.md)
+Related files: [PR.md](../docs/PR.md), [refs/pr-campaign-research-2026-07-16.md](pr-campaign-research-2026-07-16.md), [TODO.md](../docs/TODO.md), [BLOCKERS.md](../docs/BLOCKERS.md), [SECURITY.md](../.github/SECURITY.md)
 
 Canonical community home for now: https://github.com/yubi-OS/yubiOS/discussions
 
@@ -32,13 +32,13 @@ The right first move is relationship-led technical participation:
 - Link every ask to the current evidence, blockers, and limitations.
 - Route general curiosity to yubiOS Discussions instead of scattering support across unrelated venues.
 
-The campaign can safely pull owned-channel and upstream-participation knobs now. Earned media, Show HN, and broader launch language should wait for the physical-YubiKey and real-hardware evidence gates in [PR.md](../PR.md).
+The campaign can safely pull owned-channel and upstream-participation knobs now. Earned media, Show HN, and broader launch language should wait for the physical-YubiKey and real-hardware evidence gates in [PR.md](../docs/PR.md).
 
 ## Current readiness snapshot
 
 | Area | Status | PR implication |
 |---|---|---|
-| Campaign story | Ready for build-in-public framing | Use the identity-root/platform-root distinction from [PR.md](../PR.md). |
+| Campaign story | Ready for build-in-public framing | Use the identity-root/platform-root distinction from [PR.md](../docs/PR.md). |
 | Production claim | Not ready | Keep "groundwork", "experimental", and "technical preview" language. |
 | Physical YubiKey proof | Still a gate | Ask practitioners to review the flow before presenting it as proven production confidence. |
 | ARM64 Path A | Still a gate | Ask board and firmware people for help selecting and validating the first real-board proof. |
@@ -77,7 +77,7 @@ The campaign can safely pull owned-channel and upstream-participation knobs now.
 
 | Day | Action | Owner | Output | Stop condition |
 |---:|---|---|---|---|
-| 0 | Fix public claim hygiene and security intake | OMNI-AGENT | README and SECURITY changes | Stop if wording conflicts with [PR.md](../PR.md). |
+| 0 | Fix public claim hygiene and security intake | OMNI-AGENT | README and SECURITY changes | Stop if wording conflicts with [PR.md](../docs/PR.md). |
 | 1 | Publish this friend map | OMNI-AGENT | Dated ref under `refs/` | Stop if it implies endorsement or contact already happened. |
 | 2 | Open a GitHub issue to track PR kickoff outcomes | OMNI-AGENT | Issue with branch, PR, run status, and next steps | Stop if a matching issue already exists; update instead. |
 | 3-5 | Create a yubiOS Discussion for reviewer asks | Maintainer / OMNI-AGENT if Discussions tooling is available | One canonical "help review the trust boundary" thread | Stop if SECURITY/README changes are not merged. |
@@ -122,12 +122,12 @@ Review after the first two upstream touches and decide whether to continue, chan
 
 Internal sources:
 
-- [PR.md](../PR.md)
+- [PR.md](../docs/PR.md)
 - [refs/pr-campaign-research-2026-07-16.md](pr-campaign-research-2026-07-16.md)
 - [README.md](../README.md)
-- [TODO.md](../TODO.md)
-- [BLOCKERS.md](../BLOCKERS.md)
-- [SECURITY.md](../SECURITY.md)
+- [TODO.md](../docs/TODO.md)
+- [BLOCKERS.md](../docs/BLOCKERS.md)
+- [SECURITY.md](../.github/SECURITY.md)
 
 External first-party/community sources, accessed 2026-07-17:
 

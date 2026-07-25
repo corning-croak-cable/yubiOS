@@ -1,6 +1,6 @@
 [Unit]
 Description=yubiOS first-boot firmware validation (CHIPSEC)
-Documentation=https://github.com/yubi-OS/yubiOS/blob/main/ADR.md#adr-024-chipsec-first-boot-firmware-validation-as-a-portable-service
+Documentation=https://github.com/yubi-OS/yubiOS/blob/main/docs/ADR.md#adr-024-chipsec-first-boot-firmware-validation-as-a-portable-service
 ConditionSecurity=measured-os
 ConditionFirstBoot=yes
 Before=yubiOS-enroll.service

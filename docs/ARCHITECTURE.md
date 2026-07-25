@@ -3,7 +3,7 @@
 Last reviewed: 2026-07-22
 Status: planning baseline for `main`; ARM64 is primary, x86-64 is secondary and supported.
 
-This document describes the current yubiOS architecture at the level needed for planning, review, and CI triage. Normative requirements live in [SPEC.md](SPEC.md), decisions live in [ADR.md](ADR.md), pinned inputs live in [PINNED.md](PINNED.md), and threat coverage lives in [MITIGATE.md](MITIGATE.md).
+This document describes the current yubiOS architecture at the level needed for planning, review, and CI triage. Normative requirements live in [SPEC.md](SPEC.md), decisions live in [ADR.md](ADR.md), pinned inputs live in [PINNED.md](../PINNED.md), and threat coverage lives in [MITIGATE.md](MITIGATE.md).
 
 ## Thesis
 
@@ -300,7 +300,7 @@ also requires a Secure Boot boot test and a negative tamper test; offline
 installation alone cannot prove the seal.
 
 The command audit, current version gap, and promotion contract are recorded in
-[the 2026-07-22 composefs research note](refs/bootc-composefs-sealed-flow-2026-07-22.md).
+[the 2026-07-22 composefs research note](../refs/bootc-composefs-sealed-flow-2026-07-22.md).
 
 ```mermaid
 graph LR
@@ -419,7 +419,7 @@ legacy packages| NS["systemd-nspawn\n\nExamples: Debian dev container\nRPM compa
 
 ## Current Research Notes
 
-The current evidence notes are [refs/bootc-composefs-sealed-flow-2026-07-22.md](refs/bootc-composefs-sealed-flow-2026-07-22.md) for the composefs build and seal boundary, [refs/ci-evidence-2026-07-21.md](refs/ci-evidence-2026-07-21.md) for the broader workflow state, and [refs/systemd-upstream-progress-2026-07-21.md](refs/systemd-upstream-progress-2026-07-21.md) for the dated upstream snapshot. Historical planning context remains in [refs/planning-cycle-2026-07-11.md](refs/planning-cycle-2026-07-11.md).
+The current evidence notes are [refs/bootc-composefs-sealed-flow-2026-07-22.md](../refs/bootc-composefs-sealed-flow-2026-07-22.md) for the composefs build and seal boundary, [refs/ci-evidence-2026-07-21.md](../refs/ci-evidence-2026-07-21.md) for the broader workflow state, and [refs/systemd-upstream-progress-2026-07-21.md](../refs/systemd-upstream-progress-2026-07-21.md) for the dated upstream snapshot. Historical planning context remains in [refs/planning-cycle-2026-07-11.md](../refs/planning-cycle-2026-07-11.md).
 
 ## Open Edges
 

@@ -2,7 +2,7 @@
 
 Version 0.4 - 2026-07-16 - Status: pre-launch, tracks `main`
 
-This document defines the normative surface for yubiOS. Architecture rationale lives in [ARCHITECTURE.md](ARCHITECTURE.md), accepted decisions live in [ADR.md](ADR.md), threat coverage lives in [MITIGATE.md](MITIGATE.md), and pinned inputs live in [PINNED.md](PINNED.md).
+This document defines the normative surface for yubiOS. Architecture rationale lives in [ARCHITECTURE.md](ARCHITECTURE.md), accepted decisions live in [ADR.md](ADR.md), threat coverage lives in [MITIGATE.md](MITIGATE.md), and pinned inputs live in [PINNED.md](../PINNED.md).
 
 The key words MUST, MUST NOT, SHOULD, and MAY are to be interpreted as described in RFC 2119.
 
@@ -21,7 +21,7 @@ Out of scope: application-level security, hardware below an unowned firmware bou
 3. `/usr` MUST be immutable and verified through composefs, erofs, and dm-verity.
 4. OS updates MUST NOT require disk-unlock re-enrollment. LUKS2 enrollments use FIDO2 hmac-secret rather than TPM PCR-hash policies.
 5. Physical presence MUST be required for unlock and privileged identity actions.
-6. Build inputs MUST be digest-pinned in [PINNED.md](PINNED.md), and policy gates MUST reject mutable base references.
+6. Build inputs MUST be digest-pinned in [PINNED.md](../PINNED.md), and policy gates MUST reject mutable base references.
 7. Security exceptions MUST be narrow, documented, and scoped to the service that needs them.
 
 ## 3. Trust Model
@@ -83,7 +83,7 @@ The 2026-07-11 research cycle corrected a prior wording issue: `RestrictFileSyst
 
 | Area | Required evidence |
 |---|---|
-| Base image | Current digest and package/tool floor in [PINNED.md](PINNED.md) |
+| Base image | Current digest and package/tool floor in [PINNED.md](../PINNED.md) |
 | UKI signing | `systemd-sbsign` or CI SoftHSM equivalent plus `sbverify` assertion |
 | LUKS2/FIDO2 | Real or swu2f-backed boot test, clearly labeled by trust level |
 | ARM64 secure world | QEMU and then real-board evidence before production claims |
@@ -92,7 +92,7 @@ The 2026-07-11 research cycle corrected a prior wording issue: `RestrictFileSyst
 
 ## 11. Current Planning Pointer
 
-The active documentation and research cycle is recorded in [refs/planning-cycle-2026-07-11.md](refs/planning-cycle-2026-07-11.md). Future planning cycles SHOULD add a new dated note rather than silently changing historical references.
+The active documentation and research cycle is recorded in [refs/planning-cycle-2026-07-11.md](../refs/planning-cycle-2026-07-11.md). Future planning cycles SHOULD add a new dated note rather than silently changing historical references.
 
 # yubiOS Specification - Details
 
@@ -113,7 +113,7 @@ Out of scope: application-level security, hardware below the UEFI firmware bound
 3. **Immutability.** The OS ships as a read-only, dm-verity-protected image. The running system MUST NOT be able to modify `/usr`. (ADR-007)
 4. **Update-survivability.** OS updates MUST NOT invalidate disk-unlock enrollments. This is why LUKS2 binds to FIDO2 hmac-secret, not TPM PCR hashes. (ADR-011)
 5. **Physical presence.** Unlocking secrets MUST require YubiKey touch (and PIN where supported). No silent decryption. (ADR-003)
-6. **Auditable supply chain.** Every build input MUST be digest-pinned ([PINNED.md](PINNED.md)) and pass the OPA/Rego build policy ([yubiOS.rego](yubiOS.rego)) before any layer executes. Published images MUST carry SLSA provenance and SBOM attestations. (ADR-014/015)
+6. **Auditable supply chain.** Every build input MUST be digest-pinned ([PINNED.md](../PINNED.md)) and pass the OPA/Rego build policy ([yubiOS.rego](../yubiOS.rego)) before any layer executes. Published images MUST carry SLSA provenance and SBOM attestations. (ADR-014/015)
 
 ## 3. Trust model
 
@@ -177,7 +177,7 @@ owner-owned-hardware-root-of-trust goal is fully realized (ADR-023).
 ### 4.1 Image and delivery
 
 - **Format:** bootc OCI image (primary, `docker.io/0mniteck/yubios`, multi-arch amd64+arm64, `:latest` + immutable `:<commit-sha>`) and mkosi disk image (particleos-style UKI + verity, `mkosi --profile yubios`). Both consume the same `usr/` overlay tree and MUST behave identically at runtime (ADR-006).
-- **Base:** `quay.io/fedora/fedora-bootc:45`, digest-pinned; the current digest lives in [PINNED.md](PINNED.md) only (ADR-015).
+- **Base:** `quay.io/fedora/fedora-bootc:45`, digest-pinned; the current digest lives in [PINNED.md](../PINNED.md) only (ADR-015).
 - **Build:** rootless Docker Buildx, `--policy reset=true,strict=true,filename=yubiOS.rego`, `--attest type=provenance,mode=max --attest type=sbom` (ADR-014).
 
 ### 4.2 Partition layout (DPS, no /etc/fstab)
@@ -277,4 +277,4 @@ not here.
 
 *No TPM. No OEM. No trust anchors you don't control.*
 
-Internal references: [README.md](README.md) · [ARCHITECTURE.md](ARCHITECTURE.md) · [ADR.md](ADR.md) · [MITIGATE.md](MITIGATE.md) · [FUTURE.md](FUTURE.md) · [MISSION.md](MISSION.md) · [PINNED.md](PINNED.md) · [ONBOARDING.md](ONBOARDING.md)
+Internal references: [README.md](../README.md) · [ARCHITECTURE.md](ARCHITECTURE.md) · [ADR.md](ADR.md) · [MITIGATE.md](MITIGATE.md) · [FUTURE.md](FUTURE.md) · [MISSION.md](MISSION.md) · [PINNED.md](../PINNED.md) · [ONBOARDING.md](ONBOARDING.md)

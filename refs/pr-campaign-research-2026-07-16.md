@@ -2,7 +2,7 @@
 
 Status: completed research snapshot
 
-Deliverable: [PR.md](../PR.md)
+Deliverable: [PR.md](../docs/PR.md)
 
 Repository commit reviewed: `6ff2b98a17cc5ff7c2a2142aa2ca6f1bdbe33f4c`
 

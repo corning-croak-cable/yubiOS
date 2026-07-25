@@ -10,7 +10,7 @@ yubiOS is built, reviewed, and tested with heavy AI assistance. That is the poin
 
 The answer is structural, not procedural. Nothing in yubiOS asks you to trust an author, human or machine. Every layer is verified before it runs:
 
-- Every base image and CI action is digest-pinned ([PINNED.md](PINNED.md)); mutable tags are rejected by build policy ([yubiOS.rego](yubiOS.rego)).
+- Every base image and CI action is digest-pinned ([PINNED.md](../PINNED.md)); mutable tags are rejected by build policy ([yubiOS.rego](../yubiOS.rego)).
 - Every build passes an OPA/Rego supply-chain gate before a single layer executes, and ships with SLSA provenance and SBOM attestations.
 - Every byte of `/usr` is validated on read by dm-verity; every UKI is signed by a key on hardware the owner physically holds.
 - Every architectural decision is recorded with rationale and sources ([ADR.md](ADR.md)), and every attack surface is mapped to a control ([MITIGATE.md](MITIGATE.md)).
@@ -50,7 +50,7 @@ ARM64 is the primary platform because it is where yubiOS can realistically own t
 - Immutable means auditable. `/usr` is verified; mutable state is explicit.
 - Test-only tools must never quietly ship in production artifacts.
 - Every security exception must be narrow, documented, and removable.
-- Historical evidence is not a current pin. [PINNED.md](PINNED.md) is the live source of truth for digests.
+- Historical evidence is not a current pin. [PINNED.md](../PINNED.md) is the live source of truth for digests.
 
 ## What Success Looks Like
 
@@ -61,4 +61,4 @@ ARM64 is the primary platform because it is where yubiOS can realistically own t
 
 ## Planning Discipline
 
-Substantial planning and research cycles should leave a dated note under `refs/`. The current cycle is [refs/planning-cycle-2026-07-11.md](refs/planning-cycle-2026-07-11.md), which records the latest consistency corrections and research sources.
+Substantial planning and research cycles should leave a dated note under `refs/`. The current cycle is [refs/planning-cycle-2026-07-11.md](../refs/planning-cycle-2026-07-11.md), which records the latest consistency corrections and research sources.

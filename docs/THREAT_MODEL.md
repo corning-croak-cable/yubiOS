@@ -2,7 +2,7 @@
 
 Status: repository-scoped planning baseline for `main`
 
-This threat model is derived primarily from [ARCHITECTURE.md](ARCHITECTURE.md) and [MITIGATE.md](MITIGATE.md), with normative invariants cross-checked against [SPEC.md](SPEC.md) and supply-chain pinning rules cross-checked against [PINNED.md](PINNED.md). It models the intended system and explicitly distinguishes documented controls from controls that still need hardware or implementation validation. It is not evidence that every control is implemented correctly.
+This threat model is derived primarily from [ARCHITECTURE.md](ARCHITECTURE.md) and [MITIGATE.md](MITIGATE.md), with normative invariants cross-checked against [SPEC.md](SPEC.md) and supply-chain pinning rules cross-checked against [PINNED.md](../PINNED.md). It models the intended system and explicitly distinguishes documented controls from controls that still need hardware or implementation validation. It is not evidence that every control is implemented correctly.
 
 ## Overview
 

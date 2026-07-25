@@ -291,7 +291,7 @@ This document maps the main yubiOS threat surfaces to current mitigations and op
 | Disk theft | LUKS2 root/swap with FIDO2 hmac-secret, PIN, touch, and offline recovery key | An attacker with both YubiKey and PIN can unlock |
 | Silent disk decryption | FIDO2 physical presence and PIN | Malware running after unlock can access mounted plaintext while the session is active |
 | Mutable `/usr` tampering | composefs over erofs with dm-verity and signed UKI command line | Firmware or kernel compromise can subvert checks below Linux |
-| Malicious base image drift | Digest pins in [PINNED.md](PINNED.md), build policy, provenance/SBOM | Pins require active refresh for security fixes |
+| Malicious base image drift | Digest pins in [PINNED.md](../PINNED.md), build policy, provenance/SBOM | Pins require active refresh for security fixes |
 | Secure Boot key substitution | Owner-enrolled db key, PIV-backed signing, `sbverify` in CI | OEM firmware behavior is still trusted on x86-64 |
 | TPM-bound update lockout | FIDO2 hmac-secret avoids PCR-hash-bound LUKS unlock | FIDO2 does not prove which OS asked for the secret |
 | Weak local auth | pam-u2f >= 1.3.1, `required` PAM flow | Emergency recovery paths must remain guarded and documented |
@@ -342,4 +342,4 @@ Use `RestrictFileSystems=` when a filesystem-type allow/deny policy is appropria
 
 ## Current Follow-Up
 
-The active inconsistency and mitigation cleanup log is [refs/planning-cycle-2026-07-11.md](refs/planning-cycle-2026-07-11.md). It records the research sources used for the systemd, PQ TLS, bootc, and QEMU corrections.
+The active inconsistency and mitigation cleanup log is [refs/planning-cycle-2026-07-11.md](../refs/planning-cycle-2026-07-11.md). It records the research sources used for the systemd, PQ TLS, bootc, and QEMU corrections.
