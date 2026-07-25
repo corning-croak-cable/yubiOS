@@ -22,7 +22,7 @@ The original idea was to enable `systemd-tpm2-swtpm.service` in the guest. In pr
 
 ## yubiOS side
 
-- `assets/ci/vm-swtpm.conf` remains a documented drop-in for VM-only coverage experiments.
+- `vm-swtpm.conf` (now in yubi-OS/assets:ci/vm-swtpm.conf, moved 2026-07-25) remains a documented drop-in for VM-only coverage experiments.
 - VM tests should assert TPM presence and measured-boot gates, but stay honest about DirectBoot limitations.
 
 ## Done condition

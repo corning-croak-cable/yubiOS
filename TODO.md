@@ -43,7 +43,7 @@ Use this map to keep [FUTURE.md](FUTURE.md) roadmap entries tied to active TODO 
 - [x] Switch the active install docs from `bootc install to-disk` to `bootc install to-filesystem --root-mount-spec=""` so DPS auto-discovery remains explicit.
 - [x] Keep future planning cycles dated and scoped under `refs/`: see the 2026-07-17 SecTime, Frost, OpenWrt, roadmap-gate, hardening, ARM64 board, and firmware workflow refs.
 - [x] Record the complete requested-run review separately from green/red workflow status: [refs/ci-evidence-2026-07-21.md](refs/ci-evidence-2026-07-21.md).
-- [x] Add a dated systemd-family upstream snapshot and area-scaled contributor map: [refs/systemd-upstream-progress-2026-07-21.md](refs/systemd-upstream-progress-2026-07-21.md) and [assets/upstream-contributor-bubbles.svg](assets/upstream-contributor-bubbles.svg).
+- [x] Add a dated systemd-family upstream snapshot and area-scaled contributor map: [refs/systemd-upstream-progress-2026-07-21.md](refs/systemd-upstream-progress-2026-07-21.md) and [assets/upstream-contributor-bubbles.svg](https://github.com/yubi-OS/assets/blob/main/upstream-contributor-bubbles.svg).
 - [x] Audit the attached EROFS/bootc proposal against released bootc and composefs behavior, correct the practical split/ukify flow, and separate native bootc composefs from the mkosi dm-verity path: [refs/bootc-composefs-sealed-flow-2026-07-22.md](refs/bootc-composefs-sealed-flow-2026-07-22.md).
 - [ ] Reconcile the remaining composefs/dm-verity conflation in normative ADR, SPEC, threat-model, and mitigation text after the two build paths and migration policy are approved.
 

@@ -4,7 +4,7 @@ Status: dated research snapshot; not a replacement for `PINNED.md`
 
 This review covers the upstreams most directly coupled to yubiOS's systemd image, update, boot, and OCI delivery model: `systemd/systemd`, `systemd/mkosi`, `systemd/particleos`, `containers/composefs`, and `bootc-dev/bootc`. It separates merged work from open proposals and records exact snapshot commits so later reviews can reproduce the comparison.
 
-![Bubble map of leading upstream contributors](../assets/upstream-contributor-bubbles.svg)
+![Bubble map of leading upstream contributors](https://raw.githubusercontent.com/yubi-OS/assets/main/upstream-contributor-bubbles.svg)
 
 ## Snapshot and method
 

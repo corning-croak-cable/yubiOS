@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/yubi-OS/yubiOS/main/assets/logo.png" alt="yubiOS logo" width="220" style="border-radius:16px;"/>
+<img src="https://raw.githubusercontent.com/yubi-OS/assets/main/logo.png" alt="yubiOS logo" width="220" style="border-radius:16px;"/>
 
 # yubiOS
 
@@ -229,7 +229,7 @@ yubiOS/
 │   ├── workflows/                  # CI, refresh, publish, firmware, VM/e2e, integration lanes
 │   ├── patches/                    # pinned CI-only compatibility patches
 │   └── ISSUE_TEMPLATE/             # bug and feature intake templates
-├── assets/                         # logo, campaign media, README HTML, and contributor map
+└── (assets moved to yubi-OS/assets — logo, campaign media, README HTML, contributor map)
 ├── mkosi.conf                      # primary mkosi build definition
 ├── mkosi.conf.d/                   # desktop, minimal, Surface, Chipsec, and test profiles
 ├── refs/                           # dated research notes, planning cycles, implementation specs
