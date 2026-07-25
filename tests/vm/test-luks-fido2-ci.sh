@@ -201,7 +201,7 @@ g 'systemctl is-active systemd-homed.service >/dev/null' || die "systemd-homed n
 log "systemd-homed: FIDO2-backed home create + authenticate"
 g 'set -e
    PASSWORD=ignored NEWPASSWORD= homectl create citest \
-     --storage=luks --fido2-device=auto
+     --storage=luks --fido2-device=auto --enforce-password-policy=no
    homectl inspect citest | grep -qi fido2
    homectl remove citest' \
   || die "homed FIDO2 home create/inspect failed"
