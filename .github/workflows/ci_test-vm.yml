@@ -509,7 +509,7 @@ jobs:
           bcvk_ssh "$VMID" bash -c "echo ${SCRIPT_B64} | base64 -d > /tmp/verify-tpm0-pcr-extend.sh && chmod +x /tmp/verify-tpm0-pcr-extend.sh && /tmp/verify-tpm0-pcr-extend.sh"
           SCRIPT
           chmod +x /tmp/verify-tpm0-real.sh
-          sudo env "PATH=$PATH" "YUBIOS_IMAGE=${YUBIOS_IMAGE}" bash /tmp/verify-tpm0-real.sh \
+          sudo env "PATH=$PATH:/usr/sbin:/sbin" "YUBIOS_IMAGE=${YUBIOS_IMAGE}" bash /tmp/verify-tpm0-real.sh \
             || { echo "::error::verify-tpm0-pcr-extend.sh failed against real hardware /dev/tpm0"; exit 1; }
           echo "### vm-e2e (${{ matrix.arch }}) -- PASS: verify-tpm0-pcr-extend.sh, real hardware /dev/tpm0 (fTPM)" >> "$GITHUB_STEP_SUMMARY"
 
@@ -534,7 +534,7 @@ jobs:
           SCRIPT
           chmod +x /tmp/verify-tpm0-swtpm.sh
           set +e
-          OUTPUT="$(sudo env "PATH=$PATH" "YUBIOS_IMAGE=${YUBIOS_IMAGE}" bash /tmp/verify-tpm0-swtpm.sh 2>&1)"
+          OUTPUT="$(sudo env "PATH=$PATH:/usr/sbin:/sbin" "YUBIOS_IMAGE=${YUBIOS_IMAGE}" bash /tmp/verify-tpm0-swtpm.sh 2>&1)"
           rc=$?
           set -e
           echo "$OUTPUT"
@@ -597,7 +597,7 @@ jobs:
           sudo chmod 0777 /tmp/yubios-vm-e2e-logs
           echo "Running test-luks-fido2-ci.sh against image: ${YUBIOS_IMAGE:-./mkosi.output/yubiOS}"
           set +e
-          sudo env "PATH=$PATH" "YUBIOS_IMAGE=${YUBIOS_IMAGE:-./mkosi.output/yubiOS}" "BCVK_EPHEMERAL_EXTRA_ARGS=${BCVK_EPHEMERAL_EXTRA_ARGS:-}" "YUBIOS_SSH_WAIT_SECS=${YUBIOS_SSH_WAIT_SECS:-300}" bash tests/vm/test-luks-fido2-ci.sh
+          sudo env "PATH=$PATH:/usr/sbin:/sbin" "YUBIOS_IMAGE=${YUBIOS_IMAGE:-./mkosi.output/yubiOS}" "BCVK_EPHEMERAL_EXTRA_ARGS=${BCVK_EPHEMERAL_EXTRA_ARGS:-}" "YUBIOS_SSH_WAIT_SECS=${YUBIOS_SSH_WAIT_SECS:-300}" bash tests/vm/test-luks-fido2-ci.sh
           rc=$?
           set -e
           if [ "$rc" -ne 0 ]; then
@@ -636,7 +636,7 @@ jobs:
           sudo mkdir -p /tmp/yubios-vm-e2e-logs
           sudo chmod 0777 /tmp/yubios-vm-e2e-logs
           set +e
-          sudo env "PATH=$PATH" "YUBIOS_IMAGE=${YUBIOS_IMAGE:-./mkosi.output/yubiOS}" "BCVK_EPHEMERAL_EXTRA_ARGS=${BCVK_EPHEMERAL_EXTRA_ARGS:-}" "YUBIOS_SSH_WAIT_SECS=${YUBIOS_SSH_WAIT_SECS:-300}" bash tests/vm/test-fido2-enrollment.sh
+          sudo env "PATH=$PATH:/usr/sbin:/sbin" "YUBIOS_IMAGE=${YUBIOS_IMAGE:-./mkosi.output/yubiOS}" "BCVK_EPHEMERAL_EXTRA_ARGS=${BCVK_EPHEMERAL_EXTRA_ARGS:-}" "YUBIOS_SSH_WAIT_SECS=${YUBIOS_SSH_WAIT_SECS:-300}" bash tests/vm/test-fido2-enrollment.sh
           rc=$?
           set -e
           if [ "$rc" -ne 0 ]; then
