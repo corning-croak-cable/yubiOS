@@ -128,8 +128,11 @@ case "$SOCK_MODE" in
 esac
 
 log "attach QEMU as the vfio-user client"
+# -S keeps the vCPU paused: PCI device realize (and therefore the whole
+# VERSION/GET_INFO/REGION_INFO handshake) still happens at init, but no guest code
+# runs, so this needs no kernel, no firmware and no disk.
 "$QEMU_BIN" \
-  -M "$QEMU_MACHINE" -cpu max -m 512 \
+  -M "$QEMU_MACHINE" -cpu max -m 512 -S \
   -display none -nographic -no-reboot \
   -device "{\"driver\":\"vfio-user-pci\",\"socket\":{\"path\":\"${SOCK}\",\"type\":\"unix\"}}" \
   >"$CLIENT_LOG" 2>&1 &

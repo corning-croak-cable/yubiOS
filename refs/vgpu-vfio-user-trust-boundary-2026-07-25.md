@@ -123,17 +123,38 @@ self-hosted rock1 leg is the only place a guest actually boots.
   driver, and the negative VFIO surface. SKIPs 77 (naming the gap) when the
   pinned bcvk exposes no QEMU-argument passthrough.
 - `tests/vm/test-vfio-user-host-ci.sh` — QEMU version + `vfio-user-pci` probe,
-  then a real client/server handshake against a libvfio-user sample server when
-  one is available (`VFIO_USER_SERVER`), asserting socket mode `0600` and that no
-  kernel `vfio` module was loaded. SKIPs 77 otherwise.
+  then a real client/server handshake against a libvfio-user sample server
+  (`VFIO_USER_SERVER`), asserting socket mode `0600` and that no kernel `vfio`
+  module was loaded. QEMU runs with `-S`, so PCI realize (and the whole
+  VERSION/GET_INFO/REGION_INFO negotiation) happens with no guest code running —
+  no kernel, no firmware, no disk needed.
+- Both dependencies are provisioned in-run by `ci_test-vgpu-vm.yml`, cached under
+  `/opt` keyed by pinned commit, same pattern as the zstd QEMU build:
+  - **bcvk `--extra-qemu-arg`** — a CI patch applied to the pinned bcvk source
+    before `cargo build`, in the same perl-regex style as the existing privileged
+    / CAP_SYS_ADMIN / ed25519 / DirectBoot-SSH patches. It adds
+    `extra_qemu_args: Vec<String>` to `QemuConfig` (emitted verbatim onto the
+    emulator command line), a repeatable `--extra-qemu-arg` clap option on
+    `RunEphemeralOpts`, and the wiring between them. `RunEphemeralOpts` already
+    derives `Serialize`/`Deserialize` and is handed to the in-container process as
+    JSON, so the new field crosses that boundary for free. The cache prefix is
+    `-vgpu1`-suffixed so the unpatched binary built by `ci_test-vm.yml` is never
+    reused. If a hunk stops applying, the step SKIPs instead of shipping a bcvk
+    that silently ignores the flag. Upstreaming it into `yubi-OS/bcvk` retires the
+    patch.
+  - **libvfio-user** — built from pinned `nutanix/libvfio-user`
+    `37491ed9af828fc161238dacd82e83ea35a09f87` (2026-07-23, BSD-3-Clause) with
+    meson/ninja, staging `samples/gpio-pci-idio-16` plus `libvfio-user.so*`, then
+    smoke-checking that the staged binary actually opens a socket before the test
+    leg is allowed to depend on it. That sample is the server the upstream
+    `docs/qemu.md` walkthrough uses, and it takes `[-Rv] <socketpath>`.
 
 ## 5. Open questions
 
-- Does the pinned bcvk expose any path to add a QEMU device to an ephemeral run?
-  If not, a `yubi-OS/bcvk` change (`--extra-qemu-arg`) is the cleanest fix and the
-  guest leg stays SKIP until then.
-- Where does the libvfio-user sample server come from in CI: build from source in
-  the workflow, or publish it in a firmware-style OCI bundle like
-  `0mniteck/yubios:firmware-qemu-arm64`? Bundle is cheaper per run.
+- Should `--extra-qemu-arg` be a real `yubi-OS/bcvk` PR rather than a CI patch? The
+  patch is four small hunks and self-verifying, but it is still a fork-in-CI.
+- Build libvfio-user per run (current: pinned source + meson, cached under `/opt`)
+  or publish it in a firmware-style OCI bundle like
+  `0mniteck/yubios:firmware-qemu-arm64`? The bundle is cheaper per cold runner.
 - Do we want a bare-metal passthrough lab leg at all before launch, or is
   "passthrough is out of scope for v1, and here is why" the shipped position?

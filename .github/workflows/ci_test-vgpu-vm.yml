@@ -274,7 +274,7 @@ jobs:
           BCVK_REF=a9303e77dc902a0ff3b547103a7511b5164a450b # yubios branch (bcvk PR #1+#2+#7 combined); see PINNED.md
           # rock1 is self-hosted and persistent -- cache the built binary under
           # /opt keyed by the pinned commit, same pattern as qemu-zstd above.
-          BCVK_PREFIX="/opt/bcvk/${BCVK_REF}"
+          BCVK_PREFIX="/opt/bcvk/${BCVK_REF}-vgpu1" # -vgpu1 = with the --extra-qemu-arg CI patch below
           BCVK_SRC=/opt/bcvk-src
           if [ -x "${BCVK_PREFIX}/bin/bcvk" ]; then
             echo "skip=0" >> "$GITHUB_OUTPUT"
@@ -327,6 +327,38 @@ jobs:
           # tmpfiles and the yubiOS root-only helper accept the same data.
           grep -Fq -- 'io.systemd.credential.binary:tmpfiles.extra={encoded}' "$BCVK_SRC/crates/bcvk-qemu/src/credentials.rs" \
             || { echo "::error::bcvk no longer exposes the documented tmpfiles.extra root SSH credential path"; exit 1; }
+          # --- CI patch: bcvk --extra-qemu-arg -------------------------------
+          # bcvk has no way to add a QEMU device to an ephemeral run, so the guest
+          # vGPU leg would have nothing to attach. RunEphemeralOpts already derives
+          # Serialize/Deserialize and is handed to the in-container process as JSON,
+          # so a new Vec<String> field crosses that boundary for free. Same perl-regex
+          # style as the patches above: order-independent, no line numbers, verified
+          # by grep. If any hunk stops applying, this step SKIPs rather than shipping
+          # a bcvk that silently ignores the flag.
+          QEMU_RS="$BCVK_SRC/crates/bcvk-qemu/src/qemu.rs"
+          EPH_RS="$BCVK_SRC/crates/kit/src/run_ephemeral.rs"
+          if ! grep -Fq -- 'pub extra_qemu_args' "$QEMU_RS"; then
+            perl -0pi -e 's/(    \/\/\/ Optional software TPM \(swtpm\) backing the QEMU emulator TPM device\.)/    \/\/\/ Raw QEMU arguments appended verbatim to the emulator command line.\n    \/\/\/ CI-only escape hatch (ci_test-vgpu-vm.yml attaches a virtio-gpu device).\n    pub extra_qemu_args: Vec<String>,\n\n$1/' "$QEMU_RS"
+            perl -0pi -e 's/(    \/\/ Configure stdio based on display mode)/    \/\/ Raw pass-through QEMU arguments (CI vGPU device attach).\n    for arg in &config.extra_qemu_args {\n        cmd.arg(arg);\n    }\n\n$1/' "$QEMU_RS"
+          fi
+          if ! grep -Fq -- 'extra-qemu-arg' "$EPH_RS"; then
+            perl -0pi -e 's/(    pub kernel_args: Vec<String>,\n)/$1\n    #[clap(\n        long = "extra-qemu-arg",\n        value_name = "ARG",\n        help = "Pass a raw argument straight through to QEMU (repeatable)"\n    )]\n    #[serde(default)]\n    pub extra_qemu_args: Vec<String>,\n/' "$EPH_RS"
+            perl -0pi -e 's/(    qemu_config\.set_console\(opts\.common\.console\);)/    for arg in &opts.extra_qemu_args {\n        qemu_config.extra_qemu_args.push(arg.clone());\n    }\n\n$1/' "$EPH_RS"
+          fi
+          patched=1
+          grep -Fq -- 'pub extra_qemu_args' "$QEMU_RS" || patched=0
+          grep -Fq -- 'for arg in &config.extra_qemu_args' "$QEMU_RS" || patched=0
+          grep -Fq -- 'extra-qemu-arg' "$EPH_RS" || patched=0
+          grep -Fq -- 'qemu_config.extra_qemu_args.push' "$EPH_RS" || patched=0
+          if [ "$patched" -ne 1 ]; then
+            echo "skip=1" >> "$GITHUB_OUTPUT"
+            echo "::warning::SKIP: the bcvk --extra-qemu-arg CI patch no longer applies (upstream source moved); the guest vGPU leg has no way to attach a device"
+            echo "### vgpu-vm-e2e (${{ matrix.arch }}) -- SKIP: bcvk --extra-qemu-arg patch did not apply" >> "$GITHUB_STEP_SUMMARY"
+            sudo rm -rf "$BCVK_SRC"
+            exit 0
+          fi
+          echo "applied bcvk --extra-qemu-arg CI patch"
+          # -------------------------------------------------------------------
           ( cd "$BCVK_SRC" && cargo test --release -p bcvk-qemu test_karg_for_root_ssh && cargo build --release )
           if [ ! -x "$BCVK_SRC/target/release/bcvk" ]; then
             echo "skip=1" >> "$GITHUB_OUTPUT"
@@ -491,6 +523,72 @@ jobs:
           echo "blockdev: $(command -v blockdev || echo /usr/sbin/blockdev)"
           echo "ok=1" >> "$GITHUB_OUTPUT"
 
+      # -- libvfio-user: the vfio-user device SERVER half. Built from a pinned
+      #    commit and cached under /opt keyed by that commit, same pattern as the
+      #    zstd QEMU and bcvk builds above. BSD-3-Clause. Failure here is a SKIP,
+      #    not a failure: the test script gates on the binary being present.
+      - name: Build libvfio-user server @ pinned source
+        id: libvfio-user
+        run: |
+          set +e
+          LVU_REF=37491ed9af828fc161238dacd82e83ea35a09f87 # nutanix/libvfio-user master, 2026-07-23, BSD-3-Clause
+          LVU_PREFIX="/opt/libvfio-user/${LVU_REF}"
+          LVU_SRC=/opt/libvfio-user-src
+          if [ -x "${LVU_PREFIX}/bin/gpio-pci-idio-16" ]; then
+            echo "server=${LVU_PREFIX}/bin/gpio-pci-idio-16" >> "$GITHUB_OUTPUT"
+            echo "libdir=${LVU_PREFIX}/lib" >> "$GITHUB_OUTPUT"
+            echo "### vgpu-vm-e2e (${{ matrix.arch }}) -- INFO: libvfio-user cache HIT at ${LVU_PREFIX}" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends             meson ninja-build pkg-config gcc libjson-c-dev libcmocka-dev python3
+          sudo rm -rf "$LVU_SRC"
+          sudo mkdir -p "$LVU_SRC"
+          sudo chown "$(id -u):$(id -g)" "$LVU_SRC"
+          git init -q "$LVU_SRC" &&
+            git -C "$LVU_SRC" remote add origin https://github.com/nutanix/libvfio-user &&
+            git -C "$LVU_SRC" fetch --depth 1 origin "$LVU_REF" &&
+            git -C "$LVU_SRC" checkout --detach FETCH_HEAD
+          if [ "$?" -ne 0 ]; then
+            echo "::warning::SKIP: could not fetch pinned nutanix/libvfio-user source; vfio-user handshake leg will SKIP after the client-side gate"
+            echo "### vgpu-vm-e2e (${{ matrix.arch }}) -- SKIP: libvfio-user source unavailable" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          ( cd "$LVU_SRC" && meson setup build && ninja -C build )
+          if [ ! -x "$LVU_SRC/build/samples/gpio-pci-idio-16" ]; then
+            echo "::warning::SKIP: libvfio-user failed to build (see meson/ninja output above); vfio-user handshake leg will SKIP after the client-side gate"
+            echo "### vgpu-vm-e2e (${{ matrix.arch }}) -- SKIP: libvfio-user build failed" >> "$GITHUB_STEP_SUMMARY"
+            sudo rm -rf "$LVU_SRC"
+            exit 0
+          fi
+          sudo mkdir -p "${LVU_PREFIX}/bin" "${LVU_PREFIX}/lib"
+          sudo cp "$LVU_SRC/build/samples/gpio-pci-idio-16" "${LVU_PREFIX}/bin/"
+          # The sample links libvfio-user.so, so the shared object ships with it and
+          # the test step points LD_LIBRARY_PATH here.
+          sudo find "$LVU_SRC/build" -name 'libvfio-user.so*' -exec cp -P {} "${LVU_PREFIX}/lib/" \;
+          sudo chmod 0755 "${LVU_PREFIX}/bin/gpio-pci-idio-16"
+          # Smoke-check the staged binary actually starts -- shared-object staging is the
+          # fragile part. If it cannot, emit no outputs so the test leg SKIPs with its own
+          # "no server binary" message instead of failing on a half-built bundle.
+          smoke_sock="$(mktemp -u /tmp/lvu-smoke-XXXXXX.sock)"
+          LD_LIBRARY_PATH="${LVU_PREFIX}/lib" timeout 5 "${LVU_PREFIX}/bin/gpio-pci-idio-16" "$smoke_sock" &
+          smoke_pid=$!
+          for _ in $(seq 1 20); do [ -S "$smoke_sock" ] && break; sleep 0.25; done
+          if [ ! -S "$smoke_sock" ]; then
+            kill "$smoke_pid" 2>/dev/null || true
+            echo "::warning::SKIP: staged libvfio-user server does not start (shared object staging failed); vfio-user handshake leg will SKIP after the client-side gate"
+            echo "### vgpu-vm-e2e (${{ matrix.arch }}) -- SKIP: libvfio-user server binary unusable" >> "$GITHUB_STEP_SUMMARY"
+            sudo rm -rf "$LVU_SRC" "$LVU_PREFIX"
+            exit 0
+          fi
+          kill "$smoke_pid" 2>/dev/null || true
+          rm -f "$smoke_sock"
+          echo "libvfio-user server smoke check OK"
+          echo "server=${LVU_PREFIX}/bin/gpio-pci-idio-16" >> "$GITHUB_OUTPUT"
+          echo "libdir=${LVU_PREFIX}/lib" >> "$GITHUB_OUTPUT"
+          echo "### vgpu-vm-e2e (${{ matrix.arch }}) -- INFO: libvfio-user ${LVU_REF} built and cached at ${LVU_PREFIX}" >> "$GITHUB_STEP_SUMMARY"
+          sudo rm -rf "$LVU_SRC"
+
       # -- vGPU legs (this workflow's reason to exist). Ordered first because they
       #    are the cheapest and they gate the QEMU device models every later leg
       #    depends on. Same rc contract: 0 pass, 77 loud SKIP, else fail.
@@ -501,6 +599,9 @@ jobs:
           QEMU_BIN: ${{ matrix.arch == 'arm64' && steps.qemu-zstd.outputs.qemu_prefix != '' && format('{0}/bin/qemu-system-aarch64', steps.qemu-zstd.outputs.qemu_prefix) || (matrix.arch == 'arm64' && 'qemu-system-aarch64' || 'qemu-system-x86_64') }}
           QEMU_MACHINE: ${{ matrix.arch == 'arm64' && 'virt' || 'q35' }}
           VGPU_LOG_DIR: /tmp/yubios-vgpu-logs
+          VFIO_USER_SERVER: ${{ steps.libvfio-user.outputs.server }}
+          VFIO_USER_SERVER_ARGS: '-v'
+          VFIO_USER_LIBDIR: ${{ steps.libvfio-user.outputs.libdir }}
         run: |
           chmod +x tests/vm/test-vfio-user-host-ci.sh
           sudo rm -rf "$VGPU_LOG_DIR"
@@ -512,6 +613,8 @@ jobs:
             "QEMU_MACHINE=$QEMU_MACHINE" \
             "LOG_DIR=$VGPU_LOG_DIR" \
             "VFIO_USER_SERVER=${VFIO_USER_SERVER:-}" \
+            "VFIO_USER_SERVER_ARGS=${VFIO_USER_SERVER_ARGS:-}" \
+            "LD_LIBRARY_PATH=${VFIO_USER_LIBDIR:-}:${LD_LIBRARY_PATH:-}" \
             bash tests/vm/test-vfio-user-host-ci.sh
           rc=$?
           set -e
