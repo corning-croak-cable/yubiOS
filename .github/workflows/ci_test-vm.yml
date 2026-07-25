@@ -469,86 +469,98 @@ jobs:
           echo "blockdev: $(command -v blockdev || echo /usr/sbin/blockdev)"
           echo "ok=1" >> "$GITHUB_OUTPUT"
 
-      # -- Phase F0 done-condition: fTPM /dev/tpm0 + PCR-extend (verify-tpm0-pcr-extend.sh). --
-      # Runs INSIDE a freshly booted guest (the script assumes /dev/tpm0 is already up),
-      # so unlike the self-contained tests/vm/*.sh scripts below, this workflow does the
-      # boot + copy + exec + cleanup itself. Real fTPM only exists via OP-TEE on the
-      # self-hosted ARM64 rock1 board; the --swtpm leg runs on either arch and exercises
-      # the software-TPM path, but the script's OP-TEE check can't pass there -- that
-      # specific, known mismatch is treated as an explicit SKIP, not a failure.
-      # -- Phase F0 done-condition: fTPM /dev/tpm0 + PCR-extend (verify-tpm0-pcr-extend.sh). --
-      # Runs INSIDE a freshly booted guest (the script assumes /dev/tpm0 is already up),
-      # so unlike the self-contained tests/vm/*.sh scripts below, this workflow does the
-      # boot + copy + exec + cleanup itself. Real fTPM only exists via OP-TEE on the
-      # self-hosted ARM64 rock1 board; the --swtpm leg runs on either arch and exercises
-      # the software-TPM path, but the script's OP-TEE check can't pass there -- that
-      # specific, known mismatch is treated as an explicit SKIP, not a failure.
+      # -- Phase F0 done-condition: fTPM /dev/tpm0 + PCR-extend (yubiOS#35). --
+      # tests/vm/test-tpm0-pcr-extend-ci.sh is the self-contained driver, same shape as
+      # every other tests/vm CI entry: it drives `bcvk ephemeral run` itself and then runs
+      # tests/vm/verify-tpm0-pcr-extend.sh in-guest over tests/vm/bcvk-ssh-lib.sh. Wired
+      # here with the same env trio, the same log dir, and the same rc==77 == explicit
+      # SKIP contract as the legs below, so all four scripts are handled identically.
       #
-      # bcvk here needs the SAME rootful podman used by the other boot legs in this job
-      # (see "Pull yubiOS image into podman storage": sudo podman pull). Running bcvk as
-      # the plain runner user can't see that image in root's podman storage --
-      # `Error: <image>: image not known` (exit 125), the failure this fixes. Match the
-      # existing test-luks-fido2-ci.sh pattern: sudo env "PATH=$PATH" ... bash <script>.
-      - name: Run tests/vm/verify-tpm0-pcr-extend.sh (real /dev/tpm, hardware fTPM)
-        if: matrix.arch == 'arm64' && steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1'
-        timeout-minutes: 5
+      # Earlier revisions inlined the bcvk boot in the step and omitted
+      # BCVK_EPHEMERAL_EXTRA_ARGS: on arm64 the zstd-capable QEMU wrapper was never bound,
+      # the guest never booted, the ssh wait spun, and the step died on timeout-minutes
+      # with no console or journal output at all. Keep the env trio intact.
+      - name: Run tests/vm/test-tpm0-pcr-extend-ci.sh (real /dev/tpm, hardware fTPM)
+        if: ${{ always() && matrix.arch == 'arm64' && steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1' }}
+        timeout-minutes: 20
         env:
           YUBIOS_IMAGE: ${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}
+          YUBIOS_SSH_WAIT_SECS: ${{ matrix.arch == 'arm64' && '900' || '300' }}
+          BCVK_EPHEMERAL_EXTRA_ARGS: >-
+            ${{ matrix.arch == 'arm64' && format('--ro-bind {0}:qemu-zstd --ro-bind /lib/aarch64-linux-gnu:host-lib --ro-bind /usr/lib/aarch64-linux-gnu:host-usrlib --env PATH=/run/host-mounts/qemu-zstd/bcvk-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env LD_LIBRARY_PATH=/run/host-mounts/host-lib:/run/host-mounts/host-usrlib:/run/host-mounts/qemu-zstd/lib --log-dir=journal,console=/tmp/yubios-vm-e2e-logs', steps.qemu-zstd.outputs.qemu_prefix) || '' }}
+          TPM_MODE: real
         run: |
-          set -euo pipefail
-          cat > /tmp/verify-tpm0-real.sh <<'SCRIPT'
-          set -euo pipefail
-          . tests/vm/bcvk-ssh-lib.sh
-          VMID=""
-          cleanup() { [ -n "$VMID" ] && podman rm -f "$VMID" >/dev/null 2>&1 || true; }
-          trap cleanup EXIT
-          VMID="$(bcvk ephemeral run --detach --ssh-keygen "${YUBIOS_IMAGE}")"
-          [ -n "$VMID" ] || { echo "::error::bcvk ephemeral run returned no VM id (real /dev/tpm boot)"; exit 1; }
-          wait_for_bcvk_ssh "$VMID" 300 || { echo "::error::guest unreachable over ssh (real /dev/tpm boot)"; exit 1; }
-          SCRIPT_B64="$(base64 -w0 tests/vm/verify-tpm0-pcr-extend.sh)"
-          bcvk_ssh "$VMID" bash -c "echo ${SCRIPT_B64} | base64 -d > /tmp/verify-tpm0-pcr-extend.sh && chmod +x /tmp/verify-tpm0-pcr-extend.sh && /tmp/verify-tpm0-pcr-extend.sh"
-          SCRIPT
-          chmod +x /tmp/verify-tpm0-real.sh
-          sudo env "PATH=$PATH:/usr/sbin:/sbin" "YUBIOS_IMAGE=${YUBIOS_IMAGE}" bash /tmp/verify-tpm0-real.sh \
-            || { echo "::error::verify-tpm0-pcr-extend.sh failed against real hardware /dev/tpm0"; exit 1; }
-          echo "### vm-e2e (${{ matrix.arch }}) -- PASS: verify-tpm0-pcr-extend.sh, real hardware /dev/tpm0 (fTPM)" >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Run tests/vm/verify-tpm0-pcr-extend.sh (--swtpm)
-        if: steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1'
-        timeout-minutes: 5
-        env:
-          YUBIOS_IMAGE: ${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}
-        run: |
-          set -euo pipefail
-          cat > /tmp/verify-tpm0-swtpm.sh <<'SCRIPT'
-          set -euo pipefail
-          . tests/vm/bcvk-ssh-lib.sh
-          VMID=""
-          cleanup() { [ -n "$VMID" ] && podman rm -f "$VMID" >/dev/null 2>&1 || true; }
-          trap cleanup EXIT
-          VMID="$(bcvk ephemeral run --detach --ssh-keygen --swtpm "${YUBIOS_IMAGE}")"
-          [ -n "$VMID" ] || { echo "::error::bcvk ephemeral run returned no VM id (--swtpm boot)"; exit 1; }
-          wait_for_bcvk_ssh "$VMID" 300 || { echo "::error::guest unreachable over ssh (--swtpm boot)"; exit 1; }
-          SCRIPT_B64="$(base64 -w0 tests/vm/verify-tpm0-pcr-extend.sh)"
-          bcvk_ssh "$VMID" bash -c "echo ${SCRIPT_B64} | base64 -d > /tmp/verify-tpm0-pcr-extend.sh && chmod +x /tmp/verify-tpm0-pcr-extend.sh && /tmp/verify-tpm0-pcr-extend.sh"
-          SCRIPT
-          chmod +x /tmp/verify-tpm0-swtpm.sh
+          if [ -z "${YUBIOS_IMAGE}" ] && [ ! -e ./mkosi.output/yubiOS ]; then
+            echo "::warning::SKIP: no yubiOS image available -- fTPM /dev/tpm0 PCR-extend leg (TPM_MODE=${TPM_MODE}) not exercised."
+            echo "### vm-e2e (${{ matrix.arch }}) -- SKIP: test-tpm0-pcr-extend-ci.sh (TPM_MODE=real), no yubiOS image" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          chmod +x tests/vm/test-tpm0-pcr-extend-ci.sh
+          sudo rm -rf /tmp/yubios-vm-e2e-logs
+          sudo mkdir -p /tmp/yubios-vm-e2e-logs
+          sudo chmod 0777 /tmp/yubios-vm-e2e-logs
           set +e
-          OUTPUT="$(sudo env "PATH=$PATH:/usr/sbin:/sbin" "YUBIOS_IMAGE=${YUBIOS_IMAGE}" bash /tmp/verify-tpm0-swtpm.sh 2>&1)"
+          sudo env "PATH=$PATH:/usr/sbin:/sbin" "YUBIOS_IMAGE=${YUBIOS_IMAGE}" "BCVK_EPHEMERAL_EXTRA_ARGS=${BCVK_EPHEMERAL_EXTRA_ARGS:-}" "YUBIOS_SSH_WAIT_SECS=${YUBIOS_SSH_WAIT_SECS:-300}" "TPM_MODE=${TPM_MODE}" bash tests/vm/test-tpm0-pcr-extend-ci.sh
           rc=$?
           set -e
-          echo "$OUTPUT"
           if [ "$rc" -ne 0 ]; then
-            if grep -Fq "FAIL (no OP-TEE driver)" <<<"$OUTPUT"; then
-              echo "::warning::SKIP: verify-tpm0-pcr-extend.sh needs the OP-TEE fTPM TA, which --swtpm's generic virtio-TPM does not provide; this leg only exercises real hardware fTPM."
-              echo "### vm-e2e (${{ matrix.arch }}) -- SKIP: verify-tpm0-pcr-extend.sh under --swtpm (no OP-TEE fTPM in swtpm path)" >> "$GITHUB_STEP_SUMMARY"
-            else
-              echo "::error::verify-tpm0-pcr-extend.sh failed (rc=$rc) against --swtpm"
-              exit "$rc"
-            fi
-          else
-            echo "### vm-e2e (${{ matrix.arch }}) -- PASS: verify-tpm0-pcr-extend.sh, software TPM (--swtpm)" >> "$GITHUB_STEP_SUMMARY"
+            echo "--- disk after failed TPM VM run ---"
+            df -h "$PWD" /tmp /var/lib/containers || true
+            echo "--- VM console log tail ---"
+            sudo tail -200 /tmp/yubios-vm-e2e-logs/console.txt || true
+            echo "--- VM journal tail ---"
+            sudo tail -200 /tmp/yubios-vm-e2e-logs/journal.json || true
+            echo "--- VM initrd journal tail ---"
+            sudo tail -200 /tmp/yubios-vm-e2e-logs/journal-initrd.json || true
           fi
+          if [ "$rc" -eq 77 ]; then
+            echo "::warning::SKIP: test-tpm0-pcr-extend-ci.sh (TPM_MODE=real) -- this boot chain cannot provide the OP-TEE fTPM /dev/tpm0 the verifier needs (bcvk DirectBoot bypasses the systemd-stub chain; see tests/vm/build-arm64-ftpm-qemu.sh for the chain that can)."
+            echo "### vm-e2e (${{ matrix.arch }}) -- SKIP: test-tpm0-pcr-extend-ci.sh (TPM_MODE=real), no OP-TEE fTPM in this boot chain" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          [ "$rc" -eq 0 ] || exit "$rc"
+          echo "### vm-e2e (${{ matrix.arch }}) -- PASS: test-tpm0-pcr-extend-ci.sh (TPM_MODE=real), /dev/tpm0 live + PCR extend verified" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Run tests/vm/test-tpm0-pcr-extend-ci.sh (--swtpm)
+        if: ${{ always() && steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1' }}
+        timeout-minutes: 20
+        env:
+          YUBIOS_IMAGE: ${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}
+          YUBIOS_SSH_WAIT_SECS: ${{ matrix.arch == 'arm64' && '900' || '300' }}
+          BCVK_EPHEMERAL_EXTRA_ARGS: >-
+            ${{ matrix.arch == 'arm64' && format('--ro-bind {0}:qemu-zstd --ro-bind /lib/aarch64-linux-gnu:host-lib --ro-bind /usr/lib/aarch64-linux-gnu:host-usrlib --env PATH=/run/host-mounts/qemu-zstd/bcvk-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env LD_LIBRARY_PATH=/run/host-mounts/host-lib:/run/host-mounts/host-usrlib:/run/host-mounts/qemu-zstd/lib --log-dir=journal,console=/tmp/yubios-vm-e2e-logs', steps.qemu-zstd.outputs.qemu_prefix) || '' }}
+          TPM_MODE: swtpm
+        run: |
+          if [ -z "${YUBIOS_IMAGE}" ] && [ ! -e ./mkosi.output/yubiOS ]; then
+            echo "::warning::SKIP: no yubiOS image available -- fTPM /dev/tpm0 PCR-extend leg (TPM_MODE=${TPM_MODE}) not exercised."
+            echo "### vm-e2e (${{ matrix.arch }}) -- SKIP: test-tpm0-pcr-extend-ci.sh (TPM_MODE=swtpm), no yubiOS image" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          chmod +x tests/vm/test-tpm0-pcr-extend-ci.sh
+          sudo rm -rf /tmp/yubios-vm-e2e-logs
+          sudo mkdir -p /tmp/yubios-vm-e2e-logs
+          sudo chmod 0777 /tmp/yubios-vm-e2e-logs
+          set +e
+          sudo env "PATH=$PATH:/usr/sbin:/sbin" "YUBIOS_IMAGE=${YUBIOS_IMAGE}" "BCVK_EPHEMERAL_EXTRA_ARGS=${BCVK_EPHEMERAL_EXTRA_ARGS:-}" "YUBIOS_SSH_WAIT_SECS=${YUBIOS_SSH_WAIT_SECS:-300}" "TPM_MODE=${TPM_MODE}" bash tests/vm/test-tpm0-pcr-extend-ci.sh
+          rc=$?
+          set -e
+          if [ "$rc" -ne 0 ]; then
+            echo "--- disk after failed TPM VM run ---"
+            df -h "$PWD" /tmp /var/lib/containers || true
+            echo "--- VM console log tail ---"
+            sudo tail -200 /tmp/yubios-vm-e2e-logs/console.txt || true
+            echo "--- VM journal tail ---"
+            sudo tail -200 /tmp/yubios-vm-e2e-logs/journal.json || true
+            echo "--- VM initrd journal tail ---"
+            sudo tail -200 /tmp/yubios-vm-e2e-logs/journal-initrd.json || true
+          fi
+          if [ "$rc" -eq 77 ]; then
+            echo "::warning::SKIP: test-tpm0-pcr-extend-ci.sh (TPM_MODE=swtpm) -- this boot chain cannot provide the OP-TEE fTPM /dev/tpm0 the verifier needs (bcvk DirectBoot bypasses the systemd-stub chain; see tests/vm/build-arm64-ftpm-qemu.sh for the chain that can)."
+            echo "### vm-e2e (${{ matrix.arch }}) -- SKIP: test-tpm0-pcr-extend-ci.sh (TPM_MODE=swtpm), no OP-TEE fTPM in this boot chain" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          [ "$rc" -eq 0 ] || exit "$rc"
+          echo "### vm-e2e (${{ matrix.arch }}) -- PASS: test-tpm0-pcr-extend-ci.sh (TPM_MODE=swtpm), /dev/tpm0 live + PCR extend verified" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Run tests/vm/test-luks-fido2.sh (DESTRUCTIVE -- wipes ${{ inputs.hw_device }})
         if: github.event_name == 'workflow_dispatch' && inputs.hw_device != '' && steps.yubikey.outputs.present == '1' && steps.device.outputs.ok == '1'
