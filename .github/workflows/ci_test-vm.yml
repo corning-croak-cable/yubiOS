@@ -161,7 +161,7 @@ jobs:
           sudo apt-get install -y -qq --no-install-recommends \
             swtpm swtpm-tools qemu-utils ${{ matrix.qemu_pkgs }} \
             fido2-tools cryptsetup-bin git build-essential pkg-config libssl-dev virtiofsd \
-            apparmor-utils
+            apparmor-utils util-linux
           # GH runners ship /dev/kvm root:kvm 0660 -- the runner user (and
           # root-in-rootless-podman) can't open it. Documented GH recipe:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -231,7 +231,7 @@ jobs:
           "${QEMU_PREFIX}/bin/qemu-system-aarch64" --version
           echo "${QEMU_PREFIX}/bin" >> "$GITHUB_PATH"
           echo "qemu_prefix=${QEMU_PREFIX}" >> "$GITHUB_OUTPUT"
-          echo "### vm-e2e (arm64): using zstd-capable QEMU ${QEMU_ZSTD_COMMIT}" >> "$GITHUB_STEP_SUMMARY"
+          echo "### vm-e2e (arm64) -- INFO: using zstd-capable QEMU ${QEMU_ZSTD_COMMIT}" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Disk space before bcvk build (diagnostic)
         run: |
@@ -257,7 +257,7 @@ jobs:
           if [ -x "${BCVK_PREFIX}/bin/bcvk" ]; then
             echo "skip=0" >> "$GITHUB_OUTPUT"
             echo "${BCVK_PREFIX}/bin" >> "$GITHUB_PATH"
-            echo "### vm-e2e (${{ matrix.arch }}): bcvk cache HIT at ${BCVK_PREFIX} -- build skipped" >> "$GITHUB_STEP_SUMMARY"
+            echo "### vm-e2e (${{ matrix.arch }}) -- INFO: bcvk cache HIT at ${BCVK_PREFIX}, build skipped" >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           sudo rm -rf "$BCVK_SRC"
@@ -271,7 +271,7 @@ jobs:
           if [ "$bcvk_fetch_rc" -ne 0 ]; then
             echo "skip=1" >> "$GITHUB_OUTPUT"
             echo "::warning::SKIP: could not fetch pinned yubi-OS/bcvk source -- VM e2e not feasible on this runner"
-            echo "### vm-e2e (${{ matrix.arch }}): SKIPPED -- bcvk source unavailable" >> "$GITHUB_STEP_SUMMARY"
+            echo "### vm-e2e (${{ matrix.arch }}) -- SKIP: bcvk source unavailable" >> "$GITHUB_STEP_SUMMARY"
             sudo rm -rf "$BCVK_SRC"
             exit 0
           fi
@@ -309,7 +309,7 @@ jobs:
           if [ ! -x "$BCVK_SRC/target/release/bcvk" ]; then
             echo "skip=1" >> "$GITHUB_OUTPUT"
             echo "::warning::SKIP: pinned bcvk source failed to build -- VM e2e not feasible (see cargo output above)"
-            echo "### vm-e2e (${{ matrix.arch }}): SKIPPED -- bcvk build failed" >> "$GITHUB_STEP_SUMMARY"
+            echo "### vm-e2e (${{ matrix.arch }}) -- SKIP: bcvk build failed" >> "$GITHUB_STEP_SUMMARY"
             sudo rm -rf "$BCVK_SRC"
             exit 0
           fi
@@ -318,7 +318,7 @@ jobs:
           sudo chmod 0755 "${BCVK_PREFIX}/bin/bcvk"
           echo "${BCVK_PREFIX}/bin" >> "$GITHUB_PATH"
           echo "skip=0" >> "$GITHUB_OUTPUT"
-          echo "### vm-e2e (${{ matrix.arch }}): bcvk built and cached at ${BCVK_PREFIX}" >> "$GITHUB_STEP_SUMMARY"
+          echo "### vm-e2e (${{ matrix.arch }}) -- INFO: bcvk built and cached at ${BCVK_PREFIX}" >> "$GITHUB_STEP_SUMMARY"
           # Reclaim space immediately before the large image pull. Keep only the
           # cached bcvk binary under /opt; rock1 has a small root disk and hit
           # 69 MB free after pull.
@@ -340,7 +340,7 @@ jobs:
           else
             echo "kvm=0" >> "$GITHUB_OUTPUT"
             echo "::warning::SKIP: /dev/kvm absent on this runner (self-hosted ARM64 should have it -- if this fires on rock1, KVM isn't enabled in its kernel/BIOS, not a hosted-runner limitation); bcvk boot legs skipped LOUDLY"
-            echo "### vm-e2e (${{ matrix.arch }}): boot legs SKIPPED -- no /dev/kvm on this runner" >> "$GITHUB_STEP_SUMMARY"
+            echo "### vm-e2e (${{ matrix.arch }}) -- SKIP: boot legs, no /dev/kvm on this runner" >> "$GITHUB_STEP_SUMMARY"
           fi
 
       - name: "Gate amd64 boot leg on platform-priority policy (ADR-023: ARM64 is primary)"
@@ -351,7 +351,7 @@ jobs:
           else
             echo "boot=0" >> "$GITHUB_OUTPUT"
             echo "::warning::SKIP: ${{ matrix.arch }} boot leg skipped -- ARM64 is yubiOS's primary target platform (ADR-023); amd64 CI does not block on the open bcvk/virtiofsd bug on a now-secondary arch (see #9/#20/#25 for the diagnosis)."
-            echo "### vm-e2e (${{ matrix.arch }}): boot legs SKIPPED -- secondary platform per ADR-023 (bcvk/virtiofsd diagnosis: #9/#20/#25)" >> "$GITHUB_STEP_SUMMARY"
+            echo "### vm-e2e (${{ matrix.arch }}) -- SKIP: boot legs, secondary platform per ADR-023 (bcvk/virtiofsd diagnosis: #9/#20/#25)" >> "$GITHUB_STEP_SUMMARY"
           fi
 
       - name: Assert bcvk exposes --swtpm/--swu2f (real regression gate)
@@ -408,22 +408,35 @@ jobs:
           if [ -n "$aa_status" ]; then
             sudo "$aa_status" | sed -n '1,140p' || true
           fi
-          echo "### vm-e2e (arm64): AppArmor profiles relaxed for bcvk VM boot (unpriv_bwrap + swtpm when loaded)" >> "$GITHUB_STEP_SUMMARY"
+          echo "### vm-e2e (arm64) -- INFO: AppArmor profiles relaxed for bcvk VM boot (unpriv_bwrap + swtpm when loaded)" >> "$GITHUB_STEP_SUMMARY"
 
+      # -- Hardware YubiKey passthrough legs (yubiOS#9, yubiOS#20). --
+      # Deliberately steps INSIDE vm-e2e rather than a separate job: they share this
+      # job's bcvk build, image pull, and AppArmor setup on the self-hosted rock1
+      # runner instead of paying for all of it twice.
+      #
+      # tests/vm/test-luks-fido2.sh needs a PHYSICAL YubiKey + a spare block device +
+      # root: it flashes the device via `bcvk native-to-disk`, then enrolls LUKS2
+      # against a real YubiKey tap. Different mechanism from the swu2f software
+      # authenticator legs below (no VM, no QEMU USB passthrough).
+      #
+      # DESTRUCTIVE, so gated on an explicit workflow_dispatch with a non-empty
+      # hw_device; on any normal run all three steps skip.
       - name: Precondition -- physical YubiKey attached (USB vendor 0x1050)
         id: yubikey
+        if: github.event_name == 'workflow_dispatch' && inputs.hw_device != ''
         run: |
           if lsusb 2>/dev/null | grep -qi '1050:'; then
             echo "present=1" >> "$GITHUB_OUTPUT"
           else
             echo "present=0" >> "$GITHUB_OUTPUT"
-            echo "::warning::SKIP: no physical YubiKey detected on this runner (lsusb has no vendor 1050 device). vm-hw-yubikey-passthrough cannot run without real hardware."
-            echo "### vm-hw-yubikey-passthrough: SKIPPED -- no physical YubiKey attached to this runner" >> "$GITHUB_STEP_SUMMARY"
+            echo "::warning::SKIP: no physical YubiKey detected on this runner (lsusb has no vendor 1050 device)."
+            echo "### vm-e2e (${{ matrix.arch }}) -- SKIP: hardware leg, no physical YubiKey attached to this runner" >> "$GITHUB_STEP_SUMMARY"
           fi
 
-      - name: Precondition -- target device exists, is a block device, and is not the runner's root disk
+      - name: Precondition -- target device is a block device and not the runner's root disk
         id: device
-        if: steps.yubikey.outputs.present == '1'
+        if: github.event_name == 'workflow_dispatch' && inputs.hw_device != '' && steps.yubikey.outputs.present == '1'
         env:
           HW_DEVICE: ${{ inputs.hw_device }}
         run: |
@@ -431,7 +444,7 @@ jobs:
           if [ ! -b "$HW_DEVICE" ]; then
             echo "ok=0" >> "$GITHUB_OUTPUT"
             echo "::warning::SKIP: $HW_DEVICE is not a block device on this runner."
-            echo "### vm-hw-yubikey-passthrough: SKIPPED -- $HW_DEVICE is not a block device" >> "$GITHUB_STEP_SUMMARY"
+            echo "### vm-e2e (${{ matrix.arch }}) -- SKIP: hardware leg, $HW_DEVICE is not a block device" >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           root_src="$(findmnt -no SOURCE / || true)"
@@ -440,31 +453,48 @@ jobs:
           if [ -n "$root_disk" ] && { [ "$root_disk" = "$target_disk" ] || [ "$(basename "$root_src")" = "$target_disk" ]; }; then
             echo "ok=0" >> "$GITHUB_OUTPUT"
             echo "::error::REFUSING: $HW_DEVICE resolves to this runner's own root disk ($root_src). Never wiping the host."
+            echo "### vm-e2e (${{ matrix.arch }}) -- FAIL: hardware leg refused, $HW_DEVICE is the runner's own root disk" >> "$GITHUB_STEP_SUMMARY"
             exit 1
           fi
+          # bcvk native-to-disk shells out to `blockdev` (util-linux) to size the
+          # target; run 30147997124 died with "blockdev not found; install
+          # util-linux" at native_to_disk.rs:95. util-linux is installed with the
+          # other host deps above -- assert it resolves before we start flashing.
+          if ! command -v blockdev >/dev/null 2>&1 && [ ! -x /usr/sbin/blockdev ]; then
+            echo "ok=0" >> "$GITHUB_OUTPUT"
+            echo "::error::blockdev unavailable despite util-linux install; bcvk native-to-disk cannot size $HW_DEVICE"
+            echo "### vm-e2e (${{ matrix.arch }}) -- FAIL: hardware leg, blockdev unavailable (util-linux)" >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+          echo "blockdev: $(command -v blockdev || echo /usr/sbin/blockdev)"
           echo "ok=1" >> "$GITHUB_OUTPUT"
 
       - name: Run tests/vm/test-luks-fido2.sh (DESTRUCTIVE -- wipes ${{ inputs.hw_device }})
-        if: steps.yubikey.outputs.present == '1' && steps.device.outputs.ok == '1'
+        if: github.event_name == 'workflow_dispatch' && inputs.hw_device != '' && steps.yubikey.outputs.present == '1' && steps.device.outputs.ok == '1'
         timeout-minutes: 10
         env:
           HW_DEVICE: ${{ inputs.hw_device }}
           HW_IMAGE: ${{ inputs.hw_image != '' && inputs.hw_image || (inputs.image || 'docker.io/0mniteck/yubios:dev') }}
         run: |
           chmod +x tests/vm/test-luks-fido2.sh
-          echo "Running test-luks-fido2.sh against device $HW_DEVICE with image $HW_IMAGE (physical YubiKey required -- touch when prompted)"
+          echo "Running test-luks-fido2.sh against $HW_DEVICE with image $HW_IMAGE (physical YubiKey required -- touch when prompted)"
+          # Explicit PATH with the sbin dirs: blockdev, cryptsetup and
+          # systemd-cryptenroll live in /usr/sbin or /sbin, and sudo's secure_path
+          # does not necessarily carry them through.
           set +e
-          sudo env "PATH=$PATH" bash tests/vm/test-luks-fido2.sh "$HW_DEVICE" "$HW_IMAGE"
+          sudo env "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+            bash tests/vm/test-luks-fido2.sh "$HW_DEVICE" "$HW_IMAGE"
           rc=$?
           set -e
           if [ "$rc" -ne 0 ]; then
             echo "::error::test-luks-fido2.sh failed (rc=$rc) against $HW_DEVICE"
+            echo "### vm-e2e (${{ matrix.arch }}) -- FAIL: hardware leg, test-luks-fido2.sh rc=$rc against $HW_DEVICE" >> "$GITHUB_STEP_SUMMARY"
             exit "$rc"
           fi
-          echo "### vm-hw-yubikey-passthrough: PASS -- real-hardware LUKS2 FIDO2 enrollment against $HW_DEVICE (yubiOS#9, yubiOS#20)" >> "$GITHUB_STEP_SUMMARY"
+          echo "### vm-e2e (${{ matrix.arch }}) -- PASS: hardware leg, real-hardware LUKS2 FIDO2 enrollment against $HW_DEVICE (yubiOS#9, yubiOS#20)" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Run tests/vm/test-luks-fido2-ci.sh (boot leg gated on image availability)
-        if: steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1'
+        if: ${{ always() && steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1' }}
         timeout-minutes: 5
         env:
           YUBIOS_IMAGE: ${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}
@@ -475,7 +505,7 @@ jobs:
           if [ -z "${YUBIOS_IMAGE}" ] && [ ! -e ./mkosi.output/yubiOS ]; then
             echo "::warning::SKIP: no yubiOS image available (no workflow_dispatch 'image' input, no mkosi.output/yubiOS). VM boot + LUKS2-FIDO2 + homed legs NOT exercised."
             {
-              echo "### vm-e2e (${{ matrix.arch }}): VM boot leg SKIPPED (explicit)"
+              echo "### vm-e2e (${{ matrix.arch }}) -- SKIP: VM boot leg (explicit)"
               echo "- bcvk built from the pinned source and exposes \`--swtpm\`/\`--swu2f\` OK"
               echo "- swtpm / qemu / fido2-tools / cryptsetup installed OK"
               echo "- **Skipped:** VM boot + LUKS2-FIDO2 + systemd-homed legs -- needs a built yubiOS test image (\`mkosi --profile test\`) or a \`workflow_dispatch\` \`image\` input."
@@ -505,11 +535,11 @@ jobs:
           fi
           if [ "$rc" -eq 77 ]; then
             echo "::warning::SKIP: bcvk cannot DirectBoot the ARM64 zstd EFI zboot kernel in this image yet; VM boot leg skipped rather than failing on a known harness limitation."
-            echo "### vm-e2e (${{ matrix.arch }}): test-luks-fido2-ci.sh SKIPPED -- bcvk lacks zstd EFI zboot support for this ARM64 image" >> "$GITHUB_STEP_SUMMARY"
+            echo "### vm-e2e (${{ matrix.arch }}) -- SKIP: test-luks-fido2-ci.sh, bcvk lacks zstd EFI zboot support for this ARM64 image" >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           [ "$rc" -eq 0 ] || exit "$rc"
-          echo "### vm-e2e (${{ matrix.arch }}): test-luks-fido2-ci.sh ran (CTAP2 legs skip unless the test image ships swu2f Layer 2)" >> "$GITHUB_STEP_SUMMARY"
+          echo "### vm-e2e (${{ matrix.arch }}) -- PASS: test-luks-fido2-ci.sh (CTAP2 legs skip unless the test image ships swu2f Layer 2)" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Run tests/vm/test-fido2-enrollment.sh (enrollment surface, #9/#25)
         timeout-minutes: 5
@@ -544,11 +574,11 @@ jobs:
           fi
           if [ "$rc" -eq 77 ]; then
             echo "::warning::SKIP: bcvk cannot DirectBoot the ARM64 zstd EFI zboot kernel in this image yet; enrollment boot leg skipped rather than failing on a known harness limitation."
-            echo "### vm-e2e (${{ matrix.arch }}): test-fido2-enrollment.sh SKIPPED -- bcvk lacks zstd EFI zboot support for this ARM64 image" >> "$GITHUB_STEP_SUMMARY"
+            echo "### vm-e2e (${{ matrix.arch }}) -- SKIP: test-fido2-enrollment.sh, bcvk lacks zstd EFI zboot support for this ARM64 image" >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           [ "$rc" -eq 0 ] || exit "$rc"
-          echo "### vm-e2e (${{ matrix.arch }}): test-fido2-enrollment.sh ran (CTAP2 legs skip unless the test image ships swu2f Layer 2)" >> "$GITHUB_STEP_SUMMARY"
+          echo "### vm-e2e (${{ matrix.arch }}) -- PASS: test-fido2-enrollment.sh (CTAP2 legs skip unless the test image ships swu2f Layer 2)" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Free disk space (post-run -- leave rock1 clean for the next run)
         if: always()
@@ -565,25 +595,9 @@ jobs:
           sudo rm -rf /opt/bcvk-src || true
           df -h "$PWD" || true
 
-      - name: Note hardware-only variant (lint-only here; see vm-hw-yubikey-passthrough job for the gated execution path)
+      - name: Note hardware-only variant (runs above when dispatched with hw_device, else lint-only)
         run: |
-          echo "tests/vm/test-luks-fido2.sh needs a physical YubiKey + spare block device + root; lint-only in THIS job. See the vm-hw-yubikey-passthrough job below for the explicit workflow_dispatch-gated path that actually executes it (yubiOS#9, yubiOS#20)." >> "$GITHUB_STEP_SUMMARY"
-
-  # -- Hardware YubiKey passthrough (yubiOS#9, yubiOS#20). --
-  # tests/vm/test-luks-fido2.sh needs a PHYSICAL YubiKey + a spare block device + root;
-  # it flashes the device via `bcvk native-to-disk` then unlocks LUKS2 with a real
-  # YubiKey tap. That is fundamentally different from the swu2f software-authenticator
-  # path above (vm-e2e job) -- there is no VM/QEMU USB passthrough involved here, and
-  # none is available yet: yubi-OS/bcvk PR #2 ("feat(usb-passthrough): YubiKey USB
-  # passthrough for ephemeral VMs") is still open/unmerged upstream, so bcvk's
-  # `ephemeral run` has no --yubikey flag today. This job runs the native-to-disk +
-  # real-hardware path that already exists in the script, not the (not yet available)
-  # ephemeral-VM passthrough variant that issue #20's original test scenario described.
-  #
-  # DESTRUCTIVE and hardware-dependent, so this is workflow_dispatch-only, gated on an
-  # explicit non-empty hw_device input, and fails closed (skips loudly, never silently)
-  # if no physical YubiKey is attached, no block device is present at that path, or the
-  # device looks like the runner's own root disk.
+          echo "### vm-e2e (${{ matrix.arch }}) -- INFO: tests/vm/test-luks-fido2.sh needs a physical YubiKey + spare block device + root; the hardware leg above runs it for real when dispatched with hw_device set, otherwise it is lint-only (yubiOS#9, yubiOS#20)." >> "$GITHUB_STEP_SUMMARY"
 
   ci-callback:
     name: Callback to ci.yml orchestrator
