@@ -153,10 +153,10 @@ Every public claim must have an owner, evidence link, review date, and maturity 
 | Status | “Pre-launch,” “experimental,” “groundwork,” “technical preview” | [README.md](../README.md), [TODO.md](TODO.md), [BLOCKERS.md](BLOCKERS.md) | “Production-ready,” “GA,” “safe for daily use” |
 | YubiKey role | “Owner-facing human-presence and identity root” | [SPEC.md](SPEC.md), [ARCHITECTURE.md](ARCHITECTURE.md), [THREAT_MODEL.md](THREAT_MODEL.md) | “The only root of trust at every layer” |
 | TPM stance | “No mandatory TPM for owner-facing disk unlock or identity workflows” | [ADR-003](ADR.md#adr-003-luks2--fido2-via-systemd-cryptenroll-no-tpm), [SPEC.md](SPEC.md) | Unqualified “No TPM” or “replaces every TPM function” |
-| Secure Boot | “Designed to sign UKIs through YubiKey PIV slot 9c using PKCS#11” | [ADR-002](ADR.md#adr-002-secure-boot-signing-via-piv-ccid-not-fido2-hidraw), [sbsign validation note](../refs/sbsign-pkcs11-validate.md) | “FIDO2 signs Secure Boot artifacts” or “production signing fully proven” |
-| FIDO2 unlock | “Designed around FIDO2 `hmac-secret`, PIN, touch, and an offline recovery key” | [ADR-003](ADR.md#adr-003-luks2--fido2-via-systemd-cryptenroll-no-tpm), [LUKS/FIDO2 test note](../refs/luks-fido2-e2e-test.md) | “Production hardware flow fully validated” until physical evidence exists |
+| Secure Boot | “Designed to sign UKIs through YubiKey PIV slot 9c using PKCS#11” | [ADR-002](ADR.md#adr-002-secure-boot-signing-via-piv-ccid-not-fido2-hidraw), [sbsign validation note](../refs/sbsign-pkcs11-validate-2026-07-23.md) | “FIDO2 signs Secure Boot artifacts” or “production signing fully proven” |
+| FIDO2 unlock | “Designed around FIDO2 `hmac-secret`, PIN, touch, and an offline recovery key” | [ADR-003](ADR.md#adr-003-luks2--fido2-via-systemd-cryptenroll-no-tpm), [LUKS/FIDO2 test note](../refs/luks-fido2-e2e-test-2026-07-23.md) | “Production hardware flow fully validated” until physical evidence exists |
 | Immutable OS | “`/usr` is intended to be read-only and verified through composefs/erofs and dm-verity” | [SPEC.md](SPEC.md), [ARCHITECTURE.md](ARCHITECTURE.md) | “The whole system is immutable” or “runtime compromise is impossible” |
-| ARM64 | “Primary target and planned owner-owned platform-root path” | [ADR-023](ADR.md#adr-023-arm64-as-primary-target-platform), [board status](../refs/path-a-b-board-status.md) | “Production Path A is proven” |
+| ARM64 | “Primary target and planned owner-owned platform-root path” | [ADR-023](ADR.md#adr-023-arm64-as-primary-target-platform), [board status](../refs/arm64-path-a-b-board-status-2026-07-23.md) | “Production Path A is proven” |
 | x86-64 | “Supported above the UKI; OEM firmware remains below the owner-controlled boundary” | [SPEC.md](SPEC.md), [THREAT_MODEL.md](THREAT_MODEL.md) | “No OEM trust on x86-64” |
 | VM evidence | “The recorded ARM64 lane reached a Fedora guest; enrollment proof remained gated by a guest failure in that run” | [VM evidence](../refs/vm-e2e-run-29525332901.md) | “ARM64 end-to-end CI is green” without a newer verified run |
 | Software authenticators | “TEST-only regression tools isolated to `dev` tags” | [ADR-026](ADR.md#adr-026-devdev-sha-test-image-tag-swu2f-enabled-on-0mniteckyubios), [CI_MAP.md](CI_MAP.md) | “Equivalent to a physical YubiKey” |
@@ -491,17 +491,17 @@ This strategy was synthesized from all 27 pre-existing Markdown files on `main` 
 
 ### Dated and task-specific evidence
 
-- [refs/arm64-ftpm-phase-f0.md](../refs/arm64-ftpm-phase-f0.md)
-- [refs/bcvk-swtpm-ci.md](../refs/bcvk-swtpm-ci.md)
-- [refs/luks-fido2-e2e-test.md](../refs/luks-fido2-e2e-test.md)
-- [refs/path-a-b-board-status.md](../refs/path-a-b-board-status.md)
+- [refs/arm64-ftpm-phase-f0.md](../refs/arm64-ftpm-phase-f0-2026-07-23.md)
+- [refs/bcvk-swtpm-ci.md](../refs/bcvk-swtpm-ci-2026-07-23.md)
+- [refs/luks-fido2-e2e-test.md](../refs/luks-fido2-e2e-test-2026-07-23.md)
+- [refs/path-a-b-board-status.md](../refs/arm64-path-a-b-board-status-2026-07-23.md)
 - [refs/planning-cycle-2026-07-11.md](../refs/planning-cycle-2026-07-11.md)
 - [refs/research-refresh-2026-07-11.md](../refs/research-refresh-2026-07-11.md)
-- [refs/sbsign-pkcs11-validate.md](../refs/sbsign-pkcs11-validate.md)
+- [refs/sbsign-pkcs11-validate.md](../refs/sbsign-pkcs11-validate-2026-07-23.md)
 - [refs/systemd-v262-audit-2026-07-14.md](../refs/systemd-v262-audit-2026-07-14.md)
-- [refs/v261-base-image.md](../refs/v261-base-image.md)
+- [refs/v261-base-image.md](../refs/v261-base-image-bump-2026-07-23.md)
 - [refs/vm-e2e-run-29525332901.md](../refs/vm-e2e-run-29525332901.md)
-- [refs/zstd-efi-zboot-bcvk.md](../refs/zstd-efi-zboot-bcvk.md)
+- [refs/zstd-efi-zboot-bcvk.md](../refs/arm64-zstd-efi-zboot-bcvk-2026-07-23.md)
 
 ## External research base
 
