@@ -29,6 +29,7 @@ RUN dnf -y --setopt=history_record=false install \
       yubico-piv-tool \
       opensc \
       pam-u2f \
+      pamu2fcfg \
       pcsc-lite \
       pcsc-lite-ccid \
       tpm2-tools \
