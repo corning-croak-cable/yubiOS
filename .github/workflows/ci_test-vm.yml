@@ -84,6 +84,16 @@ on:
         required: false
         default: false
         type: boolean
+      firmware_image:
+        description: 'OCI ref of the published yubiOS firmware bundle to source flash.bin from (ci_firmware-rk.yml Stage 4 output). The fTPM lives in this firmware, not in the yubiOS OS image.'
+        required: false
+        default: 'docker.io/0mniteck/yubios:firmware-qemu-arm64'
+        type: string
+      ftpm_linux_payload:
+        description: 'Also run fTPM Stage B: bcvk to-disk the yubiOS image and boot it under the fTPM firmware to prove the guest kernel binds tpm_ftpm_tee. Slow (TCG) and unproven; off by default.'
+        required: false
+        default: false
+        type: boolean
       ci_vm_image:
         description: 'Internal: VM image ref carried by ci.yml.'
         required: false
@@ -469,99 +479,6 @@ jobs:
           echo "blockdev: $(command -v blockdev || echo /usr/sbin/blockdev)"
           echo "ok=1" >> "$GITHUB_OUTPUT"
 
-      # -- Phase F0 done-condition: fTPM /dev/tpm0 + PCR-extend (yubiOS#35). --
-      # tests/vm/test-tpm0-pcr-extend-ci.sh is the self-contained driver, same shape as
-      # every other tests/vm CI entry: it drives `bcvk ephemeral run` itself and then runs
-      # tests/vm/verify-tpm0-pcr-extend.sh in-guest over tests/vm/bcvk-ssh-lib.sh. Wired
-      # here with the same env trio, the same log dir, and the same rc==77 == explicit
-      # SKIP contract as the legs below, so all four scripts are handled identically.
-      #
-      # Earlier revisions inlined the bcvk boot in the step and omitted
-      # BCVK_EPHEMERAL_EXTRA_ARGS: on arm64 the zstd-capable QEMU wrapper was never bound,
-      # the guest never booted, the ssh wait spun, and the step died on timeout-minutes
-      # with no console or journal output at all. Keep the env trio intact.
-      - name: Run tests/vm/test-tpm0-pcr-extend-ci.sh (real /dev/tpm, hardware fTPM)
-        if: ${{ always() && matrix.arch == 'arm64' && steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1' }}
-        timeout-minutes: 20
-        env:
-          YUBIOS_IMAGE: ${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}
-          YUBIOS_SSH_WAIT_SECS: ${{ matrix.arch == 'arm64' && '900' || '300' }}
-          BCVK_EPHEMERAL_EXTRA_ARGS: >-
-            ${{ matrix.arch == 'arm64' && format('--ro-bind {0}:qemu-zstd --ro-bind /lib/aarch64-linux-gnu:host-lib --ro-bind /usr/lib/aarch64-linux-gnu:host-usrlib --env PATH=/run/host-mounts/qemu-zstd/bcvk-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env LD_LIBRARY_PATH=/run/host-mounts/host-lib:/run/host-mounts/host-usrlib:/run/host-mounts/qemu-zstd/lib --log-dir=journal,console=/tmp/yubios-vm-e2e-logs', steps.qemu-zstd.outputs.qemu_prefix) || '' }}
-          TPM_MODE: real
-        run: |
-          if [ -z "${YUBIOS_IMAGE}" ] && [ ! -e ./mkosi.output/yubiOS ]; then
-            echo "::warning::SKIP: no yubiOS image available -- fTPM /dev/tpm0 PCR-extend leg (TPM_MODE=${TPM_MODE}) not exercised."
-            echo "### vm-e2e (${{ matrix.arch }}) -- SKIP: test-tpm0-pcr-extend-ci.sh (TPM_MODE=real), no yubiOS image" >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
-          chmod +x tests/vm/test-tpm0-pcr-extend-ci.sh
-          sudo rm -rf /tmp/yubios-vm-e2e-logs
-          sudo mkdir -p /tmp/yubios-vm-e2e-logs
-          sudo chmod 0777 /tmp/yubios-vm-e2e-logs
-          set +e
-          sudo env "PATH=$PATH:/usr/sbin:/sbin" "YUBIOS_IMAGE=${YUBIOS_IMAGE}" "BCVK_EPHEMERAL_EXTRA_ARGS=${BCVK_EPHEMERAL_EXTRA_ARGS:-}" "YUBIOS_SSH_WAIT_SECS=${YUBIOS_SSH_WAIT_SECS:-300}" "TPM_MODE=${TPM_MODE}" bash tests/vm/test-tpm0-pcr-extend-ci.sh
-          rc=$?
-          set -e
-          if [ "$rc" -ne 0 ]; then
-            echo "--- disk after failed TPM VM run ---"
-            df -h "$PWD" /tmp /var/lib/containers || true
-            echo "--- VM console log tail ---"
-            sudo tail -200 /tmp/yubios-vm-e2e-logs/console.txt || true
-            echo "--- VM journal tail ---"
-            sudo tail -200 /tmp/yubios-vm-e2e-logs/journal.json || true
-            echo "--- VM initrd journal tail ---"
-            sudo tail -200 /tmp/yubios-vm-e2e-logs/journal-initrd.json || true
-          fi
-          if [ "$rc" -eq 77 ]; then
-            echo "::warning::SKIP: test-tpm0-pcr-extend-ci.sh (TPM_MODE=real) -- this boot chain cannot provide the OP-TEE fTPM /dev/tpm0 the verifier needs (bcvk DirectBoot bypasses the systemd-stub chain; see tests/vm/build-arm64-ftpm-qemu.sh for the chain that can)."
-            echo "### vm-e2e (${{ matrix.arch }}) -- SKIP: test-tpm0-pcr-extend-ci.sh (TPM_MODE=real), no OP-TEE fTPM in this boot chain" >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
-          [ "$rc" -eq 0 ] || exit "$rc"
-          echo "### vm-e2e (${{ matrix.arch }}) -- PASS: test-tpm0-pcr-extend-ci.sh (TPM_MODE=real), /dev/tpm0 live + PCR extend verified" >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Run tests/vm/test-tpm0-pcr-extend-ci.sh (--swtpm)
-        if: ${{ always() && steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1' }}
-        timeout-minutes: 20
-        env:
-          YUBIOS_IMAGE: ${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}
-          YUBIOS_SSH_WAIT_SECS: ${{ matrix.arch == 'arm64' && '900' || '300' }}
-          BCVK_EPHEMERAL_EXTRA_ARGS: >-
-            ${{ matrix.arch == 'arm64' && format('--ro-bind {0}:qemu-zstd --ro-bind /lib/aarch64-linux-gnu:host-lib --ro-bind /usr/lib/aarch64-linux-gnu:host-usrlib --env PATH=/run/host-mounts/qemu-zstd/bcvk-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env LD_LIBRARY_PATH=/run/host-mounts/host-lib:/run/host-mounts/host-usrlib:/run/host-mounts/qemu-zstd/lib --log-dir=journal,console=/tmp/yubios-vm-e2e-logs', steps.qemu-zstd.outputs.qemu_prefix) || '' }}
-          TPM_MODE: swtpm
-        run: |
-          if [ -z "${YUBIOS_IMAGE}" ] && [ ! -e ./mkosi.output/yubiOS ]; then
-            echo "::warning::SKIP: no yubiOS image available -- fTPM /dev/tpm0 PCR-extend leg (TPM_MODE=${TPM_MODE}) not exercised."
-            echo "### vm-e2e (${{ matrix.arch }}) -- SKIP: test-tpm0-pcr-extend-ci.sh (TPM_MODE=swtpm), no yubiOS image" >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
-          chmod +x tests/vm/test-tpm0-pcr-extend-ci.sh
-          sudo rm -rf /tmp/yubios-vm-e2e-logs
-          sudo mkdir -p /tmp/yubios-vm-e2e-logs
-          sudo chmod 0777 /tmp/yubios-vm-e2e-logs
-          set +e
-          sudo env "PATH=$PATH:/usr/sbin:/sbin" "YUBIOS_IMAGE=${YUBIOS_IMAGE}" "BCVK_EPHEMERAL_EXTRA_ARGS=${BCVK_EPHEMERAL_EXTRA_ARGS:-}" "YUBIOS_SSH_WAIT_SECS=${YUBIOS_SSH_WAIT_SECS:-300}" "TPM_MODE=${TPM_MODE}" bash tests/vm/test-tpm0-pcr-extend-ci.sh
-          rc=$?
-          set -e
-          if [ "$rc" -ne 0 ]; then
-            echo "--- disk after failed TPM VM run ---"
-            df -h "$PWD" /tmp /var/lib/containers || true
-            echo "--- VM console log tail ---"
-            sudo tail -200 /tmp/yubios-vm-e2e-logs/console.txt || true
-            echo "--- VM journal tail ---"
-            sudo tail -200 /tmp/yubios-vm-e2e-logs/journal.json || true
-            echo "--- VM initrd journal tail ---"
-            sudo tail -200 /tmp/yubios-vm-e2e-logs/journal-initrd.json || true
-          fi
-          if [ "$rc" -eq 77 ]; then
-            echo "::warning::SKIP: test-tpm0-pcr-extend-ci.sh (TPM_MODE=swtpm) -- this boot chain cannot provide the OP-TEE fTPM /dev/tpm0 the verifier needs (bcvk DirectBoot bypasses the systemd-stub chain; see tests/vm/build-arm64-ftpm-qemu.sh for the chain that can)."
-            echo "### vm-e2e (${{ matrix.arch }}) -- SKIP: test-tpm0-pcr-extend-ci.sh (TPM_MODE=swtpm), no OP-TEE fTPM in this boot chain" >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
-          [ "$rc" -eq 0 ] || exit "$rc"
-          echo "### vm-e2e (${{ matrix.arch }}) -- PASS: test-tpm0-pcr-extend-ci.sh (TPM_MODE=swtpm), /dev/tpm0 live + PCR extend verified" >> "$GITHUB_STEP_SUMMARY"
-
       - name: Run tests/vm/test-luks-fido2.sh (DESTRUCTIVE -- wipes ${{ inputs.hw_device }})
         if: github.event_name == 'workflow_dispatch' && inputs.hw_device != '' && steps.yubikey.outputs.present == '1' && steps.device.outputs.ok == '1'
         timeout-minutes: 10
@@ -688,10 +605,109 @@ jobs:
         run: |
           echo "### vm-e2e (${{ matrix.arch }}) -- INFO: tests/vm/test-luks-fido2.sh needs a physical YubiKey + spare block device + root; the hardware leg above runs it for real when dispatched with hw_device set, otherwise it is lint-only (yubiOS#9, yubiOS#20)." >> "$GITHUB_STEP_SUMMARY"
 
+  # -- Phase F0 fTPM chain (yubiOS#35). Separate job from vm-e2e on purpose. --
+  # The OP-TEE ms-tpm-20-ref fTPM lives in the FIRMWARE (TF-A + OP-TEE + U-Boot),
+  # not in the yubiOS OS image, so no bcvk guest can ever expose it: bcvk uses
+  # DirectBoot, which bypasses the firmware entirely. Earlier revisions of this
+  # workflow tried to run tests/vm/verify-tpm0-pcr-extend.sh inside a bcvk guest
+  # and could only ever fail or skip.
+  #
+  # Instead this mirrors ci_firmware-rk.yml Stage 3 and SOURCES the firmware from
+  # the published Docker bundle rather than rebuilding TF-A/OP-TEE from source
+  # (tests/vm/build-arm64-ftpm-qemu.sh does that, and takes tens of minutes).
+  # No bcvk build and no /dev/kvm needed for Stage A: it boots -bios flash.bin
+  # under TCG, same as Stage 3 does on a hosted runner.
+  #
+  # tests/vm/test-ftpm-qemu-ci.sh owns the layering and keeps the tests/vm CI
+  # contract: 0 pass, 77 explicit SKIP, 1 fail.
+  ftpm-qemu:
+    name: fTPM QEMU e2e (${{ matrix.arch }})
+    needs: lint-vm-scripts
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            runner: [self-hosted, Linux, ARM64, KVM]
+    runs-on: ${{ matrix.runner }}
+    env:
+      FIRMWARE_IMAGE: ${{ inputs.firmware_image || 'docker.io/0mniteck/yubios:firmware-qemu-arm64' }}
+      YUBIOS_IMAGE: ${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}
+      FTPM_LINUX_PAYLOAD: ${{ inputs.ftpm_linux_payload && '1' || '0' }}
+      BOOT_TIMEOUT: '180'
+      LINUX_BOOT_TIMEOUT: '900'
+      LOG_DIR: /tmp/yubios-ftpm-logs
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      - name: Install QEMU (aarch64 system emulation) + podman
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends \
+            qemu-system-arm qemu-efi-aarch64 qemu-utils podman coreutils util-linux
+          qemu-system-aarch64 --version
+          podman --version
+
+      - name: Put a cached bcvk on PATH (Stage B only; skips cleanly when absent)
+        run: |
+          bcvk_bin="$(find /opt/bcvk -maxdepth 2 -type d -name bin 2>/dev/null | head -n1 || true)"
+          if [ -n "$bcvk_bin" ]; then
+            echo "$bcvk_bin" >> "$GITHUB_PATH"
+            echo "::notice::using cached bcvk at $bcvk_bin for fTPM Stage B"
+          else
+            echo "::notice::no cached bcvk under /opt/bcvk; fTPM Stage B will SKIP if requested"
+          fi
+
+      - name: Run tests/vm/test-ftpm-qemu-ci.sh (Stage A firmware, Stage B Linux)
+        timeout-minutes: 30
+        run: |
+          chmod +x tests/vm/test-ftpm-qemu-ci.sh
+          sudo rm -rf "$LOG_DIR"
+          sudo mkdir -p "$LOG_DIR"
+          sudo chmod 0777 "$LOG_DIR"
+          set +e
+          sudo env "PATH=$PATH:/usr/sbin:/sbin" \
+            "FIRMWARE_IMAGE=$FIRMWARE_IMAGE" \
+            "YUBIOS_IMAGE=$YUBIOS_IMAGE" \
+            "FTPM_LINUX_PAYLOAD=$FTPM_LINUX_PAYLOAD" \
+            "BOOT_TIMEOUT=$BOOT_TIMEOUT" \
+            "LINUX_BOOT_TIMEOUT=$LINUX_BOOT_TIMEOUT" \
+            "LOG_DIR=$LOG_DIR" \
+            bash tests/vm/test-ftpm-qemu-ci.sh
+          rc=$?
+          set -e
+          if [ "$rc" -ne 0 ]; then
+            echo "--- OP-TEE secure-world serial log tail ---"
+            sudo tail -200 "$LOG_DIR/ftpm-optee.log" || true
+            echo "--- normal-world serial log tail ---"
+            sudo tail -200 "$LOG_DIR/ftpm-nw.log" || true
+            echo "--- Stage B Linux console tail (if any) ---"
+            sudo tail -200 "$LOG_DIR/ftpm-linux.log" || true
+          fi
+          if [ "$rc" -eq 77 ]; then
+            echo "::warning::SKIP: fTPM leg incomplete (see the SKIP line above for the exact gap)."
+            echo "### ftpm-qemu (${{ matrix.arch }}) -- SKIP: see log for the named gap" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          [ "$rc" -eq 0 ] || exit "$rc"
+          echo "### ftpm-qemu (${{ matrix.arch }}) -- PASS: OP-TEE fTPM Early TA loaded, probed, functional; StMM loaded" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload fTPM serial logs
+        if: always()
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
+        with:
+          name: ftpm-qemu-logs-${{ matrix.arch }}
+          path: /tmp/yubios-ftpm-logs/*.log
+          if-no-files-found: warn
+          retention-days: 7
+
   ci-callback:
     name: Callback to ci.yml orchestrator
     if: ${{ always() && github.event_name == 'workflow_dispatch' && inputs.ci_callback == true }}
-    needs: [lint-vm-scripts, vm-e2e]
+    needs: [lint-vm-scripts, vm-e2e, ftpm-qemu]
     runs-on: ubuntu-24.04
     permissions:
       contents: read
