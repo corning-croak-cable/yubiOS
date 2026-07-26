@@ -123,6 +123,12 @@ RUN mkdir -p /etc/yubico && touch /etc/yubico/u2f_keys && chmod 600 /etc/yubico/
 # guest still exposed /dev/vfio. --no-hostonly matches the generic/portable
 # image this container ships (never probe the container-build host's own
 # hardware); --force overwrites the stale baked-in initramfs.img in place.
-RUN kver="$(basename "$(ls -d /usr/lib/modules/*/ | head -1)")" && \
+# No pipes here on purpose (hadolint DL4006/SC2012, run 30188695768): a glob
+# via `set --` picks the first /usr/lib/modules/*/ match without `ls`, and
+# lsinitrd's listing is written to a file before grep instead of piped.
+RUN set -- /usr/lib/modules/*/ && \
+    kver="$(basename "$1")" && \
     dracut --no-hostonly --force --kver "$kver" "/usr/lib/modules/$kver/initramfs.img" && \
-    ! lsinitrd "/usr/lib/modules/$kver/initramfs.img" | grep -q "/vfio\.ko"
+    lsinitrd "/usr/lib/modules/$kver/initramfs.img" > /tmp/yubiOS-initramfs-listing.txt && \
+    { ! grep -q "/vfio\.ko" /tmp/yubiOS-initramfs-listing.txt; } && \
+    rm -f /tmp/yubiOS-initramfs-listing.txt
