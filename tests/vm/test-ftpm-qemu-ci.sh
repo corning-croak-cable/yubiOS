@@ -39,7 +39,17 @@ LINUX_BOOT_TIMEOUT="${LINUX_BOOT_TIMEOUT:-900}"
 # operation in Stage B now has its own budget, and blowing that budget is a loud
 # 77 SKIP naming the budget -- not a dead job.
 TO_DISK_TIMEOUT="${TO_DISK_TIMEOUT:-900}"
-WORK="${WORK:-${PWD}/ftpm-qemu-ci}"
+# Runs 30180564384/30180564430 (2026-07-26) showed the real failure mode: this
+# used to default under ${PWD} -- the git checkout -- and the whole script runs
+# via 'sudo', so every dir it created here (firmware/, the installer disk) came
+# out root-owned. On rock1's PERSISTENT self-hosted workspace, that leftover
+# root-owned tree makes actions/checkout's own cleanup fail with EACCES on the
+# NEXT run, which silently falls back to a stale pre-checkout tree -- the whole
+# job then runs against old code with no error banner anywhere. /tmp already
+# works for FTPM_LOG_DIR (recreated + chmod 0777 every run by the workflow), so
+# WORK moves there too, and gets removed at the START of every run for the same
+# reason: a same-run interruption's root-owned leftovers must not survive either.
+WORK="${WORK:-/tmp/yubios-ftpm-work}"
 LOG_DIR="${LOG_DIR:-/tmp/yubios-ftpm-logs}"
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -62,6 +72,7 @@ log "host preflight"
 need qemu-system-aarch64
 need podman
 need dd
+rm -rf "$WORK"
 mkdir -p "$WORK" "$LOG_DIR"
 
 # ---- source the firmware from the published OCI artifact ----
@@ -108,8 +119,14 @@ log "Stage A: boot flash.bin and assert fTPM firmware markers"
 NW_LOG="${LOG_DIR}/ftpm-nw.log"
 OPTEE_LOG="${LOG_DIR}/ftpm-optee.log"
 rm -f "$NW_LOG" "$OPTEE_LOG"
+# -nic none: run 30180564430 failed here with 'failed to find romfile
+# "efi-virtio.rom"' -- without -net none/-nodefaults QEMU auto-adds a default
+# user-mode NIC, and its virtio-net-pci default romfile isn't present in every
+# qemu-system-aarch64 build/package on this host. Nothing in Stage A boots a
+# guest OS or needs network; suppress the default NIC outright instead of
+# chasing which QEMU package ships that ROM.
 timeout "$BOOT_TIMEOUT" qemu-system-aarch64 \
-  -M virt,secure=on -cpu max -m 2048 \
+  -M virt,secure=on -cpu max -m 2048 -nic none \
   -bios "$FLASH" \
   -display none -d guest_errors \
   -serial "file:${NW_LOG}" -serial "file:${OPTEE_LOG}" || true
@@ -180,7 +197,7 @@ rm -f "$LINUX_LOG" "$LINUX_OPTEE_LOG" "$CONSOLE_SOCK"
 # the autologin shell. Second serial stays a plain file for the OP-TEE log.
 log "Stage B: boot the installed disk (console on ${CONSOLE_SOCK})"
 qemu-system-aarch64 \
-  -M virt,secure=on -cpu max -m 4096 \
+  -M virt,secure=on -cpu max -m 4096 -nic none \
   -bios "$FLASH" \
   -drive "if=none,file=${DISK},format=raw,id=hd0" \
   -device virtio-blk-device,drive=hd0 \
