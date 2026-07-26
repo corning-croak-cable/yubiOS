@@ -107,7 +107,15 @@ RUN cp /usr/lib/pam.d/yubiOS-sudo /etc/pam.d/sudo
 RUN cp /usr/lib/pam.d/yubiOS-system-auth /etc/pam.d/system-auth
 
 # ── Apply systemd presets ─────────────────────────────────────────────────
-RUN systemctl preset-all
+# systemctl preset-all inside a container build invokes systemd-machine-id-setup,
+# which writes a random /etc/machine-id and /var/lib/systemd/random-seed with
+# fresh random content on every build. Those two files break reproducibility
+# (run 30197303995: two isolated builds produced different layer[77] digests
+# because machine-id and random-seed content differed). bootc generates both
+# on first boot anyway, so removing them here is the same pattern as the dnf
+# cache cleanup above -- strip nondeterministic build-time state.
+RUN systemctl preset-all && \
+    rm -f /etc/machine-id /var/lib/systemd/random-seed
 
 # ── PAM: initialise u2f_keys file (populated by yubiOS-enroll-pam) ───────
 RUN mkdir -p /etc/yubico && touch /etc/yubico/u2f_keys && chmod 600 /etc/yubico/u2f_keys
