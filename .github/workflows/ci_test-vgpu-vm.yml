@@ -284,7 +284,7 @@ jobs:
           BCVK_REF=a9303e77dc902a0ff3b547103a7511b5164a450b # yubios branch (bcvk PR #1+#2+#7 combined); see PINNED.md
           # rock1 is self-hosted and persistent -- cache the built binary under
           # /opt keyed by the pinned commit, same pattern as qemu-zstd above.
-          BCVK_PREFIX="/opt/bcvk/${BCVK_REF}-vgpu2" # -vgpu1 = with the --extra-qemu-arg CI patch below
+          BCVK_PREFIX="/opt/bcvk/${BCVK_REF}-vgpu3" # -vgpu1 = with the --extra-qemu-arg CI patch below
           BCVK_SRC=/opt/bcvk-src
           if [ -x "${BCVK_PREFIX}/bin/bcvk" ]; then
             echo "skip=0" >> "$GITHUB_OUTPUT"
@@ -352,7 +352,7 @@ jobs:
             perl -0pi -e 's/(    \/\/ Configure stdio based on display mode)/    \/\/ Raw pass-through QEMU arguments (CI vGPU device attach).\n    for arg in &config.extra_qemu_args {\n        cmd.arg(arg);\n    }\n\n$1/' "$QEMU_RS"
           fi
           if ! grep -Fq -- 'extra-qemu-arg' "$EPH_RS"; then
-            perl -0pi -e 's/(    pub kernel_args: Vec<String>,\n)/$1\n    #[clap(\n        long = "extra-qemu-arg",\n        value_name = "ARG",\n        help = "Pass a raw argument straight through to QEMU (repeatable)"\n    )]\n    #[serde(default)]\n    pub extra_qemu_args: Vec<String>,\n/' "$EPH_RS"
+            perl -0pi -e 's/(    pub kernel_args: Vec<String>,\n)/$1\n    #[clap(\n        long = "extra-qemu-arg",\n        value_name = "ARG",\n        allow_hyphen_values = true,\n        help = "Pass a raw argument straight through to QEMU (repeatable)"\n    )]\n    #[serde(default)]\n    pub extra_qemu_args: Vec<String>,\n/' "$EPH_RS"
             perl -0pi -e 's/(    qemu_config\.set_console\(opts\.common\.console\);)/    for arg in &opts.extra_qemu_args {\n        qemu_config.extra_qemu_args.push(arg.clone());\n    }\n\n$1/' "$EPH_RS"
           fi
           # Adding extra_qemu_args to RunEphemeralOpts breaks every OTHER exhaustive
