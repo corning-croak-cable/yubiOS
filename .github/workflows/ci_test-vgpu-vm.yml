@@ -591,7 +591,7 @@ jobs:
           sudo cp "$LVU_SRC/build/samples/gpio-pci-idio-16" "${LVU_PREFIX}/bin/"
           # The sample links libvfio-user.so, so the shared object ships with it and
           # the test step points LD_LIBRARY_PATH here.
-          sudo find "$LVU_SRC/build" -name 'libvfio-user.so*' -exec cp -P {} "${LVU_PREFIX}/lib/" \;
+          sudo find "$LVU_SRC/build" -name 'libvfio-user.so*' -exec cp -r -P {} "${LVU_PREFIX}/lib/" \;
           sudo chmod 0755 "${LVU_PREFIX}/bin/gpio-pci-idio-16"
           # Smoke-check the staged binary actually starts -- shared-object staging is the
           # fragile part. If it cannot, emit no outputs so the test leg SKIPs with its own
