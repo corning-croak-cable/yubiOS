@@ -162,6 +162,16 @@ jobs:
       # Consumed by tests/vm/*-ci.sh legs that branch on 'is a vGPU attached'.
       YUBIOS_VGPU: '1'
     steps:
+      - name: Reclaim workspace before checkout (self-hosted rock1 can accumulate root-owned files from sudo-run test scripts)
+        run: |
+          # actions/checkout's own cleanup runs as the unprivileged runner user and
+          # cannot remove root-owned leftovers (e.g. tests/vm/test-ftpm-qemu-ci.sh's
+          # old WORK dir, before it moved to /tmp) -- when that happens it silently
+          # falls back to a STALE pre-checkout tree with no error banner, which is
+          # exactly what runs 30180564384/30180564430 hit. Wipe the workspace with
+          # sudo before checkout ever runs, every time, so this can't recur.
+          sudo rm -rf "$GITHUB_WORKSPACE"
+          mkdir -p "$GITHUB_WORKSPACE"
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
