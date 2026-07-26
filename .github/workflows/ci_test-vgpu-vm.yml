@@ -284,7 +284,7 @@ jobs:
           BCVK_REF=a9303e77dc902a0ff3b547103a7511b5164a450b # yubios branch (bcvk PR #1+#2+#7 combined); see PINNED.md
           # rock1 is self-hosted and persistent -- cache the built binary under
           # /opt keyed by the pinned commit, same pattern as qemu-zstd above.
-          BCVK_PREFIX="/opt/bcvk/${BCVK_REF}-vgpu3" # -vgpu1 = with the --extra-qemu-arg CI patch below
+          BCVK_PREFIX="/opt/bcvk/${BCVK_REF}-vgpu3" # -vgpu<N> = with the --extra-qemu-arg CI patch; <N> bumps when a cache-incompatible change ships
           BCVK_SRC=/opt/bcvk-src
           if [ -x "${BCVK_PREFIX}/bin/bcvk" ]; then
             echo "skip=0" >> "$GITHUB_OUTPUT"
