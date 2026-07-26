@@ -752,3 +752,30 @@ flowchart TD
 - Per-architecture staging tags are implementation artifacts. Board-neutral public tags are merged only after all required architectures pass; firmware remains board-scoped where payloads differ.
 
 **Evidence:** [refs/docker-bake-consolidation-2026-07-17.md](../refs/docker-bake-consolidation-2026-07-17.md), [refs/ci-evidence-2026-07-21.md](../refs/ci-evidence-2026-07-21.md), and [refs/reproducible-builds-2026-07-22.md](../refs/reproducible-builds-2026-07-22.md).
+
+---
+
+## ADR-031: GPU Trust Boundary -- virtio-gpu Default, vfio-user Preferred, IOMMU-Gated PCI Passthrough Gate
+
+**Date:** 2026-07-25
+**Status:** Accepted -- default/vfio-user posture proven in CI; IOMMU passthrough access gate is an accepted design, hardware enforcement is post-launch (see [FUTURE.md](FUTURE.md))
+
+**Context:** A GPU is the largest DMA-capable, firmware-carrying peripheral in the machine, and it sits inside the same memory domain that YubiKey-unsealed secrets (LUKS2 volume keys, homed keys) are decrypted into (ADR-001, ADR-003, ADR-009). The base OS's bootc/OCI images are launched as VM guests through libvirt-class hypervisor tooling (bcvk today, virt-manager/libvirt XML `<hostdev>` PCI assignment in the wild) via one of three architectures: emulated `virtio-gpu`, kernel `vfio-pci` passthrough, or a userspace `vfio-user` device server. Only the first and third are honestly testable in CI without real IOMMU hardware. `vfio-pci` passthrough without a working, isolated IOMMU group is a key-extraction primitive: an untranslated DMA-capable device can read an unsealed volume key straight out of guest RAM. Full analysis: [refs/vgpu-vfio-user-trust-boundary-2026-07-25.md](../refs/vgpu-vfio-user-trust-boundary-2026-07-25.md).
+
+**Decision:**
+
+1. Default yubiOS images ship **`virtio-gpu` only**. No `vfio-pci` autoload, no `vfio.conf`, no initramfs binding shipped by default (enforced via `usr/lib/modprobe.d/50-yubiOS-no-vfio.conf` + `usr/lib/dracut.conf.d/52-yubiOS-no-vfio.conf`, commit `afbc94a`).
+2. **OCI image GPU access gate:** before a libvirt-class launcher (bcvk, virt-manager, or any `<hostdev>` PCI-assignment path) may attach a PCI GPU to a yubiOS guest, the gate must confirm: the host IOMMU is enabled and reporting groups, the target GPU is alone in its IOMMU group (or the operator has explicitly assigned the whole group), and an operator has set explicit passthrough policy with a documented deviation on record. Absent any one condition, the gate refuses the attach outright -- it never silently degrades to an unisolated or emulated fallback.
+3. New VFIO code paths prefer **iommufd + the device cdev** over the legacy container/group ioctls; the kernel docs mark the legacy path for deprecation.
+4. Userspace device models (the CI-testable, no-IOMMU-required path) use **vfio-user**: unprivileged process, `0600` socket owned by the VMM user, mutual distrust per spec. Never expose a vfio-user socket beyond a single host namespace until the protocol has authentication.
+5. **No trust-boundary component may consume GPU state.** Adding or removing a GPU (virtio-gpu or a gated passthrough device) must be a no-op for Secure Boot, LUKS2 FIDO2 unlock (ADR-003), homed (ADR-009), pam-u2f (ADR-005), and fTPM PCR behaviour.
+6. GPU resource quota/lockout (Frost/Panfrost, see [FUTURE.md](FUTURE.md) Milestone Frost) is a separate concern from this access gate and makes no claims here about per-cgroup enforcement.
+
+**Evidence landed with this decision:**
+
+- `.github/workflows/ci_test-vgpu-vm.yml` re-runs the full VM e2e suite (fTPM, LUKS2 FIDO2, homed, pam-u2f) with a vGPU attached, proving rule 5, plus:
+- `tests/vm/test-vgpu-virtio-ci.sh` -- guest leg asserting the **negative** surface required by rule 1: no `/dev/vfio`, nothing bound to `vfio-pci`, no `vfio_pci` module loaded in a default image.
+- `tests/vm/test-vfio-user-host-ci.sh` -- real vfio-user client/server handshake with zero kernel VFIO modules, proving rule 4 is exercised end to end.
+- Tracking issue: [OMN-108](https://linear.app/omni-agent/issue/OMN-108/gpu-trust-boundary-vfio-uservirtio-gpu-default-design-vgpu-e2e-ci).
+
+**Honesty note:** Rule 2's IOMMU access gate is accepted as design and rules, not yet implemented as enforcement code or proven on real hardware. Real `vfio-pci` GPU passthrough, IOMMU isolation, and DMA-ownership enforcement need a real IOMMU plus a real GPU -- no hosted or self-hosted runner in this org has that combination today (see [FUTURE.md](FUTURE.md) Post-Launch Hardware Work). Do not describe the passthrough gate as hardware-validated until that evidence exists.
