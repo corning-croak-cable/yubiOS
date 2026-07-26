@@ -28,7 +28,8 @@ ARG SOURCE_DATE_EPOCH
 COPY mkosi.conf.d/test/install-swu2f-authenticator.sh /tmp/install-swu2f-authenticator.sh
 RUN chmod +x /tmp/install-swu2f-authenticator.sh && \
     /tmp/install-swu2f-authenticator.sh && \
-    rm -f /tmp/install-swu2f-authenticator.sh
+    rm -f /tmp/install-swu2f-authenticator.sh && \
+    rm -f /etc/machine-id /var/lib/systemd/random-seed
 
 # ── TEST-ONLY: serial-console root autologin ──────────────────────
 # Gives CI a route INTO the guest when SSH is not reachable. The fTPM chain
