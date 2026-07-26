@@ -30,6 +30,14 @@ Formula: for each line item, ROI contribution = (baseline cost or time) minus (p
 
 ## 2. Customer baseline data needed
 
+**Hardware cost sourcing matters.** Per-unit hardware cost varies substantially with transaction type, and the model needs the customer + arrangement to declare which tier applies rather than picking a single number itself:
+
+- **yubiOS supplies (enterprise/bulk quote):** the $25-per-device floor that has appeared in earlier yubiOS worksheets (notably OMN-84's pilot collateral, PR #113) reflects a Yubico enterprise / volume quote, not a single-key retail purchase. If a pilot arrangement has yubiOS supplying keys, use that per-unit cost and note the source (quote date, volume tier).
+- **Customer supplies (their existing relationship with Yubico or reseller):** use the customer's own per-device cost, which may be enterprise-tier if they already procure at volume, or retail-tier ($58-$85 US per OMN-80 Benchmark 4) if they buy ad-hoc.
+- **No cost data exists (default for an early-stage pilot):** use the $58 US retail floor as a conservative default, since the $25 enterprise figure is a real number but from a different transaction and should not be used as a generic assumption without a quote behind it.
+
+The data-collection spec below records which tier each input came from so the formula's output is interpretable, not just arithmetically valid.
+
 All five "baseline (pre-yubiOS)" cells in OMN-84's worksheet are currently marked customer-provided and blank. This model needs, per pilot customer, before the pilot starts:
 
 - Their current root-of-trust cost per device (TPM, OEM secure enclave, or none, with whatever cost figure they can provide).
