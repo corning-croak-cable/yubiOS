@@ -31,6 +31,17 @@ Use this map to keep [FUTURE.md](FUTURE.md) roadmap entries tied to active TODO 
 | Deferred Ideas | Watch-list only | Keep `systemd-sysinstall`, LUO/KHO, U-Boot FIDO2/U2F, and ORAS media types out of active scope until promoted |
 | Exit Criteria For Moving Work Out Of FUTURE | Covered by [refs/roadmap-promotion-gates-2026-07-17.md](../refs/roadmap-promotion-gates-2026-07-17.md) | Require trust boundary, recovery, evidence, pins, notification/retention policy, and prod/test separation before promotion |
 
+## Current ADR Governance Tasks (added 2026-07-25)
+
+Every ADR in [ADR.md](ADR.md) (ADR-001 through ADR-031) now has a matching Linear tracking issue in OMN (issues OMN-109 through OMN-138, plus OMN-101 relabeled). Accepted ADRs are marked Done; Proposed/idea-stage ADRs stay in Backlog until decided.
+
+- [x] Create one Linear issue per ADR and mark Accepted ones Done: ADR-001..017, 021..026, 028..031 -> Done; ADR-018, ADR-019, ADR-020, ADR-027 -> Backlog (still Proposed).
+- [x] Correct the ADR-024 numbering collision: the vGPU/vfio-user trust boundary decision was mislabeled "candidate ADR-024" in refs/vgpu-vfio-user-trust-boundary-2026-07-25.md and in an earlier FUTURE.md edit. ADR-024 is the chipsec first-boot validation ADR; the GPU trust boundary landed as **ADR-031**. Fixed the stale FUTURE.md cross-reference and relabeled OMN-101 accordingly.
+- [ ] Open a follow-up ADR (or amend ADR-031) once the IOMMU passthrough access gate (ADR-031 rule 2) has real enforcement code and hardware evidence, not just accepted design -- see OMN-101/OMN-108.
+- [ ] Promote ADR-018/019/020 (ARM64 secure-world stack, dual root-of-trust paths, U-Boot UEFI+StandaloneMM) from Proposed to Accepted once the Milestone F hardware proof lands (see Current ARM64 Tasks below); update their Linear issues from Backlog to Done at the same time, not before.
+- [ ] Promote ADR-027 (U-Boot FIDO2/U2F console gate) from idea-stage only after the USB HID threat model and recovery design named in FUTURE.md's Deferred Ideas are written.
+- [ ] Keep new ADRs and their Linear issues created together going forward -- an ADR without a tracking issue is easy to lose track of once it leaves this file.
+
 ## Current Documentation Tasks
 
 - [x] Add a dated planning-cycle note for the 2026-07-11 research pass: [refs/planning-cycle-2026-07-11.md](../refs/planning-cycle-2026-07-11.md).
