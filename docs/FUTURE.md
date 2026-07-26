@@ -63,6 +63,39 @@ Evidence needed before promotion:
 - Tests for false positives, graphics stack recovery, telemetry, logs, and owner notification.
 - ADR coverage of the trust boundary between Linux policy, OP-TEE/TF-A hard cutoff, and user recovery.
 
+### Related: vGPU / vfio-user trust boundary CI (2026-07-25)
+
+Frost's lockout design (above) governs *how much* GPU a workload may consume.
+A separate, now-landed piece of work governs *what kind of GPU access* a
+default yubiOS image exposes at all -- the attack-surface question that has to
+be settled before a lockout policy is meaningful. Full analysis and rules
+(candidate ADR-024): [refs/vgpu-vfio-user-trust-boundary-2026-07-25.md](../refs/vgpu-vfio-user-trust-boundary-2026-07-25.md).
+
+Headline rule: a GPU sits inside the memory domain a YubiKey unseals secrets
+into, so unmitigated `vfio-pci` passthrough is a key-extraction primitive.
+Default images ship `virtio-gpu` only; passthrough is opt-in, IOMMU-gated,
+and policy-gated, never a default. Userspace device models use vfio-user
+(mutual distrust by spec, unprivileged, no kernel VFIO modules). No
+trust-boundary component (Secure Boot, LUKS2 FIDO2, homed, pam-u2f, fTPM PCR)
+may depend on GPU state.
+
+Implementation landed with that ref:
+
+- `.github/workflows/ci_test-vgpu-vm.yml` -- re-runs the entire `ci_test-vm.yml`
+  suite (fTPM, LUKS2 FIDO2, homed, pam-u2f) with `YUBIOS_VGPU=1`, proving a
+  vGPU is a no-op for every trust-boundary leg, plus two new legs below.
+- `tests/vm/test-vgpu-virtio-ci.sh` -- host device-model probe, then a guest
+  leg asserting DRM nodes/driver bound *and* the negative VFIO surface (no
+  `/dev/vfio`, nothing bound to `vfio-pci`, no `vfio_pci` module).
+- `tests/vm/test-vfio-user-host-ci.sh` -- real vfio-user client/server
+  handshake (QEMU `vfio-user-pci`, upstream since 10.1, against a pinned
+  nutanix/libvfio-user sample server) with zero kernel VFIO modules loaded.
+- Both follow the 0-pass / 77-loud-SKIP / else-fail contract used across
+  `tests/vm/*`, and needed a CI-only `--extra-qemu-arg` patch to the pinned
+  yubi-OS/bcvk fork so an ephemeral guest can have a QEMU device attached
+  (open question in the ref: upstream this as a real bcvk PR).
+- Tracking issue: [OMN-108](https://linear.app/omni-agent/issue/OMN-108/gpu-trust-boundary-vfio-uservirtio-gpu-default-design-vgpu-e2e-ci).
+
 ## Milestone CI: Keep The Test Lanes Honest
 
 - Keep native ARM64 KVM evidence visible for the dev/swu2f VM leg.
