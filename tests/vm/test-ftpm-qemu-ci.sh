@@ -167,6 +167,14 @@ test -s "${SCRIPT_DIR}/verify-tpm0-pcr-extend.sh" \
 
 DISK="${WORK}/yubios-ftpm.raw"
 rm -f "$DISK"
+# Capture bcvk's own output so a SKIP at TO_DISK_TIMEOUT isn't a dead-end. The
+# heartbeat alone ("... still running bcvk to-disk") said nothing changed; the
+# real question was always "where did bcvk get stuck" -- now the answer is in a
+# file under LOG_DIR/ that survives the timeout. tee-and-redirect-to-file both
+# run even when `timeout` kills bcvk, because they're shell redirects owned by
+# the timeout's grandchild process tree at the moment of SIGTERM.
+TO_DISK_LOG="${LOG_DIR}/ftpm-to-disk.log"
+rm -f "$TO_DISK_LOG"
 (
   while true; do sleep 30; echo "... still running bcvk to-disk for ${YUBIOS_IMAGE} ($(date -u +%H:%M:%S))"; done
 ) &
@@ -174,12 +182,12 @@ HEARTBEAT_PID=$!
 # Bounded, and rc captured without tripping `set -e` (see TO_DISK_TIMEOUT above).
 TO_DISK_RC=0
 timeout --foreground -k 30 "$TO_DISK_TIMEOUT" \
-  bcvk to-disk --disk-size 20G "$YUBIOS_IMAGE" "$DISK" || TO_DISK_RC=$?
+  bcvk to-disk --disk-size 20G "$YUBIOS_IMAGE" "$DISK" >"$TO_DISK_LOG" 2>&1 || TO_DISK_RC=$?
 kill "$HEARTBEAT_PID" 2>/dev/null || true
 wait "$HEARTBEAT_PID" 2>/dev/null || true
 HEARTBEAT_PID=""
 if [[ "$TO_DISK_RC" -eq 124 || "$TO_DISK_RC" -eq 137 ]]; then
-  skip "bcvk to-disk made no progress within ${TO_DISK_TIMEOUT}s installing ${YUBIOS_IMAGE} and was killed. That is the run-#120 signature: the installer VM hangs, most likely on the same ARM64 zstd EFI zboot kernel bcvk cannot DirectBoot (the other bcvk legs in ci_test-vm.yml SKIP on it explicitly). Give this step a zstd-capable QEMU on PATH, or raise TO_DISK_TIMEOUT if the board is merely slow."
+  skip "bcvk to-disk made no progress within ${TO_DISK_TIMEOUT}s installing ${YUBIOS_IMAGE} and was killed. See ${TO_DISK_LOG} for bcvk's last output before SIGTERM (rc=${TO_DISK_RC}). If the log shows bcvk still pulling the image or still in podman create, the network or podman storage is the bottleneck and TO_DISK_TIMEOUT should be raised. If the log shows bcvk's installer VM at the firmware prompt or in a boot loop, the ARM64 zstd EFI zboot hang is the cause -- a zstd-capable QEMU should be on PATH (see FTPM_PATH above) or the firmware bundle needs to be rebuilt against a bcvk-bootable kernel."
   exit 77
 fi
 if [[ "$TO_DISK_RC" -ne 0 ]]; then
