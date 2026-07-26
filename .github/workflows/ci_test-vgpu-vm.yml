@@ -369,7 +369,6 @@ jobs:
           if ! grep -Fq -- 'extra_qemu_args: Vec::new()' "$TODISK_RS"; then
             perl -0pi -e 's/(let ephemeral_opts = RunEphemeralOpts \{\n)/$1        extra_qemu_args: Vec::new(),\n/' "$TODISK_RS"
           fi
-          fi
           patched=1
           grep -Fq -- 'pub extra_qemu_args' "$QEMU_RS" || patched=0
           grep -Fq -- 'for arg in &config.extra_qemu_args' "$QEMU_RS" || patched=0
