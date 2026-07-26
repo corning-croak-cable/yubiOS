@@ -111,3 +111,18 @@ RUN systemctl preset-all
 
 # ── PAM: initialise u2f_keys file (populated by yubiOS-enroll-pam) ───────
 RUN mkdir -p /etc/yubico && touch /etc/yubico/u2f_keys && chmod 600 /etc/yubico/u2f_keys
+
+# ── Regenerate the shipped initramfs so usr/lib/dracut.conf.d/* actually applies ──
+# COPY usr/ above lands dracut.conf.d fragments (fido2, composefs, and the
+# ADR-031 VFIO omission in 52-yubiOS-no-vfio.conf) AFTER the base image's own
+# kernel-install already produced /usr/lib/modules/<kver>/initramfs.img. bcvk
+# DirectBoot (tests/vm/test-vgpu-virtio-ci.sh, ephemeral run) boots that file
+# verbatim -- without regenerating it here, the shipped initramfs reflects
+# dracut config from before any yubiOS customization existed, so
+# omit_drivers+=" vfio ..." (ADR-031 rule 1) never took effect and a default
+# guest still exposed /dev/vfio. --no-hostonly matches the generic/portable
+# image this container ships (never probe the container-build host's own
+# hardware); --force overwrites the stale baked-in initramfs.img in place.
+RUN kver="$(basename "$(ls -d /usr/lib/modules/*/ | head -1)")" && \
+    dracut --no-hostonly --force --kver "$kver" "/usr/lib/modules/$kver/initramfs.img" && \
+    ! lsinitrd "/usr/lib/modules/$kver/initramfs.img" | grep -q "/vfio\.ko"
