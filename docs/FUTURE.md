@@ -69,7 +69,7 @@ Frost's lockout design (above) governs *how much* GPU a workload may consume.
 A separate, now-landed piece of work governs *what kind of GPU access* a
 default yubiOS image exposes at all -- the attack-surface question that has to
 be settled before a lockout policy is meaningful. Full analysis and rules
-(candidate ADR-024): [refs/vgpu-vfio-user-trust-boundary-2026-07-25.md](../refs/vgpu-vfio-user-trust-boundary-2026-07-25.md).
+(ADR-031): [refs/vgpu-vfio-user-trust-boundary-2026-07-25.md](../refs/vgpu-vfio-user-trust-boundary-2026-07-25.md).
 
 Headline rule: a GPU sits inside the memory domain a YubiKey unseals secrets
 into, so unmitigated `vfio-pci` passthrough is a key-extraction primitive.
