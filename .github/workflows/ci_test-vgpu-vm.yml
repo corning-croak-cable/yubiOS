@@ -580,7 +580,7 @@ jobs:
             echo "### vgpu-vm-e2e (${{ matrix.arch }}) -- SKIP: libvfio-user source unavailable" >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
-          ( cd "$LVU_SRC" && meson setup build -Dwerror=false && ninja -C build )
+          ( cd "$LVU_SRC" && meson setup build -Dwerror=false && ninja -C build lib/libvfio-user.so.0.0.1 samples/gpio-pci-idio-16 )
           if [ ! -x "$LVU_SRC/build/samples/gpio-pci-idio-16" ]; then
             echo "::warning::SKIP: libvfio-user failed to build (see meson/ninja output above); vfio-user handshake leg will SKIP after the client-side gate"
             echo "### vgpu-vm-e2e (${{ matrix.arch }}) -- SKIP: libvfio-user build failed" >> "$GITHUB_STEP_SUMMARY"
