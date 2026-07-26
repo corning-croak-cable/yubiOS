@@ -619,7 +619,10 @@ jobs:
       #    are the cheapest and they gate the QEMU device models every later leg
       #    depends on. Same rc contract: 0 pass, 77 loud SKIP, else fail.
       - name: Run tests/vm/test-vfio-user-host-ci.sh (vfio-user client/server, no kernel VFIO)
-        if: ${{ always() }}
+        # amd64 CI is a lint-only/secondary leg here (ADR-023: ARM64 is primary) and has
+        # no locally-pulled image for a full VM boot -- skip outright rather than fail on
+        # a guest that was never provisioned to run.
+        if: ${{ always() && matrix.arch == 'arm64' }}
         timeout-minutes: 10
         env:
           QEMU_BIN: ${{ matrix.arch == 'arm64' && steps.qemu-zstd.outputs.qemu_prefix != '' && format('{0}/bin/qemu-system-aarch64', steps.qemu-zstd.outputs.qemu_prefix) || (matrix.arch == 'arm64' && 'qemu-system-aarch64' || 'qemu-system-x86_64') }}
@@ -653,7 +656,10 @@ jobs:
           echo "### vgpu-vm-e2e (${{ matrix.arch }}) -- PASS: test-vfio-user-host-ci.sh, userspace device handshake with no kernel VFIO" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Run tests/vm/test-vgpu-virtio-ci.sh (virtio-gpu device model + guest DRM surface)
-        if: ${{ always() }}
+        # Same reason as the vfio-user step above: amd64 never gets steps 14-18
+        # (image pull, AppArmor relax, preconditions) per ADR-023, so this leg has no
+        # locally-pulled image to boot bcvk ephemeral run against. arm64-only.
+        if: ${{ always() && matrix.arch == 'arm64' }}
         timeout-minutes: 20
         env:
           YUBIOS_IMAGE: ${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}
