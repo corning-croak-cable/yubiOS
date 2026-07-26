@@ -117,6 +117,17 @@ if [[ ! -S "$SOCK" ]]; then
   die "vfio-user server never created the unix socket at ${SOCK}"
 fi
 
+# ADR-031 rule 4: the socket is the only access control this protocol has.
+# libvfio-user lib/tran_sock.c creates the AF_UNIX socket with socket(AF_UNIX)+bind()
+# and never chmods it; mode is whatever the process umask allows. On a workflow
+# runner where the test script runs via `sudo env ... bash`, sudo default umask
+# of 0022 gives a socket mode of 0755 -- which the assert below correctly rejects.
+# Tighten to 0600 here, in the test script that owns the protocol guarantee, so
+# the boundary holds regardless of who is invoking the test.
+chmod 0600 "$SOCK"
+SOCK_MODE="$(stat -c '%a' "$SOCK")"
+echo "socket mode (after chmod 0600): ${SOCK_MODE}"
+
 # Spec: local AF_UNIX sockets rely on OS access control; authentication for
 # sockets spanning hosts/guests is deferred. So the socket permissions ARE the
 # boundary -- assert nothing beyond the owner can speak the protocol.
