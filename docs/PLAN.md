@@ -19,7 +19,7 @@ The recommended model is **services-to-subscription**:
 
 This model fits the mission: an individual can retain owner control without a vendor relationship, while an enterprise can pay for a named party to operate the release, support, evidence, and recovery process.
 
-The base-case planning model reaches approximately **$350,000, $1.2 million, and $3.55 million of recognized revenue** in Years 1–3, with operating break-even during Year 3. These are planning assumptions, not forecasts. The model assumes current revenue is $0 because no revenue, paying-customer, or production-deployment evidence was supplied or found in the repository.
+The base-case planning model reaches approximately **$350,000, $1.2 million, and $3.55 million of recognized revenue** in Years 1–3, with operating break-even during Year 3. **These figures are illustrative scaffolding, not validated forecasts — see §6 and `refs/three-year-revenue-cost-model-2026-07-25.md` (OMN-77).** These are planning assumptions, not forecasts. The model assumes current revenue is $0 because no revenue, paying-customer, or production-deployment evidence was supplied or found in the repository.
 
 ## 1. Current position and evidence boundary
 
@@ -63,6 +63,8 @@ Start with organizations for which a small fleet has unusually high consequence 
 | ARM64 appliance and edge builders | 100–10,000 devices | Avoid building and maintaining a verified Linux and owner-key workflow alone | CTO, product security lead | Board-specific enablement, firmware-chain work, bootc lifecycle |
 
 Research labs, firmware specialists, and security consultancies are useful design partners. General consumers, broad office fleets, and safety-critical deployments are not initial commercial targets.
+
+**Note (added 2026-07-28):** the four enterprise segments above (release/signing workstations, security engineering fleets, regulated labs, ARM64 appliance builders) are the **enterprise overlay** for paid operators; the canonical demand-side segment list (including S1 individuals, S2 small teams, S3 public-interest orgs) lives in `refs/who-pays-and-why-2026-07-25.md` (OMN-69). This doc does not enumerate the full demand side; it only describes the enterprise subset of it. The two lists are not in conflict — they cover different altitudes (demand vs. paid-operator overlay).
 
 ### The enterprise value proposition
 
@@ -209,6 +211,12 @@ Do not use mass cold outreach. Use the existing proof-first community strategy t
 - No breach-avoidance revenue or speculative certification premium is included.
 
 ### Base case
+
+**The base-case numbers below are illustrative scaffolding, not validated forecasts.** Per `refs/three-year-revenue-cost-model-2026-07-25.md` (OMN-77): *"There is no base-case model with real numbers in this repo to validate — RULES.md and COMPANY.md both list Financial as unset, and `refs/team-budget-use-of-funds-2026-07-25.md` (OMN-74) already established that no funding/revenue figure exists for this session to ground one in. Producing a three-year model with invented revenue and cost figures would be exactly the fabrication the pulpit's doctrine rules out."* The structural framework is correct (revenue categories, sensitivity shapes, stop-rule categories); the numeric cells are placeholder inputs to be replaced once real data exists.
+
+The numbers below ($350k / $1.2M / $3.55M revenue; 3/10/25 customers; 225/1,500/6,250 nodes; exit ARR $135k / $900k / $3.75M; opex $500k / $1M / $1.75M; cumulative ~$550k operating loss; ~$700k total runway) are **planning assumptions, not forecasts, and explicitly not validated.** They will be replaced with measured inputs after the first priced proposal (Gate 1.5b) lands and the first paid pilot readout (OMN-67) provides actual support-cost and conversion data.
+
+**Required update cadence:** §6 must be re-stated against actuals within 30 days of (a) the first priced proposal landing, (b) the first paid pilot completing, or (c) any material change to the runway/funding assumption. RULES.md and COMPANY.md must be updated together so the three files do not drift.
 
 All figures are USD thousands except customer and node counts.
 
