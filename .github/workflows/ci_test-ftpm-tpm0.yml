@@ -57,9 +57,13 @@ jobs:
           podman --version
           tpm2_getcap --version 2>&1 | head -1 || true
 
-      - name: Reclaim workspace before checkout (hosted runners can accumulate root-owned leftovers)
+      - name: Reclaim workspace before checkout (only if running outside a container)
         run: |
-          sudo rm -rf "$GITHUB_WORKSPACE"
+          # Inside the dhi.io/debian-base container, $GITHUB_WORKSPACE is a fresh per-job bind-mount
+          # and sudo is unavailable. On bare runners we still want this wipe before checkout.
+          if [ -d "$GITHUB_WORKSPACE" ] && [ "$(id -u)" = "0" ]; then
+            rm -rf "$GITHUB_WORKSPACE"
+          fi
           mkdir -p "$GITHUB_WORKSPACE"
 
       - name: Checkout
