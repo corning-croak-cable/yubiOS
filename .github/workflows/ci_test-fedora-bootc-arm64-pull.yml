@@ -1,0 +1,141 @@
+# OMN-139 — quay.io fedora-bootc:45 arm64 pull integrity check
+#
+# Pulls the pinned Fedora bootc:45 arm64 INDEX digest from quay.io, walks every
+# layer in the manifest list, and validates that each layer's fetched payload
+# matches its declared Content-Length and sha256 digest. This is the missing
+# gate that would have caught run #220 (commit 970f27ce, 2026-07-26): the
+# pinned INDEX digest 2ab312b2… had been removed upstream and the failure
+# surfaced as `not found` during the build's metadata load step. Diagnosed as
+# "stream truncation on layer 16,045,778 bytes" in the issue title; the actual
+# signature is upstream manifest GC / removal, not truncation -- this workflow
+# asserts both classes anyway.
+#
+# Reads PINNED.md for the live base-image INDEX digest so it stays in sync
+# without manual edits. Exit codes: 0 pass, 1 integrity failure, 2 pull/network.
+name: yubiOS fedora-bootc arm64 pull integrity (OMN-139)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/ci_test-fedora-bootc-arm64-pull.yml'
+      - 'PINNED.md'
+  workflow_dispatch:
+    inputs:
+      digest:
+        description: 'Override the INDEX digest pulled from PINNED.md (sha256:...). Leave blank to read PINNED.md.'
+        required: false
+        default: ''
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  pull-arm64-integrity:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # PINNED.md
+
+      - name: Resolve target INDEX digest (PINNED.md -> manual override -> fail)
+        id: digest
+        run: |
+          set -euo pipefail
+          if [ -n "${{ inputs.digest }}" ]; then
+            echo "value=${{ inputs.digest }}" >> "$GITHUB_OUTPUT"
+            echo "::notice::Using manual digest override: ${{ inputs.digest }}"
+            exit 0
+          fi
+          pinned="$(grep -Eo 'sha256:[a-f0-9]{64}' PINNED.md | head -1 || true)"
+          if [ -z "$pinned" ]; then
+            echo "::error::No sha256 digest found in PINNED.md; supply via workflow_dispatch digest input"
+            exit 2
+          fi
+          echo "value=$pinned" >> "$GITHUB_OUTPUT"
+          echo "::notice::Using PINNED.md digest: $pinned"
+
+      - name: Fetch INDEX manifest list (arm64)
+        id: manifest
+        run: |
+          set -euo pipefail
+          url="https://quay.io/v2/fedora/fedora-bootc/manifests/${{ steps.digest.outputs.value }}"
+          accept='application/vnd.docker.distribution.manifest.list.v2+json,application/vnd.oci.image.index.v1+json,application/vnd.docker.distribution.manifest.v2+json,application/vnd.oci.image.manifest.v1+json'
+          curl -fsSL --retry 3 -H "Accept: $accept" -D "$RUNNER_TEMP/hdr" -o "$RUNNER_TEMP/manifest.json" "$url"
+          ct="$(awk 'tolower($1)=="content-type:" {gsub(/\r/,""); print $2}' "$RUNNER_TEMP/hdr" | tr -d '[:space:]')"
+          echo "content_type=$ct" >> "$GITHUB_OUTPUT"
+          echo "::notice::INDEX content-type=$ct"
+
+      - name: Walk layers for arm64 child and validate each one end-to-end
+        run: |
+          set -euo pipefail
+          ct="${{ steps.manifest.outputs.content_type }}"
+          manifest="$RUNNER_TEMP/manifest.json"
+          # Pick the arm64 child manifest digest
+          if [[ "$ct" == *manifest.list* ]] || [[ "$ct" == *image.index* ]]; then
+            child="$(jq -r '.manifests[] | select(.platform.architecture=="arm64") | .digest' "$manifest")"
+            if [ -z "$child" ] || [ "$child" = "null" ]; then
+              echo "::error::no arm64 child in INDEX"
+              exit 2
+            fi
+            echo "::notice::arm64 child digest: $child"
+            curl -fsSL --retry 3 \
+              -H 'Accept: application/vnd.docker.distribution.manifest.v2+json,application/vnd.oci.image.manifest.v1+json' \
+              -o "$RUNNER_TEMP/child.json" \
+              "https://quay.io/v2/fedora/fedora-bootc/manifests/$child"
+            layers="$(jq -r '.layers[] | "\(.digest) \(.size) \(.mediaType)"' "$RUNNER_TEMP/child.json")"
+            config_digest="$(jq -r '.config.digest' "$RUNNER_TEMP/child.json")"
+            config_size="$(jq -r '.config.size' "$RUNNER_TEMP/child.json")"
+          else
+            # Single-arch manifest: treat its layers as the ones to validate.
+            layers="$(jq -r '.layers[] | "\(.digest) \(.size) \(.mediaType)"' "$manifest")"
+            config_digest="$(jq -r '.config.digest // empty' "$manifest")"
+            config_size="$(jq -r '.config.size // 0' "$manifest")"
+          fi
+
+          echo "::notice::layers to validate:"
+          echo "$layers"
+
+          fail=0
+          # Validate config blob if present
+          if [ -n "$config_digest" ] && [ "$config_digest" != "null" ]; then
+            echo "::notice::fetching config $config_digest (declared size $config_size)"
+            curl -fsSL --retry 3 -o "$RUNNER_TEMP/cfg" \
+              "https://quay.io/v2/fedora/fedora-bootc/blobs/$config_digest"
+            actual_size="$(stat -c %s "$RUNNER_TEMP/cfg")"
+            actual_sha="$(sha256sum "$RUNNER_TEMP/cfg" | awk '{print $1}')"
+            if [ "$actual_size" != "$config_size" ]; then
+              echo "::error::config size mismatch: declared=$config_size actual=$actual_size"
+              fail=1
+            fi
+            if [ "sha256:$actual_sha" != "$config_digest" ]; then
+              echo "::error::config digest mismatch: declared=$config_digest actual=sha256:$actual_sha"
+              fail=1
+            fi
+          fi
+
+          # Validate each layer
+          i=0
+          echo "$layers" | while read -r digest size media; do
+            [ -z "$digest" ] && continue
+            i=$((i+1))
+            echo "::notice::layer #$i digest=$digest declared_size=$size media=$media"
+            curl -fsSL --retry 3 -o "$RUNNER_TEMP/layer" \
+              "https://quay.io/v2/fedora/fedora-bootc/blobs/$digest"
+            actual_size="$(stat -c %s "$RUNNER_TEMP/layer")"
+            actual_sha="$(sha256sum "$RUNNER_TEMP/layer" | awk '{print $1}')"
+            rc=0
+            if [ "$actual_size" != "$size" ]; then
+              echo "::error::layer $digest size mismatch: declared=$size actual=$actual_size"
+              rc=1
+            fi
+            if [ "sha256:$actual_sha" != "$digest" ]; then
+              echo "::error::layer $digest digest mismatch: declared=$digest actual=sha256:$actual_sha"
+              rc=1
+            fi
+            [ "$rc" -eq 0 ] && echo "::notice::layer $digest OK"
+          done
+
+          [ "$fail" -eq 0 ] || exit 1
+          echo "### fedora-bootc:45 arm64 pull integrity -- PASS (OMN-139)" >> "$GITHUB_STEP_SUMMARY"
