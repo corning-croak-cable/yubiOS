@@ -580,6 +580,7 @@ jobs:
       - name: Upload fTPM serial logs
         if: ${{ always() && matrix.arch == 'arm64' }}
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
+        continue-on-error: true
         with:
           name: ftpm-qemu-logs-${{ matrix.arch }}
           path: /tmp/yubios-ftpm-logs/*.log
