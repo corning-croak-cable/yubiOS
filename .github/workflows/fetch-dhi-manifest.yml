@@ -79,12 +79,11 @@ jobs:
       - name: Checkout yubiOS for PINNED.md update
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 — see PINNED.md
         with:
-          token: ${{ secrets.GH_TK }}
+          token: ${{ github.token }}
 
       - name: Fetch dhi.io Debian base manifest and update pinned refs
         env:
           DOCKER_PASS: ${{ secrets.DOCKER }}
-          GH_TK: ${{ secrets.GH_TK }}
         run: |
           set -euo pipefail
           TOKEN=$(curl -sf -u "0mniteck42:$DOCKER_PASS" \
@@ -167,7 +166,7 @@ jobs:
           if git diff --quiet; then
             echo "PINNED.md and referenced dhi.io digests already current."
           else
-            GITHUB_TOKEN=${{ secrets.GH_TK }}
+            GITHUB_TOKEN=${{ github.token }}
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
             git add PINNED.md .

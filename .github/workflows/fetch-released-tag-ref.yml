@@ -77,11 +77,11 @@ jobs:
       - name: Checkout yubiOS for fork-ref updates
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 — see PINNED.md
         with:
-          token: ${{ secrets.GH_TK }}
+          token: ${{ github.token }}
 
       - name: Fetch release tags, verify fork objects, and update pins
         env:
-          GH_TOKEN: ${{ secrets.GH_TK }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
 
