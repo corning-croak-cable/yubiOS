@@ -2,7 +2,7 @@
 
 Regenerated from the `ci/group-routing-redesign` branch shape on 2026-07-29 UTC (PR #145).
 
-Group-routing redesign: ci.yml now exposes a single `group:` choice input (none / tests / vm-tests / fetches / ci-builders / forks / all). The previous `ci_fork_run` and `ci_test_run` boolean flags and the four `*_Docker_push` per-sibling flags are collapsed into one explicit decision. `Docker_push` is lifted to a master override for the `ci-builders` (or `all`) group only; no other group ever publishes. All 22 sibling workflows are `workflow_dispatch`-only -- the previous path-scoped `on: push:` triggers (used for self-edit validation and fork upstream-sync) are removed.
+Group-routing redesign (no-chain model): ci.yml now exposes a single `group:` choice input (none / firmware / tests / vm-tests / fetches / ci-builders / forks / all). Each value maps to a list of workflow files; ci.yml fires one independent `workflow_dispatch` per workflow in that group, then exits. There is **no state machine, no callback handoff, no chain**. The previous `ci_fork_run` and `ci_test_run` boolean flags and the four `*_Docker_push` per-sibling flags are removed. `Docker_push` propagates only to the builder workflows in a group (firmware, yubiOS-ci, ci_dev_image, ci_mkosi-installer); every other workflow ignores it. The legacy pass-through inputs (`Dev_Docker_push`, `Firmware_Docker_push`, `Installer_Docker_push`, `ci_fork_run`, `ci_test_run`, `vm_image`) and the 10-input `ci_*` callback contract are gone. The `firmware` group runs `ci_firmware-rk.yml` alone (no fetches preamble, no production/dev/installer follow-up). All 22 sibling workflows are `workflow_dispatch`-only -- the previous path-scoped `on: push:` triggers (used for self-edit validation and fork upstream-sync) are removed.
 
 This map treats `.github/workflows/*.yml` as the source of truth for events, runners, jobs, artifacts, and callback handoffs. `yubiOS-bake.hcl` is the source of truth for every Docker build in the non-`ci_fork*` chain dispatched by `ci.yml`. `PINNED.md` remains the source of truth for approved action SHAs and image digests.
 
@@ -10,7 +10,7 @@ This map treats `.github/workflows/*.yml` as the source of truth for events, run
 
 | Workflow file | Role | Main inputs | Main outputs |
 |---|---|---|---|
-| `.github/workflows/ci.yml` | Top-level state machine | `group:` (none / tests / vm-tests / fetches / ci-builders / forks / all), `reason`, `target_ref`, `Docker_push` (master override for ci-builders / all only) | Dispatches the next workflow in the chosen group's chain |
+| `.github/workflows/ci.yml` | Top-level dispatch router (no chain) | `group:` (none / firmware / tests / vm-tests / fetches / ci-builders / forks / all), `reason`, `target_ref`, `Docker_push` (propagated to firmware, yubiOS-ci, ci_dev_image, ci_mkosi-installer only) | Fires one `workflow_dispatch` per workflow in the chosen group's list, then exits |
 | `.github/workflows/fetch-dhi-manifest.yml` | DHI base digest refresh | `dhi.io/debian-base:trixie-debian13-dev`, `PINNED.md` | Updated DHI digest refs committed by workflow when drift exists |
 | `.github/workflows/fetch-fedora-bootc-manifest.yml` | Fedora bootc digest refresh | `quay.io/fedora/fedora-bootc:45`, `PINNED.md` | Updated Fedora bootc digest refs committed by workflow when drift exists |
 | `.github/workflows/fetch-released-tag-ref.yml` | yubi-OS fork release-ref refresh | Nine fork/upstream mappings, stable-tag families, `PINNED.md` | Peeled release commits verified from each fork; all approved textual pins committed together when drift exists |
@@ -26,36 +26,49 @@ This map treats `.github/workflows/*.yml` as the source of truth for events, run
 
 The older `ci_int_stmm.yml`, `ci_int_optee_fip.yml`, and `ci_int_qemu.yml` lane names are not separate files on current `main`. Their StMM, OP-TEE/FIP, and QEMU stages are embedded in the firmware integration workflows.
 
-## Top-Level State Machine
+## Top-Level Dispatch Router (no chain)
 
-`ci.yml` is the coordinator. Each child workflow reports back by dispatching `ci.yml` with `state=<completed workflow name>` and `completed_conclusion=<success|failure|cancelled>`. The coordinator stops on non-success before dispatching the next workflow.
+`ci.yml` is a thin dispatch router. When called with `group=<name>`, it fires one `workflow_dispatch` per workflow in that group's list and exits. There is **no state machine, no callback, no chain**. Workflows in a group do not depend on each other; each runs independently from its own dispatch call.
 
-Group-routing redesign (PR #145): the `start` state is now driven by a single `group:` choice input that selects which subgroup of workflows runs. The `group` taxonomy collapses the previous `ci_fork_run` and `ci_test_run` boolean flags and the four `*_Docker_push` per-sibling flags into one explicit decision. `Docker_push` is lifted to a master override for the `ci-builders` (or `all`) group only; no other group ever publishes.
+Group-routing redesign (no-chain model): the single `group:` choice input decides which list of workflows gets dispatched. The previous `ci_fork_run` and `ci_test_run` boolean flags and the four `*_Docker_push` per-sibling flags are removed; the 10-input `ci_*` callback contract is removed too. `Docker_push` propagates only to the four builder workflows in a group (firmware, yubiOS-ci, ci_dev_image, ci_mkosi-installer); every other workflow receives `Docker_push=false` and ignores it.
+
+| group | workflows dispatched (each independently) | publishes with `Docker_push=true` |
+|---|---|---|
+| `none` | — (no dispatch) | — |
+| `firmware` | `ci_firmware-rk.yml` | firmware bundle |
+| `tests` | `ci_test_rootless-docker.yml`, `ci_test_bootc-filesystem.yml`, `ci_test_pq_tls_verify.yml` | — |
+| `vm-tests` | `ci_test-vm.yml` | — |
+| `fetches` | `fetch-dhi-manifest.yml`, `fetch-fedora-bootc-manifest.yml`, `fetch-released-tag-ref.yml` | — |
+| `ci-builders` | `yubiOS-ci.yml`, `ci_dev_image.yml`, `ci_mkosi-installer.yml` (firmware is its own group) | production + dev + installer |
+| `forks` | `ci_fork_mkosi.yml`, `ci_fork_bcvk.yml`, `ci_fork_arm-trusted-firmware.yml`, `ci_fork_optee-os.yml`, `ci_fork_ms-tpm-20-ref.yml`, `ci_fork_optee-ftpm.yml`, `ci_fork_u-boot.yml`, `ci_fork_edk2.yml` | — |
+| `all` | union of firmware, tests, vm-tests, fetches, ci-builders, forks | firmware, production, dev, installer |
 
 ```mermaid
 flowchart TD
-    start["ci.yml state=start"]
+    start["ci.yml dispatch step"]
     pick{"group: choice"}
-    none_path["none\ndispatch only, no group runs"]
-    forks_path["forks chain\nci_fork_mkosi -> ... -> ci_fork_edk2"]
-    tests_path["tests chain\nrootless-docker -> bootc-filesystem -> pq-tls-verify"]
-    vm_tests_path["vm-tests chain\nci_test-vm"]
-    fetches_path["fetches chain\ndhi -> fedora -> released-tag"]
-    ci_builders_path["ci-builders chain\nfetches + firmware -> ci -> dev -> installer"]
-    all_path["all chain\nfetches -> forks -> tests -> ci-builders -> vm-tests"]
-    done["Ordered CI chain complete"]
+    none_path["none\nno dispatch"]
+    firmware_path["firmware\n[ci_firmware-rk]"]
+    tests_path["tests\n[rootless-docker, bootc-filesystem, pq-tls-verify]\n(3 independent dispatches)"]
+    vm_tests_path["vm-tests\n[ci_test-vm]"]
+    fetches_path["fetches\n[dhi, fedora-bootc, released-tag]\n(3 independent dispatches)"]
+    ci_builders_path["ci-builders\n[yubiOS-ci, ci_dev_image, ci_mkosi-installer]\n(3 independent dispatches)"]
+    forks_path["forks\n[8 ci_fork_*]\n(8 independent dispatches)"]
+    all_path["all\nunion of every group\n(19 independent dispatches)"]
+    done["exit"]
 
     start --> pick
-    pick -- "none" --> none_path
-    pick -- "forks" --> forks_path --> done
+    pick -- "none" --> none_path --> done
+    pick -- "firmware" --> firmware_path --> done
     pick -- "tests" --> tests_path --> done
     pick -- "vm-tests" --> vm_tests_path --> done
     pick -- "fetches" --> fetches_path --> done
     pick -- "ci-builders" --> ci_builders_path --> done
+    pick -- "forks" --> forks_path --> done
     pick -- "all" --> all_path --> done
 ```
 
-Every child returns to the `ci.yml` dispatcher between nodes. The dispatch contract on the callback is unchanged: the 10-input `ci_*` family still flows through every child, so the per-sibling push flags, VM image, fork/test gates, and chain ref are carried through the chain exactly as before. The `state` value is the workflow display name (`github.workflow`), not the filename; the `ci.yml` case statement matches on display names.
+Each workflow runs as a standalone run from its own `workflow_dispatch` call. There is no callback handoff, no `state` propagation, no `completed_conclusion` propagation, and no `ci_*` input contract. To re-run a workflow, dispatch `ci.yml` again with the same group (or dispatch the workflow directly with its own inputs).
 
 ## Canonical Docker Bake Graph
 
@@ -214,22 +227,21 @@ flowchart TD
 
 ## Trigger Policy (group-routing redesign)
 
-All 22 sibling workflows are `workflow_dispatch`-only. The previous path-scoped `on: push:` triggers -- which previously served as self-edit validation (path-scoped to `.github/workflows/<self>.yml`) and as fork upstream-sync auto-runs (path-scoped to fork-source paths on 4 forks) -- are removed in PR #145. Every callback is still guarded by both `github.event_name == 'workflow_dispatch'` and `ci_callback == true`.
+All 22 sibling workflows are `workflow_dispatch`-only. The previous path-scoped `on: push:` triggers -- which previously served as self-edit validation (path-scoped to `.github/workflows/<self>.yml`) and as fork upstream-sync auto-runs (path-scoped to fork-source paths on 4 forks) -- are removed in PR #145. There is no longer a callback contract: workflows do not dispatch back to `ci.yml`. Each workflow runs as a standalone run from its own `workflow_dispatch` call.
 
-To validate a workflow edit: dispatch `ci.yml` with the appropriate `group:` choice, which fans out to the relevant workflow chain via the callback. Fork upstream-sync no longer auto-runs on upstream changes -- dispatch the `forks` group to re-pin upstream refs.
+To validate a workflow edit: dispatch `ci.yml` with the appropriate `group:` choice, which fans out to that group's workflows as independent dispatches (no chain). Fork upstream-sync no longer auto-runs on upstream changes -- dispatch the `forks` group to re-pin upstream refs.
 
 ```mermaid
 flowchart TD
     manual["operator dispatches ci.yml"]
-    pick{"group: choice\nnone / tests / vm-tests / fetches\nci-builders / forks / all"}
-    dispatch["ci.yml/dispatches the chosen group's chain\n(callback state propagates through 10 ci_* inputs)"]
-    sibling["22 sibling workflows\nworkflow_dispatch only"]
-    callback["sibling -> ci.yml/dispatches\nstate=<display name> + completed_conclusion"]
+    pick{"group: choice\nnone / firmware / tests / vm-tests / fetches\nci-builders / forks / all"}
+    dispatch["ci.yml fires one workflow_dispatch per workflow\nin the chosen group, then exits\n(no chain, no callback)"]
+    sibling["22 sibling workflows\nworkflow_dispatch only\n(no callback to ci.yml)"]
     none_path["none: no-op, dispatch acknowledged"]
 
     manual --> pick
     pick -- "none" --> none_path
-    pick -- "any group" --> dispatch --> sibling --> callback --> pick
+    pick -- "any group" --> dispatch --> sibling
 ```
 
 Behavior changes documented in PR #145 body:

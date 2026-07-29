@@ -1,60 +1,53 @@
 name: CI
 
-# Top-level yubiOS CI state machine — group-routing redesign.
+# Top-level yubiOS CI orchestrator — group-routing redesign (no chain).
 #
-# Documentation grounding: README.md/MISSION.md/SPEC.md define the FIDO2-first
-# OS deliverable; ADR.md, ARCHITECTURE.md, FUTURE.md, MITIGATE.md, BLOCKERS.md,
-# TODO.md, ONBOARDING.md, MAINTAINER.md, SAUNA_TOOLS.md, CITATION.md, PINNED.md,
-# and refs/*.md define the CI contract, artifact order, pinned action/image
-# policy, and ARM64 fTPM + VM-e2e constraints this workflow sequences.
+# This workflow is a simple dispatcher. When called with `group=<name>`, it
+# fires one workflow_dispatch per workflow in that group and exits. There is
+# no state machine, no callback, no chain. Each workflow runs independently.
+# Each group is a single dispatch decision; workflows within a group do not
+# depend on each other.
 #
-# Existing workflow files call back here with the current chain state. This keeps
-# dispatch inputs (push flags, VM image, target ref) explicit instead of relying
-# on workflow_run, whose event payload cannot carry the original workflow_dispatch
-# inputs across the chain.
-#
-# Every Docker build invoked by the non-ci_fork portion of this chain is defined
-# in yubiOS-bake.hcl. This file retains only GitHub dispatch/state semantics.
-#
-# Group-routing (2026-07-29 redesign): ci.yml now exposes a single `group:`
-# choice input that selects which subgroup of workflows runs. This replaces the
-# previous flag matrix (CI_FORK_RUN, CI_TEST_RUN, Docker_push,
-# Dev_Docker_push, Firmware_Docker_push, Installer_Docker_push) with one
-# explicit decision. Docker_push becomes a master override for the ci-builders
-# group only — no other group publishes.
-#
-# Group taxonomy:
-#   tests       — non-vm tests (chain runs 3): ci_test_rootless-docker,
-#                 ci_test_bootc-filesystem, ci_test_pq_tls_verify
-#                 (also reachable individually: ci_test-ftpm-tpm0,
-#                  ci_test-fedora-bootc-arm64-pull — standalone, no chain)
-#   vm-tests    — VM tests: ci_test-vm
-#                 (also reachable individually: ci_test-vgpu-vm — standalone)
-#   fetches     — manifest fetchers (chain runs 3): fetch-dhi-manifest,
-#                 fetch-fedora-bootc-manifest, fetch-released-tag-ref
-#   ci-builders — build/publish chain (chain runs 4): yubiOS-ci,
-#                 ci_dev_image, ci_mkosi-installer, ci_firmware-rk
-#                 (auto-includes fetches as the chain preamble)
-#   forks       — upstream fork builds (chain runs 8): all ci_fork_*
-#                 workflows in the existing order
-#   all         — every workflow in superset order
-#   none        — dispatch only, no group runs (default)
+# Group taxonomy (each value maps to a list of workflow files):
+#   none        — no dispatch (default)
+#   firmware    — ci_firmware-rk.yml
+#   tests       — ci_test_rootless-docker.yml, ci_test_bootc-filesystem.yml,
+#                 ci_test_pq_tls_verify.yml
+#   vm-tests    — ci_test-vm.yml
+#   fetches     — fetch-dhi-manifest.yml, fetch-fedora-bootc-manifest.yml,
+#                 fetch-released-tag-ref.yml
+#   ci-builders — yubiOS-ci.yml, ci_dev_image.yml, ci_mkosi-installer.yml
+#                 (firmware is split out as its own group)
+#   forks       — ci_fork_mkosi.yml, ci_fork_bcvk.yml,
+#                 ci_fork_arm-trusted-firmware.yml, ci_fork_optee-os.yml,
+#                 ci_fork_ms-tpm-20-ref.yml, ci_fork_optee-ftpm.yml,
+#                 ci_fork_u-boot.yml, ci_fork_edk2.yml
+#   all         — union of firmware, tests, vm-tests, fetches, ci-builders,
+#                 forks (every workflow, dispatched independently)
 #
 # Push-trigger policy (2026-07-29 redesign): all 22 sibling workflows are
 # workflow_dispatch-only. The previous path-scoped `on: push` triggers
 # (used for self-edit validation + build-artifact paths) are removed. To
 # validate a workflow edit, dispatch the relevant group manually.
+#
+# Legacy inputs removed (2026-07-29): the previous `Dev_Docker_push`,
+# `Firmware_Docker_push`, `Installer_Docker_push`, `ci_fork_run`,
+# `ci_test_run`, and `vm_image` inputs were "Legacy pass-through" flags
+# that duplicated the group routing decision. They are gone. The previous
+# internal `ci_*` callback contract is also gone: workflows do not call
+# back to ci.yml — each dispatch is independent.
 
 on:
   workflow_dispatch:
     inputs:
       group:
-        description: 'Which CI group to run. none = dispatch only (default), no group runs.'
+        description: 'Which CI group to run. none = no dispatch (default).'
         type: choice
         required: true
         default: 'none'
         options:
         - none
+        - firmware
         - tests
         - vm-tests
         - fetches
@@ -72,288 +65,89 @@ on:
         required: false
         default: ''
       Docker_push:
-        description: 'Push Docker registries at the end of the ci-builders (or all) group? No-op for other groups.'
+        description: 'Push Docker registries at the end of each builder workflow (firmware, yubiOS-ci, ci_dev_image, ci_mkosi-installer) when dispatched. No-op for non-builder workflows.'
         type: boolean
         required: false
         default: false
-      state:
-        description: 'Internal: completed workflow name (populated by callbacks).'
-        type: string
-        required: false
-        default: 'start'
-      completed_conclusion:
-        description: 'Internal: conclusion reported by the callback workflow.'
-        type: string
-        required: false
-        default: 'success'
-
-      Dev_Docker_push:
-        description: 'Legacy pass-through. Ignored; use Docker_push + group=ci-builders/all.'
-        type: boolean
-        required: false
-        default: false
-      Firmware_Docker_push:
-        description: 'Legacy pass-through. Ignored; use Docker_push + group=ci-builders/all.'
-        type: boolean
-        required: false
-        default: false
-      Installer_Docker_push:
-        description: 'Legacy pass-through. Ignored; use Docker_push + group=ci-builders/all.'
-        type: boolean
-        required: false
-        default: false
-      ci_fork_run:
-        description: 'Legacy pass-through. Ignored; use group=forks/all.'
-        type: boolean
-        required: false
-        default: false
-      ci_test_run:
-        description: 'Legacy pass-through. Ignored; use group=tests/all.'
-        type: boolean
-        required: false
-        default: false
-      vm_image:
-        description: 'Legacy pass-through. Ignored; vm-tests group uses the workflow default.'
-        type: string
-        required: false
-        default: ''
 
 permissions:
   contents: read
   actions: write
 
 jobs:
-  dispatch-next:
-    name: Dispatch next workflow from current state
+  dispatch:
+    name: Dispatch workflows for the selected group
     runs-on: ubuntu-24.04
     steps:
-      - name: Resolve and dispatch next workflow
+      - name: Dispatch each workflow in the group independently
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
           GROUP: ${{ inputs.group }}
-          STATE: ${{ inputs.state }}
-          COMPLETED_CONCLUSION: ${{ inputs.completed_conclusion }}
           REF: ${{ inputs.target_ref != '' && inputs.target_ref || github.ref_name }}
           REASON: ${{ inputs.reason }}
-          DOCKER_PUSH_INPUT: ${{ inputs.Docker_push }}
+          DOCKER_PUSH: ${{ inputs.Docker_push }}
         run: |
           set -euo pipefail
 
-          # Derive per-sibling push flags from group + Docker_push.
-          # Only the ci-builders (or all) group ever publishes.
-          DOCKER_PUSH='false'
-          DEV_DOCKER_PUSH='false'
-          FIRMWARE_DOCKER_PUSH='false'
-          INSTALLER_DOCKER_PUSH='false'
+          # Group → workflow file list. Each entry is dispatched independently
+          # as its own workflow_dispatch call. No chain, no callback.
+          WORKFLOWS=()
+          PUSH_WORKFLOWS=()
           case "$GROUP" in
-            ci-builders|all)
-              if [ "$DOCKER_PUSH_INPUT" = 'true' ]; then
-                DOCKER_PUSH='true'
-                DEV_DOCKER_PUSH='true'
-                FIRMWARE_DOCKER_PUSH='true'
-                INSTALLER_DOCKER_PUSH='true'
-              fi
-              ;;
-            *) ;;
-          esac
-          export DOCKER_PUSH DEV_DOCKER_PUSH FIRMWARE_DOCKER_PUSH INSTALLER_DOCKER_PUSH
-
-          # State machine: state -> next workflow + per-workflow inputs.
-          # Start state is GROUP-driven; chain is otherwise per the existing
-          # ci.yml dispatch contract (preserves the 10-input ci_* family).
-          next_file=''
-          callee_inputs='{}'
-          case "$STATE" in
-            start)
-              case "$GROUP" in
-                none)
-                  echo 'Group=none: dispatch only, no group runs.'
-                  exit 0
-                  ;;
-                tests)
-                  next_file='ci_test_rootless-docker.yml'
-                  ;;
-                vm-tests)
-                  next_file='ci_test-vm.yml'
-                  ;;
-                fetches)
-                  next_file='fetch-dhi-manifest.yml'
-                  ;;
-                ci-builders)
-                  next_file='fetch-dhi-manifest.yml'
-                  ;;
-                forks)
-                  next_file='ci_fork_mkosi.yml'
-                  ;;
-                all)
-                  next_file='fetch-dhi-manifest.yml'
-                  ;;
-                *)
-                  echo "::error::Unknown group: $GROUP"
-                  exit 1
-                  ;;
-              esac
-              callee_inputs=$(jq -n --arg reason "$REASON" '{reason: $reason}')
-              ;;
-            fetch-dhi-manifest)
-              next_file='fetch-fedora-bootc-manifest.yml'
-              callee_inputs=$(jq -n --arg reason 'ci after fetch-dhi-manifest' '{reason: $reason}')
-              ;;
-            fetch-fedora-bootc-manifest)
-              next_file='fetch-released-tag-ref.yml'
-              callee_inputs=$(jq -n --arg reason 'ci after fetch-fedora-bootc-manifest' '{reason: $reason}')
-              ;;
-            fetch-released-tag-ref)
-              case "$GROUP" in
-                forks|all)
-                  next_file='ci_fork_mkosi.yml'
-                  callee_inputs=$(jq -n --arg reason 'ci after fetch-released-tag-ref' '{reason: $reason}')
-                  ;;
-                tests)
-                  next_file='ci_test_rootless-docker.yml'
-                  callee_inputs=$(jq -n --arg reason 'ci after fetch-released-tag-ref' '{reason: $reason}')
-                  ;;
-                fetches)
-                  echo 'Fetch chain complete.'
-                  exit 0
-                  ;;
-                *)
-                  # ci-builders, vm-tests: continue to firmware
-                  next_file='ci_firmware-rk.yml'
-                  callee_inputs=$(jq -n --arg reason 'ci after fetch-released-tag-ref' --arg push "$FIRMWARE_DOCKER_PUSH" '{reason: $reason, Docker_push: $push}')
-                  ;;
-              esac
-              ;;
-            ci_fork_mkosi)
-              next_file='ci_fork_bcvk.yml'
-              callee_inputs=$(jq -n --arg reason 'ci after ci_fork_mkosi' '{reason: $reason}')
-              ;;
-            ci_fork_bcvk)
-              next_file='ci_fork_arm-trusted-firmware.yml'
-              callee_inputs=$(jq -n --arg reason 'ci after ci_fork_bcvk' '{reason: $reason}')
-              ;;
-            ci_fork_arm-trusted-firmware)
-              next_file='ci_fork_optee-os.yml'
-              callee_inputs=$(jq -n --arg reason 'ci after ci_fork_arm-trusted-firmware' '{reason: $reason}')
-              ;;
-            ci_fork_optee_os)
-              next_file='ci_fork_ms-tpm-20-ref.yml'
-              callee_inputs=$(jq -n --arg reason 'ci after ci_fork_optee_os' '{reason: $reason}')
-              ;;
-            ci_fork_ms-tpm-20-ref)
-              next_file='ci_fork_optee-ftpm.yml'
-              callee_inputs=$(jq -n --arg reason 'ci after ci_fork_ms-tpm-20-ref' '{reason: $reason}')
-              ;;
-            ci_fork_optee_ftpm)
-              next_file='ci_fork_u-boot.yml'
-              callee_inputs=$(jq -n --arg reason 'ci after ci_fork_optee_ftpm' '{reason: $reason}')
-              ;;
-            ci_fork_u-boot)
-              next_file='ci_fork_edk2.yml'
-              callee_inputs=$(jq -n --arg reason 'ci after ci_fork_u-boot' '{reason: $reason}')
-              ;;
-            ci_fork_edk2)
-              case "$GROUP" in
-                forks)
-                  echo 'Fork chain complete.'
-                  exit 0
-                  ;;
-                all)
-                  next_file='ci_test_rootless-docker.yml'
-                  callee_inputs=$(jq -n --arg reason 'ci after fork chain (all)' '{reason: $reason}')
-                  ;;
-                *)
-                  # ci-builders: continue with firmware
-                  next_file='ci_firmware-rk.yml'
-                  callee_inputs=$(jq -n --arg reason 'ci after ci_fork_edk2' --arg push "$FIRMWARE_DOCKER_PUSH" '{reason: $reason, Docker_push: $push}')
-                  ;;
-              esac
-              ;;
-            'TEST - Rootless Docker bootstrap validation')
-              next_file='ci_test_bootc-filesystem.yml'
-              ;;
-            'TEST - bootc to-filesystem install e2e')
-              next_file='ci_test_pq_tls_verify.yml'
-              ;;
-            'TEST - PQ hybrid TLS verification (ADR-025)')
-              case "$GROUP" in
-                all)
-                  # all: after non-vm tests, continue with vm-tests
-                  next_file='ci_test-vm.yml'
-                  ;;
-                *)
-                  # tests: terminate after PQ TLS
-                  echo 'Test chain complete.'
-                  exit 0
-                  ;;
-              esac
-              ;;
-            'yubiOS RK firmware')
-              next_file='yubiOS-ci.yml'
-              callee_inputs=$(jq -n --arg push "$DOCKER_PUSH" '{Docker_push: $push}')
-              ;;
-            'yubiOS CI')
-              next_file='ci_dev_image.yml'
-              callee_inputs=$(jq -n --arg push "$DEV_DOCKER_PUSH" '{Docker_push: $push}')
-              ;;
-            'yubiOS dev/test image (swu2f, ADR-026)')
-              next_file='ci_mkosi-installer.yml'
-              callee_inputs=$(jq -n --arg reason 'ci after yubiOS dev/test image' --arg push "$INSTALLER_DOCKER_PUSH" '{reason: $reason, Docker_push: $push}')
-              ;;
-            'yubiOS mkosi-installer')
-              case "$GROUP" in
-                all)
-                  # all: after ci-builders, run vm-tests
-                  next_file='ci_test-vm.yml'
-                  ;;
-                ci-builders)
-                  echo 'ci-builders chain complete.'
-                  exit 0
-                  ;;
-                *)
-                  # vm-tests: should not reach here, terminate gracefully
-                  echo 'vm-tests chain complete.'
-                  exit 0
-                  ;;
-              esac
-              ;;
-            'yubiOS VM e2e (tests/vm)')
-              echo 'VM e2e chain complete.'
+            none)
+              echo 'Group=none: no dispatch.'
               exit 0
               ;;
+            firmware)
+              WORKFLOWS=(ci_firmware-rk.yml)
+              PUSH_WORKFLOWS=(ci_firmware-rk.yml)
+              ;;
+            tests)
+              WORKFLOWS=(ci_test_rootless-docker.yml ci_test_bootc-filesystem.yml ci_test_pq_tls_verify.yml)
+              ;;
+            vm-tests)
+              WORKFLOWS=(ci_test-vm.yml)
+              ;;
+            fetches)
+              WORKFLOWS=(fetch-dhi-manifest.yml fetch-fedora-bootc-manifest.yml fetch-released-tag-ref.yml)
+              ;;
+            ci-builders)
+              WORKFLOWS=(yubiOS-ci.yml ci_dev_image.yml ci_mkosi-installer.yml)
+              PUSH_WORKFLOWS=(yubiOS-ci.yml ci_dev_image.yml ci_mkosi-installer.yml)
+              ;;
+            forks)
+              WORKFLOWS=(ci_fork_mkosi.yml ci_fork_bcvk.yml ci_fork_arm-trusted-firmware.yml ci_fork_optee-os.yml ci_fork_ms-tpm-20-ref.yml ci_fork_optee-ftpm.yml ci_fork_u-boot.yml ci_fork_edk2.yml)
+              ;;
+            all)
+              WORKFLOWS=(ci_firmware-rk.yml ci_test_rootless-docker.yml ci_test_bootc-filesystem.yml ci_test_pq_tls_verify.yml ci_test-vm.yml fetch-dhi-manifest.yml fetch-fedora-bootc-manifest.yml fetch-released-tag-ref.yml yubiOS-ci.yml ci_dev_image.yml ci_mkosi-installer.yml ci_fork_mkosi.yml ci_fork_bcvk.yml ci_fork_arm-trusted-firmware.yml ci_fork_optee-os.yml ci_fork_ms-tpm-20-ref.yml ci_fork_optee-ftpm.yml ci_fork_u-boot.yml ci_fork_edk2.yml)
+              PUSH_WORKFLOWS=(ci_firmware-rk.yml yubiOS-ci.yml ci_dev_image.yml ci_mkosi-installer.yml)
+              ;;
             *)
-              echo "::error::No next workflow configured for state '${STATE}'."
+              echo "::error::Unknown group: $GROUP"
               exit 1
               ;;
           esac
 
-          # Validate conclusion.
-          if [ "$COMPLETED_CONCLUSION" != 'success' ]; then
-            echo "::error::CI chain stopped at '${STATE}' with conclusion '${COMPLETED_CONCLUSION}'."
-            exit 1
-          fi
+          # Iterate and dispatch each workflow independently.
+          count=0
+          for wf in "${WORKFLOWS[@]}"; do
+            push='false'
+            for pw in "${PUSH_WORKFLOWS[@]:-}"; do
+              if [ "$pw" = "$wf" ]; then push="$DOCKER_PUSH"; fi
+            done
 
-          # Build common_inputs (the 10 ci_* contract) and dispatch.
-          common_inputs=$(jq -n \
-            --arg ci_callback 'true' \
-            --arg ci_chain_ref "$REF" \
-            --arg ci_reason "$REASON" \
-            --arg ci_Docker_push "$DOCKER_PUSH" \
-            --arg ci_Dev_Docker_push "$DEV_DOCKER_PUSH" \
-            --arg ci_Firmware_Docker_push "$FIRMWARE_DOCKER_PUSH" \
-            --arg ci_Installer_Docker_push "$INSTALLER_DOCKER_PUSH" \
-            --arg ci_fork_run 'true' \
-            --arg ci_test_run 'true' \
-            --arg ci_vm_image 'docker.io/0mniteck/yubios:dev' \
-            '{ci_callback: $ci_callback, ci_chain_ref: $ci_chain_ref, ci_reason: $ci_reason, ci_Docker_push: $ci_Docker_push, ci_Dev_Docker_push: $ci_Dev_Docker_push, ci_Firmware_Docker_push: $ci_Firmware_Docker_push, ci_Installer_Docker_push: $ci_Installer_Docker_push, ci_fork_run: $ci_fork_run, ci_test_run: $ci_test_run, ci_vm_image: $ci_vm_image}')
-          inputs_json=$(jq -n --argjson a "$callee_inputs" --argjson b "$common_inputs" '$a + $b')
-          payload=$(jq -n --arg ref "$REF" --argjson inputs "$inputs_json" '{ref: $ref, inputs: $inputs}')
+            inputs_json=$(jq -n --arg reason "$REASON" --arg push "$push" '{reason: $reason, Docker_push: $push}')
+            payload=$(jq -n --arg ref "$REF" --argjson inputs "$inputs_json" '{ref: $ref, inputs: $inputs}')
 
-          curl -fsS -X POST \
-            -H "Authorization: Bearer ${GH_TOKEN}" \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/repos/${REPO}/actions/workflows/${next_file}/dispatches" \
-            -d "$payload"
-          echo "Dispatched ${next_file} on ${REF} from state ${STATE} (group=${GROUP})."
+            echo "Dispatching $wf (ref=$REF, Docker_push=$push)"
+            curl -fsS -X POST \
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/${REPO}/actions/workflows/${wf}/dispatches" \
+              -d "$payload"
+            count=$((count + 1))
+          done
+
+          echo "Dispatched ${count} workflow(s) for group=${GROUP} (ref=${REF})."
