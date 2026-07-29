@@ -16,20 +16,14 @@ name: CI
 # Every Docker build invoked by the non-ci_fork portion of this chain is defined
 # in yubiOS-bake.hcl. This file retains only GitHub dispatch/state semantics.
 #
-# Group-routing (2026-07-29 redesign; firmware-only lane added 2026-07-29):
-# ci.yml exposes a single `group:` choice input that selects which subgroup of
-# workflows runs. The previous flag matrix (CI_FORK_RUN, CI_TEST_RUN,
-# Docker_push, Dev_Docker_push, Firmware_Docker_push, Installer_Docker_push)
-# is collapsed into one explicit decision. Docker_push becomes a master
-# override that publishes only on `ci-builders`, `all`, or `firmware` — every
-# other group builds but never publishes. The user-facing `Dev_Docker_push`,
-# `Firmware_Docker_push`, `Installer_Docker_push`, `ci_fork_run`, `ci_test_run`,
-# and `vm_image` inputs are removed: they were legacy pass-throughs that
-# duplicated the group routing decision.
+# Group-routing (2026-07-29 redesign): ci.yml now exposes a single `group:`
+# choice input that selects which subgroup of workflows runs. This replaces the
+# previous flag matrix (CI_FORK_RUN, CI_TEST_RUN, Docker_push,
+# Dev_Docker_push, Firmware_Docker_push, Installer_Docker_push) with one
+# explicit decision. Docker_push becomes a master override for the ci-builders
+# group only — no other group publishes.
 #
 # Group taxonomy:
-#   firmware    — firmware-only build: ci_firmware-rk (no fetches preamble,
-#                 no yubiOS-ci / dev / installer follow-up)
 #   tests       — non-vm tests (chain runs 3): ci_test_rootless-docker,
 #                 ci_test_bootc-filesystem, ci_test_pq_tls_verify
 #                 (also reachable individually: ci_test-ftpm-tpm0,
@@ -61,7 +55,6 @@ on:
         default: 'none'
         options:
         - none
-        - firmware
         - tests
         - vm-tests
         - fetches
@@ -79,7 +72,7 @@ on:
         required: false
         default: ''
       Docker_push:
-        description: 'Push Docker registries at the end of the group. Publishes only on ci-builders / all (full pipeline) or firmware (firmware bundle only). No-op for other groups.'
+        description: 'Push Docker registries at the end of the ci-builders (or all) group? No-op for other groups.'
         type: boolean
         required: false
         default: false
@@ -93,6 +86,37 @@ on:
         type: string
         required: false
         default: 'success'
+
+      Dev_Docker_push:
+        description: 'Legacy pass-through. Ignored; use Docker_push + group=ci-builders/all.'
+        type: boolean
+        required: false
+        default: false
+      Firmware_Docker_push:
+        description: 'Legacy pass-through. Ignored; use Docker_push + group=ci-builders/all.'
+        type: boolean
+        required: false
+        default: false
+      Installer_Docker_push:
+        description: 'Legacy pass-through. Ignored; use Docker_push + group=ci-builders/all.'
+        type: boolean
+        required: false
+        default: false
+      ci_fork_run:
+        description: 'Legacy pass-through. Ignored; use group=forks/all.'
+        type: boolean
+        required: false
+        default: false
+      ci_test_run:
+        description: 'Legacy pass-through. Ignored; use group=tests/all.'
+        type: boolean
+        required: false
+        default: false
+      vm_image:
+        description: 'Legacy pass-through. Ignored; vm-tests group uses the workflow default.'
+        type: string
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -117,8 +141,7 @@ jobs:
           set -euo pipefail
 
           # Derive per-sibling push flags from group + Docker_push.
-          # Only ci-builders / all / firmware ever publish; every other group
-          # builds without pushing.
+          # Only the ci-builders (or all) group ever publishes.
           DOCKER_PUSH='false'
           DEV_DOCKER_PUSH='false'
           FIRMWARE_DOCKER_PUSH='false'
@@ -130,12 +153,6 @@ jobs:
                 DEV_DOCKER_PUSH='true'
                 FIRMWARE_DOCKER_PUSH='true'
                 INSTALLER_DOCKER_PUSH='true'
-              fi
-              ;;
-            firmware)
-              # Firmware-only: only the firmware bundle can publish.
-              if [ "$DOCKER_PUSH_INPUT" = 'true' ]; then
-                FIRMWARE_DOCKER_PUSH='true'
               fi
               ;;
             *) ;;
@@ -154,40 +171,30 @@ jobs:
                   echo 'Group=none: dispatch only, no group runs.'
                   exit 0
                   ;;
-                firmware)
-                  # Firmware-only lane: no fetches preamble, no follow-up.
-                  next_file='ci_firmware-rk.yml'
-                  callee_inputs=$(jq -n --arg reason "$REASON" --arg push "$FIRMWARE_DOCKER_PUSH" '{reason: $reason, Docker_push: $push}')
-                  ;;
                 tests)
                   next_file='ci_test_rootless-docker.yml'
-                  callee_inputs=$(jq -n --arg reason "$REASON" '{reason: $reason}')
                   ;;
                 vm-tests)
                   next_file='ci_test-vm.yml'
-                  callee_inputs=$(jq -n --arg reason "$REASON" '{reason: $reason}')
                   ;;
                 fetches)
                   next_file='fetch-dhi-manifest.yml'
-                  callee_inputs=$(jq -n --arg reason "$REASON" '{reason: $reason}')
                   ;;
                 ci-builders)
                   next_file='fetch-dhi-manifest.yml'
-                  callee_inputs=$(jq -n --arg reason "$REASON" '{reason: $reason}')
                   ;;
                 forks)
                   next_file='ci_fork_mkosi.yml'
-                  callee_inputs=$(jq -n --arg reason "$REASON" '{reason: $reason}')
                   ;;
                 all)
                   next_file='fetch-dhi-manifest.yml'
-                  callee_inputs=$(jq -n --arg reason "$REASON" '{reason: $reason}')
                   ;;
                 *)
                   echo "::error::Unknown group: $GROUP"
                   exit 1
                   ;;
               esac
+              callee_inputs=$(jq -n --arg reason "$REASON" '{reason: $reason}')
               ;;
             fetch-dhi-manifest)
               next_file='fetch-fedora-bootc-manifest.yml'
@@ -212,7 +219,7 @@ jobs:
                   exit 0
                   ;;
                 *)
-                  # ci-builders: continue to firmware
+                  # ci-builders, vm-tests: continue to firmware
                   next_file='ci_firmware-rk.yml'
                   callee_inputs=$(jq -n --arg reason 'ci after fetch-released-tag-ref' --arg push "$FIRMWARE_DOCKER_PUSH" '{reason: $reason, Docker_push: $push}')
                   ;;
@@ -283,18 +290,8 @@ jobs:
               esac
               ;;
             'yubiOS RK firmware')
-              case "$GROUP" in
-                firmware)
-                  # Firmware-only lane ends here; no prod/dev/installer follow-up.
-                  echo 'Firmware chain complete.'
-                  exit 0
-                  ;;
-                *)
-                  # ci-builders, all: continue to yubiOS-ci
-                  next_file='yubiOS-ci.yml'
-                  callee_inputs=$(jq -n --arg push "$DOCKER_PUSH" '{Docker_push: $push}')
-                  ;;
-              esac
+              next_file='yubiOS-ci.yml'
+              callee_inputs=$(jq -n --arg push "$DOCKER_PUSH" '{Docker_push: $push}')
               ;;
             'yubiOS CI')
               next_file='ci_dev_image.yml'
