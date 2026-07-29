@@ -43,8 +43,12 @@ set -euo pipefail
 UKI_SRC="${UKI_SRC:-/usr/lib/yubiOS/uki/yubios.efi}"
 ESP_MNT="${ESP_MNT:-/boot}"
 OS_ID="${OS_ID:-yubios}"
-# shellcheck source=/usr/lib/os-release
-VERSION="${VERSION:-$(. /usr/lib/os-release && echo "${VERSION_ID:-0}")}"
+# Read VERSION_ID from /usr/lib/os-release without sourcing the file (avoids
+# SC1091 -- shellcheck cannot follow the . source to the deploy-time path that
+# does not exist on the build runner, and sourcing would also pull every other
+# os-release variable into the script scope unnecessarily).
+VERSION="${VERSION:-$(awk -F'"' '/^VERSION_ID=/{print $2;exit}' /usr/lib/os-release 2>/dev/null)}"
+VERSION="${VERSION:-0}"
 PRIORITY="${PRIORITY:-1}"
 
 if [ ! -r "${UKI_SRC}" ]; then
