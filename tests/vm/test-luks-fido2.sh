@@ -16,9 +16,13 @@ echo "  Device : $DEVICE"
 echo "  Image  : $IMAGE"
 echo ""
 
-# Step 1: Flash yubiOS to device
+# Step 1: Wipe any prior filesystem/RAID/LVM signatures on the target disk,
+# then flash yubiOS to it. wipefs -a is bcvk's own suggested alternative
+# when its "Detected existing partitions" error fires (see OMN-14), and it
+# works across bcvk builds that don't yet expose a --wipe flag.
+wipefs -a "$DEVICE" || true
 echo "1/5 Flashing $IMAGE -> $DEVICE"
-bcvk native-to-disk --wipe --yes "$IMAGE" "$DEVICE"
+bcvk native-to-disk --yes "$IMAGE" "$DEVICE"
 
 # Step 2: Find the LUKS partition (second partition after ESP)
 LUKS_PART=$(lsblk -J -o NAME,FSTYPE "$DEVICE" | \
