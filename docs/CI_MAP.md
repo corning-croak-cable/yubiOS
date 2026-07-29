@@ -1,6 +1,8 @@
 # CI_MAP.md
 
-Regenerated from the `main` workflow shape on 2026-07-23 UTC.
+Regenerated from the `ci/group-routing-redesign` branch shape on 2026-07-29 UTC (PR #145).
+
+Group-routing redesign: ci.yml now exposes a single `group:` choice input (none / tests / vm-tests / fetches / ci-builders / forks / all). The previous `ci_fork_run` and `ci_test_run` boolean flags and the four `*_Docker_push` per-sibling flags are collapsed into one explicit decision. `Docker_push` is lifted to a master override for the `ci-builders` (or `all`) group only; no other group ever publishes. All 22 sibling workflows are `workflow_dispatch`-only -- the previous path-scoped `on: push:` triggers (used for self-edit validation and fork upstream-sync) are removed.
 
 This map treats `.github/workflows/*.yml` as the source of truth for events, runners, jobs, artifacts, and callback handoffs. `yubiOS-bake.hcl` is the source of truth for every Docker build in the non-`ci_fork*` chain dispatched by `ci.yml`. `PINNED.md` remains the source of truth for approved action SHAs and image digests.
 
@@ -8,7 +10,7 @@ This map treats `.github/workflows/*.yml` as the source of truth for events, run
 
 | Workflow file | Role | Main inputs | Main outputs |
 |---|---|---|---|
-| `.github/workflows/ci.yml` | Top-level state machine | callback state, target ref, four publish flags, fork gate, TEST gate, VM image | Dispatches the next workflow in the ordered chain |
+| `.github/workflows/ci.yml` | Top-level state machine | `group:` (none / tests / vm-tests / fetches / ci-builders / forks / all), `reason`, `target_ref`, `Docker_push` (master override for ci-builders / all only) | Dispatches the next workflow in the chosen group's chain |
 | `.github/workflows/fetch-dhi-manifest.yml` | DHI base digest refresh | `dhi.io/debian-base:trixie-debian13-dev`, `PINNED.md` | Updated DHI digest refs committed by workflow when drift exists |
 | `.github/workflows/fetch-fedora-bootc-manifest.yml` | Fedora bootc digest refresh | `quay.io/fedora/fedora-bootc:45`, `PINNED.md` | Updated Fedora bootc digest refs committed by workflow when drift exists |
 | `.github/workflows/fetch-released-tag-ref.yml` | yubi-OS fork release-ref refresh | Nine fork/upstream mappings, stable-tag families, `PINNED.md` | Peeled release commits verified from each fork; all approved textual pins committed together when drift exists |
@@ -28,30 +30,32 @@ The older `ci_int_stmm.yml`, `ci_int_optee_fip.yml`, and `ci_int_qemu.yml` lane 
 
 `ci.yml` is the coordinator. Each child workflow reports back by dispatching `ci.yml` with `state=<completed workflow name>` and `completed_conclusion=<success|failure|cancelled>`. The coordinator stops on non-success before dispatching the next workflow.
 
+Group-routing redesign (PR #145): the `start` state is now driven by a single `group:` choice input that selects which subgroup of workflows runs. The `group` taxonomy collapses the previous `ci_fork_run` and `ci_test_run` boolean flags and the four `*_Docker_push` per-sibling flags into one explicit decision. `Docker_push` is lifted to a master override for the `ci-builders` (or `all`) group only; no other group ever publishes.
+
 ```mermaid
 flowchart TD
     start["ci.yml state=start"]
-    refresh["Refresh pinned DHI/Fedora digests\nand yubi-OS release refs"]
-    fork_gate{"ci_fork_run?"}
-    forks["ci_fork_* chain"]
-    test_gate{"ci_test_run?"}
-    tests["Pre-image TEST chain\nrootless Docker -> bootc filesystem -> PQ TLS"]
-    images["Image/artifact chain\nfirmware -> production -> dev -> installer"]
-    vm_gate{"ci_test_run?"}
-    vm["ci_test-vm.yml\nVM e2e runs last"]
+    pick{"group: choice"}
+    none_path["none\ndispatch only, no group runs"]
+    forks_path["forks chain\nci_fork_mkosi -> ... -> ci_fork_edk2"]
+    tests_path["tests chain\nrootless-docker -> bootc-filesystem -> pq-tls-verify"]
+    vm_tests_path["vm-tests chain\nci_test-vm"]
+    fetches_path["fetches chain\ndhi -> fedora -> released-tag"]
+    ci_builders_path["ci-builders chain\nfetches + firmware -> ci -> dev -> installer"]
+    all_path["all chain\nfetches -> forks -> tests -> ci-builders -> vm-tests"]
     done["Ordered CI chain complete"]
 
-    start --> refresh --> fork_gate
-    fork_gate -- "true" --> forks --> test_gate
-    fork_gate -- "false" --> test_gate
-    test_gate -- "true" --> tests --> images
-    test_gate -- "false" --> images
-    images --> vm_gate
-    vm_gate -- "true" --> vm --> done
-    vm_gate -- "false" --> done
+    start --> pick
+    pick -- "none" --> none_path
+    pick -- "forks" --> forks_path --> done
+    pick -- "tests" --> tests_path --> done
+    pick -- "vm-tests" --> vm_tests_path --> done
+    pick -- "fetches" --> fetches_path --> done
+    pick -- "ci-builders" --> ci_builders_path --> done
+    pick -- "all" --> all_path --> done
 ```
 
-Every child returns to the `ci.yml` dispatcher between nodes. The refresh phase runs `fetch-dhi-manifest.yml`, `fetch-fedora-bootc-manifest.yml`, and `fetch-released-tag-ref.yml` in that order. Both `ci_fork_run` and `ci_test_run` are carried through every callback, so the fork branch, pre-image TEST branch, and final VM decision remain stable for the full chain.
+Every child returns to the `ci.yml` dispatcher between nodes. The dispatch contract on the callback is unchanged: the 10-input `ci_*` family still flows through every child, so the per-sibling push flags, VM image, fork/test gates, and chain ref are carried through the chain exactly as before. The `state` value is the workflow display name (`github.workflow`), not the filename; the `ci.yml` case statement matches on display names.
 
 ## Canonical Docker Bake Graph
 
@@ -187,7 +191,9 @@ The installer self-change push trigger runs amd64 plus two clean ARM64 mkosi bui
 
 ## Optional Fork Component CI
 
-When `ci_fork_run=true`, `ci.yml` runs component workflows before the optional pre-image TEST chain and firmware integration. They validate immutable release or approved release-descendant commits fetched from yubi-OS forks but do not stitch a full firmware image; stitching happens in `ci_firmware-rk.yml`.
+When dispatched as part of `group=forks` or `group=all`, `ci.yml` runs the fork component workflows before the optional pre-image TEST chain and firmware integration. They validate immutable release or approved release-descendant commits fetched from yubi-OS forks but do not stitch a full firmware image; stitching happens in `ci_firmware-rk.yml`.
+
+Group-routing redesign (PR #145): fork runs are manual-only -- the 4 forks that previously auto-refreshed on upstream changes via path-scoped `on: push:` triggers (`ci_fork_arm-trusted-firmware.yml`, `ci_fork_bcvk.yml`, `ci_fork_ms-tpm-20-ref.yml`, `ci_fork_u-boot.yml`) now require a manual dispatch of the `forks` group to re-pin upstream fork refs.
 
 ```mermaid
 flowchart TD
@@ -206,24 +212,31 @@ flowchart TD
     start --> mkosi --> bcvk --> tfa --> optee --> ms --> ftpm --> uboot --> edk2 --> tests --> firmware
 ```
 
-## Push Triggers and Self-Change Validation
+## Trigger Policy (group-routing redesign)
 
-The orchestrated path is `workflow_dispatch` driven. Narrow `push` triggers validate current-main workflow edits without starting the callback chain; every callback is guarded by both `github.event_name == 'workflow_dispatch'` and `ci_callback == true`.
+All 22 sibling workflows are `workflow_dispatch`-only. The previous path-scoped `on: push:` triggers -- which previously served as self-edit validation (path-scoped to `.github/workflows/<self>.yml`) and as fork upstream-sync auto-runs (path-scoped to fork-source paths on 4 forks) -- are removed in PR #145. Every callback is still guarded by both `github.event_name == 'workflow_dispatch'` and `ci_callback == true`.
+
+To validate a workflow edit: dispatch `ci.yml` with the appropriate `group:` choice, which fans out to the relevant workflow chain via the callback. Fork upstream-sync no longer auto-runs on upstream changes -- dispatch the `forks` group to re-pin upstream refs.
 
 ```mermaid
 flowchart TD
-    push_main["push to main"]
-    yw_paths["yubiOS-ci.yml build inputs\nworkflow file\nContainerfile\nyubiOS-bake.hcl\nyubiOS.rego\nusr/** + tests/unit/** + mkosi.*"]
-    self_paths["workflow-only self-change paths\nfetch manifests + release refs\nfirmware + dev + VM + installer + PQ\nbootc filesystem + rootless Docker tests\nselected ci_fork files"]
-    dispatch_only["workflow_dispatch only\nci.yml\nremaining ci_fork workflows"]
-    run_yw["run yubiOS-ci.yml"]
-    run_self["run changed self-trigger workflow"]
-    manual["manual or orchestrated dispatch"]
+    manual["operator dispatches ci.yml"]
+    pick{"group: choice\nnone / tests / vm-tests / fetches\nci-builders / forks / all"}
+    dispatch["ci.yml/dispatches the chosen group's chain\n(callback state propagates through 10 ci_* inputs)"]
+    sibling["22 sibling workflows\nworkflow_dispatch only"]
+    callback["sibling -> ci.yml/dispatches\nstate=<display name> + completed_conclusion"]
+    none_path["none: no-op, dispatch acknowledged"]
 
-    push_main --> yw_paths --> run_yw
-    push_main --> self_paths --> run_self
-    dispatch_only --> manual
+    manual --> pick
+    pick -- "none" --> none_path
+    pick -- "any group" --> dispatch --> sibling --> callback --> pick
 ```
+
+Behavior changes documented in PR #145 body:
+
+- 22 siblings: removed path-scoped `on: push:` (was self-edit validation + fork upstream-sync).
+- 4 forks (`ci_fork_arm-trusted-firmware.yml`, `ci_fork_bcvk.yml`, `ci_fork_ms-tpm-20-ref.yml`, `ci_fork_u-boot.yml`) lose their upstream-sync auto-runs.
+- 3 standalone workflows (`ci_test-ftpm-tpm0.yml`, `ci_test-fedora-bootc-arm64-pull.yml`, `ci_test-vgpu-vm.yml`) remain reachable only via individual `workflow_dispatch` -- they're tagged "tests" / "vm-tests" by filename taxonomy but are not in any group chain.
 
 ## Artifact and Registry Output Map
 
@@ -491,7 +504,7 @@ The exact dispatch order is defined by the state-machine graph above. The detail
 
 ## Pre-Image TEST Workflow Detail and Self-Change Evidence
 
-When `ci_test_run=true`, these workflows run after the optional `ci_fork_*` chain and before any image build. Their narrow push triggers remain: a push to `main` runs each workflow only when its own file changes, without activating its callback. Maintainers can also dispatch each workflow manually.
+When dispatched as part of `group=tests` (or `group=all`), these workflows run after the optional `ci_fork_*` chain and before any image build. Group-routing redesign (PR #145): the narrow `on: push:` self-change triggers are removed -- pre-image TEST workflows are `workflow_dispatch`-only. Maintainers dispatch each workflow manually (either via `ci.yml/dispatches` with `group=tests`, or via the workflow's own `workflow_dispatch` button).
 
 Initial self-change evidence is green: [bootc install run 29884493346](https://github.com/yubi-OS/yubiOS/actions/runs/29884493346) passed the amd64 and arm64 disposable-disk legs, and [rootless Docker run 29884493340](https://github.com/yubi-OS/yubiOS/actions/runs/29884493340) passed both architecture legs. The bootc run generated raw kernel/initramfs BLS entries with a strict `composefs=<128-hex digest>` and no `root=`. It is therefore evidence for enforced fs-verity through an unsealed BLS deployment, not for a signed-UKI seal.
 
