@@ -17,7 +17,13 @@
 # are required assertions. Production trust remains the physical YubiKey
 # (ADR-003/ADR-004); swtpm/swu2f are TEST-ONLY. Hardware validation:
 # tests/vm/test-luks-fido2.sh.
-
+#
+# === Real-YubiKey guard ===
+# Sourced from tests/vm/lib/real-u2f-guard.sh. If a real YubiKey is detected on
+# the host before bcvk ephemeral run, the script exits 1 with a remediation
+# message. The reasoning: when a host-attached real key is visible, in-guest
+# FIDO2 assertions can silently exercise the real key instead of passless,
+# masking a passthrough regression. Pass --allow-real-u2f to opt out.
 set -euo pipefail
 
 IMAGE="${YUBIOS_IMAGE:-./mkosi.output/yubiOS}"
@@ -25,8 +31,16 @@ VMID=""
 SSH_WAIT_SECS="${YUBIOS_SSH_WAIT_SECS:-300}"
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
+# Optional opt-out for the real-YubiKey guard: --allow-real-u2f as first argv.
+if [[ "${1:-}" == "--allow-real-u2f" ]]; then
+  ALLOW_REAL_U2F=1
+  shift
+fi
+
 # shellcheck source=tests/vm/bcvk-ssh-lib.sh
 . "${SCRIPT_DIR}/bcvk-ssh-lib.sh"
+# shellcheck source=tests/vm/lib/real-u2f-guard.sh
+. "${SCRIPT_DIR}/lib/real-u2f-guard.sh"
 
 log()  { printf '\n=== %s ===\n' "$*"; }
 skip() { printf 'SKIP: %s\n' "$*"; }       # skip != fail (tool/capability absent)
@@ -55,6 +69,11 @@ log "host preflight"
 need bcvk
 bcvk ephemeral run --help 2>&1 | grep -q -- '--swtpm' || die "pinned bcvk source lacks --swtpm"
 bcvk ephemeral run --help 2>&1 | grep -q -- '--swu2f' || die "pinned bcvk source lacks --swu2f"
+
+# Real-YubiKey guard: fail fast before bcvk boots a 5+ minute VM. See
+# tests/vm/lib/real-u2f-guard.sh for the rationale. Override via
+# ALLOW_REAL_U2F=1 or --allow-real-u2f.
+assert_passless_only
 
 g() { bcvk_ssh "$VMID" "$@"; }
 
