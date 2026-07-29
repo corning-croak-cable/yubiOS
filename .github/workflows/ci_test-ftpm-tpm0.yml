@@ -121,10 +121,15 @@ jobs:
           WORK: /tmp/yubios-ftpm-tpm0-work
           LOG_DIR: /tmp/yubios-ftpm-tpm0-logs
         run: |
-          set -euo pipefail
           chmod +x tests/vm/test-ftpm-qemu-ci.sh tests/vm/ftpm-console-driver.py tests/vm/verify-tpm0-pcr-extend.sh
+          # set +e around the test script so its non-zero exit (rc=77 = loud SKIP per
+          # the test-ftpm-qemu-ci.sh contract) doesn't trigger this run block's
+          # own set -e and skip the rc capture. ci_test-vm.yml's same step uses
+          # the identical pattern; this is the yubiOS canon.
+          set +e
           sudo env "PATH=$PATH:/usr/sbin:/sbin" bash tests/vm/test-ftpm-qemu-ci.sh
           rc=$?
+          set -e
           if [ "$rc" -ne 0 ]; then
             echo "--- secure-world serial log tail ---"
             sudo tail -200 /tmp/yubios-ftpm-tpm0-logs/ftpm-optee.log 2>/dev/null || true
