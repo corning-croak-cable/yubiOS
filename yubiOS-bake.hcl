@@ -381,7 +381,7 @@ target "yubios-uki" {
   context     = UKI_CONTEXT
   dockerfile-inline = <<-DOCKERFILE
     FROM scratch
-    COPY uki/ /usr/lib/yubiOS/uki/
+    COPY . /usr/lib/yubiOS/uki/
   DOCKERFILE
   platforms   = [PLATFORM]
   labels = {
