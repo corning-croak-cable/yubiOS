@@ -797,3 +797,45 @@ flowchart TD
 - Tracking issue: [OMN-108](https://linear.app/omni-agent/issue/OMN-108/gpu-trust-boundary-vfio-uservirtio-gpu-default-design-vgpu-e2e-ci).
 
 **Honesty note:** Rule 2's IOMMU access gate is accepted as design and rules, not yet implemented as enforcement code or proven on real hardware. Real `vfio-pci` GPU passthrough, IOMMU isolation, and DMA-ownership enforcement need a real IOMMU plus a real GPU -- no hosted or self-hosted runner in this org has that combination today (see [FUTURE.md](FUTURE.md) Post-Launch Hardware Work). Do not describe the passthrough gate as hardware-validated until that evidence exists.
+
+## ADR-032: Kernel+Rootfs Split as a First-Class yubiOS Principle
+
+**Date:** 2026-07-29
+**Status:** Accepted
+**ADR:** ADR-032
+**Related:** ADR-006 (both mkosi and bootc build paths), ADR-007 (composefs), ADR-013 (A/B updates via systemd-sysupdate), ADR-022 (Unified OCI Distribution), OMN-51, B-BOOTC-SEAL
+
+**Context.** Three pre-existing ADRs implicitly define a kernel+rootfs split that the codebase has not named as a single principle:
+
+- **ADR-006** contrasts the two build paths and notes mkosi produces "signed UKI `.efi`, dm-verity root, composefs image" (3 separate artifacts) while the bootc path produces a single "OCI image deployable via `bootc install to-filesystem`".
+- **ADR-013** (A/B updates) describes updates as 4 separate artifacts: new `/usr` partition, verity data partition, PKCS#7 signature partition, and a new UKI in the ESP — the kernel (`/EFI/Linux/bootc/...`) is structurally separable from the rootfs (`/sysroot`).
+- **ADR-022** (Unified OCI Distribution) already publishes kernel and rootfs as separate OCI tags on `0mniteck/yubios`: `firmware`, `installer` (UKI), `latest` (bootc OS image), `dev` (test-only). The tag scheme acknowledges the split at the distribution surface.
+
+The phrase "kernel+rootfs split" is **not** present in `docs/ADR.md` anywhere; grep across the file confirms 0 occurrences. The three ADRs above establish the pattern as an implicit invariant.
+
+The split matters because:
+
+1. **A/B updates (ADR-013)** move only the rootfs when the kernel is unchanged, and only the kernel when the rootfs is unchanged; conflating them forces both to be re-fetched and re-verified on every update.
+2. **Reproducibility (ADR-030)** is sharper when each artifact is independently pinable: a kernel regression pins to a known UKI digest, a rootfs regression pins to a known composefs digest, and provenance attestations can target each piece separately.
+3. **Bootc's composefs fsverity chain (B-BOOTC-SEAL)** is "unsealed" specifically because the BLS digest anchor mutates per image rebuild — the fix (PR #2305 in bootc v1.16.4, plus the BLSConfig `uki` key from PR #2269 in v1.16.3) requires the kernel artifact to be addressable separately so its digest stays stable across rootfs-only changes.
+
+**Decision.** yubiOS adopts the **kernel+rootfs split as a first-class principle**. Specifically:
+
+1. **The kernel (UKI) is a separately-published OCI artifact** at `docker.io/0mniteck/yubios:uki-<sha>-<arch>`, alongside the bootc OS image (`latest`, `<sha>`). The UKI is built once, signed once via `systemd-sbsign` + PKCS#11 against YubiKey PIV slot 9c (ADR-008), and published per ADR-022's per-artifact tag scheme.
+2. **The bootc OCI image is the rootfs.** Its `/usr/` is composed of composefs EROFS + fsverity (ADR-007). The image's `containers.bootc` label is unchanged; the image is installed via `bootc install to-filesystem` with the standard yubiOS install config (`usr/lib/bootc/install/50-yubiOS.toml`).
+3. **Both paths (mkosi, bootc) agree on the cmdline.** The bootc install config sets `[install] kargs = ["root=dissect", "mount.usr=dissect", "rw", "audit=0"]` (added by this ADR), matching `mkosi.conf`'s `[Content] KernelCommandLine`. bootc embeds these in the `.cmdline` PE section of its auto-generated UKI at install time, so the two paths produce byte-identical kernel cmdlines at runtime (per ADR-006's "both paths behave identically at runtime" principle).
+4. **A BLSConfig drop-in for the pre-built UKI is staged as Phase 2.** The signed `yubios.efi` lands inside the `0mniteck/yubios:uki-<sha>` artifact; `usr/lib/yubiOS/uki/install-uki.sh` (shipped now, not yet wired) documents the install-time copy path: write the UKI to the ESP at `/EFI/Linux/bootc/bootc_composefs-<digest>.efi` (bootc 1.16.3 hard-coded path per `crates/lib/src/bootc_composefs/boot.rs`), write a BLS `.conf` containing `uki /EFI/Linux/bootc/bootc_composefs-<digest>.efi` (v1.16.3 BLSConfig key per PR #2269). The wiring is Phase 2 because bootc 1.16.3 has no project-authored BLSConfig drop-in intake; the intake mechanism is one of the follow-ups listed below.
+
+**Follow-ups (deferred, not part of this ADR).**
+
+- **B-BOOTC-SEAL Phase 2:** bootc-side patch to mirror the secureboot-keys flow at `/usr/lib/bootc/install/loader-entries/` so yubiOS can ship a BLS `.conf` drop-in alongside the UKI artifact. Without this, the pre-built UKI is published but bootc's install still generates its own UKI at install time.
+- **Base bump to fedora-bootc carrying bootc v1.16.4+** for the `bootc container split-kernel-and-rootfs` subcommand (the documented sealed-flow enabler in `docs/ARCHITECTURE.md` L244-278) and the user-provided-kargs extension (PR #2305). v1.16.4 was released 2026-07-15; Fedora 45 rebuilds lag by 1-2 weeks.
+- **`bootc container ukify` integration in the build pipeline** as the long-term signer, replacing the mkosi `--secure-boot-sign-tool systemd-sbsign` step. Requires packaging `pkcs11-provider` and `softhsm2` into fedora-bootc, or a different buildroot strategy; the sealed-flow design in `docs/ARCHITECTURE.md` L264-271 sketches the invocation.
+
+**Consequences.**
+
+- The bootc install config (`usr/lib/bootc/install/50-yubiOS.toml`) gains a `[install] kargs = [...]` line so bootc's auto-generated UKI matches mkosi's.
+- `yubiOS-bake.hcl` gains a `yubios-uki` target that packages the pre-built signed UKI as a separate scratch-rootfs OCI artifact. `ci_mkosi-installer.yml` is extended to extract the signed UKI into `inst/uki/` and publish the artifact via Bake.
+- `docs/BLOCKERS.md` `B-BOOTC-SEAL` is downgraded in scope: the kernel-side artifact split is now shipped (this ADR closes that half); the install-time BLSConfig wiring to use the pre-built UKI remains open (Phase 2 follow-up above).
+- `refs/kernel-rootfs-split-2026-07-29.md` is the research note that motivated this ADR; it cites the exact bootc upstream source paths (v1.16.3 PR #2269, PR #2305) and the yubiOS-side seams (yubiOS-bake.hcl target naming, ci_mkosi-installer.yml SoftHSM pipeline).
+
