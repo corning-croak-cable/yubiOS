@@ -11,12 +11,6 @@ name: TEST - PQ hybrid TLS verification (ADR-025)
 # dependency for this specific job): promote to a required check once stable.
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/ci_test_pq_tls_verify.yml' # self-change trigger for validating workflow edits
-      - 'scripts/lib/reproducible-build.sh'
-      - 'yubiOS-bake.hcl'
   workflow_dispatch:
     inputs:
       ci_callback:

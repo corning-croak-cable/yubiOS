@@ -30,18 +30,6 @@ name: yubiOS mkosi-installer
 # Docker + Buildx and creates the named builder in the invoking user scope.
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/ci_mkosi-installer.yml' # self-change trigger for validating workflow edits
-      - 'mkosi.conf'
-      - 'mkosi.conf.d/**'
-      - 'mkosi.extra/**'
-      - 'mkosi.finalize'
-      - 'scripts/lib/manifest-filesystem.py'
-      - 'scripts/lib/reproducible-build.sh'
-      - 'scripts/verify-reproducible-installer.py'
-      - 'yubiOS-bake.hcl'
   workflow_dispatch:
     inputs:
       reason:

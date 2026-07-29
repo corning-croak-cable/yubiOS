@@ -25,12 +25,6 @@ name: yubiOS vGPU VM e2e (tests/vm)
 # IOMMU plus a real GPU. Those stay bare-metal-only, documented in the same ref.
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/ci_test-vgpu-vm.yml' # self-change trigger for validating workflow edits on current main
-      - 'tests/vm/test-vgpu-virtio-ci.sh'
-      - 'tests/vm/test-vfio-user-host-ci.sh'
   workflow_dispatch:
     inputs:
       image:

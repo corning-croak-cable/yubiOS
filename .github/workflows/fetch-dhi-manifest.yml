@@ -11,10 +11,6 @@ name: fetch-dhi-manifest
 # absent. The host ubuntu-24.04 image has curl + python3 preinstalled.
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/fetch-dhi-manifest.yml' # self-change trigger for validating workflow edits
   workflow_dispatch:
     inputs:
       reason:

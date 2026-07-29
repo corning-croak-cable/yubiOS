@@ -26,14 +26,6 @@
 name: yubiOS fTPM /dev/tpm0 guest verify (OMN-96)
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/ci_test-ftpm-tpm0.yml'
-      - 'tests/vm/test-ftpm-qemu-ci.sh'
-      - 'tests/vm/ftpm-console-driver.py'
-      - 'tests/vm/verify-tpm0-pcr-extend.sh'
-      - '.github/workflows/ci_firmware-rk.yml'
   workflow_dispatch:
     inputs:
       firmware_image:

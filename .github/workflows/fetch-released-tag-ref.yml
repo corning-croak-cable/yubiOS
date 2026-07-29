@@ -8,10 +8,6 @@ name: fetch-released-tag-ref
 # release, so an automated refresh cannot silently remove required features.
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/fetch-released-tag-ref.yml' # self-change validation
   workflow_dispatch:
     inputs:
       reason:
