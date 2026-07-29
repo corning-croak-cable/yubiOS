@@ -91,10 +91,10 @@ Stress-test of V6:
 ## Where this lives
 
 * This one-pager is the ideation artifact.
-* Convert to ADR-032 (OMN-109) by filling in the ADR template (Context / Decision / Alternatives / Consequences).
-* Pair with OMN-110 (prior-art search) before ADR-032 is accepted.
+* Convert to ADR-033 (OMN-109) by filling in the ADR template (Context / Decision / Alternatives / Consequences).
+* Pair with OMN-110 (prior-art search) before ADR-033 is accepted.
 * Pair with OMN-112 (trigger model) before any code lands.
 
 ## Note on file location
 
-This one-pager is in `session/` (per ideate-solo skill convention, which expects `docs/ideas/`). Per PROJECT_RULES.md durable content lives in `yubi-OS/yubiOS refs/` not local `documents/` — so the durable copy should land at `refs/adr-032-misbehavior-cutoff-policy-2026-07-28.md` after approval (this file becomes the ideation preamble, the refs/ file becomes the ADR).
+This one-pager is in `session/` (per ideate-solo skill convention, which expects `docs/ideas/`). Per PROJECT_RULES.md durable content lives in `yubi-OS/yubiOS refs/` not local `documents/` — so the durable copy should land at `refs/adr-033-misbehavior-cutoff-policy-2026-07-28.md` after approval (this file becomes the ideation preamble, the refs/ file becomes the ADR).
