@@ -73,7 +73,7 @@ clean_package_manager_state() {
 install_ok=0
 for attempt in 1 2 3 4 5; do
   rm -f /var/cache/dnf/*.lock /var/cache/dnf/*.pid /run/dnf5.lock /run/dnf.lock 2>/dev/null || true
-  if dnf -y --setopt=history_record=false install "${BUILD_DEPS[@]}"; then
+  if dnf -y --setopt=history_record=false --setopt=install_weak_deps=False install "${BUILD_DEPS[@]}"; then
     install_ok=1
     break
   fi
@@ -130,7 +130,7 @@ install -Dm0644 "${src}/contrib/udev/90-passless.rules"   /usr/lib/udev/rules.d/
 install -Dm0644 "${src}/contrib/modules-load.d/fido.conf" /usr/lib/modules-load.d/yubiOS-swu2f-uhid.conf
 
 dnf -y --setopt=history_record=false remove "${BUILD_DEPS[@]}" || true
-dnf -y clean all || true
+dnf -y --setopt=install_weak_deps=False clean all || true
 clean_package_manager_state
 
 /usr/bin/passless --version || true
