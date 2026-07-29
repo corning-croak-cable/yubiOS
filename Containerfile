@@ -23,7 +23,7 @@ ARG SOURCE_DATE_EPOCH
 # package scriptlets also refresh ldconfig's regenerable auxiliary cache in
 # filesystem-dependent order. RPM itself honors SOURCE_DATE_EPOCH, so remove
 # those caches while retaining the installed RPM and runtime linker databases.
-RUN dnf -y --setopt=history_record=false --setopt=install_weak_deps=False --setopt=upgrade_type=none install \
+RUN dnf -y --setopt=history_record=false --setopt=install_weak_deps=False -x 'libssh*,libssh2*,libssh-config' install \
       libfido2 \
       yubikey-manager \
       yubico-piv-tool \
