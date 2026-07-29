@@ -47,7 +47,9 @@ SSH_WAIT_SECS="${YUBIOS_SSH_WAIT_SECS:-300}"
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
 # Optional opt-out for the real-YubiKey guard: --allow-real-u2f as first argv.
+# shellcheck disable=SC2034 # ALLOW_REAL_U2F is read by assert_passless_only in tests/vm/lib/real-u2f-guard.sh
 if [[ "${1:-}" == "--allow-real-u2f" ]]; then
+  # shellcheck disable=SC2034 # read by assert_passless_only in tests/vm/lib/real-u2f-guard.sh
   ALLOW_REAL_U2F=1
   shift
 fi
