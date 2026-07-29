@@ -18,7 +18,7 @@ echo ""
 
 # Step 1: Flash yubiOS to device
 echo "1/5 Flashing $IMAGE -> $DEVICE"
-bcvk native-to-disk --yes "$IMAGE" "$DEVICE"
+bcvk native-to-disk --wipe --yes "$IMAGE" "$DEVICE"
 
 # Step 2: Find the LUKS partition (second partition after ESP)
 LUKS_PART=$(lsblk -J -o NAME,FSTYPE "$DEVICE" | \
