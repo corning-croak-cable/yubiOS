@@ -1,34 +1,28 @@
-# OMN-96 -- yubiOS fTPM /dev/tpm0 guest verification (always-on Stage B)
+# OMN-96 -- yubiOS fTPM /dev/tpm0 guest verification (always-on, matrix)
 #
 # Small dedicated workflow that runs ONLY the fTPM legs of ci_test-vm.yml,
-# forcing Stage B (Linux payload + in-guest verify-tpm0-pcr-extend.sh) on so
-# every run proves /dev/tpm0 is exposed and PCR extend works in a yubiOS
-# guest booted under the OP-TEE fTPM firmware.
+# keeping the matrix + platform-priority pattern from ci_test-vm.yml verbatim:
+#   - arm64 self-hosted (rock1, KVM): does the real Stage A firmware-marker
+#     check on every push.
+#   - amd64 hosted: per ADR-023 (ARM64 is the primary target), the leg is
+#     SKIPped LOUDLY -- emulating an arm64 firmware bundle on amd64 was
+#     attempted earlier (the firmware tag is arm64-only) and is not in scope
+#     for this workflow.
 #
-# Pattern is copied verbatim from ci_test-vm.yml (commit 36727ee / 5e1f3a9 /
-# 97dbb79 in ses_06730e703ffezdFn0SrMQJhw8R):
-#   - Bare ubuntu-24.04 runner (no container; podman/bcvk need privileges
-#     the hardened dhi.io/debian-base container strips).
-#   - `sudo apt-get install` for host deps (the runner user can't lock
-#     /var/lib/apt/lists/).
+# Stage B (Linux payload + in-guest verify-tpm0-pcr-extend.sh) stays opt-in
+# via inputs.ftpm_linux_payload to keep per-push run time bounded (Stage A
+# is the always-on fTPM-firmware-marker gate; Stage B is for explicit
+# end-to-end Linux fTPM verification).
+#
+# Pattern copied from ci_test-vm.yml (ses_06730e703ffezdFn0SrMQJhw8R):
+#   - Bare runner (no container; podman/bcvk need privileges the
+#     hardened dhi.io/debian-base container strips).
+#   - `sudo apt-get install` for host deps.
 #   - `sudo env "PATH=$PATH:/usr/sbin:/sbin" ...` wrapping every podman
-#     invocation so rootful podman can see what was pulled and bcvk can
-#     find the binary.
+#     invocation so rootful podman can see what was pulled.
+#   - Reuses tests/vm/test-ftpm-qemu-ci.sh verbatim.
 #
-# Reuses the existing tests/vm/* canon instead of reimplementing it:
-#   - tests/vm/test-ftpm-qemu-ci.sh: pulls firmware bundle + yubiOS image,
-#     boots Stage A (firmware markers), and Stage B (bcvk to-disk + in-guest
-#     verifier) when FTPM_LINUX_PAYLOAD=1.
-#   - tests/vm/verify-tpm0-pcr-extend.sh: in-guest done-condition check
-#     (fTPM TA present, /dev/tpm0 + /dev/tpmrm0 exist, tpm2_startup,
-#     tpm2_pcrread, tpm2_pcrextend changes the value).
-#   - tests/vm/ftpm-console-driver.py: QEMU serial-console driver that
-#     uploads verify-tpm0-pcr-extend.sh in 384-byte chunks and reads back
-#     the in-guest exit code.
-#
-# Honest contract: rc=0 pass, rc=77 loud SKIP (firmware or test image
-# unavailable, or bcvk to-disk hung within TO_DISK_TIMEOUT), anything else
-# FAIL.
+# Honest contract: rc=0 pass, rc=77 loud SKIP, anything else FAIL.
 name: yubiOS fTPM /dev/tpm0 guest verify (OMN-96)
 
 on:
@@ -39,36 +33,67 @@ on:
       - 'tests/vm/test-ftpm-qemu-ci.sh'
       - 'tests/vm/ftpm-console-driver.py'
       - 'tests/vm/verify-tpm0-pcr-extend.sh'
+      - '.github/workflows/ci_firmware-rk.yml'
   workflow_dispatch:
     inputs:
       firmware_image:
-        description: 'OCI ref for the firmware bundle. Default: published QEMU ARM64 firmware (qemu-arm64 tag from ci_firmware-rk.yml Stage 4).'
+        description: 'OCI ref for the firmware bundle. Default: published QEMU ARM64 firmware.'
         required: false
         default: 'docker.io/0mniteck/yubios:firmware-qemu-arm64'
         type: string
       yubios_image:
-        description: 'OCI ref for the yubiOS dev/test image to install and boot under the fTPM firmware.'
+        description: 'OCI ref for the yubiOS dev/test image.'
         required: false
         default: 'docker.io/0mniteck/yubios:dev'
         type: string
+      ftpm_linux_payload:
+        description: 'Also run Stage B (Linux payload + in-guest verifier). Slow (bcvk to-disk) and unproven on first-run; default off.'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
 
 jobs:
   ftpm-tpm0-verify:
-    runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+            primary: false
+          - arch: arm64
+            runner: [self-hosted, Linux, ARM64, KVM]
+            primary: true
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 10
     steps:
+      - name: Gate amd64 boot leg on platform-priority policy (ADR-023: ARM64 is primary)
+        id: policy
+        if: matrix.arch == 'amd64'
+        run: |
+          if [ "${{ matrix.primary }}" = "true" ]; then
+            echo "boot=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "boot=0" >> "$GITHUB_OUTPUT"
+            echo "::warning::SKIP: amd64 boot leg skipped -- ARM64 is yubiOS's primary target (ADR-023); fTPM verification is per-arch (the firmware bundle is arm64-only by tag, so this leg cannot boot it on an amd64 runner without binfmt/QEMU emulation that this workflow deliberately does not run). The arm64 matrix leg is the always-on gate."
+            echo "### ftpm-tpm0 (${{ matrix.arch }}) -- SKIP: platform-priority per ADR-023 (amd64 cannot boot the arm64 firmware bundle)" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Reclaim workspace before checkout (bare runner -- root-owned leftovers possible)
+        if: matrix.arch == 'arm64' || (matrix.arch == 'amd64' && steps.policy.outputs.boot == '1')
         run: |
           sudo rm -rf "$GITHUB_WORKSPACE"
           mkdir -p "$GITHUB_WORKSPACE"
 
       - name: Checkout
+        if: matrix.arch == 'arm64' || (matrix.arch == 'amd64' && steps.policy.outputs.boot == '1')
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # PINNED.md
 
       - name: Install host deps (podman, qemu aarch64, swtpm, tpm2-tools)
+        if: matrix.arch == 'arm64' || (matrix.arch == 'amd64' && steps.policy.outputs.boot == '1')
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq --no-install-recommends \
@@ -76,20 +101,20 @@ jobs:
             python3 python3-serial skopeo
 
       - name: Login to docker.io (bare runner pulls need creds for 0mniteck42 namespace)
+        if: matrix.arch == 'arm64' || (matrix.arch == 'amd64' && steps.policy.outputs.boot == '1')
         env:
           DOCKER_USER: 0mniteck42
           DOCKER_PASS: ${{ secrets.DOCKER }}
         run: |
           echo "$DOCKER_PASS" | sudo podman login --username "$DOCKER_USER" --password-stdin docker.io
 
-      - name: Run tests/vm/test-ftpm-qemu-ci.sh with FTPM_LINUX_PAYLOAD=1 (Stage A + Stage B, always)
+      - name: Run tests/vm/test-ftpm-qemu-ci.sh (Stage A always; Stage B when FTPM_LINUX_PAYLOAD=1)
+        if: matrix.arch == 'arm64' || (matrix.arch == 'amd64' && steps.policy.outputs.boot == '1')
         env:
-          # IMPORTANT: path matches ci_test-vm.yml + the canonical 97dbb79 commit
-          # (sudo env "PATH=$PATH:/usr/sbin:/sbin" -- bcvk binary is in /usr/sbin).
           PATH: ${{ runner.temp }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
           FIRMWARE_IMAGE: ${{ inputs.firmware_image || 'docker.io/0mniteck/yubios:firmware-qemu-arm64' }}
           YUBIOS_IMAGE: ${{ inputs.yubios_image || 'docker.io/0mniteck/yubios:dev' }}
-          FTPM_LINUX_PAYLOAD: '1'    # force Stage B (Linux payload + in-guest verifier)
+          FTPM_LINUX_PAYLOAD: ${{ inputs.ftpm_linux_payload && '1' || '0' }}
           BOOT_TIMEOUT: '180'
           LINUX_BOOT_TIMEOUT: '900'
           TO_DISK_TIMEOUT: '900'
@@ -98,10 +123,6 @@ jobs:
         run: |
           set -euo pipefail
           chmod +x tests/vm/test-ftpm-qemu-ci.sh tests/vm/ftpm-console-driver.py tests/vm/verify-tpm0-pcr-extend.sh
-          # sudo env "PATH=$PATH:/usr/sbin:/sbin" is the yubiOS canon (ci_test-vm.yml +
-          # ses_06730e703ffezdFn0SrMQJhw8R b5169ad + 97dbb79): rootful podman pulls
-          # see the same store bcvk reads from, and the PATH includes /usr/sbin
-          # where bcvk and blockdev live.
           sudo env "PATH=$PATH:/usr/sbin:/sbin" bash tests/vm/test-ftpm-qemu-ci.sh
           rc=$?
           if [ "$rc" -ne 0 ]; then
@@ -120,13 +141,13 @@ jobs:
             exit 0
           fi
           [ "$rc" -eq 0 ] || exit "$rc"
-          echo "### ftpm-tpm0 -- PASS: /dev/tpm0 + tpm2_* verified in yubiOS guest" >> "$GITHUB_STEP_SUMMARY"
+          echo "### ftpm-tpm0 -- PASS: fTPM firmware markers verified (Stage A) [+ Stage B if FTPM_LINUX_PAYLOAD=1]" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload fTPM serial logs
         if: always()
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
         with:
-          name: ftpm-tpm0-logs
+          name: ftpm-tpm0-logs-${{ matrix.arch }}
           path: /tmp/yubios-ftpm-tpm0-logs/*.log
           if-no-files-found: warn
           retention-days: 7
