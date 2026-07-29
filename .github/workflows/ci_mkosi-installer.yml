@@ -503,7 +503,9 @@ jobs:
           path: inst/uki
           if-no-files-found: error
           compression-level: 0
-          retention-days: 1 Upload installer reproducibility subject
+          retention-days: 1
+
+      - name: Upload installer reproducibility subject
         if: matrix.proof_variant != 'none'
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
         with:
@@ -638,7 +640,9 @@ jobs:
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
         with:
           name: mkosi-uki-payload-${{ matrix.arch }}
-          path: inst/uki Install docker CLI + buildx (${{ matrix.arch }})
+          path: inst/uki
+
+      - name: Install docker CLI + buildx (${{ matrix.arch }})
         run: |
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends \
