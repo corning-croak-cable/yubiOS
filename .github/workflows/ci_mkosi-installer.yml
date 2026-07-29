@@ -861,6 +861,7 @@ jobs:
         run: docker -H unix:///run/docker-rootless/docker.sock logout || true
 
 
+  ci-callback:
     name: Callback to ci.yml orchestrator
     if: ${{ always() && github.event_name == 'workflow_dispatch' && inputs.ci_callback == true }}
     needs: [build, installer-reproducibility, installer-publish, merge-manifest]
