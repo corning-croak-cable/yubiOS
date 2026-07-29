@@ -1,5 +1,7 @@
 # Misbehavior-Triggered PCI-Mediation Cutoff [SOLO]
 
+<last-reviewed-against-blockers>2026-07-28</last-reviewed-against-blockers>
+
 Date: 2026-07-28
 Source: ideate-solo (no dialogue — autonomous variation generation)
 Scope class: medium (single policy layer over an established mechanism)
