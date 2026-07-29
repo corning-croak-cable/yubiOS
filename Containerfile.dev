@@ -25,6 +25,20 @@ FROM ${BASE_IMAGE}
 
 ARG SOURCE_DATE_EPOCH
 
+# Ensure bootupd is present for the destructive hardware-test leg
+# (tests/vm/test-luks-fido2.sh runs `bcvk native-to-disk` which calls
+# `bootc install to-disk`; bootc refuses ostree installs without bootupd).
+# The production Containerfile installs bootupd at line 37 (commit 1b4638d,
+# OMN-95), but the dev image's `yubios-base` context inheritance did not
+# surface bootupd in the published :dev tag as of run #132 / 2026-07-29.
+# Re-install here so the dev image carries it explicitly and the
+# destructive hardware leg stops dying at "Installing to disk: bootupd
+# is required for ostree-based installs" (errors/bcvk native_to_disk.rs:262).
+RUN dnf -y --setopt=history_record=false --setopt=install_weak_deps=False install bootupd && \\
+    rm -f /var/cache/dnf/*.lock /var/cache/dnf/*.pid /run/dnf5.lock /run/dnf.lock 2>/dev/null || true && \\
+    dnf -y --setopt=install_weak_deps=False clean all && \\
+    rm -rf /var/cache/dnf /var/cache/libdnf5 /run/dnf /var/log/dnf* /var/log/libdnf* /var/lib/dnf/repos /var/lib/dnf/system-repo.lock /usr/lib/sysimage/libdnf5/transaction_history.sqlite* /usr/lib/sysimage/libdnf5/*.toml
+
 COPY mkosi.conf.d/test/install-swu2f-authenticator.sh /tmp/install-swu2f-authenticator.sh
 RUN chmod +x /tmp/install-swu2f-authenticator.sh && \
     /tmp/install-swu2f-authenticator.sh && \
