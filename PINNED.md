@@ -14,7 +14,7 @@ All GitHub Actions, internal yubi-OS fork refs, external GitHub source refs, con
 |--------|------------|
 | `0mniteck/.pki` | `*` (org-internal workflows only, ref matches `.github/*/*@*`) |
 | `actions/attest` | `59d89421af93a897026c735860bf21b6eb4f7b26` |
-| `actions/checkout` | `9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0` |
+| `actions/checkout` | `de0fac2e4500dabe0009e67214ff5f5447ce83dd` |
 | `actions/configure-pages` | `45bfe0192ca1faeb007ade9deae92b16b8254a0d` |
 | `actions/deploy-pages` | `cd2ce8fcbc39b97be8ca5fce6e763baed58fa128` |
 | `actions/download-artifact` | `37930b1c2abaa49bbe596cd826c3c89aef350131` |
