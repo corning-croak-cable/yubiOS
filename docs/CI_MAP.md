@@ -37,7 +37,7 @@ Group-routing redesign (no-chain model): the single `group:` choice input decide
 | `none` | — (no dispatch) | — |
 | `firmware` | `ci_firmware-rk.yml` | firmware bundle |
 | `tests` | `ci_test_rootless-docker.yml`, `ci_test_bootc-filesystem.yml`, `ci_test_pq_tls_verify.yml` | — |
-| `vm-tests` | `ci_test-vm.yml` | — |
+| `vm-tests` | `ci_test-vm.yml`, `ci_test-vgpu-vm.yml` | — |
 | `fetches` | `fetch-dhi-manifest.yml`, `fetch-fedora-bootc-manifest.yml`, `fetch-released-tag-ref.yml` | — |
 | `ci-builders` | `yubiOS-ci.yml`, `ci_dev_image.yml`, `ci_mkosi-installer.yml` (firmware is its own group) | production + dev + installer |
 | `forks` | `ci_fork_mkosi.yml`, `ci_fork_bcvk.yml`, `ci_fork_arm-trusted-firmware.yml`, `ci_fork_optee-os.yml`, `ci_fork_ms-tpm-20-ref.yml`, `ci_fork_optee-ftpm.yml`, `ci_fork_u-boot.yml`, `ci_fork_edk2.yml` | — |
@@ -50,18 +50,7 @@ flowchart TD
     none_path["none\nno dispatch"]
     firmware_path["firmware\n[ci_firmware-rk]"]
     tests_path["tests\n[rootless-docker, bootc-filesystem, pq-tls-verify]\n(3 independent dispatches)"]
-    vm_tests_path["vm-tests\n[ci_test-vm]"]
-    fetches_path["fetches\n[dhi, fedora-bootc, released-tag]\n(3 independent dispatches)"]
-    ci_builders_path["ci-builders\n[yubiOS-ci, ci_dev_image, ci_mkosi-installer]\n(3 independent dispatches)"]
-    forks_path["forks\n[8 ci_fork_*]\n(8 independent dispatches)"]
-    all_path["all\nunion of every group\n(19 independent dispatches)"]
-    done["exit"]
-
-    start --> pick
-    pick -- "none" --> none_path --> done
-    pick -- "firmware" --> firmware_path --> done
-    pick -- "tests" --> tests_path --> done
-    pick -- "vm-tests" --> vm_tests_path --> done
+    vm_tests_path["vm-tests\n[ci_test-vm, ci_test-vgpu-vm]\n(2 independent dispatches)"]\n    fetches_path["fetches\n[dhi, fedora-bootc, released-tag]\n(3 independent dispatches)"]\n    ci_builders_path["ci-builders\n[yubiOS-ci, ci_dev_image, ci_mkosi-installer]\n(3 independent dispatches)"]\n    forks_path["forks\n[8 ci_fork_*]\n(8 independent dispatches)"]\n    all_path["all\nunion of every group\n(20 independent dispatches)"]\n    done["exit"]\n\n    start --> pick\n    pick -- "none" --> none_path --> done\n    pick -- "firmware" --> firmware_path --> done\n    pick -- "tests" --> tests_path --> done\n    pick -- "vm-tests" --> vm_tests_path --> done
     pick -- "fetches" --> fetches_path --> done
     pick -- "ci-builders" --> ci_builders_path --> done
     pick -- "forks" --> forks_path --> done
