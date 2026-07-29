@@ -118,7 +118,7 @@ jobs:
       image: docker://dhi.io/debian-base@sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6 # trixie-debian13-dev INDEX (manifest list)
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v7.0.0
       - name: shellcheck + bash -n on tests/vm/*.sh
         run: |
           apt-get update -qq
@@ -167,7 +167,7 @@ jobs:
           sudo rm -rf "$GITHUB_WORKSPACE"
           mkdir -p "$GITHUB_WORKSPACE"
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v7.0.0
 
       - name: Free disk space (self-hosted rock1 persists disk across runs -- unlike hosted runners)
         if: matrix.arch == 'arm64'

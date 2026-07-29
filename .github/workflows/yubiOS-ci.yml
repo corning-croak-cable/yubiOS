@@ -90,7 +90,7 @@ jobs:
       image: docker://dhi.io/debian-base@sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6 # trixie-debian13-dev INDEX (manifest list)
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v7.0.0
       - name: shellcheck
         run: |
           apt-get update -qq
@@ -104,7 +104,7 @@ jobs:
       image: docker://ghcr.io/hadolint/hadolint:v2.14.0-debian@sha256:158cd0184dcaa18bd8ec20b61f4c1cabdf8b32a592d062f57bdcb8e4c1d312e2
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v7.0.0
       - name: hadolint (Containerfile lint)
         run: hadolint --ignore DL3041 --ignore DL3059 - < Containerfile
 
@@ -132,7 +132,7 @@ jobs:
           apt-get install -y -qq --no-install-recommends git
 
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v7.0.0
       - name: Install test dependencies
         run: |
           apt-get update -qq
@@ -157,7 +157,7 @@ jobs:
       image: docker://dhi.io/debian-base@sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6 # auto-resolves to ${{ matrix.arch }}
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v7.0.0
       - name: Install mkosi (from yubi-OS fork)
         run: |
           apt-get update -qq
@@ -196,7 +196,7 @@ jobs:
           apt-get install -y -qq --no-install-recommends git
 
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v7.0.0
 
       - name: Resolve reproducible build environment
         env:

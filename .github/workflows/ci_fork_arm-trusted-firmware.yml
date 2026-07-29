@@ -92,7 +92,7 @@ jobs:
           sudo chown -R "$(id -u):$(id -g)" "$GITHUB_WORKSPACE"
 
       - name: Checkout arm-trusted-firmware
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6.0.2 — see PINNED.md
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2 — see PINNED.md
         with:
           repository: yubi-OS/arm-trusted-firmware
           ref: da738d5eae93af342fdc4995dd3c05acb4c9d757 # release ref; see PINNED.md
@@ -152,7 +152,7 @@ jobs:
           aarch64-linux-gnu-gcc --version || gcc --version
 
       - name: Checkout mbed TLS (3.6.6 — matches TF-A MBEDTLS_CONFIG_VERSION 0x03060600)
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6.0.2 — see PINNED.md
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2 — see PINNED.md
         with:
           repository: Mbed-TLS/mbedtls
           ref: 0bebf8b8c7f07abe3571ded48a11aa907a1ffb20 # mbedtls-3.6.6

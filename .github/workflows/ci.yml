@@ -87,6 +87,37 @@ on:
         required: false
         default: 'success'
 
+      Dev_Docker_push:
+        description: 'Legacy pass-through. Ignored; use Docker_push + group=ci-builders/all.'
+        type: boolean
+        required: false
+        default: false
+      Firmware_Docker_push:
+        description: 'Legacy pass-through. Ignored; use Docker_push + group=ci-builders/all.'
+        type: boolean
+        required: false
+        default: false
+      Installer_Docker_push:
+        description: 'Legacy pass-through. Ignored; use Docker_push + group=ci-builders/all.'
+        type: boolean
+        required: false
+        default: false
+      ci_fork_run:
+        description: 'Legacy pass-through. Ignored; use group=forks/all.'
+        type: boolean
+        required: false
+        default: false
+      ci_test_run:
+        description: 'Legacy pass-through. Ignored; use group=tests/all.'
+        type: boolean
+        required: false
+        default: false
+      vm_image:
+        description: 'Legacy pass-through. Ignored; vm-tests group uses the workflow default.'
+        type: string
+        required: false
+        default: ''
+
 permissions:
   contents: read
   actions: write

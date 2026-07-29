@@ -93,7 +93,7 @@ jobs:
 
     steps:
       - name: Checkout ms-tpm-20-ref
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6.0.2 — see PINNED.md
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2 — see PINNED.md
         with:
           repository: yubi-OS/ms-tpm-20-ref
           ref: ee21db0a941decd3cac67925ea3310873af60ab3 # release ref; see PINNED.md

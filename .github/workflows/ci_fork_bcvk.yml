@@ -90,7 +90,7 @@ jobs:
       group: ${{ github.workflow }}-tests-${{ matrix.arch }}-${{ github.ref }}
       cancel-in-progress: true
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # see PINNED.md
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # see PINNED.md
         with:
           repository: yubi-OS/bcvk
           ref: c29246b1a1ea0114fcb92530298a364627f0cae0 # release-descendant ref; see PINNED.md
@@ -128,7 +128,7 @@ jobs:
     # fork; keep it visible but non-blocking so it doesn't red the meaningful unit
     # gate. Tighten to hard-fail once the yubiOS-added crates are clippy-clean.
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           repository: yubi-OS/bcvk
           ref: c29246b1a1ea0114fcb92530298a364627f0cae0 # release-descendant ref; see PINNED.md
