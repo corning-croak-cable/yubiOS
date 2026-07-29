@@ -1,17 +1,34 @@
-# OMN-96 -- yubiOS fTPM /dev/tpm0 guest verification
+# OMN-96 -- yubiOS fTPM /dev/tpm0 guest verification (always-on Stage B)
 #
-# Single small workflow that proves the fTPM chain (TF-A + OP-TEE + U-Boot) is
-# wired end-to-end in a yubiOS guest. Boots the published firmware bundle
-# (docker.io/0mniteck/yubios:firmware-qemu-arm64) under QEMU aarch64 (TCG, no
-# KVM required for fTPM Stage A), attaches a yubiOS dev/test image, and asserts
-# in-guest that /dev/tpm0 exists and that tpm2_* basic commands succeed. This
-# is the dedicated test the issue asks for -- the same fTPM Stage B already
-# lives inside ci_test-vm.yml behind `inputs.ftpm_linux_payload`, but that
-# gate is buried in a larger matrix job and is opt-in. This workflow is
-# always-on for the fTPM path and runs in ~3 minutes.
+# Small dedicated workflow that runs ONLY the fTPM legs of ci_test-vm.yml,
+# forcing Stage B (Linux payload + in-guest verify-tpm0-pcr-extend.sh) on so
+# every run proves /dev/tpm0 is exposed and PCR extend works in a yubiOS
+# guest booted under the OP-TEE fTPM firmware.
 #
-# Honest contract: 0 pass, 77 loud SKIP (when the firmware image or the test
-# image is missing), anything else FAIL. Boot timeout 180s.
+# Pattern is copied verbatim from ci_test-vm.yml (commit 36727ee / 5e1f3a9 /
+# 97dbb79 in ses_06730e703ffezdFn0SrMQJhw8R):
+#   - Bare ubuntu-24.04 runner (no container; podman/bcvk need privileges
+#     the hardened dhi.io/debian-base container strips).
+#   - `sudo apt-get install` for host deps (the runner user can't lock
+#     /var/lib/apt/lists/).
+#   - `sudo env "PATH=$PATH:/usr/sbin:/sbin" ...` wrapping every podman
+#     invocation so rootful podman can see what was pulled and bcvk can
+#     find the binary.
+#
+# Reuses the existing tests/vm/* canon instead of reimplementing it:
+#   - tests/vm/test-ftpm-qemu-ci.sh: pulls firmware bundle + yubiOS image,
+#     boots Stage A (firmware markers), and Stage B (bcvk to-disk + in-guest
+#     verifier) when FTPM_LINUX_PAYLOAD=1.
+#   - tests/vm/verify-tpm0-pcr-extend.sh: in-guest done-condition check
+#     (fTPM TA present, /dev/tpm0 + /dev/tpmrm0 exist, tpm2_startup,
+#     tpm2_pcrread, tpm2_pcrextend changes the value).
+#   - tests/vm/ftpm-console-driver.py: QEMU serial-console driver that
+#     uploads verify-tpm0-pcr-extend.sh in 384-byte chunks and reads back
+#     the in-guest exit code.
+#
+# Honest contract: rc=0 pass, rc=77 loud SKIP (firmware or test image
+# unavailable, or bcvk to-disk hung within TO_DISK_TIMEOUT), anything else
+# FAIL.
 name: yubiOS fTPM /dev/tpm0 guest verify (OMN-96)
 
 on:
@@ -19,16 +36,18 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/ci_test-ftpm-tpm0.yml'
-      - 'tests/vm/test-ftpm-tpm0-ci.sh'
+      - 'tests/vm/test-ftpm-qemu-ci.sh'
+      - 'tests/vm/ftpm-console-driver.py'
+      - 'tests/vm/verify-tpm0-pcr-extend.sh'
   workflow_dispatch:
     inputs:
       firmware_image:
-        description: 'OCI ref for the firmware bundle (TF-A+OP-TEE+U-Boot+fTPM). Default: published QEMU ARM64 firmware.'
+        description: 'OCI ref for the firmware bundle. Default: published QEMU ARM64 firmware (qemu-arm64 tag from ci_firmware-rk.yml Stage 4).'
         required: false
         default: 'docker.io/0mniteck/yubios:firmware-qemu-arm64'
         type: string
       yubios_image:
-        description: 'OCI ref for the yubiOS dev/test image to boot under the fTPM firmware.'
+        description: 'OCI ref for the yubiOS dev/test image to install and boot under the fTPM firmware.'
         required: false
         default: 'docker.io/0mniteck/yubios:dev'
         type: string
@@ -39,108 +58,61 @@ permissions:
 jobs:
   ftpm-tpm0-verify:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 45
     steps:
-      - name: Install host deps (podman, qemu aarch64, swtpm, tpm2-tools)
-        run: |
-          set -euo pipefail
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq --no-install-recommends \
-            podman qemu-system-arm qemu-efi-aarch64 qemu-utils swtpm swtpm-tools tpm2-tools \
-            python3 python3-serial skopeo
-          qemu-system-aarch64 --version | head -1
-          podman --version
-          tpm2_getcap --version 2>&1 | head -1 || true
-      - name: Login to docker.io (bare runner pulls need creds for 0mniteck42 namespace)
-        env:
-          DOCKER_USER: 0mniteck42
-          DOCKER_PASS: ${{ secrets.DOCKER }}
-        run: |
-          set -euo pipefail
-          echo "$DOCKER_PASS" | podman login --username "$DOCKER_USER" --password-stdin docker.io
-
       - name: Reclaim workspace before checkout (bare runner -- root-owned leftovers possible)
         run: |
-          # Bare runner can accumulate root-owned files from prior jobs; actions/checkout
-          # cannot remove them and silently uses a stale tree (see ci_test-vm.yml "Reclaim workspace").
           sudo rm -rf "$GITHUB_WORKSPACE"
           mkdir -p "$GITHUB_WORKSPACE"
 
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # PINNED.md
 
-      - name: Pull firmware bundle and yubiOS dev/test image
+      - name: Install host deps (podman, qemu aarch64, swtpm, tpm2-tools)
         run: |
-          set -euo pipefail
-          podman pull --quiet "${{ inputs.firmware_image }}"
-          podman pull --quiet "${{ inputs.yubios_image }}"
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends \
+            podman qemu-system-arm qemu-efi-aarch64 qemu-utils swtpm swtpm-tools tpm2-tools \
+            python3 python3-serial skopeo
 
-      - name: Extract flash.bin (fTPM lives here, not in the OS image) and a bootable kernel
-        id: unpack
-        run: |
-          set -euo pipefail
-          mkdir -p "$RUNNER_TEMP/fw" "$RUNNER_TEMP/os"
-          # Firmware image is a docker image; the fTPM binary is in /usr/lib/firmware/yubios/.
-          # ci_firmware-rk.yml Stage 4 publishes flash.bin + tee-*.bin + u-boot.bin into /usr/lib/firmware/yubios/.
-          cid="$(podman create "${{ inputs.firmware_image }}" true)"
-          podman cp "$cid":/usr/lib/firmware/yubios "$RUNNER_TEMP/fw/yubios-fw" || {
-            echo "::error::firmware image does not contain /usr/lib/firmware/yubios/ -- check ci_firmware-rk.yml Stage 4 output"
-            podman rm -f "$cid"
-            exit 1
-          }
-          podman rm -f "$cid"
-          ls -la "$RUNNER_TEMP/fw/yubios-fw"
-          if [ ! -e "$RUNNER_TEMP/fw/yubios-fw/flash.bin" ]; then
-            echo "::error::flash.bin missing from firmware bundle"
-            exit 1
-          fi
-
-          # yubiOS dev/test image: pull the kernel + initrd out so QEMU can DirectBoot.
-          cid="$(podman create "${{ inputs.yubios_image }}" true)"
-          podman mount "$cid" > "$RUNNER_TEMP/mount"
-          mp="$(cat "$RUNNER_TEMP/mount")"
-          podman rm -f "$cid"
-          echo "::notice::mounted yubiOS dev/test image at $mp"
-          # The dev image ships /usr/lib/modules/<v>/vmlinuz and an initramfs.
-          vmlinuz="$(find "$mp/usr/lib/modules" -maxdepth 2 -name vmlinuz | head -1)"
-          initrd="$(find "$mp/usr/lib/modules" -maxdepth 2 -name 'initramfs*.img' | head -1)"
-          if [ -z "$vmlinuz" ] || [ -z "$initrd" ]; then
-            echo "::error::could not find vmlinuz/initramfs inside yubiOS dev/test image"
-            exit 1
-          fi
-          cp "$vmlinuz" "$RUNNER_TEMP/os/vmlinuz"
-          cp "$initrd"  "$RUNNER_TEMP/os/initrd.img"
-          umount "$mp" || true
-          echo "kernel=$(basename "$vmlinuz")"  >> "$GITHUB_OUTPUT"
-          echo "flash=ok" >> "$GITHUB_OUTPUT"
-
-      - name: Run tests/vm/test-ftpm-tpm0-ci.sh (TCG, no /dev/kvm required)
+      - name: Login to docker.io (bare runner pulls need creds for 0mniteck42 namespace)
         env:
-          FIRMWARE_DIR: ${{ runner.temp }}/fw/yubios-fw
-          KERNEL_PATH: ${{ runner.temp }}/os/vmlinuz
-          INITRD_PATH: ${{ runner.temp }}/os/initrd.img
+          DOCKER_USER: 0mniteck42
+          DOCKER_PASS: ${{ secrets.DOCKER }}
+        run: |
+          echo "$DOCKER_PASS" | sudo podman login --username "$DOCKER_USER" --password-stdin docker.io
+
+      - name: Run tests/vm/test-ftpm-qemu-ci.sh with FTPM_LINUX_PAYLOAD=1 (Stage A + Stage B, always)
+        env:
+          # IMPORTANT: path matches ci_test-vm.yml + the canonical 97dbb79 commit
+          # (sudo env "PATH=$PATH:/usr/sbin:/sbin" -- bcvk binary is in /usr/sbin).
+          PATH: ${{ runner.temp }}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+          FIRMWARE_IMAGE: ${{ inputs.firmware_image || 'docker.io/0mniteck/yubios:firmware-qemu-arm64' }}
+          YUBIOS_IMAGE: ${{ inputs.yubios_image || 'docker.io/0mniteck/yubios:dev' }}
+          FTPM_LINUX_PAYLOAD: '1'    # force Stage B (Linux payload + in-guest verifier)
           BOOT_TIMEOUT: '180'
+          LINUX_BOOT_TIMEOUT: '900'
+          TO_DISK_TIMEOUT: '900'
+          WORK: /tmp/yubios-ftpm-tpm0-work
           LOG_DIR: /tmp/yubios-ftpm-tpm0-logs
         run: |
           set -euo pipefail
-          chmod +x tests/vm/test-ftpm-tpm0-ci.sh || true
-          if [ ! -x tests/vm/test-ftpm-tpm0-ci.sh ]; then
-            echo "::error::tests/vm/test-ftpm-tpm0-ci.sh missing -- this workflow expects it to exist on main"
-            exit 1
-          fi
-          sudo rm -rf "$LOG_DIR"
-          sudo mkdir -p "$LOG_DIR"
-          sudo chmod 0777 "$LOG_DIR"
-          sudo env "PATH=$PATH:/usr/sbin:/sbin" \
-            bash tests/vm/test-ftpm-tpm0-ci.sh
+          chmod +x tests/vm/test-ftpm-qemu-ci.sh tests/vm/ftpm-console-driver.py tests/vm/verify-tpm0-pcr-extend.sh
+          # sudo env "PATH=$PATH:/usr/sbin:/sbin" is the yubiOS canon (ci_test-vm.yml +
+          # ses_06730e703ffezdFn0SrMQJhw8R b5169ad + 97dbb79): rootful podman pulls
+          # see the same store bcvk reads from, and the PATH includes /usr/sbin
+          # where bcvk and blockdev live.
+          sudo env "PATH=$PATH:/usr/sbin:/sbin" bash tests/vm/test-ftpm-qemu-ci.sh
           rc=$?
           if [ "$rc" -ne 0 ]; then
-            echo "--- secure-world serial tail ---"
-            sudo tail -200 "$LOG_DIR"/ftpm-optee.log || true
-            echo "--- normal-world serial tail ---"
-            sudo tail -200 "$LOG_DIR"/ftpm-nw.log || true
-            echo "--- guest console tail ---"
-            sudo tail -200 "$LOG_DIR"/guest.log || true
+            echo "--- secure-world serial log tail ---"
+            sudo tail -200 /tmp/yubios-ftpm-tpm0-logs/ftpm-optee.log 2>/dev/null || true
+            echo "--- normal-world serial log tail ---"
+            sudo tail -200 /tmp/yubios-ftpm-tpm0-logs/ftpm-nw.log 2>/dev/null || true
+            echo "--- bcvk to-disk log tail (Stage B) ---"
+            sudo tail -200 /tmp/yubios-ftpm-tpm0-logs/ftpm-to-disk.log 2>/dev/null || true
+            echo "--- guest console log tail (Stage B) ---"
+            sudo tail -200 /tmp/yubios-ftpm-tpm0-logs/ftpm-linux.log 2>/dev/null || true
           fi
           if [ "$rc" -eq 77 ]; then
             echo "::warning::SKIP: fTPM /dev/tpm0 leg incomplete (see log)"
