@@ -379,7 +379,10 @@ target "yubios-uki" {
   inherits    = ["_policy", "_source-metadata", "_reproducible", "_image-export"]
   description = "Package the PKCS#11-signed UKI as a separate OCI image (kernel side of ADR-032 kernel+rootfs split; OMN-51)."
   context     = UKI_CONTEXT
-  dockerfile  = "Containerfile.uki"
+  dockerfile-inline = <<-DOCKERFILE
+    FROM scratch
+    COPY uki/ /usr/lib/yubiOS/uki/
+  DOCKERFILE
   platforms   = [PLATFORM]
   labels = {
     "org.opencontainers.image.title"       = "yubiOS signed UKI"
