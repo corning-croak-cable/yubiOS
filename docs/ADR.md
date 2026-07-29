@@ -55,6 +55,15 @@ Secure Boot key) is tracked in TODO.md. `age-plugin-fido2-hmac` is a candidate.
 ykman config usb --enable FIDO --enable CCID
 ```
 
+
+**Amendment (2026-07-28):** Reviewed against today's `docs/BLOCKERS.md` — no blocking
+blockers retired today affect this ADR. The `systemd v257+` floor in the signing-toolchain
+line above is the correct `systemd-sbsign` minimum (per ADR-008, sbsign landed in v257 in
+Dec 2024); the yubiOS base remains pinned to v261 per ADR-015/ADR-016. This PR completes
+the v257→v261 doc-sync flagged in `RECENT_ACTIVITY.md` (2026-07-08 entry); no further
+swap is needed in this ADR.
+
+<last-reviewed-against-blockers>2026-07-28</last-reviewed-against-blockers>
 ---
 
 ## ADR-003: LUKS2 + FIDO2 via systemd-cryptenroll (no TPM)
@@ -94,6 +103,15 @@ TPM-dependent layer.
 **Dracut:** The `fido2` dracut module must be enabled for FIDO2 unlock at boot.
 This ships in `usr/lib/dracut.conf.d/50-yubiOS-fido2.conf`.
 
+
+**Amendment (2026-07-28):** Reviewed against today's `docs/BLOCKERS.md` — no blocking
+blockers retired today affect this ADR. The 2026-07-11 v261 review note above remains
+accurate: no FIDO2/YubiKey regressions from v257 → v261 affect the
+`systemd-cryptenroll --fido2-device=auto` / `--fido2-with-client-pin=yes` paths used by
+this ADR. This PR completes the v257→v261 doc-sync flagged in `RECENT_ACTIVITY.md`
+(2026-07-08 entry).
+
+<last-reviewed-against-blockers>2026-07-28</last-reviewed-against-blockers>
 ---
 
 ## ADR-004: ed25519-sk resident keys for SSH
