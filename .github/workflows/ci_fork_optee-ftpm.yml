@@ -110,7 +110,7 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Checkout optee_ftpm
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # see PINNED.md
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 — see PINNED.md
         with:
           repository: yubi-OS/optee_ftpm
           ref: 5e09cdbe1bcb1bc3bcf4875ebafb4e1a1154417c # release-descendant ref; see PINNED.md
