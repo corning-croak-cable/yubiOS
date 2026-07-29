@@ -44,8 +44,8 @@ jobs:
       - name: Install host deps (podman, qemu aarch64, swtpm, tpm2-tools)
         run: |
           set -euo pipefail
-          apt-get update -qq
-          apt-get install -y -qq --no-install-recommends \
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends \
             podman qemu-system-arm qemu-efi-aarch64 qemu-utils swtpm swtpm-tools tpm2-tools \
             python3 python3-serial skopeo
           qemu-system-aarch64 --version | head -1
