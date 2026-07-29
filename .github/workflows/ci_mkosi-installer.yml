@@ -732,6 +732,7 @@ jobs:
           PLATFORM: linux/${{ matrix.arch }}
           GIT_SHA: ${{ github.sha }}
           INSTALLER_CONTEXT: inst
+          UKI_CONTEXT: inst/uki
           PUSH: 'true'
         run: |
           set -euxo pipefail
@@ -746,7 +747,6 @@ jobs:
           docker -H unix:///run/docker-rootless/docker.sock buildx bake \
             --builder hardened \
             --file yubiOS-bake.hcl \
-            --set "*.UKI_CONTEXT=inst/uki" \
             yubios-uki
           docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "0mniteck/yubios:uki-${{ github.sha }}-${{ matrix.arch }}"
           docker -H unix:///run/docker-rootless/docker.sock logout
