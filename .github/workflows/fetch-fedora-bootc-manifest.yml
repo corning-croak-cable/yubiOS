@@ -77,6 +77,8 @@ jobs:
     steps:
       - name: Checkout yubiOS for PINNED.md update
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 — see PINNED.md
+        with:
+          token: ${{ secrets.WORKFLOW }}
 
       - name: Fetch Fedora bootc manifest and update pinned refs
         run: |
