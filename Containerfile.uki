@@ -7,27 +7,30 @@
 #
 # Build pipeline (Phase 1 of OMN-51, refs/kernel-rootfs-split-2026-07-29.md):
 #   1. ci_mkosi-installer.yml builds the signed UKI via mkosi's
-#      `--secure-boot-key-source provider:pkcs11 --secure-boot-sign-tool
-#      systemd-sbsign` path, mock-anchored to a SoftHSM token standing in
+#      --secure-boot-key-source provider:pkcs11 --secure-boot-sign-tool
+#      systemd-sbsign path, mock-anchored to a SoftHSM token standing in
 #      for YubiKey PIV slot 9c. The signed UKI lands at
-#      `mkosi.output/yubiOS.efi`.
-#   2. The ci_mkosi-installer.yml "Assemble /installer payload + MANIFEST"
+#      mkosi.output/yubiOS.efi.
+#   2. The ci_mkosi-installer.yml "Assemble /uki payload + MANIFEST"
 #      step additionally copies the UKI + signing cert into a separate
-#      `inst/uki/` payload directory.
-#   3. This Containerfile takes that `inst/uki/` as a Bake build context
-#      named `uki-context` and packages it as a scratch-rootfs OCI image
-#      with `/usr/lib/yubiOS/uki/yubios.efi` + `/usr/lib/yubiOS/uki/ci-secure-boot-cert.pem`
-#      + `/usr/lib/yubiOS/uki/MANIFEST.txt`.
-#   4. yubiOS-bake.hcl's `yubios-uki` target publishes the artifact as
-#      `0mniteck/yubios:uki-<sha>-<arch>` per ADR-022's per-artifact tag
-#      scheme.
+#      inst/uki/ payload directory.
+#   3. This Containerfile takes that inst/uki/ directory as the default
+#      build context (the yubios-uki target's context = UKI_CONTEXT,
+#      which the workflow passes as inst/uki) and packages it as a
+#      scratch-rootfs OCI image with /usr/lib/yubiOS/uki/yubios.efi
+#      + /usr/lib/yubiOS/uki/ci-secure-boot-cert.pem
+#      + /usr/lib/yubiOS/uki/MANIFEST.txt.
+#   4. yubiOS-bake.hcl's yubios-uki target publishes the artifact as
+#      0mniteck/yubios:uki-<sha>-<arch> per ADR-022's per-artifact tag
+#      scheme; OCI labels are owned by the bake target (single source of
+#      truth, matches the existing installer target's contract).
 #
 # Phase 2 (deferred, B-BOOTC-SEAL follow-up issue): the install-time
 # handler in usr/lib/yubiOS/uki/install-uki.sh (placeholder; not wired
 # into a bootc install hook yet because bootc 1.16.3 has no
 # BLSConfig drop-in intake -- PR #2269 is feature code but no intake
 # for project-authored .conf). The bootc install config
-# usr/lib/bootc/install/50-yubiOS.toml gets a new [install.kargs]
+# usr/lib/bootc/install/50-yubiOS.toml gets a new [install] kargs
 # section so bootc's auto-generated UKI uses the yubiOS standard
 # cmdline (root=dissect mount.usr=dissect rw audit=0).
 #
@@ -36,18 +39,9 @@
 
 FROM scratch
 
-# Bake injects the prepared UKI payload directory here as `uki-context`.
-# The `0mniteck/yubios:uki-<sha>-<arch>` artifact exposes the same paths
-# the installer flow expects, so a host can `docker pull` this image,
-# `docker cp` the UKI out, and place it on the ESP at
-# /EFI/Linux/bootc/bootc_composefs-<digest>.efi (matches bootc 1.16.3
-# install-time path per PR bootc-dev/bootc#2269).
-COPY --from=uki-context / /usr/lib/yubiOS/uki/
-
-# Make the layout obvious to anyone inspecting the OCI artifact.
-LABEL org.opencontainers.image.title="yubiOS signed UKI"
-LABEL org.opencontainers.image.description="PKCS#11-signed UKI (kernel side of ADR-032 kernel+rootfs split). Generated via mkosi --secure-boot-sign-tool systemd-sbsign against the YubiKey PIV slot 9c anchor (mocked with SoftHSM in CI; production uses the real YubiKey, ADR-008)."
-LABEL io.yubios.artifact.role="uki-kernel"
-LABEL io.yubios.uki.sign-tool="systemd-sbsign"
-LABEL io.yubios.uki.pkcs11="provider:pkcs11 against SoftHSM (CI, ci_mkosi-installer.yml) / YubiKey PIV slot 9c (production, ADR-008)"
-LABEL io.yubios.adr="ADR-032"
+# Relative COPY against the default build context (the workflow passes
+# UKI_CONTEXT=inst/uki via docker buildx bake --set, so the build context
+# is ./inst/uki/ relative to the workflow CWD). The inst/uki/ directory
+# was assembled by the ci_mkosi-installer.yml "Assemble /uki payload"
+# step from mkosi.output/*.efi + mkosi.secure-boot.pem.
+COPY uki/ /usr/lib/yubiOS/uki/

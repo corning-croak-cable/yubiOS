@@ -493,7 +493,17 @@ jobs:
           normalize_reproducible_tree inst/uki
           write_reproducible_checksums inst/uki
           ls -l inst/uki/
-      - name: Upload installer reproducibility subject
+      - name:
+
+      - name: Upload prepared uki payload
+        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true && matrix.publish == true
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
+        with:
+          name: mkosi-uki-payload-${{ matrix.artifact_suffix }}
+          path: inst/uki
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 1 Upload installer reproducibility subject
         if: matrix.proof_variant != 'none'
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
         with:
@@ -526,15 +536,7 @@ jobs:
         password: ${{ secrets.DOCKER }}
       image: docker://dhi.io/debian-base@sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6
     steps:
-      - name: Upload prepared uki payload
-        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true && matrix.publish == true
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
-        with:
-          name: mkosi-uki-payload-${{ matrix.artifact_suffix }}
-          path: inst/uki
-          if-no-files-found: error
-          compression-level: 0
-          retention-days: 1
+
       - name: Install git for checkout and reproducibility
         run: |
           apt-get update -qq
@@ -630,7 +632,13 @@ jobs:
           name: mkosi-installer-payload-${{ matrix.arch }}
           path: inst/installer
 
-      - name: Install docker CLI + buildx (${{ matrix.arch }})
+      - name:
+
+      - name: Download prepared uki payload
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
+        with:
+          name: mkosi-uki-payload-${{ matrix.arch }}
+          path: inst/uki Install docker CLI + buildx (${{ matrix.arch }})
         run: |
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends \
@@ -739,7 +747,7 @@ jobs:
           docker -H unix:///run/docker-rootless/docker.sock buildx bake \
             --builder hardened \
             --file yubiOS-bake.hcl \
-            --set "*.UKI_CONTEXT=uki" \
+            --set "*.UKI_CONTEXT=inst/uki" \
             yubios-uki
           docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "0mniteck/yubios:uki-${{ github.sha }}-${{ matrix.arch }}"
           docker -H unix:///run/docker-rootless/docker.sock logout
@@ -853,43 +861,10 @@ jobs:
         if: always()
         run: docker -H unix:///run/docker-rootless/docker.sock logout || true
 
-  merge-uki-manifest:
-    name: Merge uki multi-arch manifest
-    needs: installer-publish
-    if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
-    runs-on: ubuntu-24.04
-    defaults:
-      run:
-        shell: bash
-    container:
-      options: --privileged
-      volumes:
-        - /mnt:/mnt
-      credentials:
-        username: 0mniteck42
-        password: ${{ secrets.DOCKER }}
-      image: docker://dhi.io/debian-base@sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6
-    steps:
-      - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER }}" | docker -H unix:///run/docker-rootless/docker.sock login -u 0mniteck42 --password-stdin
 
-      - name: Create and push uki multi-arch manifest
-        run: |
-          docker -H unix:///run/docker-rootless/docker.sock buildx imagetools create \
-            -t "0mniteck/yubios:uki-${{ github.sha }}" \
-            "0mniteck/yubios:uki-${{ github.sha }}-amd64" \
-            "0mniteck/yubios:uki-${{ github.sha }}-arm64"
-
-      - name: Verify uki manifest list
-        run: docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "0mniteck/yubios:uki-${{ github.sha }}"
-
-      - name: Log out of Docker Hub
-        if: always()
-        run: docker -H unix:///run/docker-rootless/docker.sock logout || true
-  ci-callback:
     name: Callback to ci.yml orchestrator
     if: ${{ always() && github.event_name == 'workflow_dispatch' && inputs.ci_callback == true }}
-    needs: [build, installer-reproducibility, installer-publish, merge-manifest, merge-uki-manifest]
+    needs: [build, installer-reproducibility, installer-publish, merge-manifest]
     runs-on: ubuntu-24.04
     permissions:
       contents: read
