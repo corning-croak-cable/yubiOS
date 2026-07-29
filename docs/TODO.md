@@ -1,6 +1,6 @@
 # yubiOS TODO
 
-Last reviewed: 2026-07-22
+Last reviewed: 2026-07-29
 Status: active task list
 Latest requested-run evidence review: [refs/ci-evidence-2026-07-21.md](../refs/ci-evidence-2026-07-21.md), covering the complete logs of runs 29869480442, 29869503301, 29869527608, 29872130447, 29872433355, 29872832727, 29876111887, and 29876466349.
 Latest upstream progress review: [refs/systemd-upstream-progress-2026-07-21.md](../refs/systemd-upstream-progress-2026-07-21.md).
@@ -108,6 +108,7 @@ These items map [FUTURE.md](FUTURE.md) sections that were missing or only partia
 - [x] Validate the documented `bootc install to-filesystem` path on a fresh VM or disposable disk, including external partition preparation, mounted `/mnt`, `--skip-finalize`, and omitted `root=` via `--root-mount-spec=""`: [run 29884493346](https://github.com/yubi-OS/yubiOS/actions/runs/29884493346) passed on native amd64 and arm64.
 - [x] Strengthen the external-image `to-filesystem` smoke so it requires an ext4 `verity` feature, the composefs repository instead of an ostree fallback, measurable EROFS metadata images, a rejected protected-object write, and a strict digest-bound BLS entry classified as unsealed.
 - [ ] Promote a sealed composefs lane only after the pinned base exposes the released v1.16.4 split/ukify capabilities; build and sign the exact rootfs UKI, boot it with Secure Boot on both architectures, assert UKI composefs status, and retain a negative tamper-boot proof.
+- [x] PR #143 (commit `a1940330`, merged 2026-07-29) shipped the kernel-side artifact split per ADR-032: `0mniteck/yubios:uki-<sha>-<arch>` published as a separate OCI artifact, `Containerfile.uki`, `usr/lib/yubiOS/uki/install-uki.sh` documented, `usr/lib/bootc/install/50-yubiOS.toml` kargs pinned. Phase 2 (install-time BLSConfig wiring) is the remaining work — see `refs/kernel-rootfs-split-2026-07-29.md`. Closes OMN-51.
 
 ## Current ARM64 Tasks
 
