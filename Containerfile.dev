@@ -34,9 +34,9 @@ ARG SOURCE_DATE_EPOCH
 # Re-install here so the dev image carries it explicitly and the
 # destructive hardware leg stops dying at "Installing to disk: bootupd
 # is required for ostree-based installs" (errors/bcvk native_to_disk.rs:262).
-RUN dnf -y --setopt=history_record=false --setopt=install_weak_deps=False install bootupd && \\
-    rm -f /var/cache/dnf/*.lock /var/cache/dnf/*.pid /run/dnf5.lock /run/dnf.lock 2>/dev/null || true && \\
-    dnf -y --setopt=install_weak_deps=False clean all && \\
+RUN dnf -y --setopt=history_record=false --setopt=install_weak_deps=False install bootupd && \
+    rm -f /var/cache/dnf/*.lock /var/cache/dnf/*.pid /run/dnf5.lock /run/dnf.lock 2>/dev/null || true && \
+    dnf -y --setopt=install_weak_deps=False clean all && \
     rm -rf /var/cache/dnf /var/cache/libdnf5 /run/dnf /var/log/dnf* /var/log/libdnf* /var/lib/dnf/repos /var/lib/dnf/system-repo.lock /usr/lib/sysimage/libdnf5/transaction_history.sqlite* /usr/lib/sysimage/libdnf5/*.toml
 
 COPY mkosi.conf.d/test/install-swu2f-authenticator.sh /tmp/install-swu2f-authenticator.sh
