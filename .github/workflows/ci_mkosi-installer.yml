@@ -493,8 +493,6 @@ jobs:
           normalize_reproducible_tree inst/uki
           write_reproducible_checksums inst/uki
           ls -l inst/uki/
-      - name:
-
       - name: Upload prepared uki payload
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true && matrix.publish == true
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
@@ -633,9 +631,6 @@ jobs:
         with:
           name: mkosi-installer-payload-${{ matrix.arch }}
           path: inst/installer
-
-      - name:
-
       - name: Download prepared uki payload
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
         with:
