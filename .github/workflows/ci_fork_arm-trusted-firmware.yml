@@ -8,10 +8,6 @@ name: ci_fork_arm-trusted-firmware
 # placeholder payloads only to drive FIP packaging — do NOT stitch components here.
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/ci_fork_arm-trusted-firmware.yml' # self-change trigger for validating workflow edits
   workflow_dispatch:
     inputs:
       reason:

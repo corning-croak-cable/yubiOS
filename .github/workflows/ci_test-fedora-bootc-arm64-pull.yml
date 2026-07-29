@@ -15,11 +15,6 @@
 name: yubiOS fedora-bootc arm64 pull integrity (OMN-139)
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/ci_test-fedora-bootc-arm64-pull.yml'
-      - 'PINNED.md'
   workflow_dispatch:
     inputs:
       digest:

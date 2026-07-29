@@ -17,10 +17,6 @@ name: ci_fork_ms-tpm-20-ref
 # host + cross toolchain; the hardened dhi base omits crt*.o / libc.
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/ci_fork_ms-tpm-20-ref.yml' # self-change trigger for validating workflow edits
   workflow_dispatch:
     inputs:
       reason:

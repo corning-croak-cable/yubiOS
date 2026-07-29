@@ -22,20 +22,6 @@ name: yubiOS dev/test image (swu2f, ADR-026)
 # yubiOS.rego policy, tags, and outputs defined in yubiOS-bake.hcl.
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/ci_dev_image.yml' # self-change trigger for validating workflow edits
-      - '.dockerignore'
-      - 'Containerfile'
-      - 'Containerfile.dev'
-      - 'mkosi.conf.d/test/install-swu2f-authenticator.sh'
-      - 'scripts/lib/reproducible-build.sh'
-      - 'scripts/lib/diagnose-oci-layout.py'
-      - 'scripts/verify-reproducible-images.sh'
-      - 'yubiOS-bake.hcl'
-      - 'usr/lib/modprobe.d/**' # VFIO blacklist (ADR-024 rule 1) -- must rebuild :dev when this changes
-      - 'usr/lib/dracut.conf.d/**' # VFIO initramfs omission (ADR-024 rule 1) -- ditto
   workflow_dispatch:
     inputs:
       Docker_push:

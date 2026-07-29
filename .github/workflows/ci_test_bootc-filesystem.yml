@@ -7,10 +7,6 @@ name: TEST - bootc to-filesystem install e2e
 # BLS deployment; a separate Secure Boot VM lane is required to prove sealing.
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/ci_test_bootc-filesystem.yml' # narrow self-change validation
   workflow_dispatch:
     inputs:
       image:

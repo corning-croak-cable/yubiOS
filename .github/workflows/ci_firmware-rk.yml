@@ -8,13 +8,6 @@ name: yubiOS RK firmware
 # non-functional Rockchip image.
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/ci_firmware-rk.yml' # self-change trigger for validating workflow edits
-      - 'scripts/lib/reproducible-build.sh'
-      - 'scripts/verify-reproducible-firmware.py'
-      - 'yubiOS-bake.hcl'
   workflow_dispatch:
     inputs:
       reason:

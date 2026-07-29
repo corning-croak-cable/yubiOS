@@ -10,10 +10,6 @@ name: fetch-fedora-bootc-manifest
 # and a repo text update. AGENTS.md allows container absent.
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/fetch-fedora-bootc-manifest.yml' # self-change trigger for validating workflow edits
   workflow_dispatch:
     inputs:
       reason:

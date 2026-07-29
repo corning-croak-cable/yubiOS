@@ -13,10 +13,6 @@ name: ci_fork_bcvk
 # Action refs pinned per PINNED.md.
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/ci_fork_bcvk.yml' # self-change trigger for validating workflow edits
   workflow_dispatch:
     inputs:
       reason:
