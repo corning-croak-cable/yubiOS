@@ -432,3 +432,14 @@ The current evidence notes are [refs/bootc-composefs-sealed-flow-2026-07-22.md](
   evidence, and a negative fs-verity tamper test. The current BLS lane is
   strict but unsealed.
 - The U-Boot FIDO2/U2F console gate remains idea-stage until the USB HID and recovery model are audited.
+
+
+## Kernel+rootfs split (ADR-032)
+
+yubiOS adopts the kernel+rootfs split as a first-class principle (ADR-032). The kernel (signed UKI) is published as a separate OCI artifact at `docker.io/0mniteck/yubios:uki-<sha>-<arch>`, alongside the bootc OS image (`latest`, `<sha>`) which carries the rootfs. The split is grounded in three pre-existing ADRs (006, 013, 022) and motivated by A/B-update granularity (only the rootfs or only the kernel moves per update), sharper reproducibility (each artifact independently pinable and attestable), and the bootc composefs fsverity chain's path to a sealed anchor (the BLS digest anchor must stay stable across rootfs-only changes).
+
+The mkosi path produces the signed UKI as a side artifact of `mkosi build` via `--secure-boot-sign-tool systemd-sbsign` (ADR-008), anchored to the YubiKey PIV slot 9c via PKCS#11 (`provider:pkcs11`). The bootc install config `usr/lib/bootc/install/50-yubiOS.toml` now sets `[install] kargs` so bootc's auto-generated UKI uses the yubiOS standard cmdline (`root=dissect mount.usr=dissect rw audit=0`), matching the mkosi path per ADR-006's "both paths behave identically at runtime" principle.
+
+The install-time BLSConfig wiring to use the pre-built UKI (the v1.16.3 `uki` key per PR [bootc-dev/bootc#2269](https://github.com/bootc-dev/bootc/pull/2269)) is staged as Phase 2 because bootc 1.16.3 has no project-authored BLSConfig drop-in intake. The `usr/lib/yubiOS/uki/install-uki.sh` script in this repo documents the install-time copy path (write the UKI to `/EFI/Linux/bootc/bootc_composefs-<digest>.efi` and a BLS `.conf` with the `uki` key) for the follow-up that wires it into either a bootc install hook or a first-boot systemd unit.
+
+See [refs/kernel-rootfs-split-2026-07-29.md](../refs/kernel-rootfs-split-2026-07-29.md) for the upstream-source citations and the Phase 1/Phase 2 cut, and [ADR-032](ADR.md) for the policy decision.

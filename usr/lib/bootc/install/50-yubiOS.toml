@@ -1,6 +1,6 @@
 # yubiOS bootc install configuration
 # Applied during: bootc install to-filesystem
-# Schema verified from: https://github.com/bootc-dev/bootc/blob/main/crates/lib/src/install/config.rs
+# Schema verified from: https://github.com/bootc-dev/bootc/blob/v1.16.3/crates/lib/src/install/config.rs
 
 [install]
 # systemd-boot: works natively on standard UEFI, no GRUB needed.
@@ -16,6 +16,15 @@ discoverable-partitions = true
 block = ["direct"]
 
 # No match-architectures: applies to both x86-64 and aarch64.
+
+# Install-time kernel arguments. In bootc 1.16.3 these are embedded into the
+# .cmdline PE section of the auto-generated UKI (see
+# crates/lib/src/bootc_composefs/boot.rs write_systemd_uki_config). This
+# matches the mkosi.conf [Content] KernelCommandLine so the mkosi path and
+# the bootc install path agree on the cmdline, which is required by
+# ADR-006's "both paths behave identically at runtime" principle.
+# PR #2305 (v1.16.4) extends this with user-provided kargs via x-options-source-*.
+kargs = ["root=dissect", "mount.usr=dissect", "rw", "audit=0"]
 
 [install.filesystem.root]
 # ext4 matches the yubiOS convention already used by the to-filesystem CI lane

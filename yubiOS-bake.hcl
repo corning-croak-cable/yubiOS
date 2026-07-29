@@ -98,6 +98,12 @@ variable "INSTALLER_CONTEXT" {
   description = "Prepared context containing installer/ for the scratch artifact."
 }
 
+variable "UKI_CONTEXT" {
+  type        = string
+  default     = "uki"
+  description = "Prepared context containing uki/ for the signed-UKI scratch artifact (kernel side of ADR-032 kernel+rootfs split)."
+}
+
 function "ref" {
   params = [tag]
   result = "${IMAGE}:${tag}"
@@ -354,6 +360,43 @@ target "installer" {
   )
 }
 
+# yubios-uki -- kernel side of the ADR-032 kernel+rootfs split.
+# ADR-032 names "kernel+rootfs split" as a first-class yubiOS principle;
+# the kernel half is the signed UKI published here as a separate OCI
+# artifact, so it can be built, signed, and inspected independently of
+# the bootc OCI image (which carries the rootfs). The UKI itself is
+# produced by mkosi's --secure-boot-sign-tool systemd-sbsign path in
+# ci_mkosi-installer.yml; this target is the packaging step.
+#
+# The signed UKI inside this artifact matches what mkosi.conf's
+# [Validation] SecureBoot=yes produces on the disk-image path
+# (ci_mkosi-installer.yml's minimal profile). The bootc install config
+# usr/lib/bootc/install/50-yubiOS.toml sets [install.kargs] so bootc's
+# own auto-generated UKI uses the same cmdline (root=dissect
+# mount.usr=dissect rw audit=0), per ADR-006's "both paths behave
+# identically at runtime" principle.
+target "yubios-uki" {
+  inherits    = ["_policy", "_source-metadata", "_reproducible", "_image-export"]
+  description = "Package the PKCS#11-signed UKI as a separate OCI image (kernel side of ADR-032 kernel+rootfs split; OMN-51)."
+  context     = UKI_CONTEXT
+  dockerfile  = "Containerfile.uki"
+  platforms   = [PLATFORM]
+  labels = {
+    "org.opencontainers.image.title"       = "yubiOS signed UKI"
+    "org.opencontainers.image.description" = "PKCS#11-signed UKI (kernel side of ADR-032 kernel+rootfs split). Built via mkosi --secure-boot-sign-tool systemd-sbsign against the YubiKey PIV slot 9c anchor (mocked with SoftHSM in CI; production uses the real YubiKey, ADR-008)."
+    "io.yubios.artifact.role"               = "uki-kernel"
+    "io.yubios.uki.sign-tool"               = "systemd-sbsign"
+    "io.yubios.uki.pkcs11"                  = "provider:pkcs11 against SoftHSM (CI) / YubiKey PIV slot 9c (production)"
+    "io.yubios.adr"                         = "ADR-032"
+  }
+  tags = PUSH ? [
+    ref("uki-${GIT_SHA}-${ARCH}"),
+  ] : concat(
+    ["yubios:uki-${ARCH}"],
+    LOCAL_TAG != "" ? ["yubios:${LOCAL_TAG}-uki"] : [],
+  )
+}
+
 # A live network verification must never be satisfied by an old RUN cache.
 target "pq-tls-verify" {
   inherits    = ["_policy", "_reproducible"]
@@ -374,7 +417,7 @@ target "pq-tls-verify" {
       echo "OpenSSL $v is below the 3.5 PQ hybrid floor" >&2
       exit 1
     fi
-    group=$(curl -sv https://omniteck.com/ 2>&1 | grep -o 'SSL connection using[^\"]*' || true)
+    group=$(curl -sv https://omniteck.com/ 2>&1 | grep -o 'SSL connection using[^"]*' || true)
     echo "negotiated: $group"
     case "$group" in
       *MLKEM*) echo "PQ hybrid group confirmed against omniteck.com" ;;

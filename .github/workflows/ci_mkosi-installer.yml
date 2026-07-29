@@ -459,6 +459,40 @@ jobs:
           source scripts/lib/reproducible-build.sh
           normalize_reproducible_tree "$proof_dir"
 
+
+      - name: Assemble /uki payload + MANIFEST (ADR-032 kernel-side split artifact)
+        run: |
+          set -euxo pipefail
+          source scripts/lib/reproducible-build.sh
+          mkdir -p inst/uki
+          # Same signed UKI that lands in inst/installer/yubiOS.efi; lifted into
+          # a separate payload so the yubios-uki Bake target publishes it as a
+          # standalone OCI artifact (ADR-022 per-artifact tag scheme).
+          find mkosi.output -maxdepth 1 -name '*.efi' -type f -exec cp {} inst/uki/ \;
+          cp mkosi.secure-boot.pem inst/uki/ci-secure-boot-cert.pem
+          {
+            echo "yubiOS signed UKI artifact (kernel side of ADR-032 kernel+rootfs split)"
+            echo "architecture=${{ matrix.arch }}"
+            echo "yubios_commit=${GITHUB_SHA}"
+            echo "source_date_epoch=${SOURCE_DATE_EPOCH}"
+            echo "mkosi_source=https://github.com/yubi-OS/mkosi@b2b1ea6ad59621a6f955e4cbceee72580a91889a (approved source; release provenance in PINNED.md)"
+            echo "signing=UKI signed via SecureBootKeySource=provider:pkcs11 + systemd-sbsign"
+            echo "signature_envelope=random non-production SoftHSM key; excluded from byte-for-byte proof"
+            echo "NOTE: Signing key is a SoftHSM mock of YubiKey PIV slot 9c."
+            echo "Production images are signed with the real YubiKey (ADR-008); this"
+            echo "image validates the build + PKCS#11 signing path, not a production key."
+            echo "Install flow (ADR-022 / ADR-032): pull this artifact, mount the ESP,"
+            echo "copy yubios.efi to /EFI/Linux/bootc/bootc_composefs-<digest>.efi at"
+            echo "install time (the bootc 1.16.3 hard-coded install path), write a BLS"
+            echo ".conf with the uki key (PR bootc-dev/bootc#2269) -- see"
+            echo "refs/kernel-rootfs-split-2026-07-29.md for the Phase 2 install-time"
+            echo "wiring once the bootc-side intake lands."
+            echo "ADR=ADR-032"
+            echo "OMN=OMN-51"
+          } > inst/uki/MANIFEST.txt
+          normalize_reproducible_tree inst/uki
+          write_reproducible_checksums inst/uki
+          ls -l inst/uki/
       - name: Upload installer reproducibility subject
         if: matrix.proof_variant != 'none'
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
@@ -492,6 +526,15 @@ jobs:
         password: ${{ secrets.DOCKER }}
       image: docker://dhi.io/debian-base@sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6
     steps:
+      - name: Upload prepared uki payload
+        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true && matrix.publish == true
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
+        with:
+          name: mkosi-uki-payload-${{ matrix.artifact_suffix }}
+          path: inst/uki
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 1
       - name: Install git for checkout and reproducibility
         run: |
           apt-get update -qq
@@ -693,6 +736,12 @@ jobs:
             --builder hardened \
             --file yubiOS-bake.hcl \
             installer
+          docker -H unix:///run/docker-rootless/docker.sock buildx bake \
+            --builder hardened \
+            --file yubiOS-bake.hcl \
+            --set "*.UKI_CONTEXT=uki" \
+            yubios-uki
+          docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "0mniteck/yubios:uki-${{ github.sha }}-${{ matrix.arch }}"
           docker -H unix:///run/docker-rootless/docker.sock logout
           docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "0mniteck/yubios:installer-${{ github.sha }}-${{ matrix.arch }}"
 
@@ -804,10 +853,43 @@ jobs:
         if: always()
         run: docker -H unix:///run/docker-rootless/docker.sock logout || true
 
+  merge-uki-manifest:
+    name: Merge uki multi-arch manifest
+    needs: installer-publish
+    if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        shell: bash
+    container:
+      options: --privileged
+      volumes:
+        - /mnt:/mnt
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:5c45913e72c90581fc4cca57c3a7cd7dcac2d9fa44fce24fe4cfa342e5ccb7a6
+    steps:
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER }}" | docker -H unix:///run/docker-rootless/docker.sock login -u 0mniteck42 --password-stdin
+
+      - name: Create and push uki multi-arch manifest
+        run: |
+          docker -H unix:///run/docker-rootless/docker.sock buildx imagetools create \
+            -t "0mniteck/yubios:uki-${{ github.sha }}" \
+            "0mniteck/yubios:uki-${{ github.sha }}-amd64" \
+            "0mniteck/yubios:uki-${{ github.sha }}-arm64"
+
+      - name: Verify uki manifest list
+        run: docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "0mniteck/yubios:uki-${{ github.sha }}"
+
+      - name: Log out of Docker Hub
+        if: always()
+        run: docker -H unix:///run/docker-rootless/docker.sock logout || true
   ci-callback:
     name: Callback to ci.yml orchestrator
     if: ${{ always() && github.event_name == 'workflow_dispatch' && inputs.ci_callback == true }}
-    needs: [build, installer-reproducibility, installer-publish, merge-manifest]
+    needs: [build, installer-reproducibility, installer-publish, merge-manifest, merge-uki-manifest]
     runs-on: ubuntu-24.04
     permissions:
       contents: read
