@@ -57,7 +57,8 @@ clean_package_manager_state() {
         /var/log/libdnf* \
         /var/lib/dnf/repos \
         /var/lib/dnf/system-repo.lock \
-        /usr/lib/sysimage/libdnf5/transaction_history.sqlite*
+        /usr/lib/sysimage/libdnf5/transaction_history.sqlite* \
+        /usr/lib/sysimage/libdnf5/*.toml
 }
 
 # Defensive: dnf5 can leave a stale package-cache lock file behind in a
@@ -73,7 +74,7 @@ clean_package_manager_state() {
 install_ok=0
 for attempt in 1 2 3 4 5; do
   rm -f /var/cache/dnf/*.lock /var/cache/dnf/*.pid /run/dnf5.lock /run/dnf.lock 2>/dev/null || true
-  if dnf -y --setopt=history_record=false --setopt=install_weak_deps=False -x 'libssh*,libssh2*,libssh-config' install "${BUILD_DEPS[@]}"; then
+  if dnf -y --no-upgrade --setopt=history_record=false --setopt=install_weak_deps=False install "${BUILD_DEPS[@]}"; then
     install_ok=1
     break
   fi
