@@ -4,6 +4,10 @@ Source: OMN-73 (team OMNI-AGENT), section 5 of the yubiOS Business and Stewardsh
 
 ## Purpose
 
+**Last reviewed against docs/BLOCKERS.md:** 2026-07-30 review (sha 7501fa0c13a4). No new blocker retirements since this doc's prior review. B-VM-CTAP2 was RESOLVED 2026-07-25 (run 30139433902, OMN-48 Done) — 5 days before this BLOCKERS.md review. Where this doc still says "B-VM-CTAP2 still open" or treats it as a pending blocker, that text is stale and contradicted by the current BLOCKERS.md; see the explicit drift callouts below. BLOCKERS.md gained a new "Permanent CI-Evidence Patterns" section (systemd drop-in lex-sort rule, source OMN-149) — does not affect this doc's content but should be cited if any cross-references are added.
+
+
+> **Drift callout (2026-07-30):** B-VM-CTAP2 was RESOLVED 2026-07-25 (run 30139433902, OMN-48 Done). Line 37 ("Status: not met. Per the live BLOCKERS.md as of 2026-07-22, B-VM-CTAP2 is still open") is now STALE — that resolution is 5 days old. Gate 2's evidence criterion (`B-VM-CTAP2 closed with logged FIDO2 token enumeration`) has been met. The remaining Gate 2 work is pricing/SOW/2-recruit + B-HARDENING-RUNTIME, not B-VM-CTAP2.
 Define Gate 0 through Gate 3, the evidence required to move between them, what commercial activity each gate allows, and the proof-first sales motion, so the rest of the go-to-market work (OMN-65/66/67, OMN-71, OMN-84) has one shared readiness ladder instead of each doc inventing its own.
 
 ## Scope (from OMN-73)
