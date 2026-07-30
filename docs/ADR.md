@@ -839,3 +839,63 @@ The split matters because:
 - `docs/BLOCKERS.md` `B-BOOTC-SEAL` is downgraded in scope: the kernel-side artifact split is now shipped (this ADR closes that half); the install-time BLSConfig wiring to use the pre-built UKI remains open (Phase 2 follow-up above).
 - `refs/kernel-rootfs-split-2026-07-29.md` is the research note that motivated this ADR; it cites the exact bootc upstream source paths (v1.16.3 PR #2269, PR #2305) and the yubiOS-side seams (yubiOS-bake.hcl target naming, ci_mkosi-installer.yml SoftHSM pipeline).
 
+## ADR-033: Misbehavior-Triggered PCI-Mediation Cutoff Policy
+
+**Date:** 2026-07-30
+**Status:** Proposed
+**ADR:** ADR-033
+**Related:** ADR-031 (GPU trust boundary — virtio-gpu default, vfio-user preferred, IOMMU-gated PCI passthrough), OMN-144 (one-pager), OMN-145 (prior-art search), OMN-146 (bare-metal PCI-passthrough scope), OMN-147 (trigger model), `drm-gpu-quota-secure-time` skill (cousin: resource-exhaustion policy)
+**Background:** [refs/adr-033-misbehavior-cutoff-policy-2026-07-28.md](../refs/adr-033-misbehavior-cutoff-policy-2026-07-28.md) ([SOLO] ideation, V3 finalist), [refs/adr-033-prior-art-search-2026-07-28.md](../refs/adr-033-prior-art-search-2026-07-28.md) (sources + gap analysis)
+
+**Context.** ADR-031 established the yubiOS GPU trust boundary: virtio-gpu is the default device model, vfio-user is the preferred mediation layer when a workload must reach a physical GPU, and IOMMU-gated PCI passthrough is the post-launch hardware enforcement gate. ADR-031 settled the *mechanism*. This ADR settles the *policy* that decides when to invoke the boundary.
+
+A workload (typically an AI/ML model inside a yubiOS bootc VM) that reaches a GPU via vfio-user can misbehave in ways that the device boundary can observe but the model cannot observe or attack: DMA-window anomaly patterns, suspicious region-access frequencies, syscall sequences inconsistent with the declared workload. ADR-031's rule 5 (no trust-boundary component may consume GPU state) closes the model-self-policing failure mode — the policy that decides when to invoke ADR-031's mechanism must therefore live outside the model, in the same place ADR-031 puts the device: the vfio-user server.
+
+The threat model is concrete: an untranslated DMA-capable device can read an unsealed LUKS volume key straight out of guest RAM. The current policy (ADR-031 only) is "let the workload run; trust the boundary." That trust is correct for well-behaved workloads but cannot be unconditional for workloads that exhibit behavioral patterns known to be unsafe. A behavioral cutoff policy is the missing piece.
+
+The mechanism family decision tree (per the prior-art search at `refs/adr-033-prior-art-search-2026-07-28.md`):
+
+1. **vfio-user protocol** (QEMU, Nutanix libvfio-user) — the substrate. Mutual-distrust validation is per-message, not per-pattern. Built-in response to misbehavior is reset (discards state). No trigger vocabulary. No severity ladder. No forensic-state capture.
+2. **VFIO mdev** (kernel-mediated, vendor-driver) — isolation unit = IOMMU group, not the mdev itself. Behavioral handling is delegated to vendor driver error paths. No shared policy engine across vendors. No severity ladder.
+3. **NVIDIA vGPU / SR-IOV / MIG** — closest commercial cousin. Resource-scheduling policies (Best Effort / Equal Share / Fixed Share) are orthogonal modes, not escalating tiers. Suspend-resume discards in-flight GPU work. Policy lives in the hypervisor/orchestration layer, not the device boundary.
+
+The closest cousin in the yubiOS repo is `drm-gpu-quota-secure-time` (per-cgroup VRAM quota + SMC hard cutoff on Rockchip). Different trigger (resource exhaustion, not behavioral) and complementary, not duplicative.
+
+**Decision.** yubiOS adopts a **4-tier severity ladder** (INFO → WARN → THROTTLE → SEVER) for behavioral cutoff of AI/ML workloads at the vfio-user boundary, with **state-preservation-before-cutoff** as the design invariant. Specifically:
+
+1. **The ladder lives in the vfio-user server process**, not the orchestrator/hypervisor. Closes the model-self-policing failure mode — the model cannot observe or attack its own evaluator (per ADR-031 rule 5). The server exposes a pluggable trigger evaluator interface; the initial evaluator is a DMA-window anomaly score with tunable threshold.
+
+2. **Each tier captures the prior tier's state before escalating.** Forensic preservation is monotonic: an INFO log is captured before a WARN snapshot; a WARN metadata snapshot is captured before a THROTTLE state snapshot; a THROTTLE state snapshot is captured before a SEVER full-VM snapshot. The design invariant: a higher tier never fires without the lower-tier capture being durable first.
+
+3. **SEVER snapshots and severs — does not kill.** VM state (qcow2 + bootc delta) is snapshotted; the vfio-user socket is revoked; the VM is frozen; an operator webhook fires. The VM stays alive at SEVER — only the device access is severed. A fresh vfio-user socket can be attached later in a clean environment.
+
+4. **The trigger model is workload-agnostic** (per OMN-147, not finalized here). No LLM-agent-vs-training-vs-inference distinctions in the policy itself; workload-specific triggers can be downstream issues.
+
+5. **The honesty note carries forward from ADR-031.** ADR-031's hardware IOMMU enforcement is post-launch. The SEVER cutoff operates in *software* on top of ADR-031's *design* — the policy is in scope now, even before the hardware gate is validated. The software policy is also the right test bed for what the hardware gate eventually enforces.
+
+**Key Assumptions to Validate (per OMN-144 one-pager).**
+
+- [ ] **A1.** Misbehavior can be detected from a vfio-user-server-side observer without seeing model internals. *Test:* prototype a vfio-user server watching DMA-window patterns and flagging anomalies; check false-positive rate against known-good traffic.
+- [ ] **A2.** VM state can be snapshotted at SEVER without losing GPU's pending work. *Test:* qcow2 snapshot + vfio-user socket teardown + cold-restore; measure model recovery time.
+- [ ] **A3.** Operators will respond to a SEVER alert within the model-state-preservation window (e.g., minutes, not hours). *Test:* simulation with synthetic operator response times.
+- [ ] **A4.** The severity ladder is monotonic — a higher tier is never triggered without a lower one being captured first. *Test:* policy state-machine verification.
+
+**Consequences.**
+
+- The vfio-user server (currently a thin protocol layer) gains a pluggable trigger evaluator interface and a 4-tier policy engine. The protocol itself is unchanged — the policy sits on top, like ADR-031's mechanism sits below.
+- An audit log captures every tier transition with: timestamp, trigger signal, tier, action, snapshot hash. This is the "what was the system doing when it misbehaved" log that AI safety papers currently lack.
+- The NVIDIA vGPU Fixed Share + suspend-resume pattern is the closest commercial analogue but is policy-mode (orthogonal modes), not escalation; ADR-033's contribution is *escalation with state-preservation*. NVIDIA's discard-on-suspend is the explicit differentiator — ADR-033's SEVER preserves.
+- The `drm-gpu-quota-secure-time` skill's SMC-based hard cutoff (resource-exhaustion) and ADR-033's behavioral ladder operate at different layers (DRM cgroup vs vfio-user server); both can fire on the same workload with different state captures. They are complementary, not duplicative.
+- OMN-146 (bare-metal PCI-passthrough testing in scope for v1?) and OMN-147 (trigger model — what counts as misbehavior?) are downstream of this ADR. The policy is in scope now; the trigger model and the hardware test bed are post-launch or scope-deferred per their respective Linear threads.
+
+**Follow-ups (deferred, not part of this ADR).**
+
+- **OMN-146:** Decide whether bare-metal PCI-passthrough testing is in scope for v1 launch. Affects whether A2's "qcow2 snapshot + vfio-user socket teardown + cold-restore" test runs on real hardware or stays in QEMU-only.
+- **OMN-147:** Define the trigger model. Affects what "DMA-window anomaly" means precisely. Default-first evaluator is anomaly-score with tunable threshold; the formal vocabulary is OMN-147's work.
+- **Open Questions (carried forward from the one-pager):**
+  - OQ1. Where do trigger evaluators live — in the vfio-user server, in a sidecar, or in a separate observer process? Default: in-process for the initial evaluator, sidecar-extractable later.
+  - OQ2. Who owns the snapshot at SEVER — the host (operator can reattach) or the guest (guest controls its own state)? ADR-031's rule 5 cuts against guest-side capture; default is host-owned snapshot.
+  - OQ3. How does this interact with `drm-gpu-quota-secure-time`? Both can fire; their state captures differ. The MVP does not unify them.
+  - OQ4. What's the recovery story after SEVER? Fresh vfio-user socket + cold VM resume. A "clean room" vfio-user server with verified inputs is a downstream improvement.
+
+**Where the depth lives.** The ideation one-pager ([SOLO] V3 finalist, refs/adr-033-misbehavior-cutoff-policy-2026-07-28.md) and the prior-art search (refs/adr-033-prior-art-search-2026-07-28.md, 14 cited sources across the vfio-user / mdev / NVIDIA vGPU families) carry the long-form reasoning. This ADR is the decision anchor.
