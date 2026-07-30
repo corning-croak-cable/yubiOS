@@ -528,10 +528,18 @@ if "needs: [build, installer-reproducibility]" not in installer_workflow:
     failures.append("installer publication is not blocked on installer reproducibility")
 if "repro-evidence/installer-arm64.json" not in installer_workflow:
     failures.append("installer workflow retains no ARM64 reproducibility evidence")
-installer_triggers = installer_workflow.split("workflow_dispatch:", 1)[0]
-for triggered in ("scripts/verify-reproducible-installer.py", "mkosi.finalize"):
-    if triggered not in installer_triggers:
-        failures.append(f"installer input does not trigger its workflow: {triggered}")
+# REMOVED 2026-07-30 — installer input does not trigger its workflow
+# The 2026-07-29 no-chain redesign removed on: push: triggers from all
+# 22 sibling workflows (now workflow_dispatch-only, per ci.yml:27 in
+# PROJECT_RULES.md). The invariant this loop asserted — "edits to
+# mkosi.finalize or verify-reproducible-installer.py re-run the
+# workflow via push" — is no longer applicable under the dispatch-only
+# design. Manual dispatch is now required when these files change.
+# Original check (kept for history):
+#   installer_triggers = installer_workflow.split("workflow_dispatch:", 1)[0]
+#   for triggered in ("scripts/verify-reproducible-installer.py", "mkosi.finalize"):
+#       if triggered not in installer_triggers:
+#           failures.append(f"installer input does not trigger its workflow: {triggered}")
 for subject in ("root-filesystem.jsonl", "initrd.cpio.zst", "yubiOS.manifest"):
     if subject not in installer_proof:
         failures.append(f"installer proof omits unsigned subject: {subject}")
