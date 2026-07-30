@@ -1,43 +1,114 @@
 #!/bin/bash
-# End-to-end LUKS2 FIDO2 unlock test using bcvk native-to-disk + a host-attached YubiKey.
-# Requires: bcvk, a physical YubiKey visible to the HOST's /dev/hidraw* (so systemd-cryptenroll
-# can prompt for a tap), and a spare block device.
+# End-to-end LUKS2 FIDO2 unlock test using bootc install to-filesystem + a host-attached YubiKey.
+# Requires: podman, parted, dosfstools, e2fsprogs, cryptsetup, systemd-cryptenroll,
+# a physical YubiKey visible to the HOST's /dev/hidraw* (so systemd-cryptenroll can prompt
+# for a tap), and a spare block device.
 # Usage: sudo ./tests/vm/test-luks-fido2.sh /dev/sdX <yubiOS-image:tag>
 #
-# The image MUST be a production yubiOS image (mkosi without --profile test): if passless +
-# the swu2f uhid forced-load are present, the flashed disk itself will enumerate a virtual
-# FIDO2 device on next boot. That is harmless for THIS test (step 5 runs systemd-cryptenroll
-# on the HOST against the HOST's HID bus, not inside the flashed image), but a test image
-# would silently pass CI tests/vm/test-luks-fido2-ci.sh's enrollment against passless on
-# the SAME host, which is the gap tests/vm/lib/real-u2f-guard.sh was added to catch.
-#
-# Step 5's `--fido2-device=auto --fido2-with-user-presence=yes` REQUIRES a real YubiKey
-# tap to complete enrollment. If the host has no real key, the precondition below dies
-# loudly BEFORE `systemd-cryptenroll` is invoked -- so the operator never sees a silent
-# "no tap prompt, nothing happened" failure mode.
+# This test bypasses bcvk (which internally invokes `bootc install to-disk`, triggering
+# `bootupd_check_required` -- see OMN-149). Instead, we partition + format + LUKS + mount
+# ourselves, then invoke `bootc install to-filesystem` directly inside a privileged podman
+# container running the yubiOS image. Pattern adapted from upstream bootc's
+# tmt/tests/booted/test-install-to-filesystem-var-mount.sh -- the canonical CI test for
+# `bootc install to-filesystem`.
 set -euo pipefail
 
 DEVICE="${1:-}"
 IMAGE="${2:-}"   # required: previous default (ghcr.io/corning-croak-cable/yubiOS:latest) was a stale org rename that 404s
 PASS="testpassphrase123"
+MNT=/mnt/yubios-install
 
 [[ -z "$DEVICE" || -z "$IMAGE" ]] && { echo "Usage: $0 <block-device> <image:tag>"; exit 1; }
 [[ "$EUID" -ne 0 ]]  && { echo "Run as root (sudo)."; exit 1; }
 
-echo "=== yubiOS LUKS2 FIDO2 end-to-end test ==="
+cleanup() {
+  set +e
+  umount "$MNT/boot/efi" 2>/dev/null
+  umount "$MNT" 2>/dev/null
+  cryptsetup close yubios-root 2>/dev/null
+  rm -rf "$MNT" 2>/dev/null
+}
+trap cleanup EXIT
+
+echo "=== yubiOS LUKS2 FIDO2 end-to-end test (bootc install to-filesystem) ==="
 echo "  Device : $DEVICE"
 echo "  Image  : $IMAGE"
 echo ""
 
-# Step 1: Wipe any prior filesystem/RAID/LVM signatures on the target disk,
-# then flash yubiOS to it. wipefs -a is bcvk's own suggested alternative
-# when its "Detected existing partitions" error fires (see OMN-14), and it
-# works across bcvk builds that don't yet expose a --wipe flag.
+# Step 0: Wipe any prior filesystem/RAID/LVM signatures on the target disk.
+# wipefs -a is bcvk's own suggested alternative (see OMN-14) when its
+# "Detected existing partitions" error fires, and it works across builds
+# that don't yet expose a --wipe flag.
 wipefs -a "$DEVICE" || true
-echo "1/5 Flashing $IMAGE -> $DEVICE"
-bcvk native-to-disk --yes "$IMAGE" "$DEVICE"
 
-# Step 2: Find the LUKS partition (second partition after ESP)
+# Step 1: Partition the disk (GPT: ESP + LUKS root).
+# Layout:
+#   p1: ESP (vfat, 1GiB) -- /boot/efi
+#   p2: LUKS root (rest of disk) -- / via LUKS
+echo "1/7 Partitioning $DEVICE (GPT: ESP + LUKS root)"
+parted -s "$DEVICE" mklabel gpt
+parted -s "$DEVICE" mkpart ESP fat32 1MiB 1025MiB
+parted -s "$DEVICE" set 1 esp on
+parted -s "$DEVICE" mkpart root 1025MiB 100%
+partprobe "$DEVICE" || true
+sleep 2
+
+# Resolve partition paths (NVMe uses 'p' separator; SCSI/SATA does not).
+if [[ "$DEVICE" =~ nvme ]]; then
+  ESP_PART="${DEVICE}p1"
+  LUKS_PART="${DEVICE}p2"
+else
+  ESP_PART="${DEVICE}1"
+  LUKS_PART="${DEVICE}2"
+fi
+[[ -b "$ESP_PART"  ]] || { echo "ERROR: $ESP_PART not present after partprobe"; exit 1; }
+[[ -b "$LUKS_PART" ]] || { echo "ERROR: $LUKS_PART not present after partprobe"; exit 1; }
+
+# Step 2: Format ESP + LUKS + open + ext4 on the opened device.
+echo "2/7 Formatting ESP + LUKS root"
+mkfs.vfat -F32 "$ESP_PART"
+echo -n "$PASS" | cryptsetup luksFormat --batch-mode "$LUKS_PART" -
+echo -n "$PASS" | cryptsetup open "$LUKS_PART" yubios-root -
+mkfs.ext4 -F /dev/mapper/yubios-root
+
+# Step 3: Mount root + ESP at the staging path bootc will see as /target.
+echo "3/7 Mounting target filesystems"
+mkdir -p "$MNT"
+mount /dev/mapper/yubios-root "$MNT"
+mkdir -p "$MNT/boot/efi"
+mount "$ESP_PART" "$MNT/boot/efi"
+
+# Step 4: Run bootc install to-filesystem inside a privileged podman container.
+# This is the upstream bootc canonical pattern: invoke bootc from inside the
+# image itself, with /dev mounted so bootc can see the block devices and
+# --pid=host so it can mount within the host's mount namespace.
+LUKS_UUID=$(blkid -s UUID -o value "$LUKS_PART")
+ESP_UUID=$(blkid -s UUID -o value "$ESP_PART")
+
+echo "4/7 Running bootc install to-filesystem (in privileged podman)"
+podman run --rm --privileged \
+    -v "$MNT:/target" \
+    -v /dev:/dev \
+    --pid=host \
+    --security-opt label=type:unconfined_t \
+    "$IMAGE" \
+    bootc install to-filesystem \
+        --disable-selinux \
+        --root-mount-spec="UUID=$LUKS_UUID" \
+        --boot-mount-spec="UUID=$ESP_UUID" \
+        /target
+
+# Step 5: Tear down mounts + LUKS before the post-install verify steps.
+# The verify steps re-open the LUKS container fresh and would conflict with
+# an existing mount on /dev/mapper/yubios-root.
+echo "5/7 Cleaning up mount + LUKS"
+umount "$MNT/boot/efi"
+umount "$MNT"
+cryptsetup close yubios-root
+trap - EXIT  # disable cleanup trap; we've already cleaned up
+
+# Step 6: Verify the resulting LUKS partition unlocks with the test passphrase.
+echo "6/7 Verifying LUKS unlock with test passphrase"
 LUKS_PART=$(lsblk -J -o NAME,FSTYPE "$DEVICE" | \
   python3 -c "
 import sys,json
@@ -46,24 +117,17 @@ for b in d['blockdevices']:
   for c in b.get('children',[]):
     if c.get('fstype')=='crypto_LUKS': print('/dev/'+c['name']); break
 ")
-echo "2/5 LUKS partition: $LUKS_PART"
+echo "  LUKS partition: $LUKS_PART"
 [[ -z "$LUKS_PART" ]] && { echo "ERROR: no LUKS partition found"; exit 1; }
-
-# Step 3: Add a known passphrase slot for test automation
-echo "3/5 Adding test passphrase slot"
-echo -n "$PASS" | cryptsetup luksAddKey "$LUKS_PART" - --batch-mode
-
-# Step 4: Verify passphrase unlocks
-echo "4/5 Verifying passphrase unlock"
 echo -n "$PASS" | cryptsetup open "$LUKS_PART" yubiOS-test --batch-mode
 cryptsetup status yubiOS-test
 cryptsetup close yubiOS-test
 
-# Step 4.5 (NEW): real-YubiKey precondition for the FIDO2 enrollment in step 5.
+# Step 6.5 (NEW): real-YubiKey precondition for the FIDO2 enrollment in step 7.
 # systemd-cryptenroll --fido2-device=auto picks the FIRST HID FIDO2 device it
 # enumerates. If the host has no real Yubico (VID 1050) device, --auto finds
 # nothing and the enrollment silently exits without prompting -- exactly the
-# "I havent been asked to tap/enroll" failure mode. This precondition matches
+# "I haven't been asked to tap/enroll" failure mode. This precondition matches
 # the inverse of tests/vm/lib/real-u2f-guard.sh: the CI tests fail loud when a
 # real key IS visible (so they don't accidentally exercise the real key instead
 # of passless); this DESTRUCTIVE test fails loud when a real key is NOT visible
@@ -75,7 +139,7 @@ if [[ -d /sys/class/hidraw ]]; then
     if command -v udevadm >/dev/null 2>&1; then
       if udevadm info "$d" 2>/dev/null | grep -Eiq 'ID_VENDOR=Yubico|ID_VENDOR_ID=1050'; then
         real_key_seen=1
-        echo "OK: real YubiKey on $d (will be used by step 5)"
+        echo "OK: real YubiKey on $d (will be used by step 7)"
         break
       fi
     fi
@@ -84,7 +148,7 @@ fi
 if [[ "$real_key_seen" -ne 1 ]]; then
   echo "FAIL: no real YubiKey visible to the HOST's HID bus." >&2
   echo "" >&2
-  echo "Step 5 calls systemd-cryptenroll --fido2-device=auto --fido2-with-user-presence=yes" >&2
+  echo "Step 7 calls systemd-cryptenroll --fido2-device=auto --fido2-with-user-presence=yes" >&2
   echo "against $LUKS_PART. With no real Yubico (VID 1050) device on /dev/hidraw*, --auto" >&2
   echo "finds nothing and the enrollment exits silently without ever prompting for a tap." >&2
   echo "" >&2
@@ -94,8 +158,8 @@ if [[ "$real_key_seen" -ne 1 ]]; then
   exit 1
 fi
 
-# Step 5: Enroll FIDO2 (interactive — requires YubiKey touch)
-echo "5/5 Enrolling FIDO2 (touch YubiKey when prompted)"
+# Step 7: Enroll FIDO2 (interactive -- requires YubiKey touch).
+echo "7/7 Enrolling FIDO2 (touch YubiKey when prompted)"
 systemd-cryptenroll \
   --fido2-device=auto \
   --fido2-with-client-pin=yes \
