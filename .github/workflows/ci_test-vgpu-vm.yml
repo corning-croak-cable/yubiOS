@@ -123,7 +123,7 @@ jobs:
       image: docker://dhi.io/debian-base@sha256:9d293dad5b7b448154d2fee38651d7cd6faa4953300d84503bfacca22357a879 # trixie-debian13-dev INDEX (manifest list)
     steps:
       - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 — see PINNED.md
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 â see PINNED.md
       - name: shellcheck + bash -n on tests/vm/*.sh
         run: |
           apt-get update -qq
@@ -172,7 +172,7 @@ jobs:
           sudo rm -rf "$GITHUB_WORKSPACE"
           mkdir -p "$GITHUB_WORKSPACE"
       - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 — see PINNED.md
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 â see PINNED.md
 
       - name: Free disk space (self-hosted rock1 persists disk across runs -- unlike hosted runners)
         if: matrix.arch == 'arm64'
@@ -192,7 +192,7 @@ jobs:
           sudo apt-get install -y -qq --no-install-recommends \
             swtpm swtpm-tools qemu-utils ${{ matrix.qemu_pkgs }} \
             fido2-tools cryptsetup-bin git build-essential pkg-config libssl-dev virtiofsd \
-            apparmor-utils util-linux
+            apparmor-utils util-linux parted dosfstools e2fsprogs
           # GH runners ship /dev/kvm root:kvm 0660 -- the runner user (and
           # root-in-rootless-podman) can't open it. Documented GH recipe:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -693,7 +693,7 @@ jobs:
           if [ "${missing:-0}" = "1" ]; then
             sudo apt-get update -qq
             sudo apt-get install -y -qq --no-install-recommends \
-              qemu-system-arm qemu-efi-aarch64 podman python3
+              qemu-system-arm qemu-efi-aarch64 podman python3 parted dosfstools e2fsprogs
           fi
           qemu-system-aarch64 --version | head -1
           chmod +x tests/vm/test-ftpm-qemu-ci.sh
