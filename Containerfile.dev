@@ -45,6 +45,28 @@ RUN chmod +x /tmp/install-swu2f-authenticator.sh && \
     rm -f /tmp/install-swu2f-authenticator.sh && \
     rm -f /etc/machine-id /var/lib/systemd/random-seed
 
+# ── composefs backend (upstream-recommended fix for OMN-149 / bootupd regression) ──
+# The destructive hardware-test leg (tests/vm/test-luks-fido2.sh) calls
+# `bcvk native-to-disk`, which runs `bootc install to-disk`. bootc's
+# `bootupd_check_required` in crates/lib/src/install.rs demands a working
+# `bootupd` in the source image's userland for the ostree backend -- and despite
+# multiple fix attempts (production Containerfile line 37 in 1b4638d, Containerfile.dev
+# line 36 in b8ba8574 / f58d6c14), the check has kept tripping on the destructive leg.
+# Per bootc-dev/bootc issue #2093 + PR #2098, switching to the composefs backend
+# bypasses this entire class of failures: bootc no longer requires bootupd when
+# [composefs] enabled=true is set in /usr/lib/ostree/prepare-root.conf.
+#
+# The yubios-smoke test in yubiOS-bake.hcl still rejects composefs as a DRACUT MODULE
+# (it checks for `add_dracutmodules+=" bootc "`, not composefs), so this backend
+# switch does not break the smoke test -- dracut still uses the bootc module.
+#
+# belt-and-suspenders: keep the `RUN dnf install bootupd` block above so the ostree
+# backend path still has bootupd if composefs is ever disabled downstream.
+RUN install -Dm644 /dev/stdin /usr/lib/ostree/prepare-root.conf <<'EOF'
+[composefs]
+enabled = true
+EOF
+
 # ── TEST-ONLY: serial-console root autologin ──────────────────────
 # Gives CI a route INTO the guest when SSH is not reachable. The fTPM chain
 # (ci_test-vm.yml ftpm-qemu -> tests/vm/test-ftpm-qemu-ci.sh) boots this image
