@@ -1,0 +1,22 @@
+# ADR-031 rule 1: default yubiOS images ship virtio-gpu only. ADR-031 settled
+# the *mechanism* (modprobe blacklist + dracut omit + tmpfiles remove); the
+# devtmpfs daemon that mounts /dev at boot still re-creates /dev/vfio as a
+# structural kernel object (the vfio subsystem registers itself regardless of
+# whether any module is loaded). The OMN-149 diagnostic at commit 2a0d5e58
+# confirmed: systemd-tmpfiles-setup ran cleanly at 10:07:10 with `Finished`,
+# no vfio modules loaded, yet /dev/vfio was recreated at 10:08 (~1 min later)
+# before the test asserted. The kernel cdev (10,196) is harmless without the
+# module behind it, but its mere existence is the exact attack-surface
+# signal tests/vm/test-vgpu-virtio-ci.sh's `test ! -e /dev/vfio` assertion
+# is checking.
+#
+# Udev sees every device node that devtmpfs creates (the kernel fires an
+# `add` uevent). RUN+=/bin/rm in this rule removes /dev/vfio the moment
+# udev processes the event, so devtmpfs races against an immediate
+# delete instead of leaving the node in place until the next tmpfiles pass.
+# Belt-and-suspenders with yubiOS-no-vfio-purge.service (catches anything
+# udev misses, e.g. a hotplug while the test is running).
+#
+# See refs/vgpu-vfio-user-trust-boundary-2026-07-25.md.
+KERNEL=="vfio", RUN+="/bin/rm -rf /dev/vfio /dev/vfio/*"
+KERNEL=="vfio*", RUN+="/bin/rm -f /dev/%k"

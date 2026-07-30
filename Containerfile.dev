@@ -90,5 +90,18 @@ RUN test -s /usr/lib/systemd/system/serial-getty@.service.d/10-yubiOS-test-autol
     grep -q -- "--autologin root" \
       /usr/lib/systemd/system/serial-getty@.service.d/10-yubiOS-test-autologin.conf && \
     test -L /usr/lib/systemd/system/getty.target.wants/serial-getty@ttyAMA0.service
+
+# ADR-031 rule 1: default yubiOS images ship virtio-gpu only. devtmpfs
+# re-creates /dev/vfio from the kernel device tree after the tmpfiles
+# remove + udev rule fire; this systemd oneshot is the post-sysinit
+# belt-and-suspenders. Wire its multi-user.target.wants/ symlink here
+# using the same pattern as the getty.target.wants links above. See
+# refs/vgpu-vfio-user-trust-boundary-2026-07-25.md.
+RUN install -d /usr/lib/systemd/system/multi-user.target.wants && \
+    ln -sf ../yubiOS-no-vfio-purge.service \
+      /usr/lib/systemd/system/multi-user.target.wants/yubiOS-no-vfio-purge.service && \
+    test -L /usr/lib/systemd/system/multi-user.target.wants/yubiOS-no-vfio-purge.service
+
+
 LABEL yubiOS.image.kind="dev-test"
 LABEL yubiOS.image.warning="TEST-ONLY: ships the passless swu2f software FIDO2 authenticator AND serial/tty root autologin (local-access bypass of pam_u2f). Never use in production. See ADR-003, ADR-026."

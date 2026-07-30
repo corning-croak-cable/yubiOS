@@ -1,0 +1,40 @@
+# ADR-031 rule 1: default yubiOS images ship virtio-gpu only. devtmpfs
+# re-creates /dev/vfio from the kernel device tree at boot, after our
+# tmpfiles.d/ r rule (vfio-yubiOS-no-static-vfio.conf) and the udev rule
+# (yubiOS-no-vfio-udev.rules) have both fired. This oneshot purges any
+# residual /dev/vfio after sysinit.target so the test assertion
+# `test ! -e /dev/vfio` in tests/vm/test-vgpu-virtio-ci.sh is satisfied
+# at user-space time. Without this, the OMN-149 diagnostic at commit
+# 2a0d5e58 showed /dev/vfio back ~1 min after tmpfiles-setup completed.
+#
+# Idempotent: the rmdir on the parent cleans up the directory if it is
+# empty after the rm. The touch on a stamp file is a small audit trail
+# for `journalctl -u yubiOS-no-vfio-purge` to confirm the unit actually
+# fired on each boot.
+#
+# Defence in depth with the udev rule above; both layers stay.
+# See refs/vgpu-vfio-user-trust-boundary-2026-07-25.md.
+[Unit]
+Description=yubiOS: ensure /dev/vfio is absent (ADR-031 rule 1)
+Documentation=https://github.com/yubi-OS/yubiOS/blob/main/docs/ADR.md (ADR-031)
+# Run after devtmpfs has settled AND after tmpfiles-setup has fired its
+# own remove, so we are the last writer to /dev/vfio at boot.
+After=systemd-tmpfiles-setup.service systemd-udevd.service
+DefaultDependencies=no
+# Defensive: only run when a /dev/vfio actually exists. If udev + tmpfiles
+# already cleared it, this is a no-op.
+ConditionPathExists=/dev/vfio
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/rm -rf /dev/vfio /dev/vfio/*
+ExecStart=/bin/rmdir /dev/vfio 2>/dev/null || true
+ExecStart=/bin/sh -c 'echo yubiOS-no-vfio-purge fired $(date -Iseconds) >> /run/yubiOS-no-vfio-purge.log || true'
+# Defensive: udevadm settle so any in-flight uevent for /dev/vfio/vfio
+# lands before we return; otherwise the test could observe a node that
+# udev was still queueing.
+ExecStart=/usr/bin/udevadm settle --timeout=10 || true
+
+[Install]
+WantedBy=multi-user.target
