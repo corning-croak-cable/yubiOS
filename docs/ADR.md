@@ -788,6 +788,7 @@ flowchart TD
 4. Userspace device models (the CI-testable, no-IOMMU-required path) use **vfio-user**: unprivileged process, `0600` socket owned by the VMM user, mutual distrust per spec. Never expose a vfio-user socket beyond a single host namespace until the protocol has authentication.
 5. **No trust-boundary component may consume GPU state.** Adding or removing a GPU (virtio-gpu or a gated passthrough device) must be a no-op for Secure Boot, LUKS2 FIDO2 unlock (ADR-003), homed (ADR-009), pam-u2f (ADR-005), and fTPM PCR behaviour.
 6. GPU resource quota/lockout (Frost/Panfrost, see [FUTURE.md](FUTURE.md) Milestone Frost) is a separate concern from this access gate and makes no claims here about per-cgroup enforcement.
+7. **Boot-time image attestation gates libvirt launches.** Before any libvirt-class launcher (bcvk, virt-manager, or any `<hostdev>` PCI-assignment path) may attach a PCI GPU -- through any of the three architectures in rules 1-5 (virtio-gpu, vfio-user, vfio-pci) -- to a yubiOS guest, the gate must additionally confirm: (a) the bootc OCI image digest matches a pinned reference digest in the launcher's reference value store, AND (b) the SLSA provenance attestation attached to that image verifies against the expected builder-id. **Enforcement is software-only -- no TEE required.** The builder-id reference is operator-set today (same trust model as rule 2's operator-set passthrough policy); a future iteration may anchor the builder-id to a hardware root of trust (fTPM PCR or YubiKey attestation). The existing `ci_test-vgpu-vm.yml` matrix extends with a `YUBIOS_ATTESTED=1` leg to prove the gate end to end.
 
 **Evidence landed with this decision:**
 
@@ -795,8 +796,9 @@ flowchart TD
 - `tests/vm/test-vgpu-virtio-ci.sh` -- guest leg asserting the **negative** surface required by rule 1: no `/dev/vfio`, nothing bound to `vfio-pci`, no `vfio_pci` module loaded in a default image.
 - `tests/vm/test-vfio-user-host-ci.sh` -- real vfio-user client/server handshake with zero kernel VFIO modules, proving rule 4 is exercised end to end.
 - Tracking issue: [OMN-108](https://linear.app/omni-agent/issue/OMN-108/gpu-trust-boundary-vfio-uservirtio-gpu-default-design-vgpu-e2e-ci).
+- Full design + prior-art + novelty verdict: [refs/attested-bootc-gpu-cutover-2026-07-30.md](../refs/attested-bootc-gpu-cutover-2026-07-30.md) (BORDERLINE verdict, mechanism established via ADR-031, policy layer novel).
 
-**Honesty note:** Rule 2's IOMMU access gate is accepted as design and rules, not yet implemented as enforcement code or proven on real hardware. Real `vfio-pci` GPU passthrough, IOMMU isolation, and DMA-ownership enforcement need a real IOMMU plus a real GPU -- no hosted or self-hosted runner in this org has that combination today (see [FUTURE.md](FUTURE.md) Post-Launch Hardware Work). Do not describe the passthrough gate as hardware-validated until that evidence exists.
+**Honesty note:** Rule 2's IOMMU access gate and rule 7's image-attestation gate are accepted as design and rules, not yet implemented as enforcement code or proven on real hardware. Real `vfio-pci` GPU passthrough, IOMMU isolation, and DMA-ownership enforcement need a real IOMMU plus a real GPU -- no hosted or self-hosted runner in this org has that combination today (see [FUTURE.md](FUTURE.md) Post-Launch Hardware Work). The image-attestation gate (rule 7) is software-only and CI-testable, but the reference value store is operator-set today, not hardware-anchored. Do not describe either gate as fully validated until (a) the IOMMU evidence exists for rule 2, AND (b) the builder-id reference store is hardware-anchored for rule 7.
 
 ## ADR-032: Kernel+Rootfs Split as a First-Class yubiOS Principle
 
