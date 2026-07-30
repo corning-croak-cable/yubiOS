@@ -1,6 +1,6 @@
 # yubiOS Blockers
 
-Last reviewed: 2026-07-29
+Last reviewed: 2026-07-30
 Status: active blocker register
 
 This file lists current blockers only. Historical blockers that were resolved by merged work should move into ADRs, refs, or PR history rather than staying in the active list.
@@ -46,3 +46,19 @@ The 2026-07-11 planning cycle found and corrected these inconsistencies across d
 ## Reporting Rule
 
 When a blocker changes state, update this file and the relevant issue or PR report. Do not leave resolved blockers in the active table just because they are historically important.
+
+## Permanent CI-Evidence Patterns
+
+These are failure modes that have happened in CI and are expected to recur; the doctrine below is what the repo does about them. Add new entries as further CI-evidence patterns emerge; remove only when the underlying mechanism is removed.
+
+### Systemd drop-in lex-sort rule (est. 2026-07-30, source: OMN-149)
+
+`modprobe.d`, `dracut.conf.d`, `tmpfiles.d`, `systemd/*.service.d/`, and `udev/rules.d` ALL sort files lexicographically by full filename (per systemd-tmpfiles(5): "All configuration files are sorted by their filename in lexicographic order"). Numeric-prefixed naming (`50-...`, `53-...`) is a sysv-init `rcN.d/` convention that does NOT transfer to systemd drop-in directories.
+
+**yubiOS naming convention for systemd drop-in overrides whose intent is "fire after upstream":** use `vfio-yubiOS-...`, `yubiOS-...`, or any other prefix that lex-sorts AFTER every upstream package file the drop-in overrides. Drop-ins whose intent is "fire before upstream" can keep a low numeric prefix or `yubiOS-` only.
+
+**Verification recipe** for any new yubiOS drop-in override: `ls -1 usr/lib/<dir>/ | sort -u` and confirm the yubiOS filename sorts AFTER every upstream package file it intends to override. If a future upstream package adds a same-prefix file (e.g. another `static-...`), re-verify the ordering.
+
+**Source of the lesson:** OMN-149. `/dev/vfio` was found in a yubiOS guest despite `usr/lib/tmpfiles.d/53-yubiOS-no-static-vfio.conf` being shipped in commit `59f4332` (2026-07-26). Root cause was the `"53"` prefix lex-sorting BEFORE upstream `static-nodes-permissions.conf`'s `"s"` prefix (`"5"` 0x35 < `"s"` 0x73 in ASCII), so the yubiOS `r /dev/vfio/vfio` fired first and the upstream `z /dev/vfio/vfio 0666 - - -` then re-created the cdev last on every boot. The fix renamed the file to `vfio-yubiOS-no-static-vfio.conf` (leading `"v"` 0x76 lex-sorts AFTER `"s"` 0x73) in commit `f92c6010`. `/dev/vfio` had existed in every yubiOS guest for 4 days before this was caught.
+
+Cross-references: PROJECT_RULES.md entry "systemd drop-in lex-sort lesson (2026-07-30)"; commit `f92c6010`; Linear OMN-149.
