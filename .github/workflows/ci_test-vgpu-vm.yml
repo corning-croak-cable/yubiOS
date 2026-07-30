@@ -280,10 +280,10 @@ jobs:
         id: bcvk
         run: |
           set +e
-          BCVK_REF=a9303e77dc902a0ff3b547103a7511b5164a450b # yubios branch (bcvk PR #1+#2+#7 combined); see PINNED.md
+          BCVK_REF=a9303e77dc902a0ff3b547103a7511b5164a450b # yubios branch (bcvk PR #1+#2+#7+#8 combined); see PINNED.md
           # rock1 is self-hosted and persistent -- cache the built binary under
           # /opt keyed by the pinned commit, same pattern as qemu-zstd above.
-          BCVK_PREFIX="/opt/bcvk/${BCVK_REF}-vgpu3" # -vgpu<N> = with the --extra-qemu-arg CI patch; <N> bumps when a cache-incompatible change ships
+          BCVK_PREFIX="/opt/bcvk/${BCVK_REF}" # cache-keyed by pinned source; rebuilds when BCVK_REF changes (bcvk PR #1+#2+#7+#8 combined upstream; no in-run CI patch since PR #8 merged)
           BCVK_SRC=/opt/bcvk-src
           if [ -x "${BCVK_PREFIX}/bin/bcvk" ]; then
             echo "skip=0" >> "$GITHUB_OUTPUT"
@@ -336,54 +336,6 @@ jobs:
           # tmpfiles and the yubiOS root-only helper accept the same data.
           grep -Fq -- 'io.systemd.credential.binary:tmpfiles.extra={encoded}' "$BCVK_SRC/crates/bcvk-qemu/src/credentials.rs" \
             || { echo "::error::bcvk no longer exposes the documented tmpfiles.extra root SSH credential path"; exit 1; }
-          # --- CI patch: bcvk --extra-qemu-arg -------------------------------
-          # bcvk has no way to add a QEMU device to an ephemeral run, so the guest
-          # vGPU leg would have nothing to attach. RunEphemeralOpts already derives
-          # Serialize/Deserialize and is handed to the in-container process as JSON,
-          # so a new Vec<String> field crosses that boundary for free. Same perl-regex
-          # style as the patches above: order-independent, no line numbers, verified
-          # by grep. If any hunk stops applying, this step SKIPs rather than shipping
-          # a bcvk that silently ignores the flag.
-          QEMU_RS="$BCVK_SRC/crates/bcvk-qemu/src/qemu.rs"
-          EPH_RS="$BCVK_SRC/crates/kit/src/run_ephemeral.rs"
-          if ! grep -Fq -- 'pub extra_qemu_args' "$QEMU_RS"; then
-            perl -0pi -e 's/(    \/\/\/ Optional software TPM \(swtpm\) backing the QEMU emulator TPM device\.)/    \/\/\/ Raw QEMU arguments appended verbatim to the emulator command line.\n    \/\/\/ CI-only escape hatch (ci_test-vgpu-vm.yml attaches a virtio-gpu device).\n    pub extra_qemu_args: Vec<String>,\n\n$1/' "$QEMU_RS"
-            perl -0pi -e 's/(    \/\/ Configure stdio based on display mode)/    \/\/ Raw pass-through QEMU arguments (CI vGPU device attach).\n    for arg in &config.extra_qemu_args {\n        cmd.arg(arg);\n    }\n\n$1/' "$QEMU_RS"
-          fi
-          if ! grep -Fq -- 'extra-qemu-arg' "$EPH_RS"; then
-            perl -0pi -e 's/(    pub kernel_args: Vec<String>,\n)/$1\n    #[clap(\n        long = "extra-qemu-arg",\n        value_name = "ARG",\n        allow_hyphen_values = true,\n        help = "Pass a raw argument straight through to QEMU (repeatable)"\n    )]\n    #[serde(default)]\n    pub extra_qemu_args: Vec<String>,\n/' "$EPH_RS"
-            perl -0pi -e 's/(    qemu_config\.set_console\(opts\.common\.console\);)/    for arg in &opts.extra_qemu_args {\n        qemu_config.extra_qemu_args.push(arg.clone());\n    }\n\n$1/' "$EPH_RS"
-          fi
-          # Adding extra_qemu_args to RunEphemeralOpts breaks every OTHER exhaustive
-          # struct literal of it (Rust requires every field named unless the literal ends
-          # in ..Default::default()) -- run 30180564384 hit exactly this in
-          # varlink_ipc.rs and to_disk.rs (E0063 missing field). Patch those two call
-          # sites too, inserting the new field first so it applies regardless of the
-          # rest of the literal's field order.
-          VARLINK_RS="$BCVK_SRC/crates/kit/src/varlink_ipc.rs"
-          TODISK_RS="$BCVK_SRC/crates/kit/src/to_disk.rs"
-          if ! grep -Fq -- 'extra_qemu_args: Vec::new()' "$VARLINK_RS"; then
-            perl -0pi -e 's/(let run_opts = RunEphemeralOpts \{\n)/$1                extra_qemu_args: Vec::new(),\n/' "$VARLINK_RS"
-          fi
-          if ! grep -Fq -- 'extra_qemu_args: Vec::new()' "$TODISK_RS"; then
-            perl -0pi -e 's/(let ephemeral_opts = RunEphemeralOpts \{\n)/$1        extra_qemu_args: Vec::new(),\n/' "$TODISK_RS"
-          fi
-          patched=1
-          grep -Fq -- 'pub extra_qemu_args' "$QEMU_RS" || patched=0
-          grep -Fq -- 'for arg in &config.extra_qemu_args' "$QEMU_RS" || patched=0
-          grep -Fq -- 'extra-qemu-arg' "$EPH_RS" || patched=0
-          grep -Fq -- 'qemu_config.extra_qemu_args.push' "$EPH_RS" || patched=0
-          grep -Fq -- 'extra_qemu_args: Vec::new()' "$VARLINK_RS" || patched=0
-          grep -Fq -- 'extra_qemu_args: Vec::new()' "$TODISK_RS" || patched=0
-          if [ "$patched" -ne 1 ]; then
-            echo "skip=1" >> "$GITHUB_OUTPUT"
-            echo "::warning::SKIP: the bcvk --extra-qemu-arg CI patch no longer applies (upstream source moved); the guest vGPU leg has no way to attach a device"
-            echo "### vgpu-vm-e2e (${{ matrix.arch }}) -- SKIP: bcvk --extra-qemu-arg patch did not apply" >> "$GITHUB_STEP_SUMMARY"
-            sudo rm -rf "$BCVK_SRC"
-            exit 0
-          fi
-          echo "applied bcvk --extra-qemu-arg CI patch"
-          # -------------------------------------------------------------------
           ( cd "$BCVK_SRC" && cargo test --release -p bcvk-qemu test_karg_for_root_ssh && cargo build --release )
           if [ ! -x "$BCVK_SRC/target/release/bcvk" ]; then
             echo "skip=1" >> "$GITHUB_OUTPUT"
