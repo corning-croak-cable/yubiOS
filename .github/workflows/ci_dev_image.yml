@@ -363,10 +363,17 @@ jobs:
           done
 
       - name: Create + push multi-arch dev manifest
+        # Also tag with the 8-char short SHA prefix so dispatchers can pull
+        # `dev-<short-sha>` (the natural human-readable form) without knowing
+        # the full 40-char SHA at dispatch time. OMN-149 verification at
+        # d2646452 dispatched `dev-d2646452` (short) but the workflow only
+        # pushed `dev-d264645271cdc...` (full) -- "manifest unknown".
         run: |
+          DEV_SHORT_SHA_TAG="0mniteck/yubios:dev-${GITHUB_SHA:0:8}"
           docker -H unix:///run/docker-rootless/docker.sock buildx imagetools create \
             -t "$DEV_SHA_TAG" \
             -t "$DEV_FLOATING_TAG" \
+            -t "$DEV_SHORT_SHA_TAG" \
             "0mniteck/yubios:dev-${{ github.sha }}-amd64" \
             "0mniteck/yubios:dev-${{ github.sha }}-arm64"
 
