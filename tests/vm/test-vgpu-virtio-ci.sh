@@ -143,8 +143,20 @@ g 'ls /dev/dri/renderD* >/dev/null 2>&1' \
 g 'cat /sys/class/drm/card0/device/uevent' || true
 
 log "guest: NEGATIVE trust-boundary surface (no passthrough)"
-g 'test ! -e /dev/vfio' \
-  || die "/dev/vfio exists in a default yubiOS guest; rule 1 says images ship virtio-gpu only"
+# OMN-149 DIAGNOSTIC (2026-07-30): if /dev/vfio is found, gather inside-guest
+# evidence BEFORE failing. The earlier lex-sort rename to
+# usr/lib/tmpfiles.d/vfio-yubiOS-no-static-vfio.conf (commit f92c6010) did NOT
+# fix this; we need data to pick the next hypothesis. Hypothesis space:
+#   1 = conf file missing from image (mkosi dropped it)
+#   2 = systemd-tmpfiles-setup.service did not run on bcvk DirectBoot path
+#   3 = /dev/vfio is created by devtmpfs on vfio module load, or by a
+#       systemd-static-devices c rule, or by a udev rule
+#   4 = r rule silently failed (permission/early-boot context)
+if g 'test -e /dev/vfio' >/dev/null 2>&1; then
+  log "diagnostic: /dev/vfio present in guest; gathering evidence"
+  g 'echo "--- ls -la /dev/vfio/ ---"; ls -la /dev/vfio/ 2>&1 || echo "(ls failed)"; echo "--- /proc/modules | grep -i vfio ---"; grep -i vfio /proc/modules 2>&1 || echo "(no vfio modules loaded)"; echo "--- /usr/lib/tmpfiles.d/ (vfio) ---"; ls -la /usr/lib/tmpfiles.d/ 2>&1 | grep -i vfio || echo "(no vfio tmpfiles file in image)"; echo "--- journalctl systemd-tmpfiles-setup (tail 30) ---"; journalctl -u systemd-tmpfiles-setup.service --no-pager 2>&1 | tail -30 || echo "(no journalctl output)"; echo "--- /lib/systemd/ static-devices ---"; ls -la /lib/systemd/ 2>&1 | grep -i static || echo "(no static-devices file)"; echo "--- /sys/module/vfio* ---"; ls /sys/module/ 2>&1 | grep -i vfio || echo "(no /sys/module/vfio*)"; echo "--- systemctl is-active systemd-tmpfiles-setup ---"; systemctl is-active systemd-tmpfiles-setup.service 2>&1 || echo "(systemctl unavailable)"' || true
+  die "/dev/vfio exists in a default yubiOS guest; rule 1 says images ship virtio-gpu only"
+fi
 g 'test ! -d /sys/bus/pci/drivers/vfio-pci || [ -z "$(ls -A /sys/bus/pci/drivers/vfio-pci 2>/dev/null | grep -E "^[0-9a-f]{4}:")" ]' \
   || die "a PCI device is bound to vfio-pci inside the guest"
 g '! grep -qw vfio_pci /proc/modules' \
