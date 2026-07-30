@@ -102,6 +102,11 @@ on:
         required: false
         default: 'docker.io/0mniteck/yubios:dev'
         type: string
+      allow_real_u2f:
+        description: 'Pass ALLOW_REAL_U2F=1 to the passless CI tests (test-luks-fido2-ci.sh, test-fido2-enrollment.sh). Required on the arm64 self-hosted rock1 runner because that runner has a physical YubiKey attached for the DESTRUCTIVE test (tests/vm/test-luks-fido2.sh). PR #144 real-U2F guard correctly refuses to silently run passless tests when a real key is on the host (otherwise a passless regression would be masked by the in-guest software authenticator losing the enumeration race to the real key) -- so CI must explicitly opt in. Default false; set true on any dispatch that runs on rock1.'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -660,6 +665,7 @@ jobs:
           QEMU_BIN: ${{ matrix.arch == 'arm64' && steps.qemu-zstd.outputs.qemu_prefix != '' && format('{0}/bin/qemu-system-aarch64', steps.qemu-zstd.outputs.qemu_prefix) || (matrix.arch == 'arm64' && 'qemu-system-aarch64' || 'qemu-system-x86_64') }}
           VGPU_DEVICE: ${{ matrix.arch == 'arm64' && 'virtio-gpu-pci' || 'virtio-gpu-pci' }}
           YUBIOS_SSH_WAIT_SECS: '300'
+          ALLOW_REAL_U2F: ${{ inputs.allow_real_u2f && '1' || '0' }}
           BCVK_EPHEMERAL_EXTRA_ARGS: >-
             ${{ matrix.arch == 'arm64' && format('--ro-bind {0}:qemu-zstd --ro-bind /lib/aarch64-linux-gnu:host-lib --ro-bind /usr/lib/aarch64-linux-gnu:host-usrlib --env PATH=/run/host-mounts/qemu-zstd/bcvk-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env LD_LIBRARY_PATH=/run/host-mounts/host-lib:/run/host-mounts/host-usrlib:/run/host-mounts/qemu-zstd/lib --log-dir=journal,console=/tmp/yubios-vm-e2e-logs', steps.qemu-zstd.outputs.qemu_prefix) || '' }}
         run: |
@@ -814,6 +820,7 @@ jobs:
         env:
           YUBIOS_IMAGE: ${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}
           YUBIOS_SSH_WAIT_SECS: ${{ matrix.arch == 'arm64' && '900' || '300' }}
+          ALLOW_REAL_U2F: ${{ inputs.allow_real_u2f && '1' || '0' }}
           BCVK_EPHEMERAL_EXTRA_ARGS: >-
             ${{ matrix.arch == 'arm64' && format('--ro-bind {0}:qemu-zstd --ro-bind /lib/aarch64-linux-gnu:host-lib --ro-bind /usr/lib/aarch64-linux-gnu:host-usrlib --env PATH=/run/host-mounts/qemu-zstd/bcvk-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env LD_LIBRARY_PATH=/run/host-mounts/host-lib:/run/host-mounts/host-usrlib:/run/host-mounts/qemu-zstd/lib --log-dir=journal,console=/tmp/yubios-vm-e2e-logs', steps.qemu-zstd.outputs.qemu_prefix) || '' }}
         run: |
@@ -862,6 +869,7 @@ jobs:
         env:
           YUBIOS_IMAGE: ${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}
           YUBIOS_SSH_WAIT_SECS: ${{ matrix.arch == 'arm64' && '900' || '300' }}
+          ALLOW_REAL_U2F: ${{ inputs.allow_real_u2f && '1' || '0' }}
           BCVK_EPHEMERAL_EXTRA_ARGS: >-
             ${{ matrix.arch == 'arm64' && format('--ro-bind {0}:qemu-zstd --ro-bind /lib/aarch64-linux-gnu:host-lib --ro-bind /usr/lib/aarch64-linux-gnu:host-usrlib --env PATH=/run/host-mounts/qemu-zstd/bcvk-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env LD_LIBRARY_PATH=/run/host-mounts/host-lib:/run/host-mounts/host-usrlib:/run/host-mounts/qemu-zstd/lib --log-dir=journal,console=/tmp/yubios-vm-e2e-logs', steps.qemu-zstd.outputs.qemu_prefix) || '' }}
         run: |
