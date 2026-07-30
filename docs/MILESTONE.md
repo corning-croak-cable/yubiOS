@@ -1,11 +1,13 @@
 # yubiOS Milestones
 
-Last reviewed: 2026-07-28
+Last reviewed: 2026-07-30 (against BLOCKERS.md 2026-07-30 review)
 Status: repo-native mirror of the Linear execution project. This is a planning-only document -- it summarizes workstreams and milestones, it does not duplicate TODO.md, BLOCKERS.md, or FUTURE.md. For current task details see TODO.md; for open blockers see BLOCKERS.md; for longer-horizon research see FUTURE.md.
 
 Source: mirrors the Linear project "yubiOS Production Proof & Release Gates" (id `a9a0701b-d1be-448c-a194-e573c82bd9f8`, team OMNI-AGENT), per OMN-64/OMN-44. **Review-gate applied 2026-07-28**: re-read against `docs/BLOCKERS.md` `Last reviewed: 2026-07-25`; same-day drift on the 2026-07-25 version of this doc is corrected below.
 
 ## Goal
+
+**Last reviewed against docs/BLOCKERS.md:** 2026-07-30 review (sha 7501fa0c13a4). No new blocker retirements since this doc's prior review (Last reviewed 2026-07-28). B-VM-CTAP2 was RESOLVED 2026-07-25 (5 days before this BLOCKERS.md review) and is already noted correctly in this doc. BLOCKERS.md gained a new "Permanent CI-Evidence Patterns" section (systemd drop-in lex-sort rule, source OMN-149) — does not affect this doc's content. The 2026-07-28 review diff (corrected against the same-day BLOCKERS.md) remains the binding drift correction; this 2026-07-30 stamp is a no-new-retirements confirmation.
 
 Drive yubiOS from research-backed roadmap items to production-proof evidence across ARM64 Path A, token-backed CI, sealed bootc flow, and runtime/supply-chain validation.
 
