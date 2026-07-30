@@ -1,6 +1,6 @@
 # yubiOS TODO
 
-Last reviewed: 2026-07-29
+Last reviewed: 2026-07-30
 Status: active task list
 Latest requested-run evidence review: [refs/ci-evidence-2026-07-21.md](../refs/ci-evidence-2026-07-21.md), covering the complete logs of runs 29869480442, 29869503301, 29869527608, 29872130447, 29872433355, 29872832727, 29876111887, and 29876466349.
 Latest upstream progress review: [refs/systemd-upstream-progress-2026-07-21.md](../refs/systemd-upstream-progress-2026-07-21.md).
@@ -35,7 +35,9 @@ Use this map to keep [FUTURE.md](FUTURE.md) roadmap entries tied to active TODO 
 
 Every ADR in [ADR.md](ADR.md) (ADR-001 through ADR-031) now has a matching Linear tracking issue in OMN (issues OMN-109 through OMN-138, plus OMN-101 relabeled). Accepted ADRs are marked Done; Proposed/idea-stage ADRs stay in Backlog until decided.
 
-- [x] Create one Linear issue per ADR and mark Accepted ones Done: ADR-001..017, 021..026, 028..031 -> Done; ADR-018, ADR-019, ADR-020, ADR-027 -> Backlog (still Proposed).
+- [x] Create one Linear issue per ADR and mark Accepted ones Done: ADR-001..017, 021..026, 028..032 -> Done; ADR-018, ADR-019, ADR-020, ADR-027 -> Backlog (still Proposed).
+- [x] ADR-032 (Kernel+Rootfs Split) accepted 2026-07-29 (commit `a1940330` via PR #143); corresponding Linear OMN-51 marked Done.
+- [ ] ADR-033 (Misbehavior-Triggered PCI-Mediation Cutoff) opened as PR #151 (`feat/adr-033-misbehavior-cutoff-policy`, faithful to `refs/adr-033-misbehavior-cutoff-policy-2026-07-28.md` [SOLO] V3 finalist + `refs/adr-033-prior-art-search-2026-07-28.md`); status Pending until Jenny reviews + merges; companion Linear cluster OMN-144..147 already re-parented to ADR-031.
 - [x] Correct the ADR-024 numbering collision: the vGPU/vfio-user trust boundary decision was mislabeled "candidate ADR-024" in refs/vgpu-vfio-user-trust-boundary-2026-07-25.md and in an earlier FUTURE.md edit. ADR-024 is the chipsec first-boot validation ADR; the GPU trust boundary landed as **ADR-031**. Fixed the stale FUTURE.md cross-reference and relabeled OMN-101 accordingly.
 - [ ] Open a follow-up ADR (or amend ADR-031) once the IOMMU passthrough access gate (ADR-031 rule 2) has real enforcement code and hardware evidence, not just accepted design -- see OMN-101/OMN-108.
 - [ ] Promote ADR-018/019/020 (ARM64 secure-world stack, dual root-of-trust paths, U-Boot UEFI+StandaloneMM) from Proposed to Accepted once the Milestone F hardware proof lands (see Current ARM64 Tasks below); update their Linear issues from Backlog to Done at the same time, not before.
@@ -163,3 +165,7 @@ These items map [FUTURE.md](FUTURE.md) sections that were missing or only partia
 - Treating swu2f Layer 2 as merely planned: the TEST-only dev image path exists and must stay isolated.
 - Repeating old digest examples from workflow logs as current pins: use [PINNED.md](../PINNED.md).
 - Describing ARM64 as secondary: ADR-023 makes ARM64 primary and x86-64 supported secondary.
+
+## Today's BLOCKERS.md diff (2026-07-30 review)
+
+Per the planning-cycle doctrine (BLOCKERS.md review-gate rule), the 2026-07-30 review added a new "Permanent CI-Evidence Patterns" section with the systemd drop-in lex-sort rule (the OMN-149 lesson at commit `f92c6010`). No active blockers were retired in this review; OMN-149 verification is in flight (ci_test-vgpu-vm run #26 at head f92c601). B-OMN-149 is not a separate blocker row — the bug is fixed (commit `f92c6010`), the dev image carries the fix (run #30528264163), and end-to-end verification is the remaining gate.
