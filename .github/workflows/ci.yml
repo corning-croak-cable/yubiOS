@@ -136,11 +136,16 @@ jobs:
           count=0
           for wf in "${WORKFLOWS[@]}"; do
             push='false'
+            is_builder=0
             for pw in "${PUSH_WORKFLOWS[@]:-}"; do
-              if [ "$pw" = "$wf" ]; then push="$DOCKER_PUSH"; fi
+              if [ "$pw" = "$wf" ]; then push="$DOCKER_PUSH"; is_builder=1; fi
             done
 
-            inputs_json=$(jq -n --arg reason "$REASON" --arg push "$push" '{reason: $reason, Docker_push: $push}')
+            if [ "$is_builder" = 1 ]; then
+              inputs_json=$(jq -n --arg reason "$REASON" --arg push "$push" '{reason: $reason, Docker_push: $push}')
+            else
+              inputs_json=$(jq -n --arg reason "$REASON" '{reason: $reason}')
+            fi
             payload=$(jq -n --arg ref "$REF" --argjson inputs "$inputs_json" '{ref: $ref, inputs: $inputs}')
 
             echo "Dispatching $wf (ref=$REF, Docker_push=$push)"
