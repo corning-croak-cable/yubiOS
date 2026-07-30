@@ -142,9 +142,9 @@ jobs:
             done
 
             if [ "$is_builder" = 1 ]; then
-              inputs_json=$(jq -n --arg reason "$REASON" --arg push "$push" '{reason: $reason, Docker_push: $push}')
+              inputs_json=$(jq -n --argjson push "$([ "$push" = "true" ] && echo true || echo false)" '{Docker_push: $push}')
             else
-              inputs_json=$(jq -n --arg reason "$REASON" '{reason: $reason}')
+              inputs_json='{}'
             fi
             payload=$(jq -n --arg ref "$REF" --argjson inputs "$inputs_json" '{ref: $ref, inputs: $inputs}')
 
