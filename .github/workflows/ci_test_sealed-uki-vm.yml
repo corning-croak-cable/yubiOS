@@ -502,7 +502,10 @@ jobs:
           # so comment lines can't match. V71 active code:
           #   || { echo "::error::jq cmdline extraction from /tmp/inspect.txt failed"; exit 1; }
           # Untouched: V69 jq extraction, V68 RSA-4096 bump, V67 ukify arg-order.
-            || { echo "::error::jq cmdline extraction from /tmp/inspect.txt failed"; exit 1; }
+          # V72: removed the orphaned || guard V71 left dangling here (bash syntax
+          # error at script line 148, run 30624562181). The ukify line above already
+          # carries its own || guard; the jq extraction below is now a single line
+          # with inline || (no backslash continuation, no blank-line split).
           test -s /tmp/inspect.txt || { echo "::error::/tmp/inspect.txt empty (ukify produced no output)"; exit 1; }
           # V69: ukify inspect --json=short + jq for cmdline extraction (replace awk).
           # V67 (e2fea142) and V68 (75f9b0ca) both failed at assertion 3 with:
@@ -526,9 +529,7 @@ jobs:
           # string. The `// empty` fallback returns nothing for missing fields
           # rather than `null` (so grep can detect "no roothash" cleanly).
           # Active code in V69:
-          jq -r '.[".cmdline"].text // empty' /tmp/inspect.txt > /tmp/cmdline.txt \
-
-            || { echo "::error::awk extract of .cmdline from /tmp/inspect.txt failed"; exit 1; }
+          jq -r '.[".cmdline"].text // empty' /tmp/inspect.txt > /tmp/cmdline.txt || { echo "::error::jq cmdline extraction from /tmp/inspect.txt failed"; exit 1; }
           grep -E '\broothash=[0-9a-f]{64}\b' /tmp/cmdline.txt \
             || { echo "::error::no roothash= in UKI .cmdline"; exit 1; }
           echo "Assertions 1-3 PASS"
