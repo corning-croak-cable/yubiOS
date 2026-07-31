@@ -152,7 +152,7 @@ jobs:
           esac
           echo "RESOLVED_IMAGE=$RESOLVED_IMAGE" >> "$GITHUB_ENV"
 
-      - name: Generate PKI as plain files (V38: cert + PKCS#8 PEM on host, no cross-mount)
+      - name: "Generate PKI as plain files (V38: cert + PKCS#8 PEM on host, no cross-mount)"
         run: |
           set -euxo pipefail
           cd "$GITHUB_WORKSPACE"
@@ -184,7 +184,7 @@ jobs:
           ls -la mkosi.output/pki/
           echo "=== V37 PKI ready: $(ls mkosi.output/pki/ | wc -l) files ==="
 
-      - name: Verify PKI on host (V38 diagnostic: cert + PKCS#8)
+      - name: "Verify PKI on host (V38 diagnostic: cert + PKCS#8)"
         run: |
           set -euxo pipefail
           echo "PWD=$PWD"
