@@ -1053,13 +1053,12 @@ jobs:
           # This is the FinalizeScript-at-install-time pattern. systemd-boot will
           # prefer this entry over bootc's own Type1 entry by sort-key.
           sudo mkdir -p /mnt/cfs-target/boot/loader/entries
-          sudo tee /mnt/cfs-target/boot/loader/entries/yubios-ukify.conf >/dev/null <<EOF
-          title yubiOS (UKI, om150-phase2)
-          version 1.0
-          uki /EFI/Linux/bootc/bootc_composefs-${UKI_HASH}.efi
-          sort-key yubios-ukify-0
-          machine-id $(cat /etc/machine-id 2>/dev/null || echo 00000000000000000000000000000000)
-EOF
+          sudo bash -c "cat > /mnt/cfs-target/boot/loader/entries/yubios-ukify.conf" <<'YUBL_END'
+title yubiOS (UKI, om150-phase2)
+version 1.0
+uki /EFI/Linux/bootc/bootc_composefs-${UKI_HASH}.efi
+sort-key yubios-ukify-0
+YUBL_END
           sudo cat /mnt/cfs-target/boot/loader/entries/yubios-ukify.conf
           echo "BLSConfig .conf with uki key written"
 
