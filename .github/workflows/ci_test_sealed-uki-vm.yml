@@ -228,13 +228,23 @@ jobs:
           #   "Cannot operate on active root filesystem; mount separate target instead"
           # The container is `--privileged` so `mount --bind` works. Single-line bash -c
           # with && chaining (proven V18 pattern, avoids V23 multi-line quoting bug).
-          # systemd-sbsign is NOT in the base Fedora bootc image — it is a separate
-          # Fedora package (systemd-sbsign). V26's Step 3 failed with
-          # "bash: line 1: systemd-sbsign: command not found" (exit 127) because the
-          # install was on a previous (now-torn-down) container. V27 installs it
-          # inside Step 3's bash -c so it is present in the same container.
-          # Mount the host's /var/lib/softhsm so the container's PKCS#11 engine
-          # reaches the SoftHSM token.
+          # V28: three fixes to the signing step, per run #35 evidence + ADR-008:
+          #   1. QUOTING -- the pkcs11 URI's semicolons were unquoted inside bash -c,
+          #      so bash split the sign command at each ';' (run #35: "bash: line 1:
+          #      --private-key-source=engine:pkcs11: command not found"). The URI is
+          #      now single-quoted inside the double-quoted bash -c string.
+          #   2. BINARY PATH -- systemd-sbsign is NOT a dnf package on rawhide (run
+          #      #35: "No match for argument: systemd-sbsign"). It ships inside the
+          #      main systemd package at /usr/lib/systemd/systemd-sbsign (verified
+          #      against the systemd-261.2-1.fc45 file list), just not in PATH.
+          #      Called by full path; no install needed.
+          #   3. PIN + PROVIDER -- per ADR-008 / canonical ci_mkosi-installer.yml:
+          #      provider:pkcs11 (not engine:pkcs11), PIN embedded in the URI as
+          #      ?pin-value=1234, PKCS11_PROVIDER_MODULE pointed at the Fedora
+          #      softhsm module, SOFTHSM2_CONF written inside the container to the
+          #      mounted host token dir. Only softhsm + pkcs11-provider need dnf.
+          # NOTE: no $ expansions inside the inner bash -c besides intended outer
+          # ones -- the outer runner shell expands $RESOLVED_IMAGE/$PWD only.
           # Step 1+2 combined: install signing tools + build unsigned UKI.
           docker run --rm --privileged --pid=host --ipc=host \
             --security-opt label=type:unconfined_t \
@@ -243,13 +253,13 @@ jobs:
             -v /dev:/dev \
             "$RESOLVED_IMAGE" \
             bash -c "set -euo pipefail; dnf install -y systemd-ukify opensc softhsm && mkdir -p /target && mount --bind / /target && bootc container ukify --rootfs /target -- --output /output/yubios.unsigned.efi"
-          # Step 3: install systemd-sbsign + sign UKI with PKCS#11 + SoftHSM token (mounted from host).
+          # Step 3: sign UKI via systemd-sbsign + provider:pkcs11 + SoftHSM token (mounted from host).
           docker run --rm --privileged \
             --security-opt label=type:unconfined_t \
             -v /var/lib/softhsm:/var/lib/softhsm:ro \
             -v "$PWD/mkosi.output:/output" \
             "$RESOLVED_IMAGE" \
-            bash -c "set -euo pipefail; dnf install -y systemd-sbsign && systemd-sbsign sign --private-key=pkcs11:token=yubiOS-ci;object=sb-key;type=private --private-key-source=engine:pkcs11 --certificate=/output/pki/sb.crt --output=/output/yubios.efi.tmp /output/yubios.unsigned.efi && mv /output/yubios.efi.tmp /output/yubios.efi"
+            bash -c "set -euo pipefail; dnf install -y softhsm pkcs11-provider; printf 'directories.tokendir = /var/lib/softhsm/tokens\nobjectstore.backend = file\n' > /tmp/softhsm2.conf; export SOFTHSM2_CONF=/tmp/softhsm2.conf PKCS11_PROVIDER_MODULE=/usr/lib64/pkcs11/libsofthsm2.so; /usr/lib/systemd/systemd-sbsign sign --private-key='pkcs11:token=yubiOS-ci;object=sb-key;type=private?pin-value=1234' --private-key-source=provider:pkcs11 --certificate=/output/pki/sb.crt --output=/output/yubios.efi.tmp /output/yubios.unsigned.efi && mv /output/yubios.efi.tmp /output/yubios.efi"
 
       - name: Assert signed UKI is well-formed (assertions 1-3 of 6)
         run: |
