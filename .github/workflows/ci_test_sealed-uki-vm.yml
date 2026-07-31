@@ -14,10 +14,10 @@ name: TEST - sealed UKI Secure Boot VM e2e
 #   2. boot-secure-vm -- boots the signed UKI in a QEMU OVMF Secure Boot VM
 #      on fresh GitHub-hosted runners, asserts systemd-stub SecureBoot=yes
 #      via QEMU serial console (assertion 4 of 6).
-#   3. negative-tamper-tests -- proves the negative paths:
+#   3. negative-tamper-tests -- proves the negative paths (amd64-only):
 #      * Negative 1 (tampered UKI byte flip -> sbverify rejection) -- IMPLEMENTED
-#      * Negative 2 (tampered composefs hash -> dm-verity rejection) -- TODO
-#      * Negative 3 (missing ROTPK -> unsigned UKI rejection) -- TODO
+#      * Negative 2 (tampered composefs hash -> dm-verity rejection) -- DEFERRED (separate e2e lane per user)
+#      * Negative 3 (foreign ROTPK -> unsigned UKI rejection) -- IMPLEMENTED
 #
 # All jobs run inside the digest-pinned dhi.io/debian-base container
 # (security architecture per PINNED.md / the approved-container rule).
@@ -40,9 +40,24 @@ permissions:
 
 jobs:
   build-and-verify-uki:
-    name: build + sign + verify signed UKI (assertions 1-3 of 6)
-    runs-on: ubuntu-24.04
+    name: "build + sign + verify signed UKI (assertions 1-3 of 6) [${{ matrix.arch }}]"
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
+    continue-on-error: ${{ matrix.arch == 'arm64' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+            docker_arch: x86_64
+            docker_sha512: 42401384ef853dab0a1986a7990420e77d3ee2bc39e178f8817d27ba6c4403998b7aacf3c28c7172135cdeec281cd328a8f2af949b5f57db44a211a093cfd20b
+            rootless_sha512: 184b583a0f325bef12feaf1ca175ff5ea4a65a168f2136eb1daf9c2ae646eecf02134ed65766c8800bd8eb03ac4d338d1e5d700248bc33632027b5b0b52de48a
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            docker_arch: aarch64
+            docker_sha512: 04713ac54030bed8b2c096280d034b02f5430ed73ba8bcc4a686f7bbbf4a3444eb027847e896cd9ee91c3237dbe1c25a4cfca43d1dcd922a1a10009c960ace0b
+            rootless_sha512: 37649acdaacc597c115d2f19b71a4729a0119c6debbba4b4af18da2fd497ac28f5691df13137b7fc59903551ab0e08868f4b976a9a5704e2b7958b3b5b0cc0af
     container:
       options: --privileged
       volumes:
@@ -79,10 +94,11 @@ jobs:
             curl -fsSL -o "$file" "$url"
             printf '%s  %s\n' "$sha" "$file" | sha512sum --check --strict
           }
-          DOCKER_SHA512=42401384ef853dab0a1986a7990420e77d3ee2bc39e178f8817d27ba6c4403998b7aacf3c28c7172135cdeec281cd328a8f2af949b5f57db44a211a093cfd20b
-          ROOTLESS_SHA512=184b583a0f325bef12feaf1ca175ff5ea4a65a168f2136eb1daf9c2ae646eecf02134ed65766c8800bd8eb03ac4d338d1e5d700248bc33632027b5b0b52de48a
-          wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz" "$DOCKER_SHA512"
-          wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-rootless-extras-29.6.0.tgz" "$ROOTLESS_SHA512"
+          # V79: arch-keyed static docker binaries.
+          DOCKER_SHA512=${{ matrix.docker_sha512 }}
+          ROOTLESS_SHA512=${{ matrix.rootless_sha512 }}
+          wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-29.6.0.tgz" "$DOCKER_SHA512"
+          wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-rootless-extras-29.6.0.tgz" "$ROOTLESS_SHA512"
           tar xzf docker-29.6.0.tgz
           tar xzf docker-rootless-extras-29.6.0.tgz
           install -m 0755 docker/* "$DOCKER_TOOLS_DIR/bin/"
@@ -550,7 +566,7 @@ jobs:
       - name: Upload signed UKI artifact
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v4
         with:
-          name: sealed-uki-artifacts
+          name: sealed-uki-artifacts-${{ matrix.arch }}
           path: |
             mkosi.output/yubios.efi
             mkosi.output/yubios.unsigned.efi
@@ -558,11 +574,53 @@ jobs:
             mkosi.output/pki/sb.key
           retention-days: 7
 
+      - name: Assert UKI machine type matches matrix arch (V79 guard)
+        run: |
+          set -euo pipefail
+          cd "$GITHUB_WORKSPACE"
+          file mkosi.output/yubios.efi
+          case "${{ matrix.arch }}" in
+            amd64) EXPECT='x86-64' ;;
+            arm64) EXPECT='Aarch64' ;;
+          esac
+          file mkosi.output/yubios.efi | grep -qi "$EXPECT" \
+            || { echo "::error::UKI PE machine type does not match matrix arch ${{ matrix.arch }} (expected $EXPECT)"; exit 1; }
+          echo "UKI arch guard PASS: ${{ matrix.arch }}"
+
   boot-secure-vm:
-    name: boot signed UKI in OVMF Secure Boot VM (assertion 4 of 6)
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    name: "boot signed UKI in Secure Boot VM (assertion 4 of 6) [${{ matrix.arch }}]"
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
     needs: [build-and-verify-uki]
+    continue-on-error: ${{ matrix.arch == 'arm64' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+            qemu_pkg: qemu-system-x86
+            fw_pkg: ovmf
+            qemu_bin: qemu-system-x86_64
+            fw_dir: /usr/share/OVMF
+            code_fd: OVMF_CODE_4M.secboot.fd
+            vars_fd: OVMF_VARS_4M.fd
+            machine: q35,smm=on,accel=kvm
+            cpu: host
+            smp: "4"
+            boot_timeout: "60"
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            qemu_pkg: qemu-system-arm
+            fw_pkg: qemu-efi-aarch64
+            qemu_bin: qemu-system-aarch64
+            fw_dir: /usr/share/AAVMF
+            code_fd: AAVMF_CODE.secboot.fd
+            vars_fd: AAVMF_VARS.fd
+            machine: virt,accel=tcg
+            cpu: max
+            smp: "1"
+            boot_timeout: "900"
     container:
       options: --privileged
       volumes:
@@ -577,55 +635,63 @@ jobs:
           set -euo pipefail
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends \
-            qemu-system-x86 ovmf swtpm tpm2-tools curl python3-virt-firmware \
-            systemd-ukify jq
+            ${{ matrix.qemu_pkg }} ${{ matrix.fw_pkg }} swtpm tpm2-tools curl python3-virt-firmware \
+            systemd-ukify jq openssl
+          command -v ${{ matrix.qemu_bin }} >/dev/null 2>&1 || { echo "::error::${{ matrix.qemu_bin }} missing"; exit 1; }
 
       - name: Download signed UKI artifact
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
         with:
-          name: sealed-uki-artifacts
+          name: sealed-uki-artifacts-${{ matrix.arch }}
           path: mkosi.output
 
-      - name: Prepare OVMF Secure Boot firmware (enroll CI cert)
+      - name: Prepare Secure Boot firmware (enroll CI cert)
         run: |
           set -euo pipefail
-          # V76: run 30626142108 (V75, f7c7260e) 404'd here -- tianocore/edk2
-          # GitHub releases do NOT attach OVMF_CODE.fd binaries (source-only
-          # tags), so the curl could never work. The Debian `ovmf` package
-          # (already installed above) ships the firmware locally, including
-          # the Secure Boot-enforcing build. A stock VARS file would also
-          # never satisfy assertion 4: the UKI is signed by the CI-generated
-          # self-signed cert, which stock OVMF has never heard of -- SB must
-          # be provisioned with OUR cert as PK/KEK/db. virt-fw-vars (Debian
-          # python3-virt-firmware) enrolls sb.crt from the downloaded
-          # artifact and flips SecureBootEnable in one pass.
+          # V79: arch-keyed firmware. arm64: AAVMF_CODE.fd is a SYMLINK to
+          # AAVMF_CODE.no-secboot.fd -- using it would boot firmware with SB
+          # compiled out. AAVMF_CODE.secboot.fd is the enforcing build.
           mkdir -p ovmf
-          test -f /usr/share/OVMF/OVMF_CODE_4M.secboot.fd || { echo "::error::OVMF secboot firmware missing from ovmf package"; ls -la /usr/share/OVMF/; exit 1; }
-          cp /usr/share/OVMF/OVMF_CODE_4M.secboot.fd ovmf/OVMF_CODE.fd
+          test -f ${{ matrix.fw_dir }}/${{ matrix.code_fd }} \
+            || { echo "::error::${{ matrix.code_fd }} missing from ${{ matrix.fw_pkg }}"; ls -la ${{ matrix.fw_dir }}/; exit 1; }
+          test -f ${{ matrix.fw_dir }}/${{ matrix.vars_fd }} \
+            || { echo "::error::${{ matrix.vars_fd }} missing"; ls -la ${{ matrix.fw_dir }}/; exit 1; }
+          cp -L ${{ matrix.fw_dir }}/${{ matrix.code_fd }} ovmf/CODE.fd
           GUID="a0baa8a3-041d-48a8-bc87-c36d121b5e3d"
           virt-fw-vars \
-            --input /usr/share/OVMF/OVMF_VARS_4M.fd \
-            --output ovmf/OVMF_VARS.run.fd \
+            --input ${{ matrix.fw_dir }}/${{ matrix.vars_fd }} \
+            --output ovmf/VARS.run.fd \
             --secure-boot \
             --set-pk  "$GUID" mkosi.output/pki/sb.crt \
             --add-kek "$GUID" mkosi.output/pki/sb.crt \
             --add-db  "$GUID" mkosi.output/pki/sb.crt
-          virt-fw-vars --input ovmf/OVMF_VARS.run.fd --print | grep -i secure || true
+          virt-fw-vars --input ovmf/VARS.run.fd --print | grep -i secure || true
+          if [ "${{ matrix.arch }}" = "arm64" ]; then
+            openssl genrsa -out /tmp/foreign.key 2048 2>/dev/null
+            openssl req -new -x509 -key /tmp/foreign.key -sha256 -days 1 \
+              -subj "/CN=Foreign ROTPK (arm64 SB differential)" -out /tmp/foreign.crt
+            FGUID="a0baa8a3-041d-48a8-bc87-c36d5badc0de"
+            virt-fw-vars \
+              --input ${{ matrix.fw_dir }}/${{ matrix.vars_fd }} \
+              --output ovmf/VARS.foreign.fd \
+              --secure-boot \
+              --set-pk  "$FGUID" /tmp/foreign.crt \
+              --add-kek "$FGUID" /tmp/foreign.crt \
+              --add-db  "$FGUID" /tmp/foreign.crt
+          fi
 
-      - name: Boot signed UKI in QEMU OVMF Secure Boot VM
+      - name: Boot signed UKI in QEMU Secure Boot VM
         run: |
           set -euo pipefail
-          # V73: same extraction fix as assertion 3 -- ukify inspect needs
-          # --json=short (compact JSON) and the cmdline string lives at
-          # .[".cmdline"].text; bare .[".cmdline"] returns an object.
           ukify inspect mkosi.output/yubios.efi --json=short \
             | jq -r '.[".cmdline"].text // empty' > /tmp/cmdline.txt
           test -s /tmp/cmdline.txt || { echo "::error::empty cmdline extracted from UKI"; exit 1; }
-          timeout 60 qemu-system-x86_64 \
-            -machine q35,smm=on,accel=kvm \
-            -cpu host -smp 4 -m 4G \
-            -drive if=pflash,format=raw,readonly=on,file=ovmf/OVMF_CODE.fd \
-            -drive if=pflash,format=raw,file=ovmf/OVMF_VARS.run.fd \
+          START=$(date +%s)
+          timeout ${{ matrix.boot_timeout }} ${{ matrix.qemu_bin }} \
+            -machine ${{ matrix.machine }} \
+            -cpu ${{ matrix.cpu }} -smp ${{ matrix.smp }} -m 4G \
+            -drive if=pflash,format=raw,readonly=on,file=ovmf/CODE.fd \
+            -drive if=pflash,format=raw,file=ovmf/VARS.run.fd \
             -kernel mkosi.output/yubios.efi \
             -append "$(cat /tmp/cmdline.txt)" \
             -nographic \
@@ -633,16 +699,50 @@ jobs:
             -display none \
             -no-reboot \
             > /tmp/qemu.log 2>&1 || true
-          if grep -E -i 'Secure Boot[: ]+(enabled|yes)' /tmp/qemu.log; then
-            echo "Assertion 4 PASS: systemd-stub reports Secure Boot enabled"
+          echo "=== QEMU wall time: $(( $(date +%s) - START ))s (limit ${{ matrix.boot_timeout }}s) ==="
+          echo "=== full serial log ($(wc -l < /tmp/qemu.log) lines) ==="
+          cat /tmp/qemu.log
+          echo "=== end serial log ==="
+          if [ "${{ matrix.arch }}" = "amd64" ]; then
+            if grep -E -i 'Secure Boot[: ]+(enabled|yes)' /tmp/qemu.log; then
+              echo "Assertion 4 PASS: systemd-stub reports Secure Boot enabled"
+            else
+              echo "::error::Secure Boot not detected in QEMU log"; tail -50 /tmp/qemu.log; exit 1
+            fi
           else
-            echo "::error::Secure Boot not detected in QEMU log"
-            tail -50 /tmp/qemu.log
-            exit 1
+            # arm64: differential SB proof (strictly stronger than grep).
+            grep -q 'Booting Linux' /tmp/qemu.log \
+              || { echo "::error::arm64 positive leg: UKI never executed under SB-enforcing AAVMF"; exit 1; }
+            echo "arm64 positive leg PASS: signed UKI executed with our cert in db"
+            START=$(date +%s)
+            timeout ${{ matrix.boot_timeout }} ${{ matrix.qemu_bin }} \
+              -machine ${{ matrix.machine }} \
+              -cpu ${{ matrix.cpu }} -smp ${{ matrix.smp }} -m 4G \
+              -drive if=pflash,format=raw,readonly=on,file=ovmf/CODE.fd \
+              -drive if=pflash,format=raw,file=ovmf/VARS.foreign.fd \
+              -kernel mkosi.output/yubios.efi \
+              -append "$(cat /tmp/cmdline.txt)" \
+              -nographic \
+              -serial mon:stdio \
+              -display none \
+              -no-reboot \
+              > /tmp/qemu-foreign.log 2>&1 || true
+            echo "=== foreign-db QEMU wall time: $(( $(date +%s) - START ))s ==="
+            cat /tmp/qemu-foreign.log
+            if grep -q 'Booting Linux' /tmp/qemu-foreign.log; then
+              echo "::error::arm64 negative leg FAIL: AAVMF executed our UKI with a FOREIGN db -- SB not enforcing"
+              exit 1
+            fi
+            echo "Assertion 4 PASS (arm64, differential): AAVMF executed the UKI with our cert enrolled and refused it with a foreign db"
           fi
 
+  # V79: deliberately NOT matrix'd. Negative 3 asserts on x86-only
+  # kernel string 'secureboot: Secure boot enabled' (arch/x86/kernel/setup.c);
+  # on arm64 that string can never appear -> the FAIL branch could never fire
+  # and the test would pass VACUOUSLY. arm64 SB proof lives in boot-secure-vm
+  # as a positive/foreign-db differential. Negative 2 deferred per user.
   negative-tamper-tests:
-    name: 3 negative tamper tests (all 3 implemented)
+    name: "3 negative tamper tests -- amd64 only [Negative 3 implemented]"
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     needs: [boot-secure-vm]
@@ -669,10 +769,10 @@ jobs:
             systemd-ukify jq sbsigntool openssl
           command -v sbverify >/dev/null 2>&1 || { echo "::error::sbverify missing after sbsigntool install"; exit 1; }
 
-      - name: Download signed UKI artifact
+      - name: Download signed UKI artifact (amd64 build, V79 arch-keyed)
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
         with:
-          name: sealed-uki-artifacts
+          name: sealed-uki-artifacts-amd64
           path: mkosi.output
 
       - name: Negative 1 -- tampered UKI byte flip -> sbverify rejection
