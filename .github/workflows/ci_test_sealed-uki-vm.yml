@@ -215,17 +215,19 @@ jobs:
             cat "${RUNNER_TEMP}/dockerd.log"
             exit 1
           fi
-          # V17: install systemd-ukify inside the container first. yubiOS images are
-          # minimal and don't ship ukify, but `bootc container ukify` needs it in
-          # PATH to build the UKI. `dnf install` is a no-op if already present
-          # (idempotent), so this is safe to keep.
+          # V17+V18: install systemd-ukify inside the container first, then bind-mount
+          # / to /target so `bootc container ukify` can compute the composefs digest
+          # against a non-active target. Without --target (V17 alone), bootc errors:
+          #   "Cannot operate on active root filesystem; mount separate target instead"
+          # The container is `--privileged` so `mount --bind` works. dnf install is
+          # idempotent (|| true so it's a no-op if systemd-ukify is already present).
           docker run --rm --privileged --pid=host --ipc=host \
             --security-opt label=type:unconfined_t \
             -v /var/lib/containers:/var/lib/containers \
             -v "$PWD/mkosi.output:/output" \
             -v /dev:/dev \
             "$RESOLVED_IMAGE" \
-            bash -c 'set -euo pipefail; dnf install -y systemd-ukify || true; exec bootc container ukify -- --output /output/yubios.unsigned.efi'
+            bash -c 'set -euo pipefail; dnf install -y systemd-ukify || true; mkdir -p /target; mount --bind / /target; exec bootc container ukify --target /target -- --output /output/yubios.unsigned.efi'
           systemd-sbsign sign \
             --private-key=pkcs11:token=yubiOS-ci;object=sb-key;type=private \
             --private-key-source=engine:pkcs11 \
