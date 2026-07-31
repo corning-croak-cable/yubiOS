@@ -577,7 +577,7 @@ jobs:
           set -euo pipefail
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends \
-            qemu-system-x86 ovmf swtpm tpm2-tools curl
+            qemu-system-x86 ovmf swtpm tpm2-tools curl python3-virt-firmware
 
       - name: Download signed UKI artifact
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
@@ -585,16 +585,31 @@ jobs:
           name: sealed-uki-artifacts
           path: mkosi.output
 
-      - name: Fetch OVMF firmware
+      - name: Prepare OVMF Secure Boot firmware (enroll CI cert)
         run: |
           set -euo pipefail
+          # V76: run 30626142108 (V75, f7c7260e) 404'd here -- tianocore/edk2
+          # GitHub releases do NOT attach OVMF_CODE.fd binaries (source-only
+          # tags), so the curl could never work. The Debian `ovmf` package
+          # (already installed above) ships the firmware locally, including
+          # the Secure Boot-enforcing build. A stock VARS file would also
+          # never satisfy assertion 4: the UKI is signed by the CI-generated
+          # self-signed cert, which stock OVMF has never heard of -- SB must
+          # be provisioned with OUR cert as PK/KEK/db. virt-fw-vars (Debian
+          # python3-virt-firmware) enrolls sb.crt from the downloaded
+          # artifact and flips SecureBootEnable in one pass.
           mkdir -p ovmf
-          OVMF_VERSION="edk2-stable202405"
-          curl -fsSL -o ovmf/OVMF_CODE.fd \
-            "https://github.com/tianocore/edk2/releases/download/$OVMF_VERSION/OVMF_CODE.fd"
-          curl -fsSL -o ovmf/OVMF_VARS.fd \
-            "https://github.com/tianocore/edk2/releases/download/$OVMF_VERSION/OVMF_VARS.fd"
-          cp ovmf/OVMF_VARS.fd ovmf/OVMF_VARS.run.fd
+          test -f /usr/share/OVMF/OVMF_CODE_4M.secboot.fd || { echo "::error::OVMF secboot firmware missing from ovmf package"; ls -la /usr/share/OVMF/; exit 1; }
+          cp /usr/share/OVMF/OVMF_CODE_4M.secboot.fd ovmf/OVMF_CODE.fd
+          GUID="a0baa8a3-041d-48a8-bc87-c36d121b5e3d"
+          virt-fw-vars \
+            --input /usr/share/OVMF/OVMF_VARS_4M.fd \
+            --output ovmf/OVMF_VARS.run.fd \
+            --secure-boot \
+            --set-pk  "$GUID" mkosi.output/pki/sb.crt \
+            --add-kek "$GUID" mkosi.output/pki/sb.crt \
+            --add-db  "$GUID" mkosi.output/pki/sb.crt
+          virt-fw-vars --input ovmf/OVMF_VARS.run.fd --print | grep -i secure || true
 
       - name: Boot signed UKI in QEMU OVMF Secure Boot VM
         run: |
