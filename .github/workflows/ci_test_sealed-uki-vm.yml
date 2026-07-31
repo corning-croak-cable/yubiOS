@@ -215,29 +215,29 @@ jobs:
             cat "${RUNNER_TEMP}/dockerd.log"
             exit 1
           fi
-          # V17+V18: install systemd-ukify inside the container first, then bind-mount
-          # / to /target so `bootc container ukify` can compute the composefs digest
-          # against a non-active target. Without --target (V17 alone), bootc errors:
+          # V26: combine `dnf install` + `bootc container ukify` into ONE docker run.
+          # V25 split them into 2 separate docker runs; the install was on a throwaway
+          # container and did NOT persist to the bootc container (containers are ephemeral
+          # unless committed). V25's bootc step failed with:
+          #   "error: Building UKI: ukify executable not found in PATH.
+          #    Please install systemd-ukify or equivalent."
+          # (verified in run #33 at 04:02:24Z). The fix: do install + ukify in the same
+          # container, chained with && so the bootc call only runs if install succeeds.
+          # Bind-mount / to /target so `bootc container ukify` can compute the composefs
+          # digest against a non-active target. Without --target, bootc errors:
           #   "Cannot operate on active root filesystem; mount separate target instead"
-          # The container is `--privileged` so `mount --bind` works. dnf install is
-          # idempotent (|| true so it's a no-op if systemd-ukify is already present).
-          # V24: split into 3 separate docker runs to avoid bash -c quoting hazards (V23's
-          # multi-line bash -c broke — dnf/bootc escaped to host execution).
+          # The container is `--privileged` so `mount --bind` works. Single-line bash -c
+          # with && chaining (proven V18 pattern, avoids V23 multi-line quoting bug).
           # systemd-sbsign is part of systemd on the Fedora bootc IMAGE; mount the
           # host's /var/lib/softhsm so the container's PKCS#11 engine reaches the token.
-          # Step 1: install signing tools inside the container.
-          docker run --rm --privileged \
-            --security-opt label=type:unconfined_t \
-            "$RESOLVED_IMAGE" \
-            dnf install -y systemd-ukify opensc softhsm || true
-          # Step 2: build unsigned UKI (proven V18 pattern).
+          # Step 1+2 combined: install signing tools + build unsigned UKI.
           docker run --rm --privileged --pid=host --ipc=host \
             --security-opt label=type:unconfined_t \
             -v /var/lib/containers:/var/lib/containers \
             -v "$PWD/mkosi.output:/output" \
             -v /dev:/dev \
             "$RESOLVED_IMAGE" \
-            bash -c "set -euo pipefail; mkdir -p /target; mount --bind / /target; bootc container ukify --rootfs /target -- --output /output/yubios.unsigned.efi"
+            bash -c "set -euo pipefail; dnf install -y systemd-ukify opensc softhsm && mkdir -p /target && mount --bind / /target && bootc container ukify --rootfs /target -- --output /output/yubios.unsigned.efi"
           # Step 3: sign the UKI with systemd-sbsign using PKCS#11 + SoftHSM token (mounted from host).
           docker run --rm --privileged \
             --security-opt label=type:unconfined_t \
