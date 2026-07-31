@@ -106,7 +106,16 @@ jobs:
           if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
             sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
           fi
-          setpriv \
+          # V7: detach the rootless dockerd into its own session so it
+          # survives the step-4 shell exit. GitHub Actions runs each step
+          # in a fresh shell; bare '&' leaves the daemon in the parent
+          # process group, which gets SIGHUP'd when the shell exits.
+          #   setsid -> new session (immune to session-leader HUP)
+          #   nohup  -> ignore SIGHUP directly
+          #   < /dev/null -> detach stdin from the closing shell's FDs
+          #   disown -> remove from job table so the shell doesn't track
+          #     it for cleanup at exit
+          nohup setsid setpriv \
             --reuid="$ROOTLESS_USER" \
             --regid="$ROOTLESS_USER" \
             --init-groups \
@@ -121,7 +130,8 @@ jobs:
                 --data-root="$ROOTLESS_DATA_DIR" \
                 --storage-driver=fuse-overlayfs \
                 -H "unix://${ROOTLESS_SOCKET}" \
-            > "${RUNNER_TEMP}/dockerd-rootless.log" 2>&1 &
+            > "${RUNNER_TEMP}/dockerd-rootless.log" 2>&1 < /dev/null &
+          disown || true
           for i in $(seq 1 60); do
             docker -H "unix://${ROOTLESS_SOCKET}" info >/dev/null 2>&1 && break
             sleep 1
