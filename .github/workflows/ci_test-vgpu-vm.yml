@@ -888,7 +888,8 @@ jobs:
       matrix:
         include:
           - arch: amd64
-            runner: ubuntu-24.04
+            runner: [self-hosted, Linux, ARM64, KVM]
+
             root_type_guid: 4f68bce3-e8cd-4db1-96e7-fbcaf984b709
             qemu: qemu-system-x86_64
             fw_dir: /usr/share/OVMF
