@@ -82,7 +82,7 @@ jobs:
           wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz" "$DOCKER_SHA512"
           wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-rootless-extras-29.6.0.tgz" "$ROOTLESS_SHA512"
           tar xzf docker-29.6.0.tgz
-          tar xzf docker-rootless-extras.tgz
+          tar xzf docker-rootless-extras-29.6.0.tgz
           install -m 0755 docker/* "$DOCKER_TOOLS_DIR/bin/"
           install -m 0755 docker-rootless-extras/dockerd-rootless.sh "$DOCKER_TOOLS_DIR/bin/"
           install -m 0755 docker-rootless-extras/rootlesskit "$DOCKER_TOOLS_DIR/bin/"
