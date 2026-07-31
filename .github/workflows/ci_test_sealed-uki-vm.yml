@@ -63,7 +63,7 @@ jobs:
             git curl iproute2 iptables nftables passwd procps util-linux \
             uidmap slirp4netns fuse-overlayfs \
             binutils dosfstools e2fsprogs jq \
-            mkosi opensc softhsm2 tpm2-tools \
+            mkosi opensc softhsm2 tpm2-tools systemd-sbsign \
             docker.io containerd runc
           command -v mkosi systemd-sbsign sbverify \
             softhsm2-util pkcs11-tool docker dockerd \
