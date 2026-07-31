@@ -152,7 +152,7 @@ jobs:
           esac
           echo "RESOLVED_IMAGE=$RESOLVED_IMAGE" >> "$GITHUB_ENV"
 
-      - name: Generate PKI as plain files (V37: drops host softhsm init + cross-mount)
+      - name: Generate PKI as plain files (V38: cert + PKCS#8 PEM on host, no cross-mount)
         run: |
           set -euxo pipefail
           cd "$GITHUB_WORKSPACE"
@@ -184,7 +184,7 @@ jobs:
           ls -la mkosi.output/pki/
           echo "=== V37 PKI ready: $(ls mkosi.output/pki/ | wc -l) files ==="
 
-      - name: Verify cert on host (V30 diagnostic)
+      - name: Verify PKI on host (V38 diagnostic: cert + PKCS#8)
         run: |
           set -euxo pipefail
           echo "PWD=$PWD"
@@ -284,17 +284,26 @@ jobs:
           # bugs has cost 5+ iterations. Merging into one container ensures the cert
           # (Step 6 output) and the unsigned UKI (bootc output) share the same filesystem
           # layer with no overlay/mount-mask surprises.
-          # V36: drop bind-mount for cert entirely (V35's single-file mount caused
+          # V38: pass BOTH cert + PKCS#8 as base64 env vars. V35 single-file bind-mount
+          # -> EISDIR; V36 cross-mount -> cross-version BDB; V37 env vars forgot KEY_P8_B64
+          # (set -u exits on first echo). Inner bash decodes /tmp/sb.crt + /tmp/sb.p8. No
+          # bind mounts for PKI files. Container initializes own token dir + imports
+          # sb.p8 via softhsm2-util --import. V36's -v /var/lib/softhsm:ro mount was dropped
+          # because the host has no tokens anymore (keeping it would EROFS the container).
           # EISDIR on /output/pki/sb.crt). Pass cert as base64 env var instead --
           # the inner bash decodes it to /tmp/sb.crt. No bind mount = no shadowing.
           CERT_B64=$(base64 -w 0 "$GITHUB_WORKSPACE/mkosi.output/pki/sb.crt")
+          KEY_P8_B64=$(base64 -w 0 "$GITHUB_WORKSPACE/mkosi.output/pki/sb.p8")
+          # ARG_MAX is ~128KB on Linux; both encoded payloads are well under 1KB.
+          echo "CERT_B64 length: ${#CERT_B64} chars"
+          echo "KEY_P8_B64 length: ${#KEY_P8_B64} chars"
           docker run --rm --privileged --pid=host --ipc=host \
             --security-opt label=type:unconfined_t \
             -v /var/lib/containers:/var/lib/containers \
-            -v /var/lib/softhsm:/run/yubios-hsm:ro \
             -v "$GITHUB_WORKSPACE/mkosi.output:/output" \
             -v /dev:/dev \
             -e CERT_B64="$CERT_B64" \
+            -e KEY_P8_B64="$KEY_P8_B64" \
             "$RESOLVED_IMAGE" \
             bash -c 'set -euo pipefail; echo "$CERT_B64" | base64 -d > /tmp/sb.crt && echo "$KEY_P8_B64" | base64 -d > /tmp/sb.p8 && ls -la /tmp/sb.crt /tmp/sb.p8 && file /tmp/sb.crt /tmp/sb.p8 && dnf install -y systemd-ukify opensc softhsm pkcs11-provider && mkdir -p /target /run/yubios-hsm/tokens && mount --bind / /target && bootc container ukify --rootfs /target -- --output /output/yubios.unsigned.efi && printf "directories.tokendir = /run/yubios-hsm/tokens\nobjectstore.backend = file\n" > /run/yubios-hsm/softhsm2.conf && export SOFTHSM2_CONF=/run/yubios-hsm/softhsm2.conf && softhsm2-util --init-token --free --label yubiOS-ci --pin 1234 --so-pin 1234 && softhsm2-util --import /tmp/sb.p8 --token yubiOS-ci --label sb-key --pin 1234 && chmod -R a+rwX /run/yubios-hsm && export PKCS11_PROVIDER_MODULE=/usr/lib64/libsofthsm2.so && /usr/lib/systemd/systemd-sbsign sign --private-key="pkcs11:token=yubiOS-ci;object=sb-key;type=private?pin-value=1234" --private-key-source=provider:pkcs11 --certificate=/tmp/sb.crt --output=/output/yubios.efi.tmp /output/yubios.unsigned.efi && mv /output/yubios.efi.tmp /output/yubios.efi'
 
