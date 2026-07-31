@@ -887,18 +887,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: arm64
-        runner: [self-hosted, Linux, ARM64, KVM]
-        root_type_guid: b921b045-1df0-41c3-af44-4c6f280d3fae
-        qemu: qemu-system-aarch64
-        fw_dir: /usr/share/AAVMF
-        code_fd: AAVMF_CODE.fd
-        vars_fd: AAVMF_VARS.fd
-        machine: virt,accel=kvm
-        cpu: host
-        smp: "1"
-        boot_timeout: "120"
-        console_arg: console=ttyAMA0,115200
+        include:
+          - arch: arm64
+            runner: [self-hosted, Linux, ARM64, KVM]
+            root_type_guid: b921b045-1df0-41c3-af44-4c6f280d3fae
+            qemu: qemu-system-aarch64
+            fw_dir: /usr/share/AAVMF
+            code_fd: AAVMF_CODE.fd
+            vars_fd: AAVMF_VARS.fd
+            machine: virt,accel=kvm
+            cpu: host
+            smp: "1"
+            boot_timeout: "120"
+            console_arg: console=ttyAMA0,115200
+
 
     env:
       REQUESTED_IMAGE: ${{ inputs.ci_vm_image || inputs.image || 'docker.io/0mniteck/yubios:dev' }}
