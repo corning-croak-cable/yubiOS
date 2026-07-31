@@ -154,7 +154,8 @@ jobs:
 
       - name: Bootstrap SoftHSM slot emulating PIV 9c
         run: |
-          set -euo pipefail
+          set -euxo pipefail
+          cd "$GITHUB_WORKSPACE"
           # Set explicit token store + conf (per ci_mkosi-installer.yml pattern).
           # On Debian trixie (dhi container), libsofthsm2.so lives at
           # /usr/lib/softhsm/libsofthsm2.so, NOT /usr/lib64/libsofthsm2.so
@@ -180,6 +181,27 @@ jobs:
             --login --pin 1234 \
             --write-object mkosi.output/pki/sb.crt \
             --type cert --label sb-cert
+
+      - name: Verify cert on host (V30 diagnostic)
+        run: |
+          set -euxo pipefail
+          echo "PWD=$PWD"
+          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
+          echo "--- ls -la mkosi.output/ ---"
+          ls -la mkosi.output/ 2>&1 || echo "mkosi.output/ does not exist"
+          echo "--- ls -la mkosi.output/pki/ ---"
+          ls -la mkosi.output/pki/ 2>&1 || echo "mkosi.output/pki/ does not exist"
+          echo "--- test -f mkosi.output/pki/sb.crt ---"
+          if test -f mkosi.output/pki/sb.crt; then
+            echo "OK: cert present"
+            ls -la mkosi.output/pki/sb.crt
+            file mkosi.output/pki/sb.crt 2>/dev/null || true
+          else
+            echo "ERROR: cert missing at mkosi.output/pki/sb.crt"
+            echo "--- searching for sb.crt anywhere under \$PWD ---"
+            find . -name 'sb.crt' -type f 2>/dev/null | head -20 || true
+            exit 1
+          fi
 
       - name: Build signed UKI from image (bootc container ukify + systemd-sbsign)
         run: |
