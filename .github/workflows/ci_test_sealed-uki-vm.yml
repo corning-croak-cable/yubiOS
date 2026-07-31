@@ -174,7 +174,21 @@ jobs:
           # on the host and let the Fedora container initialize a fresh
           # token + import the key via softhsm2-util --import. No
           # cross-mount, no cross-version BDB.
-          openssl genrsa -out mkosi.output/pki/sb.key 2048
+          # V68: bump RSA-2048 -> RSA-4096 for Secure Boot signing key (sb.key).
+          # User directive (3:30 PT Friday): "new issue so bump to rsa4096 then debug".
+          # V67 (e2fea142) fix landed the argparse arg-order bug for ukify (assertions
+          # 1 + 2 now PASS) but uncovered a NEW issue at assertion 3 -- the awk
+          # pattern extracting the UKI .cmdline value gets nothing because ukify
+          # --json=short emits multi-line output (header on one line, value on
+          # subsequent lines). That's a V69 fix (different concern, different
+          # commit). The RSA-2048 -> RSA-4096 bump is a STANDALONE change per the
+          # user's directive, done independently of V69 so V69 can focus on the
+          # extraction logic. Also: RSA-4096 matches UEFI Secure Boot db key
+          # conventions and gives margin against future softhsm mechanism quirks
+          # (V56 evidence -- rsa2048-provider PASS, ec-provider FAIL on multi-part
+          # digest-sign; RSA mechanisms are natively multi-part, RSA-4096 inherits
+          # the same compatibility).
+          openssl genrsa -out mkosi.output/pki/sb.key 4096
           openssl req -new -x509 \
             -key mkosi.output/pki/sb.key \
             -out mkosi.output/pki/sb.crt \
