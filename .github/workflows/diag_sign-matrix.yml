@@ -1,9 +1,8 @@
 name: DIAG - UKI signing matrix (10 variants)
 
-# v2: RSA focus. v1 proved single-part provider sign works but every
-# multi-part (digest-sign) pkcs11 path fails = softhsm 2.7.0 hashed-ECDSA
-# bug (PR 683, single-part only). RSA mechanisms are multi-part native in
-# softhsm, so RSA-2048 keys should unblock systemd-sbsign provider:pkcs11.
+# Stub on main so workflow_dispatch is registered; the full matrix
+# lives on the sealed-uki-vm-lane-v2 branch. Dispatch with ref=<branch>.
+# Same pattern as ci_test_sealed-uki-vm.yml.
 
 on:
   workflow_dispatch: {}
