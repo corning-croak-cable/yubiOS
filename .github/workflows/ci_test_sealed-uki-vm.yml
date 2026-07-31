@@ -658,18 +658,16 @@ jobs:
       - name: Install VM dependencies for Negative 3
         run: |
           set -euo pipefail
-          # V79: run 30627590276 (V78, 1c9ddd8b) failed at "OVMF secboot
-          # firmware missing" -- the negative job's container was the bare
-          # dhi.io debian-base; Negative 3 now boots QEMU itself with a
-          # foreign OVMF varstore, so it needs the same qemu/ovmf/virt-fw
-          # stack as the boot-secure-vm job. sbverify (for Negative 1) is
-          # already provided by osslsigncode or system openssl on Debian
-          # -- check.
-          command -v sbverify >/dev/null 2>&1 || { echo "::error::sbverify missing (needed for Negative 1)"; exit 1; }
+          # V80: V79 (7ef35f95, run 30627902934) hit "sbverify missing" -- I
+          # assumed sbverify would already be in the dhi.io debian-base; it
+          # isn't. sbverify lives in the sbsigntool package (per Debian
+          # tracker, packages.debian.org/trixie/sbsigntool) -- install it
+          # alongside the rest of the VM/UKI stack the negative job needs.
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends \
             qemu-system-x86 ovmf python3-virt-firmware \
-            systemd-ukify jq
+            systemd-ukify jq sbsigntool openssl
+          command -v sbverify >/dev/null 2>&1 || { echo "::error::sbverify missing after sbsigntool install"; exit 1; }
 
       - name: Download signed UKI artifact
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
