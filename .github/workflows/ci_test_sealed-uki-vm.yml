@@ -275,23 +275,21 @@ jobs:
           # 'cpio: chown failed - No data available' (run #37, exit 1). /run/ is
           # safe for both RPM install and bind-mounts -- matches the canonical
           # ci_mkosi-installer.yml path. SOFTHSM2_CONF points tokendir at the
-          # remounted path: /run/yubios-hsm/tokens.
-          # ones -- the outer runner shell expands $RESOLVED_IMAGE/$PWD only.
-          # Step 1+2 combined: install signing tools + build unsigned UKI.
+          # V32: merge Step 1+2 (build unsigned UKI) + Step 3 (sign with sbsign) into ONE docker run.
+          # V31 (run #41) proved that two separate docker runs with the same -v mount can
+          # diverge: Step 1+2 wrote /output/yubios.unsigned.efi OK, but Step 3's fresh
+          # container saw /output/pki/ as missing. The ephemeral-container class of
+          # bugs has cost 5+ iterations. Merging into one container ensures the cert
+          # (Step 6 output) and the unsigned UKI (bootc output) share the same filesystem
+          # layer with no overlay/mount-mask surprises.
           docker run --rm --privileged --pid=host --ipc=host \
             --security-opt label=type:unconfined_t \
             -v /var/lib/containers:/var/lib/containers \
+            -v /var/lib/softhsm:/run/yubios-hsm:ro \
             -v "$GITHUB_WORKSPACE/mkosi.output:/output" \
             -v /dev:/dev \
             "$RESOLVED_IMAGE" \
-            bash -c "set -euo pipefail; dnf install -y systemd-ukify opensc softhsm && mkdir -p /target && mount --bind / /target && bootc container ukify --rootfs /target -- --output /output/yubios.unsigned.efi"
-          # Step 3: sign UKI via systemd-sbsign + provider:pkcs11 + SoftHSM token (mounted from host).
-          docker run --rm --privileged \
-            --security-opt label=type:unconfined_t \
-            -v /var/lib/softhsm:/run/yubios-hsm:ro \
-            -v "$GITHUB_WORKSPACE/mkosi.output:/output" \
-            "$RESOLVED_IMAGE" \
-            bash -c "set -euo pipefail; dnf install -y softhsm pkcs11-provider; printf 'directories.tokendir = /run/yubios-hsm/tokens\nobjectstore.backend = file\n' > /tmp/softhsm2.conf; export SOFTHSM2_CONF=/tmp/softhsm2.conf PKCS11_PROVIDER_MODULE=/usr/lib64/pkcs11/libsofthsm2.so; /usr/lib/systemd/systemd-sbsign sign --private-key='pkcs11:token=yubiOS-ci;object=sb-key;type=private?pin-value=1234' --private-key-source=provider:pkcs11 --certificate=/output/pki/sb.crt --output=/output/yubios.efi.tmp /output/yubios.unsigned.efi && mv /output/yubios.efi.tmp /output/yubios.efi"
+            bash -c "set -euo pipefail; dnf install -y systemd-ukify opensc softhsm pkcs11-provider && mkdir -p /target && mount --bind / /target && bootc container ukify --rootfs /target -- --output /output/yubios.unsigned.efi && printf 'directories.tokendir = /run/yubios-hsm/tokens\nobjectstore.backend = file\n' > /tmp/softhsm2.conf && export SOFTHSM2_CONF=/tmp/softhsm2.conf PKCS11_PROVIDER_MODULE=/usr/lib64/pkcs11/libsofthsm2.so && /usr/lib/systemd/systemd-sbsign sign --private-key='pkcs11:token=yubiOS-ci;object=sb-key;type=private?pin-value=1234' --private-key-source=provider:pkcs11 --certificate=/output/pki/sb.crt --output=/output/yubios.efi.tmp /output/yubios.unsigned.efi && mv /output/yubios.efi.tmp /output/yubios.efi"
 
       - name: Assert signed UKI is well-formed (assertions 1-3 of 6)
         run: |
