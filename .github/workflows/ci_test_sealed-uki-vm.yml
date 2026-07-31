@@ -1,0 +1,42 @@
+name: TEST - sealed UKI Secure Boot VM e2e
+
+# Companion to ci_test_bootc-filesystem.yml. Proves the Secure Boot VM lane
+# that the bootc-to-filesystem workflow explicitly carves out at its lines 6-7.
+# Parent issue: OMN-53. Stub: full implementation in refs/sealed-uki-vm-test-2026-07-30.md.
+
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: Pullable yubiOS OCI image ref
+        required: true
+        default: 'docker.io/0mniteck/yubios:dev'
+        type: string
+  workflow_call:
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  build-and-boot:
+    name: signed-UKI Secure Boot VM e2e (amd64)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+
+      - name: Bootstrap SoftHSM slot emulating PIV 9c
+        run: |
+          set -euo pipefail
+          softhsm2-util --init-token --slot 0 --label yubiOS-ci --pin 1234 --so-pin 1234
+
+      - name: Pull yubiOS image
+        run: docker pull "${{ inputs.image }}"
+
+      - name: Stub: build signed UKI from image, boot in OVMF Secure Boot VM
+        run: |
+          echo "TODO: see refs/sealed-uki-vm-test-2026-07-30.md for the full implementation."
+          echo "TODOs: mkosi ukify, systemd-sbsign sign, qemu-system-x86_64 with OVMF Secure Boot + swtpm, then negative tamper tests."
+          exit 0
