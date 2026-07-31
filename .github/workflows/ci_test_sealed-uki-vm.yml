@@ -484,9 +484,32 @@ jobs:
           # to consume `short` as its value (the Geteopt-style `=` flag-value
           # syntax), leaving `$file` as the single positional file arg.
           ukify inspect "$SIGNED_EFI" --json=short > /tmp/inspect.txt \
-            || { echo "::error::ukify inspect FILE --json=short failed"; exit 1; }
+            || { echo "::error::jq -r '.[".cmdline"].text' extraction from /tmp/inspect.txt failed"; exit 1; }
           test -s /tmp/inspect.txt || { echo "::error::/tmp/inspect.txt empty (ukify produced no output)"; exit 1; }
-          awk -F': ' '/^\.cmdline:/{print $2}' /tmp/inspect.txt > /tmp/cmdline.txt \
+          # V69: ukify inspect --json=short + jq for cmdline extraction (replace awk).
+          # V67 (e2fea142) and V68 (75f9b0ca) both failed at assertion 3 with:
+          #   ##[error]no roothash= in UKI .cmdline
+          # V67 fixed the ukify invocation (arg order: `ukify inspect FILE --json=short`
+          # -- file before --json=short) so assertions 1 + 2 PASS. But the awk
+          # extraction of the .cmdline value got nothing because ukify --json=short
+          # does NOT produce `.cmdline: <value>` text format -- it produces COMPACT
+          # JSON. v257.13 src/ukify/ukify.py:1514-1521 (inspect_sections): for
+          # --json != 'off', `json.dump(descs, sys.stdout, indent=indent)` with
+          # indent=None for --json=short produces single-line JSON like:
+          #   {".cmdline": {"size": N, "sha256": "...", "text": "roothash=..."},
+          #    ".linux": {...}, ".initrd": {...}}
+          # The awk pattern `/^\.cmdline:/{print $2}` only matches lines starting
+          # with literal `.cmdline:` -- the JSON line starts with `{` and uses
+          # `".cmdline":` (with quotes) so awk matches nothing. /tmp/cmdline.txt
+          # ends up empty. v257.13 src/ukify/ukify.py:378-393 (DEFAULT_SECTIONS_TO_SHOW)
+          # maps `.cmdline: 'text'`, so `.cmdline.text` is always present in the
+          # JSON output (no need for --all). Fix: replace awk with jq. jq handles
+          # the compact JSON cleanly and `.[".cmdline"].text` returns the cmdline
+          # string. The `// empty` fallback returns nothing for missing fields
+          # rather than `null` (so grep can detect "no roothash" cleanly).
+          # Active code in V69:
+          jq -r '.[".cmdline"].text // empty' /tmp/inspect.txt > /tmp/cmdline.txt \
+
             || { echo "::error::awk extract of .cmdline from /tmp/inspect.txt failed"; exit 1; }
           grep -E '\broothash=[0-9a-f]{64}\b' /tmp/cmdline.txt \
             || { echo "::error::no roothash= in UKI .cmdline"; exit 1; }
