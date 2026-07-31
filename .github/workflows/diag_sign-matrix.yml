@@ -1,0 +1,20 @@
+name: DIAG - UKI signing matrix (10 variants)
+
+# Stub on main so workflow_dispatch is registered; the full matrix
+# lives on the sealed-uki-vm-lane-v2 branch. Dispatch with ref=<branch>.
+# Same pattern as ci_test_sealed-uki-vm.yml.
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  noop:
+    name: stub (dispatch with ref=sealed-uki-vm-lane-v2 for the real matrix)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Explain
+        run: echo "This is the main-branch stub. Dispatch this workflow with ref=sealed-uki-vm-lane-v2 to run the 10-variant signing matrix."
