@@ -879,39 +879,27 @@ jobs:
   # (full rationale in commit message)
   # ====================================================================
   composefs-tamper-test:
-    name: "composefs tamper -> dm-verity refusal (Negative 2) [${{ matrix.arch }}]"
+    name: "composefs tamper -> dm-verity refusal (Negative 2) [arm64]"
+
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 60
     needs: [lint-vm-scripts]
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - arch: amd64
-            runner: [self-hosted, Linux, ARM64, KVM]
+        arch: arm64
+        runner: [self-hosted, Linux, ARM64, KVM]
+        root_type_guid: b921b045-1df0-41c3-af44-4c6f280d3fae
+        qemu: qemu-system-aarch64
+        fw_dir: /usr/share/AAVMF
+        code_fd: AAVMF_CODE.fd
+        vars_fd: AAVMF_VARS.fd
+        machine: virt,accel=kvm
+        cpu: host
+        smp: "1"
+        boot_timeout: "120"
+        console_arg: console=ttyAMA0,115200
 
-            root_type_guid: 4f68bce3-e8cd-4db1-96e7-fbcaf984b709
-            qemu: qemu-system-x86_64
-            fw_dir: /usr/share/OVMF
-            code_fd: OVMF_CODE_4M.fd
-            vars_fd: OVMF_VARS_4M.fd
-            machine: q35,smm=on,accel=kvm
-            cpu: host
-            smp: "4"
-            boot_timeout: "120"
-            console_arg: console=ttyS0,115200
-          - arch: arm64
-            runner: [self-hosted, Linux, ARM64, KVM]
-            root_type_guid: b921b045-1df0-41c3-af44-4c6f280d3fae
-            qemu: qemu-system-aarch64
-            fw_dir: /usr/share/AAVMF
-            code_fd: AAVMF_CODE.fd
-            vars_fd: AAVMF_VARS.fd
-            machine: virt,accel=kvm
-            cpu: host
-            smp: "1"
-            boot_timeout: "120"
-            console_arg: console=ttyAMA0,115200
     env:
       REQUESTED_IMAGE: ${{ inputs.ci_vm_image || inputs.image || 'docker.io/0mniteck/yubios:dev' }}
       FW_DIR: ${{ matrix.fw_dir }}
