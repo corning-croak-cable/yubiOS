@@ -580,7 +580,7 @@ jobs:
             qemu-system-x86 ovmf swtpm tpm2-tools curl
 
       - name: Download signed UKI artifact
-        uses: actions/download-artifact@fa8eb13b434876587b4c5b13ab27cd1a93ec61e9 # v4
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
         with:
           name: sealed-uki-artifacts
           path: mkosi.output
@@ -640,7 +640,7 @@ jobs:
       image: docker://dhi.io/debian-base@sha256:9415967aa0ed8adea8b5c048994259d1982026dca143d0303c7bbe0e11ed67d3
     steps:
       - name: Download signed UKI artifact
-        uses: actions/download-artifact@fa8eb13b434876587b4c5b13ab27cd1a93ec61e9 # v4
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
         with:
           name: sealed-uki-artifacts
           path: mkosi.output
