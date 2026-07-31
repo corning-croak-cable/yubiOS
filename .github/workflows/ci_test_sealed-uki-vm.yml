@@ -123,25 +123,25 @@ jobs:
           disown || true
           DOCKER_PID=$!
           for i in $(seq 1 60); do
-            docker info >/dev/null 2>&1 && break
+            docker -H "unix://${DOCKER_SOCK}" info >/dev/null 2>&1 && break
             if ! kill -0 "$DOCKER_PID" 2>/dev/null; then
               cat "${RUNNER_TEMP}/dockerd.log"
               exit 1
             fi
             sleep 1
           done
-          if ! docker info >/dev/null 2>&1; then
+          if ! docker -H "unix://${DOCKER_SOCK}" info >/dev/null 2>&1; then
             cat "${RUNNER_TEMP}/dockerd.log"
             exit 1
           fi
           export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
           export DOCKER_HOST="unix://${DOCKER_SOCK}"
           if [ -n "${DOCKER_PASSWORD:-}" ]; then
-            printf '%s' "$DOCKER_PASSWORD" | docker login \
+            printf '%s' "$DOCKER_PASSWORD" | docker -H "unix://${DOCKER_SOCK}" login \
               --username 0mniteck42 --password-stdin docker.io
           fi
-          docker pull "$REQUESTED_IMAGE"
-          RESOLVED_IMAGE="$(docker image inspect "$REQUESTED_IMAGE" \
+          docker -H "unix://${DOCKER_SOCK}" pull "$REQUESTED_IMAGE"
+          RESOLVED_IMAGE="$(docker -H "unix://${DOCKER_SOCK}" image inspect "$REQUESTED_IMAGE" \
             --format '{{ index .RepoDigests 0 }}')"
           test -n "$RESOLVED_IMAGE"
           case "$RESOLVED_IMAGE" in
@@ -205,20 +205,20 @@ jobs:
           disown || true
           DOCKER_PID=$!
           for i in $(seq 1 60); do
-            docker info >/dev/null 2>&1 && break
+            docker -H "unix://${DOCKER_SOCK}" info >/dev/null 2>&1 && break
             if ! kill -0 "$DOCKER_PID" 2>/dev/null; then
               cat "${RUNNER_TEMP}/dockerd.log"
               exit 1
             fi
             sleep 1
           done
-          if ! docker info >/dev/null 2>&1; then
+          if ! docker -H "unix://${DOCKER_SOCK}" info >/dev/null 2>&1; then
             cat "${RUNNER_TEMP}/dockerd.log"
             exit 1
           fi
           export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
           export DOCKER_HOST="unix://${DOCKER_SOCK}"
-          docker run --rm --privileged --pid=host --ipc=host \
+          docker -H "unix://${DOCKER_SOCK}" run --rm --privileged --pid=host --ipc=host \
             --security-opt label=type:unconfined_t \
             -v /var/lib/containers:/var/lib/containers \
             -v "$PWD/mkosi.output:/output" \
