@@ -120,6 +120,11 @@ jobs:
             > "${RUNNER_TEMP}/dockerd.log" 2>&1 < /dev/null &
           disown || true
           DOCKER_PID=$!
+          # V14: unset DOCKER_HOST inherited from GITHUB_ENV (step 4 echoes
+          # DOCKER_HOST=unix:///run/docker-rootless/docker.sock). That path
+          # has no daemon. Our V12 dockerd listens at the default
+          # /var/run/docker.sock -- let docker CLI default to it.
+          unset DOCKER_HOST
           for i in $(seq 1 60); do
             docker info >/dev/null 2>&1 && break
             if ! kill -0 "$DOCKER_PID" 2>/dev/null; then
@@ -197,6 +202,11 @@ jobs:
             > "${RUNNER_TEMP}/dockerd.log" 2>&1 < /dev/null &
           disown || true
           DOCKER_PID=$!
+          # V14: unset DOCKER_HOST inherited from GITHUB_ENV (step 4 echoes
+          # DOCKER_HOST=unix:///run/docker-rootless/docker.sock). That path
+          # has no daemon. Our V12 dockerd listens at the default
+          # /var/run/docker.sock -- let docker CLI default to it.
+          unset DOCKER_HOST
           for i in $(seq 1 60); do
             docker info >/dev/null 2>&1 && break
             if ! kill -0 "$DOCKER_PID" 2>/dev/null; then
