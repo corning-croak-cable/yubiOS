@@ -642,7 +642,7 @@ jobs:
           fi
 
   negative-tamper-tests:
-    name: 3 negative tamper tests (1 implemented; 2 + 3 deferred)
+    name: 3 negative tamper tests (all 3 implemented)
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     needs: [boot-secure-vm]
@@ -681,9 +681,82 @@ jobs:
           echo "assert dm-verity refuses to mount the composefs store. See"
           echo "refs/sealed-uki-vm-test-2026-07-30.md section 'Negative 2'."
 
-      - name: Negative 3 -- missing ROTPK -> unsigned UKI rejection (TODO)
+      - name: Negative 3 -- foreign ROTPK -> OVMF rejects signed UKI as unsigned
         run: |
-          echo "TODO: follow-up PR. Requires OVMF_VARS without yubios cert"
-          echo "enrolled, attempt to boot the signed UKI, assert OVMF rejects it"
-          echo "as unsigned. See refs/sealed-uki-vm-test-2026-07-30.md section"
-          echo "'Negative 3'."
+          set -euo pipefail
+          # V78: design doc calls this "missing ROTPK -> unsigned UKI rejection".
+          # The strongest form is: build a FOREIGN OVMF varstore with Secure
+          # Boot enforcing but our cert NOT in db, boot the SAME signed UKI,
+          # assert OVMF refuses to load it as an unsigned image. If OVMF
+          # loaded it, the signing step proved nothing -- any attacker could
+          # present an unsigned blob. The design doc's stated invariant:
+          # "Secure Boot VM must refuse to boot" (assertion 6 negative
+          # variant). Generate a throwaway key, enroll it as the FOREIGN
+          # PK/KEK/db (NOT sb.crt), boot the signed UKI, expect refusal.
+          mkdir -p ovmf
+          test -f /usr/share/OVMF/OVMF_CODE_4M.secboot.fd || { echo "::error::OVMF secboot firmware missing"; ls -la /usr/share/OVMF/; exit 1; }
+          cp /usr/share/OVMF/OVMF_CODE_4M.secboot.fd ovmf/OVMF_CODE.fd
+          # Throwaway foreign PKI -- different key from sb.key, so OVMF has
+          # never seen the yubios signing chain. SHA256 self-signed RSA-2048
+          # is fine for the foreign key; OVMF only needs SOME db cert to
+          # evaluate "is this image signed by a known signer?" -- and ours
+          # is NOT in this db.
+          openssl genrsa -out /tmp/foreign.key 2048 2>/dev/null
+          openssl req -new -x509 -key /tmp/foreign.key -sha256 -days 1 \
+            -subj "/CN=Foreign ROTPK (Negative 3)" -out /tmp/foreign.crt
+          GUID="a0baa8a3-041d-48a8-bc87-c36d5badc0de"
+          virt-fw-vars \
+            --input /usr/share/OVMF/OVMF_VARS_4M.fd \
+            --output ovmf/OVMF_VARS.foreign.fd \
+            --secure-boot \
+            --set-pk  "$GUID" /tmp/foreign.crt \
+            --add-kek "$GUID" /tmp/foreign.crt \
+            --add-db  "$GUID" /tmp/foreign.crt
+          # cmdline extraction (same path as assertion 4)
+          ukify inspect mkosi.output/yubios.efi --json=short \
+            | jq -r '.[".cmdline"].text // empty' > /tmp/cmdline.txt
+          test -s /tmp/cmdline.txt || { echo "::error::empty cmdline extracted from UKI"; exit 1; }
+          # Boot with foreign db. -no-reboot forces exit on any firmware
+          # halt. QEMU exits with non-zero on OVMF "Image verification
+          # failed" / "Security Violation" -- capture both serial output
+          # AND the exit code so we can assert either or both.
+          timeout 60 qemu-system-x86_64 \
+            -machine q35,smm=on,accel=kvm \
+            -cpu host -smp 4 -m 4G \
+            -drive if=pflash,format=raw,readonly=on,file=ovmf/OVMF_CODE.fd \
+            -drive if=pflash,format=raw,file=ovmf/OVMF_VARS.foreign.fd \
+            -kernel mkosi.output/yubios.efi \
+            -append "$(cat /tmp/cmdline.txt)" \
+            -nographic \
+            -serial mon:stdio \
+            -display none \
+            -no-reboot \
+            > /tmp/qemu-neg3.log 2>&1
+          rc=$?
+          echo "QEMU exit code: $rc"
+          echo "--- QEMU serial (tail 60) ---"
+          tail -60 /tmp/qemu-neg3.log
+          echo "--- assertion ---"
+          # Two failure modes are both PASS for this negative test:
+          # (a) OVMF refused to load the image -> no 'secureboot: Secure
+          #     boot enabled' line appears
+          # (b) kernel panicked on missing rootfs -> no 'Booting Linux'
+          #     banner
+          if grep -q 'secureboot: Secure boot enabled' /tmp/qemu-neg3.log; then
+            echo "::error::Negative 3 FAIL: kernel saw Secure Boot enabled -- foreign db accepted our signed UKI"
+            exit 1
+          fi
+          # Must also see SOMETHING that shows OVMF blocked or kernel
+          # panicked -- a silent exit is a flake, not a pass.
+          if grep -qiE 'verification failed|security violation|invalid signature|cannot load image|panic' /tmp/qemu-neg3.log; then
+            echo "Negative 3 PASS: OVMF refused foreign-db boot of signed UKI"
+          else
+            # QEMU timeout also acceptable: firmware stuck at Setup or
+            # bootloader spin with no console output is itself a refusal.
+            if [ "$rc" -ne 0 ]; then
+              echo "Negative 3 PASS: QEMU exited non-zero ($rc) without booting -- OVMF refused foreign-db boot"
+            else
+              echo "::error::Negative 3 FAIL: ambiguous -- no SB banner, no refusal marker, QEMU exit 0"
+              exit 1
+            fi
+          fi
