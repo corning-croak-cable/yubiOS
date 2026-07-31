@@ -5,27 +5,24 @@ name: TEST - sealed UKI Secure Boot VM e2e
 # Parent issue: OMN-53. Full spec: refs/sealed-uki-vm-test-2026-07-30.md.
 #
 # Three jobs (per the design doc's evidence requirement):
-#   1. build-and-verify-uki — builds a signed UKI from a yubiOS OCI image via
+#   1. build-and-verify-uki -- builds a signed UKI from a yubiOS OCI image via
 #      bootc container ukify (bootc 1.16.6+ capability verified by
 #      ci_test_bootc-filesystem.yml run #11 at 7eba4856e7), signs via
 #      systemd-sbsign (engine:pkcs11 SoftHSM backend per ADR-008), then
 #      verifies sbverify + UKI structure + verity roothash
 #      (assertions 1-3 of 6).
-#   2. boot-secure-vm — boots the signed UKI in a QEMU OVMF Secure Boot VM
+#   2. boot-secure-vm -- boots the signed UKI in a QEMU OVMF Secure Boot VM
 #      on fresh GitHub-hosted runners, asserts systemd-stub SecureBoot=yes
 #      via QEMU serial console (assertion 4 of 6).
-#   3. negative-tamper-tests — proves the negative paths:
-#      * Negative 1 (tampered UKI byte flip → sbverify rejection) — IMPLEMENTED
-#      * Negative 2 (tampered composefs hash → dm-verity rejection) — TODO
-#        follow-up PR (requires bootc install to-filesystem + BLS composefs
-#        byte flip + dm-verity rejection assertion)
-#      * Negative 3 (missing ROTPK → unsigned UKI rejection) — TODO
-#        follow-up PR (requires OVMF_VARS without yubios cert + boot signed
-#        UKI + OVMF rejection assertion)
+#   3. negative-tamper-tests -- proves the negative paths:
+#      * Negative 1 (tampered UKI byte flip -> sbverify rejection) -- IMPLEMENTED
+#      * Negative 2 (tampered composefs hash -> dm-verity rejection) -- TODO
+#      * Negative 3 (missing ROTPK -> unsigned UKI rejection) -- TODO
 #
-# Assertions 5-6 (sealed LUKS2 with FIDO2 unlock on a real YubiKey) are
-# documented in refs/sealed-uki-vm-test-2026-07-30.md as the next iteration
-# after this PR lands.
+# All jobs run inside the digest-pinned dhi.io/debian-base container
+# (security architecture per PINNED.md / the approved-container rule).
+# The dhi container runs as root, so install steps use apt-get directly
+# without sudo -- matches the canonical ci_mkosi-installer.yml pattern.
 
 on:
   workflow_dispatch:
@@ -46,15 +43,20 @@ jobs:
     name: build + sign + verify signed UKI (assertions 1-3 of 6)
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    container:
+      image: docker://dhi.io/debian-base@sha256:9415967aa0ed8adea8b5c048994259d1982026dca143d0303c7bbe0e11ed67d3
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
     steps:
       - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 — see PINNED.md
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 -- see PINNED.md
 
       - name: Install build dependencies
         run: |
           set -euo pipefail
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq --no-install-recommends \
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends \
             binutils dosfstools e2fsprogs jq util-linux \
             mkosi opensc softhsm2 tpm2-tools
           command -v mkosi systemd-sbsign sbverify \
@@ -67,7 +69,7 @@ jobs:
           REQUESTED_IMAGE: ${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}
         run: |
           set -euo pipefail
-          if [ -n "${DOCKER_PASSWORD:-}" ]; then
+          if [ -n "${{ DOCKER_PASSWORD:- }}" ]; then
             printf '%s' "$DOCKER_PASSWORD" | docker login \
               --username 0mniteck42 --password-stdin docker.io
           fi
@@ -84,9 +86,17 @@ jobs:
       - name: Bootstrap SoftHSM slot emulating PIV 9c
         run: |
           set -euo pipefail
+          # Set explicit token store + conf (per ci_mkosi-installer.yml pattern).
+          # On Debian trixie (dhi container), libsofthsm2.so lives at
+          # /usr/lib/softhsm/libsofthsm2.so, NOT /usr/lib64/libsofthsm2.so
+          # (which is the Fedora/RHEL path).
+          export SOFTHSM2_CONF=/tmp/softhsm2.conf
+          mkdir -p /var/lib/softhsm/tokens
+          printf 'directories.tokendir = /var/lib/softhsm/tokens\nobjectstore.backend = file\n' \
+            > "$SOFTHSM2_CONF"
           softhsm2-util --init-token --slot 0 --label yubiOS-ci \
             --pin 1234 --so-pin 1234
-          pkcs11-tool --module /usr/lib64/libsofthsm2.so \
+          pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so \
             --login --pin 1234 \
             --keypairgen --key-type EC:prime256v1 \
             --label sb-key --usage-sign
@@ -97,7 +107,7 @@ jobs:
             -subj "/CN=yubiOS CI Secure Boot/" \
             -addext "keyUsage=digitalSignature" \
             -addext "extendedKeyUsage=codeSigning"
-          pkcs11-tool --module /usr/lib64/libsofthsm2.so \
+          pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so \
             --login --pin 1234 \
             --write-object mkosi.output/pki/sb.crt \
             --type cert --label sb-cert
@@ -105,10 +115,7 @@ jobs:
       - name: Build signed UKI from image (bootc container ukify + systemd-sbsign)
         run: |
           set -euo pipefail
-          # Build UKI from the running bootc container. bootc 1.16.6+ exposes
-          # `container ukify` as a subcommand; capability verified by
-          # ci_test_bootc-filesystem.yml run #11 at 7eba4856e7.
-          sudo docker run --rm --privileged --pid=host --ipc=host \
+          docker run --rm --privileged --pid=host --ipc=host \
             --security-opt label=type:unconfined_t \
             -v /var/lib/containers:/var/lib/containers \
             -v "$PWD/mkosi.output:/output" \
@@ -116,8 +123,6 @@ jobs:
             "$RESOLVED_IMAGE" \
             bootc container ukify \
               --output /output/yubios.unsigned.efi
-          # Sign via systemd-sbsign (ADR-008). engine:pkcs11 routes to SoftHSM
-          # via the standard PKCS#11 URI scheme.
           systemd-sbsign sign \
             --private-key=pkcs11:token=yubiOS-ci;object=sb-key;type=private \
             --private-key-source=engine:pkcs11 \
@@ -158,12 +163,17 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     needs: [build-and-verify-uki]
+    container:
+      image: docker://dhi.io/debian-base@sha256:9415967aa0ed8adea8b5c048994259d1982026dca143d0303c7bbe0e11ed67d3
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
     steps:
       - name: Install VM dependencies
         run: |
           set -euo pipefail
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq --no-install-recommends \
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends \
             qemu-system-x86 ovmf swtpm tpm2-tools curl
 
       - name: Download signed UKI artifact
@@ -178,9 +188,9 @@ jobs:
           mkdir -p ovmf
           OVMF_VERSION="edk2-stable202405"
           curl -fsSL -o ovmf/OVMF_CODE.fd \
-            "https://github.com/tianocore/edk2/releases/download/${OVMF_VERSION}/OVMF_CODE.fd"
+            "https://github.com/tianocore/edk2/releases/download/${{ OVMF_VERSION }}/OVMF_CODE.fd"
           curl -fsSL -o ovmf/OVMF_VARS.fd \
-            "https://github.com/tianocore/edk2/releases/download/${OVMF_VERSION}/OVMF_VARS.fd"
+            "https://github.com/tianocore/edk2/releases/download/${{ OVMF_VERSION }}/OVMF_VARS.fd"
           cp ovmf/OVMF_VARS.fd ovmf/OVMF_VARS.run.fd
 
       - name: Boot signed UKI in QEMU OVMF Secure Boot VM
@@ -213,6 +223,11 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     needs: [boot-secure-vm]
+    container:
+      image: docker://dhi.io/debian-base@sha256:9415967aa0ed8adea8b5c048994259d1982026dca143d0303c7bbe0e11ed67d3
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
     steps:
       - name: Download signed UKI artifact
         uses: actions/download-artifact@fa8eb13b434876587b4c5b13ab27cd1a93ec61e9 # v4
@@ -220,7 +235,7 @@ jobs:
           name: sealed-uki-artifacts
           path: mkosi.output
 
-      - name: Negative 1 — tampered UKI byte flip → sbverify rejection
+      - name: Negative 1 -- tampered UKI byte flip -> sbverify rejection
         run: |
           set -euo pipefail
           cp mkosi.output/yubios.efi mkosi.output/yubios-tampered.efi
@@ -233,14 +248,14 @@ jobs:
           fi
           echo "Negative 1 PASS: sbverify rejected tampered UKI"
 
-      - name: Negative 2 — tampered composefs hash → dm-verity rejection (TODO)
+      - name: Negative 2 -- tampered composefs hash -> dm-verity rejection (TODO)
         run: |
           echo "TODO: follow-up PR. Requires bootc install to-filesystem, flip"
           echo "one byte in the BLS composefs=<sha512> entry, boot the image, and"
           echo "assert dm-verity refuses to mount the composefs store. See"
           echo "refs/sealed-uki-vm-test-2026-07-30.md section 'Negative 2'."
 
-      - name: Negative 3 — missing ROTPK → unsigned UKI rejection (TODO)
+      - name: Negative 3 -- missing ROTPK -> unsigned UKI rejection (TODO)
         run: |
           echo "TODO: follow-up PR. Requires OVMF_VARS without yubios cert"
           echo "enrolled, attempt to boot the signed UKI, assert OVMF rejects it"
