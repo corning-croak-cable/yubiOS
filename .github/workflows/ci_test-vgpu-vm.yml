@@ -1080,6 +1080,38 @@ jobs:
               --skip-finalize \
             /run/host/mnt/cfs-target/
           echo "bootc install complete"
+      - name: Lay down composefs store symlink (manual, post-install)
+        run: |
+          set -euo pipefail
+          # bootc install --skip-finalize skips the finalize phase, which is what
+          # normally creates the composefs store symlink at
+          # /mnt/cfs-target/composefs/images/<digest>. With --composefs-backend the
+          # blob lands on disk at /mnt/cfs-target/composefs/blob/<digest> but the
+          # store symlink is missing. We need it because dm-verity refuses to mount
+          # a composefs image without a discoverable store reference.
+          #
+          # Read our BLSConfig .conf (laid down before install) to find the UKI,
+          # extract the composefs digest from the UKI's .cmdline PE section via
+          # scripts/extract_uki_cmdline.py, then create the symlink.
+          entry="$(sudo find /mnt/cfs-target/boot -type f -path '*/loader/entries/*.conf' | head -1)"
+          test -n "$entry" || { echo "::error::no BLS entry under /mnt/cfs-target/boot"; exit 1; }
+          uki_path="$(sudo awk '$1 == "uki" {sub(/^uki[[:space:]]+/, ""); print}' "$entry")"
+          test -n "$uki_path" || { echo "::error::no uki key in $entry"; exit 1; }
+          full_uki="/mnt/cfs-target/boot${uki_path}"
+          test -f "$full_uki" || { echo "::error::UKI $full_uki not found"; exit 1; }
+          cd_digest="$(python3 scripts/extract_uki_cmdline.py "$full_uki" | grep -oE 'composefs=[0-9a-f]{128}' | cut -d= -f2)"
+          test -n "$cd_digest" || { echo "::error::no composefs= in UKI cmdline"; exit 1; }
+          echo "composefs digest from UKI: $cd_digest"
+          # Lay down the store symlink. The blob path is the standard bootc composefs
+          # layout (verified to exist after --composefs-backend install).
+          sudo mkdir -p /mnt/cfs-target/composefs/images
+          if [ ! -f "/mnt/cfs-target/composefs/blob/$cd_digest" ]; then
+            echo "::warning::composefs blob not at /mnt/cfs-target/composefs/blob/$cd_digest; probing alt paths"
+            sudo find /mnt/cfs-target -maxdepth 6 -type f -name "$cd_digest*" 2>/dev/null | head -5 || true
+          fi
+          sudo ln -sfn "../blob/$cd_digest" "/mnt/cfs-target/composefs/images/$cd_digest"
+          sudo ls -la "/mnt/cfs-target/composefs/images/"
+          echo "composefs store symlink laid down for $cd_digest"
 
       - name: Verify install produced a composefs= BLS entry (Type1)
         run: |
