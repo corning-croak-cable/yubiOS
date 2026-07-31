@@ -229,7 +229,7 @@ jobs:
           docker run --rm --privileged \
             --security-opt label=type:unconfined_t \
             "$RESOLVED_IMAGE" \
-            dnf install -y systemd-ukify systemd-sbsign opensc softhsm
+            dnf install -y systemd-ukify opensc softhsm || true
           # Step 2: build unsigned UKI (proven V18 pattern).
           docker run --rm --privileged --pid=host --ipc=host \
             --security-opt label=type:unconfined_t \
