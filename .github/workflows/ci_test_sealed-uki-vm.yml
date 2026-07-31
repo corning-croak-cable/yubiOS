@@ -152,35 +152,37 @@ jobs:
           esac
           echo "RESOLVED_IMAGE=$RESOLVED_IMAGE" >> "$GITHUB_ENV"
 
-      - name: Bootstrap SoftHSM slot emulating PIV 9c
+      - name: Generate PKI as plain files (V37: drops host softhsm init + cross-mount)
         run: |
           set -euxo pipefail
           cd "$GITHUB_WORKSPACE"
-          # Set explicit token store + conf (per ci_mkosi-installer.yml pattern).
-          # On Debian trixie (dhi container), libsofthsm2.so lives at
-          # /usr/lib/softhsm/libsofthsm2.so, NOT /usr/lib64/libsofthsm2.so
-          # (which is the Fedora/RHEL path).
-          export SOFTHSM2_CONF=/tmp/softhsm2.conf
-          mkdir -p /var/lib/softhsm/tokens
-          printf 'directories.tokendir = /var/lib/softhsm/tokens\nobjectstore.backend = file\n' \
-            > "$SOFTHSM2_CONF"
-          softhsm2-util --init-token --slot 0 --label yubiOS-ci \
-            --pin 1234 --so-pin 1234
-          pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so \
-            --login --pin 1234 \
-            --keypairgen --key-type EC:prime256v1 \
-            --label sb-key --usage-sign
           mkdir -p mkosi.output/pki
-          openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:prime256v1 \
-            -keyout mkosi.output/pki/sb.key -out mkosi.output/pki/sb.crt \
+          # V37: Generate EC P-256 keypair as plain PEM files on host. V36
+          # initialized a SoftHSM token on the Debian trixie host (softhsm
+          # 2.6.1) and cross-mounted /var/lib/softhsm into the Fedora container
+          # (softhsm 2.7.0-2.fc45). The cross-version BDB token format caused
+          # "Input/output error" when the container's pkcs11-provider tried
+          # to load the private key (run #47 L2247). The canonical
+          # ci_mkosi-installer.yml pattern keeps the entire token lifecycle
+          # inside one OS environment; here we keep the key material as files
+          # on the host and let the Fedora container initialize a fresh
+          # token + import the key via softhsm2-util --import. No
+          # cross-mount, no cross-version BDB.
+          openssl ecparam -name prime256v1 -genkey -noout \
+            -out mkosi.output/pki/sb.key
+          openssl req -new -x509 \
+            -key mkosi.output/pki/sb.key \
+            -out mkosi.output/pki/sb.crt \
             -days 30 -nodes \
             -subj "/CN=yubiOS CI Secure Boot/" \
             -addext "keyUsage=digitalSignature" \
             -addext "extendedKeyUsage=codeSigning"
-          pkcs11-tool --module /usr/lib/softhsm/libsofthsm2.so \
-            --login --pin 1234 \
-            --write-object mkosi.output/pki/sb.crt \
-            --type cert --label sb-cert
+          # PKCS#8 PEM (unencrypted) -- the format softhsm2-util --import accepts.
+          openssl pkcs8 -topk8 -nocrypt \
+            -in mkosi.output/pki/sb.key \
+            -out mkosi.output/pki/sb.p8
+          ls -la mkosi.output/pki/
+          echo "=== V37 PKI ready: $(ls mkosi.output/pki/ | wc -l) files ==="
 
       - name: Verify cert on host (V30 diagnostic)
         run: |
@@ -294,7 +296,7 @@ jobs:
             -v /dev:/dev \
             -e CERT_B64="$CERT_B64" \
             "$RESOLVED_IMAGE" \
-            bash -c "set -euo pipefail; echo \"\$CERT_B64\" | base64 -d > /tmp/sb.crt && ls -la /tmp/sb.crt && dnf install -y systemd-ukify opensc softhsm pkcs11-provider && mkdir -p /target && mount --bind / /target && bootc container ukify --rootfs /target -- --output /output/yubios.unsigned.efi && printf 'directories.tokendir = /run/yubios-hsm/tokens\nobjectstore.backend = file\n' > /tmp/softhsm2.conf && export SOFTHSM2_CONF=/tmp/softhsm2.conf PKCS11_PROVIDER_MODULE=/usr/lib64/pkcs11/libsofthsm2.so && { echo '=== V36 DIAG: ls -la /tmp/sb.crt ==='; ls -la /tmp/sb.crt; echo '=== V36 DIAG: file /tmp/sb.crt ==='; file /tmp/sb.crt; } && /usr/lib/systemd/systemd-sbsign sign --private-key='pkcs11:token=yubiOS-ci;object=sb-key;type=private?pin-value=1234' --private-key-source=provider:pkcs11 --certificate=/tmp/sb.crt --output=/output/yubios.efi.tmp /output/yubios.unsigned.efi && mv /output/yubios.efi.tmp /output/yubios.efi"
+            bash -c 'set -euo pipefail; echo "$CERT_B64" | base64 -d > /tmp/sb.crt && echo "$KEY_P8_B64" | base64 -d > /tmp/sb.p8 && ls -la /tmp/sb.crt /tmp/sb.p8 && file /tmp/sb.crt /tmp/sb.p8 && dnf install -y systemd-ukify opensc softhsm pkcs11-provider && mkdir -p /target /run/yubios-hsm/tokens && mount --bind / /target && bootc container ukify --rootfs /target -- --output /output/yubios.unsigned.efi && printf "directories.tokendir = /run/yubios-hsm/tokens\nobjectstore.backend = file\n" > /run/yubios-hsm/softhsm2.conf && export SOFTHSM2_CONF=/run/yubios-hsm/softhsm2.conf && softhsm2-util --init-token --free --label yubiOS-ci --pin 1234 --so-pin 1234 && softhsm2-util --import /tmp/sb.p8 --token yubiOS-ci --label sb-key --pin 1234 && chmod -R a+rwX /run/yubios-hsm && export PKCS11_PROVIDER_MODULE=/usr/lib64/libsofthsm2.so && /usr/lib/systemd/systemd-sbsign sign --private-key="pkcs11:token=yubiOS-ci;object=sb-key;type=private?pin-value=1234" --private-key-source=provider:pkcs11 --certificate=/tmp/sb.crt --output=/output/yubios.efi.tmp /output/yubios.unsigned.efi && mv /output/yubios.efi.tmp /output/yubios.efi'
 
       - name: Assert signed UKI is well-formed (assertions 1-3 of 6)
         run: |
