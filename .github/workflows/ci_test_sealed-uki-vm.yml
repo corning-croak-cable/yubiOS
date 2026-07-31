@@ -578,12 +578,18 @@ jobs:
         run: |
           set -euo pipefail
           cd "$GITHUB_WORKSPACE"
+          # V81: file(1) outputs 'ARM64' on aarch64 libmagic, not 'Aarch64'.
+          # Match a single unambiguous substring per arch:
+          #   amd64: 'x86' (matches 'x86-64', 'AMD x86_64', etc.)
+          #   arm64: 'ARM' or 'aarch64' (matches 'Aarch64', 'ARM aarch64', 'ARM64')
+          # grep -qi is case-insensitive; 'ARM' alone could false-match a
+          # hypothetical ARMv7 build, so require 'aarch64' OR '64-bit ARM'.
           file mkosi.output/yubios.efi
           case "${{ matrix.arch }}" in
             amd64) EXPECT='x86-64' ;;
-            arm64) EXPECT='Aarch64' ;;
+            arm64) EXPECT='\(Aarch64\|ARM aarch64\|ARM64\)' ;;
           esac
-          file mkosi.output/yubios.efi | grep -qi "$EXPECT" \
+          file mkosi.output/yubios.efi | grep -Eqi "$EXPECT" \
             || { echo "::error::UKI PE machine type does not match matrix arch ${{ matrix.arch }} (expected $EXPECT)"; exit 1; }
           echo "UKI arch guard PASS: ${{ matrix.arch }}"
 
@@ -686,6 +692,13 @@ jobs:
           ukify inspect mkosi.output/yubios.efi --json=short \
             | jq -r '.[".cmdline"].text // empty' > /tmp/cmdline.txt
           test -s /tmp/cmdline.txt || { echo "::error::empty cmdline extracted from UKI"; exit 1; }
+          # V81: add -net none. Debian's qemu-efi-aarch64 doesn't ship
+          # efi-virtio.rom; the default `virt` machine tries to instantiate
+          # a virtio-net nic, fails to load the romfile, and exits with
+          # "failed to find romfile "efi-virtio.rom"" before firmware
+          # boots. Disabling the nic avoids the romfile dependency without
+          # affecting the SB enforcement proof (we don't need network for
+          # this leg -- the UKI just needs to execute and reach 'Booting Linux').
           START=$(date +%s)
           timeout ${{ matrix.boot_timeout }} ${{ matrix.qemu_bin }} \
             -machine ${{ matrix.machine }} \
@@ -694,6 +707,7 @@ jobs:
             -drive if=pflash,format=raw,file=ovmf/VARS.run.fd \
             -kernel mkosi.output/yubios.efi \
             -append "$(cat /tmp/cmdline.txt)" \
+            -net none \
             -nographic \
             -serial mon:stdio \
             -display none \
@@ -722,6 +736,7 @@ jobs:
               -drive if=pflash,format=raw,file=ovmf/VARS.foreign.fd \
               -kernel mkosi.output/yubios.efi \
               -append "$(cat /tmp/cmdline.txt)" \
+              -net none \
               -nographic \
               -serial mon:stdio \
               -display none \
