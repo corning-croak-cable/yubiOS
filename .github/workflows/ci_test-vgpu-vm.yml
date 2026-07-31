@@ -991,6 +991,44 @@ jobs:
           echo "Installing immutable source: $RESOLVED"
           echo "RESOLVED=$RESOLVED" >> "$GITHUB_ENV"
 
+      # V3: Lay down a signed UKI before bootc install so find_uki_path()
+      # detects it and bootc writes a Type2 BLS entry (uk /EFI/Linux/<file>.efi
+      # + options composefs=<sha512>), not the Type1 entry the raw-kernel
+      # install produces. Pulls the latest sealed-uki-artifacts-<arch>
+      # artifact from ci_test_sealed-uki-vm.yml (PR #155; that workflow's
+      # build job signs a UKI via systemd-sbsign) and copies yubios.efi into
+      # /mnt/cfs-target/boot/EFI/Linux/. This makes Negative 2 test the real
+      # yubiOS shape (UKI-based BLS), per bootc 1.16.3 PR #2269 uki key.
+      - name: "Lay down signed UKI from sealed-UKI VM artifact"
+        env:
+          DOCKER_PASSWORD: ${{ secrets.DOCKER }}
+        run: |
+          set -euo pipefail
+          ART_NAME="sealed-uki-artifacts-${{ matrix.arch }}"
+          RUN_ID=$(curl -fsS \
+            -H "Authorization: token ${GITHUB_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/yubi-OS/yubiOS/actions/runs?status=success&per_page=30" \
+            | python3 -c 'import json,sys; runs=[r for r in json.load(sys.stdin)["workflow_runs"] if "sealed UKI" in r["name"]]; print(runs[0]["id"] if runs else "")')
+          test -n "$RUN_ID" || { echo "::error::no sealed-UKI VM run found"; exit 1; }
+          echo "Using sealed-UKI VM run $RUN_ID"
+          ART_URL=$(curl -fsS \
+            -H "Authorization: token ${GITHUB_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/yubi-OS/yubiOS/actions/runs/$RUN_ID/artifacts" \
+            | python3 -c "import json,sys; arts=[a for a in json.load(sys.stdin)['artifacts'] if a['name']=='$ART_NAME']; print(arts[0]['archive_download_url'] if arts else '')")
+          test -n "$ART_URL" || { echo "::error::$ART_NAME not in run $RUN_ID"; exit 1; }
+          echo "Downloading $ART_NAME"
+          curl -fsSL -o /tmp/uki.zip "$ART_URL"
+          mkdir -p /tmp/uki-extract && cd /tmp/uki-extract && unzip -o /tmp/uki.zip >/dev/null
+          test -f yubios.efi || { echo "::error::yubios.efi not in artifact"; exit 1; }
+          file yubios.efi
+          UKI_HASH=$(sha256sum yubios.efi | cut -d' ' -f1)
+          sudo mkdir -p /mnt/cfs-target/boot/EFI/Linux
+          sudo cp -v yubios.efi "/mnt/cfs-target/boot/EFI/Linux/${UKI_HASH}.efi"
+          sudo ls -la /mnt/cfs-target/boot/EFI/Linux/
+          echo "UKI laid down at /mnt/cfs-target/boot/EFI/Linux/${UKI_HASH}.efi"
+
       - name: bootc install to-filesystem (composefs backend, systemd-boot)
         run: |
           set -euo pipefail
