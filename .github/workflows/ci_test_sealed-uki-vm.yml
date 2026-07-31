@@ -100,57 +100,42 @@ jobs:
           REQUESTED_IMAGE: ${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}
         run: |
           set -euo pipefail
-          # V9: launch rootless dockerd inline in this step.
-          # GitHub Actions does not preserve background processes across step
-          # boundaries -- the daemon started in step 4 is gone by step 5
-          # regardless of setsid/nohup/disown. Each docker-using step (5 and
-          # 7) launches the daemon fresh in its own preamble. The canonical
-          # ci_mkosi-installer.yml follows this exact pattern.
-          ROOTLESS_USER=docker-rootless
-          ROOTLESS_RUNTIME_DIR=/run/docker-rootless
-          ROOTLESS_SOCKET="${ROOTLESS_RUNTIME_DIR}/docker.sock"
-          ROOTLESS_DATA_DIR="$(mktemp -d /mnt/docker-rootless.XXXXXX)"
-          useradd --create-home --shell /bin/sh "$ROOTLESS_USER" 2>/dev/null || true
-          printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subuid
-          printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subgid
-          install -d -m 0700 -o "$ROOTLESS_USER" -g "$ROOTLESS_USER" "$ROOTLESS_RUNTIME_DIR"
-          chown "$ROOTLESS_USER:$ROOTLESS_USER" "$ROOTLESS_DATA_DIR"
-          chmod 0700 "$ROOTLESS_DATA_DIR"
-          if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
-            sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
-          fi
-          export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
-          export DOCKER_CONFIG="$DOCKER_TOOLS_DIR/config"
-          export DOCKER_HOST="unix://${ROOTLESS_SOCKET}"
-          setpriv \
-            --reuid="$ROOTLESS_USER" \
-            --regid="$ROOTLESS_USER" \
-            --init-groups \
-            env \
-              HOME="/home/${ROOTLESS_USER}" \
-              USER="$ROOTLESS_USER" \
-              LOGNAME="$ROOTLESS_USER" \
-              XDG_RUNTIME_DIR="$ROOTLESS_RUNTIME_DIR" \
-              PATH="$DOCKER_TOOLS_DIR/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
-              DOCKERD_ROOTLESS_ROOTLESSKIT_NET=slirp4netns \
-              dockerd-rootless.sh \
-                --data-root="$ROOTLESS_DATA_DIR" \
-                --storage-driver=fuse-overlayfs \
-                -H "unix://${ROOTLESS_SOCKET}" \
-            > "${RUNNER_TEMP}/dockerd-rootless.log" 2>&1 &
-          ROOTLESS_DOCKER_PID=$!
+          # V10: use privileged dockerd (not rootless). The container is
+          # already --privileged, so user-namespace plumbing is unnecessary
+          # complexity. V5-V9 all tried rootless; the rootlesskit + slirp4netns
+          # + fuse-overlayfs stack proved too fragile for this CI environment.
+          # Privileged dockerd is a single detached process -- no userns, no
+          # rootlesskit, no bind-mounted socket to lose.
+          #   --storage-driver=vfs   works without kernel overlayfs
+          #   --iptables=false       we don't need iptables rules in CI
+          #   --ip6tables=false      same
+          DOCKER_SOCK=/var/run/docker.sock
+          mkdir -p /var/lib/docker "$(dirname "$DOCKER_SOCK")"
+          nohup "$DOCKER_TOOLS_DIR/bin/dockerd" \
+            --data-root=/var/lib/docker \
+            --exec-root=/var/run/docker \
+            --pidfile=/var/run/docker.pid \
+            --host="unix://${DOCKER_SOCK}" \
+            --iptables=false \
+            --ip6tables=false \
+            --storage-driver=vfs \
+            > "${RUNNER_TEMP}/dockerd.log" 2>&1 < /dev/null &
+          disown || true
+          DOCKER_PID=$!
           for i in $(seq 1 60); do
-            docker -H "unix://${ROOTLESS_SOCKET}" info >/dev/null 2>&1 && break
-            if ! kill -0 "$ROOTLESS_DOCKER_PID" 2>/dev/null; then
-              cat "${RUNNER_TEMP}/dockerd-rootless.log"
+            docker info >/dev/null 2>&1 && break
+            if ! kill -0 "$DOCKER_PID" 2>/dev/null; then
+              cat "${RUNNER_TEMP}/dockerd.log"
               exit 1
             fi
             sleep 1
           done
-          if ! docker -H "unix://${ROOTLESS_SOCKET}" info >/dev/null 2>&1; then
-            cat "${RUNNER_TEMP}/dockerd-rootless.log"
+          if ! docker info >/dev/null 2>&1; then
+            cat "${RUNNER_TEMP}/dockerd.log"
             exit 1
           fi
+          export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
+          export DOCKER_HOST="unix://${DOCKER_SOCK}"
           if [ -n "${DOCKER_PASSWORD:-}" ]; then
             printf '%s' "$DOCKER_PASSWORD" | docker login \
               --username 0mniteck42 --password-stdin docker.io
@@ -197,57 +182,42 @@ jobs:
       - name: Build signed UKI from image (bootc container ukify + systemd-sbsign)
         run: |
           set -euo pipefail
-          # V9: launch rootless dockerd inline in this step.
-          # GitHub Actions does not preserve background processes across step
-          # boundaries -- the daemon started in step 4 is gone by step 5
-          # regardless of setsid/nohup/disown. Each docker-using step (5 and
-          # 7) launches the daemon fresh in its own preamble. The canonical
-          # ci_mkosi-installer.yml follows this exact pattern.
-          ROOTLESS_USER=docker-rootless
-          ROOTLESS_RUNTIME_DIR=/run/docker-rootless
-          ROOTLESS_SOCKET="${ROOTLESS_RUNTIME_DIR}/docker.sock"
-          ROOTLESS_DATA_DIR="$(mktemp -d /mnt/docker-rootless.XXXXXX)"
-          useradd --create-home --shell /bin/sh "$ROOTLESS_USER" 2>/dev/null || true
-          printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subuid
-          printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subgid
-          install -d -m 0700 -o "$ROOTLESS_USER" -g "$ROOTLESS_USER" "$ROOTLESS_RUNTIME_DIR"
-          chown "$ROOTLESS_USER:$ROOTLESS_USER" "$ROOTLESS_DATA_DIR"
-          chmod 0700 "$ROOTLESS_DATA_DIR"
-          if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
-            sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
-          fi
-          export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
-          export DOCKER_CONFIG="$DOCKER_TOOLS_DIR/config"
-          export DOCKER_HOST="unix://${ROOTLESS_SOCKET}"
-          setpriv \
-            --reuid="$ROOTLESS_USER" \
-            --regid="$ROOTLESS_USER" \
-            --init-groups \
-            env \
-              HOME="/home/${ROOTLESS_USER}" \
-              USER="$ROOTLESS_USER" \
-              LOGNAME="$ROOTLESS_USER" \
-              XDG_RUNTIME_DIR="$ROOTLESS_RUNTIME_DIR" \
-              PATH="$DOCKER_TOOLS_DIR/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
-              DOCKERD_ROOTLESS_ROOTLESSKIT_NET=slirp4netns \
-              dockerd-rootless.sh \
-                --data-root="$ROOTLESS_DATA_DIR" \
-                --storage-driver=fuse-overlayfs \
-                -H "unix://${ROOTLESS_SOCKET}" \
-            > "${RUNNER_TEMP}/dockerd-rootless.log" 2>&1 &
-          ROOTLESS_DOCKER_PID=$!
+          # V10: use privileged dockerd (not rootless). The container is
+          # already --privileged, so user-namespace plumbing is unnecessary
+          # complexity. V5-V9 all tried rootless; the rootlesskit + slirp4netns
+          # + fuse-overlayfs stack proved too fragile for this CI environment.
+          # Privileged dockerd is a single detached process -- no userns, no
+          # rootlesskit, no bind-mounted socket to lose.
+          #   --storage-driver=vfs   works without kernel overlayfs
+          #   --iptables=false       we don't need iptables rules in CI
+          #   --ip6tables=false      same
+          DOCKER_SOCK=/var/run/docker.sock
+          mkdir -p /var/lib/docker "$(dirname "$DOCKER_SOCK")"
+          nohup "$DOCKER_TOOLS_DIR/bin/dockerd" \
+            --data-root=/var/lib/docker \
+            --exec-root=/var/run/docker \
+            --pidfile=/var/run/docker.pid \
+            --host="unix://${DOCKER_SOCK}" \
+            --iptables=false \
+            --ip6tables=false \
+            --storage-driver=vfs \
+            > "${RUNNER_TEMP}/dockerd.log" 2>&1 < /dev/null &
+          disown || true
+          DOCKER_PID=$!
           for i in $(seq 1 60); do
-            docker -H "unix://${ROOTLESS_SOCKET}" info >/dev/null 2>&1 && break
-            if ! kill -0 "$ROOTLESS_DOCKER_PID" 2>/dev/null; then
-              cat "${RUNNER_TEMP}/dockerd-rootless.log"
+            docker info >/dev/null 2>&1 && break
+            if ! kill -0 "$DOCKER_PID" 2>/dev/null; then
+              cat "${RUNNER_TEMP}/dockerd.log"
               exit 1
             fi
             sleep 1
           done
-          if ! docker -H "unix://${ROOTLESS_SOCKET}" info >/dev/null 2>&1; then
-            cat "${RUNNER_TEMP}/dockerd-rootless.log"
+          if ! docker info >/dev/null 2>&1; then
+            cat "${RUNNER_TEMP}/dockerd.log"
             exit 1
           fi
+          export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
+          export DOCKER_HOST="unix://${DOCKER_SOCK}"
           docker run --rm --privileged --pid=host --ipc=host \
             --security-opt label=type:unconfined_t \
             -v /var/lib/containers:/var/lib/containers \
