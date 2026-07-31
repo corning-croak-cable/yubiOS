@@ -222,6 +222,7 @@ jobs:
             -v /dev:/dev \
             "$RESOLVED_IMAGE" \
             bootc container ukify \
+              -- \
               --output /output/yubios.unsigned.efi
           systemd-sbsign sign \
             --private-key=pkcs11:token=yubiOS-ci;object=sb-key;type=private \
