@@ -156,6 +156,17 @@ jobs:
             runner: [self-hosted, Linux, ARM64, KVM]
             qemu_pkgs: qemu-system-arm qemu-efi-aarch64
             primary: true
+            # -- Negative 2 (composefs tamper) leg, merged in from the former standalone
+            #    composefs-tamper-test job. arm64-only; amd64 leg skips them via `if: matrix.arch == 'arm64'`.
+            root_type_guid: b921b045-1df0-41c3-af44-4c6f280d3fae
+            qemu: qemu-system-aarch64
+            fw_dir: /usr/share/AAVMF
+            code_fd: AAVMF_CODE.fd
+            vars_fd: AAVMF_VARS.fd
+            machine: virt,accel=kvm
+            cpu: host
+            smp: "1"
+            boot_timeout: "120"
     runs-on: ${{ matrix.runner }}
     env:
       # Consumed by tests/vm/*-ci.sh legs that branch on 'is a vGPU attached'.
@@ -874,70 +885,24 @@ jobs:
         run: |
           echo "### vgpu-vm-e2e (${{ matrix.arch }}) -- INFO: tests/vm/test-luks-fido2.sh needs a physical YubiKey + spare block device + root; the hardware leg above runs it for real when dispatched with hw_device set, otherwise it is lint-only (yubiOS#9, yubiOS#20)." >> "$GITHUB_STEP_SUMMARY"
 
-# ====================================================================
-  # -- Negative 2: tampered composefs= -> dm-verity refusal. --
-  # (full rationale in commit message)
-  # ====================================================================
-  composefs-tamper-test:
-    name: "composefs tamper -> dm-verity refusal (Negative 2) [arm64]"
-
-    runs-on: ${{ matrix.runner }}
-    timeout-minutes: 60
-    needs: [lint-vm-scripts]
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - arch: arm64
-            runner: [self-hosted, Linux, ARM64, KVM]
-            root_type_guid: b921b045-1df0-41c3-af44-4c6f280d3fae
-            qemu: qemu-system-aarch64
-            fw_dir: /usr/share/AAVMF
-            code_fd: AAVMF_CODE.fd
-            vars_fd: AAVMF_VARS.fd
-            machine: virt,accel=kvm
-            cpu: host
-            smp: "1"
-            boot_timeout: "120"
-            console_arg: console=ttyAMA0,115200
-
-
-    env:
-      REQUESTED_IMAGE: ${{ inputs.ci_vm_image || inputs.image || 'docker.io/0mniteck/yubios:dev' }}
-      FW_DIR: ${{ matrix.fw_dir }}
-      QEMU: ${{ matrix.qemu }}
-    steps:
-      - name: "Reclaim workspace before checkout"
-        run: |
-          sudo rm -rf "$GITHUB_WORKSPACE" 2>/dev/null || true
-          mkdir -p "$GITHUB_WORKSPACE"
-
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 - see PINNED.md
-
       - name: "Reclaim target dir + loop devices (rock1 persistent)"
+        if: matrix.arch == 'arm64'
         run: |
           sudo umount -R /mnt 2>/dev/null || true
           sudo losetup -D 2>/dev/null || true
           sudo mkdir -p /mnt
           sudo rm -rf /mnt/cfs-target
           sudo install -d -m 0755 -o "$(id -u)" -g "$(id -g)" /mnt/cfs-target
-
-      - name: Install host deps
+      - name: Install Negative 2 extra deps
+        if: matrix.arch == 'arm64'
         run: |
           set -euo pipefail
           sudo apt-get update -qq
           sudo apt-get install -y -qq --no-install-recommends \
-            binutils dosfstools e2fsprogs fdisk jq util-linux \
-            qemu-utils qemu-system-x86 qemu-system-arm \
-            ovmf qemu-efi-aarch64 \
-            docker.io containerd runc
-
-      - name: Verify /dev/kvm available
-        run: |
-          ls -la /dev/kvm || { echo "::error::/dev/kvm absent"; exit 1; }
-
+            binutils fdisk jq docker.io containerd runc
       - name: Prepare disk image + GPT partitions + fs-verity root
+        if: matrix.arch == 'arm64'
+        id: cfs_disk
         run: |
           set -euo pipefail
           DISK="$RUNNER_TEMP/yubios-composefs-tamper-${{ matrix.arch }}.raw"
@@ -962,10 +927,11 @@ jobs:
           echo "LOOP=$LOOP"        >> "$GITHUB_ENV"
           echo "ESP=$ESP"          >> "$GITHUB_ENV"
           echo "ROOT=$ROOT"        >> "$GITHUB_ENV"
-
       - name: Pull yubiOS image + resolve immutable digest
+        if: matrix.arch == 'arm64'
         env:
           DOCKER_PASSWORD: ${{ secrets.DOCKER }}
+          REQUESTED_IMAGE: ${{ inputs.ci_vm_image || inputs.image || 'docker.io/0mniteck/yubios:dev' }}
         run: |
           set -euo pipefail
           # arm64 self-hosted runner (rock1): apt installs docker.io but the
@@ -995,6 +961,7 @@ jobs:
       # /mnt/cfs-target/boot/EFI/Linux/. This makes Negative 2 test the real
       # yubiOS shape (UKI-based BLS), per bootc 1.16.3 PR #2269 uki key.
       - name: "Lay down signed UKI from sealed-UKI VM artifact"
+        if: matrix.arch == 'arm64'
         env:
           DOCKER_PASSWORD: ${{ secrets.DOCKER }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -1052,8 +1019,8 @@ jobs:
 
           sudo cat /mnt/cfs-target/boot/loader/entries/yubios-ukify.conf
           echo "BLSConfig .conf with uki key written"
-
       - name: bootc install to-filesystem (composefs backend, systemd-boot)
+        if: matrix.arch == 'arm64'
         run: |
           set -euo pipefail
           sudo install -d -m 0755 /var/lib/containers
@@ -1072,6 +1039,7 @@ jobs:
             /run/host/mnt/cfs-target/
           echo "bootc install complete"
       - name: Lay down composefs store symlink (manual, post-install)
+        if: matrix.arch == 'arm64'
         run: |
           set -euo pipefail
           # bootc install --skip-finalize skips the finalize phase, which is what
@@ -1103,8 +1071,8 @@ jobs:
           sudo ln -sfn "../blob/$cd_digest" "/mnt/cfs-target/composefs/images/$cd_digest"
           sudo ls -la "/mnt/cfs-target/composefs/images/"
           echo "composefs store symlink laid down for $cd_digest"
-
       - name: Verify install produced a composefs= BLS entry (Type1)
+        if: matrix.arch == 'arm64'
         run: |
           set -euo pipefail
           entry="$(sudo find /mnt/cfs-target/boot -type f -path '*/loader/entries/*.conf' | head -1)"
@@ -1155,17 +1123,16 @@ jobs:
             || { echo "::error::composefs store symlink missing for $COMPOSEFS_DIGEST"; exit 1; }
           echo "BLS_ENTRY=$entry"          >> "$GITHUB_ENV"
           echo "COMPOSEFS_DIGEST=$COMPOSEFS_DIGEST" >> "$GITHUB_ENV"
-
       - name: "Teardown loop+mount before QEMU touches the raw file"
-        if: always()
+        if: always() && matrix.arch == 'arm64' && steps.cfs_disk.outcome == 'success'
         run: |
           set +e
           sudo umount /mnt/cfs-target/boot 2>/dev/null
           sudo umount /mnt/cfs-target 2>/dev/null
           sudo losetup --detach "$LOOP" 2>/dev/null
           echo "teardown done"
-
       - name: Boot baseline (untampered BLS) and assert composefs mount succeeds
+        if: matrix.arch == 'arm64'
         run: |
           set -euo pipefail
           test -f "$FW_DIR/${{ matrix.code_fd }}" \
@@ -1197,8 +1164,8 @@ jobs:
             echo "::error::baseline must NOT show composefs refusal -- install is broken"
             exit 1
           fi
-
       - name: Re-attach loop + tamper one nibble of composefs=<digest> in BLS entry
+        if: matrix.arch == 'arm64'
         run: |
           set -euo pipefail
           LOOP="$(sudo losetup --find --show --partscan "$DISK")"
@@ -1223,16 +1190,15 @@ jobs:
           fi
           echo "TAMPERED_DIGEST=$TAMPERED_DIGEST" >> "$GITHUB_ENV"
           echo "Tamper committed."
-
       - name: Teardown loop+mount before reboot
-        if: always()
+        if: always() && matrix.arch == 'arm64' && steps.cfs_disk.outcome == 'success'
         run: |
           set +e
           sudo umount /mnt/cfs-target/boot 2>/dev/null
           sudo umount /mnt/cfs-target 2>/dev/null
           sudo losetup --detach "$LOOP" 2>/dev/null
-
       - name: Reboot, assert composefs refusal (Negative 2)
+        if: matrix.arch == 'arm64'
         run: |
           set -euo pipefail
           echo "=== QEMU tampered (composefs=$TAMPERED_DIGEST, not in composefs store) ==="
@@ -1267,7 +1233,6 @@ jobs:
           echo "::error::Negative 2 AMBIGUOUS: no refusal marker AND no success marker"
           grep -iE 'composefs|fsverity|verity|switching root|emergency|panic|invalid' /tmp/qemu-tampered.log | head -20
           exit 1
-
       - name: Final cleanup detach loop and remove disk image
         if: always()
         run: |
@@ -1280,7 +1245,7 @@ jobs:
   ci-callback:
     name: Callback to ci.yml orchestrator
     if: ${{ always() && github.event_name == 'workflow_dispatch' && inputs.ci_callback == true }}
-    needs: [lint-vm-scripts, vgpu-vm-e2e, composefs-tamper-test]
+    needs: [lint-vm-scripts, vgpu-vm-e2e]
     runs-on: ubuntu-24.04
     permissions:
       contents: read
