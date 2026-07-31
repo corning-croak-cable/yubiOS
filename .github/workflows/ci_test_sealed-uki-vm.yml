@@ -88,31 +88,36 @@ jobs:
           install -m 0755 docker-rootless-extras/rootlesskit "$DOCKER_TOOLS_DIR/bin/"
           echo "$DOCKER_TOOLS_DIR/bin" >> "$GITHUB_PATH"
           export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
-          # V8: mirror ci_mkosi-installer.yml rootless dockerd setup exactly.
-          # Three fixes vs V6+V7:
-          #  (a) data-root on /mnt (host-mounted volume, real persistent FS).
-          #      /home/$USER was on the container overlayfs -- chmod from
-          #      inside the rootless user-namespace was EPERM there.
-          #  (b) bare '&' with $! capture; no nohup/setsid/disown. The
-          #      ci_mkosi-installer workflow works across step boundaries
-          #      this way; the previous detach machinery was chasing a
-          #      symptom (the chmod EPERM) not the cause.
-          #  (c) PID liveness check via kill -0 in the wait loop, plus
-          #      export DOCKER_HOST for the current step (not only future
-          #      steps via GITHUB_ENV).
+          # Set DOCKER_HOST for subsequent steps (steps 5-9 use `docker` directly)
+          echo "DOCKER_HOST=unix:///run/docker-rootless/docker.sock" >> "$GITHUB_ENV"
+          echo "DOCKER_CONFIG=$DOCKER_TOOLS_DIR/config" >> "$GITHUB_ENV"
+          mkdir -p "$DOCKER_TOOLS_DIR/config/cli-plugins"
+          echo "DOCKER_TOOLS_DIR=$DOCKER_TOOLS_DIR" >> "$GITHUB_ENV"
+
+      - name: Resolve image digest
+        env:
+          DOCKER_PASSWORD: ${{ secrets.DOCKER }}
+          REQUESTED_IMAGE: ${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}
+        run: |
+          set -euo pipefail
+          # V9: launch rootless dockerd inline in this step.
+          # GitHub Actions does not preserve background processes across step
+          # boundaries -- the daemon started in step 4 is gone by step 5
+          # regardless of setsid/nohup/disown. Each docker-using step (5 and
+          # 7) launches the daemon fresh in its own preamble. The canonical
+          # ci_mkosi-installer.yml follows this exact pattern.
           ROOTLESS_USER=docker-rootless
           ROOTLESS_RUNTIME_DIR=/run/docker-rootless
           ROOTLESS_SOCKET="${ROOTLESS_RUNTIME_DIR}/docker.sock"
           ROOTLESS_DATA_DIR="$(mktemp -d /mnt/docker-rootless.XXXXXX)"
-          useradd --create-home --shell /bin/sh "$ROOTLESS_USER"
+          useradd --create-home --shell /bin/sh "$ROOTLESS_USER" 2>/dev/null || true
           printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subuid
           printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subgid
           install -d -m 0700 -o "$ROOTLESS_USER" -g "$ROOTLESS_USER" "$ROOTLESS_RUNTIME_DIR"
           chown "$ROOTLESS_USER:$ROOTLESS_USER" "$ROOTLESS_DATA_DIR"
           chmod 0700 "$ROOTLESS_DATA_DIR"
-          # RootlessKit needs unprivileged user namespaces on Ubuntu 24.04.
           if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
-            sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+            sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
           fi
           export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
           export DOCKER_CONFIG="$DOCKER_TOOLS_DIR/config"
@@ -146,18 +151,6 @@ jobs:
             cat "${RUNNER_TEMP}/dockerd-rootless.log"
             exit 1
           fi
-          # Set DOCKER_HOST for subsequent steps (steps 5-9 use `docker` directly)
-          echo "DOCKER_HOST=unix:///run/docker-rootless/docker.sock" >> "$GITHUB_ENV"
-          echo "DOCKER_CONFIG=$DOCKER_TOOLS_DIR/config" >> "$GITHUB_ENV"
-          mkdir -p "$DOCKER_TOOLS_DIR/config/cli-plugins"
-          echo "DOCKER_TOOLS_DIR=$DOCKER_TOOLS_DIR" >> "$GITHUB_ENV"
-
-      - name: Resolve image digest
-        env:
-          DOCKER_PASSWORD: ${{ secrets.DOCKER }}
-          REQUESTED_IMAGE: ${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}
-        run: |
-          set -euo pipefail
           if [ -n "${DOCKER_PASSWORD:-}" ]; then
             printf '%s' "$DOCKER_PASSWORD" | docker login \
               --username 0mniteck42 --password-stdin docker.io
@@ -204,6 +197,57 @@ jobs:
       - name: Build signed UKI from image (bootc container ukify + systemd-sbsign)
         run: |
           set -euo pipefail
+          # V9: launch rootless dockerd inline in this step.
+          # GitHub Actions does not preserve background processes across step
+          # boundaries -- the daemon started in step 4 is gone by step 5
+          # regardless of setsid/nohup/disown. Each docker-using step (5 and
+          # 7) launches the daemon fresh in its own preamble. The canonical
+          # ci_mkosi-installer.yml follows this exact pattern.
+          ROOTLESS_USER=docker-rootless
+          ROOTLESS_RUNTIME_DIR=/run/docker-rootless
+          ROOTLESS_SOCKET="${ROOTLESS_RUNTIME_DIR}/docker.sock"
+          ROOTLESS_DATA_DIR="$(mktemp -d /mnt/docker-rootless.XXXXXX)"
+          useradd --create-home --shell /bin/sh "$ROOTLESS_USER" 2>/dev/null || true
+          printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subuid
+          printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subgid
+          install -d -m 0700 -o "$ROOTLESS_USER" -g "$ROOTLESS_USER" "$ROOTLESS_RUNTIME_DIR"
+          chown "$ROOTLESS_USER:$ROOTLESS_USER" "$ROOTLESS_DATA_DIR"
+          chmod 0700 "$ROOTLESS_DATA_DIR"
+          if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
+            sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+          fi
+          export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
+          export DOCKER_CONFIG="$DOCKER_TOOLS_DIR/config"
+          export DOCKER_HOST="unix://${ROOTLESS_SOCKET}"
+          setpriv \
+            --reuid="$ROOTLESS_USER" \
+            --regid="$ROOTLESS_USER" \
+            --init-groups \
+            env \
+              HOME="/home/${ROOTLESS_USER}" \
+              USER="$ROOTLESS_USER" \
+              LOGNAME="$ROOTLESS_USER" \
+              XDG_RUNTIME_DIR="$ROOTLESS_RUNTIME_DIR" \
+              PATH="$DOCKER_TOOLS_DIR/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+              DOCKERD_ROOTLESS_ROOTLESSKIT_NET=slirp4netns \
+              dockerd-rootless.sh \
+                --data-root="$ROOTLESS_DATA_DIR" \
+                --storage-driver=fuse-overlayfs \
+                -H "unix://${ROOTLESS_SOCKET}" \
+            > "${RUNNER_TEMP}/dockerd-rootless.log" 2>&1 &
+          ROOTLESS_DOCKER_PID=$!
+          for i in $(seq 1 60); do
+            docker -H "unix://${ROOTLESS_SOCKET}" info >/dev/null 2>&1 && break
+            if ! kill -0 "$ROOTLESS_DOCKER_PID" 2>/dev/null; then
+              cat "${RUNNER_TEMP}/dockerd-rootless.log"
+              exit 1
+            fi
+            sleep 1
+          done
+          if ! docker -H "unix://${ROOTLESS_SOCKET}" info >/dev/null 2>&1; then
+            cat "${RUNNER_TEMP}/dockerd-rootless.log"
+            exit 1
+          fi
           docker run --rm --privileged --pid=host --ipc=host \
             --security-opt label=type:unconfined_t \
             -v /var/lib/containers:/var/lib/containers \
