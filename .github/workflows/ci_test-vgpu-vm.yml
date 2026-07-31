@@ -1002,6 +1002,7 @@ jobs:
       - name: "Lay down signed UKI from sealed-UKI VM artifact"
         env:
           DOCKER_PASSWORD: ${{ secrets.DOCKER }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           ART_NAME="sealed-uki-artifacts-${{ matrix.arch }}"
