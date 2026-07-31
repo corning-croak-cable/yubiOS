@@ -55,16 +55,81 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 -- see PINNED.md
 
-      - name: Install build dependencies
+      - name: Install build dependencies (incl. docker CLI + rootless daemon per ci_mkosi-installer.yml pattern)
         run: |
           set -euo pipefail
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends \
-            binutils dosfstools e2fsprogs jq util-linux \
+            git curl iproute2 iptables nftables passwd procps util-linux \
+            uidmap slirp4netns fuse-overlayfs \
+            binutils dosfstools e2fsprogs jq \
             mkosi opensc softhsm2 tpm2-tools
           command -v mkosi systemd-sbsign sbverify \
-            softhsm2-util pkcs11-tool \
+            softhsm2-util pkcs11-tool docker dockerd-rootless.sh \
             >/dev/null
+          # Install docker CLI + rootless daemon (SHA-pinned static binaries,
+          # amd64 digest; the canonical ci_mkosi-installer.yml pattern).
+          DOCKER_TOOLS_DIR="${RUNNER_TEMP}/docker-tools"
+          mkdir -p "$DOCKER_TOOLS_DIR/bin"
+          wcurl() {
+            local url="$1" sha="$2"
+            local file; file="$(basename "$url")"
+            curl -fsSL -o "$file" "$url"
+            printf '%s  %s\n' "$sha" "$file" | sha512sum --check --strict
+          }
+          DOCKER_SHA512=42401384ef853dab0a1986a7990420e77d3ee2bc39e178f8817d27ba6c4403998b7aacf3c28c7172135cdeec281cd328a8f2af949b5f57db44a211a093cfd20b
+          ROOTLESS_SHA512=184b583a0f325bef12feaf1ca175ff5ea4a65a168f2136eb1daf9c2ae646eecf02134ed65766c8800bd8eb03ac4d338d1e5d700248bc33632027b5b0b52de48a
+          wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz" "$DOCKER_SHA512"
+          wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-rootless-extras-29.6.0.tgz" "$ROOTLESS_SHA512"
+          tar xzf docker-29.6.0.tgz
+          tar xzf docker-rootless-extras.tgz
+          install -m 0755 docker/* "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 docker-rootless-extras/dockerd-rootless.sh "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 docker-rootless-extras/rootlesskit "$DOCKER_TOOLS_DIR/bin/"
+          echo "$DOCKER_TOOLS_DIR/bin" >> "$GITHUB_PATH"
+          export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
+          # Start rootless dockerd (canonical ci_mkosi-installer.yml pattern).
+          # The outer container has options: --privileged, so the kernel
+          # user-namespace plumbing rootlesskit needs is available.
+          ROOTLESS_USER=docker-rootless
+          ROOTLESS_RUNTIME_DIR=/run/docker-rootless
+          ROOTLESS_SOCKET="${ROOTLESS_RUNTIME_DIR}/docker.sock"
+          ROOTLESS_DATA_DIR="$(mktemp -d /tmp/docker-rootless.XXXXXX)"
+          printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subuid
+          printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subgid
+          useradd --create-home --shell /bin/sh "$ROOTLESS_USER" || true
+          install -d -m 0700 -o "$ROOTLESS_USER" -g "$ROOTLESS_USER" "$ROOTLESS_RUNTIME_DIR"
+          chmod 0700 "$ROOTLESS_DATA_DIR"
+          if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
+            sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+          fi
+          setpriv \
+            --reuid="$ROOTLESS_USER" \
+            --regid="$ROOTLESS_USER" \
+            --init-groups \
+            env \
+              HOME="/home/${ROOTLESS_USER}" \
+              USER="$ROOTLESS_USER" \
+              LOGNAME="$ROOTLESS_USER" \
+              XDG_RUNTIME_DIR="$ROOTLESS_RUNTIME_DIR" \
+              PATH="$DOCKER_TOOLS_DIR/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+              DOCKERD_ROOTLESS_ROOTLESSKIT_NET=slirp4netns \
+              dockerd-rootless.sh \
+                --data-root="$ROOTLESS_DATA_DIR" \
+                --storage-driver=fuse-overlayfs \
+                -H "unix://${ROOTLESS_SOCKET}" \
+            > "${RUNNER_TEMP}/dockerd-rootless.log" 2>&1 &
+          for i in $(seq 1 60); do
+            docker -H "unix://${ROOTLESS_SOCKET}" info >/dev/null 2>&1 && break
+            sleep 1
+          done
+          docker -H unix:///run/docker-rootless/docker.sock info >/dev/null 2>&1 \
+            || { cat "${RUNNER_TEMP}/dockerd-rootless.log"; exit 1; }
+          # Set DOCKER_HOST for subsequent steps (steps 5-9 use `docker` directly)
+          echo "DOCKER_HOST=unix:///run/docker-rootless/docker.sock" >> "$GITHUB_ENV"
+          echo "DOCKER_CONFIG=$DOCKER_TOOLS_DIR/config" >> "$GITHUB_ENV"
+          mkdir -p "$DOCKER_TOOLS_DIR/config/cli-plugins"
+          echo "DOCKER_TOOLS_DIR=$DOCKER_TOOLS_DIR" >> "$GITHUB_ENV"
 
       - name: Resolve image digest
         env:
