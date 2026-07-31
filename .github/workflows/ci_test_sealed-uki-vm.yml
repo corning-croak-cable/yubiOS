@@ -655,6 +655,22 @@ jobs:
         password: ${{ secrets.DOCKER }}
       image: docker://dhi.io/debian-base@sha256:9415967aa0ed8adea8b5c048994259d1982026dca143d0303c7bbe0e11ed67d3
     steps:
+      - name: Install VM dependencies for Negative 3
+        run: |
+          set -euo pipefail
+          # V79: run 30627590276 (V78, 1c9ddd8b) failed at "OVMF secboot
+          # firmware missing" -- the negative job's container was the bare
+          # dhi.io debian-base; Negative 3 now boots QEMU itself with a
+          # foreign OVMF varstore, so it needs the same qemu/ovmf/virt-fw
+          # stack as the boot-secure-vm job. sbverify (for Negative 1) is
+          # already provided by osslsigncode or system openssl on Debian
+          # -- check.
+          command -v sbverify >/dev/null 2>&1 || { echo "::error::sbverify missing (needed for Negative 1)"; exit 1; }
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends \
+            qemu-system-x86 ovmf python3-virt-firmware \
+            systemd-ukify jq
+
       - name: Download signed UKI artifact
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
         with:
