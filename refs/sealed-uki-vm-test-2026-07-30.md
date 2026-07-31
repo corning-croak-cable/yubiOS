@@ -58,13 +58,20 @@ fresh GitHub-hosted QEMU.
 
 ## Out of scope (parked for follow-on PRs)
 
-- **bootc 1.16.4+ `bootc container split-kernel-and-rootfs`** — required for the
-  BLSConfig wiring on the yubiOS side (OMN-150 Phase 2). Until that lands on
-  the yubios base image, the BLS entries still point at `bootc_composefs-…/
-  vmlinuz` and `bootc_composefs-…/initrd`, NOT at a UKI. So this VM lane proves
-  the *primitive* (signed UKI + ROTPK + dm-verity + sealed LUKS works in a
-  QEMU Secure Boot VM) but does NOT prove the yubiOS install-time wiring. The
-  two need to land separately.
+- **yubiOS-side BLSConfig wiring (OMN-150 Phase 2)** — required for the BLS
+  entries to point at the signed UKI rather than the composefs-blessed
+  kernel. The upstream bootc 1.16.6 capability IS met (verified by
+  `ci_test_bootc-filesystem.yml` run #11 at `7eba4856e7` job `91037694742`,
+  which probed `bootc container split-kernel-and-rootfs --help` and
+  `bootc container ukify --help` and reported `sealed-build split capability:
+  present` / `sealed-build ukify capability: present`). But the actual BLS
+  entry on the new image still points at
+  `/EFI/Linux/bootc_composefs-<sha512>/vmlinuz` with `composefs=<sha512>`
+  in options (verified in the same run, line 909). So the yubios-side wiring
+  (Containerfile.dev → ukify call, BLSConfig drop-in for UKI) has not landed.
+  This VM lane proves the *primitive* (signed UKI + ROTPK + dm-verity +
+  sealed LUKS works in a QEMU Secure Boot VM) but does NOT prove the
+  yubios install-time wiring. The two need to land separately.
 - **Real YubiKey PIV 9c in CI.** Out of scope. SoftHSM fallback per the
   `mkosi-image-builder` skill is the CI primitive.
 - **ARM64 Secure Boot on RK3588.** Out of scope for this lane. The
