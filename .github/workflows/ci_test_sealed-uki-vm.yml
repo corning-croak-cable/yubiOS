@@ -428,8 +428,9 @@ jobs:
           # `\.cmdline: ` prefix. `set -euo pipefail` ensures the awk
           # exit code propagates; the explicit || handler with ::error::
           # makes a regression surface clearly.
-          ukify inspect --format=short "$SIGNED_EFI" > /tmp/inspect.txt \
-            || { echo "::error::ukify inspect --format=short failed"; exit 1; }
+          # V64: ukify inspect --json short (user's hint; --json takes a choice value).
+          ukify inspect --json short "$SIGNED_EFI" > /tmp/inspect.txt \
+            || { echo "::error::ukify inspect --json short failed"; exit 1; }
           test -s /tmp/inspect.txt || { echo "::error::/tmp/inspect.txt empty (ukify produced no output)"; exit 1; }
           awk -F': ' '/^\.cmdline:/{print $2}' /tmp/inspect.txt > /tmp/cmdline.txt \
             || { echo "::error::awk extract of .cmdline from /tmp/inspect.txt failed"; exit 1; }
