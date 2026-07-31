@@ -69,7 +69,7 @@ jobs:
           REQUESTED_IMAGE: ${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}
         run: |
           set -euo pipefail
-          if [ -n "${{ DOCKER_PASSWORD:- }}" ]; then
+          if [ -n "${DOCKER_PASSWORD:-}" ]; then
             printf '%s' "$DOCKER_PASSWORD" | docker login \
               --username 0mniteck42 --password-stdin docker.io
           fi
@@ -188,9 +188,9 @@ jobs:
           mkdir -p ovmf
           OVMF_VERSION="edk2-stable202405"
           curl -fsSL -o ovmf/OVMF_CODE.fd \
-            "https://github.com/tianocore/edk2/releases/download/${{ OVMF_VERSION }}/OVMF_CODE.fd"
+            "https://github.com/tianocore/edk2/releases/download/$OVMF_VERSION/OVMF_CODE.fd"
           curl -fsSL -o ovmf/OVMF_VARS.fd \
-            "https://github.com/tianocore/edk2/releases/download/${{ OVMF_VERSION }}/OVMF_VARS.fd"
+            "https://github.com/tianocore/edk2/releases/download/$OVMF_VERSION/OVMF_VARS.fd"
           cp ovmf/OVMF_VARS.fd ovmf/OVMF_VARS.run.fd
 
       - name: Boot signed UKI in QEMU OVMF Secure Boot VM
