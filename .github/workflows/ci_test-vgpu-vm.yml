@@ -874,10 +874,286 @@ jobs:
         run: |
           echo "### vgpu-vm-e2e (${{ matrix.arch }}) -- INFO: tests/vm/test-luks-fido2.sh needs a physical YubiKey + spare block device + root; the hardware leg above runs it for real when dispatched with hw_device set, otherwise it is lint-only (yubiOS#9, yubiOS#20)." >> "$GITHUB_STEP_SUMMARY"
 
+# ====================================================================
+  # -- Negative 2: tampered composefs= -> dm-verity refusal. --
+  # (full rationale in commit message)
+  # ====================================================================
+  composefs-tamper-test:
+    name: "composefs tamper -> dm-verity refusal (Negative 2) [${{ matrix.arch }}]"
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    needs: [lint-vm-scripts]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+            root_type_guid: 4f68bce3-e8cd-4db1-96e7-fbcaf984b709
+            qemu: qemu-system-x86_64
+            fw_dir: /usr/share/OVMF
+            code_fd: OVMF_CODE_4M.fd
+            vars_fd: OVMF_VARS_4M.fd
+            machine: q35,smm=on,accel=kvm
+            cpu: host
+            smp: "4"
+            boot_timeout: "120"
+            console_arg: console=ttyS0,115200
+          - arch: arm64
+            runner: [self-hosted, Linux, ARM64, KVM]
+            root_type_guid: b921b045-1df0-41c3-af44-4c6f280d3fae
+            qemu: qemu-system-aarch64
+            fw_dir: /usr/share/AAVMF
+            code_fd: AAVMF_CODE.fd
+            vars_fd: AAVMF_VARS.fd
+            machine: virt,accel=kvm
+            cpu: host
+            smp: "1"
+            boot_timeout: "120"
+            console_arg: console=ttyAMA0,115200
+    env:
+      REQUESTED_IMAGE: ${{ inputs.ci_vm_image || inputs.image || 'docker.io/0mniteck/yubios:dev' }}
+    steps:
+      - name: "Reclaim workspace before checkout"
+        run: |
+          sudo rm -rf "$GITHUB_WORKSPACE" 2>/dev/null || true
+          mkdir -p "$GITHUB_WORKSPACE"
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 - see PINNED.md
+
+      - name: "Reclaim target dir + loop devices (rock1 persistent)"
+        run: |
+          sudo umount -R /mnt 2>/dev/null || true
+          sudo losetup -D 2>/dev/null || true
+          sudo mkdir -p /mnt
+          sudo rm -rf /mnt/cfs-target
+          sudo install -d -m 0755 -o "$(id -u)" -g "$(id -g)" /mnt/cfs-target
+
+      - name: Install host deps
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends \
+            binutils dosfstools e2fsprogs fdisk jq util-linux \
+            qemu-utils qemu-system-x86 qemu-system-arm \
+            ovmf qemu-efi-aarch64 \
+            docker.io containerd runc
+
+      - name: Verify /dev/kvm available
+        run: |
+          ls -la /dev/kvm || { echo "::error::/dev/kvm absent"; exit 1; }
+
+      - name: Prepare disk image + GPT partitions + fs-verity root
+        run: |
+          set -euo pipefail
+          DISK="$RUNNER_TEMP/yubios-composefs-tamper-${{ matrix.arch }}.raw"
+          truncate -s 12G "$DISK"
+          LOOP="$(sudo losetup --find --show --partscan "$DISK")"
+          printf 'label: gpt\nsize=1G, type=c12a7328-f81f-11d2-ba4b-00a0c93ec93b, name=ESP\ntype=%s, name=yubiOS-root\n' \
+            "${{ matrix.root_type_guid }}" | sudo sfdisk "$LOOP"
+          sudo partx --update "$LOOP" || true
+          sudo udevadm settle
+          ESP="${LOOP}p1"
+          ROOT="${LOOP}p2"
+          test -b "$ESP" || { echo "::error::$ESP not a block device"; exit 1; }
+          test -b "$ROOT" || { echo "::error::$ROOT not a block device"; exit 1; }
+          sudo mkfs.vfat -F 32 -n EFI "$ESP"
+          sudo mkfs.ext4 -F -O verity -L yubiOS-root "$ROOT"
+          sudo mount "$ROOT" /mnt/cfs-target
+          sudo install -d -m 0755 /mnt/cfs-target/boot
+          sudo mount "$ESP" /mnt/cfs-target/boot
+          test "$(findmnt -nro SOURCE /mnt/cfs-target)" = "$ROOT"
+          test "$(findmnt -nro SOURCE /mnt/cfs-target/boot)" = "$ESP"
+          echo "DISK=$DISK"        >> "$GITHUB_ENV"
+          echo "LOOP=$LOOP"        >> "$GITHUB_ENV"
+          echo "ESP=$ESP"          >> "$GITHUB_ENV"
+          echo "ROOT=$ROOT"        >> "$GITHUB_ENV"
+
+      - name: Pull yubiOS image + resolve immutable digest
+        env:
+          DOCKER_PASSWORD: ${{ secrets.DOCKER }}
+        run: |
+          set -euo pipefail
+          if [ -n "${DOCKER_PASSWORD:-}" ]; then
+            printf '%s' "$DOCKER_PASSWORD" | docker login \
+              --username 0mniteck42 --password-stdin docker.io
+          fi
+          docker pull "$REQUESTED_IMAGE"
+          RESOLVED="$(docker image inspect "$REQUESTED_IMAGE" \
+            --format '{{ index .RepoDigests 0 }}')"
+          case "$RESOLVED" in
+            *@sha256:*) ;;
+            *) echo "::error::image did not resolve to an immutable digest: $RESOLVED"; exit 1 ;;
+          esac
+          echo "Installing immutable source: $RESOLVED"
+          echo "RESOLVED=$RESOLVED" >> "$GITHUB_ENV"
+
+      - name: bootc install to-filesystem (composefs backend, systemd-boot)
+        run: |
+          set -euo pipefail
+          sudo install -d -m 0755 /var/lib/containers
+          docker run --rm --privileged --pid=host --ipc=host \
+            --security-opt label=type:unconfined_t \
+            -v /var/lib/containers:/var/lib/containers \
+            -v /dev:/dev \
+            -v /:/run/host \
+            "$RESOLVED" \
+            bootc install to-filesystem \
+              --source-imgref="registry:${RESOLVED}" \
+              --bootloader=systemd \
+              --root-mount-spec="" \
+              --composefs-backend \
+              --skip-finalize \
+            /run/host/mnt/cfs-target/
+          echo "bootc install complete"
+
+      - name: Verify install produced a composefs= BLS entry (Type1)
+        run: |
+          set -euo pipefail
+          entry="$(sudo find /mnt/cfs-target/boot -type f -path '*/loader/entries/*.conf' | head -1)"
+          test -n "$entry" || { echo "::error::no BLS entry under /mnt/cfs-target/boot"; exit 1; }
+          echo "BLS entry: $entry"
+          sudo cat "$entry"
+          options="$(sudo awk '$1 == "options" {sub(/^options[[:space:]]+/, ""); print}' "$entry")"
+          echo "options: $options"
+          if [[ " $options " =~ [[:space:]]composefs=([0-9a-f]{128})[[:space:]] ]]; then
+            COMPOSEFS_DIGEST="${BASH_REMATCH[1]}"
+            echo "COMPOSEFS_DIGEST=$COMPOSEFS_DIGEST"
+          else
+            echo "::error::no composefs=<sha512> in $entry -- test is vacuous without Type1 BLS"
+            exit 1
+          fi
+          sudo test -L "/mnt/cfs-target/composefs/images/$COMPOSEFS_DIGEST" \
+            || { echo "::error::composefs store symlink missing for $COMPOSEFS_DIGEST"; exit 1; }
+          echo "BLS_ENTRY=$entry"          >> "$GITHUB_ENV"
+          echo "COMPOSEFS_DIGEST=$COMPOSEFS_DIGEST" >> "$GITHUB_ENV"
+
+      - name: "Teardown loop+mount before QEMU touches the raw file"
+        if: always()
+        run: |
+          set +e
+          sudo umount /mnt/cfs-target/boot 2>/dev/null
+          sudo umount /mnt/cfs-target 2>/dev/null
+          sudo losetup --detach "$LOOP" 2>/dev/null
+          echo "teardown done"
+
+      - name: Boot baseline (untampered BLS) and assert composefs mount succeeds
+        run: |
+          set -euo pipefail
+          test -f "$FW_DIR/${{ matrix.code_fd }}" \
+            || { echo "::error::${{ matrix.code_fd }} missing from $FW_DIR"; ls -la "$FW_DIR/"; exit 1; }
+          test -f "$FW_DIR/${{ matrix.vars_fd }}" \
+            || { echo "::error::${{ matrix.vars_fd }} missing"; exit 1; }
+          echo "=== QEMU baseline (untampered BLS, composefs=$COMPOSEFS_DIGEST) ==="
+          timeout "${{ matrix.boot_timeout }}" "$QEMU" \
+            -machine "${{ matrix.machine }}" \
+            -cpu "${{ matrix.cpu }}" -smp "${{ matrix.smp }}" -m 4G \
+            -drive if=pflash,format=raw,readonly=on,file="$FW_DIR/${{ matrix.code_fd }}" \
+            -drive if=pflash,format=raw,file="$FW_DIR/${{ matrix.vars_fd }}" \
+            -drive file="$DISK",format=raw,if=virtio \
+            -net none \
+            -nographic -serial mon:stdio -display none -no-reboot \
+            > /tmp/qemu-baseline.log 2>&1 || true
+          echo "=== baseline serial log (last 60 lines) ==="
+          tail -60 /tmp/qemu-baseline.log
+          echo "=== end serial log ==="
+          if grep -Eq '(Switching root|Reached target Basic System|initrd-switch-root\.service.*(start|finish))' /tmp/qemu-baseline.log; then
+            echo "Baseline PASS: kernel reached composefs-mounted userspace"
+          else
+            echo "::error::Baseline AMBIGUOUS: no initrd-stage success marker"
+            echo "--- looking for composefs/fsverity markers ---"
+            grep -iE 'composefs|fsverity|verity|switching root|emergency' /tmp/qemu-baseline.log | head -20
+            exit 1
+          fi
+          if grep -qiE '(Failed to mount composefs image|bootc-root-setup.*Failed|emergency)' /tmp/qemu-baseline.log; then
+            echo "::error::baseline must NOT show composefs refusal -- install is broken"
+            exit 1
+          fi
+
+      - name: Re-attach loop + tamper one nibble of composefs=<digest> in BLS entry
+        run: |
+          set -euo pipefail
+          LOOP="$(sudo losetup --find --show --partscan "$DISK")"
+          ROOT="${LOOP}p2"
+          ESP="${LOOP}p1"
+          sudo mount "$ROOT" /mnt/cfs-target
+          sudo mount "$ESP"  /mnt/cfs-target/boot
+          orig="${COMPOSEFS_DIGEST:0:1}"
+          if [ "$orig" = "0" ]; then
+            tampered_first="1"
+          else
+            tampered_first="0"
+          fi
+          TAMPERED_DIGEST="${tampered_first}${COMPOSEFS_DIGEST:1}"
+          echo "Original composefs=<sha512>: $COMPOSEFS_DIGEST"
+          echo "Tampered  composefs=<sha512>: $TAMPERED_DIGEST"
+          sudo sed -i "s/composefs=${COMPOSEFS_DIGEST}/composefs=${TAMPERED_DIGEST}/g" "$BLS_ENTRY"
+          sudo grep -E 'composefs=' "$BLS_ENTRY"
+          if sudo test -e "/mnt/cfs-target/composefs/images/$TAMPERED_DIGEST"; then
+            echo "::error::tampered digest $TAMPERED_DIGEST unexpectedly exists in store"
+            exit 1
+          fi
+          echo "TAMPERED_DIGEST=$TAMPERED_DIGEST" >> "$GITHUB_ENV"
+          echo "Tamper committed."
+
+      - name: Teardown loop+mount before reboot
+        if: always()
+        run: |
+          set +e
+          sudo umount /mnt/cfs-target/boot 2>/dev/null
+          sudo umount /mnt/cfs-target 2>/dev/null
+          sudo losetup --detach "$LOOP" 2>/dev/null
+
+      - name: Reboot, assert composefs refusal (Negative 2)
+        run: |
+          set -euo pipefail
+          echo "=== QEMU tampered (composefs=$TAMPERED_DIGEST, not in composefs store) ==="
+          timeout "${{ matrix.boot_timeout }}" "$QEMU" \
+            -machine "${{ matrix.machine }}" \
+            -cpu "${{ matrix.cpu }}" -smp "${{ matrix.smp }}" -m 4G \
+            -drive if=pflash,format=raw,readonly=on,file="$FW_DIR/${{ matrix.code_fd }}" \
+            -drive if=pflash,format=raw,file="$FW_DIR/${{ matrix.vars_fd }}" \
+            -drive file="$DISK",format=raw,if=virtio \
+            -net none \
+            -nographic -serial mon:stdio -display none -no-reboot \
+            > /tmp/qemu-tampered.log 2>&1 || true
+          echo "=== tampered serial log (last 60 lines) ==="
+          tail -60 /tmp/qemu-tampered.log
+          echo "=== end serial log ==="
+          if grep -qiE '(Failed to mount composefs image|bootc-root-setup.*Failed)' /tmp/qemu-tampered.log; then
+            echo "Negative 2 PASS: dm-verity refused tampered composefs=$TAMPERED_DIGEST"
+            echo "### composefs-tamper-test (${{ matrix.arch }}) -- PASS: dm-verity refused tampered composefs reference" \
+              >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          if grep -qiE 'emergency' /tmp/qemu-tampered.log; then
+            echo "Negative 2 PASS (emergency mode reached after composefs mount failure)"
+            echo "### composefs-tamper-test (${{ matrix.arch }}) -- PASS: emergency.target after tampered composefs" \
+              >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          if grep -Eq '(Switching root|Reached target Basic System)' /tmp/qemu-tampered.log; then
+            echo "::error::Negative 2 FAIL: tamper had no effect -- kernel reached userspace"
+            exit 1
+          fi
+          echo "::error::Negative 2 AMBIGUOUS: no refusal marker AND no success marker"
+          grep -iE 'composefs|fsverity|verity|switching root|emergency|panic|invalid' /tmp/qemu-tampered.log | head -20
+          exit 1
+
+      - name: Final cleanup detach loop and remove disk image
+        if: always()
+        run: |
+          set +e
+          sudo umount -R /mnt/cfs-target 2>/dev/null
+          sudo losetup -D 2>/dev/null
+          rm -f "$DISK"
+          echo "cleanup done"
+
   ci-callback:
     name: Callback to ci.yml orchestrator
     if: ${{ always() && github.event_name == 'workflow_dispatch' && inputs.ci_callback == true }}
-    needs: [lint-vm-scripts, vgpu-vm-e2e]
+    needs: [lint-vm-scripts, vgpu-vm-e2e, composefs-tamper-test]
     runs-on: ubuntu-24.04
     permissions:
       contents: read
