@@ -429,8 +429,24 @@ jobs:
           # exit code propagates; the explicit || handler with ::error::
           # makes a regression surface clearly.
           # V64: ukify inspect --json short (user's hint; --json takes a choice value).
-          ukify inspect --json short "$SIGNED_EFI" > /tmp/inspect.txt \
-            || { echo "::error::ukify inspect --json short failed"; exit 1; }
+          # V65: ukify inspect --json=short (equals sign, not space).
+          # V64 commit ea5ee131 (run #86, job 91127722244) made assertion 1
+          # pass cleanly ('Signature verification: ok') and assertion 2 pass cleanly.
+          # But assertion 3 failed at 09:59:51Z with:
+          #   ukify: error: unrecognized arguments: /__w/yubiOS/yubiOS/mkosi.output/yubios.efi
+          #   ##[error]ukify inspect --json short failed
+          #   ##[error]Process completed with exit code 1.
+          # Root cause: systemd-ukify v257's `--json` flag is `optional_argument`,
+          # not `required_argument`. With `--json short "$file"` (space-separated),
+          # bash splits it into 3 args: `--json`, `short`, `/path/to/file`. The parser
+          # then (a) accepts `--json` with no value, (b) consumes `short` as the
+          # positional FILE argument (it's the only positional), and (c) sees
+          # `/path/to/file` as a SECOND positional -> 'unrecognized arguments'.
+          # Fix: use `--json=short` (equals sign). The equals syntax forces `--json`
+          # to consume `short` as its value (the Geteopt-style `=` flag-value
+          syntax), leaving `$file` as the single positional file arg.
+          ukify inspect --json=short "$SIGNED_EFI" > /tmp/inspect.txt \
+            || { echo "::error::ukify inspect --json=short failed"; exit 1; }
           test -s /tmp/inspect.txt || { echo "::error::/tmp/inspect.txt empty (ukify produced no output)"; exit 1; }
           awk -F': ' '/^\.cmdline:/{print $2}' /tmp/inspect.txt > /tmp/cmdline.txt \
             || { echo "::error::awk extract of .cmdline from /tmp/inspect.txt failed"; exit 1; }
