@@ -94,12 +94,15 @@ jobs:
           ROOTLESS_USER=docker-rootless
           ROOTLESS_RUNTIME_DIR=/run/docker-rootless
           ROOTLESS_SOCKET="${ROOTLESS_RUNTIME_DIR}/docker.sock"
-          ROOTLESS_DATA_DIR="$(mktemp -d /tmp/docker-rootless.XXXXXX)"
           printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subuid
           printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subgid
           useradd --create-home --shell /bin/sh "$ROOTLESS_USER" || true
           install -d -m 0700 -o "$ROOTLESS_USER" -g "$ROOTLESS_USER" "$ROOTLESS_RUNTIME_DIR"
-          chmod 0700 "$ROOTLESS_DATA_DIR"
+          # V6: data-root under docker-rootless's HOME so the directory is owned
+          # by that user outside the user-namespace. /tmp would be owned by the
+          # outer job user; inner-rootless dockerd cannot chmod a root-owned dir.
+          ROOTLESS_DATA_DIR="/home/${ROOTLESS_USER}/docker-data"
+          install -d -m 0700 -o "$ROOTLESS_USER" -g "$ROOTLESS_USER" "$ROOTLESS_DATA_DIR"
           if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
             sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
           fi
