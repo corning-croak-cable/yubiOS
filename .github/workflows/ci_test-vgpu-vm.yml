@@ -913,6 +913,8 @@ jobs:
             console_arg: console=ttyAMA0,115200
     env:
       REQUESTED_IMAGE: ${{ inputs.ci_vm_image || inputs.image || 'docker.io/0mniteck/yubios:dev' }}
+      FW_DIR: ${{ matrix.fw_dir }}
+      QEMU: ${{ matrix.qemu }}
     steps:
       - name: "Reclaim workspace before checkout"
         run: |
