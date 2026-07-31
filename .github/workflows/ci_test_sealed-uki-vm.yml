@@ -289,6 +289,17 @@ jobs:
           # bugs has cost 5+ iterations. Merging into one container ensures the cert
           # (Step 6 output) and the unsigned UKI (bootc output) share the same filesystem
           # layer with no overlay/mount-mask surprises.
+          # V58: drop the .tmp + mv atomic-rename dance. Run #76 (V57 commit
+          # 0131059, job 91118193069 at 09:10:33Z) showed sbsign writing to
+          # /output/yubios.efi.tmp and step 8 succeeding (so mv's exit code
+          # was 0), yet step 9's osslsigncode verify failed with 'Failed to
+          # open file: mkosi.output/yubios.efi'. Root cause: the bind-mounted
+          # $GITHUB_WORKSPACE/mkosi.output:/output did not always surface the
+          # rename to the host path inside this docker --rm + VFS-storage
+          # combo, leaving mkosi.output/yubios.efi.tmp as the only artifact
+          # visible to step 9. Fix: have sbsign write directly to the final
+          # path and follow with explicit ls -la + file + test -s sanity
+          # checks so a regression is impossible to hide silently.
           # V38: pass BOTH cert + PKCS#8 as base64 env vars. V35 single-file bind-mount
           # -> EISDIR; V36 cross-mount -> cross-version BDB; V37 env vars forgot KEY_P8_B64
           # (set -u exits on first echo). Inner bash decodes /tmp/sb.crt + /tmp/sb.p8. No
@@ -310,7 +321,7 @@ jobs:
             -e CERT_B64="$CERT_B64" \
             -e KEY_P8_B64="$KEY_P8_B64" \
             "$RESOLVED_IMAGE" \
-            bash -c 'set -euo pipefail; echo "$KEY_P8_B64" | base64 -d > /tmp/sb.p8.host && echo "$CERT_B64" | base64 -d > /tmp/sb.crt.host && mkdir -p /output/pki && cp /tmp/sb.crt.host /output/pki/sb.crt && ls -la /output/pki/sb.crt /tmp/sb.p8.host && file /output/pki/sb.crt /tmp/sb.p8.host && dnf install -y systemd-ukify opensc softhsm pkcs11-provider && mkdir -p /target /run/yubios-hsm/tokens && mount --bind / /target && bootc container ukify --rootfs /target -- --output /output/yubios.unsigned.efi && printf "directories.tokendir = /run/yubios-hsm/tokens\nobjectstore.backend = file\n" > /run/yubios-hsm/softhsm2.conf && export SOFTHSM2_CONF=/run/yubios-hsm/softhsm2.conf && softhsm2-util --init-token --free --label yubiOS-ci --pin 1234 --so-pin 1234 && export PKCS11_PROVIDER_MODULE=/usr/lib64/libsofthsm2.so && chmod -R a+rwX /run/yubios-hsm && softhsm2-util --import /tmp/sb.p8.host --token yubiOS-ci --label sb-key --id 0102 --pin 1234 && /usr/lib/systemd/systemd-sbsign sign --private-key-source=provider:pkcs11 --private-key='\''pkcs11:token=yubiOS-ci;object=sb-key;type=private?pin-value=1234'\'' --certificate=/output/pki/sb.crt --output=/output/yubios.efi.tmp /output/yubios.unsigned.efi && mv /output/yubios.efi.tmp /output/yubios.efi'
+            bash -c 'set -euo pipefail; echo "$KEY_P8_B64" | base64 -d > /tmp/sb.p8.host && echo "$CERT_B64" | base64 -d > /tmp/sb.crt.host && mkdir -p /output/pki && cp /tmp/sb.crt.host /output/pki/sb.crt && ls -la /output/pki/sb.crt /tmp/sb.p8.host && file /output/pki/sb.crt /tmp/sb.p8.host && dnf install -y systemd-ukify opensc softhsm pkcs11-provider && mkdir -p /target /run/yubios-hsm/tokens && mount --bind / /target && bootc container ukify --rootfs /target -- --output /output/yubios.unsigned.efi && printf "directories.tokendir = /run/yubios-hsm/tokens\nobjectstore.backend = file\n" > /run/yubios-hsm/softhsm2.conf && export SOFTHSM2_CONF=/run/yubios-hsm/softhsm2.conf && softhsm2-util --init-token --free --label yubiOS-ci --pin 1234 --so-pin 1234 && export PKCS11_PROVIDER_MODULE=/usr/lib64/libsofthsm2.so && chmod -R a+rwX /run/yubios-hsm && softhsm2-util --import /tmp/sb.p8.host --token yubiOS-ci --label sb-key --id 0102 --pin 1234 && /usr/lib/systemd/systemd-sbsign sign --private-key-source=provider:pkcs11 --private-key='\''pkcs11:token=yubiOS-ci;object=sb-key;type=private?pin-value=1234'\'' --certificate=/output/pki/sb.crt --output=/output/yubios.efi /output/yubios.unsigned.efi && ls -la /output/yubios.efi && file /output/yubios.efi && test -s /output/yubios.efi'
 
       - name: Assert signed UKI is well-formed (assertions 1-3 of 6)
         run: |
