@@ -977,12 +977,16 @@ jobs:
           DOCKER_PASSWORD: ${{ secrets.DOCKER }}
         run: |
           set -euo pipefail
+          # arm64 self-hosted runner (rock1): apt installs docker.io but the
+          # runner user has no socket access. vgpu-vm-e2e arm64 step 15 uses
+          # `sudo podman pull` for the same reason; match the pattern here so
+          # the composefs-tamper Negative 2 job actually pulls the image.
           if [ -n "${DOCKER_PASSWORD:-}" ]; then
-            printf '%s' "$DOCKER_PASSWORD" | docker login \
+            printf '%s' "$DOCKER_PASSWORD" | sudo docker login \
               --username 0mniteck42 --password-stdin docker.io
           fi
-          docker pull "$REQUESTED_IMAGE"
-          RESOLVED="$(docker image inspect "$REQUESTED_IMAGE" \
+          sudo docker pull "$REQUESTED_IMAGE"
+          RESOLVED="$(sudo docker image inspect "$REQUESTED_IMAGE" \
             --format '{{ index .RepoDigests 0 }}')"
           case "$RESOLVED" in
             *@sha256:*) ;;
@@ -1020,7 +1024,14 @@ jobs:
             | python3 -c "import json,sys; arts=[a for a in json.load(sys.stdin)['artifacts'] if a['name']=='$ART_NAME']; print(arts[0]['archive_download_url'] if arts else '')")
           test -n "$ART_URL" || { echo "::error::$ART_NAME not in run $RUN_ID"; exit 1; }
           echo "Downloading $ART_NAME"
-          curl -fsSL -o /tmp/uki.zip "$ART_URL"
+          # The archive_download_url requires the same Authorization header as
+          # the listing queries above -- without it GitHub returns 401. Commit
+          # a6a61667 exposed GITHUB_TOKEN to env (so the listing queries work
+          # and resolve the right run id) but forgot this download line.
+          curl -fsSL \
+            -H "Authorization: token ${GITHUB_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -o /tmp/uki.zip "$ART_URL"
           mkdir -p /tmp/uki-extract && cd /tmp/uki-extract && unzip -o /tmp/uki.zip >/dev/null
           test -f yubios.efi || { echo "::error::yubios.efi not in artifact"; exit 1; }
           file yubios.efi
