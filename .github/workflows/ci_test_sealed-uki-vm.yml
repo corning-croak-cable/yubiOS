@@ -410,10 +410,29 @@ jobs:
           # Also add an `ukify inspect --json` sanity check on the
           # returned key so a future output-format change surfaces as
           # `::error::` instead of a silent jq parse error.
-          ukify inspect --json "$SIGNED_EFI" > /tmp/inspect.json \
-            || { echo "::error::ukify inspect --json failed"; exit 1; }
-          jq -e '.[".cmdline"]' /tmp/inspect.json > /tmp/cmdline.txt \
-            || { echo "::error::jq extract of .cmdline from /tmp/inspect.json failed"; exit 1; }
+          # V63: ukify inspect --format=short (v257.13 has no --json).
+          # V62 commit aebd23d (run #84, job 91125616967) made assertion 1
+          # pass cleanly ('Signature verification: ok') and assertion 2
+          # pass cleanly. But assertion 3 failed at 09:48:04Z with:
+          #   ukify: error: argument --json: invalid choice:
+          #     '/__w/yubiOS/yubiOS/mkosi.output/yubios.efi'
+          #     (choose from pretty, short, off)
+          #   ##[error]ukify inspect --json failed
+          #   ##[error]Process completed with exit code 1.
+          # Root cause: systemd v257.13's `ukify inspect` accepts
+          # `--format=pretty|short|off` -- NOT `--json`. I assumed
+          # `--json` existed (it doesn't in v257). Fix: use
+          # `--format=short` (outputs `.cmdline: foo\n.linux: bar\n.initrd: baz`
+          # without the pretty borders) and parse with awk instead of jq.
+          # awk -F': ' '/^\.cmdline:/{print $2}' extracts the value after the
+          # `\.cmdline: ` prefix. `set -euo pipefail` ensures the awk
+          # exit code propagates; the explicit || handler with ::error::
+          # makes a regression surface clearly.
+          ukify inspect --format=short "$SIGNED_EFI" > /tmp/inspect.txt \
+            || { echo "::error::ukify inspect --format=short failed"; exit 1; }
+          test -s /tmp/inspect.txt || { echo "::error::/tmp/inspect.txt empty (ukify produced no output)"; exit 1; }
+          awk -F': ' '/^\.cmdline:/{print $2}' /tmp/inspect.txt > /tmp/cmdline.txt \
+            || { echo "::error::awk extract of .cmdline from /tmp/inspect.txt failed"; exit 1; }
           grep -E '\broothash=[0-9a-f]{64}\b' /tmp/cmdline.txt \
             || { echo "::error::no roothash= in UKI .cmdline"; exit 1; }
           echo "Assertions 1-3 PASS"
