@@ -313,8 +313,22 @@ jobs:
           # ARG_MAX is ~128KB on Linux; both encoded payloads are well under 1KB.
           echo "CERT_B64 length: ${#CERT_B64} chars"
           echo "KEY_P8_B64 length: ${#KEY_P8_B64} chars"
-          docker run --rm --privileged --pid=host --ipc=host \
+          # V60: drop --rm + use docker cp. V58 dropped .tmp+mv; V59
+          # added diagnostic + absolute paths. V59's diagnostic
+          # (run #80, job 91121560795) confirmed the inner->outer
+          # container bind mount of $GITHUB_WORKSPACE/mkosi.output:/output
+          # never propagates writes back to the host runner (container-
+          # in-container VFS storage driver issue, confirmed: find under
+          # $GITHUB_WORKSPACE returned nothing despite /output/yubios.efi
+          # being 146MB PE32+ EFI inside the inner container). docker cp
+          # reads from the container's own filesystem union directly,
+          # bypassing the bind-mount propagation race entirely. The
+          # bind mount is still useful for the cert import (cp into
+          # /output/pki/sb.crt inside the container), so we keep it.
+          docker rm -f yubios-ci-build 2>/dev/null || true
+          docker run --privileged --pid=host --ipc=host \
             --security-opt label=type:unconfined_t \
+            --name yubios-ci-build \
             -v /var/lib/containers:/var/lib/containers \
             -v "$GITHUB_WORKSPACE/mkosi.output:/output" \
             -v /dev:/dev \
@@ -322,6 +336,8 @@ jobs:
             -e KEY_P8_B64="$KEY_P8_B64" \
             "$RESOLVED_IMAGE" \
             bash -c 'set -euo pipefail; echo "$KEY_P8_B64" | base64 -d > /tmp/sb.p8.host && echo "$CERT_B64" | base64 -d > /tmp/sb.crt.host && mkdir -p /output/pki && cp /tmp/sb.crt.host /output/pki/sb.crt && ls -la /output/pki/sb.crt /tmp/sb.p8.host && file /output/pki/sb.crt /tmp/sb.p8.host && dnf install -y systemd-ukify opensc softhsm pkcs11-provider && mkdir -p /target /run/yubios-hsm/tokens && mount --bind / /target && bootc container ukify --rootfs /target -- --output /output/yubios.unsigned.efi && printf "directories.tokendir = /run/yubios-hsm/tokens\nobjectstore.backend = file\n" > /run/yubios-hsm/softhsm2.conf && export SOFTHSM2_CONF=/run/yubios-hsm/softhsm2.conf && softhsm2-util --init-token --free --label yubiOS-ci --pin 1234 --so-pin 1234 && export PKCS11_PROVIDER_MODULE=/usr/lib64/libsofthsm2.so && chmod -R a+rwX /run/yubios-hsm && softhsm2-util --import /tmp/sb.p8.host --token yubiOS-ci --label sb-key --id 0102 --pin 1234 && /usr/lib/systemd/systemd-sbsign sign --private-key-source=provider:pkcs11 --private-key='\''pkcs11:token=yubiOS-ci;object=sb-key;type=private?pin-value=1234'\'' --certificate=/output/pki/sb.crt --output=/output/yubios.efi /output/yubios.unsigned.efi && ls -la /output/yubios.efi && file /output/yubios.efi && test -s /output/yubios.efi'
+          docker cp yubios-ci-build:/output/yubios.efi "$GITHUB_WORKSPACE/mkosi.output/yubios.efi"
+          docker rm -f yubios-ci-build >/dev/null
 
       - name: Assert signed UKI is well-formed (assertions 1-3 of 6)
         run: |
