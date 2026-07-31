@@ -485,7 +485,24 @@ jobs:
           # syntax), leaving `$file` as the single positional file arg.
           ukify inspect "$SIGNED_EFI" --json=short > /tmp/inspect.txt \
             || { echo "::error::jq cmdline extraction from /tmp/inspect.txt failed"; exit 1; }
-            || { echo "::error::jq -r '.[".cmdline"].text' extraction from /tmp/inspect.txt failed"; exit 1; }
+          # V71: actually fix the broken jq error message (V70 ship had search bug).
+          # V70 commit 3ab647dc (run 30624304691, dispatched 10:39:35Z) shipped a fix
+          # attempt for the V69 bash syntax error, but my Python edit script had a
+          # search bug: the second `for` loop matched a line inside the V70 COMMENT
+          # block (which references the broken syntax as an example: "V69 active
+          # code: || { echo "::error::jq -r '.[\'".cmdline"].text\' extraction
+          # from /tmp/inspect.txt failed"; exit 1; }") -- that line contains the
+          # exact substring "jq -r ... .[".cmdline"].text ... extraction from
+          # /tmp/inspect.txt failed ... exit 1", so my naive substring search
+          # matched the COMMENT line (which had 10 leading spaces from "# "),
+          # NOT the actual error line (which has 12 leading spaces from the
+          # indented YAML run-block). V70 therefore PRESERVED the broken error
+          # line and added a no-op duplicate at the wrong position. V71 fix: use
+          # a stricter signature match (line.startswith with 12 spaces + `|| { echo "`)
+          # so comment lines can't match. V71 active code:
+          #   || { echo "::error::jq cmdline extraction from /tmp/inspect.txt failed"; exit 1; }
+          # Untouched: V69 jq extraction, V68 RSA-4096 bump, V67 ukify arg-order.
+            || { echo "::error::jq cmdline extraction from /tmp/inspect.txt failed"; exit 1; }
           test -s /tmp/inspect.txt || { echo "::error::/tmp/inspect.txt empty (ukify produced no output)"; exit 1; }
           # V69: ukify inspect --json=short + jq for cmdline extraction (replace awk).
           # V67 (e2fea142) and V68 (75f9b0ca) both failed at assertion 3 with:
