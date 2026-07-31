@@ -215,15 +215,17 @@ jobs:
             cat "${RUNNER_TEMP}/dockerd.log"
             exit 1
           fi
+          # V17: install systemd-ukify inside the container first. yubiOS images are
+          # minimal and don't ship ukify, but `bootc container ukify` needs it in
+          # PATH to build the UKI. `dnf install` is a no-op if already present
+          # (idempotent), so this is safe to keep.
           docker run --rm --privileged --pid=host --ipc=host \
             --security-opt label=type:unconfined_t \
             -v /var/lib/containers:/var/lib/containers \
             -v "$PWD/mkosi.output:/output" \
             -v /dev:/dev \
             "$RESOLVED_IMAGE" \
-            bootc container ukify \
-              -- \
-              --output /output/yubios.unsigned.efi
+            bash -c 'set -euo pipefail; dnf install -y systemd-ukify || true; exec bootc container ukify -- --output /output/yubios.unsigned.efi'
           systemd-sbsign sign \
             --private-key=pkcs11:token=yubiOS-ci;object=sb-key;type=private \
             --private-key-source=engine:pkcs11 \
