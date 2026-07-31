@@ -222,24 +222,24 @@ jobs:
           # The container is `--privileged` so `mount --bind` works. dnf install is
           # idempotent (|| true so it's a no-op if systemd-ukify is already present).
           # V24: split into 3 separate docker runs to avoid bash -c quoting hazards (V23's
-# multi-line bash -c broke — dnf/bootc escaped to host execution).
-# systemd-sbsign is part of systemd on the Fedora bootc IMAGE; mount the
-# host's /var/lib/softhsm so the container's PKCS#11 engine reaches the token.
-# Step 1: install signing tools inside the container.
-docker run --rm --privileged \
+          # multi-line bash -c broke — dnf/bootc escaped to host execution).
+          # systemd-sbsign is part of systemd on the Fedora bootc IMAGE; mount the
+          # host's /var/lib/softhsm so the container's PKCS#11 engine reaches the token.
+          # Step 1: install signing tools inside the container.
+          docker run --rm --privileged \
             --security-opt label=type:unconfined_t \
             "$RESOLVED_IMAGE" \
             dnf install -y systemd-ukify systemd-sbsign opensc softhsm
-# Step 2: build unsigned UKI (proven V18 pattern).
-docker run --rm --privileged --pid=host --ipc=host \
+          # Step 2: build unsigned UKI (proven V18 pattern).
+          docker run --rm --privileged --pid=host --ipc=host \
             --security-opt label=type:unconfined_t \
             -v /var/lib/containers:/var/lib/containers \
             -v "$PWD/mkosi.output:/output" \
             -v /dev:/dev \
             "$RESOLVED_IMAGE" \
             bash -c "set -euo pipefail; mkdir -p /target; mount --bind / /target; bootc container ukify --rootfs /target -- --output /output/yubios.unsigned.efi"
-# Step 3: sign the UKI with systemd-sbsign using PKCS#11 + SoftHSM token (mounted from host).
-docker run --rm --privileged \
+          # Step 3: sign the UKI with systemd-sbsign using PKCS#11 + SoftHSM token (mounted from host).
+          docker run --rm --privileged \
             --security-opt label=type:unconfined_t \
             -v /var/lib/softhsm:/var/lib/softhsm:ro \
             -v "$PWD/mkosi.output:/output" \
