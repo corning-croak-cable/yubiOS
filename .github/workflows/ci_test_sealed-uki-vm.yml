@@ -484,6 +484,7 @@ jobs:
           # to consume `short` as its value (the Geteopt-style `=` flag-value
           # syntax), leaving `$file` as the single positional file arg.
           ukify inspect "$SIGNED_EFI" --json=short > /tmp/inspect.txt \
+            || { echo "::error::jq cmdline extraction from /tmp/inspect.txt failed"; exit 1; }
             || { echo "::error::jq -r '.[".cmdline"].text' extraction from /tmp/inspect.txt failed"; exit 1; }
           test -s /tmp/inspect.txt || { echo "::error::/tmp/inspect.txt empty (ukify produced no output)"; exit 1; }
           # V69: ukify inspect --json=short + jq for cmdline extraction (replace awk).
