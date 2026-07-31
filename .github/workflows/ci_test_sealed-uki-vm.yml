@@ -281,7 +281,7 @@ jobs:
           docker run --rm --privileged --pid=host --ipc=host \
             --security-opt label=type:unconfined_t \
             -v /var/lib/containers:/var/lib/containers \
-            -v "$PWD/mkosi.output:/output" \
+            -v "$GITHUB_WORKSPACE/mkosi.output:/output" \
             -v /dev:/dev \
             "$RESOLVED_IMAGE" \
             bash -c "set -euo pipefail; dnf install -y systemd-ukify opensc softhsm && mkdir -p /target && mount --bind / /target && bootc container ukify --rootfs /target -- --output /output/yubios.unsigned.efi"
@@ -289,7 +289,7 @@ jobs:
           docker run --rm --privileged \
             --security-opt label=type:unconfined_t \
             -v /var/lib/softhsm:/run/yubios-hsm:ro \
-            -v "$PWD/mkosi.output:/output" \
+            -v "$GITHUB_WORKSPACE/mkosi.output:/output" \
             "$RESOLVED_IMAGE" \
             bash -c "set -euo pipefail; dnf install -y softhsm pkcs11-provider; printf 'directories.tokendir = /run/yubios-hsm/tokens\nobjectstore.backend = file\n' > /tmp/softhsm2.conf; export SOFTHSM2_CONF=/tmp/softhsm2.conf PKCS11_PROVIDER_MODULE=/usr/lib64/pkcs11/libsofthsm2.so; /usr/lib/systemd/systemd-sbsign sign --private-key='pkcs11:token=yubiOS-ci;object=sb-key;type=private?pin-value=1234' --private-key-source=provider:pkcs11 --certificate=/output/pki/sb.crt --output=/output/yubios.efi.tmp /output/yubios.unsigned.efi && mv /output/yubios.efi.tmp /output/yubios.efi"
 
