@@ -403,7 +403,7 @@ jobs:
           grep -F '.cmdline' /tmp/inspect.txt
           grep -F '.linux'   /tmp/inspect.txt
           grep -F '.initrd'  /tmp/inspect.txt
-          echo "=== Assertion 3: verity roothash embedded in UKI .cmdline ==="
+          echo "=== Assertion 3: composefs fsverity digest sealed in UKI .cmdline ==="
           # V62: ukify inspect --json (machine-readable output).
           # V61 commit b8af8109 (run #83, job 91124368536) made assertion 1
           # pass cleanly ('Signature verification: ok') and assertion 2
@@ -530,8 +530,17 @@ jobs:
           # rather than `null` (so grep can detect "no roothash" cleanly).
           # Active code in V69:
           jq -r '.[".cmdline"].text // empty' /tmp/inspect.txt > /tmp/cmdline.txt || { echo "::error::jq cmdline extraction from /tmp/inspect.txt failed"; exit 1; }
-          grep -E '\broothash=[0-9a-f]{64}\b' /tmp/cmdline.txt \
-            || { echo "::error::no roothash= in UKI .cmdline"; exit 1; }
+          echo "UKI .cmdline: $(cat /tmp/cmdline.txt)"
+          # V73: run 30625364579 (V72, 194e4b82) cleared the bash syntax errors and
+          # the jq extraction ran cleanly, but grep found no roothash= -- correctly.
+          # This lane builds the UKI with `bootc container ukify --rootfs /target`,
+          # and bootc (crates/lib/src/ukify.rs) embeds a COMPOSEFS fsverity digest
+          # karg via ComposefsCmdline::build -- `composefs=[?]<64-hex>` -- never a
+          # dm-verity `roothash=`. The roothash= expectation came from the mkosi
+          # dm-verity lane. Assert the karg this build path actually seals: the
+          # optional `?` prefix means allow_missing_fsverity (status.rs Display).
+          grep -E '\bcomposefs=\??[0-9a-f]{64}\b' /tmp/cmdline.txt \
+            || { echo "::error::no composefs=<fsverity-digest> in UKI .cmdline"; exit 1; }
           echo "Assertions 1-3 PASS"
 
       - name: Upload signed UKI artifact
@@ -586,8 +595,12 @@ jobs:
       - name: Boot signed UKI in QEMU OVMF Secure Boot VM
         run: |
           set -euo pipefail
-          ukify inspect mkosi.output/yubios.efi \
-            | jq -r '.[".cmdline"]' > /tmp/cmdline.txt
+          # V73: same extraction fix as assertion 3 -- ukify inspect needs
+          # --json=short (compact JSON) and the cmdline string lives at
+          # .[".cmdline"].text; bare .[".cmdline"] returns an object.
+          ukify inspect mkosi.output/yubios.efi --json=short \
+            | jq -r '.[".cmdline"].text // empty' > /tmp/cmdline.txt
+          test -s /tmp/cmdline.txt || { echo "::error::empty cmdline extracted from UKI"; exit 1; }
           timeout 60 qemu-system-x86_64 \
             -machine q35,smm=on,accel=kvm \
             -cpu host -smp 4 -m 4G \
