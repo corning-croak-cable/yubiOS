@@ -326,15 +326,39 @@ jobs:
       - name: Assert signed UKI is well-formed (assertions 1-3 of 6)
         run: |
           set -euo pipefail
+          # V59: diagnostic + absolute paths. Run #78 (V58 commit e72b32d)
+          # failed at this step with 'Failed to open file:
+          # mkosi.output/yubios.efi' even after V58 dropped the .tmp+mv
+          # race -- the inner-docker-run bind mount of
+          # $GITHUB_WORKSPACE/mkosi.output:/output inside the outer
+          # dhi.io/debian-base container is fragile (container-in-container
+          # bind-mount propagation), and a relative path hides where the
+          # file actually landed. Fix: cd explicitly, find() the file by
+          # absolute path, and verify it exists before handing it to
+          # osslsigncode so a regression is impossible to hide silently.
+          cd "$GITHUB_WORKSPACE"
+          echo "=== V59 diagnostic: filesystem state ==="
+          echo "PWD=$PWD"
+          echo "GITHUB_WORKSPACE=$GITHUB_WORKSPACE"
+          echo "--- ls -la mkosi.output/ ---"
+          ls -la mkosi.output/ 2>&1 || echo "mkosi.output/ does not exist"
+          echo "--- find \$GITHUB_WORKSPACE -name 'yubios*.efi' ---"
+          find "$GITHUB_WORKSPACE" -name 'yubios*.efi' -ls 2>/dev/null \
+            || echo "no yubios*.efi found anywhere under \$GITHUB_WORKSPACE"
+          echo "--- end diagnostic ---"
+          SIGNED_EFI="$GITHUB_WORKSPACE/mkosi.output/yubios.efi"
+          CERT="$GITHUB_WORKSPACE/mkosi.output/pki/sb.crt"
+          test -f "$SIGNED_EFI" || { echo "::error::$SIGNED_EFI missing"; exit 1; }
+          test -f "$CERT"      || { echo "::error::$CERT missing";      exit 1; }
           echo "=== Assertion 1: osslsigncode verify accepts signed UKI (sbverify dropped per ADR-008) ==="
-          osslsigncode verify -in mkosi.output/yubios.efi -CAfile mkosi.output/pki/sb.crt
+          osslsigncode verify -in "$SIGNED_EFI" -CAfile "$CERT"
           echo "=== Assertion 2: UKI structure has .cmdline + .linux + .initrd ==="
-          systemd-ukify inspect mkosi.output/yubios.efi > /tmp/inspect.txt
+          systemd-ukify inspect "$SIGNED_EFI" > /tmp/inspect.txt
           grep -F '.cmdline' /tmp/inspect.txt
-          grep -F '.linux' /tmp/inspect.txt
-          grep -F '.initrd' /tmp/inspect.txt
+          grep -F '.linux'   /tmp/inspect.txt
+          grep -F '.initrd'  /tmp/inspect.txt
           echo "=== Assertion 3: verity roothash embedded in UKI .cmdline ==="
-          systemd-ukify inspect mkosi.output/yubios.efi \
+          systemd-ukify inspect "$SIGNED_EFI" \
             | jq -r '.[".cmdline"]' > /tmp/cmdline.txt
           grep -E '\broothash=[0-9a-f]{64}\b' /tmp/cmdline.txt \
             || { echo "::error::no roothash= in UKI .cmdline"; exit 1; }
