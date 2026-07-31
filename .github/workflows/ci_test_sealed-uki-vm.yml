@@ -63,9 +63,13 @@ jobs:
             git curl iproute2 iptables nftables passwd procps util-linux \
             uidmap slirp4netns fuse-overlayfs \
             binutils dosfstools e2fsprogs jq \
-            mkosi opensc softhsm2 tpm2-tools
+            mkosi opensc softhsm2 tpm2-tools \
+            # V12: install docker.io for system dockerd + docker CLI.
+            # The static docker-29.6.0 tarball's CLI didn't reliably
+            # respect -H over DOCKER_HOST; system docker.io does.
+            docker.io containerd runc
           command -v mkosi systemd-sbsign sbverify \
-            softhsm2-util pkcs11-tool docker dockerd-rootless.sh \
+            softhsm2-util pkcs11-tool docker dockerd \
             >/dev/null
           # Install docker CLI + rootless daemon (SHA-pinned static binaries,
           # amd64 digest; the canonical ci_mkosi-installer.yml pattern).
@@ -100,22 +104,19 @@ jobs:
           REQUESTED_IMAGE: ${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}
         run: |
           set -euo pipefail
-          # V10: use privileged dockerd (not rootless). The container is
-          # already --privileged, so user-namespace plumbing is unnecessary
-          # complexity. V5-V9 all tried rootless; the rootlesskit + slirp4netns
-          # + fuse-overlayfs stack proved too fragile for this CI environment.
-          # Privileged dockerd is a single detached process -- no userns, no
-          # rootlesskit, no bind-mounted socket to lose.
+          # V12: use apt-installed system dockerd (from docker.io package).
+          # Default socket /var/run/docker.sock. The system docker CLI
+          # reliably connects to it without needing -H flags, and is
+          # known to properly handle DOCKER_HOST env var precedence.
           #   --storage-driver=vfs   works without kernel overlayfs
           #   --iptables=false       we don't need iptables rules in CI
           #   --ip6tables=false      same
-          DOCKER_SOCK=/var/run/docker.sock
-          mkdir -p /var/lib/docker "$(dirname "$DOCKER_SOCK")"
-          nohup "$DOCKER_TOOLS_DIR/bin/dockerd" \
+          mkdir -p /var/lib/docker
+          nohup dockerd \
             --data-root=/var/lib/docker \
             --exec-root=/var/run/docker \
             --pidfile=/var/run/docker.pid \
-            --host="unix://${DOCKER_SOCK}" \
+            --host=unix:///var/run/docker.sock \
             --iptables=false \
             --ip6tables=false \
             --storage-driver=vfs \
@@ -123,25 +124,23 @@ jobs:
           disown || true
           DOCKER_PID=$!
           for i in $(seq 1 60); do
-            docker -H "unix://${DOCKER_SOCK}" info >/dev/null 2>&1 && break
+            docker info >/dev/null 2>&1 && break
             if ! kill -0 "$DOCKER_PID" 2>/dev/null; then
               cat "${RUNNER_TEMP}/dockerd.log"
               exit 1
             fi
             sleep 1
           done
-          if ! docker -H "unix://${DOCKER_SOCK}" info >/dev/null 2>&1; then
+          if ! docker info >/dev/null 2>&1; then
             cat "${RUNNER_TEMP}/dockerd.log"
             exit 1
           fi
-          export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
-          export DOCKER_HOST="unix://${DOCKER_SOCK}"
           if [ -n "${DOCKER_PASSWORD:-}" ]; then
-            printf '%s' "$DOCKER_PASSWORD" | docker -H "unix://${DOCKER_SOCK}" login \
+            printf '%s' "$DOCKER_PASSWORD" | docker login \
               --username 0mniteck42 --password-stdin docker.io
           fi
-          docker -H "unix://${DOCKER_SOCK}" pull "$REQUESTED_IMAGE"
-          RESOLVED_IMAGE="$(docker -H "unix://${DOCKER_SOCK}" image inspect "$REQUESTED_IMAGE" \
+          docker pull "$REQUESTED_IMAGE"
+          RESOLVED_IMAGE="$(docker image inspect "$REQUESTED_IMAGE" \
             --format '{{ index .RepoDigests 0 }}')"
           test -n "$RESOLVED_IMAGE"
           case "$RESOLVED_IMAGE" in
@@ -182,22 +181,19 @@ jobs:
       - name: Build signed UKI from image (bootc container ukify + systemd-sbsign)
         run: |
           set -euo pipefail
-          # V10: use privileged dockerd (not rootless). The container is
-          # already --privileged, so user-namespace plumbing is unnecessary
-          # complexity. V5-V9 all tried rootless; the rootlesskit + slirp4netns
-          # + fuse-overlayfs stack proved too fragile for this CI environment.
-          # Privileged dockerd is a single detached process -- no userns, no
-          # rootlesskit, no bind-mounted socket to lose.
+          # V12: use apt-installed system dockerd (from docker.io package).
+          # Default socket /var/run/docker.sock. The system docker CLI
+          # reliably connects to it without needing -H flags, and is
+          # known to properly handle DOCKER_HOST env var precedence.
           #   --storage-driver=vfs   works without kernel overlayfs
           #   --iptables=false       we don't need iptables rules in CI
           #   --ip6tables=false      same
-          DOCKER_SOCK=/var/run/docker.sock
-          mkdir -p /var/lib/docker "$(dirname "$DOCKER_SOCK")"
-          nohup "$DOCKER_TOOLS_DIR/bin/dockerd" \
+          mkdir -p /var/lib/docker
+          nohup dockerd \
             --data-root=/var/lib/docker \
             --exec-root=/var/run/docker \
             --pidfile=/var/run/docker.pid \
-            --host="unix://${DOCKER_SOCK}" \
+            --host=unix:///var/run/docker.sock \
             --iptables=false \
             --ip6tables=false \
             --storage-driver=vfs \
@@ -205,20 +201,18 @@ jobs:
           disown || true
           DOCKER_PID=$!
           for i in $(seq 1 60); do
-            docker -H "unix://${DOCKER_SOCK}" info >/dev/null 2>&1 && break
+            docker info >/dev/null 2>&1 && break
             if ! kill -0 "$DOCKER_PID" 2>/dev/null; then
               cat "${RUNNER_TEMP}/dockerd.log"
               exit 1
             fi
             sleep 1
           done
-          if ! docker -H "unix://${DOCKER_SOCK}" info >/dev/null 2>&1; then
+          if ! docker info >/dev/null 2>&1; then
             cat "${RUNNER_TEMP}/dockerd.log"
             exit 1
           fi
-          export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
-          export DOCKER_HOST="unix://${DOCKER_SOCK}"
-          docker -H "unix://${DOCKER_SOCK}" run --rm --privileged --pid=host --ipc=host \
+          docker run --rm --privileged --pid=host --ipc=host \
             --security-opt label=type:unconfined_t \
             -v /var/lib/containers:/var/lib/containers \
             -v "$PWD/mkosi.output:/output" \
