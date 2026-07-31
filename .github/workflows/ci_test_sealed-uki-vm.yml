@@ -362,6 +362,22 @@ jobs:
           find "$GITHUB_WORKSPACE" -name 'yubios*.efi' -ls 2>/dev/null \
             || echo "no yubios*.efi found anywhere under \$GITHUB_WORKSPACE"
           echo "--- end diagnostic ---"
+          # V61: systemd-ukify -> ukify (Debian pkg vs binary).
+          # V60 commit 0985cb1 (run #82, job 91123023217) fixed the
+          # bind-mount race via docker cp -- assertion 1 then passed
+          # cleanly. But assertion 2 failed with
+          # 'systemd-ukify: command not found' (exit 127). The apt-get
+          # install of 'systemd-ukify' on Debian trixie
+          # (dhi.io/debian-base) succeeded -- the package installs the
+          # binary as /usr/bin/ukify, NOT /usr/bin/systemd-ukify.
+          # The Fedora inner container's `dnf install systemd-ukify` is
+          # a different package that does install /usr/bin/systemd-ukify;
+          # the host assertion step runs on Debian where the binary
+          # name is just `ukify`. command -v ukify sanity check makes a
+          # future regression (binary renamed, package removed, etc.)
+          # surface as `::error::ukify not found` instead of a silent
+          # exit 127.
+          command -v ukify >/dev/null 2>&1 || { echo "::error::ukify not found (Debian systemd-ukify package installs the binary as 'ukify' at /usr/bin/ukify)"; exit 1; }
           SIGNED_EFI="$GITHUB_WORKSPACE/mkosi.output/yubios.efi"
           CERT="$GITHUB_WORKSPACE/mkosi.output/pki/sb.crt"
           test -f "$SIGNED_EFI" || { echo "::error::$SIGNED_EFI missing"; exit 1; }
@@ -369,12 +385,12 @@ jobs:
           echo "=== Assertion 1: osslsigncode verify accepts signed UKI (sbverify dropped per ADR-008) ==="
           osslsigncode verify -in "$SIGNED_EFI" -CAfile "$CERT"
           echo "=== Assertion 2: UKI structure has .cmdline + .linux + .initrd ==="
-          systemd-ukify inspect "$SIGNED_EFI" > /tmp/inspect.txt
+          ukify inspect "$SIGNED_EFI" > /tmp/inspect.txt
           grep -F '.cmdline' /tmp/inspect.txt
           grep -F '.linux'   /tmp/inspect.txt
           grep -F '.initrd'  /tmp/inspect.txt
           echo "=== Assertion 3: verity roothash embedded in UKI .cmdline ==="
-          systemd-ukify inspect "$SIGNED_EFI" \
+          ukify inspect "$SIGNED_EFI" \
             | jq -r '.[".cmdline"]' > /tmp/cmdline.txt
           grep -E '\broothash=[0-9a-f]{64}\b' /tmp/cmdline.txt \
             || { echo "::error::no roothash= in UKI .cmdline"; exit 1; }
@@ -432,7 +448,7 @@ jobs:
       - name: Boot signed UKI in QEMU OVMF Secure Boot VM
         run: |
           set -euo pipefail
-          systemd-ukify inspect mkosi.output/yubios.efi \
+          ukify inspect mkosi.output/yubios.efi \
             | jq -r '.[".cmdline"]' > /tmp/cmdline.txt
           timeout 60 qemu-system-x86_64 \
             -machine q35,smm=on,accel=kvm \
