@@ -64,6 +64,7 @@ jobs:
             uidmap slirp4netns fuse-overlayfs \
             binutils dosfstools e2fsprogs jq \
             mkosi opensc softhsm2 tpm2-tools \
+            osslsigncode systemd-ukify \
             docker.io containerd runc
           command -v mkosi \
             softhsm2-util pkcs11-tool docker dockerd \
