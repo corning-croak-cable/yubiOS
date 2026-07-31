@@ -11,10 +11,110 @@ permissions:
   contents: read
 
 jobs:
-  noop:
-    name: stub (dispatch with ref=sealed-uki-vm-lane-v2 for the real matrix)
+  sign-variant:
+    name: ${{ matrix.variant }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        variant:
+          - control-rsa-file
+          - ec-provider
+          - rsa2048-provider
+          - rsa4096-provider
+          - rsa2048-engine
+          - rsa2048-sbsign-engine
+          - rsa2048-osslsigncode-pkcs11
+          - ec-osslsigncode-pkcs11
+          - rsa2048-dgst-provider
+          - rsa2048-pkeyutl-provider
     steps:
-      - name: Explain
-        run: echo "This is the main-branch stub. Dispatch this workflow with ref=sealed-uki-vm-lane-v2 to run the 10-variant signing matrix."
+      - name: Generate PKI on host (EC + RSA)
+        run: |
+          set -euxo pipefail
+          mkdir -p pki
+          openssl ecparam -name prime256v1 -genkey -noout -out pki/ec.key
+          openssl req -new -x509 -key pki/ec.key -out pki/ec.crt -days 30 -nodes \
+            -subj "/CN=yubiOS CI Secure Boot EC/" \
+            -addext "keyUsage=digitalSignature" -addext "extendedKeyUsage=codeSigning"
+          openssl pkcs8 -topk8 -nocrypt -in pki/ec.key -out pki/ec.p8
+          openssl genrsa -out pki/rsa.key 2048
+          openssl req -new -x509 -key pki/rsa.key -out pki/rsa.crt -days 30 -nodes \
+            -subj "/CN=yubiOS CI Secure Boot RSA/" \
+            -addext "keyUsage=digitalSignature" -addext "extendedKeyUsage=codeSigning"
+          openssl pkcs8 -topk8 -nocrypt -in pki/rsa.key -out pki/rsa.p8
+          if [ "${{ matrix.variant }}" = rsa4096-provider ]; then
+            openssl genrsa -out pki/rsa.key 4096
+            openssl req -new -x509 -key pki/rsa.key -out pki/rsa.crt -days 30 -nodes \
+              -subj "/CN=yubiOS CI Secure Boot RSA4096/" \
+              -addext "keyUsage=digitalSignature" -addext "extendedKeyUsage=codeSigning"
+            openssl pkcs8 -topk8 -nocrypt -in pki/rsa.key -out pki/rsa.p8
+          fi
+      - name: Write container test script
+        run: |
+          cat > sign-test.sh <<'SIGNTESTSCRIPT'
+          #!/bin/bash
+          set -uxo pipefail
+          case "$VARIANT" in
+            rsa*) KEYP8=/pki/rsa.p8; KEYFILE=/pki/rsa.key; CERT=/pki/rsa.crt ;;
+            *)    KEYP8=/pki/ec.p8;  KEYFILE=/pki/ec.key;  CERT=/pki/ec.crt ;;
+          esac
+          URI='pkcs11:token=yubiOS-ci;object=sb-key;type=private?pin-value=1234'
+          SBS=/usr/lib/systemd/systemd-sbsign
+          dnf install -y --setopt=install_weak_deps=False systemd-boot-unsigned opensc softhsm pkcs11-provider sbsigntools osslsigncode openssl-pkcs11
+          rpm -q systemd softhsm pkcs11-provider osslsigncode || true
+          if [ "$VARIANT" != control-rsa-file ]; then
+            mkdir -p /run/hsm/tokens
+            printf 'directories.tokendir = /run/hsm/tokens\nobjectstore.backend = file\n' > /run/hsm/softhsm2.conf
+            export SOFTHSM2_CONF=/run/hsm/softhsm2.conf
+            softhsm2-util --init-token --free --label yubiOS-ci --pin 1234 --so-pin 1234
+            softhsm2-util --import "$KEYP8" --token yubiOS-ci --label sb-key --id 0102 --pin 1234
+            export PKCS11_PROVIDER_MODULE=/usr/lib64/libsofthsm2.so
+          fi
+          cp /usr/lib/systemd/boot/efi/systemd-bootx64.efi /tmp/test.efi
+          printf 'sign me' > /tmp/data
+          rc=99; vrc=99; skip_verify=0
+          case "$VARIANT" in
+            control-rsa-file)
+              "$SBS" sign --private-key="$KEYFILE" --certificate="$CERT" --output=/tmp/signed.efi /tmp/test.efi; rc=$? ;;
+            rsa2048-provider|rsa4096-provider|ec-provider)
+              "$SBS" sign --private-key-source=provider:pkcs11 --private-key="$URI" --certificate="$CERT" --output=/tmp/signed.efi /tmp/test.efi; rc=$? ;;
+            rsa2048-engine)
+              export PKCS11_MODULE_PATH=/usr/lib64/libsofthsm2.so
+              "$SBS" sign --private-key-source=engine:pkcs11 --private-key="$URI" --certificate="$CERT" --output=/tmp/signed.efi /tmp/test.efi; rc=$? ;;
+            rsa2048-sbsign-engine)
+              export PKCS11_MODULE_PATH=/usr/lib64/libsofthsm2.so
+              sbsign --engine pkcs11 --key "$URI" --cert "$CERT" --output /tmp/signed.efi /tmp/test.efi; rc=$? ;;
+            rsa2048-osslsigncode-pkcs11|ec-osslsigncode-pkcs11)
+              osslsigncode sign -pkcs11module /usr/lib64/libsofthsm2.so -key "$URI" -certs "$CERT" -h sha256 -in /tmp/test.efi -out /tmp/signed.efi; rc=$? ;;
+            rsa2048-dgst-provider)
+              openssl dgst -sha256 -provider pkcs11 -provider default -sign "$URI" -out /tmp/sig /tmp/data; rc=$?; skip_verify=1
+              ls -la /tmp/sig || true ;;
+            rsa2048-pkeyutl-provider)
+              openssl dgst -sha256 -binary -out /tmp/dgst /tmp/data
+              openssl pkeyutl -sign -inkey "$URI" -provider pkcs11 -provider default -in /tmp/dgst -out /tmp/sig; rc=$?; skip_verify=1
+              ls -la /tmp/sig || true ;;
+            *) echo "unknown variant $VARIANT"; exit 3 ;;
+          esac
+          if [ "$skip_verify" = 0 ] && [ "$rc" = 0 ]; then
+            osslsigncode verify -in /tmp/signed.efi -CAfile "$CERT"; vrc=$?
+          else
+            vrc=0
+          fi
+          echo "MATRIX_RESULT variant=$VARIANT sign_rc=$rc verify_rc=$vrc"
+          [ "$rc" = 0 ] || exit 1
+          [ "$vrc" = 0 ] || exit 2
+          exit 0
+          SIGNTESTSCRIPT
+          chmod +x sign-test.sh
+      - name: Docker Hub login
+        run: echo "${{ secrets.DOCKER }}" | docker login -u 0mniteck42 --password-stdin
+      - name: Run variant in yubios container
+        run: |
+          docker run --rm \
+            -e VARIANT=${{ matrix.variant }} \
+            -v "$PWD/pki:/pki:ro" \
+            -v "$PWD/sign-test.sh:/sign-test.sh:ro" \
+            0mniteck/yubios@sha256:976b0b39e6139661c57a1cf732e30ad36aa22c7d5a39fa6beef10a6139847be9 \
+            bash /sign-test.sh
