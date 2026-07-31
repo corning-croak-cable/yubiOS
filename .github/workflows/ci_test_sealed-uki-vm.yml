@@ -428,6 +428,24 @@ jobs:
           # `\.cmdline: ` prefix. `set -euo pipefail` ensures the awk
           # exit code propagates; the explicit || handler with ::error::
           # makes a regression surface clearly.
+          # V67: ukify inspect FILE --json=short (swap arg order; arg-order bug, not flag).
+          # V66 commit 7dc86db3 (run #88, job 91130977668 at 10:15:39Z) failed at
+          # assertion 3 with the IDENTICAL error as V64 (ea5ee131, run #86):
+          #   ukify: error: unrecognized arguments: /__w/yubiOS/yubiOS/mkosi.output/yubios.efi
+          # Same error from V64 (`--json short FILE`) and V66 (`--json=short FILE`)
+          # proves the bug is NOT about --json value parsing -- it's argparse
+          # `nargs='*'` positional arg collection order with options that take
+          # values. Once argparse parses an option-with-value like `--json=short`,
+          # the nargs='*' positional-collection window closes; the next non-option
+          # arg (the FILE positional) becomes 'unrecognized arguments'. v257 vs
+          # v261 is a red herring: Debian trixie's systemd-ukify package
+          # (systemd-ukify_257.13-1~deb13u1) ships v257.13 with identical argparse
+          # structure (positional nargs='*', --json choices+default). Same bug
+          # in both. Fix: swap arg order to match the documented help syntax
+          # (`ukify inspect FILE... [options...]`). Mirrors the working assertion 2
+          # invocation (`ukify inspect "$SIGNED_EFI"`) and the boot-secure-vm
+          # invocation (`ukify inspect mkosi.output/yubios.efi | jq ...`) -- both
+          # already use file-first order.
           # V64: ukify inspect --json short (user's hint; --json takes a choice value).
           # V66: fix dropped `# ` prefix on V65's last comment line.
           # V65 (run #87) had a bash syntax error (exit 2) because one
@@ -451,8 +469,8 @@ jobs:
           # Fix: use `--json=short` (equals sign). The equals syntax forces `--json`
           # to consume `short` as its value (the Geteopt-style `=` flag-value
           # syntax), leaving `$file` as the single positional file arg.
-          ukify inspect --json=short "$SIGNED_EFI" > /tmp/inspect.txt \
-            || { echo "::error::ukify inspect --json=short failed"; exit 1; }
+          ukify inspect "$SIGNED_EFI" --json=short > /tmp/inspect.txt \
+            || { echo "::error::ukify inspect FILE --json=short failed"; exit 1; }
           test -s /tmp/inspect.txt || { echo "::error::/tmp/inspect.txt empty (ukify produced no output)"; exit 1; }
           awk -F': ' '/^\.cmdline:/{print $2}' /tmp/inspect.txt > /tmp/cmdline.txt \
             || { echo "::error::awk extract of .cmdline from /tmp/inspect.txt failed"; exit 1; }
