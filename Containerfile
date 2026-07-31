@@ -114,7 +114,18 @@ RUN cp /usr/lib/pam.d/yubiOS-system-auth /etc/pam.d/system-auth
 # because machine-id and random-seed content differed). bootc generates both
 # on first boot anyway, so removing them here is the same pattern as the dnf
 # cache cleanup above -- strip nondeterministic build-time state.
+# Install + enable first-boot services (ADR-024 + OMN-150).
+# yubiOS-chipsec-firstboot.service is the documented precedent (ADR-024). The new
+# yubios-uki-install.service follows the same pattern (ConditionFirstBoot=yes,
+# ConditionPathExists=...) for OMN-150 Phase 2: it fires install-uki.sh at first boot
+# when the signed UKI is present at /usr/lib/yubiOS/uki/yubios.efi. The unit is a
+# no-op when the UKI is absent (bootc OCI image built without the yubios-uki
+# Bake target), so this lands safely before the UKI-into-image wiring ships.
+COPY usr/lib/systemd/system/yubios-uki-install.service /etc/systemd/system/yubios-uki-install.service
+COPY usr/lib/systemd/system/yubios-uki-install.service /usr/lib/systemd/system/yubios-uki-install.service
+
 RUN systemctl preset-all && \
+    systemctl preset yubios-uki-install.service && \
     rm -f /etc/machine-id /var/lib/systemd/random-seed
 
 # ── PAM: initialise u2f_keys file (populated by yubiOS-enroll-pam) ───────

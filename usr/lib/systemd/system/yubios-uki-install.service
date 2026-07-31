@@ -1,0 +1,28 @@
+[Unit]
+Description=yubiOS: install the signed UKI into the BLSConfig at first boot (OMN-150 Phase 2)
+Documentation=https://github.com/yubi-OS/yubiOS/blob/main/docs/ADR.md#adr-032-kernelrootfs-split-as-a-first-class-principle
+Documentation=https://linear.app/omni-agent/issue/OMN-150
+# install-uki.sh writes the BLSConfig fragment at /loader/entries/bootc_<os_id>-<version>-<priority>.conf
+# with `uki /EFI/Linux/bootc/bootc_composefs-<digest>.efi`, matching bootc 1.16's uki key.
+# The unit is a no-op (exits 0) when /usr/lib/yubiOS/uki/yubios.efi is absent -- e.g. on the
+# dev/test image built without the yubios-uki Bake target. Once the yubios-uki artifact
+# is wired into the bootc OCI image at build time, this unit fires at first boot and
+# replaces the composefs-blessed kernel entry with the signed UKI entry.
+ConditionPathExists=/usr/lib/yubiOS/uki/yubios.efi
+ConditionFirstBoot=yes
+After=multi-user.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+# install-uki.sh runs fsverity on the UKI, writes the BLSConfig fragment, and exits
+# cleanly. The script no-ops when /EFI/Linux/bootc/ is already wired with a matching
+# composefs=<digest> entry (re-running is safe).
+ExecStart=/usr/lib/yubiOS/uki/install-uki.sh
+# Read-write paths install-uki.sh touches: ESP mount, /loader/entries, /run.
+# PrivateNetwork + ProtectSystem=strict to mirror the yubiOS-chipsec-firstboot.service
+# sandbox baseline (see ADR-024 for the documented exception pattern).
+PrivateNetwork=yes
+ProtectHome=yes
+ProtectSystem=strict
+ReadWritePaths=/boot /efi /loader /run
