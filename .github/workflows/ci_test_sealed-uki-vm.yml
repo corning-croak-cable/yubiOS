@@ -89,8 +89,14 @@ jobs:
           install -m 0755 docker-rootless-extras/rootlesskit "$DOCKER_TOOLS_DIR/bin/"
           echo "$DOCKER_TOOLS_DIR/bin" >> "$GITHUB_PATH"
           export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
-          # Set DOCKER_HOST for subsequent steps (steps 5-9 use `docker` directly)
-          echo "DOCKER_HOST=unix:///run/docker-rootless/docker.sock" >> "$GITHUB_ENV"
+          # DOCKER_HOST is intentionally NOT exported to GITHUB_ENV.
+          # Earlier revisions (V8/V9) set DOCKER_HOST=unix:///run/docker-rootless/docker.sock
+          # (rootless socket path that no longer exists). That stale value caused docker
+          # CLI in steps 5/7 to fail with "Cannot connect" -- V14 tried `unset DOCKER_HOST`
+          # in the preamble but the unset did not take effect (likely GitHub Actions
+          # re-injects GITHUB_ENV values into the shell environment). V15 just removes
+          # the echo entirely so DOCKER_HOST is never set in the first place -- docker CLI
+          # defaults to /var/run/docker.sock where the V12 system dockerd listens.
           echo "DOCKER_CONFIG=$DOCKER_TOOLS_DIR/config" >> "$GITHUB_ENV"
           mkdir -p "$DOCKER_TOOLS_DIR/config/cli-plugins"
           echo "DOCKER_TOOLS_DIR=$DOCKER_TOOLS_DIR" >> "$GITHUB_ENV"
@@ -120,11 +126,6 @@ jobs:
             > "${RUNNER_TEMP}/dockerd.log" 2>&1 < /dev/null &
           disown || true
           DOCKER_PID=$!
-          # V14: unset DOCKER_HOST inherited from GITHUB_ENV (step 4 echoes
-          # DOCKER_HOST=unix:///run/docker-rootless/docker.sock). That path
-          # has no daemon. Our V12 dockerd listens at the default
-          # /var/run/docker.sock -- let docker CLI default to it.
-          unset DOCKER_HOST
           for i in $(seq 1 60); do
             docker info >/dev/null 2>&1 && break
             if ! kill -0 "$DOCKER_PID" 2>/dev/null; then
@@ -202,11 +203,6 @@ jobs:
             > "${RUNNER_TEMP}/dockerd.log" 2>&1 < /dev/null &
           disown || true
           DOCKER_PID=$!
-          # V14: unset DOCKER_HOST inherited from GITHUB_ENV (step 4 echoes
-          # DOCKER_HOST=unix:///run/docker-rootless/docker.sock). That path
-          # has no daemon. Our V12 dockerd listens at the default
-          # /var/run/docker.sock -- let docker CLI default to it.
-          unset DOCKER_HOST
           for i in $(seq 1 60); do
             docker info >/dev/null 2>&1 && break
             if ! kill -0 "$DOCKER_PID" 2>/dev/null; then
