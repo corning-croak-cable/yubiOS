@@ -64,9 +64,6 @@ jobs:
             uidmap slirp4netns fuse-overlayfs \
             binutils dosfstools e2fsprogs jq \
             mkosi opensc softhsm2 tpm2-tools \
-            # V12: install docker.io for system dockerd + docker CLI.
-            # The static docker-29.6.0 tarball's CLI didn't reliably
-            # respect -H over DOCKER_HOST; system docker.io does.
             docker.io containerd runc
           command -v mkosi systemd-sbsign sbverify \
             softhsm2-util pkcs11-tool docker dockerd \
