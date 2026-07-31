@@ -1,5 +1,10 @@
 name: DIAG - UKI signing matrix (10 variants)
 
+# v2: RSA focus. v1 proved single-part provider sign works but every
+# multi-part (digest-sign) pkcs11 path fails = softhsm 2.7.0 hashed-ECDSA
+# bug (PR 683, single-part only). RSA mechanisms are multi-part native in
+# softhsm, so RSA-2048 keys should unblock systemd-sbsign provider:pkcs11.
+
 on:
   workflow_dispatch: {}
 
@@ -15,87 +20,86 @@ jobs:
       fail-fast: false
       matrix:
         variant:
-          - control-file-systemd-sbsign
-          - provider-pkcs11
-          - provider-pkcs11-osslcnf
-          - provider-pkcs11-id-uri
-          - engine-pkcs11
-          - sbsign-file
-          - sbsign-engine
-          - keygen-on-token
-          - openssl-pkeyutl-provider
-          - openssl-dgst-provider
+          - control-rsa-file
+          - ec-provider
+          - rsa2048-provider
+          - rsa4096-provider
+          - rsa2048-engine
+          - rsa2048-sbsign-engine
+          - rsa2048-osslsigncode-pkcs11
+          - ec-osslsigncode-pkcs11
+          - rsa2048-dgst-provider
+          - rsa2048-pkeyutl-provider
     steps:
-      - name: Generate PKI on host
+      - name: Generate PKI on host (EC + RSA)
         run: |
           set -euxo pipefail
           mkdir -p pki
-          openssl ecparam -name prime256v1 -genkey -noout -out pki/sb.key
-          openssl req -new -x509 -key pki/sb.key -out pki/sb.crt -days 30 -nodes \
-            -subj "/CN=yubiOS CI Secure Boot/" \
+          openssl ecparam -name prime256v1 -genkey -noout -out pki/ec.key
+          openssl req -new -x509 -key pki/ec.key -out pki/ec.crt -days 30 -nodes \
+            -subj "/CN=yubiOS CI Secure Boot EC/" \
             -addext "keyUsage=digitalSignature" -addext "extendedKeyUsage=codeSigning"
-          openssl pkcs8 -topk8 -nocrypt -in pki/sb.key -out pki/sb.p8
+          openssl pkcs8 -topk8 -nocrypt -in pki/ec.key -out pki/ec.p8
+          openssl genrsa -out pki/rsa.key 2048
+          openssl req -new -x509 -key pki/rsa.key -out pki/rsa.crt -days 30 -nodes \
+            -subj "/CN=yubiOS CI Secure Boot RSA/" \
+            -addext "keyUsage=digitalSignature" -addext "extendedKeyUsage=codeSigning"
+          openssl pkcs8 -topk8 -nocrypt -in pki/rsa.key -out pki/rsa.p8
+          if [ "${{ matrix.variant }}" = rsa4096-provider ]; then
+            openssl genrsa -out pki/rsa.key 4096
+            openssl req -new -x509 -key pki/rsa.key -out pki/rsa.crt -days 30 -nodes \
+              -subj "/CN=yubiOS CI Secure Boot RSA4096/" \
+              -addext "keyUsage=digitalSignature" -addext "extendedKeyUsage=codeSigning"
+            openssl pkcs8 -topk8 -nocrypt -in pki/rsa.key -out pki/rsa.p8
+          fi
       - name: Write container test script
         run: |
           cat > sign-test.sh <<'SIGNTESTSCRIPT'
           #!/bin/bash
           set -uxo pipefail
+          case "$VARIANT" in
+            rsa*) KEYP8=/pki/rsa.p8; KEYFILE=/pki/rsa.key; CERT=/pki/rsa.crt ;;
+            *)    KEYP8=/pki/ec.p8;  KEYFILE=/pki/ec.key;  CERT=/pki/ec.crt ;;
+          esac
           URI='pkcs11:token=yubiOS-ci;object=sb-key;type=private?pin-value=1234'
-          URI_ID='pkcs11:token=yubiOS-ci;id=%01%02;type=private?pin-value=1234'
           SBS=/usr/lib/systemd/systemd-sbsign
           dnf install -y --setopt=install_weak_deps=False systemd-boot-unsigned opensc softhsm pkcs11-provider sbsigntools osslsigncode openssl-pkcs11
-          rpm -q systemd softhsm pkcs11-provider sbsigntools osslsigncode openssl-pkcs11 opensc || true
-          need_token=1
-          case "$VARIANT" in
-            control-file-systemd-sbsign|sbsign-file) need_token=0 ;;
-          esac
-          if [ "$need_token" = 1 ]; then
+          rpm -q systemd softhsm pkcs11-provider osslsigncode || true
+          if [ "$VARIANT" != control-rsa-file ]; then
             mkdir -p /run/hsm/tokens
             printf 'directories.tokendir = /run/hsm/tokens\nobjectstore.backend = file\n' > /run/hsm/softhsm2.conf
             export SOFTHSM2_CONF=/run/hsm/softhsm2.conf
             softhsm2-util --init-token --free --label yubiOS-ci --pin 1234 --so-pin 1234
-            if [ "$VARIANT" = keygen-on-token ]; then
-              pkcs11-tool --module /usr/lib64/libsofthsm2.so --login --pin 1234 --keypairgen --key-type EC:prime256v1 --label sb-key --id 0102
-            else
-              softhsm2-util --import /pki/sb.p8 --token yubiOS-ci --label sb-key --id 0102 --pin 1234
-            fi
+            softhsm2-util --import "$KEYP8" --token yubiOS-ci --label sb-key --id 0102 --pin 1234
             export PKCS11_PROVIDER_MODULE=/usr/lib64/libsofthsm2.so
           fi
           cp /usr/lib/systemd/boot/efi/systemd-bootx64.efi /tmp/test.efi
           printf 'sign me' > /tmp/data
           rc=99; vrc=99; skip_verify=0
           case "$VARIANT" in
-            control-file-systemd-sbsign)
-              "$SBS" sign --private-key=/pki/sb.key --certificate=/pki/sb.crt --output=/tmp/signed.efi /tmp/test.efi; rc=$? ;;
-            provider-pkcs11)
-              "$SBS" sign --private-key-source=provider:pkcs11 --private-key="$URI" --certificate=/pki/sb.crt --output=/tmp/signed.efi /tmp/test.efi; rc=$? ;;
-            provider-pkcs11-osslcnf)
-              printf '%s\n' 'openssl_conf = openssl_init' '[openssl_init]' 'providers = provider_sect' '[provider_sect]' 'default = default_sect' 'pkcs11 = pkcs11_sect' '[default_sect]' 'activate = 1' '[pkcs11_sect]' 'module = /usr/lib64/ossl-modules/pkcs11.so' 'pkcs11-module-path = /usr/lib64/libsofthsm2.so' 'activate = 1' > /tmp/ossl.cnf
-              export OPENSSL_CONF=/tmp/ossl.cnf
-              "$SBS" sign --private-key-source=provider:pkcs11 --private-key="$URI" --certificate=/pki/sb.crt --output=/tmp/signed.efi /tmp/test.efi; rc=$? ;;
-            provider-pkcs11-id-uri)
-              "$SBS" sign --private-key-source=provider:pkcs11 --private-key="$URI_ID" --certificate=/pki/sb.crt --output=/tmp/signed.efi /tmp/test.efi; rc=$? ;;
-            engine-pkcs11)
+            control-rsa-file)
+              "$SBS" sign --private-key="$KEYFILE" --certificate="$CERT" --output=/tmp/signed.efi /tmp/test.efi; rc=$? ;;
+            rsa2048-provider|rsa4096-provider|ec-provider)
+              "$SBS" sign --private-key-source=provider:pkcs11 --private-key="$URI" --certificate="$CERT" --output=/tmp/signed.efi /tmp/test.efi; rc=$? ;;
+            rsa2048-engine)
               export PKCS11_MODULE_PATH=/usr/lib64/libsofthsm2.so
-              "$SBS" sign --private-key-source=engine:pkcs11 --private-key="$URI" --certificate=/pki/sb.crt --output=/tmp/signed.efi /tmp/test.efi; rc=$? ;;
-            sbsign-file)
-              sbsign --key /pki/sb.key --cert /pki/sb.crt --output /tmp/signed.efi /tmp/test.efi; rc=$? ;;
-            sbsign-engine)
+              "$SBS" sign --private-key-source=engine:pkcs11 --private-key="$URI" --certificate="$CERT" --output=/tmp/signed.efi /tmp/test.efi; rc=$? ;;
+            rsa2048-sbsign-engine)
               export PKCS11_MODULE_PATH=/usr/lib64/libsofthsm2.so
-              sbsign --engine pkcs11 --key "$URI" --cert /pki/sb.crt --output /tmp/signed.efi /tmp/test.efi; rc=$? ;;
-            keygen-on-token)
-              "$SBS" sign --private-key-source=provider:pkcs11 --private-key="$URI" --certificate=/pki/sb.crt --output=/tmp/signed.efi /tmp/test.efi; rc=$?; skip_verify=1 ;;
-            openssl-pkeyutl-provider)
+              sbsign --engine pkcs11 --key "$URI" --cert "$CERT" --output /tmp/signed.efi /tmp/test.efi; rc=$? ;;
+            rsa2048-osslsigncode-pkcs11|ec-osslsigncode-pkcs11)
+              osslsigncode sign -pkcs11module /usr/lib64/libsofthsm2.so -key "$URI" -certs "$CERT" -h sha256 -in /tmp/test.efi -out /tmp/signed.efi; rc=$? ;;
+            rsa2048-dgst-provider)
+              openssl dgst -sha256 -provider pkcs11 -provider default -sign "$URI" -out /tmp/sig /tmp/data; rc=$?; skip_verify=1
+              ls -la /tmp/sig || true ;;
+            rsa2048-pkeyutl-provider)
               openssl dgst -sha256 -binary -out /tmp/dgst /tmp/data
               openssl pkeyutl -sign -inkey "$URI" -provider pkcs11 -provider default -in /tmp/dgst -out /tmp/sig; rc=$?; skip_verify=1
-              ls -la /tmp/sig || true ;;
-            openssl-dgst-provider)
-              openssl dgst -sha256 -provider pkcs11 -provider default -sign "$URI" -out /tmp/sig /tmp/data; rc=$?; skip_verify=1
               ls -la /tmp/sig || true ;;
             *) echo "unknown variant $VARIANT"; exit 3 ;;
           esac
           if [ "$skip_verify" = 0 ] && [ "$rc" = 0 ]; then
-            osslsigncode verify -in /tmp/signed.efi -CAfile /pki/sb.crt; vrc=$?
+            osslsigncode verify -in /tmp/signed.efi -CAfile "$CERT"; vrc=$?
           else
             vrc=0
           fi
