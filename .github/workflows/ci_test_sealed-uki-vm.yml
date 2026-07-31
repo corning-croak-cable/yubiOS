@@ -390,8 +390,30 @@ jobs:
           grep -F '.linux'   /tmp/inspect.txt
           grep -F '.initrd'  /tmp/inspect.txt
           echo "=== Assertion 3: verity roothash embedded in UKI .cmdline ==="
-          ukify inspect "$SIGNED_EFI" \
-            | jq -r '.[".cmdline"]' > /tmp/cmdline.txt
+          # V62: ukify inspect --json (machine-readable output).
+          # V61 commit b8af8109 (run #83, job 91124368536) made assertion 1
+          # pass cleanly ('Signature verification: ok') and assertion 2
+          # pass cleanly (ukify ran, .cmdline/.linux/.initrd matched).
+          # But assertion 3 failed at 09:42:11Z with:
+          #   jq: parse error: Invalid numeric literal at line 1, column 6
+          #   ##[error]Process completed with exit code 5.
+          # Root cause: `ukify inspect` (without --json) in systemd v257
+          # outputs human-readable text (.cmdline:, .linux:, .initrd:
+          # headers followed by content on the SAME line), not JSON.
+          # `jq -r '.[".cmdline"]'` then tries to parse `.cmdline: <hex>`
+          # as JSON, and `.` is interpreted as a numeric literal prefix
+          # -- it expects digits at column 2, but finds `c` (of `.cmdline`),
+          # giving the parse error at column 6 of line 1. systemd v254+
+          # added `ukify inspect --json` for machine-readable output. Fix:
+          # add --json so the output is valid JSON with .cmdline/.linux/
+          # .initrd as keys, and jq extracts the cmdline value cleanly.
+          # Also add an `ukify inspect --json` sanity check on the
+          # returned key so a future output-format change surfaces as
+          # `::error::` instead of a silent jq parse error.
+          ukify inspect --json "$SIGNED_EFI" > /tmp/inspect.json \
+            || { echo "::error::ukify inspect --json failed"; exit 1; }
+          jq -e '.[".cmdline"]' /tmp/inspect.json > /tmp/cmdline.txt \
+            || { echo "::error::jq extract of .cmdline from /tmp/inspect.json failed"; exit 1; }
           grep -E '\broothash=[0-9a-f]{64}\b' /tmp/cmdline.txt \
             || { echo "::error::no roothash= in UKI .cmdline"; exit 1; }
           echo "Assertions 1-3 PASS"
