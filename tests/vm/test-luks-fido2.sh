@@ -168,13 +168,32 @@ if [[ "$real_key_seen" -ne 1 ]]; then
   exit 1
 fi
 
-# Step 7: Enroll FIDO2 (interactive -- requires YubiKey touch).
+# Step 7: Enroll FIDO2 (CI-friendly: passphrase via file, touch for user-presence).
+# In CI there is no TTY for systemd-tty-ask-password-agent. systemd-cryptenroll
+# needs to (a) unlock the existing LUKS slot to add a new token, AND (b)
+# optionally prompt for a new FIDO2 PIN. Both prompts route through
+# systemd-ask-password and hang the job in a non-interactive environment
+# (broadcast: "Please enter current passphrase for disk /dev/sda2:").
+# Fix:
+#   1. Write the test passphrase ($PASS) to a 0600 temp file so cryptenroll
+#      can unlock the existing slot via systemd-ask-password without a TTY.
+#   2. Pass --unlock-key-file to cryptenroll (reads passphrase from file).
+#   3. Set --fido2-with-client-pin=no so the FIDO2 enrollment skips the PIN
+#      prompt and only requires YubiKey touch (user-presence).
+# After this, the only interactive step is the physical YubiKey touch.
+PASSFILE=$(mktemp /tmp/yubios-cryptenroll-passphrase.XXXXXX)
+echo -n "$PASS" > "$PASSFILE"
+chmod 0600 "$PASSFILE"
 echo "7/7 Enrolling FIDO2 (touch YubiKey when prompted)"
 systemd-cryptenroll \
   --fido2-device=auto \
-  --fido2-with-client-pin=yes \
+  --fido2-with-client-pin=no \
   --fido2-with-user-presence=yes \
+  --unlock-key-file="$PASSFILE" \
   "$LUKS_PART"
+CRYPTENROLL_RC=$?
+rm -f "$PASSFILE"
+[ "$CRYPTENROLL_RC" -eq 0 ] || exit "$CRYPTENROLL_RC"
 
 echo ""
 echo "=== PASS: LUKS2 FIDO2 enrollment complete ==="
