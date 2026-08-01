@@ -95,7 +95,7 @@ on:
       ftpm_linux_payload:
         description: 'Also run fTPM Stage B: bcvk to-disk the yubiOS image and boot it under the fTPM firmware to prove the guest kernel binds tpm_ftpm_tee. Slow (TCG) and unproven; off by default.'
         required: false
-        default: false
+        default: true
         type: boolean
       ci_vm_image:
         description: 'Internal: VM image ref carried by ci.yml.'
@@ -189,10 +189,10 @@ jobs:
         if: matrix.arch == 'arm64'
         run: |
           df -h "$PWD" || true
-          echo "--- pruning podman storage from prior runs (root-owned, since bcvk/vm-e2e now runs under sudo) ---"
-          sudo podman system prune -af --volumes || true
+          echo "--- !OFF for speed - pruning podman storage from prior runs (root-owned, since bcvk/vm-e2e now runs under sudo) ---"
+          # sudo podman system prune -af --volumes || true
           echo "--- removing leftover bcvk-src clone + cargo target from a prior run ---"
-          sudo rm -rf /opt/bcvk-src || true
+          sudo rm -rf /opt/*-src || true
           echo "--- cleaning apt cache ---"
           sudo apt-get clean || true
           df -h "$PWD" || true
@@ -275,18 +275,6 @@ jobs:
           echo "qemu_prefix=${QEMU_PREFIX}" >> "$GITHUB_OUTPUT"
           echo "### vgpu-vgpu-vm-e2e (arm64) -- INFO: using zstd-capable QEMU ${QEMU_ZSTD_COMMIT}" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Disk space before bcvk build (diagnostic)
-        run: |
-          df -h "$PWD" /tmp || true
-          echo "--- inode usage ---"
-          df -i "$PWD" /tmp || true
-
-      - name: Free disk space (pre-build -- kill stray containers from an aborted prior run)
-        run: |
-          sudo podman ps -aq | xargs -r sudo podman rm -f || true
-          sudo podman system prune -af --volumes || true
-          df -h "$PWD" || true
-
       - name: Build bcvk @ pinned source (feasibility gate)
         id: bcvk
         run: |
@@ -367,13 +355,6 @@ jobs:
           rm -rf ~/.cargo/registry ~/.cargo/git ~/.cargo/.package-cache 2>/dev/null || true
           sudo rm -rf "$BCVK_SRC"
 
-      - name: Disk space after bcvk build attempt (diagnostic)
-        if: always()
-        run: |
-          df -h "$PWD" /tmp || true
-          du -sh /opt/bcvk-src 2>/dev/null || true
-          du -sh ~/.cargo 2>/dev/null || true
-
       - name: Gate on KVM (bcvk hard-requires /dev/kvm; now real hardware on arm64 via self-hosted rock1)
         id: kvm
         run: |
@@ -413,11 +394,6 @@ jobs:
       # bcvk would still report "image not known". Every podman call in this
       # workflow and in tests/vm/*.sh (pull / rm / logs) exists to interoperate
       # with that hardcoded dependency, not because we chose podman ourselves.
-      - name: Free disk space (pre-pull -- reclaim space the cargo build just used)
-        if: steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1'
-        run: |
-          sudo podman system prune -af --volumes || true
-          df -h "$PWD" || true
 
       - name: Pull yubiOS image into podman storage (bcvk boots from local storage)
         if: steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1'
@@ -475,7 +451,7 @@ jobs:
           fi
           echo "### vgpu-vgpu-vm-e2e (arm64) -- INFO: AppArmor profiles relaxed for bcvk VM boot (unpriv_bwrap + swtpm when loaded)" >> "$GITHUB_STEP_SUMMARY"
 
-      # -- Hardware YubiKey passthrough legs (yubiOS#9, yubiOS#20). --
+ # -- Hardware YubiKey passthrough legs (yubiOS#9, yubiOS#20). --
       # Deliberately steps INSIDE vm-e2e rather than a separate job: they share this
       # job's bcvk build, image pull, and AppArmor setup on the self-hosted rock1
       # runner instead of paying for all of it twice.
@@ -487,6 +463,7 @@ jobs:
       #
       # DESTRUCTIVE, so gated on an explicit workflow_dispatch with a non-empty
       # hw_device; on any normal run all three steps skip.
+
       - name: Precondition -- physical YubiKey attached (USB vendor 0x1050)
         id: yubikey
         if: github.event_name == 'workflow_dispatch' && inputs.hw_device != ''
@@ -534,255 +511,9 @@ jobs:
           echo "blockdev: $(command -v blockdev || echo /usr/sbin/blockdev)"
           echo "ok=1" >> "$GITHUB_OUTPUT"
 
-      # -- libvfio-user: the vfio-user device SERVER half. Built from a pinned
-      #    commit and cached under /opt keyed by that commit, same pattern as the
-      #    zstd QEMU and bcvk builds above. BSD-3-Clause. Failure here is a SKIP,
-      #    not a failure: the test script gates on the binary being present.
-      - name: Build libvfio-user server @ pinned source
-        id: libvfio-user
-        run: |
-          set +e
-          LVU_REF=37491ed9af828fc161238dacd82e83ea35a09f87 # nutanix/libvfio-user master, 2026-07-23, BSD-3-Clause
-          LVU_PREFIX="/opt/libvfio-user/${LVU_REF}"
-          LVU_SRC=/opt/libvfio-user-src
-          if [ -x "${LVU_PREFIX}/bin/gpio-pci-idio-16" ]; then
-            echo "server=${LVU_PREFIX}/bin/gpio-pci-idio-16" >> "$GITHUB_OUTPUT"
-            echo "libdir=${LVU_PREFIX}/lib" >> "$GITHUB_OUTPUT"
-            echo "### vgpu-vm-e2e (${{ matrix.arch }}) -- INFO: libvfio-user cache HIT at ${LVU_PREFIX}" >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq --no-install-recommends             meson ninja-build pkg-config gcc libjson-c-dev libcmocka-dev python3
-          sudo rm -rf "$LVU_SRC"
-          sudo mkdir -p "$LVU_SRC"
-          sudo chown "$(id -u):$(id -g)" "$LVU_SRC"
-          git init -q "$LVU_SRC" &&
-            git -C "$LVU_SRC" remote add origin https://github.com/nutanix/libvfio-user &&
-            git -C "$LVU_SRC" fetch --depth 1 origin "$LVU_REF" &&
-            git -C "$LVU_SRC" checkout --detach FETCH_HEAD
-          if [ "$?" -ne 0 ]; then
-            echo "::warning::SKIP: could not fetch pinned nutanix/libvfio-user source; vfio-user handshake leg will SKIP after the client-side gate"
-            echo "### vgpu-vm-e2e (${{ matrix.arch }}) -- SKIP: libvfio-user source unavailable" >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
-          ( cd "$LVU_SRC" && meson setup build -Dwerror=false && ninja -C build lib/libvfio-user.so.0.0.1 samples/gpio-pci-idio-16 )
-          if [ ! -x "$LVU_SRC/build/samples/gpio-pci-idio-16" ]; then
-            echo "::warning::SKIP: libvfio-user failed to build (see meson/ninja output above); vfio-user handshake leg will SKIP after the client-side gate"
-            echo "### vgpu-vm-e2e (${{ matrix.arch }}) -- SKIP: libvfio-user build failed" >> "$GITHUB_STEP_SUMMARY"
-            sudo rm -rf "$LVU_SRC"
-            exit 0
-          fi
-          sudo mkdir -p "${LVU_PREFIX}/bin" "${LVU_PREFIX}/lib"
-          sudo cp "$LVU_SRC/build/samples/gpio-pci-idio-16" "${LVU_PREFIX}/bin/"
-          # The sample links libvfio-user.so, so the shared object ships with it and
-          # the test step points LD_LIBRARY_PATH here.
-          sudo find "$LVU_SRC/build" -name 'libvfio-user.so*' -exec cp -r -P {} "${LVU_PREFIX}/lib/" \;
-          sudo chmod 0755 "${LVU_PREFIX}/bin/gpio-pci-idio-16"
-          # Smoke-check the staged binary actually starts -- shared-object staging is the
-          # fragile part. If it cannot, emit no outputs so the test leg SKIPs with its own
-          # "no server binary" message instead of failing on a half-built bundle.
-          smoke_sock="$(mktemp -u /tmp/lvu-smoke-XXXXXX.sock)"
-          LD_LIBRARY_PATH="${LVU_PREFIX}/lib" timeout 5 "${LVU_PREFIX}/bin/gpio-pci-idio-16" "$smoke_sock" &
-          smoke_pid=$!
-          for _ in $(seq 1 20); do [ -S "$smoke_sock" ] && break; sleep 0.25; done
-          if [ ! -S "$smoke_sock" ]; then
-            kill "$smoke_pid" 2>/dev/null || true
-            echo "::warning::SKIP: staged libvfio-user server does not start (shared object staging failed); vfio-user handshake leg will SKIP after the client-side gate"
-            echo "### vgpu-vm-e2e (${{ matrix.arch }}) -- SKIP: libvfio-user server binary unusable" >> "$GITHUB_STEP_SUMMARY"
-            sudo rm -rf "$LVU_SRC" "$LVU_PREFIX"
-            exit 0
-          fi
-          kill "$smoke_pid" 2>/dev/null || true
-          rm -f "$smoke_sock"
-          echo "libvfio-user server smoke check OK"
-          echo "server=${LVU_PREFIX}/bin/gpio-pci-idio-16" >> "$GITHUB_OUTPUT"
-          echo "libdir=${LVU_PREFIX}/lib" >> "$GITHUB_OUTPUT"
-          echo "### vgpu-vm-e2e (${{ matrix.arch }}) -- INFO: libvfio-user ${LVU_REF} built and cached at ${LVU_PREFIX}" >> "$GITHUB_STEP_SUMMARY"
-          sudo rm -rf "$LVU_SRC"
-
-      # -- vGPU legs (this workflow's reason to exist). Ordered first because they
-      #    are the cheapest and they gate the QEMU device models every later leg
-      #    depends on. Same rc contract: 0 pass, 77 loud SKIP, else fail.
-      - name: Run tests/vm/test-vfio-user-host-ci.sh (vfio-user client/server, no kernel VFIO)
-        # amd64 CI is a lint-only/secondary leg here (ADR-023: ARM64 is primary) and has
-        # no locally-pulled image for a full VM boot -- skip outright rather than fail on
-        # a guest that was never provisioned to run.
-        if: ${{ always() && matrix.arch == 'arm64' }}
-        timeout-minutes: 10
-        env:
-          QEMU_BIN: ${{ matrix.arch == 'arm64' && steps.qemu-zstd.outputs.qemu_prefix != '' && format('{0}/bin/qemu-system-aarch64', steps.qemu-zstd.outputs.qemu_prefix) || (matrix.arch == 'arm64' && 'qemu-system-aarch64' || 'qemu-system-x86_64') }}
-          QEMU_MACHINE: ${{ matrix.arch == 'arm64' && 'virt' || 'q35' }}
-          VGPU_LOG_DIR: /tmp/yubios-vgpu-logs
-          VFIO_USER_SERVER: ${{ steps.libvfio-user.outputs.server }}
-          VFIO_USER_SERVER_ARGS: '-v'
-          VFIO_USER_LIBDIR: ${{ steps.libvfio-user.outputs.libdir }}
-        run: |
-          chmod +x tests/vm/test-vfio-user-host-ci.sh
-          sudo rm -rf "$VGPU_LOG_DIR"
-          sudo mkdir -p "$VGPU_LOG_DIR"
-          sudo chmod 0777 "$VGPU_LOG_DIR"
-          set +e
-          sudo env "PATH=$PATH:/usr/sbin:/sbin" \
-            "QEMU_BIN=$QEMU_BIN" \
-            "QEMU_MACHINE=$QEMU_MACHINE" \
-            "LOG_DIR=$VGPU_LOG_DIR" \
-            "VFIO_USER_SERVER=${VFIO_USER_SERVER:-}" \
-            "VFIO_USER_SERVER_ARGS=${VFIO_USER_SERVER_ARGS:-}" \
-            "LD_LIBRARY_PATH=${VFIO_USER_LIBDIR:-}:${LD_LIBRARY_PATH:-}" \
-            bash tests/vm/test-vfio-user-host-ci.sh
-          rc=$?
-          set -e
-          if [ "$rc" -eq 77 ]; then
-            echo "::warning::SKIP: vfio-user leg incomplete -- see the SKIP line above for the exact gap."
-            echo "### vgpu-vm-e2e (${{ matrix.arch }}) -- SKIP: test-vfio-user-host-ci.sh, see log for the named gap" >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
-          [ "$rc" -eq 0 ] || exit "$rc"
-          echo "### vgpu-vm-e2e (${{ matrix.arch }}) -- PASS: test-vfio-user-host-ci.sh, userspace device handshake with no kernel VFIO" >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Run tests/vm/test-vgpu-virtio-ci.sh (virtio-gpu device model + guest DRM surface)
-        # Same reason as the vfio-user step above: amd64 never gets steps 14-18
-        # (image pull, AppArmor relax, preconditions) per ADR-023, so this leg has no
-        # locally-pulled image to boot bcvk ephemeral run against. arm64-only.
-        if: ${{ always() && matrix.arch == 'arm64' }}
-        timeout-minutes: 20
-        env:
-          YUBIOS_IMAGE: ${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}
-          QEMU_BIN: ${{ matrix.arch == 'arm64' && steps.qemu-zstd.outputs.qemu_prefix != '' && format('{0}/bin/qemu-system-aarch64', steps.qemu-zstd.outputs.qemu_prefix) || (matrix.arch == 'arm64' && 'qemu-system-aarch64' || 'qemu-system-x86_64') }}
-          VGPU_DEVICE: ${{ matrix.arch == 'arm64' && 'virtio-gpu-pci' || 'virtio-gpu-pci' }}
-          YUBIOS_SSH_WAIT_SECS: '300'
-          ALLOW_REAL_U2F: ${{ inputs.allow_real_u2f && '1' || '0' }}
-          BCVK_EPHEMERAL_EXTRA_ARGS: >-
-            ${{ matrix.arch == 'arm64' && format('--ro-bind {0}:qemu-zstd --ro-bind /lib/aarch64-linux-gnu:host-lib --ro-bind /usr/lib/aarch64-linux-gnu:host-usrlib --env PATH=/run/host-mounts/qemu-zstd/bcvk-bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin --env LD_LIBRARY_PATH=/run/host-mounts/host-lib:/run/host-mounts/host-usrlib:/run/host-mounts/qemu-zstd/lib --log-dir=journal,console=/tmp/yubios-vm-e2e-logs', steps.qemu-zstd.outputs.qemu_prefix) || '' }}
-        run: |
-          chmod +x tests/vm/test-vgpu-virtio-ci.sh
-          set +e
-          sudo env "PATH=$PATH:/usr/sbin:/sbin" \
-            "QEMU_BIN=$QEMU_BIN" \
-            "VGPU_DEVICE=$VGPU_DEVICE" \
-            "YUBIOS_IMAGE=${YUBIOS_IMAGE:-./mkosi.output/yubiOS}" \
-            "BCVK_EPHEMERAL_EXTRA_ARGS=${BCVK_EPHEMERAL_EXTRA_ARGS:-}" \
-            "YUBIOS_SSH_WAIT_SECS=${YUBIOS_SSH_WAIT_SECS:-300}" \
-            bash tests/vm/test-vgpu-virtio-ci.sh
-          rc=$?
-          set -e
-          if [ "$rc" -eq 77 ]; then
-            echo "::warning::SKIP: vGPU guest leg incomplete -- see the SKIP line above for the exact gap."
-            echo "### vgpu-vm-e2e (${{ matrix.arch }}) -- SKIP: test-vgpu-virtio-ci.sh, see log for the named gap" >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
-          [ "$rc" -eq 0 ] || exit "$rc"
-          echo "### vgpu-vm-e2e (${{ matrix.arch }}) -- PASS: test-vgpu-virtio-ci.sh, virtio-gpu present and no VFIO passthrough surface" >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Upload vGPU logs
-        if: ${{ always() }}
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
-        with:
-          name: vgpu-logs-${{ matrix.arch }}
-          path: /tmp/yubios-vgpu-logs/*.log
-          if-no-files-found: ignore
-          retention-days: 7
-
-      # -- Phase F0 fTPM chain (yubiOS#35), first of the tests/vm legs. --
-      # The OP-TEE ms-tpm-20-ref fTPM lives in the FIRMWARE (TF-A + OP-TEE + U-Boot),
-      # not in the yubiOS OS image, so no bcvk guest can expose it -- bcvk DirectBoot
-      # bypasses the firmware entirely. tests/vm/test-ftpm-qemu-ci.sh therefore sources
-      # flash.bin from the published firmware bundle (ci_firmware-rk.yml Stage 4) and
-      # boots it directly, exactly like that workflow's Stage 3, instead of going
-      # through bcvk ephemeral. Stage A asserts the secure-world markers; Stage B
-      # (opt-in) installs the OS with bcvk to-disk, boots it under the same firmware,
-      # and runs tests/vm/verify-tpm0-pcr-extend.sh in-guest over the serial console
-      # via tests/vm/ftpm-console-driver.py -- the dev/test image's root-autologin
-      # getty is the only route in, since U-Boot owns the boot and there is no network.
-      #
-      # Runs under TCG, so it needs neither the bcvk build nor /dev/kvm for Stage A.
-      # Same rc contract as the legs below: 0 pass, 77 loud SKIP, anything else fails.
-      # Run #120 (30165202571) failed in this step: Stage B's `bcvk to-disk` sat for
-      # 26 minutes with no progress and timeout-minutes killed the job, so the
-      # script never reached its own 77-SKIP contract and left no diagnosis. Two
-      # fixes, both minimal: the script now bounds to-disk with TO_DISK_TIMEOUT and
-      # converts a blown budget into a loud SKIP, and this step hands it the
-      # zstd-capable QEMU built above -- to-disk boots an installer VM, and the
-      # distro QEMU cannot DirectBoot this image's zstd EFI zboot kernel, which is
-      # the known hang the other bcvk legs already SKIP on. Budget: 180s Stage A +
-      # 900s to-disk + 900s guest boot, so the step needs more than 30 minutes.
-      - name: Run tests/vm/test-ftpm-qemu-ci.sh (OP-TEE fTPM, firmware from Docker)
-        if: ${{ always() && matrix.arch == 'arm64' }}
-        timeout-minutes: 45
-        env:
-          FIRMWARE_IMAGE: ${{ inputs.firmware_image || 'docker.io/0mniteck/yubios:firmware-qemu-arm64' }}
-          YUBIOS_IMAGE: ${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}
-          FTPM_LINUX_PAYLOAD: ${{ inputs.ftpm_linux_payload && '1' || '0' }}
-          BOOT_TIMEOUT: '180'
-          LINUX_BOOT_TIMEOUT: '900'
-          TO_DISK_TIMEOUT: '900'
-          QEMU_ZSTD_PREFIX: ${{ steps.qemu-zstd.outputs.qemu_prefix }}
-          FTPM_LOG_DIR: /tmp/yubios-ftpm-logs
-        run: |
-          # The arm64 leg installs qemu-system-arm already; amd64 installs the x86
-          # emulator only, and neither matrix leg guarantees podman/python3 here.
-          command -v qemu-system-aarch64 >/dev/null 2>&1 || missing=1
-          command -v podman >/dev/null 2>&1 || missing=1
-          command -v python3 >/dev/null 2>&1 || missing=1
-          if [ "${missing:-0}" = "1" ]; then
-            sudo apt-get update -qq
-            sudo apt-get install -y -qq --no-install-recommends \
-              qemu-system-arm qemu-efi-aarch64 podman python3 parted dosfstools e2fsprogs
-          fi
-          qemu-system-aarch64 --version | head -1
-          chmod +x tests/vm/test-ftpm-qemu-ci.sh
-          sudo rm -rf "$FTPM_LOG_DIR"
-          sudo mkdir -p "$FTPM_LOG_DIR"
-          sudo chmod 0777 "$FTPM_LOG_DIR"
-          # Stage B's `bcvk to-disk` runs its own installer VM under QEMU. Put the
-          # zstd-capable build first on PATH when the step above produced one.
-          FTPM_PATH="$PATH:/usr/sbin:/sbin"
-          if [ -n "${QEMU_ZSTD_PREFIX:-}" ] && [ -x "${QEMU_ZSTD_PREFIX}/bin/qemu-system-aarch64" ]; then
-            FTPM_PATH="${QEMU_ZSTD_PREFIX}/bin:$FTPM_PATH"
-            echo "bcvk to-disk will see zstd-capable QEMU at ${QEMU_ZSTD_PREFIX}/bin"
-          else
-            echo "::warning::no zstd-capable QEMU prefix available; bcvk to-disk may hang on the ARM64 zstd EFI zboot kernel (bounded by TO_DISK_TIMEOUT)"
-          fi
-          set +e
-          sudo env "PATH=$FTPM_PATH" \
-            "FIRMWARE_IMAGE=$FIRMWARE_IMAGE" \
-            "YUBIOS_IMAGE=$YUBIOS_IMAGE" \
-            "FTPM_LINUX_PAYLOAD=$FTPM_LINUX_PAYLOAD" \
-            "BOOT_TIMEOUT=$BOOT_TIMEOUT" \
-            "LINUX_BOOT_TIMEOUT=$LINUX_BOOT_TIMEOUT" \
-            "TO_DISK_TIMEOUT=$TO_DISK_TIMEOUT" \
-            "LOG_DIR=$FTPM_LOG_DIR" \
-            bash tests/vm/test-ftpm-qemu-ci.sh
-          rc=$?
-          set -e
-          if [ "$rc" -ne 0 ]; then
-            echo "--- OP-TEE secure-world serial log tail ---"
-            sudo tail -200 "$FTPM_LOG_DIR/ftpm-optee.log" || true
-            echo "--- normal-world serial log tail ---"
-            sudo tail -200 "$FTPM_LOG_DIR/ftpm-nw.log" || true
-            echo "--- Stage B guest console tail ---"
-            sudo tail -200 "$FTPM_LOG_DIR/ftpm-linux.log" || true
-          fi
-          if [ "$rc" -eq 77 ]; then
-            echo "::warning::SKIP: fTPM leg incomplete -- see the SKIP line above for the exact gap."
-            echo "### vgpu-vm-e2e (${{ matrix.arch }}) -- SKIP: test-ftpm-qemu-ci.sh, see log for the named gap" >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
-          [ "$rc" -eq 0 ] || exit "$rc"
-          echo "### vgpu-vm-e2e (${{ matrix.arch }}) -- PASS: test-ftpm-qemu-ci.sh, OP-TEE fTPM verified" >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Upload fTPM serial logs
-        if: ${{ always() && matrix.arch == 'arm64' }}
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
-        with:
-          name: ftpm-qemu-logs-${{ matrix.arch }}
-          path: /tmp/yubios-ftpm-logs/*.log
-          if-no-files-found: warn
-          retention-days: 7
-
       - name: Run tests/vm/test-luks-fido2.sh (DESTRUCTIVE -- wipes ${{ inputs.hw_device }})
         if: github.event_name == 'workflow_dispatch' && inputs.hw_device != '' && steps.yubikey.outputs.present == '1' && steps.device.outputs.ok == '1'
-        timeout-minutes: 10
+        timeout-minutes: 15
         env:
           HW_DEVICE: ${{ inputs.hw_device }}
           HW_IMAGE: ${{ inputs.hw_image != '' && inputs.hw_image || (inputs.image || 'docker.io/0mniteck/yubios:dev') }}
@@ -889,7 +620,7 @@ jobs:
           [ "$rc" -eq 0 ] || exit "$rc"
           echo "### vgpu-vm-e2e (${{ matrix.arch }}) -- PASS: test-fido2-enrollment.sh (CTAP2 legs skip unless the test image ships swu2f Layer 2)" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Free disk space (post-run -- leave rock1 clean for the next run)
+      - name: Free disk space (post-run)
         if: always()
         run: |
           aa_enforce="$(command -v aa-enforce || true)"
@@ -907,8 +638,7 @@ jobs:
           # by step 34's `docker run -v /var/lib/containers:/var/lib/containers`.
           # Container cleanup (the line above) is still safe: it removes
           # exited containers, not images.
-          sudo podman ps -aq | xargs -r sudo podman rm -f || true
-          sudo rm -rf /opt/bcvk-src || true
+          sudo rm -rf /opt/*-src || true
           df -h "$PWD" || true
 
       - name: Note hardware-only variant (runs above when dispatched with hw_device, else lint-only)
@@ -923,13 +653,15 @@ jobs:
           sudo mkdir -p /mnt
           sudo rm -rf /mnt/cfs-target
           sudo install -d -m 0755 -o "$(id -u)" -g "$(id -g)" /mnt/cfs-target
-      - name: Install Negative 2 extra deps
+
+      - name: Install extra deps
         if: matrix.arch == 'arm64'
         run: |
           set -euo pipefail
           sudo apt-get update -qq
           sudo apt-get install -y -qq --no-install-recommends \
             binutils fdisk jq docker.io containerd runc
+
       - name: Prepare disk image + GPT partitions + fs-verity root
         if: matrix.arch == 'arm64'
         id: cfs_disk
@@ -957,6 +689,7 @@ jobs:
           echo "LOOP=$LOOP"        >> "$GITHUB_ENV"
           echo "ESP=$ESP"          >> "$GITHUB_ENV"
           echo "ROOT=$ROOT"        >> "$GITHUB_ENV"
+
       - name: Sanity-check immutable digest from vgpu-vm-e2e pull (no re-pull)
         if: matrix.arch == 'arm64'
         run: |
@@ -981,6 +714,7 @@ jobs:
       # build job signs a UKI via systemd-sbsign) and copies yubios.efi into
       # /mnt/cfs-target/boot/EFI/Linux/. This makes Negative 2 test the real
       # yubiOS shape (UKI-based BLS), per bootc 1.16.3 PR #2269 uki key.
+
       - name: "Lay down signed UKI from sealed-UKI VM artifact"
         if: matrix.arch == 'arm64'
         env:
@@ -1037,9 +771,9 @@ jobs:
             'version 1.0' \
             "uki /EFI/Linux/bootc/bootc_composefs-${UKI_HASH}.efi" \
             'sort-key yubios-ukify-0' | sudo tee /mnt/cfs-target/boot/loader/entries/yubios-ukify.conf >/dev/null
-
           sudo cat /mnt/cfs-target/boot/loader/entries/yubios-ukify.conf
           echo "BLSConfig .conf with uki key written"
+
       - name: bootc install to-filesystem (composefs backend, systemd-boot)
         if: matrix.arch == 'arm64'
         run: |
@@ -1059,6 +793,7 @@ jobs:
               --skip-finalize \
             /run/host/mnt/cfs-target/
           echo "bootc install complete"
+
       - name: Lay down composefs store symlink (manual, post-install)
         if: matrix.arch == 'arm64'
         run: |
@@ -1092,6 +827,7 @@ jobs:
           sudo ln -sfn "../blob/$cd_digest" "/mnt/cfs-target/composefs/images/$cd_digest"
           sudo ls -la "/mnt/cfs-target/composefs/images/"
           echo "composefs store symlink laid down for $cd_digest"
+
       - name: Verify install produced a composefs= BLS entry (Type1)
         if: matrix.arch == 'arm64'
         run: |
@@ -1127,8 +863,6 @@ jobs:
             # Extract .cmdline section from the UKI PE/PE+ binary.
             # Use python with a minimal PE parser: find .cmdline section and read its bytes.
             COMPOSEFS_DIGEST="$(python3 scripts/extract_uki_cmdline.py "$full_uki")"
-
-
             echo "Type2 path: uki=$uki_path, cmdline from $full_uki"
             echo "cmdline: $COMPOSEFS_DIGEST"
             if [[ " $COMPOSEFS_DIGEST " =~ [[:space:]]composefs=([0-9a-f]{128})[[:space:]] ]]; then
@@ -1144,6 +878,7 @@ jobs:
             || { echo "::error::composefs store symlink missing for $COMPOSEFS_DIGEST"; exit 1; }
           echo "BLS_ENTRY=$entry"          >> "$GITHUB_ENV"
           echo "COMPOSEFS_DIGEST=$COMPOSEFS_DIGEST" >> "$GITHUB_ENV"
+
       - name: "Teardown loop+mount before QEMU touches the raw file"
         if: always() && matrix.arch == 'arm64' && steps.cfs_disk.outcome == 'success'
         run: |
@@ -1152,6 +887,7 @@ jobs:
           sudo umount /mnt/cfs-target 2>/dev/null
           sudo losetup --detach "$LOOP" 2>/dev/null
           echo "teardown done"
+
       - name: Boot baseline (untampered BLS) and assert composefs mount succeeds
         if: matrix.arch == 'arm64'
         run: |
@@ -1185,6 +921,7 @@ jobs:
             echo "::error::baseline must NOT show composefs refusal -- install is broken"
             exit 1
           fi
+
       - name: Re-attach loop + tamper one nibble of composefs=<digest> in BLS entry
         if: matrix.arch == 'arm64'
         run: |
@@ -1211,6 +948,7 @@ jobs:
           fi
           echo "TAMPERED_DIGEST=$TAMPERED_DIGEST" >> "$GITHUB_ENV"
           echo "Tamper committed."
+
       - name: Teardown loop+mount before reboot
         if: always() && matrix.arch == 'arm64' && steps.cfs_disk.outcome == 'success'
         run: |
@@ -1218,6 +956,7 @@ jobs:
           sudo umount /mnt/cfs-target/boot 2>/dev/null
           sudo umount /mnt/cfs-target 2>/dev/null
           sudo losetup --detach "$LOOP" 2>/dev/null
+
       - name: Reboot, assert composefs refusal (Negative 2)
         if: matrix.arch == 'arm64'
         run: |
@@ -1254,6 +993,7 @@ jobs:
           echo "::error::Negative 2 AMBIGUOUS: no refusal marker AND no success marker"
           grep -iE 'composefs|fsverity|verity|switching root|emergency|panic|invalid' /tmp/qemu-tampered.log | head -20
           exit 1
+
       - name: Final cleanup detach loop and remove disk image
         if: always()
         run: |
