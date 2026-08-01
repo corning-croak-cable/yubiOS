@@ -168,31 +168,52 @@ if [[ "$real_key_seen" -ne 1 ]]; then
   exit 1
 fi
 
-# Step 7: Enroll FIDO2 (CI-friendly: passphrase via file, touch for user-presence).
-# In CI there is no TTY for systemd-tty-ask-password-agent. systemd-cryptenroll
-# needs to (a) unlock the existing LUKS slot to add a new token, AND (b)
-# optionally prompt for a new FIDO2 PIN. Both prompts route through
-# systemd-ask-password and hang the job in a non-interactive environment
-# (broadcast: "Please enter current passphrase for disk /dev/sda2:").
-# Fix:
-#   1. Write the test passphrase ($PASS) to a 0600 temp file so cryptenroll
-#      can unlock the existing slot via systemd-ask-password without a TTY.
-#   2. Pass --unlock-key-file to cryptenroll (reads passphrase from file).
-#   3. Set --fido2-with-client-pin=no so the FIDO2 enrollment skips the PIN
-#      prompt and only requires YubiKey touch (user-presence).
-# After this, the only interactive step is the physical YubiKey touch.
-PASSFILE=$(mktemp /tmp/yubios-cryptenroll-passphrase.XXXXXX)
-echo -n "$PASS" > "$PASSFILE"
-chmod 0600 "$PASSFILE"
+# Step 7: Enroll FIDO2 (CI-friendly: add temp key slot via luksAddKey,
+# then use the temp slot to unlock cryptenroll).
+# In CI there is no TTY for systemd-tty-ask-password-agent. The previous
+# v0.14 approach (--unlock-key-file=$PASS with $PASS written to a tmp
+# file) still prompted for the current passphrase on rock1 -- the
+# systemd-cryptenroll version there doesn't honor --unlock-key-file
+# as expected, or the file-content mechanism is broken. Per Ermine's
+# directive (2026-08-01): "maybe set a temp pass so we can unlock to
+# trigger a add u2f". Approach:
+#   1. Pick a random per-run TMP_PASS (avoids collisions with prior runs).
+#   2. Write $PASS to EXISTING_PASSFILE and TMP_PASS to TMP_PASSFILE
+#      (both 0600 temp files).
+#   3. cryptsetup luksAddKey -- uses EXISTING_PASSFILE=$PASS to authorize
+#      the slot add, then writes TMP_PASS as a NEW key slot on the LUKS.
+#      This is an LUKS keyslot addition, not a replacement; the original
+#      $PASS slot is preserved.
+#   4. systemd-cryptenroll -- now uses TMP_PASSFILE for --unlock-key-file.
+#      TMP_PASS unlocks the new slot cryptenroll just added, which
+#      cryptenroll can read non-interactively.
+#   5. systemd-cryptenroll -- --fido2-with-client-pin=no so the FIDO2
+#      enrollment skips the PIN prompt and only requires YubiKey touch.
+#   6. Cleanup EXISTING_PASSFILE + TMP_PASSFILE, propagate exit code.
+# Only YubiKey touch is interactive (physical operator action).
+TMP_PASS="yubios-fido-temp-$(date +%s%N | sha256sum | head -c 16)"
+EXISTING_PASSFILE=$(mktemp /tmp/yubios-luks-existing-pass.XXXXXX)
+TMP_PASSFILE=$(mktemp /tmp/yubios-luks-temp-pass.XXXXXX)
+echo -n "$PASS" > "$EXISTING_PASSFILE"
+echo -n "$TMP_PASS" > "$TMP_PASSFILE"
+chmod 0600 "$EXISTING_PASSFILE" "$TMP_PASSFILE"
+# Add a new key slot with TMP_PASS (authorized by EXISTING_PASSFILE=$PASS)
+cryptsetup luksAddKey "$LUKS_PART" \
+  --key-file="$EXISTING_PASSFILE" \
+  --new-keyfile="$TMP_PASSFILE" \
+  --batch-mode
+LUKSADDKEY_RC=$?
+[ "$LUKSADDKEY_RC" -eq 0 ] || { rm -f "$EXISTING_PASSFILE" "$TMP_PASSFILE"; exit "$LUKSADDKEY_RC"; }
+# Now systemd-cryptenroll uses TMP_PASS to unlock (new slot, no prompt expected)
 echo "7/7 Enrolling FIDO2 (touch YubiKey when prompted)"
 systemd-cryptenroll \
   --fido2-device=auto \
   --fido2-with-client-pin=no \
   --fido2-with-user-presence=yes \
-  --unlock-key-file="$PASSFILE" \
+  --unlock-key-file="$TMP_PASSFILE" \
   "$LUKS_PART"
 CRYPTENROLL_RC=$?
-rm -f "$PASSFILE"
+rm -f "$EXISTING_PASSFILE" "$TMP_PASSFILE"
 [ "$CRYPTENROLL_RC" -eq 0 ] || exit "$CRYPTENROLL_RC"
 
 echo ""
