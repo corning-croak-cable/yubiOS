@@ -779,7 +779,7 @@ jobs:
         run: |
           set -euo pipefail
           sudo install -d -m 0755 /var/lib/containers
-          docker run --rm --privileged --pid=host --ipc=host \
+          sudo docker run --rm --privileged --pid=host --ipc=host \
             --security-opt label=type:unconfined_t \
             -v /var/lib/containers:/var/lib/containers \
             -v /dev:/dev \
