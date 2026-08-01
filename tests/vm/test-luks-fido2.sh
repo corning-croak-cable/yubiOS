@@ -23,7 +23,7 @@ MNT=/mnt/yubios-install
 
 cleanup() {
   set +e
-  umount "$MNT/boot/efi" 2>/dev/null
+  umount "$MNT/boot" 2>/dev/null
   umount "$MNT" 2>/dev/null
   cryptsetup close yubios-root 2>/dev/null
   rm -rf "$MNT" 2>/dev/null
@@ -75,8 +75,17 @@ mkfs.ext4 -F /dev/mapper/yubios-root
 echo "3/7 Mounting target filesystems"
 mkdir -p "$MNT"
 mount /dev/mapper/yubios-root "$MNT"
-mkdir -p "$MNT/boot/efi"
-mount "$ESP_PART" "$MNT/boot/efi"
+# Mount the ESP at /target/boot (= "$MNT/boot" via podman -v "$MNT:/target").
+# NOT at /target/boot/efi: bootc install to-filesystem with
+# --boot-mount-spec=UUID=$ESP_UUID mounts the boot partition at /target/boot
+# for Finalizing-filesystem-boot. Mounting ESP at /target/boot/efi leaves
+# /target/boot as a plain directory under the root fs, and finalize-boot
+# fails with:
+#   mount: /target/boot: mount point not mounted or bad option.
+# systemd-boot then writes to /target/boot/efi/* (a directory inside the
+# ESP mount) -- the correct EFI directory layout on the ESP.
+mkdir -p "$MNT/boot"
+mount "$ESP_PART" "$MNT/boot"
 
 # Step 4: Run bootc install to-filesystem inside a privileged podman container.
 # This is the upstream bootc canonical pattern: invoke bootc from inside the
@@ -103,7 +112,7 @@ podman run --rm --privileged \
 # The verify steps re-open the LUKS container fresh and would conflict with
 # an existing mount on /dev/mapper/yubios-root.
 echo "5/7 Cleaning up mount + LUKS"
-umount "$MNT/boot/efi"
+umount "$MNT/boot"
 umount "$MNT"
 cryptsetup close yubios-root
 trap - EXIT  # disable cleanup trap; we've already cleaned up
