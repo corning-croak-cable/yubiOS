@@ -93,6 +93,7 @@ podman run --rm --privileged \
     --security-opt label=type:unconfined_t \
     "$IMAGE" \
     bootc install to-filesystem \
+        --composefs-backend \
         --disable-selinux \
         --root-mount-spec="UUID=$LUKS_UUID" \
         --boot-mount-spec="UUID=$ESP_UUID" \
