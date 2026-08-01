@@ -421,9 +421,32 @@ jobs:
 
       - name: Pull yubiOS image into podman storage (bcvk boots from local storage)
         if: steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1'
+        env:
+          DOCKER_PASSWORD: ${{ secrets.DOCKER }}
         run: |
+          # Login to docker.io if a password is available. arm64 self-hosted
+          # runner (rock1): apt installs docker.io but the runner user has
+          # no socket access, so use sudo podman throughout. This all-in-one
+          # deployment/verifier workflow uses ONE pull for both the
+          # vgpu-vm-e2e leg and the composefs-tamper Negative 2 leg; the
+          # podman store is preserved between legs (see step 27 comment).
+          if [ -n "${DOCKER_PASSWORD:-}" ]; then
+            printf '%s' "$DOCKER_PASSWORD" | sudo podman login \
+              --username 0mniteck42 --password-stdin docker.io
+          fi
           sudo podman pull "${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}"
           sudo podman images | head -5
+          # Resolve the immutable digest (pattern from former step 32)
+          # for the composefs-tamper Negative 2 leg to reuse. podman
+          # supports the same `--format '{{ index .RepoDigests 0 }}'` as docker.
+          RESOLVED="$(sudo podman image inspect "${{ inputs.image || 'docker.io/0mniteck/yubios:dev' }}" \
+            --format '{{ index .RepoDigests 0 }}')"
+          case "$RESOLVED" in
+            *@sha256:*) ;;
+            *) echo "::error::image did not resolve to an immutable digest: $RESOLVED"; exit 1 ;;
+          esac
+          echo "Installing immutable source: $RESOLVED"
+          echo "RESOLVED=$RESOLVED" >> "$GITHUB_ENV"
 
       - name: Relax AppArmor profiles for bcvk VM boot
         if: matrix.arch == 'arm64' && steps.bcvk.outputs.skip == '0' && steps.kvm.outputs.kvm == '1' && steps.policy.outputs.boot == '1'
@@ -876,8 +899,15 @@ jobs:
               sudo "$aa_enforce" "$profile" || true
             done
           fi
+          # NOTE: `sudo podman system prune -af --volumes` intentionally
+          # REMOVED. This all-in-one workflow keeps the yubiOS image in
+          # podman storage between the vgpu-vm-e2e leg (steps before this)
+          # and the composefs-tamper Negative 2 leg (steps after this).
+          # Re-pulling wastes CI minutes; the same podman store is reused
+          # by step 34's `docker run -v /var/lib/containers:/var/lib/containers`.
+          # Container cleanup (the line above) is still safe: it removes
+          # exited containers, not images.
           sudo podman ps -aq | xargs -r sudo podman rm -f || true
-          sudo podman system prune -af --volumes || true
           sudo rm -rf /opt/bcvk-src || true
           df -h "$PWD" || true
 
@@ -927,30 +957,21 @@ jobs:
           echo "LOOP=$LOOP"        >> "$GITHUB_ENV"
           echo "ESP=$ESP"          >> "$GITHUB_ENV"
           echo "ROOT=$ROOT"        >> "$GITHUB_ENV"
-      - name: Pull yubiOS image + resolve immutable digest
+      - name: Sanity-check immutable digest from vgpu-vm-e2e pull (no re-pull)
         if: matrix.arch == 'arm64'
-        env:
-          DOCKER_PASSWORD: ${{ secrets.DOCKER }}
-          REQUESTED_IMAGE: ${{ inputs.ci_vm_image || inputs.image || 'docker.io/0mniteck/yubios:dev' }}
         run: |
           set -euo pipefail
-          # arm64 self-hosted runner (rock1): apt installs docker.io but the
-          # runner user has no socket access. vgpu-vm-e2e arm64 step 15 uses
-          # `sudo podman pull` for the same reason; match the pattern here so
-          # the composefs-tamper Negative 2 job actually pulls the image.
-          if [ -n "${DOCKER_PASSWORD:-}" ]; then
-            printf '%s' "$DOCKER_PASSWORD" | sudo docker login \
-              --username 0mniteck42 --password-stdin docker.io
-          fi
-          sudo docker pull "$REQUESTED_IMAGE"
-          RESOLVED="$(sudo docker image inspect "$REQUESTED_IMAGE" \
-            --format '{{ index .RepoDigests 0 }}')"
-          case "$RESOLVED" in
-            *@sha256:*) ;;
-            *) echo "::error::image did not resolve to an immutable digest: $RESOLVED"; exit 1 ;;
-          esac
-          echo "Installing immutable source: $RESOLVED"
-          echo "RESOLVED=$RESOLVED" >> "$GITHUB_ENV"
+          # Image was already pulled + RESOLVED was already exported in the
+          # vgpu-vm-e2e arm64 podman pull step (single pull serves both legs).
+          # This all-in-one workflow keeps the yubiOS image in podman storage
+          # between the vgpu-vm-e2e leg (steps before this) and the
+          # composefs-tamper Negative 2 leg (steps after this); see step 27
+          # comment for why podman system prune was removed. This step
+          # just confirms the digest is available for the downstream
+          # `docker run -v /var/lib/containers:/var/lib/containers` in
+          # step 34, which mounts the same podman store.
+          test -n "${RESOLVED:-}" || { echo "::error::RESOLVED not set; vgpu-vm-e2e arm64 podman pull step must run first to export RESOLVED"; exit 1; }
+          echo "RESOLVED (from vgpu-vm-e2e arm64 podman pull): $RESOLVED"
 
       # V3: Lay down a signed UKI before bootc install so find_uki_path()
       # detects it and bootc writes a Type2 BLS entry (uk /EFI/Linux/<file>.efi
