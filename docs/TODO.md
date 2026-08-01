@@ -1,12 +1,14 @@
 # yubiOS TODO
 
-Last reviewed: 2026-07-30
+Last reviewed: 2026-08-01
 Status: active task list
 Latest requested-run evidence review: [refs/ci-evidence-2026-07-21.md](../refs/ci-evidence-2026-07-21.md), covering the complete logs of runs 29869480442, 29869503301, 29869527608, 29872130447, 29872433355, 29872832727, 29876111887, and 29876466349.
 Latest upstream progress review: [refs/systemd-upstream-progress-2026-07-21.md](../refs/systemd-upstream-progress-2026-07-21.md).
 Latest targeted audit: [refs/systemd-v262-audit-2026-07-14.md](../refs/systemd-v262-audit-2026-07-14.md).
 Latest broad research note: [refs/research-refresh-2026-07-11.md](../refs/research-refresh-2026-07-11.md).
+Latest VM e2e evidence: [run 30697269619](https://github.com/yubi-OS/yubiOS/actions/runs/30697269619) on rock1 (self-hosted ARM64 KVM); commit b7f9d467 on main; both `tests/vm/test-luks-fido2-ci.sh` and `tests/vm/test-fido2-enrollment.sh` PASS in the ARM64 bcvk guest -- swtpm + swu2f CTAP2 enumeration + LUKS2 FIDO2 enroll/unlock + homed FIDO2 home create + 5 `yubiOS-enroll-*` commands + ed25519-sk SSH keygen all execute (no skips). Hardware leg against `/dev/sda` also PASSes (`New FIDO2 token enrolled as key slot 2`). Sealed-UKI negative-tamper-boot leg blocked by a new rock1 host-deps gap (B-VGPU-VM-UNZIP), not by docker-storage (see OMN-151 disambiguation).
 Latest VM e2e evidence: [run 29872832727](https://github.com/yubi-OS/yubiOS/actions/runs/29872832727); root SSH and the DirectBoot bootloader-update guard passed, while guest CTAP2 enumeration remained absent.
+Latest sealed-UKI source for the Negative 2 leg: [run 30652859000](https://github.com/yubi-OS/yubiOS/actions/runs/30652859000) (V83 on branch `sealed-uki-vm-lane-v2`, SHA `1d0666d7`); produces `sealed-uki-artifacts-arm64` consumed by `ci_test-vgpu-vm.yml` step 24. Run 30697269619 hit B-VGPU-VM-UNZIP at the unzip extraction step.
 Latest bootc install evidence: [run 29884493346](https://github.com/yubi-OS/yubiOS/actions/runs/29884493346); native amd64 and arm64 fresh-runner legs installed digest `sha256:22140ef11deebac5643544434af1263368b72fa791fe53e98add677bbcadc08e` onto externally prepared DPS partitions, retained `/mnt` under `--skip-finalize`, and emitted no `root=` in the generated BLS entries.
 Latest composefs audit: [refs/bootc-composefs-sealed-flow-2026-07-22.md](../refs/bootc-composefs-sealed-flow-2026-07-22.md); the current install evidence is strict fs-verity through an unsealed BLS entry, while the sealed target requires a signed UKI that authenticates the composefs digest.
 Latest roadmap research pass: [refs/sectime-rk-secure-time-2026-07-17.md](../refs/sectime-rk-secure-time-2026-07-17.md), [refs/frost-panfrost-lockout-2026-07-17.md](../refs/frost-panfrost-lockout-2026-07-17.md), [refs/openwrt-deception-proof-plan-2026-07-17.md](../refs/openwrt-deception-proof-plan-2026-07-17.md), and [refs/roadmap-promotion-gates-2026-07-17.md](../refs/roadmap-promotion-gates-2026-07-17.md).
@@ -97,10 +99,11 @@ These items map [FUTURE.md](FUTURE.md) sections that were missing or only partia
 
 - [ ] Keep PQ TLS verification visible in CI for OpenSSL 3.5+ and Go 1.24+ defaults; run 29876466349 negotiated TLS 1.3 `X25519MLKEM768`. When the repo toolchain reaches Go 1.26, include `SecP256r1MLKEM768` and `SecP384r1MLKEM1024` in accepted hybrid-group checks.
 - [ ] Keep the QEMU zstd EFI zboot workaround version-gated until runner QEMU contains upstream zstd EFI zboot loader support.
+- [ ] Add `unzip` (or `python3 -m zipfile` / `bsdtar`) to the rock1 apt install in `.github/workflows/ci_test-vgpu-vm.yml`; B-VGPU-VM-UNZIP blocks the sealed-UKI BLSConfig verification path (OMN-150 Phase 2 / B-BOOTC-SEAL) AND the negative-tamper-boot proof. Run 30697269619 hit the gap at step 24 with `unzip: command not found` (exit 127). Same workflow file already installs `binutils fdisk jq docker.io containerd runc` -- extend that line.
 - [x] Validate the bcvk virtiofs-root `bootloader-update.service` guard: run 29872832727 reached the guest assertions without the old DirectBoot/virtiofs failure.
 - [x] Validate the bcvk root SSH credential path: run 29872832727 authenticated and ran the ARM64 guest-side assertions.
 - [x] Confirm `tests/vm/test-fido2-enrollment.sh` still runs when token-dependent operations skip: run 29872832727 executed the enrollment-surface script after the passless layer found no CTAP2 device.
-- [ ] Make a swu2f CTAP2 token enumerate inside the ARM64 bcvk guest, then require the LUKS2 FIDO2, homed, and OpenSSH `ed25519-sk` operations to execute instead of skip. The VM scripts now pre-create passless's headless local store, launch it as an observable transient service, and fail closed on every token-dependent operation; completion awaits a fresh dev-image build and VM e2e run.
+- [x] Make a swu2f CTAP2 token enumerate inside the ARM64 bcvk guest, then require the LUKS2 FIDO2, homed, and OpenSSH `ed25519-sk` operations to execute instead of skip. Run 30697269619 PASSes both `test-luks-fido2-ci.sh` and `test-fido2-enrollment.sh` against the in-guest passless CTAP2 authenticator on the ARM64 guest: `PASS: swtpm + swu2f CTAP2 + LUKS2 FIDO2 + homed FIDO2 verified` and `PASS: enrollment surface + CTAP2 registration + OpenSSH ed25519-sk verified`. Closes OMN-48 / yubiOS#25 on the production arm64 guest (not just the dev image). Tracked in Linear OMN-89 (Done) comment c74cec44.
 - [x] Add a native arm64 build/publish leg and multi-architecture manifest merge to `.github/workflows/ci_mkosi-installer.yml`; run 29876111887 proved only the amd64 path, and the workflow now stages both architectures before merging public tags.
 - [ ] Keep `dev`/`dev-<sha>` swu2f images isolated from production build and publish paths.
 - [ ] Treat old-sha workflow reruns as historical unless the workflow is rerun against current `main`.
@@ -146,7 +149,8 @@ These items map [FUTURE.md](FUTURE.md) sections that were missing or only partia
 ## Watch List
 
 - Run 29525332901 proved the ARM64 lane can boot the dev image to Fedora login with the pinned QEMU workaround; keep watching for runner QEMU refreshes before removing that workaround.
-- Run 29872832727 retired the old root-SSH and DirectBoot bootloader-update blockers. Its remaining VM gap is narrower: passless starts, but no CTAP2 token enumerates, so token-dependent assertions skip.
+- Run 29872832727 retired the old root-SSH and DirectBoot bootloader-update blockers. Its remaining VM gap was narrower: passless starts, but no CTAP2 token enumerates, so token-dependent assertions skip.
+- Run 30697269619 (commit b7f9d467 on main) retires the residual CTAP2-skip leg on rock1: both `test-luks-fido2-ci.sh` and `test-fido2-enrollment.sh` reach their final `PASS:` assertions against the in-guest passless authenticator (not the dev image only). Its remaining gap is the sealed-UKI negative-tamper-boot leg (step 24+), blocked by B-VGPU-VM-UNZIP rather than by harness or guest bugs. Use this run as the canonical VM e2e evidence reference until the next green redline.
 - Run 29869527608 proves the QEMU fTPM/StandaloneMM integration and board-specific compilation, but not physical-board behavior. ROCK 5B additionally lacks the required real DDR/TPL input and combined boot image.
 - `.github/workflows/ci_firmware-rk.yml` is the orchestrated firmware lane. The removed `ci_test-int.yml` workflow is historical context only; do not restore its `yubiOS firmware` state to the top-level `ci.yml` chain.
 - systemd v262 removes `/run/boot-loader-entries/` support and the experimental `systemd-sysupdated` D-Bus API; the 2026-07-14 audit found no repo dependency, but future update UX should stay on UAPI.1/BLS and Varlink/systemd-sysupdate rather than removed interfaces or unaudited `updatectl` assumptions.
@@ -166,6 +170,12 @@ These items map [FUTURE.md](FUTURE.md) sections that were missing or only partia
 - Repeating old digest examples from workflow logs as current pins: use [PINNED.md](../PINNED.md).
 - Describing ARM64 as secondary: ADR-023 makes ARM64 primary and x86-64 supported secondary.
 
-## Today's BLOCKERS.md diff (2026-07-30 review)
+## Today's BLOCKERS.md diff (2026-08-01 review)
 
-Per the planning-cycle doctrine (BLOCKERS.md review-gate rule), the 2026-07-30 review added a new "Permanent CI-Evidence Patterns" section with the systemd drop-in lex-sort rule (the OMN-149 lesson at commit `f92c6010`). No active blockers were retired in this review; OMN-149 verification is in flight (ci_test-vgpu-vm run #26 at head f92c601). B-OMN-149 is not a separate blocker row — the bug is fixed (commit `f92c6010`), the dev image carries the fix (run #30528264163), and end-to-end verification is the remaining gate.
+Per the planning-cycle doctrine (BLOCKERS.md review-gate rule), the 2026-08-01 review added:
+
+- New active blocker row **B-VGPU-VM-UNZIP**: rock1 self-hosted runner has no `unzip` binary installed; sealed-UKI BLSConfig verification path (OMN-150 Phase 2 / B-BOOTC-SEAL) and the negative-tamper-boot proof cannot complete on rock1. Run [30697269619](https://github.com/yubi-OS/yubiOS/actions/runs/30697269619) hit the gap at step 24 (`unzip: command not found`, exit 127). Tracked in Linear OMN-150 comment d2e627de.
+- New **"Self-hosted runner host-deps gap"** entry in "Permanent CI-Evidence Patterns": workflow steps that shell out to binaries not in the apt install list fail with `127 (command not found)` even when every other layer is correct; yubiOS verification recipe is to list every CLI tool in the workflow's apt install block or use `python3 -m zipfile` / `python3 -m tarfile` as a zero-dependency fallback.
+- `B-VM-CTAP2` second-pass arm64 proof logged under "Not Current Blockers": run 30697269619 is the first arm64-only end-to-end VM e2e PASS with the in-guest passless CTAP2 authenticator actually enumerated (no skip paths). Linear OMN-48 / yubiOS#25 stays closed; OMN-89 carries the hardware-leg proof point.
+
+No previously active blockers were retired in this review. OMN-150 stays in Backlog until B-VGPU-VM-UNZIP is closed and the negative-tamper-boot proof lands.
