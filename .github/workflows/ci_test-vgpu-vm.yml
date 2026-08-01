@@ -190,7 +190,7 @@ jobs:
         run: |
           df -h "$PWD" || true
           echo "--- !OFF for speed - pruning podman storage from prior runs (root-owned, since bcvk/vm-e2e now runs under sudo) ---"
-          # sudo podman system prune -af --volumes || true
+          sudo podman system prune -af --volumes || true
           echo "--- removing leftover bcvk-src clone + cargo target from a prior run ---"
           sudo rm -rf /opt/*-src || true
           echo "--- cleaning apt cache ---"
