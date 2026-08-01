@@ -1,4 +1,4 @@
-# SER.md — yubiOS SER Framework
+# SER.md — yubiOS SER / SERA Framework
 
 > Reference: **SER Framework** by Shant Tchatalbachian (0mniteck)  
 > https://omniteck.com/?p=1104
@@ -18,6 +18,10 @@ yubiOS is intentionally built around pre-launch artifacts, pinned digests, dispo
 ## Reproducibility
 
 Reproducibility is a first-class property in yubiOS: the repo uses pinned base images, digest tracking, reproducibility-focused build lanes, and explicit evidence files for CI, firmware, installer, and VM validation. The install path is designed around deterministic OCI delivery, bootc-based updates, and repeatable build/install commands, which aligns with SER’s immutable provenance and deterministic execution requirements. <citation src="2,3"></citation>
+
+## for ALL
+
+Intended to be an open framework / open service model
 
 ## SER Mapping
 
