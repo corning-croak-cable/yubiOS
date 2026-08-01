@@ -64,7 +64,7 @@ skopeo inspect --raw docker://docker.io/0mniteck/yubios:dev-<short-sha> | sha256
 |---|---|---|---|
 | 1 (OMN-139) | 2026-07-26 | `sha256:f6b5b775…` (arm64 stream truncation at layer 16,045,778) → re-resolved | rebuilt via `fetch-fedora-bootc-manifest.yml` |
 | 2 | 2026-07-29 | `f6b5b775…` → `sha256:1dcca7ac54b243bef0cf65bfca165fb4a514d7891854db216a4ab6cbc10215ff` | `8ccffa71` |
-| 3 | 2026-07-30 | `1dcca7ac…` (404) → `sha256:2d6f1df373be1423db91dd32a217b5d99fd4940d651fc1e2477b9b660e063906` | `d2646452` |
+| 3 | 2026-07-30 | `1dcca7ac…` (404) → `sha256:202edf252af2e0951f6e341325f39326a581f43e6c008f63324074ac86d4fa6e` | `d2646452` |
 
 Incident 3 was recovered entirely in self-mode under Jenny's standing directive "stale image? just re-run the fetch group ci".
 
