@@ -576,6 +576,10 @@ jobs:
     name: Publish installer OCI artifact (${{ matrix.arch }})
     needs: [build, installer-reproducibility]
     if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
+    permissions:
+      contents: read
+      actions: write
+      id-token: write
     strategy:
       fail-fast: false
       matrix:
@@ -738,6 +742,56 @@ jobs:
             yubios-uki
           docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "0mniteck/yubios:uki-${{ github.sha }}-${{ matrix.arch }}"
           docker -H unix:///run/docker-rootless/docker.sock logout
+
+
+      - name: Install cosign v3.1.2 (per-arch installer + uki)
+        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true && matrix.publish == true
+        run: |
+          wcurl "https://github.com/sigstore/cosign/releases/download/v3.1.2/cosign-linux-amd64"
+          COSIGN_SHA512=01174ede4958413aca502e7eafdff34a5a7fab39c25af66b84c24b98e354e5cf2631bf2c07ecdd8c684dfab843f9694237606706eeafc20ae30ed5ed831f1d60
+          printf '%s  %s\n' "$COSIGN_SHA512" cosign-linux-amd64 | sha512sum --check --strict
+          install -m 0755 cosign-linux-amd64 /usr/local/bin/cosign
+
+      - name: Resolve per-arch digests + extract BuildKit attestations
+        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true && matrix.publish == true
+        id: resolve
+        env:
+          INSTALLER_TAG: 0mniteck/yubios:installer-${{ github.sha }}-${{ matrix.arch }}
+          UKI_TAG: 0mniteck/yubios:uki-${{ github.sha }}-${{ matrix.arch }}
+        run: |
+          set -euo pipefail
+          : > per-arch-digests.txt
+          for tag in "$INSTALLER_TAG" "$UKI_TAG"; do
+            DIGEST=$(docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "$tag" --format '{{.Manifest.Digest}}')
+            echo "$tag $DIGEST" >> per-arch-digests.txt
+          done
+          docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "$INSTALLER_TAG" --format '{{json .SBOM}}' > sbom.json
+          docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "$INSTALLER_TAG" --format '{{json .Provenance}}' > provenance.json
+          test -s sbom.json
+          test -s provenance.json
+          jq -e . sbom.json
+          jq -e . provenance.json
+
+      - name: Attach SPDX SBOM attestation (cosign attest, per-arch installer)
+        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true && matrix.publish == true
+        run: |
+          cosign initialize >/dev/null
+          INSTALLER_DIGEST=$(grep installer per-arch-digests.txt | cut -d ' ' -f 2)
+          cosign attest -y --type spdxjson --predicate sbom.json "0mniteck/yubios:installer@$INSTALLER_DIGEST"
+
+      - name: Attach SLSA v1.0 provenance attestation (cosign attest, per-arch installer)
+        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true && matrix.publish == true
+        run: |
+          INSTALLER_DIGEST=$(grep installer per-arch-digests.txt | cut -d ' ' -f 2)
+          cosign attest -y --type slsaprovenance1 --predicate provenance.json "0mniteck/yubios:installer@$INSTALLER_DIGEST"
+
+      - name: cosign sign per-arch (ukis + installer per-arch)
+        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true && matrix.publish == true
+        run: |
+          while read -r tag digest; do
+            cosign sign -y "$tag@$digest"
+          done < per-arch-digests.txt
+
           docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "0mniteck/yubios:installer-${{ github.sha }}-${{ matrix.arch }}"
 
   # Combine the two native staging images only after both publish legs pass.
@@ -746,6 +800,10 @@ jobs:
     needs: installer-publish
     if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      actions: write
+      id-token: write
     defaults:
       run:
         shell: bash
@@ -848,6 +906,69 @@ jobs:
         if: always()
         run: docker -H unix:///run/docker-rootless/docker.sock logout || true
 
+
+
+      - name: Install cosign v3.1.2
+        run: |
+          wcurl "https://github.com/sigstore/cosign/releases/download/v3.1.2/cosign-linux-amd64"
+          COSIGN_SHA512=01174ede4958413aca502e7eafdff34a5a7fab39c25af66b84c24b98e354e5cf2631bf2c07ecdd8c684dfab843f9694237606706eeafc20ae30ed5ed831f1d60
+          printf '%s  %s\n' "$COSIGN_SHA512" cosign-linux-amd64 | sha512sum --check --strict
+          install -m 0755 cosign-linux-amd64 /usr/local/bin/cosign
+
+      - name: Resolve image digest + extract BuildKit attestations
+        id: resolve
+        env:
+          IMAGE_TAG: 0mniteck/yubios:installer-${{ github.sha }}
+        run: |
+          set -euo pipefail
+          DIGEST=$(docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "$IMAGE_TAG" --format '{{.Manifest.Digest}}')
+          echo "DIGEST=$DIGEST" >> "$GITHUB_OUTPUT"
+          docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "$IMAGE_TAG" --format '{{json .SBOM}}' > sbom.json
+          docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "$IMAGE_TAG" --format '{{json .Provenance}}' > provenance.json
+          test -s sbom.json
+          test -s provenance.json
+          jq -e . sbom.json
+          jq -e . provenance.json
+
+      - name: Attach SPDX SBOM attestation (cosign attest)
+        env:
+          IMAGE_REF: 0mniteck/yubios:installer-${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
+        run: cosign initialize >/dev/null && cosign attest -y --type spdxjson --predicate sbom.json "$IMAGE_REF"
+
+      - name: Attach SLSA v1.0 provenance attestation (cosign attest)
+        env:
+          IMAGE_REF: 0mniteck/yubios:installer-${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
+        run: cosign attest -y --type slsaprovenance1 --predicate provenance.json "$IMAGE_REF"
+
+      - name: cosign sign (keyless OIDC, GitHub Actions)
+        env:
+          IMAGE_REF: 0mniteck/yubios:installer-${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
+        run: cosign sign -y "$IMAGE_REF"
+
+
+
+  verify-attest:
+    name: Verify published image attestations + signature
+    needs: merge-manifest
+    if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Install cosign v3.1.2
+        run: |
+          wcurl "https://github.com/sigstore/cosign/releases/download/v3.1.2/cosign-linux-amd64"
+          COSIGN_SHA512=01174ede4958413aca502e7eafdff34a5a7fab39c25af66b84c24b98e354e5cf2631bf2c07ecdd8c684dfab843f9694237606706eeafc20ae30ed5ed831f1d60
+          printf '%s  %s\n' "$COSIGN_SHA512" cosign-linux-amd64 | sha512sum --check --strict
+          install -m 0755 cosign-linux-amd64 /usr/local/bin/cosign
+      - name: Verify published image attestations + cosign signature
+        env:
+          IMAGE_TAG: 0mniteck/yubios:${{ github.sha }}
+          WORKFLOW_FILE: ci_mkosi-installer.yml
+        run: |
+          WORKFLOW_FILES="${WORKFLOW_FILE%.yml}" \
+            IMAGE_REF="${IMAGE_TAG}" \
+            bash tests/verify-oci-attestations.sh
 
   ci-callback:
     name: Callback to ci.yml orchestrator
