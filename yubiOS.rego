@@ -93,6 +93,7 @@ default reason := "Build evaluated."
 
 # ── Deny reasons ─────────────────────────────────────────────────────────────
 reason := msg if {
+    not allow
     not input.local
     not approved_registry(input.image.ref)
     msg := sprintf(
@@ -102,6 +103,7 @@ reason := msg if {
 }
 
 reason := msg if {
+    not allow
     not input.local
     approved_registry(input.image.ref)
     not input.image.isCanonical
