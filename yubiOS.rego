@@ -25,17 +25,11 @@ approved_registry(ref) if startswith(ref, "quay.io/fedora/")
 approved_registry(ref) if startswith(ref, "dhi.io/")
 approved_registry(ref) if startswith(ref, "ghcr.io/actions/")
 approved_registry(ref) if startswith(ref, "ghcr.io/hadolint/")
-# OMN-157: docker.io/docker/ is buildkit-syft-scanner, pulled by BuildKit
-# internally during the `attest: [{type: "sbom"}]` SBOM attestation pass.
-# Scans the image at build time only, never in production runtime. The
-# resulting SBOM is itself attested (cosign attest --type spdxjson) and
-# signed (cosign sign) by the same workflow, so a syft-scanner supply-
-# chain hit is bounded to the build attestation step. The `stable-1`
-# tag is acceptable here because (a) it never lands in a runtime image
-# and (b) any syft scanner change produces a new SBOM subject that is
-# independently cosign-verified before consumers trust it. Digest
-# pinning is tracked as a follow-up (refs/slsa-l3-sbom-cosign-2026-08-04.md).
-approved_registry(ref) if startswith(ref, "docker.io/docker/")
+# docker.io/docker/* images are NOT blanket-approved. Buildkit's internal
+# syft-scanner is the only known consumer, handled by the explicit carve-
+# out in Rule 2.5 below. Any future buildkit-internal helper still needs
+# its own explicit exception (per the OMN-157 narrow-by-default doctrine).
+# Rationale + digest pinning tracked in refs/slsa-l3-sbom-cosign-2026-08-04.md.
 
 # ── Rule 1: local context (no FROM pull) ─────────────────────────────────────
 # Pure local builds (e.g. COPY-only layers) always pass.
