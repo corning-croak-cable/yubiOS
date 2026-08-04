@@ -1,0 +1,50 @@
+name: ci_package-floor
+on:
+  pull_request:
+    paths:
+      - 'PINNED.md'
+      - 'Containerfile'
+      - 'Containerfile.dev'
+      - 'scripts/verify-package-floor.sh'
+  schedule:
+    # Daily 6 AM UTC drift scan
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      target_image:
+        description: 'Target OCI image to verify'
+        required: false
+        default: 'docker.io/0mniteck/yubios:dev'
+
+permissions:
+  contents: read
+
+jobs:
+  verify-floor:
+    name: Verify package-floor against target image
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Install skopeo + podman
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y skopeo podman
+
+      - name: Run package-floor verification
+        run: |
+          bash scripts/verify-package-floor.sh \
+            --target-image "${{ inputs.target_image || 'docker.io/0mniteck/yubios:dev' }}" \
+            --report floor-report.json
+
+      - name: Upload floor report
+        if: always()
+        uses: actions/upload-artifact@v4.6.0
+        with:
+          name: package-floor-report-${{ github.run_id }}
+          path: floor-report.json
+          retention-days: 30
