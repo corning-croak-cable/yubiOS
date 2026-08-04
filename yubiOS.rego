@@ -56,6 +56,20 @@ allow if {
     input.image.isCanonical
 }
 
+# ── Rule 2.5: buildkit-syft-scanner (OMN-157) ────────────────────────────────
+# buildkit-syft-scanner is pulled by BuildKit internally during the
+# `attest: [{type = "sbom"}]` SBOM attestation pass. It is a build-time
+# tool only — never lands in a runtime image. The scanner image uses a
+# mutable `stable-1` tag by default, which is acceptable because the
+# SBOM it produces is independently cosign-attested and cosign-signed by
+# the same workflow before any consumer can trust it.
+#
+# This rule is narrowly-scoped to one specific image (not a blanket
+# docker.io/docker/* allow) so any future buildkit-internal helper still
+# needs its own explicit exception. Rationale + digest pinning tracked
+# in refs/slsa-l3-sbom-cosign-2026-08-04.md.
+allow if input.image.ref == "docker.io/docker/buildkit-syft-scanner:stable-1"
+
 # ── Rule 3: provenance attestation (preferred, not yet required) ──────────────
 # Uncomment to require SLSA provenance on all base images.
 # Leave commented until quay.io/fedora/fedora-bootc ships provenance.
