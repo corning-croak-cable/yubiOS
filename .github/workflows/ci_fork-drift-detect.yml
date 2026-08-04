@@ -1,0 +1,76 @@
+name: ci_fork-drift-detect
+on:
+  schedule:
+    # Daily 6 AM UTC; leaves a 12h buffer before US work hours
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      threshold_commits:
+        description: 'Drift threshold (commits)'
+        required: false
+        default: '10'
+      apply:
+        description: 'File GitHub issues for drifted forks'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  detect:
+    name: Detect fork-upstream drift
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5.3.0
+        with:
+          python-version: '3.12'
+
+      - name: Install PyYAML + requests
+        run: pip install pyyaml requests
+
+      - name: Run drift detection
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/detect-fork-drift.py \
+            --repo-root . \
+            --pinned PINNED.md \
+            --upstream-map scripts/detect-fork-drift.upstream-map.yaml \
+            --org yubi-OS \
+            --threshold-commits ${{ inputs.threshold_commits || '10' }} \
+            --output-format json \
+            > drift-report.json
+
+      - name: File issues (if drift detected)
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ inputs.apply || false }}" = "true" ]; then
+            python3 scripts/file-drift-issues.py \
+              --input drift-report.json \
+              --apply \
+              --org yubi-OS \
+              --labels drift-detected automated
+          else
+            python3 scripts/file-drift-issues.py \
+              --input drift-report.json
+          fi
+
+      - name: Upload drift report
+        if: always()
+        uses: actions/upload-artifact@v4.6.0
+        with:
+          name: fork-drift-report-${{ github.run_id }}
+          path: drift-report.json
+          retention-days: 30
