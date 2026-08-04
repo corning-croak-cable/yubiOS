@@ -499,6 +499,8 @@ jobs:
           COSIGN_SHA512=01174ede4958413aca502e7eafdff34a5a7fab39c25af66b84c24b98e354e5cf2631bf2c07ecdd8c684dfab843f9694237606706eeafc20ae30ed5ed831f1d60
           printf '%s  %s\n' "$COSIGN_SHA512" cosign-linux-amd64 | sha512sum --check --strict
           install -D -m 0755 cosign-linux-amd64 /usr/local/bin/cosign
+      - name: Install jq for attestation predicate inspection
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq jq
       - name: Verify published image attestations + cosign signature
         env:
           IMAGE_TAG: 0mniteck/yubios:${{ github.sha }}
