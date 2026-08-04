@@ -1,6 +1,6 @@
 # PINNED.md - yubiOS approved refs & digests
 
-_Last reviewed: 2026-07-23 during the upstream release-ref audit._
+_Last reviewed: 2026-08-04 during the OMN-157 SLSA L3+SBOM+cosign wiring._
 
 All GitHub Actions, internal yubi-OS fork refs, external GitHub source refs, container image references, and directly downloaded workflow artifacts used across the yubi-OS org must appear here before being added to any workflow or Containerfile. Non-pinned refs such as mutable tags and branch names are not permitted.
 
@@ -34,6 +34,10 @@ Every `wcurl` payload is verified with GNU `sha512sum --check --strict` before i
 | `https://download.docker.com/linux/static/stable/aarch64/docker-29.6.0.tgz` | `linux/arm64` | `04713ac54030bed8b2c096280d034b02f5430ed73ba8bcc4a686f7bbbf4a3444eb027847e896cd9ee91c3237dbe1c25a4cfca43d1dcd922a1a10009c960ace0b` |
 | `https://download.docker.com/linux/static/stable/aarch64/docker-rootless-extras-29.6.0.tgz` | `linux/arm64` | `37649acdaacc597c115d2f19b71a4729a0119c6debbba4b4af18da2fd497ac28f5691df13137b7fc59903551ab0e08868f4b976a9a5704e2b7958b3b5b0cc0af` |
 | `https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-arm64` | `linux/arm64` | `6dc0d4ed11a7bbd8148dab8897594d7050e7f3bc43e6d130e629aa443e50266e77beed8816737e5dc34b7d43617e7a4eef8121561042ef9a87479aea14383058` |
+| `https://github.com/sigstore/cosign/releases/download/v3.1.2/cosign-linux-amd64` | `linux/amd64` | `01174ede4958413aca502e7eafdff34a5a7fab39c25af66b84c24b98e354e5cf2631bf2c07ecdd8c684dfab843f9694237606706eeafc20ae30ed5ed831f1d60` |
+| `https://github.com/sigstore/cosign/releases/download/v3.1.2/cosign-linux-arm64` | `linux/arm64` | `635c9d2d661dc300ce8038f5f922af90886faa8b7baacdbb7f6de9f734b80d18bb13b4d34854720fd6d0a63839b8899d2b4fdea2811c0d7e07a802cdb518df24` |
+
+> cosign v3.1.2 SHA-512 self-computed locally from the upstream binary; cross-validate against the upstream SHA-256 in `cosign_checksums.txt` at the same release URL when bumping versions.
 
 ## Internal yubi-OS Fork Refs
 
@@ -107,3 +111,4 @@ Dynamic refs such as `github.sha`, `github.ref_name`, `target_ref`, and `ci_chai
 - To add or roll a ref: obtain the digest, update this file, update repo references to the old digest, update `yubiOS.rego` if a new registry is introduced, and open a PR.
 - Use `fetch-released-tag-ref` for yubi-OS fork release refs, `fetch-dhi-manifest` for `dhi.io/debian-base`, and `fetch-fedora-bootc-manifest` for `quay.io/fedora/fedora-bootc:45`.
 - Digests are verified at build time by the explicit `yubiOS.rego` `target.policy` inherited from `yubiOS-bake.hcl` (`reset=true`, `strict=true`).
+- cosign v3.1.2 is the canonical signing binary; downstream verification tooling MUST pin to v3.1.2 SHA-512 above. The yubiOS verifier (`tests/verify-oci-attestations.sh`) keys its identity regex to `^https://github\.com/yubi-OS/yubiOS/\.github/workflows/(yubiOS-ci|ci_dev_image|ci_mkosi-installer)\.yml@refs/(heads|tags)/.+$`; a future publisher workflow must add its filename to that set in the verifier script.
