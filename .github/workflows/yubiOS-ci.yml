@@ -484,6 +484,7 @@ jobs:
       - name: Attach SLSA v1.0 provenance attestation (cosign attest)
         env:
           IMAGE_REF: 0mniteck/yubios:${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
+        run: |
           for attempt in 1 2 3 4 5; do
             cosign attest -y --type slsaprovenance1 --predicate provenance.json "$IMAGE_REF" && exit 0
             echo "::warning::cosign slsaprovenance1 attempt ${attempt}/5 failed; retry in $((attempt * 15))s" >&2
@@ -496,6 +497,7 @@ jobs:
       - name: cosign sign (keyless OIDC, GitHub Actions)
         env:
           IMAGE_REF: 0mniteck/yubios:${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
+        run: |
           for attempt in 1 2 3 4 5; do
             cosign sign -y "$IMAGE_REF" && exit 0
             echo "::warning::cosign sign attempt ${attempt}/5 failed; retry in $((attempt * 15))s" >&2
