@@ -151,9 +151,26 @@ target "_image-export" {
   # Attestations are stored as additional manifests in an image index. Keep
   # provenance on registry exports, but disable it for Docker exports because
   # the local Docker image store accepts only a single image manifest.
+  # OMN-157: provenance mode=min->max adds embedded LLB + Dockerfile source
+  # + source maps on top of the default mode=min (resolvedDependencies only).
+  # The actual SLSA Build L3 claim requires an isolated builder the tenant
+  # can't tamper with -- buildx-in-DinD is L2 with provenance-as-evidence,
+  # not L3; commit message + refs/ note call this out honestly. SPDX SBOM
+  # (buildkit-syft-scanner, pulled by buildkitd internally and not visible
+  # to yubiOS.rego) is added as a second attestation child. Both attestations
+  # are stored as additional manifests in the image index (media type
+  # application/vnd.docker.attestation.manifest.v1+json) with platform
+  # unknown/unknown -- verified by `docker buildx imagetools inspect --raw`.
+  # Provenance-only on Docker exports because the local Docker store
+  # accepts only a single image manifest.
   attest = [
     {
       type     = "provenance"
+      mode     = "max"
+      disabled = !PUSH
+    },
+    {
+      type     = "sbom"
       disabled = !PUSH
     },
   ]
