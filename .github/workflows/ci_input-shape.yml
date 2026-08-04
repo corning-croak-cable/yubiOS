@@ -1,0 +1,57 @@
+name: ci_input-shape
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+      - '.github/actions/validate-input-shape/**'
+  schedule:
+    # Weekly Monday 9 AM UTC drift scan on main
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+    inputs:
+      fail_on:
+        type: choice
+        description: 'Exit non-zero threshold'
+        options:
+          - ERROR
+          - WARN
+          - NEVER
+        default: ERROR
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate workflow input shape
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5.3.0
+        with:
+          python-version: '3.12'
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Run validate-input-shape
+        run: |
+          python3 scripts/validate-input-shape.py \
+            --repo-root . \
+            --output-format json \
+            --fail-on "${{ inputs.fail_on || 'ERROR' }}" \
+            > input-shape-report.json
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4.6.0
+        with:
+          name: input-shape-report-${{ github.run_id }}
+          path: input-shape-report.json
+          retention-days: 30
