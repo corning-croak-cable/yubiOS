@@ -1,0 +1,71 @@
+name: ci_test-bootc-lifecycle
+on:
+  pull_request:
+    paths:
+      - 'tests/vm/test-bootc-upgrade.sh'
+      - 'tests/vm/test-bootc-rollback.sh'
+      - 'tests/vm/test-homed-migrate.sh'
+      - 'scripts/ci_test-bootc-lifecycle.yml'
+  schedule:
+    # Weekly Monday 6 AM UTC drift scan
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      from_image:
+        description: 'FROM image (current)'
+        required: false
+        default: 'docker.io/0mniteck/yubios:dev'
+      to_image:
+        description: 'TO image (target upgrade)'
+        required: false
+        default: 'docker.io/0mniteck/yubios:dev-latest'
+      allow_real_u2f:
+        type: boolean
+        description: 'Host has a real YubiKey for destructive legs'
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  test-upgrade:
+    name: bootc upgrade + rollback test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+      - name: Install bcvk + podman
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y podman
+          curl -fsSL https://github.com/yubi-OS/bcvk/releases/latest/download/bcvk -o /tmp/bcvk
+          sudo install -m 0755 /tmp/bcvk /usr/local/bin/bcvk
+      - name: Run test-bootc-upgrade.sh
+        env:
+          ALLOW_REAL_U2F: ${{ inputs.allow_real_u2f }}
+        run: |
+          bash tests/vm/test-bootc-upgrade.sh \
+            --from-image "${{ inputs.from_image || 'docker.io/0mniteck/yubios:dev' }}" \
+            --to-image "${{ inputs.to_image || 'docker.io/0mniteck/yubios:dev-latest' }}" \
+            --allow-real-u2f "${{ inputs.allow_real_u2f || false }}"
+
+  test-homed-migrate:
+    name: systemd-homed migration test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - name: Install bcvk + podman
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y podman
+          curl -fsSL https://github.com/yubi-OS/bcvk/releases/latest/download/bcvk -o /tmp/bcvk
+          sudo install -m 0755 /tmp/bcvk /usr/local/bin/bcvk
+      - name: Run test-homed-migrate.sh
+        env:
+          ALLOW_REAL_U2F: ${{ inputs.allow_real_u2f }}
+        run: |
+          bash tests/vm/test-homed-migrate.sh \
+            --allow-real-u2f "${{ inputs.allow_real_u2f || false }}"

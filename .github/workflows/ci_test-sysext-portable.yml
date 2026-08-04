@@ -1,0 +1,69 @@
+name: ci_test-sysext-portable
+on:
+  pull_request:
+    paths:
+      - 'tests/vm/test-sysext-overlay.sh'
+      - 'tests/vm/test-portable-service.sh'
+      - 'scripts/ci_test-sysext-portable.yml'
+  schedule:
+    # Weekly Monday 6 AM UTC drift scan
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      base_image:
+        description: 'Base image for sysext/portable tests'
+        required: false
+        default: 'docker.io/0mniteck/yubios:dev'
+      sysext_image:
+        description: 'Sysext overlay image (must contain /usr content)'
+        required: false
+        default: ''
+      service_image:
+        description: 'Portable service image'
+        required: false
+        default: ''
+      overlay_bin:
+        description: 'Optional binary path to verify exists post-sysext merge'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  test-sysext:
+    name: sysext overlay test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - name: Install bcvk + podman
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y podman
+          curl -fsSL https://github.com/yubi-OS/bcvk/releases/latest/download/bcvk -o /tmp/bcvk
+          sudo install -m 0755 /tmp/bcvk /usr/local/bin/bcvk
+      - name: Run test-sysext-overlay.sh
+        run: |
+          bash tests/vm/test-sysext-overlay.sh \
+            --base-image "${{ inputs.base_image || 'docker.io/0mniteck/yubios:dev' }}" \
+            --sysext-image "${{ inputs.sysext_image || 'docker.io/0mniteck/yubios-sysext-test:latest' }}" \
+            --overlay-bin "${{ inputs.overlay_bin || '' }}"
+
+  test-portable:
+    name: portable service attach/detach test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - name: Install bcvk + podman
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y podman
+          curl -fsSL https://github.com/yubi-OS/bcvk/releases/latest/download/bcvk -o /tmp/bcvk
+          sudo install -m 0755 /tmp/bcvk /usr/local/bin/bcvk
+      - name: Run test-portable-service.sh
+        run: |
+          bash tests/vm/test-portable-service.sh \
+            --service-image "${{ inputs.service_image || 'docker.io/0mniteck/yubios-portable-svc-test:latest' }}" \
+            --attach-and-start
