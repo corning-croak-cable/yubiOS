@@ -1,0 +1,27 @@
+# yubiOS fork-to-upstream mapping (OMN-160).
+# Used by detect-fork-drift.py. The fork name matches the yubi-OS org repo name.
+forks:
+  - fork: arm-trusted-firmware
+    upstream: ARM-software/arm-trusted-firmware
+    upstream_branch: main
+  - fork: optee_os
+    upstream: OP-TEE/optee_os
+    upstream_branch: master
+  - fork: optee_ftpm
+    upstream: OP-TEE/optee_ftpm
+    upstream_branch: master
+  - fork: u-boot
+    upstream: u-boot/u-boot
+    upstream_branch: master
+  - fork: ms-tpm-20-ref
+    upstream: microsoft/ms-tpm-20-ref
+    upstream_branch: master
+  - fork: edk2-rk3588
+    upstream: edk2-porting/edk2-rk3588
+    upstream_branch: main
+  - fork: bcvk
+    upstream: congatec-os/bcvk
+    upstream_branch: yubios
+  - fork: mkosi
+    upstream: systemd/mkosi
+    upstream_branch: main
