@@ -450,7 +450,7 @@ jobs:
           wcurl "https://github.com/sigstore/cosign/releases/download/v3.1.2/cosign-linux-amd64"
           COSIGN_SHA512=01174ede4958413aca502e7eafdff34a5a7fab39c25af66b84c24b98e354e5cf2631bf2c07ecdd8c684dfab843f9694237606706eeafc20ae30ed5ed831f1d60
           printf '%s  %s\n' "$COSIGN_SHA512" cosign-linux-amd64 | sha512sum --check --strict
-          install -m 0755 cosign-linux-amd64 /usr/local/bin/cosign
+          sudo mkdir -p /usr/local/bin && install -m 0755 cosign-linux-amd64 /usr/local/bin/cosign
 
       - name: Resolve image digest + extract BuildKit attestations
         id: resolve
@@ -498,7 +498,7 @@ jobs:
           wcurl "https://github.com/sigstore/cosign/releases/download/v3.1.2/cosign-linux-amd64"
           COSIGN_SHA512=01174ede4958413aca502e7eafdff34a5a7fab39c25af66b84c24b98e354e5cf2631bf2c07ecdd8c684dfab843f9694237606706eeafc20ae30ed5ed831f1d60
           printf '%s  %s\n' "$COSIGN_SHA512" cosign-linux-amd64 | sha512sum --check --strict
-          install -m 0755 cosign-linux-amd64 /usr/local/bin/cosign
+          sudo mkdir -p /usr/local/bin && install -m 0755 cosign-linux-amd64 /usr/local/bin/cosign
       - name: Verify published image attestations + cosign signature
         env:
           IMAGE_TAG: 0mniteck/yubios:${{ github.sha }}
