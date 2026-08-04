@@ -1,0 +1,62 @@
+name: ci_token-audit
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+      - '.github/actions/**'
+      - 'scripts/audit-workflow-tokens.py'
+      - 'scripts/audit-workflow-tokens.allowlist.yaml'
+  schedule:
+    # Weekly Monday 9 AM UTC drift scan on main
+    - cron: '0 9 * * 1'
+  workflow_dispatch:
+    inputs:
+      fail_on:
+        type: choice
+        description: 'Exit non-zero threshold'
+        options:
+          - ERROR
+          - WARN
+          - INFO
+          - NEVER
+        default: ERROR
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: Audit workflow token scope
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5.3.0
+        with:
+          python-version: '3.12'
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Run audit
+        run: |
+          python3 scripts/audit-workflow-tokens.py \
+            --repo-root . \
+            --secrets-config scripts/audit-workflow-tokens.allowlist.yaml \
+            --offline \
+            --output-format json \
+            --fail-on "${{ inputs.fail_on || 'ERROR' }}" \
+            > audit-report.json
+
+      - name: Upload audit report
+        if: always()
+        uses: actions/upload-artifact@v4.6.0
+        with:
+          name: token-audit-report-${{ github.run_id }}
+          path: audit-report.json
+          retention-days: 30

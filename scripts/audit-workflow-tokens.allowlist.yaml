@@ -1,0 +1,11 @@
+# Known yubiOS repo secrets (subset; full list lives in repo Settings -> Secrets)
+# This file is the single source of truth for audit-workflow-tokens.py.
+# Add a new entry here whenever a new repo secret is introduced.
+known_secrets:
+  # dhi.io auth (settings: ${{ secrets.DOCKER }}), referenced by all build workflows
+  - DOCKER
+  # Auto-injected by GitHub Actions; allowlisted for clarity (audit-workflow-tokens.py
+  # also auto-adds this regardless of what's in the file).
+  - GITHUB_TOKEN
+  # GH_TK is RETIRED (PR #148, 2026-07-29); if any workflow references it,
+  # audit-workflow-tokens.py flags ERROR.
