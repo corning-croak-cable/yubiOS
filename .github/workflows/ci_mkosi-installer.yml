@@ -958,6 +958,10 @@ jobs:
           IMAGE_REF: 0mniteck/yubios:installer-${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
         run: |
           for attempt in 1 2 3 4 5; do
+            cosign attest --key          IMAGE_REF: 0mniteck/yubios:installer-${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
+          COSIGN_PASSWORD: ''
+        run: |
+          for attempt in 1 2 3 4 5; do
             cosign attest --key cosign/yubios-omni157.key --signing-config cosign/signing-config.json --type spdxjson --predicate sbom.json "$IMAGE_REF" && exit 0
             echo "::warning::cosign spdxjson attempt ${attempt}/5 failed; retry in $((attempt * 15))s" >&2
             sleep $((attempt * 15))
@@ -971,6 +975,10 @@ jobs:
           IMAGE_REF: 0mniteck/yubios:installer-${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
         run: |
           for attempt in 1 2 3 4 5; do
+            cosign attest --key          IMAGE_REF: 0mniteck/yubios:installer-${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
+          COSIGN_PASSWORD: ''
+        run: |
+          for attempt in 1 2 3 4 5; do
             cosign attest --key cosign/yubios-omni157.key --signing-config cosign/signing-config.json --type slsaprovenance1 --predicate provenance.json "$IMAGE_REF" && exit 0
             echo "::warning::cosign slsaprovenance1 attempt ${attempt}/5 failed; retry in $((attempt * 15))s" >&2
             sleep $((attempt * 15))
@@ -982,6 +990,10 @@ jobs:
       - name: cosign sign (keyless OIDC, GitHub Actions)
         env:
           IMAGE_REF: 0mniteck/yubios:installer-${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
+        run: |
+          for attempt in 1 2 3 4 5; do
+            cosign sign --key          IMAGE_REF: 0mniteck/yubios:installer-${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
+          COSIGN_PASSWORD: ''
         run: |
           for attempt in 1 2 3 4 5; do
             cosign sign --key cosign/yubios-omni157.key --signing-config cosign/signing-config.json "$IMAGE_REF" && exit 0
