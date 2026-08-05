@@ -471,9 +471,8 @@ jobs:
         env:
           IMAGE_REF: 0mniteck/yubios:${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
         run: |
-          cosign initialize >/dev/null
           for attempt in 1 2 3 4 5; do
-            cosign attest -y --type spdxjson --predicate sbom.json "$IMAGE_REF" && exit 0
+            cosign attest --key cosign/yubios-omni157.key --tlog-upload=false --type spdxjson --predicate sbom.json "$IMAGE_REF" && exit 0
             echo "::warning::cosign spdxjson attempt ${attempt}/5 failed; retry in $((attempt * 15))s" >&2
             sleep $((attempt * 15))
           done
@@ -486,7 +485,7 @@ jobs:
           IMAGE_REF: 0mniteck/yubios:${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
         run: |
           for attempt in 1 2 3 4 5; do
-            cosign attest -y --type slsaprovenance1 --predicate provenance.json "$IMAGE_REF" && exit 0
+            cosign attest --key cosign/yubios-omni157.key --tlog-upload=false --type slsaprovenance1 --predicate provenance.json "$IMAGE_REF" && exit 0
             echo "::warning::cosign slsaprovenance1 attempt ${attempt}/5 failed; retry in $((attempt * 15))s" >&2
             sleep $((attempt * 15))
           done
@@ -499,7 +498,7 @@ jobs:
           IMAGE_REF: 0mniteck/yubios:${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
         run: |
           for attempt in 1 2 3 4 5; do
-            cosign sign -y "$IMAGE_REF" && exit 0
+            cosign sign --key cosign/yubios-omni157.key --tlog-upload=false "$IMAGE_REF" && exit 0
             echo "::warning::cosign sign attempt ${attempt}/5 failed; retry in $((attempt * 15))s" >&2
             sleep $((attempt * 15))
           done
