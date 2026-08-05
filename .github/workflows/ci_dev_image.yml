@@ -277,6 +277,8 @@ jobs:
         password: ${{ secrets.DOCKER }}
       image: docker://dhi.io/debian-base@sha256:4440cf16b142316744a7fd1c5070eb23df54c7c335d8684c8d72864f0f3eb30e
     steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 — see PINNED.md
       - name: Install docker CLI + buildx
         run: |
           apt-get update -qq
@@ -456,6 +458,8 @@ jobs:
     permissions:
       contents: read
     steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 — see PINNED.md
       - name: Install cosign v3.1.2
         run: |
           wcurl "https://github.com/sigstore/cosign/releases/download/v3.1.2/cosign-linux-amd64"
