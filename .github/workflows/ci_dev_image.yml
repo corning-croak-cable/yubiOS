@@ -109,7 +109,7 @@ jobs:
       credentials:
         username: 0mniteck42
         password: ${{ secrets.DOCKER }}
-      image: docker://dhi.io/debian-base@sha256:9d293dad5b7b448154d2fee38651d7cd6faa4953300d84503bfacca22357a879 # auto-resolves to ${{ matrix.arch }}
+      image: docker://dhi.io/debian-base@sha256:4440cf16b142316744a7fd1c5070eb23df54c7c335d8684c8d72864f0f3eb30e # auto-resolves to ${{ matrix.arch }}
     steps:
       - name: Install git for checkout and reproducibility
         run: |
@@ -275,7 +275,7 @@ jobs:
       credentials:
         username: 0mniteck42
         password: ${{ secrets.DOCKER }}
-      image: docker://dhi.io/debian-base@sha256:9d293dad5b7b448154d2fee38651d7cd6faa4953300d84503bfacca22357a879
+      image: docker://dhi.io/debian-base@sha256:4440cf16b142316744a7fd1c5070eb23df54c7c335d8684c8d72864f0f3eb30e
     steps:
       - name: Install docker CLI + buildx
         run: |

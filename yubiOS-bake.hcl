@@ -423,7 +423,7 @@ target "pq-tls-verify" {
   description = "Verify the OpenSSL 3.5+ PQ hybrid TLS default against the live endpoint."
   context     = "."
   dockerfile-inline = <<-DOCKERFILE
-    FROM dhi.io/debian-base@sha256:9d293dad5b7b448154d2fee38651d7cd6faa4953300d84503bfacca22357a879
+    FROM dhi.io/debian-base@sha256:4440cf16b142316744a7fd1c5070eb23df54c7c335d8684c8d72864f0f3eb30e
     SHELL ["/bin/bash", "-c"]
     RUN <<'VERIFY'
     set -euo pipefail
