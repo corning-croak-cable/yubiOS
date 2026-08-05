@@ -472,9 +472,6 @@ jobs:
       - name: Attach SPDX SBOM attestation (cosign attest)
         env:
           IMAGE_REF: 0mniteck/yubios:${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
-        run: |
-          for attempt in 1 2 3 4 5; do
-            cosign attest --key          IMAGE_REF: 0mniteck/yubios:${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
           COSIGN_PASSWORD: ''
         run: |
           for attempt in 1 2 3 4 5; do
@@ -489,9 +486,6 @@ jobs:
       - name: Attach SLSA v1.0 provenance attestation (cosign attest)
         env:
           IMAGE_REF: 0mniteck/yubios:${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
-        run: |
-          for attempt in 1 2 3 4 5; do
-            cosign attest --key          IMAGE_REF: 0mniteck/yubios:${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
           COSIGN_PASSWORD: ''
         run: |
           for attempt in 1 2 3 4 5; do
@@ -506,9 +500,6 @@ jobs:
       - name: cosign sign (keyless OIDC, GitHub Actions)
         env:
           IMAGE_REF: 0mniteck/yubios:${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
-        run: |
-          for attempt in 1 2 3 4 5; do
-            cosign sign --key          IMAGE_REF: 0mniteck/yubios:${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
           COSIGN_PASSWORD: ''
         run: |
           for attempt in 1 2 3 4 5; do
