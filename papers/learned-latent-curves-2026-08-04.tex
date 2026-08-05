@@ -1,0 +1,267 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{times}
+
+\title{Learned Latent Curves: A Closed-Loop Framework for\\ Corpus Embedding and Recursive Skill Auditing}
+\author{Shant Tchatalbachian \\ \small yubi-OS}
+\date{August 4, 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We describe a family of three composed techniques used to audit and prioritize
+improvement work across a corpus of engineering artifacts (software skills,
+self-documentation files): (1) a \emph{learned latent curve}, which re-expands
+a single 1-D ordering coordinate $t$ into a fixed-width $D$-dimensional
+embedding via a Fourier basis with learned frequencies; (2) \emph{curve-guided
+recursive self-improvement} (curve-guided RSI), which uses sparse cells of the
+fitted curve as a prioritization lens for gap-mapping and bounded
+fixpoint-style editing cycles; and (3) a self-documentation variant of the
+same pipeline, retargeted at heterogeneous memory-file corpora via a
+per-corpus primitive basis and an explicit item-granularity rule. We give the
+governing equations for each stage, the empirical validation obtained on a
+corpus of software skills ($N=62$–$211$) and a self-documentation corpus
+($N=17$–$154$), and we note the technique's distinction from an unrelated
+prior work on weight-space reparameterization for neural network optimization
+(arXiv:2607.09967) that shares only surface vocabulary (``curve'',
+``curvature'') and no derivation.
+\end{abstract}
+
+\section{Introduction}
+
+Many corpus-auditing problems reduce to the same shape: $N$ items live in a
+high-dimensional feature space, and a practitioner wants (a) a single scalar
+ordering of the items and (b) a fixed-width representation indexed by that
+ordering, so that interpolation and sparse-region detection are well defined.
+Dimensionality reduction (collapsing features to $t$) and dimensionality
+\emph{expansion} (re-expanding $t$ into an embedding) are usually treated as
+separate problems. This paper documents a single closed-form round trip
+between them and its use as the fitting stage of a larger closed-loop audit
+pipeline.
+
+\section{The Learned Latent Curve}
+\label{sec:curve}
+
+For output dimension $j = 1, \dots, D$ (canonically $D = 384$) and 1-D
+coordinate $t \in [0, 1]$, the model is
+
+\begin{equation}
+z_j(t) \;=\; a_{j,0} \;+\; \sum_{m=1}^{k} \Big( a_{j,m}\, \sin(2\pi f_m t)
+\;+\; b_{j,m}\, \cos(2\pi f_m t) \Big),
+\label{eq:model}
+\end{equation}
+
+with $k$ shared learned frequencies $f_1, \dots, f_k$ and per-output
+coefficients $a_{j,m}, b_{j,m}$. Stacked over $j$, this is a curve
+$\gamma : \mathbb{R} \to \mathbb{R}^D$. Writing the design vector
+
+\begin{equation}
+\phi(t) = \big[\, 1,\; \sin(2\pi f_1 t),\, \cos(2\pi f_1 t),\, \dots,\,
+\sin(2\pi f_k t),\, \cos(2\pi f_k t) \,\big] \in \mathbb{R}^{1+2k},
+\label{eq:design}
+\end{equation}
+
+the model is $\gamma(t) = C\, \phi(t)$ with coefficient matrix
+$C \in \mathbb{R}^{D \times (1+2k)}$, giving a parameter count of
+
+\begin{equation}
+P \;=\; k \;+\; D(1 + 2k).
+\label{eq:paramcount}
+\end{equation}
+
+At $D = 384$, $k = 8$: $P = 8 + 384 \times 17 = 6{,}536$ parameters, compared
+against $N \times D$ target scalars.
+
+\subsection{Closed-form coefficient solve}
+
+With the frequencies $f$ held fixed, $C$ has a closed-form ridge solution
+
+\begin{equation}
+C^\star \;=\; Z^\top \Phi \, \big( \Phi^\top \Phi + \lambda I \big)^{-1},
+\label{eq:ridge}
+\end{equation}
+
+where $\Phi \in \mathbb{R}^{N \times (1+2k)}$ is the design matrix and
+$Z \in \mathbb{R}^{N \times D}$ is the target matrix. Only the $k$
+frequencies require non-convex search; the closed-form ridge fit at any
+candidate frequency vector is a sanity floor for the gradient-descent fit.
+
+\subsection{Frequency parameterization}
+
+Frequencies are stored in an unconstrained form and mapped through a softplus
+to guarantee strict positivity and finite gradients near zero:
+
+\begin{equation}
+f_m \;=\; \operatorname{softplus}(\tilde f_m) \;=\; \log\!\big(1 + e^{\tilde f_m}\big), \qquad f_m > 0.
+\label{eq:softplus}
+\end{equation}
+
+\subsection{Losses}
+
+Let $t \in \mathbb{R}^N$, $Z \in \mathbb{R}^{N \times D}$ the targets, and
+$\hat Z = \gamma(t)$ the fitted curve evaluated at the training coordinates.
+The total objective is
+
+\begin{equation}
+\mathcal{L} \;=\; \mathcal{L}_{\mathrm{rec}} \;+\; \mathcal{L}_{\mathrm{freq}}
+\;+\; \mathcal{L}_{\mathrm{smooth}} \;\big(+\, \mathcal{L}_{\mathrm{orth}}\big),
+\label{eq:totalloss}
+\end{equation}
+
+\begin{align}
+\mathcal{L}_{\mathrm{rec}} &= \operatorname{mean}\big( (\hat Z - Z)^2 \big), \label{eq:lrec}\\
+\mathcal{L}_{\mathrm{freq}} &= \lambda_f \cdot \operatorname{mean}(f^2), \label{eq:lfreq}\\
+\mathcal{L}_{\mathrm{smooth}} &= \lambda_s \cdot \operatorname{mean}
+\Big( \big(\gamma(t_{\mathrm{grid}})[2:] - 2\gamma(t_{\mathrm{grid}})[1{:}\!-\!1]
++ \gamma(t_{\mathrm{grid}})[:\!-\!2]\big)^2 \Big), \label{eq:lsmooth}
+\end{align}
+
+where $t_{\mathrm{grid}}$ is a dense grid of $\sim$512 points spanning the
+coordinate range and $\lambda_f \approx 10^{-4}$, $\lambda_s \approx 10^{-3}$.
+$\mathcal{L}_{\mathrm{smooth}}$ regularizes the curve \emph{between} observed
+points, where reconstruction loss alone is blind.
+
+\subsection{Obtaining the coordinate $t$}
+
+The default pipeline sets $t$ from the top principal component of a
+$z$-scored $N \times D_{\mathrm{feat}}$ feature matrix, mapped to $[0,1]$; a
+rank-uniformized variant replaces raw PC1 scores by their ranks to improve
+design-matrix conditioning. The explained-variance ratio of PC1 (or
+PC1+PC2 for a 2-D surface variant) is recorded as an explicit go/no-go gate,
+with $\mathrm{PC1} \geq 0.40$ treated as evidence of usable low-rank
+structure.
+
+\section{Curve-Guided Recursive Self-Improvement}
+\label{sec:rsi}
+
+Curve-guided RSI composes the fitted curve with a gap-mapping and editing
+loop. Coordinates are reduced to a 2-D surface $(u, v) \in [0,1]^2$ via
+PC1+PC2 of a binary primitive-coverage matrix $C \in \{0,1\}^{N \times 9}$
+lifted to $D = 384$ by a fixed seeded orthonormal projection $Q$:
+
+\begin{equation}
+Z \;=\; C \, Q^\top, \qquad (u_i, v_i) \;=\; \mathrm{PCA}_{1,2}(Z)_i.
+\label{eq:liftpca}
+\end{equation}
+
+The $[0,1]^2$ plane is discretized into a $0.05 \times 0.05$ grid
+($21 \times 21 = 441$ cells). For a cell $c = (u, v)$,
+
+\begin{align}
+\mathrm{neighbors}(c) &:= \big\{\, i \in \mathrm{corpus} : \| (u_i, v_i) - c \|_\infty \le r \,\big\}, \label{eq:neighbors}\\
+\mathrm{is\_sparse}(c) &:= \big| \mathrm{neighbors}(c) \big| = 0, \label{eq:sparse}
+\end{align}
+
+with default radius $r = 0.05$. Cells with zero neighbors are gap
+candidates; for each, a fresh-context gap-mapping subagent (focused on that
+single item, never the whole corpus) is dispatched, and any flagged
+``Extend'' gap is closed via a bounded editing loop capped at three cycles
+per item. After all cycles, Stage 1 is re-run and the closed-loop claim is
+verified by comparing the sparse-cell count before and after:
+
+\begin{equation}
+\Delta_{\mathrm{sparse}} \;=\; |\mathrm{sparse\_cells}|_{\mathrm{post}} - |\mathrm{sparse\_cells}|_{\mathrm{pre}} \;<\; 0
+\quad\Longrightarrow\quad \text{gaps closed.}
+\label{eq:delta}
+\end{equation}
+
+\section{Self-Documentation Variant}
+\label{sec:self}
+
+The self-documentation offshoot retargets Equations~\ref{eq:liftpca}–\ref{eq:delta}
+at heterogeneous memory-file corpora (\texttt{SELF.md},
+\texttt{SELF-CHANGELOG.md}, and eight additional preference/rule files),
+under the granularity rule that \emph{each version is one corpus item}
+(a changelog entry, a memory-file section, or a named row). Each corpus
+receives its own 9-D binary primitive basis rather than sharing one basis
+across structurally distinct document types, since a single shared basis was
+found to flatten the per-corpus signal. Near-constant columns (coverage
+$> 0.90$ or $< 0.10$) are dropped before the PCA lift in
+Equation~\ref{eq:liftpca}.
+
+\section{Empirical Validation}
+\label{sec:results}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lrrrl@{}}
+\toprule
+Corpus / fit & $N$ & PC1(+PC2) & Holdout $R^2$ & Status \\
+\midrule
+Skill corpus, v1 (raw-content target) & 62 & 0.40 (1-D) & $-0.155$ & fail \\
+Skill corpus, v2 (primitive-coverage target) & 213 & 0.40 (1-D) & $+0.183$ & pass \\
+Skill corpus, v3 (2-D surface) & 211 & 0.4655 & $+0.4655$ & headline pass \\
+Skill corpus, v4 (sentence-transformer target) & 211 & 0.0955 & $-0.005$ to $+0.130$ & fail (wrong target) \\
+Curve-guided RSI, cycle 5 (69 skills) & 69 & 0.4615 & $+0.2244$ & pass \\
+SELF-CHANGELOG.md, canonical & 17 & 0.9164 & $+0.9917$ & pass \\
+SELF.md, canonical & 51 & 0.6952 & $+0.7041$ & pass \\
+Combined memory-file corpus, v4 & 154 & 0.6479 & $+0.7877$ & pass \\
+\bottomrule
+\end{tabular}
+\caption{Fit quality across corpora. PC1(+PC2) is the explained-variance
+gate (Section~\ref{sec:curve}); Holdout $R^2$ is measured against held-out
+items refit from their $t$ coordinate alone.}
+\label{tab:results}
+\end{table}
+
+\section{Relation to Prior Work}
+
+Equation~\ref{eq:model} shares no derivation with the weight-space
+reparameterization proposed in arXiv:2607.09967 (``Learning in Curved Weight
+Space: Exponential-Linear Weight Reparameterization for Improved
+Optimization''), which maps a single raw neural-network weight scalar $w$
+through a sign-aware symmetric-exponential/linear pathway pair to obtain an
+effective weight $w_{\mathrm{eff}}$ for optimizer training, and is validated
+by training-step reduction on autoregressive language models. The present
+work instead maps a per-item ordering coordinate $t$ through a Fourier
+basis to obtain a fixed-width corpus embedding, and is validated by holdout
+reconstruction accuracy on document corpora. The overlap is limited to the
+word ``curve''/``curvature'' and the presence of learnable shape parameters;
+neither the domain, the basis function family, nor the fitting objective is
+shared. The two are unrelated by construction, not merely by citation
+omission --- a full side-by-side comparison is documented separately.
+
+Within the embedding literature, Equation~\ref{eq:model} is a fitted
+generalization of two established fixed-basis constructions: random Fourier
+features \citep{rahimi2007} use \emph{fixed random} frequencies as a kernel
+approximation, and transformer positional encodings \citep{tancik2020} use
+\emph{fixed geometric} frequencies with no learned coefficients. The present
+model instead learns both the frequencies and the coefficients from the
+target embeddings directly.
+
+\section{Conclusion}
+
+The learned latent curve gives a closed-form, auditable, interpolatable
+representation for small-$N$ corpora with a low-rank ordering structure.
+Composed with sparse-cell detection and a bounded gap-closing loop, it
+converts a one-shot corpus audit into a measurable, repeatable improvement
+process with an explicit before/after metric (Equation~\ref{eq:delta}). The
+same pipeline transfers, with corpus-specific primitive bases, from a
+software-skill corpus to a self-documentation corpus.
+
+\begin{thebibliography}{9}
+
+\bibitem{rahimi2007}
+A.~Rahimi and B.~Recht.
+\emph{Random Features for Large-Scale Kernel Machines}.
+Advances in Neural Information Processing Systems, 2007.
+
+\bibitem{tancik2020}
+M.~Tancik et al.
+\emph{Fourier Features Let Networks Learn High Frequency Functions in Low
+Dimensional Domains}.
+Advances in Neural Information Processing Systems, 2020.
+
+\bibitem{smith2026}
+E.~Smith.
+\emph{Learning in Curved Weight Space: Exponential-Linear Weight
+Reparameterization for Improved Optimization}.
+arXiv:2607.09967 [cs.LG], 2026.
+
+\end{thebibliography}
+
+\end{document}
