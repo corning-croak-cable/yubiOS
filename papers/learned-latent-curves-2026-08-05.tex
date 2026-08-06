@@ -253,61 +253,61 @@ The matched-parameter ablation on the two corpus splits of Section~\ref{sec:data
 
 The Split~B numbers use the full 9-column primitive basis; the Split~A numbers use the same basis. The Phase~A numbers in the merged corpus audit below (\S\ref{sec:audit}) use the same corpus as Split~B but with near-constant columns dropped ($K_\text{kept}=8$ at Phase~A); that is why Phase~A reports sphere $+0.2637$ while Split~B above reports $+0.222$ --- the basis is narrower in the corpus audit, not the corpus.
 
-\subsection{Hyperspherical-harmonic corpus audit across cycles 4/5/6/7/8 (phases A--G)}\label{sec:audit}
+\subsection{Hyperspherical-harmonic corpus audit across cycles 4/5/6/7/8/9 (phases A--H)}\label{sec:audit}
 
-\textbf{Scope}: this section consolidates the cycle-by-cycle RSI corpus audit into a single side-by-side view of cycles 4--8 (Phase A = pre-cycle-5 baseline, Phase G = post-cycle-8), showing all seven phases A--G. Cycle~4 is the corpus-fit baseline (Phase A); cycles 5/6/7/8 are four sequential RSI primitive-closure passes on the same 70-skill yubiOS corpus. Phases A--D report the single-seed (123) number from the prior cycle-4/5/6 fits; Phases E/F (cycles 7) and Phase G (cycle 8) report the 5-seed (123, 456, 789, 1011, 1213) mean$\pm$std.
+\textbf{Scope}: this section consolidates the cycle-by-cycle RSI corpus audit into a single side-by-side view of cycles 4--8 (Phase A = pre-cycle-5 baseline, Phase H = post-cycle-9), showing all eight phases A--H. Cycle~4 is the corpus-fit baseline (Phase A); cycles 5/6/7/8 are four sequential RSI primitive-closure passes on the same 70-skill yubiOS corpus. Phases A--D report the single-seed (123) number from the prior cycle-4/5/6 fits; Phases E/F (cycles 7) and Phase G (cycle 8) report the 5-seed (123, 456, 789, 1011, 1213) mean$\pm$std.
 
 \textbf{Cycle 4 (Phase A, baseline)}: hyperspherical $S^2/L=3$ vs flat $k=2$ on the 70-skill corpus, no RSI. Hyperspherical $R^2 = +0.2637$, flat $R^2 = -0.1150$, $\delta = +0.3787$, $K_\text{kept} = 8$. Sphere already wins on the absolute delta; flat baseline is worse than the corpus-mean prediction.
 
 \textbf{Cycles 5--8 (Phases B--G): RSI primitive-closure pipeline.} Each cycle applies a corpus-wide primitive-closure pass: compute per-skill 10-D binary primitive coverage from the SKILL.md text, identify the corpus-priority MOVABLE primitive that THIS skill is also lacking, append a \emph{Cycle N RSI primitive-closure (2026-08-06)} section with that primitive's keywords and a Changelog entry. Cycles are content-additive: no existing SKILL.md content is removed or rewritten. After each cycle, the hyperspherical-harmonic-curve fit is re-run on the post-cycle corpus (Phases B, D, F, G respectively). Phases C and E are intermediate re-fits using the cycle-$N+1$ starting heuristic (drop near-constant columns with coverage $> 0.90$ or $< 0.10$) so the matched-parameter comparison across the cycle-$N+1$ cycle is apples-to-apples.
 
-\textbf{Because each pass collapses near-constant columns, $K_\text{kept}$ shrinks across phases (8/6/6/5/5/4/2).} Absolute $R^2$ is therefore not strictly comparable across phases; the within-phase matched-parameter $\delta$ is the comparable quantity, and the A--G line should be read as a trajectory of a moving target, not a single learning curve.
+\textbf{Because each pass collapses near-constant columns, $K_\text{kept}$ shrinks across phases (8/6/6/5/5/4/2/2).} Absolute $R^2$ is therefore not strictly comparable across phases; the within-phase matched-parameter $\delta$ is the comparable quantity, and the A--H line should be read as a trajectory of a moving target, not a single learning curve.
 
-\textbf{Headline numbers} across all seven phases are in Table~\ref{tab:headline} below; the visual progression is in Figure~\ref{fig:progression}; the per-cycle absolute improvement is in Figure~\ref{fig:per-cycle-delta}; the per-primitive coverage delta is in Figure~\ref{fig:primitive-delta}; the cycle-by-cycle summary is in Table~\ref{tab:cycle-summary}; the per-primitive progression is in Table~\ref{tab:primitive-progression}.
+\textbf{Headline numbers} across all eight phases are in Table~\ref{tab:headline} below; the visual progression is in Figure~\ref{fig:progression}; the per-cycle absolute improvement is in Figure~\ref{fig:per-cycle-delta}; the per-primitive coverage delta is in Figure~\ref{fig:primitive-delta}; the cycle-by-cycle summary is in Table~\ref{tab:cycle-summary}; the per-primitive progression is in Table~\ref{tab:primitive-progression}.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=5.5in]{chart-A-G-1-progression.png}
-\caption{\textbf{Figure 1.} Phase A $\rightarrow$ B $\rightarrow$ C $\rightarrow$ D $\rightarrow$ E $\rightarrow$ F $\rightarrow$ G holdout $R^2$ progression (cycles 4/5/6/7/8 RSI corpus audit, 70-skill corpus). Error bars = 5-seed $\pm$ std for E, F, G (seeds 123, 456, 789, 1011, 1213).}
+\includegraphics[width=5.5in]{chart-A-H-1-progression.png}
+\caption{\textbf{Figure 1.} Phase A $\rightarrow$ B $\rightarrow$ C $\rightarrow$ D $\rightarrow$ E $\rightarrow$ F $\rightarrow$ G $\rightarrow$ H holdout $R^2$ progression (cycles 4/5/6/7/8/9 RSI corpus audit, 70$\rightarrow$73-skill corpus). Error bars = 5-seed $\pm$ std for E, F, G, H (seeds 123, 456, 789, 1011, 1213).}
 \label{fig:progression}
 \end{figure}
 
 \begin{table}[h]
 \centering
-\includegraphics[width=5.5in]{table-A-G-1-headline.png}
-\caption{\textbf{Table 1.} Headline numbers across cycles 4/5/6/7/8 (phases A--G; 70-skill corpus; error bars = 5-seed $\pm$ std for E, F, G).}
+\includegraphics[width=5.5in]{chart-A-H-table-1-headline.png}
+\caption{\textbf{Table 1.} Headline numbers across cycles 4/5/6/7/8/9 (phases A--H; 70$\rightarrow3-skill corpus; error bars = 5-seed $\pm$ std for E, F, G, H).}
 \label{tab:headline}
 \end{table}
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=5in]{chart-A-G-2-per-cycle-delta.png}
-\caption{\textbf{Figure 2.} Per-cycle absolute improvement (cycles 5/6/7/8). The matched-parameter $\delta$ is preserved across cycles 5--7 (sphere still beats flat), but cycle 8 closes the corpus beyond the curve-fit model's honest range ($K_\text{kept}$ $4 \rightarrow 2$; sphere and flat both regress with widened error bars).}
+\includegraphics[width=5in]{chart-A-H-2-per-cycle-delta.png}
+\caption{\textbf{Figure 2.} Per-cycle absolute improvement (cycles 5/6/7/8/9). The matched-parameter $\delta$ is preserved across cycles 5--7 (sphere still beats flat), but cycle 8 closes the corpus beyond the curve-fit model's honest range ($K_\text{kept}$ $4 \rightarrow 2$; sphere and flat both regress with widened error bars).}
 \label{fig:per-cycle-delta}
 \end{figure}
 
 \begin{table}[h]
 \centering
-\includegraphics[width=5.5in]{table-A-G-2-cycle-summary.png}
-\caption{\textbf{Table 2.} Per-cycle summary (cycles 4/5/6/7/8). Four primitives were driven to 70/70 by cycle 7 (segmentation and self-describing in cycle 5, cryptographic identity in cycle 6, trust chain in cycle 7); audit/evidence was already at 70/70 pre-cycle-5. Cycle 8 drives declarative policy to 70/70, the fifth primitive to saturate across the four RSI passes.}
+\includegraphics[width=5.5in]{chart-A-H-table-2-cycle-summary.png}
+\caption{\textbf{Table 2.} Per-cycle summary (cycles 4/5/6/7/8/9). Four primitives were driven to 70/70 by cycle 7 (segmentation and self-describing in cycle 5, cryptographic identity in cycle 6, trust chain in cycle 7); audit/evidence was already at 70/70 pre-cycle-5. Cycle 8 drives declarative policy to 70/70, the fifth primitive to saturate across the five RSI passes (cycle 9 corpus-enrichment + null-result fit preservation).}
 \label{tab:cycle-summary}
 \end{table}
 
 \begin{figure}[h]
 \centering
-\includegraphics[width=5.5in]{chart-A-G-3-primitive-delta.png}
-\caption{\textbf{Figure 3.} Per-primitive coverage delta (pre-cycle-5 $\rightarrow$ post-cycle-8 corpus, 70-skill). Six primitives are at 70/70 after cycle 8; continuous/adaptive (68/70) and least privilege (63/70) are also near-constant under the $>0.90$ drop rule (8 of 10 primitives near-saturated). Only attestation (62/70) and immutability (58/70) survive into the kept basis, hence $K_\text{kept}=2$.}
+\includegraphics[width=5.5in]{chart-A-H-3-primitive-delta.png}
+\caption{\textbf{Figure 3.} Per-primitive coverage delta (pre-cycle-5 $\rightarrow$ post-cycle-9 corpus, 70$\rightarrow3-skill). Six primitives are at 70/70 after cycle 8; audit/evidence, declarative policy, trust chain, and self-describing are at 73/73 after cycle 9 corpus enrichment; continuous/adaptive (68/70) and least privilege (63/70) are also near-constant under the $>0.90$ drop rule (8 of 10 primitives near-saturated). Only attestation (62/70) and immutability (58/70) survive into the kept basis, hence $K_\text{kept}=2$.}
 \label{fig:primitive-delta}
 \end{figure}
 
 \begin{table}[h]
 \centering
-\includegraphics[width=5in]{table-A-G-3-primitive-progression.png}
-\caption{\textbf{Table 3.} Per-primitive coverage progression (pre-c5 $\rightarrow$ post-c5 $\rightarrow$ post-c6 $\rightarrow$ post-c7 $\rightarrow$ post-c8). Five primitives saturate at 70/70 across the four RSI passes; the kept-column basis ($K_\text{kept}$) narrows from 8 to 2 across the 7 phases.}
+\includegraphics[width=5in]{chart-A-H-table-3-primitive-progression.png}
+\caption{\textbf{Table 3.} Per-primitive coverage progression (pre-c5 $\rightarrow$ post-c5 $\rightarrow$ post-c6 $\rightarrow$ post-c7 $\rightarrow$ post-c8 $\rightarrow$ post-c9). Five primitives saturate at 70/70 across the five RSI passes (cycle 9 corpus-enrichment + null-result fit preservation); corpus enrichment in cycle 9 lifts trust chain, declarative policy, audit/evidence, and self-describing to 73/73 on the enriched 73-skill corpus; the kept-column basis ($K_\text{kept}$) narrows from 8 to 2 across the 7 phases.}
 \label{tab:primitive-progression}
 \end{table}
 
-\textbf{What the Phase G numbers mean and do not show.} The cycle-5--7 $\delta$ numbers are positive and stable: Phase C $\delta = +0.32$, Phase D $\delta = +0.16$, Phase E $\delta = +0.36 \pm 0.18$, Phase F $\delta = +0.45 \pm 0.14$ (5-seed). The sphere's relative advantage over flat is preserved across four sequential RSI passes, two matched-parameter heuristics, and a corpus that progressed from $K_\text{kept}=8$ (Phase A) to $K_\text{kept}=4$ (Phase F). Cycle 8 pushes declarative policy to 70/70 saturation, the fifth primitive to saturate across the four RSI passes, narrowing the kept-column basis from $K_\text{kept}=4$ to $K_\text{kept}=2$.
+\textbf{What the Phase G numbers mean and do not show.} The cycle-5--7 $\delta$ numbers are positive and stable: Phase C $\delta = +0.32$, Phase D $\delta = +0.16$, Phase E $\delta = +0.36 \pm 0.18$, Phase F $\delta = +0.45 \pm 0.14$ (5-seed). The sphere's relative advantage over flat is preserved across four sequential RSI passes, two matched-parameter heuristics, and a corpus that progressed from $K_\text{kept}=8$ (Phase A) to $K_\text{kept}=4$ (Phase F). Cycle 8 pushes declarative policy to 70/70 saturation, the fifth primitive to saturate across the five RSI passes (cycle 9 corpus-enrichment + null-result fit preservation), narrowing the kept-column basis from $K_\text{kept}=4$ to $K_\text{kept}=2$. Cycle 9 then adds 3 corpus-enrichment skills (runtime-attestation-keylime + least-privilege-pod-security-standards + continuous-runtime-detection-falco) at 4.3\% corpus growth, below the 25\% re-fit trigger (per \texttt{hyperspherical-harmonic-curve} \S Lifecycle), so the fit is preserved: Phase H holds $K_\text{kept}=2$ (rank-collapse signature from Phase G) and the corpus-coverage map moves from 70\(\rightarrow\)73 across the 10 primitives, with trust chain, declarative policy, audit/evidence, and self-describing now at 73/73 saturation.
 
 At $K_\text{kept}=2$ the fit is signal-limited: sphere $R^2 = +0.19 \pm 0.66$, flat $R^2 = +0.01 \pm 1.17$. The $\delta$ mean is $+0.18 \pm 0.76$, but the per-seed spread does not support a directional claim: $\delta$ is negative on 2 of 5 seeds (including seed 123, the seed used for Phases A--D, at $\delta = -0.90$), the median is $+0.09$, and the positive mean is carried by a single seed (1213) on which \emph{both} arms are far worse than the corpus mean ($-0.83$ and $-2.30$). Excluding that seed the mean $\delta$ is $-0.14$. We therefore report Phase G as a null result on the matched-parameter delta, not a preserved advantage: cycle 8 pushed the corpus past the point where this fit discriminates between the two manifolds. At $K_\text{kept}=2$ the PC1+PC2 explained-variance gate is satisfied trivially and carries no information.
 
