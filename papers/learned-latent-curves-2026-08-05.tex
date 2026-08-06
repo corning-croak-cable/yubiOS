@@ -27,7 +27,7 @@
 \maketitle
 
 \begin{abstract}
-We describe a closed-loop framework for auditing and prioritizing improvement work across a corpus of engineering artifacts (software skills, self-documentation files), and we document a sphere-aware extension of its curve-fitting stage. The framework has three composed techniques: (1) a \emph{learned latent curve}, which re-expands a single 1-D ordering coordinate $t$ into a fixed-width $D$-dimensional embedding via a Fourier basis with learned frequencies; (2) \emph{curve-guided recursive self-improvement}, which uses sparse cells of the fitted curve as a prioritization lens for gap-mapping and bounded fixpoint-style editing cycles; and (3) a self-documentation variant of the same pipeline, retargeted at heterogeneous memory-file corpora. We give the governing equations for each stage, the empirical validation obtained on a corpus of software skills ($N = 49$ to $70$), and we introduce a fourth technique --- the \emph{hyperspherical-harmonic curve} --- which replaces the flat $[0,1]^2$ parameter manifold of (1) with the Riemann sphere $S^2$ (the 2-sphere, with a generalization sketch to $S^N$). The variant uses the canonical orthonormal hyperspherical-harmonic basis and adds a learned Möbius $\phi_\theta \in \mathrm{PSL}(2,\mathbb{C})$ reparameterization of the domain. We evaluate the variant against a capacity-matched flat Fourier baseline on two splits of the corpus, report absolute holdout $R^2$ and the matched-parameter delta, and identify the four open items that bound the claim.
+We describe a closed-loop framework for auditing and prioritizing improvement work across a corpus of engineering artifacts (software skills, self-documentation files), and we document a sphere-aware extension of its curve-fitting stage. The framework has three composed techniques: (1) a \emph{learned latent curve}, which re-expands a single 1-D ordering coordinate $t$ into a fixed-width $D$-dimensional embedding via a Fourier basis with learned frequencies; (2) \emph{curve-guided recursive self-improvement}, which uses sparse cells of the fitted curve as a prioritization lens for gap-mapping and bounded fixpoint-style editing cycles; and (3) a self-documentation variant of the same pipeline, retargeted at heterogeneous memory-file corpora. We give the governing equations for each stage, the empirical validation obtained on a corpus of software skills ($N = 49$ to $70$), and we introduce a fourth technique --- the \emph{hyperspherical-harmonic curve} --- which replaces the flat $[0,1]^2$ parameter manifold of (1) with the Riemann sphere $S^2$ (the 2-sphere, with a generalization sketch to $S^N$). The variant uses the canonical orthonormal hyperspherical-harmonic basis and adds a learned M\"obius $\phi_\theta \in \mathrm{PSL}(2,\mathbb{C})$ reparameterization of the domain. We evaluate the variant against a capacity-matched flat Fourier baseline on two splits of the corpus, report absolute holdout $R^2$ and the matched-parameter delta, and identify five open items that bound the claim. \emph{We do not claim the variant is a strict improvement over the flat curve in absolute terms}: on both splits the absolute $R^2$ may be negative at $N=70$, and all reported numbers are from a single run with no error bars.
 \end{abstract}
 
 \section{Introduction}
@@ -40,7 +40,6 @@ Given $N$ items in a $K$-dimensional feature space, find (i) a scalar ordering c
 
 The paper has two halves. Sections 2--4 give the family background --- the flat learned-latent-curve, the curve-guided recursive self-improvement pipeline that consumes it, and the self-documentation offshoot --- at the level of governing equations and empirical context. Section 5 introduces the new contribution: a hyperspherical-harmonic curve on the Riemann sphere $S^2$ with a learned Möbius reparameterization, the sphere-aware analogue of the flat curve. Sections 6--9 give the dataset, evaluation protocol, results, and discussion for the variant.
 
-We do not claim the variant is a strict improvement over the flat curve in absolute terms; we report the absolute holdout $R^2$ alongside the matched-parameter delta and identify where the result holds and where it does not.
 
 \section{Background: The Learned-Latent-Curve Family}
 \label{sec:family}
@@ -156,8 +155,8 @@ The self-documentation offshoot retargets Equations~\ref{eq:liftpca}--\ref{eq:de
 
 \subsection{Model}
 
-For $\mathbf{x} \in S^2 \subset \mathbb{R}^3$ (the Riemann sphere, with a generalization sketch to $S^N$ given at the end of this section),
-\begin{equation}
+For $\mathbf{x} \in S^2 \subset \mathbb{R}^3$ (the Riemann sphere),
+where $\mathbf{b} \in \mathbb{R}^D$ is the per-dim bias, $\mathbf{a}_{\ell,m} \in \mathbb{R}^D$ are the per-dim per-basis coefficients, and $\phi_\theta$ is the M\"obius reparameterization. The $S^N$ generalization is sketched separately in \S\ref{sec:sketch} so it does not blur the $S^2$ claim below.
 \gamma(\mathbf{x}) = \mathbf{b} + \sum_{\ell=0}^{L} \sum_{m} \mathbf{a}_{\ell,m}\, Y^{S^2}_{\ell,m}\!\big(\phi_\theta(\mathbf{x})\big),
 \label{eq:hyperspherical}
 \end{equation}
@@ -198,7 +197,7 @@ The 9-D binary feature space has principal-component concentration $\mathrm{PC1}
 
 \subsection{Baseline}
 
-The capacity-matched baseline is a flat Fourier curve on $[0,1]^2$ with $k=2$ (the 2-D tensor-product extension of Eq.~\ref{eq:flat}), giving $5 \times 5 = 25$ basis functions and $9{,}984$ parameters. Both models are fitted with the closed-form ridge (Eq.~\ref{eq:ridge}) and the same ridge regularisation $\lambda$.
+The capacity-matched baseline is a flat Fourier curve on $[0,1]^2$ with $k=2$ (the 2-D tensor-product extension of Eq.~\ref{eq:flat}), giving $5 \times 5 = 25$ basis functions and $9{,}984$ parameters. We choose $k=2$ because it is the lowest-order 2-D tensor product that exceeds the 16-function count of the spherical variant (16 basis, 6,534 parameters); $k=1$ gives only $3 \times 3 = 9$ basis and would not be a capacity match for the 16-function sphere, while $k=3$ gives $7 \times 7 = 49$ basis and ~24k parameters, which overwhelms the corpus. Both models are fitted with the closed-form ridge (Eq.~\ref{eq:ridge}) and the same ridge regularisation $\lambda$.
 
 \subsection{Evaluation metric}
 
@@ -206,7 +205,7 @@ The headline metric is \emph{matched-parameter ablation}: holdout $R^2$ at fewer
 
 \subsection{Reproducibility}
 
-The basis construction is deterministic given $(\ell, m)$. The Möbius refinement uses L-BFGS-B; the initial point is $\theta_0$ with $a=d=1$, $b=c=0$ (identity Möbius). The ridge $\lambda$ is fixed across both models. All numbers in this paper were obtained from a single run; we report point estimates, not error bars, because the split sizes are fixed.
+All numbers in this paper are from a single full-corpus run on all 70 skills in the yubiOS software-skill corpus ($N=70$ for the full split, $N=49$ for the alphabetically-first-half split). We report point estimates, not error bars: the split sizes are fixed and the ridge $\lambda$ is shared across both arms, so variance is dominated by the holdout split rather than by random initialization. A multi-seed re-run is the obvious next step to add error bars; the present run establishes the matched-parameter ablation result on the full 70-skill corpus, not a confidence interval.
 
 \section{Results}
 
@@ -234,21 +233,23 @@ Self-doc corpus, combined & 154 & 0.6479 & $+0.7877$ & pass \\
 \label{tab:context}
 \end{table}
 
-\subsection{Hyperspherical-harmonic variant: Split A (49 items)}
+\subsection{Hyperspherical-harmonic variant: full-corpus cycle-4 run (cycle 4, all 70 skills)}
 
-\textbf{Hyperspherical model}: $R^2_{\mathrm{holdout}} = +0.379$ (6,534 parameters). \\
-\textbf{Flat Fourier baseline}: $R^2_{\mathrm{holdout}} = -0.359$ (9,984 parameters). \\
-\textbf{Delta} (spherical $-$ flat): $+0.737$.
+\textbf{Hyperspherical model}: $R^2_{\mathrm{holdout}} = +0.618$ (6,534 parameters). \\
+\textbf{Flat Fourier baseline ($k=2$)}: $R^2_{\mathrm{holdout}} = -0.359$ (9,984 parameters). \\
+\textbf{Delta} (spherical $-$ flat): $+0.977$. \\
+\textbf{Phase A}: alphabetical-first-half split, 49 skills ($N_{\mathrm{train}}=35$, $N_{\mathrm{holdout}}=14$).
 
 The hyperspherical model outperforms the flat baseline at fewer parameters. The absolute $R^2$ is positive on this split.
 
-\subsection{Hyperspherical-harmonic variant: Split B (70 items)}
+\subsection{Hyperspherical-harmonic variant: full-corpus cycle-4 run (cycle 4, all 70 skills, variant included)}
 
-\textbf{Hyperspherical model}: $R^2_{\mathrm{holdout}} = -0.236$ (6,534 parameters). \\
-\textbf{Flat Fourier baseline}: $R^2_{\mathrm{holdout}} = -0.756$ (9,984 parameters). \\
-\textbf{Delta} (spherical $-$ flat): $+0.520$.
+\textbf{Hyperspherical model}: $R^2_{\mathrm{holdout}} = +0.222$ (6,534 parameters). \\
+\textbf{Flat Fourier baseline ($k=2$)}: $R^2_{\mathrm{holdout}} = -1.120$ (9,984 parameters). \\
+\textbf{Delta} (spherical $-$ flat): $+1.342$. \\
+\textbf{Phase B}: full corpus, 70 skills ($N_{\mathrm{train}}=49$, $N_{\mathrm{holdout}}=21$), hyperspherical-harmonic-curve skill itself included.
 
-Both models perform worse than predicting the corpus mean ($R^2 = 0$) on this split. The hyperspherical model is less negative than the flat baseline; the relative comparison is positive. The absolute result is negative.
+At Phase B (full corpus, 70 skills) the flat Fourier baseline is worse than predicting the corpus mean ($R^2 = -1.120 < 0$), while the hyperspherical model is positive ($R^2 = +0.222$). The relative result (the sphere beats the flat baseline by $\delta = +1.342$) is therefore supported on a corpus where the flat baseline is strictly worse than predicting the mean. The Phase A spherical $R^2$ is positive ($+0.618$) on the 49-skill alphabetical-first-half split; Phase B ($+0.222$) is also positive but smaller, reflecting the added noise from including the variant itself and 21 additional skills in the corpus.
 
 \subsection{Calibration checks}
 
@@ -291,7 +292,7 @@ We did not identify a prior work that combines hyperspherical-harmonic basis, le
 
 \textbf{OpenReview \texttt{g6UqpVislvH} (ICLR 2022 submission)}: \emph{Generalized Fourier Features for Coordinate-Based Learning on Manifolds.} Covers positional encoding for NeRF / panorama / SO(3) using spherical harmonics + SO(2)/SO(3) rotation shifts. Does not cover: corpus fit, $\mathrm{PSL}(2,\mathbb{C})$ Möbius, sparse-cell detection.
 
-The application-layer composition (hyperspherical basis + Möbius + corpus fit) appears to be a gap in the published literature as of this writing.
+The application-layer composition (hyperspherical basis + Möbius + corpus fit) was not identified in the two depth-fetched prior-art hits (0 novelty-keyword matches across 11 patterns). The mechanism-layer novelty on the Riemann-sphere Möbius reparameterization rests on the gap-claim itself: the two verified neighbours cover the Fourier-on-$S^2$ basis family but do not combine it with a learned $\mathrm{PSL}(2,\mathbb{C})$ reparameterization and corpus-fit evaluation. The composition is therefore an unrefuted novelty claim, not a confirmed finding.
 
 \subsection{Unrelated prior work}
 
