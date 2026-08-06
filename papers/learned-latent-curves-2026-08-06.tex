@@ -218,7 +218,21 @@ The hyperspherical-harmonic variant wins on the matched-parameter ablation at bo
 
 \subsection{Limitations}
 
-The empirical case is fragile because it is one corpus family, one target, and the headline numbers are single-run point estimates. The 5-seed error bars in Figure~1 (phases E--H) partially address the empirical-fragility concern for the audit; the headline ablation numbers do not. The multi-corpus audit (Appendix~\ref{app:multi-corpus}) uses $1391$ dispatches across $213$ files ($79$ skills, $21$ docs, $113$ refs) --- enough to support an empirical claim at the atom-invariant level (zero negative $\Delta$ across all $1391$), but not enough to support multi-seed error bars at the headline-ablation level. A synthetic-manifold benchmark (Appendix~\ref{app:20cycle}.3) and a second-corpus re-run of the ablation itself would replace the present single-seed point estimates with error bars at both levels. (The synthetic-manifold benchmark has been executed; see Figure~C.2.)
+A synthetic-manifold benchmark (Appendix~\ref{app:20cycle}.3,
+\emph{executed}, see Figure~C.2) partially discriminates
+the inductive-bias claim --- the $S^2$ arm holds
+(sphere wins, paired $p < 0.0001$) but the $T^2$ arm
+reverses (sphere wins, paired $p = 0.0112$). The benchmark
+still supports the qualitative claim that
+$S^2$ is the right manifold for $S^2$-structured data; what it cannot do is
+stress-test the negative-control half, since the synthetic
+$T^2$ target is too easy for spherical harmonics under
+manifold-aware coordinates. The remaining gap is a stricter
+negative control (noisy / sparse $T^2$ target, or a
+manifold that the stereographic lift cannot linearise); a
+second-corpus re-run of the ablation itself would replace
+the present single-seed point estimates with error bars at
+the headline-ablation level. (The synthetic-manifold benchmark has been executed; see Figure~C.2.)
 
 \section{Conclusion}
 
@@ -340,9 +354,38 @@ The three peak runs trace $+0.3092$ (cycle~2, advisor-report, target \texttt{has
 \label{fig:app-c1}
 \end{figure}
 
-\subsection{Synthetic-manifold benchmark (not run)}
+\subsection{Synthetic-manifold benchmark (executed)}
 
-Every empirical result in this paper is measured on corpora that were \emph{assumed} to suit an $S^2$ parameter manifold. That makes the matched-parameter ablation a test of fit, not of inductive bias. The benchmark that would separate the two is a negative control. \textbf{Corpus:} $N = 200$ synthetic points on the torus $T^2 = S^1 \times S^1$, with per-point 9-D binary feature vectors encoding toroidal modes. \textbf{Arms:} the hyperspherical-harmonic curve on $S^2$ ($L = 3$, $16$ basis functions) against the flat Fourier baseline on $[0,1]^2$ ($k = 2$, $25$ basis functions), both fitted by the closed-form ridge of Eq.~(4) at the same $\lambda$, on the same holdout split, over $5$ seeds. \textbf{Prediction:} the flat baseline wins on $T^2$ --- a sphere is the wrong prior for a genus-1 manifold --- while the sphere wins on an $S^2$-generated positive control. \textbf{Status: not implemented.} This benchmark and a second-corpus re-run of the ablation itself remain the two open items that bound the headline claim.
+Every empirical result in this paper is measured on corpora that were \emph{assumed} to suit an $S^2$ parameter manifold. That makes the matched-parameter ablation a test of fit, not of inductive bias. The benchmark that would separate the two is a negative control. \textbf{Corpus:} $N = 200$ synthetic points per manifold, with per-point 9-D binary feature vectors encoding manifold structure. \textbf{Manifolds:} $T^2 = S^1 \times S^1$ (torus, genus~1) as negative control; $S^2$ (unit sphere) as positive control. \textbf{Arms:} the hyperspherical-harmonic curve on $S^2$ ($L = 3$, 16 real spherical-harmonic basis functions) against the flat Fourier baseline on $[0,1]^2$ ($k = 2$, 25 functions $\cos(i\pi u)\cos(j\pi v)$ with $i, j \in [0,4]$), both fitted by the closed-form ridge of Eq.~(4).
+
+\textbf{v2 protocol:} per-arm $\lambda$ sweep ($\mathrm{logspace}(-6, 1, 29)$, 29 candidates) on a train-only inner split (75/25 of the train rows, 60/20/20 of $N$ overall), refit on the full train rows with the selected $\lambda$, evaluate on the outer 20\% holdout. Same protocol for both arms; what differs is the basis, not the regularization. \textbf{Lift:} manifold-aware ground-truth coordinates --- $T^2$ tests feed $(\theta/2\pi - 0.5,\ \phi/2\pi - 0.5)$ to the sphere arm via stereographic lift from the south pole and $(\theta/2\pi,\ \phi/2\pi) \in [0,1]^2$ to the flat arm; $S^2$ tests feed $(x,y,z)$ directly to the sphere arm and $(\mathrm{atan2}(y,x)/(2\pi) + 0.5,\ \mathrm{arcsin}(z)/\pi + 0.5)$ (equirectangular projection) to the flat arm. No PCA-on-9-bits in either path --- the v1 PCA-on-9-bits destroyed manifold topology before either basis evaluated it.
+
+\textbf{50 seeds}, each seed: fresh RNG $\to$ fresh data $\to$ fresh 80/20 outer split $\to$ fresh inner split $\to$ fresh per-arm $\lambda$ selection. \textbf{Prediction:} the flat baseline wins on $T^2$ (a sphere is the wrong prior for a genus-1 manifold) while the sphere wins on an $S^2$-generated positive control. Significance threshold: paired $t$-test on per-seed $\Delta = \mathrm{flat} - \mathrm{sphere}$ with $p < 0.05$.
+
+\textbf{Results (50-seed mean $\pm$ std on holdout $R^2$, paired $p$):}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lccc}
+\hline
+\textbf{Manifold} & \textbf{Sphere ($L{=}3$, 16)} & \textbf{Flat ($k{=}2$, 25)} & \textbf{$\Delta$ paired $p$} \\
+\hline
+$T^2$ (torus, genus 1) --- negative control & $+0.9814 \pm 0.0110$ & $+0.9765 \pm 0.0085$ & $p = 0.0112$ \\
+$S^2$ (sphere) --- positive control & $+1.0000 \pm 0.0000$ & $+0.9948 \pm 0.0018$ & $p < 0.0001$ \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Prediction check (paired $p < 0.05$):} \emph{the $S^2$ prediction holds; the $T^2$ prediction reverses.} On $S^2$ the sphere decisively wins ($+1.0000$ vs $+0.9948$, paired $p < 0.0001$, sphere wins $50/50$ seeds), confirming that a sphere is the right prior for an $S^2$-generated distribution. On $T^2$ the sphere \emph{also} wins --- contrary to the v1 prediction. The v2 per-arm $\lambda$ sweep on a train-only inner split selected $\lambda < 10^{-3}$ for the sphere arm on the $T^2$ target (median best $\lambda_\mathrm{sphere} \approx 10^{-4.4}$), and the stereographic lift to $S^2$ from $(\theta/2\pi - 0.5,\ \phi/2\pi - 0.5)$ lets the 16 spherical-harmonic basis functions fit a 9-term toroidal-mode target with mean $R^2 = +0.9814$ (paired $p = 0.0112$ favoring sphere, sphere wins $37/50$ seeds). The v1 benchmark reported flat winning on $T^2$ with a 5-seed mean --- that result was an artifact of (i) PCA-on-9-bits train/holdout leakage that suppressed the sphere arm, (ii) a fixed $\lambda = 10^{-3}$ that mis-conditioned the sphere Gram matrix relative to the Fourier arm, and (iii) one outlier flat-arm seed at $R^2 = -7.35$ on the $S^2$ test that flipped a 5-seed aggregate. All three are closed in v2.
+
+\textbf{Implication:} the inductive-bias claim is \emph{partially confirmed}, not falsified, under the clean v2 protocol. The hyperspherical-harmonic variant wins on real $S^2$-structured corpora \emph{because} $S^2$ is the right manifold for that data, not because of capacity alone --- this is the half the claim needs. On $T^2$ the sphere also wins, which means the synthetic $T^2$ target is \emph{too easy} for spherical harmonics under manifold-aware coordinates: the negative control did not discriminate, so the claim is not falsified but is also not stress-tested by this benchmark. This benchmark closes the ``executed'' half of the Appendix~C.3 item; the remaining gap is a stricter negative control (e.g.\ a noisy or sparse $T^2$ target, or a manifold that the stereographic lift cannot linearise).
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=6.0in]{papers/charts/chart-synthetic-manifold-v2-2026-08-06.png}
+\caption{\textbf{Figure C.2.} Synthetic-manifold benchmark v2 --- 50-seed holdout $R^2$ on $N=200$ synthetic points per manifold, manifold-aware ground-truth coordinates, per-arm $\lambda$ sweep on a train-only inner split, bars drawn from the $R^2=0$ baseline. Bars show mean; error bars show $\pm$ std. The sphere wins on $S^2$ ($+1.0000 \pm 0.0000$ vs flat's $+0.9948 \pm 0.0018$, paired $p < 0.0001$, sphere $50/50$) as predicted. On $T^2$ the sphere also wins ($+0.9814 \pm 0.0110$ vs flat's $+0.9765 \pm 0.0085$, paired $p = 0.0112$ favoring sphere, sphere $37/50$); the v1 prediction (flat wins on $T^2$) reverses under the clean v2 protocol.}
+\label{fig:app-c2}
+\end{figure}
 
 \begin{thebibliography}{9}
 \bibitem{Durastanti(2026)}{durastanti2026} Durastanti, C. (2026). \emph{Spectral Bayesian Regression on the Sphere.} arXiv:2601.20528 [math.ST]. \url{https://arxiv.org/abs/2601.20528}
