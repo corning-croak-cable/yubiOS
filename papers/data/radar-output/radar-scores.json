@@ -1,0 +1,1179 @@
+{
+  "basis": [
+    "attestation",
+    "trust_chain",
+    "least_privilege",
+    "declarative_policy",
+    "continuous_adaptive",
+    "immutability",
+    "audit_evidence",
+    "cryptographic_identity",
+    "segmentation"
+  ],
+  "primitive_definitions": {
+    "attestation": "Attestation \u2014 verifiable evidence a system meets a claim (TPM2 quotes, Rekor v2, keylime)",
+    "trust_chain": "Trust chain \u2014 root-of-trust + transitive trust establishment (UKI, PCR, dm-verity)",
+    "least_privilege": "Least privilege \u2014 minimal-capability authorization (pod security, capabilities, cgroups)",
+    "declarative_policy": "Declarative policy \u2014 desired-state definitions (k8s, composefs, Image Mode)",
+    "continuous_adaptive": "Continuous / adaptive \u2014 runtime detection + auto-remediation (Falco, keylime)",
+    "immutability": "Immutability \u2014 read-only / signed artifacts (dm-verity, composefs, sealed-uki-vm)",
+    "audit_evidence": "Audit / evidence \u2014 tamper-evident trail (audit-evidence-packaging, SLSA)",
+    "cryptographic_identity": "Cryptographic identity \u2014 device- or workload-bound keys (TPM2, YubiKey FIDO2)",
+    "segmentation": "Segmentation \u2014 process / VM / network isolation (nspawn, vfio-user, ADR-031)"
+  },
+  "corpus_origin": "real",
+  "corpus_source_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/rsi-79-corpus-multi-cycle-2026-08-06.json",
+  "n_items": 79,
+  "scores": {
+    "0pointer-mastery": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "api-and-interface-design": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "arm-trusted-firmware-optee": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "ascii-uart-animator": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    "audit-evidence-packaging": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "bcvk-virtualization": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "bootc-images": [
+      1,
+      0,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "browser-testing-with-devtools": [
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "ci-cd-and-automation": [
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "code-review-and-quality": [
+      1,
+      1,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "code-simplification": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "composefs-kernel-floors": [
+      1,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      1,
+      1
+    ],
+    "context-engineering": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "context-isolation": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "curve-guided-rsi": [
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "curve-guided-rsi-self": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "debug-with-cli": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1
+    ],
+    "debugging-and-error-recovery": [
+      1,
+      1,
+      1,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "deprecation-and-migration": [
+      1,
+      1,
+      1,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "dm-verity-and-integrity": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "docker-bake-action": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "docker-build-policy": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "docker-build-push-action": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "docker-buildx-rootless": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "docker-login-action": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "docker-metadata-action": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "docker-setup-buildx-action": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "docker-setup-qemu-action": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "documentation-and-adrs": [
+      1,
+      1,
+      1,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "doubt-driven-development": [
+      1,
+      1,
+      0,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "drm-gpu-quota-secure-time": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "fedora-bootc-base-images": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "frontend-ui-engineering": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "ftpm-optee-tpm": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "git-workflow-and-versioning": [
+      1,
+      1,
+      1,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "github-actions": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "github-api": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "github-stacked-pull-requests": [
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "human-for-feasibility": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "hyperspherical-harmonic-curve": [
+      1,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0
+    ],
+    "idea-kill": [
+      1,
+      1,
+      1,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "idea-refine": [
+      1,
+      1,
+      1,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "ideate-solo": [
+      1,
+      1,
+      1,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "incremental-implementation": [
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "internal-big-picture": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "internal-nonlex-tokens": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0
+    ],
+    "interview-me": [
+      1,
+      1,
+      1,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "learned-latent-curve": [
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "linkedin-browser-outreach": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "mkosi-image-builder": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "negative-skill-space": [
+      1,
+      0,
+      0,
+      1,
+      1,
+      0,
+      1,
+      0,
+      0
+    ],
+    "novelty-indication": [
+      1,
+      1,
+      1,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "nspawn-containers": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "observability-and-instrumentation": [
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "performance-optimization": [
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "planning-and-task-breakdown": [
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "play-audio-on-rock1": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    "pr-launch": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "prior-art-search": [
+      1,
+      1,
+      1,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "radio-queue": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    "recursive-self-improvement": [
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1,
+      0,
+      1
+    ],
+    "restful-self": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    "rootless-container-builds": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "security-and-hardening": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "self-archaeology": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0
+    ],
+    "shipping-and-launch": [
+      1,
+      1,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "sigstore-rekor-v2": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "single-action-curve-rsi": [
+      0,
+      0,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1,
+      0
+    ],
+    "slsa-provenance": [
+      1,
+      0,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "source-driven-development": [
+      1,
+      1,
+      1,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "spec-driven-development": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "systemd-hardening": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "systemd-homed": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "test-driven-development": [
+      1,
+      1,
+      1,
+      0,
+      0,
+      1,
+      1,
+      1,
+      1
+    ],
+    "the-cult": [
+      1,
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "the-follower": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "token-efficiency": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "using-agent-skills": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "yubikey-operations": [
+      1,
+      1,
+      0,
+      1,
+      0,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  "missing_primitives": {
+    "0pointer-mastery": [],
+    "api-and-interface-design": [
+      "continuous_adaptive"
+    ],
+    "arm-trusted-firmware-optee": [
+      "continuous_adaptive"
+    ],
+    "ascii-uart-animator": [
+      "attestation",
+      "trust_chain",
+      "least_privilege",
+      "declarative_policy",
+      "continuous_adaptive",
+      "immutability",
+      "audit_evidence",
+      "cryptographic_identity"
+    ],
+    "audit-evidence-packaging": [],
+    "bcvk-virtualization": [
+      "continuous_adaptive"
+    ],
+    "bootc-images": [
+      "trust_chain",
+      "continuous_adaptive"
+    ],
+    "browser-testing-with-devtools": [
+      "declarative_policy"
+    ],
+    "ci-cd-and-automation": [
+      "declarative_policy"
+    ],
+    "code-review-and-quality": [
+      "least_privilege",
+      "declarative_policy",
+      "continuous_adaptive"
+    ],
+    "code-simplification": [
+      "continuous_adaptive"
+    ],
+    "composefs-kernel-floors": [
+      "least_privilege",
+      "declarative_policy",
+      "continuous_adaptive",
+      "audit_evidence"
+    ],
+    "context-engineering": [
+      "continuous_adaptive"
+    ],
+    "context-isolation": [
+      "continuous_adaptive"
+    ],
+    "curve-guided-rsi": [
+      "trust_chain"
+    ],
+    "curve-guided-rsi-self": [],
+    "debug-with-cli": [
+      "attestation",
+      "trust_chain",
+      "least_privilege",
+      "declarative_policy",
+      "continuous_adaptive",
+      "immutability",
+      "audit_evidence"
+    ],
+    "debugging-and-error-recovery": [
+      "declarative_policy",
+      "continuous_adaptive"
+    ],
+    "deprecation-and-migration": [
+      "declarative_policy",
+      "continuous_adaptive"
+    ],
+    "dm-verity-and-integrity": [],
+    "docker-bake-action": [
+      "continuous_adaptive"
+    ],
+    "docker-build-policy": [
+      "continuous_adaptive"
+    ],
+    "docker-build-push-action": [],
+    "docker-buildx-rootless": [
+      "continuous_adaptive"
+    ],
+    "docker-login-action": [],
+    "docker-metadata-action": [],
+    "docker-setup-buildx-action": [
+      "continuous_adaptive"
+    ],
+    "docker-setup-qemu-action": [
+      "continuous_adaptive"
+    ],
+    "documentation-and-adrs": [
+      "declarative_policy",
+      "continuous_adaptive"
+    ],
+    "doubt-driven-development": [
+      "least_privilege",
+      "continuous_adaptive"
+    ],
+    "drm-gpu-quota-secure-time": [
+      "continuous_adaptive"
+    ],
+    "fedora-bootc-base-images": [
+      "continuous_adaptive"
+    ],
+    "frontend-ui-engineering": [],
+    "ftpm-optee-tpm": [],
+    "git-workflow-and-versioning": [
+      "declarative_policy",
+      "continuous_adaptive"
+    ],
+    "github-actions": [],
+    "github-api": [
+      "continuous_adaptive"
+    ],
+    "github-stacked-pull-requests": [
+      "trust_chain"
+    ],
+    "human-for-feasibility": [
+      "continuous_adaptive"
+    ],
+    "hyperspherical-harmonic-curve": [
+      "trust_chain",
+      "least_privilege",
+      "declarative_policy",
+      "audit_evidence",
+      "cryptographic_identity",
+      "segmentation"
+    ],
+    "idea-kill": [
+      "declarative_policy",
+      "continuous_adaptive"
+    ],
+    "idea-refine": [
+      "declarative_policy",
+      "continuous_adaptive"
+    ],
+    "ideate-solo": [
+      "declarative_policy",
+      "continuous_adaptive"
+    ],
+    "incremental-implementation": [
+      "declarative_policy"
+    ],
+    "internal-big-picture": [],
+    "internal-nonlex-tokens": [
+      "attestation",
+      "trust_chain",
+      "least_privilege",
+      "declarative_policy",
+      "continuous_adaptive",
+      "cryptographic_identity",
+      "segmentation"
+    ],
+    "interview-me": [
+      "declarative_policy",
+      "continuous_adaptive"
+    ],
+    "learned-latent-curve": [
+      "trust_chain"
+    ],
+    "linkedin-browser-outreach": [
+      "continuous_adaptive"
+    ],
+    "mkosi-image-builder": [
+      "continuous_adaptive"
+    ],
+    "negative-skill-space": [
+      "trust_chain",
+      "least_privilege",
+      "immutability",
+      "cryptographic_identity",
+      "segmentation"
+    ],
+    "novelty-indication": [
+      "declarative_policy",
+      "continuous_adaptive"
+    ],
+    "nspawn-containers": [
+      "continuous_adaptive"
+    ],
+    "observability-and-instrumentation": [
+      "least_privilege"
+    ],
+    "performance-optimization": [
+      "declarative_policy"
+    ],
+    "planning-and-task-breakdown": [
+      "declarative_policy"
+    ],
+    "play-audio-on-rock1": [
+      "attestation",
+      "trust_chain",
+      "least_privilege",
+      "declarative_policy",
+      "continuous_adaptive",
+      "immutability",
+      "audit_evidence",
+      "cryptographic_identity"
+    ],
+    "pr-launch": [],
+    "prior-art-search": [
+      "declarative_policy",
+      "continuous_adaptive"
+    ],
+    "radio-queue": [
+      "attestation",
+      "trust_chain",
+      "least_privilege",
+      "declarative_policy",
+      "continuous_adaptive",
+      "immutability",
+      "audit_evidence",
+      "cryptographic_identity"
+    ],
+    "recursive-self-improvement": [
+      "trust_chain",
+      "cryptographic_identity"
+    ],
+    "restful-self": [
+      "attestation",
+      "trust_chain",
+      "least_privilege",
+      "declarative_policy",
+      "continuous_adaptive",
+      "audit_evidence",
+      "cryptographic_identity",
+      "segmentation"
+    ],
+    "rootless-container-builds": [],
+    "security-and-hardening": [],
+    "self-archaeology": [
+      "attestation",
+      "trust_chain",
+      "least_privilege",
+      "declarative_policy",
+      "continuous_adaptive",
+      "cryptographic_identity",
+      "segmentation"
+    ],
+    "shipping-and-launch": [
+      "least_privilege",
+      "declarative_policy"
+    ],
+    "sigstore-rekor-v2": [
+      "continuous_adaptive"
+    ],
+    "single-action-curve-rsi": [
+      "attestation",
+      "trust_chain",
+      "least_privilege",
+      "declarative_policy",
+      "segmentation"
+    ],
+    "slsa-provenance": [
+      "trust_chain",
+      "continuous_adaptive"
+    ],
+    "source-driven-development": [
+      "declarative_policy",
+      "continuous_adaptive"
+    ],
+    "spec-driven-development": [],
+    "systemd-hardening": [],
+    "systemd-homed": [],
+    "test-driven-development": [
+      "declarative_policy",
+      "continuous_adaptive"
+    ],
+    "the-cult": [
+      "declarative_policy"
+    ],
+    "the-follower": [],
+    "token-efficiency": [],
+    "using-agent-skills": [],
+    "yubikey-operations": [
+      "least_privilege",
+      "continuous_adaptive"
+    ]
+  }
+}
