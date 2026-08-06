@@ -1013,7 +1013,7 @@ jobs:
         run: sudo apt-get update -qq && sudo apt-get install -y -qq jq
       - name: Verify published image attestations + cosign signature
         env:
-          IMAGE_TAG: 0mniteck/yubios:${{ github.sha }}
+          IMAGE_TAG: 0mniteck/yubios:installer-${{ github.sha }}
           WORKFLOW_FILE: ci_mkosi-installer.yml
         run: |
           WORKFLOW_FILES="${WORKFLOW_FILE%.yml}" \
