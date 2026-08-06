@@ -1,0 +1,1373 @@
+{
+  "corpus": "skills",
+  "basis": [
+    "has_purpose",
+    "has_evidence",
+    "has_correction",
+    "has_constraint",
+    "has_pushback",
+    "has_test",
+    "has_source",
+    "has_recommendation",
+    "has_priority"
+  ],
+  "primitive_definitions": {
+    "has_purpose": "deep-research 9-primitive variant (#0) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis",
+    "has_evidence": "deep-research 9-primitive variant (#1) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis",
+    "has_correction": "deep-research 9-primitive variant (#2) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis",
+    "has_constraint": "deep-research 9-primitive variant (#3) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis",
+    "has_pushback": "deep-research 9-primitive variant (#4) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis",
+    "has_test": "deep-research 9-primitive variant (#5) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis",
+    "has_source": "deep-research 9-primitive variant (#6) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis",
+    "has_recommendation": "deep-research 9-primitive variant (#7) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis",
+    "has_priority": "deep-research 9-primitive variant (#8) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis"
+  },
+  "n_items": 74,
+  "pc1_explained": 0.6731803668731766,
+  "pc2_explained": 0.20841708354590388,
+  "pc1_plus_pc2": 0.8815974504190804,
+  "ridge_lambda": 0.001,
+  "basis_L": 3,
+  "basis_size": 16,
+  "identity_mobius_frozen": true,
+  "fit_method": "closed-form ridge on real spherical-harmonic basis (L=3, 16 functions)",
+  "distance_metric": "chordal S^2 (bounded [0, 2])",
+  "sub20_warning": false,
+  "saturated_count": 0,
+  "sparse_count": 73,
+  "avg_coverage": 0.17567567567567569,
+  "points": [
+    {
+      "file": "0pointer-mastery",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "api-and-interface-design",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "arm-trusted-firmware-optee",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "audit-evidence-packaging",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "bcvk-virtualization",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "bootc-images",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "browser-testing-with-devtools",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "ci-cd-and-automation",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "code-review-and-quality",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "code-simplification",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "composefs-kernel-floors",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "context-engineering",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "context-isolation",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "continuous-runtime-detection-falco",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "curve-guided-rsi",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "debugging-and-error-recovery",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "deprecation-and-migration",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "dm-verity-and-integrity",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "docker-bake-action",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "docker-build-policy",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "docker-build-push-action",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "docker-buildx-rootless",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "docker-login-action",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "docker-metadata-action",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "docker-setup-buildx-action",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "docker-setup-qemu-action",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "documentation-and-adrs",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "doubt-driven-development",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "drm-gpu-quota-secure-time",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "fedora-bootc-base-images",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "frontend-ui-engineering",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "ftpm-optee-tpm",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "git-workflow-and-versioning",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "github-actions",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "github-api",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "github-stacked-pull-requests",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "human-for-feasibility",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "hyperspherical-harmonic-curve",
+      "lon": -64.34512328752244,
+      "lat": -5.218655862168808,
+      "t": 0.16522113814967454,
+      "residual": 0.011920805352940197,
+      "primitives": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "idea-kill",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "idea-refine",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "ideate-solo",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "incremental-implementation",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "internal-big-picture",
+      "lon": -64.34512328752244,
+      "lat": -5.218655862168808,
+      "t": 0.16522113814967454,
+      "residual": 0.011920805352940197,
+      "primitives": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "interview-me",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "learned-latent-curve",
+      "lon": 56.23787685833188,
+      "lat": -27.970849264511173,
+      "t": 0.14340535473390964,
+      "residual": 0.02005492064172582,
+      "primitives": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "least-privilege-pod-security-standards",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "linkedin-browser-outreach",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "mkosi-image-builder",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "negative-skill-space",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "novelty-indication",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "nspawn-containers",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "observability-and-instrumentation",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "performance-optimization",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "planning-and-task-breakdown",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "pr-launch",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "prior-art-search",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "recursive-self-improvement",
+      "lon": 56.23787685833188,
+      "lat": -27.970849264511173,
+      "t": 0.14340535473390964,
+      "residual": 0.02005492064172582,
+      "primitives": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "rootless-container-builds",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "runtime-attestation-keylime",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "security-and-hardening",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "shipping-and-launch",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "sigstore-rekor-v2",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "single-action-curve-rsi",
+      "lon": 5.52828137219233,
+      "lat": 49.97424833312438,
+      "t": 1.0,
+      "residual": 0.0007276161341106138,
+      "primitives": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ]
+    },
+    {
+      "file": "slsa-provenance",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "source-driven-development",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "spec-driven-development",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "systemd-hardening",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "systemd-homed",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "test-driven-development",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "the-cult",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "the-follower",
+      "lon": -64.34512328752244,
+      "lat": -5.218655862168808,
+      "t": 0.16522113814967454,
+      "residual": 0.011920805352940197,
+      "primitives": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "token-efficiency",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951477147,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "using-agent-skills",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951476787,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "yubikey-operations",
+      "lon": 165.28709611998454,
+      "lat": -82.02160578310036,
+      "t": 0.0,
+      "residual": 0.00014346624951476787,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+[
+  {
+    "name": "rsi-79-corpus-multi-cycle-2026-08-06.json",
+    "path": "papers/data/rsi-79-corpus-multi-cycle-2026-08-06.json",
+    "sha": "aa36353df0ce95d094ee469e04066024f21121c1",
+    "size": 104523,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/rsi-79-corpus-multi-cycle-2026-08-06.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/rsi-79-corpus-multi-cycle-2026-08-06.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/aa36353df0ce95d094ee469e04066024f21121c1",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/rsi-79-corpus-multi-cycle-2026-08-06.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/rsi-79-corpus-multi-cycle-2026-08-06.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/aa36353df0ce95d094ee469e04066024f21121c1",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/rsi-79-corpus-multi-cycle-2026-08-06.json"
+    }
+  },
+  {
+    "name": "single-action-curve-rsi-cycles-2026-08-05.json",
+    "path": "papers/data/single-action-curve-rsi-cycles-2026-08-05.json",
+    "sha": "9c0ac19c372e2e439cb691f09ca9b7ad7621e00e",
+    "size": 1979,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/single-action-curve-rsi-cycles-2026-08-05.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/single-action-curve-rsi-cycles-2026-08-05.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/9c0ac19c372e2e439cb691f09ca9b7ad7621e00e",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/single-action-curve-rsi-cycles-2026-08-05.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/single-action-curve-rsi-cycles-2026-08-05.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/9c0ac19c372e2e439cb691f09ca9b7ad7621e00e",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/single-action-curve-rsi-cycles-2026-08-05.json"
+    }
+  }
+]
