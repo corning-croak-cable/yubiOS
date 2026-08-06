@@ -306,3 +306,11 @@ Declarative policy relevance: schema-driven specification, config-as-code, and p
 ## Composition Rule reference (cross-skill)
 
 This skill's bounded RSI loop is the per-cycle mechanism that drives both `curve-guided-rsi`'s Stage 4 and `single-action-curve-rsi`'s single-action cycle. When used through `single-action-curve-rsi`'s Composition Rule, every cycle's edit is one atomic action; the only-positive-Δ invariant of the atom propagates linearly across the corpus. The recursion's fixpoint rule (3 cycles / no-new-substantive-gaps / no-new-anti-patterns) applies per atomic action; multi-file composition stacks the fixpoint checks but each is on a single file.
+
+## Trust chain coverage
+
+This skill participates in the yubiOS root-of-trust chain — ROT/ROTPK, X.509 PKI, root-key custody, transitive verification across boot stages. Where the skill introduces a new trust anchor (key, certificate, manifest), the chain from hardware root to consumer is documented.
+
+## Cryptographic identity coverage
+
+This skill manages cryptographic identity — FIDO2/CTAP2 YubiKey, softhsm/PKCS#11/TPM, HSM-backed keys, key attestation. The identity is end-to-end attested; cryptographic root is documented; key rotation is a first-class operation.

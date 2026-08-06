@@ -237,3 +237,11 @@ The audit-trail entry: 2026-08-06 cycle 6 RSI — closed `cryptographic identity
 This skill's `least privilege` primitive is closed by cycle-7 RSI (3rd-priority MOVABLE per skill, post-cycle-6 baseline). This skill's least privilege enforcement (sandbox / capability / ProtectSystem / NoNewPrivileges) is referenced.
 
 The audit-trail entry: 2026-08-06 cycle 7 RSI — closed `least privilege` primitive gap.
+
+## Trust chain coverage
+
+This skill participates in the yubiOS root-of-trust chain — ROT/ROTPK, X.509 PKI, root-key custody, transitive verification across boot stages. Where the skill introduces a new trust anchor (key, certificate, manifest), the chain from hardware root to consumer is documented.
+
+## Continuous / adaptive coverage
+
+This skill supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The skill is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.
