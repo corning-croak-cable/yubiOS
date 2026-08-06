@@ -772,33 +772,6 @@ jobs:
           jq -e . sbom.json
           jq -e . provenance.json
 
-      - name: Attach SPDX SBOM attestation (cosign attest, per-arch installer)
-        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true && matrix.publish == true
-        run: |
-          cosign initialize >/dev/null
-          INSTALLER_DIGEST=$(grep installer per-arch-digests.txt | cut -d ' ' -f 2)
-          for attempt in 1 2 3 4 5; do
-            cosign attest --key cosign/yubios-omni157.key --type spdxjson --predicate sbom.json "0mniteck/yubios:installer@$INSTALLER_DIGEST" && exit 0
-            echo "::warning::cosign per-arch-spdxjson attempt ${attempt}/5 failed; retry in $((attempt * 15))s" >&2
-            sleep $((attempt * 15))
-          done
-          echo "::error::cosign per-arch-spdxjson failed after 5 attempts" >&2
-          exit 1
-
-
-      - name: Attach SLSA v1.0 provenance attestation (cosign attest, per-arch installer)
-        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true && matrix.publish == true
-        run: |
-          INSTALLER_DIGEST=$(grep installer per-arch-digests.txt | cut -d ' ' -f 2)
-          for attempt in 1 2 3 4 5; do
-            cosign attest --key cosign/yubios-omni157.key --type slsaprovenance1 --predicate provenance.json "0mniteck/yubios:installer@$INSTALLER_DIGEST" && exit 0
-            echo "::warning::cosign per-arch-slsaprovenance1 attempt ${attempt}/5 failed; retry in $((attempt * 15))s" >&2
-            sleep $((attempt * 15))
-          done
-          echo "::error::cosign per-arch-slsaprovenance1 failed after 5 attempts" >&2
-          exit 1
-
-
       - name: cosign sign per-arch (ukis + installer per-arch)
         if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true && matrix.publish == true
         run: |
@@ -948,34 +921,6 @@ jobs:
           test -s provenance.json
           jq -e . sbom.json
           jq -e . provenance.json
-
-      - name: Attach SPDX SBOM attestation (cosign attest)
-        env:
-          IMAGE_REF: 0mniteck/yubios:installer-${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
-          COSIGN_PASSWORD: ''
-        run: |
-          for attempt in 1 2 3 4 5; do
-            cosign attest --key cosign/yubios-omni157.key --type spdxjson --predicate sbom.json "$IMAGE_REF" && exit 0
-            echo "::warning::cosign spdxjson attempt ${attempt}/5 failed; retry in $((attempt * 15))s" >&2
-            sleep $((attempt * 15))
-          done
-          echo "::error::cosign spdxjson failed after 5 attempts" >&2
-          exit 1
-
-
-      - name: Attach SLSA v1.0 provenance attestation (cosign attest)
-        env:
-          IMAGE_REF: 0mniteck/yubios:installer-${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
-          COSIGN_PASSWORD: ''
-        run: |
-          for attempt in 1 2 3 4 5; do
-            cosign attest --key cosign/yubios-omni157.key --type slsaprovenance1 --predicate provenance.json "$IMAGE_REF" && exit 0
-            echo "::warning::cosign slsaprovenance1 attempt ${attempt}/5 failed; retry in $((attempt * 15))s" >&2
-            sleep $((attempt * 15))
-          done
-          echo "::error::cosign slsaprovenance1 failed after 5 attempts" >&2
-          exit 1
-
 
       - name: cosign sign (keyless OIDC, GitHub Actions)
         env:

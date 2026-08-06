@@ -469,34 +469,6 @@ jobs:
           jq -e . sbom.json
           jq -e . provenance.json
 
-      - name: Attach SPDX SBOM attestation (cosign attest)
-        env:
-          IMAGE_REF: 0mniteck/yubios:${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
-          COSIGN_PASSWORD: ''
-        run: |
-          for attempt in 1 2 3 4 5; do
-            cosign attest --key cosign/yubios-omni157.key --type spdxjson --predicate sbom.json "$IMAGE_REF" && exit 0
-            echo "::warning::cosign spdxjson attempt ${attempt}/5 failed; retry in $((attempt * 15))s" >&2
-            sleep $((attempt * 15))
-          done
-          echo "::error::cosign spdxjson failed after 5 attempts" >&2
-          exit 1
-
-
-      - name: Attach SLSA v1.0 provenance attestation (cosign attest)
-        env:
-          IMAGE_REF: 0mniteck/yubios:${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
-          COSIGN_PASSWORD: ''
-        run: |
-          for attempt in 1 2 3 4 5; do
-            cosign attest --key cosign/yubios-omni157.key --type slsaprovenance1 --predicate provenance.json "$IMAGE_REF" && exit 0
-            echo "::warning::cosign slsaprovenance1 attempt ${attempt}/5 failed; retry in $((attempt * 15))s" >&2
-            sleep $((attempt * 15))
-          done
-          echo "::error::cosign slsaprovenance1 failed after 5 attempts" >&2
-          exit 1
-
-
       - name: cosign sign (keyless OIDC, GitHub Actions)
         env:
           IMAGE_REF: 0mniteck/yubios:${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
