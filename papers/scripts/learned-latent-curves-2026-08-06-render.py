@@ -75,10 +75,10 @@ style_body = ParagraphStyle(
 )
 style_abstract = ParagraphStyle(
     "Abstract", parent=styles["Normal"],
-    fontName=BODY_FONT, fontSize=10, leading=13.5,
+    fontName=BODY_FONT, fontSize=9.5, leading=13,
     alignment=TA_JUSTIFY, leftIndent=14, rightIndent=14,
-    spaceBefore=4, spaceAfter=10, borderColor=HexColor("#cccccc"),
-    borderWidth=0.5, borderPadding=7, backColor=HexColor("#f8f8f8"),
+    spaceBefore=4, spaceAfter=10, borderColor=HexColor("#888888"),
+    borderWidth=1.2, borderPadding=8, backColor=HexColor("#fafafa"),
 )
 style_equation = ParagraphStyle(
     "Equation", parent=styles["Normal"],
@@ -188,34 +188,34 @@ def tex_to_html(s):
                 cmd = m.group(1)
                 j = i + len(m.group(0))
                 if cmd in ("textbf", "textbf*"):
-                    end = find_balanced(s, j - 1, "{", "}")
+                    end = find_balanced(s, j, "{", "}")
                     if end == -1:
                         i = j
                         continue
-                    inner = tex_to_html(s[j:end])
+                    inner = tex_to_html(s[j+1:end])
                     out.append(f"<b>{inner}</b>")
                     i = end + 1
                     continue
                 elif cmd in ("emph", "textit", "textit*"):
-                    end = find_balanced(s, j - 1, "{", "}")
+                    end = find_balanced(s, j, "{", "}")
                     if end == -1:
                         i = j
                         continue
-                    inner = tex_to_html(s[j:end])
+                    inner = tex_to_html(s[j+1:end])
                     out.append(f"<i>{inner}</i>")
                     i = end + 1
                     continue
                 elif cmd in ("texttt",):
-                    end = find_balanced(s, j - 1, "{", "}")
+                    end = find_balanced(s, j, "{", "}")
                     if end == -1:
                         i = j
                         continue
-                    out.append(f"<b>{tex_to_html(s[j:end])}</b>")
+                    out.append(f"<b>{tex_to_html(s[j+1:end])}</b>")
                     i = end + 1
                     continue
                 elif cmd in ("ref",):
                     # \ref{label} -> "[ref]"
-                    end = find_balanced(s, j - 1, "{", "}")
+                    end = find_balanced(s, j, "{", "}")
                     if end == -1:
                         i = j
                         continue
@@ -249,7 +249,7 @@ def tex_to_html(s):
                     i = end + 1
                     continue
                 elif cmd in ("cite",):
-                    end = find_balanced(s, j - 1, "{", "}")
+                    end = find_balanced(s, j, "{", "}")
                     if end == -1:
                         i = j
                         continue
@@ -257,14 +257,14 @@ def tex_to_html(s):
                     i = end + 1
                     continue
                 elif cmd in ("label",):
-                    end = find_balanced(s, j - 1, "{", "}")
+                    end = find_balanced(s, j, "{", "}")
                     if end == -1:
                         i = j
                         continue
                     i = end + 1  # Discard
                     continue
                 elif cmd in ("url",):
-                    end = find_balanced(s, j - 1, "{", "}")
+                    end = find_balanced(s, j, "{", "}")
                     if end == -1:
                         i = j
                         continue
@@ -272,7 +272,7 @@ def tex_to_html(s):
                     i = end + 1
                     continue
                 elif cmd in ("href",):
-                    end = find_balanced(s, j - 1, "{", "}")
+                    end = find_balanced(s, j, "{", "}")
                     if end == -1:
                         i = j
                         continue
@@ -298,13 +298,101 @@ def tex_to_html(s):
                                 "\\": "\\"}[cmd])
                     i = j
                     continue
-                elif cmd in ("mathrm", "mathbf", "mathit", "mathbb"):
-                    # Treat math commands as text within italic
-                    end = find_balanced(s, j - 1, "{", "}")
+                elif cmd in ("sum", "int", "iint", "oint", "partial", "nabla",
+                            "pm", "mp", "geq", "le", "geq", "leq",
+                            "neq", "ne", "to", "rightarrow", "leftarrow",
+                            "Rightarrow", "Leftarrow", "leftrightarrow",
+                            "infty", "cdot", "times", "div", "approx",
+                            "sim", "equiv", "propto", "ll", "gg",
+                            "le", "ge", "subset", "supset", "subseteq", "supseteq",
+                            "in", "notin", "cup", "cap", "emptyset",
+                            "exists", "forall", "neg",
+                            # Greek letters
+                            "alpha", "beta", "gamma", "delta", "epsilon", "varepsilon",
+                            "zeta", "eta", "theta", "vartheta", "iota", "kappa",
+                            "lambda", "mu", "nu", "xi", "pi", "varpi", "rho",
+                            "varrho", "sigma", "varsigma", "tau", "upsilon",
+                            "phi", "varphi", "chi", "psi", "omega",
+                            "Gamma", "Delta", "Theta", "Lambda", "Xi", "Pi",
+                            "Sigma", "Upsilon", "Phi", "Psi", "Omega",
+                            # Trig / log functions (render as text in italic)
+                            "sin", "cos", "tan", "cot", "sec", "csc",
+                            "arcsin", "arccos", "arctan",
+                            "sinh", "cosh", "tanh", "coth",
+                            "log", "ln", "exp", "lim", "sup", "inf",
+                            "max", "min", "arg", "det",
+                            "det", "dim", "ker", "hom", "Pr",
+                            # Sizing / structural (skip)
+                            "big", "Big", "bigg", "Bigg", "left", "right",
+                            "bigl", "bigr", "Bigl", "Bigr",
+                            "bigl", "bigr", "biggl", "biggr",
+                            "begin", "end"):
+                    sym_map = {
+                        "sum": "∑", "int": "∫", "iint": "∬",
+                        "oint": "∮", "partial": "∂", "nabla": "∇",
+                        "pm": "±", "mp": "∓", "geq": "≥",
+                        "le": "≤", "leq": "≤", "ge": "≥",
+                        "neq": "≠", "ne": "≠", "to": "→",
+                        "rightarrow": "→", "leftarrow": "←",
+                        "Rightarrow": "⇒", "Leftarrow": "⇐",
+                        "leftrightarrow": "↔", "infty": "∞",
+                        "cdot": "·", "times": "×", "div": "÷",
+                        "approx": "≈", "sim": "∼", "equiv": "≡",
+                        "propto": "∝", "ll": "≪", "gg": "≫",
+                        "subset": "⊂", "supset": "⊃",
+                        "subseteq": "⊆", "supseteq": "⊇",
+                        "in": "∈", "notin": "∉",
+                        "cup": "∪", "cap": "∩",
+                        "emptyset": "∅", "exists": "∃",
+                        "forall": "∀", "neg": "¬",
+                        # Greek lowercase
+                        "alpha": "α", "beta": "β", "gamma": "γ",
+                        "delta": "δ", "epsilon": "ε", "varepsilon": "ε",
+                        "zeta": "ζ", "eta": "η", "theta": "θ",
+                        "vartheta": "ϑ", "iota": "ι", "kappa": "κ",
+                        "lambda": "λ", "mu": "μ", "nu": "ν",
+                        "xi": "ξ", "pi": "π", "varpi": "ϖ",
+                        "rho": "ρ", "varrho": "ϱ", "sigma": "σ",
+                        "varsigma": "ς", "tau": "τ", "upsilon": "υ",
+                        "phi": "φ", "varphi": "ϕ", "chi": "χ",
+                        "psi": "ψ", "omega": "ω",
+                        # Greek uppercase
+                        "Gamma": "Γ", "Delta": "Δ", "Theta": "Θ",
+                        "Lambda": "Λ", "Xi": "Ξ", "Pi": "Π",
+                        "Sigma": "Σ", "Upsilon": "Υ", "Phi": "Φ",
+                        "Psi": "Ψ", "Omega": "Ω",
+                        # Trig functions
+                        "sin": "sin", "cos": "cos", "tan": "tan",
+                        "cot": "cot", "sec": "sec", "csc": "csc",
+                        "sinh": "sinh", "cosh": "cosh", "tanh": "tanh",
+                        "arcsin": "arcsin", "arccos": "arccos", "arctan": "arctan",
+                        "log": "log", "ln": "ln", "exp": "exp",
+                        "lim": "lim", "sup": "sup", "inf": "inf",
+                        "max": "max", "min": "min", "arg": "arg",
+                        "det": "det", "dim": "dim", "ker": "ker",
+                        "Pr": "Pr",
+                    }
+                    out.append(sym_map.get(cmd, cmd))
+                    i = j
+                    continue
+                elif cmd in ("mathrm", "mathbf", "mathit", "mathbb",
+                            "mathcal", "mathfrak", "mathsf"):
+                    # Treat math commands as text within italic; blackboard bold for mathbb
+                    end = find_balanced(s, j, "{", "}")
                     if end == -1:
                         i = j
                         continue
-                    out.append(f"<i>{s[j:end]}</i>")
+                    if cmd == "mathbb":
+                        # Convert letters to Unicode blackboard-bold chars
+                        bb_map = {"R": "ℝ", "C": "ℂ", "N": "ℕ",
+                                  "Z": "ℤ", "Q": "ℚ", "P": "ℙ"}
+                        body = s[j+1:end]
+                        rendered = ""
+                        for ch in body:
+                            rendered += bb_map.get(ch, ch)
+                        out.append(f"<i>{rendered}</i>")
+                    else:
+                        out.append(f"<i>{s[j+1:end]}</i>")
                     i = end + 1
                     continue
                 else:
@@ -464,18 +552,29 @@ def main():
     # Build flowables
     flowables = []
 
-    # Title block
-    title_match = re.search(r"\\title\{([^}]+(?:\{[^}]+\}[^}]+)*)\}", body)
+    # Title block (search in full text — \title{} is in the preamble, not \begin{document})
+    title_match = re.search(r"\\title\{((?:[^{}]|\{[^{}]*\})*)\}", text)
     if title_match:
-        title = title_match.group(1)
-        # Drop the subtitle in {... \large ...}
-        title = re.sub(r"\\\\?\{?\\large\s+([^}]+)\}?", "", title)
+        full = title_match.group(1)
+        # Extract subtitle from {\large ...}
+        subtitle_match = re.search(r"\{\\large\s+([^}]+)\}", full)
+        subtitle = None
+        if subtitle_match:
+            subtitle = subtitle_match.group(1).strip()
+            # Drop the \\ and {\large ...} from the title
+            title = re.sub(r"\\\\\s*\{\\large\s+[^}]+\}", "", full).strip()
+        else:
+            title = full
+        # Convert \\ (LaTeX line break) to a space
         title = title.replace("\\\\", " ").strip()
+        title = title.rstrip(":").strip()
         flowables.append(Paragraph(title, style_title))
-    author_match = re.search(r"\\author\{([^}]+)\}", body)
+        if subtitle:
+            flowables.append(Paragraph(subtitle, style_subtitle))
+    author_match = re.search(r"\\author\{([^}]+)\}", text)
     if author_match:
         flowables.append(Paragraph(author_match.group(1), style_author))
-    date_match = re.search(r"\\date\{([^}]+)\}", body)
+    date_match = re.search(r"\\date\{([^}]+)\}", text)
     if date_match:
         flowables.append(Paragraph(date_match.group(1), style_author))
     flowables.append(Spacer(1, 6))
@@ -486,6 +585,17 @@ def main():
 
     pos = 0
     in_abstract = False
+    current_abstract = []
+    in_itemize = False
+    in_equation = False
+    in_theorem_like = False
+    in_proof = False
+    in_figure = False
+    in_table = False
+    in_bibliography = False
+    current_paragraph = []
+    current_itemize_items = []
+    current_equation = []  
     in_itemize = False
     in_equation = False
     in_theorem_like = False
@@ -534,11 +644,26 @@ def main():
         if re.match(r"\\begin\{abstract\}", stripped):
             flush_paragraph()
             in_abstract = True
+            current_abstract = []
             i += 1
             continue
         if re.match(r"\\end\{abstract\}", stripped):
-            flush_paragraph()
+            # Render abstract content as a single boxed paragraph
+            abstract_text = " ".join(current_abstract)
+            abstract_html = tex_to_html(abstract_text)
+            abstract_html = re.sub(r"\s+", " ", abstract_html).strip()
+            if abstract_html:
+                flowables.append(Paragraph(
+                    f"<b>Abstract.</b> {abstract_html}",
+                    style_abstract,
+                ))
             in_abstract = False
+            current_abstract = []
+            i += 1
+            continue
+
+        if in_abstract:
+            current_abstract.append(stripped)
             i += 1
             continue
 
