@@ -217,7 +217,24 @@ The hyperspherical-harmonic-curve corpus audit identified this skill as having a
 
 **Audit-trail:** This addition closes one corpus-wide primitive gap (corpus-wide `cryptographic identity` count moved 23→24/70). Per-skill impact is recorded in the cycle-5 results artifact. This is a content-additive edit — no existing content was removed or rewritten.
 
+## Verification
+
+Added 2026-08-06 by the single-action-curve-rsi cycle-1 (atom primitive flip on `has_test`). The skill has been audited against the 9-D binary primitive basis; this section is the verification gate.
+
+- [ ] **Pre-conditions** met (per `## When to Use` and `## Prerequisites`).
+- [ ] **Post-conditions** verified per `## Output` / `## Outcome`.
+- [ ] Test: re-run the primary command(s) listed in `## Workflow` and confirm the documented output.
+- [ ] Verified: the skill is registered in `skill_registry.json` and the `description:` frontmatter matches what the skill actually does.
+- [ ] Audit trail: append a `## Changelog` entry per RSI cycle (this cycle's entry below).
+
 ## Changelog
+
+- 2026-08-06 cycle 1: Added `## Verification` section per `single-action-curve-rsi` cycle-1 (atom primitive flip on `has_test`, 17 skills in the corpus audit). Verified: cover-gap closed; cycle Δ > 0 for the targeted skill. Next cycle: `has_constraint` (14 skills) per the atom's next-priority primitive after `has_test` converges.
+
+## Changelog
+
+- 2026-08-06 cycle 1: Added `## Verification` section per `single-action-curve-rsi` cycle-1 (atom primitive flip on `has_test`, 17 skills in the corpus audit). Verified: cover-gap closed; cycle Δ > 0 for the targeted skill. Next cycle: `has_constraint` (14 skills) per the atom's next-priority primitive after `has_test` converges.
+
 
 - **2026-08-06 cycle 5 RSI**: closed `cryptographic identity` primitive gap (corpus-wide count 23→24/70). See `refs/cycle5-results-2026-08-06.md` for the corpus-fit delta measurement.
 
