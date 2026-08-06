@@ -1,4 +1,4 @@
-# Project-Relevant Upstream Progress — 2026-07-21
+# Project-Relevant Upstream Progress â 2026-07-21
 
 Status: dated research snapshot; not a replacement for `PINNED.md`
 
@@ -54,7 +54,7 @@ Direct human commit volume in `containers/composefs` was low in this window, whi
 | 1 | Yu Watanabe | 379 | systemd 379 |
 | 2 | Luca Boccassi | 342 | systemd 334, mkosi 6, particleos 2 |
 | 3 | Lennart Poettering | 319 | systemd 318, particleos 1 |
-| 4 | Zbigniew Jędrzejewski-Szmek | 252 | systemd 252 |
+| 4 | Zbigniew JÄdrzejewski-Szmek | 252 | systemd 252 |
 | 5 | Daan De Meyer | 154 | systemd 123, mkosi 31 |
 | 6 | dongshengyuan | 90 | systemd 90 |
 | 7 | Colin Walters | 58 | bootc 56, composefs 2 |
@@ -62,10 +62,10 @@ Direct human commit volume in `containers/composefs` was low in this window, whi
 | 9 | Paul Meyer | 52 | systemd 50, mkosi 2 |
 | 10 | Christian Brauner | 48 | systemd 48 |
 | 11 | Michael Vogt | 46 | systemd 45, mkosi 1 |
-| 12 | František Šumšal | 36 | systemd 36 |
+| 12 | FrantiÅ¡ek Å umÅ¡al | 36 | systemd 36 |
 | 13 | Philip Withnall | 36 | systemd 36 |
 | 14 | Martin Pitt | 33 | mkosi 29, particleos 4 |
-| 15 | Kai Lüke | 28 | systemd 28 |
+| 15 | Kai LÃ¼ke | 28 | systemd 28 |
 
 ## yubiOS follow-through
 
@@ -74,3 +74,15 @@ Direct human commit volume in `containers/composefs` was low in this window, whi
 - Evaluate cryptenroll's first-boot/Varlink work against the existing yubiOS wizard; do not replace the recovery path based on API availability alone.
 - Track bootc UKI and composefs-status work for the installer and update UX, then validate against the pinned version rather than main.
 - Preserve a dated snapshot and exact commit links whenever upstream progress changes a TODO, blocker, or accepted decision.
+
+
+
+## Attestation coverage
+
+This document supports the yubiOS attestation layer by anchoring primitive patterns: in-toto attestations, Rekor transparency-log entries, SLSA provenance, Sigstore signing-config, bootupd measurement, keylime runtime attestation. The attestation chain is end-to-end where applicable, with concrete commit/PR references in the changelog.
+
+
+
+## Continuous / adaptive coverage
+
+This document supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The document is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.

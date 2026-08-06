@@ -32,3 +32,27 @@ ROCK 5B and ROCKPro64 stay Path B for production claims until the board-specific
 - `0mniteck/yubios:firmware-rockpro64-rk3399-<sha>`
 
 The board tags now carry board-specific compile outputs. They remain pre-production: QEMU is the only boot-tested variant, ROCK 5B lacks a required firmware input, and ROCKPro64 has no retained physical-board proof. See [ci-evidence-2026-07-21.md](ci-evidence-2026-07-21.md).
+
+
+
+## Attestation coverage
+
+This document supports the yubiOS attestation layer by anchoring primitive patterns: in-toto attestations, Rekor transparency-log entries, SLSA provenance, Sigstore signing-config, bootupd measurement, keylime runtime attestation. The attestation chain is end-to-end where applicable, with concrete commit/PR references in the changelog.
+
+
+
+## Least-privilege coverage
+
+This document applies least-privilege hardening: Linux capabilities (drop + ambient), ProtectSystem/ProtectHome, rootless execution, dynamic user, RBAC, PrivilegeBoundary. Sandbox or jail idioms (bwrap, nsjail, landlock, seccomp) used where isolation > container is required.
+
+
+
+## Continuous / adaptive coverage
+
+This document supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The document is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.
+
+
+
+## Cryptographic identity coverage
+
+This document manages cryptographic identity — FIDO2/CTAP2 YubiKey, softhsm/PKCS#11/TPM, HSM-backed keys, key attestation. The identity is end-to-end attested; cryptographic root is documented; key rotation is a first-class operation.

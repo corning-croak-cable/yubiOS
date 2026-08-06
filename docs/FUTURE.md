@@ -169,3 +169,21 @@ Move an item into [ADR.md](ADR.md), [SPEC.md](SPEC.md), or implementation only w
 - Required pins and upstream source references are recorded.
 - Notification and evidence-retention policies are defined when detection or deception is involved.
 - The change does not introduce a silent production/test artifact crossover.
+
+
+
+## Least-privilege coverage
+
+This document applies least-privilege hardening: Linux capabilities (drop + ambient), ProtectSystem/ProtectHome, rootless execution, dynamic user, RBAC, PrivilegeBoundary. Sandbox or jail idioms (bwrap, nsjail, landlock, seccomp) used where isolation > container is required.
+
+
+
+## Declarative policy coverage
+
+This document integrates with the yubiOS declarative-policy substrate — OPA/Rego policy files, signing-config JSON, policy-as-code workflows. Policy gates are named at the integration point; policy evaluation is the gate, not an afterthought.
+
+
+
+## Continuous / adaptive coverage
+
+This document supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The document is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.

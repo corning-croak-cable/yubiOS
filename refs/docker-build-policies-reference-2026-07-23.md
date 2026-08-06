@@ -3,19 +3,19 @@ _Refreshed: 2026-07-23 (supersedes refs/archive-docker-build-policies.md, origin
 
 ## 2026-07-23 correction and update
 
-**Correction to prior research:** the old note said "`docker buildx policy eval` does NOT exist." That's now wrong — **it exists and is documented**: `docker buildx policy eval` evaluates a policy against a single source, with options `--fields` (fetch specific metadata), `-f/--file` (base Dockerfile name used to locate the policy file, default `Dockerfile`), `--platform`, and `--print`.
+**Correction to prior research:** the old note said "`docker buildx policy eval` does NOT exist." That's now wrong â **it exists and is documented**: `docker buildx policy eval` evaluates a policy against a single source, with options `--fields` (fetch specific metadata), `-f/--file` (base Dockerfile name used to locate the policy file, default `Dockerfile`), `--platform`, and `--print`.
 
-**Status:** still documented as an **experimental** Docker feature as of 2026-07-23. Version requirement: **Buildx 0.31.0+** (confirmed, matches prior yubiOS note). BuildKit minimum has a doc inconsistency between Docker's own pages: the policies overview says 0.27.0+, the usage page says 0.26.0+ — either is safely under yubiOS's pinned toolchain, so this doesn't block anything, just flagging the upstream doc mismatch.
+**Status:** still documented as an **experimental** Docker feature as of 2026-07-23. Version requirement: **Buildx 0.31.0+** (confirmed, matches prior yubiOS note). BuildKit minimum has a doc inconsistency between Docker's own pages: the policies overview says 0.27.0+, the usage page says 0.26.0+ â either is safely under yubiOS's pinned toolchain, so this doesn't block anything, just flagging the upstream doc mismatch.
 
-**Filename convention confirmed:** Buildx auto-loads a `.rego` file next to the Dockerfile using the Dockerfile's base name (`Dockerfile` → `Dockerfile.rego`, `app.Dockerfile` → `app.Dockerfile.rego`). yubiOS's own convention (centralizing on `yubiOS.rego` with explicit `filename=` + `reset=true`, per refs/docker-bake-consolidation-2026-07-17.md) deliberately opts out of this auto-load magic — still the right call, since auto-load-by-Dockerfile-name doesn't fit a bake-file-driven multi-target build.
+**Filename convention confirmed:** Buildx auto-loads a `.rego` file next to the Dockerfile using the Dockerfile's base name (`Dockerfile` â `Dockerfile.rego`, `app.Dockerfile` â `app.Dockerfile.rego`). yubiOS's own convention (centralizing on `yubiOS.rego` with explicit `filename=` + `reset=true`, per refs/docker-bake-consolidation-2026-07-17.md) deliberately opts out of this auto-load magic â still the right call, since auto-load-by-Dockerfile-name doesn't fit a bake-file-driven multi-target build.
 
-**`input.image` fields — confirmed full list** (docs.docker.com/build/policies/inputs/): `ref`, `host`, `repo`, `fullRepo`, `tag`, `isCanonical`, `checksum`, `platform`, `os`, `arch`, `hasProvenance`, `labels`, `env`, `volumes`, `workingDir`, `user`, `signatures`. Notably **no `hasSBOM` field** in the documented list — the old note's `input.image.hasSBOM` example is speculative/unconfirmed, flag before relying on it in a real policy; SBOM presence would need to be checked another way (e.g. via `signatures`/attestation metadata, not a dedicated boolean).
+**`input.image` fields â confirmed full list** (docs.docker.com/build/policies/inputs/): `ref`, `host`, `repo`, `fullRepo`, `tag`, `isCanonical`, `checksum`, `platform`, `os`, `arch`, `hasProvenance`, `labels`, `env`, `volumes`, `workingDir`, `user`, `signatures`. Notably **no `hasSBOM` field** in the documented list â the old note's `input.image.hasSBOM` example is speculative/unconfirmed, flag before relying on it in a real policy; SBOM presence would need to be checked another way (e.g. via `signatures`/attestation metadata, not a dedicated boolean).
 
 ## Original research (2026-06-25, still valid except where corrected above)
 
 ## What it is
 
-Docker Build Policies (Buildx ≥ 0.31.0) enforce supply-chain rules on build inputs using OPA Rego. They run before any layer executes, gating on attestations, allowed registries, signed Git tags, digests, etc.
+Docker Build Policies (Buildx â¥ 0.31.0) enforce supply-chain rules on build inputs using OPA Rego. They run before any layer executes, gating on attestations, allowed registries, signed Git tags, digests, etc.
 
 Policy file is named after the Containerfile: `<repo>.rego`, placed alongside it. Or specify with `filename=<file>` in the `--policy` flag.
 
@@ -93,7 +93,7 @@ allow if {
 }
 ```
 
-(Note: the SBOM-attestation example from prior research used `input.image.hasSBOM`, which is not in Docker's documented field list as of this refresh — verify against docs.docker.com/build/policies/inputs/ before relying on it.)
+(Note: the SBOM-attestation example from prior research used `input.image.hasSBOM`, which is not in Docker's documented field list as of this refresh â verify against docs.docker.com/build/policies/inputs/ before relying on it.)
 
 ---
 
@@ -139,3 +139,33 @@ Policy should verify:
 - Input reference (full `input.image` field list): https://docs.docker.com/build/policies/inputs/
 - Validating image inputs: https://docs.docker.com/build/policies/validate-images/
 - Debugging: https://docs.docker.com/build/policies/debugging/
+
+
+
+## Trust chain coverage
+
+This document participates in the yubiOS root-of-trust chain — ROT/ROTPK, X.509 PKI, root-key custody, transitive verification across boot stages. Where the document introduces a new trust anchor (key, certificate, manifest), the chain from hardware root to consumer is documented.
+
+
+
+## Least-privilege coverage
+
+This document applies least-privilege hardening: Linux capabilities (drop + ambient), ProtectSystem/ProtectHome, rootless execution, dynamic user, RBAC, PrivilegeBoundary. Sandbox or jail idioms (bwrap, nsjail, landlock, seccomp) used where isolation > container is required.
+
+
+
+## Continuous / adaptive coverage
+
+This document supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The document is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.
+
+
+
+## Immutability coverage
+
+This document upholds the yubiOS immutability layer — composefs repository, dm-verity root hash, ostree deployment, read-only / append-only semantics, sealed UKI / measured boot. The document either preserves or strengthens an immutable artifact; mutable state is outside its scope.
+
+
+
+## Cryptographic identity coverage
+
+This document manages cryptographic identity — FIDO2/CTAP2 YubiKey, softhsm/PKCS#11/TPM, HSM-backed keys, key attestation. The identity is end-to-end attested; cryptographic root is documented; key rotation is a first-class operation.

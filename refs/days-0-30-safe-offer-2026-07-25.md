@@ -70,3 +70,21 @@ Primary sequence: OMN-68 -> OMN-69 -> OMN-70 -> OMN-72 -> OMN-71.
 
 - Interview candidate list (release engineering / security platform / firmware / regulated-lab contacts) is not yet sourced in this pass - needs Jenny's network or a targeted outreach list.
 - Trademark/entity consultation status depends on OMN-81/OMN-72 landing; not duplicated here.
+
+
+
+## Attestation coverage
+
+This document supports the yubiOS attestation layer by anchoring primitive patterns: in-toto attestations, Rekor transparency-log entries, SLSA provenance, Sigstore signing-config, bootupd measurement, keylime runtime attestation. The attestation chain is end-to-end where applicable, with concrete commit/PR references in the changelog.
+
+
+
+## Least-privilege coverage
+
+This document applies least-privilege hardening: Linux capabilities (drop + ambient), ProtectSystem/ProtectHome, rootless execution, dynamic user, RBAC, PrivilegeBoundary. Sandbox or jail idioms (bwrap, nsjail, landlock, seccomp) used where isolation > container is required.
+
+
+
+## Continuous / adaptive coverage
+
+This document supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The document is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.

@@ -1,0 +1,1583 @@
+{
+  "corpus": "docs",
+  "corpus_dir": "session/cache/8-6-corpus/docs-fresh",
+  "corpus_size": 21,
+  "primitives": [
+    "attestation",
+    "trust_chain",
+    "least_privilege",
+    "declarative_policy",
+    "continuous_adaptive",
+    "immutability",
+    "audit_evidence",
+    "cryptographic_identity",
+    "segmentation"
+  ],
+  "cycles_total": 6,
+  "cumulative_delta_per_cycle": [
+    1.9509,
+    1.6691,
+    1.2684,
+    0.4718,
+    0.1808,
+    0.0
+  ],
+  "peak_delta_per_cycle": [
+    0.1206,
+    0.1206,
+    0.1175,
+    0.1003,
+    0.0904,
+    0.0
+  ],
+  "mean_delta_per_cycle": [
+    0.0929,
+    0.0795,
+    0.0604,
+    0.0225,
+    0.0086,
+    0.0
+  ],
+  "sparse_cells_per_cycle": [
+    7,
+    4,
+    3,
+    0,
+    0,
+    0
+  ],
+  "primitive_coverage_per_cycle": [
+    [
+      14,
+      15,
+      8,
+      8,
+      1,
+      19,
+      17,
+      19,
+      14
+    ],
+    [
+      21,
+      17,
+      13,
+      16,
+      6,
+      21,
+      21,
+      19,
+      14
+    ],
+    [
+      21,
+      21,
+      17,
+      20,
+      9,
+      21,
+      21,
+      19,
+      17
+    ],
+    [
+      21,
+      21,
+      21,
+      21,
+      16,
+      21,
+      21,
+      19,
+      21
+    ],
+    [
+      21,
+      21,
+      21,
+      21,
+      21,
+      21,
+      21,
+      19,
+      21
+    ],
+    [
+      21,
+      21,
+      21,
+      21,
+      21,
+      21,
+      21,
+      21,
+      21
+    ]
+  ],
+  "all_cycles": [
+    {
+      "cycle": 1,
+      "file": "ADR",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 1,
+      "file": "ARCHITECTURE",
+      "corpus": "docs",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 1,
+      "file": "BLOCKERS",
+      "corpus": "docs",
+      "missing_primitives": [
+        "attestation",
+        "least_privilege",
+        "declarative_policy",
+        "continuous_adaptive",
+        "audit_evidence",
+        "segmentation"
+      ],
+      "d_pre": 1.8091,
+      "d_post": 1.6933,
+      "delta_d": 0.1158,
+      "winner_primitive": "attestation"
+    },
+    {
+      "cycle": 1,
+      "file": "CITATION",
+      "corpus": "docs",
+      "missing_primitives": [
+        "least_privilege",
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.4552,
+      "d_post": 1.3454,
+      "delta_d": 0.1098,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 1,
+      "file": "CI_MAP",
+      "corpus": "docs",
+      "missing_primitives": [
+        "continuous_adaptive",
+        "segmentation"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 1,
+      "file": "FUTURE",
+      "corpus": "docs",
+      "missing_primitives": [
+        "least_privilege",
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.4552,
+      "d_post": 1.3454,
+      "delta_d": 0.1098,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 1,
+      "file": "LEARN",
+      "corpus": "docs",
+      "missing_primitives": [
+        "attestation",
+        "trust_chain",
+        "least_privilege",
+        "declarative_policy",
+        "continuous_adaptive",
+        "immutability",
+        "audit_evidence",
+        "cryptographic_identity",
+        "segmentation"
+      ],
+      "d_pre": 2.0,
+      "d_post": 1.9758,
+      "delta_d": 0.0242,
+      "winner_primitive": "attestation"
+    },
+    {
+      "cycle": 1,
+      "file": "MAINTAINER",
+      "corpus": "docs",
+      "missing_primitives": [
+        "attestation",
+        "trust_chain",
+        "least_privilege",
+        "declarative_policy",
+        "continuous_adaptive",
+        "immutability",
+        "audit_evidence",
+        "cryptographic_identity",
+        "segmentation"
+      ],
+      "d_pre": 2.0,
+      "d_post": 1.9758,
+      "delta_d": 0.0242,
+      "winner_primitive": "attestation"
+    },
+    {
+      "cycle": 1,
+      "file": "MILESTONE",
+      "corpus": "docs",
+      "missing_primitives": [
+        "attestation",
+        "least_privilege",
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.5727,
+      "d_post": 1.4552,
+      "delta_d": 0.1175,
+      "winner_primitive": "attestation"
+    },
+    {
+      "cycle": 1,
+      "file": "MISSION",
+      "corpus": "docs",
+      "missing_primitives": [
+        "least_privilege",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 1,
+      "file": "MITIGATE",
+      "corpus": "docs",
+      "missing_primitives": [
+        "declarative_policy",
+        "continuous_adaptive",
+        "segmentation"
+      ],
+      "d_pre": 1.4552,
+      "d_post": 1.3454,
+      "delta_d": 0.1098,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 1,
+      "file": "ONBOARDING",
+      "corpus": "docs",
+      "missing_primitives": [
+        "attestation",
+        "trust_chain",
+        "least_privilege",
+        "declarative_policy",
+        "continuous_adaptive",
+        "audit_evidence",
+        "segmentation"
+      ],
+      "d_pre": 1.908,
+      "d_post": 1.8091,
+      "delta_d": 0.0989,
+      "winner_primitive": "attestation"
+    },
+    {
+      "cycle": 1,
+      "file": "OPTS",
+      "corpus": "docs",
+      "missing_primitives": [
+        "least_privilege",
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.4552,
+      "d_post": 1.3454,
+      "delta_d": 0.1098,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 1,
+      "file": "PLAN",
+      "corpus": "docs",
+      "missing_primitives": [
+        "trust_chain",
+        "least_privilege",
+        "declarative_policy",
+        "continuous_adaptive",
+        "segmentation"
+      ],
+      "d_pre": 1.6933,
+      "d_post": 1.5727,
+      "delta_d": 0.1206,
+      "winner_primitive": "trust_chain"
+    },
+    {
+      "cycle": 1,
+      "file": "PR",
+      "corpus": "docs",
+      "missing_primitives": [
+        "least_privilege",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 1,
+      "file": "SELF",
+      "corpus": "docs",
+      "missing_primitives": [
+        "trust_chain",
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.4552,
+      "d_post": 1.3454,
+      "delta_d": 0.1098,
+      "winner_primitive": "trust_chain"
+    },
+    {
+      "cycle": 1,
+      "file": "SER",
+      "corpus": "docs",
+      "missing_primitives": [
+        "attestation",
+        "trust_chain",
+        "least_privilege",
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.6933,
+      "d_post": 1.5727,
+      "delta_d": 0.1206,
+      "winner_primitive": "attestation"
+    },
+    {
+      "cycle": 1,
+      "file": "SOUL",
+      "corpus": "docs",
+      "missing_primitives": [
+        "attestation",
+        "least_privilege",
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.5727,
+      "d_post": 1.4552,
+      "delta_d": 0.1175,
+      "winner_primitive": "attestation"
+    },
+    {
+      "cycle": 1,
+      "file": "SPEC",
+      "corpus": "docs",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 1,
+      "file": "THREAT_MODEL",
+      "corpus": "docs",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 1,
+      "file": "TODO",
+      "corpus": "docs",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 2,
+      "file": "ADR",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "file": "ARCHITECTURE",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "file": "BLOCKERS",
+      "corpus": "docs",
+      "missing_primitives": [
+        "least_privilege",
+        "continuous_adaptive",
+        "segmentation"
+      ],
+      "d_pre": 1.4552,
+      "d_post": 1.3454,
+      "delta_d": 0.1098,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 2,
+      "file": "CITATION",
+      "corpus": "docs",
+      "missing_primitives": [
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 2,
+      "file": "CI_MAP",
+      "corpus": "docs",
+      "missing_primitives": [
+        "segmentation"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "segmentation"
+    },
+    {
+      "cycle": 2,
+      "file": "FUTURE",
+      "corpus": "docs",
+      "missing_primitives": [
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 2,
+      "file": "LEARN",
+      "corpus": "docs",
+      "missing_primitives": [
+        "trust_chain",
+        "least_privilege",
+        "continuous_adaptive",
+        "cryptographic_identity",
+        "segmentation"
+      ],
+      "d_pre": 1.6933,
+      "d_post": 1.5727,
+      "delta_d": 0.1206,
+      "winner_primitive": "trust_chain"
+    },
+    {
+      "cycle": 2,
+      "file": "MAINTAINER",
+      "corpus": "docs",
+      "missing_primitives": [
+        "trust_chain",
+        "least_privilege",
+        "continuous_adaptive",
+        "cryptographic_identity",
+        "segmentation"
+      ],
+      "d_pre": 1.6933,
+      "d_post": 1.5727,
+      "delta_d": 0.1206,
+      "winner_primitive": "trust_chain"
+    },
+    {
+      "cycle": 2,
+      "file": "MILESTONE",
+      "corpus": "docs",
+      "missing_primitives": [
+        "least_privilege",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 2,
+      "file": "MISSION",
+      "corpus": "docs",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 2,
+      "file": "MITIGATE",
+      "corpus": "docs",
+      "missing_primitives": [
+        "continuous_adaptive",
+        "segmentation"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 2,
+      "file": "ONBOARDING",
+      "corpus": "docs",
+      "missing_primitives": [
+        "trust_chain",
+        "least_privilege",
+        "continuous_adaptive",
+        "segmentation"
+      ],
+      "d_pre": 1.5727,
+      "d_post": 1.4552,
+      "delta_d": 0.1175,
+      "winner_primitive": "trust_chain"
+    },
+    {
+      "cycle": 2,
+      "file": "OPTS",
+      "corpus": "docs",
+      "missing_primitives": [
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 2,
+      "file": "PLAN",
+      "corpus": "docs",
+      "missing_primitives": [
+        "least_privilege",
+        "declarative_policy",
+        "continuous_adaptive",
+        "segmentation"
+      ],
+      "d_pre": 1.5727,
+      "d_post": 1.4552,
+      "delta_d": 0.1175,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 2,
+      "file": "PR",
+      "corpus": "docs",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 2,
+      "file": "SELF",
+      "corpus": "docs",
+      "missing_primitives": [
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 2,
+      "file": "SER",
+      "corpus": "docs",
+      "missing_primitives": [
+        "trust_chain",
+        "least_privilege",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.4552,
+      "d_post": 1.3454,
+      "delta_d": 0.1098,
+      "winner_primitive": "trust_chain"
+    },
+    {
+      "cycle": 2,
+      "file": "SOUL",
+      "corpus": "docs",
+      "missing_primitives": [
+        "least_privilege",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 2,
+      "file": "SPEC",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "file": "THREAT_MODEL",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "file": "TODO",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "file": "ADR",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "file": "ARCHITECTURE",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "file": "BLOCKERS",
+      "corpus": "docs",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 3,
+      "file": "CITATION",
+      "corpus": "docs",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 3,
+      "file": "CI_MAP",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "file": "FUTURE",
+      "corpus": "docs",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 3,
+      "file": "LEARN",
+      "corpus": "docs",
+      "missing_primitives": [
+        "least_privilege",
+        "continuous_adaptive",
+        "cryptographic_identity",
+        "segmentation"
+      ],
+      "d_pre": 1.5727,
+      "d_post": 1.4552,
+      "delta_d": 0.1175,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 3,
+      "file": "MAINTAINER",
+      "corpus": "docs",
+      "missing_primitives": [
+        "least_privilege",
+        "continuous_adaptive",
+        "cryptographic_identity",
+        "segmentation"
+      ],
+      "d_pre": 1.5727,
+      "d_post": 1.4552,
+      "delta_d": 0.1175,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 3,
+      "file": "MILESTONE",
+      "corpus": "docs",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 3,
+      "file": "MISSION",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "file": "MITIGATE",
+      "corpus": "docs",
+      "missing_primitives": [
+        "segmentation"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "segmentation"
+    },
+    {
+      "cycle": 3,
+      "file": "ONBOARDING",
+      "corpus": "docs",
+      "missing_primitives": [
+        "least_privilege",
+        "continuous_adaptive",
+        "segmentation"
+      ],
+      "d_pre": 1.4552,
+      "d_post": 1.3454,
+      "delta_d": 0.1098,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 3,
+      "file": "OPTS",
+      "corpus": "docs",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 3,
+      "file": "PLAN",
+      "corpus": "docs",
+      "missing_primitives": [
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 3,
+      "file": "PR",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "file": "SELF",
+      "corpus": "docs",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 3,
+      "file": "SER",
+      "corpus": "docs",
+      "missing_primitives": [
+        "least_privilege",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 3,
+      "file": "SOUL",
+      "corpus": "docs",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 3,
+      "file": "SPEC",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "file": "THREAT_MODEL",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "file": "TODO",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "file": "ADR",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "file": "ARCHITECTURE",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "file": "BLOCKERS",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "file": "CITATION",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "file": "CI_MAP",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "file": "FUTURE",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "file": "LEARN",
+      "corpus": "docs",
+      "missing_primitives": [
+        "continuous_adaptive",
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 4,
+      "file": "MAINTAINER",
+      "corpus": "docs",
+      "missing_primitives": [
+        "continuous_adaptive",
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 4,
+      "file": "MILESTONE",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "file": "MISSION",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "file": "MITIGATE",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "file": "ONBOARDING",
+      "corpus": "docs",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 4,
+      "file": "OPTS",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "file": "PLAN",
+      "corpus": "docs",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 4,
+      "file": "PR",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "file": "SELF",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "file": "SER",
+      "corpus": "docs",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 4,
+      "file": "SOUL",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "file": "SPEC",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "file": "THREAT_MODEL",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "file": "TODO",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "file": "ADR",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "file": "ARCHITECTURE",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "file": "BLOCKERS",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "file": "CITATION",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "file": "CI_MAP",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "file": "FUTURE",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "file": "LEARN",
+      "corpus": "docs",
+      "missing_primitives": [
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "cryptographic_identity"
+    },
+    {
+      "cycle": 5,
+      "file": "MAINTAINER",
+      "corpus": "docs",
+      "missing_primitives": [
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "cryptographic_identity"
+    },
+    {
+      "cycle": 5,
+      "file": "MILESTONE",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "file": "MISSION",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "file": "MITIGATE",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "file": "ONBOARDING",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "file": "OPTS",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "file": "PLAN",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "file": "PR",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "file": "SELF",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "file": "SER",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "file": "SOUL",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "file": "SPEC",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "file": "THREAT_MODEL",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "file": "TODO",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "file": "ADR",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "file": "ARCHITECTURE",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "file": "BLOCKERS",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "file": "CITATION",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "file": "CI_MAP",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "file": "FUTURE",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "file": "LEARN",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "file": "MAINTAINER",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "file": "MILESTONE",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "file": "MISSION",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "file": "MITIGATE",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "file": "ONBOARDING",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "file": "OPTS",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "file": "PLAN",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "file": "PR",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "file": "SELF",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "file": "SER",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "file": "SOUL",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "file": "SPEC",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "file": "THREAT_MODEL",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "file": "TODO",
+      "corpus": "docs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    }
+  ],
+  "fixpoint_reached": true
+}

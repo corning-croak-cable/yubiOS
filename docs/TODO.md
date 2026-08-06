@@ -113,7 +113,7 @@ These items map [FUTURE.md](FUTURE.md) sections that were missing or only partia
 - [x] Validate the documented `bootc install to-filesystem` path on a fresh VM or disposable disk, including external partition preparation, mounted `/mnt`, `--skip-finalize`, and omitted `root=` via `--root-mount-spec=""`: [run 29884493346](https://github.com/yubi-OS/yubiOS/actions/runs/29884493346) passed on native amd64 and arm64.
 - [x] Strengthen the external-image `to-filesystem` smoke so it requires an ext4 `verity` feature, the composefs repository instead of an ostree fallback, measurable EROFS metadata images, a rejected protected-object write, and a strict digest-bound BLS entry classified as unsealed.
 - [ ] Promote a sealed composefs lane only after the pinned base exposes the released v1.16.4 split/ukify capabilities; build and sign the exact rootfs UKI, boot it with Secure Boot on both architectures, assert UKI composefs status, and retain a negative tamper-boot proof.
-- [x] PR #143 (commit `a1940330`, merged 2026-07-29) shipped the kernel-side artifact split per ADR-032: `0mniteck/yubios:uki-<sha>-<arch>` published as a separate OCI artifact, `Containerfile.uki`, `usr/lib/yubiOS/uki/install-uki.sh` documented, `usr/lib/bootc/install/50-yubiOS.toml` kargs pinned. Phase 2 (install-time BLSConfig wiring) is the remaining work — see `refs/kernel-rootfs-split-2026-07-29.md`. Closes OMN-51.
+- [x] PR #143 (commit `a1940330`, merged 2026-07-29) shipped the kernel-side artifact split per ADR-032: `0mniteck/yubios:uki-<sha>-<arch>` published as a separate OCI artifact, `Containerfile.uki`, `usr/lib/yubiOS/uki/install-uki.sh` documented, `usr/lib/bootc/install/50-yubiOS.toml` kargs pinned. Phase 2 (install-time BLSConfig wiring) is the remaining work â see `refs/kernel-rootfs-split-2026-07-29.md`. Closes OMN-51.
 
 ## Current ARM64 Tasks
 
@@ -137,7 +137,7 @@ These items map [FUTURE.md](FUTURE.md) sections that were missing or only partia
 - [ ] Update [PINNED.md](../PINNED.md) for every base-image/tool digest change.
 - [x] Pin the BuildKit daemon independently, derive `SOURCE_DATE_EPOCH` from the source commit, clamp OCI/layer timestamps, and enforce two isolated OCI-layout builds for production and dev: [refs/reproducible-builds-2026-07-22.md](../refs/reproducible-builds-2026-07-22.md).
 - [ ] Replace live Fedora/Debian repository resolution with immutable snapshots plus exact package/toolchain closure before claiming later rebuildability.
-- [x] Separate installer and TF-A signature-bearing envelopes—including the root-resident `systemd-boot*.efi.signed` file—from canonical unsigned subjects in the blocking ARM64 comparisons; retain both envelope digests without treating random keys/signatures as equality subjects.
+- [x] Separate installer and TF-A signature-bearing envelopesâincluding the root-resident `systemd-boot*.efi.signed` fileâfrom canonical unsigned subjects in the blocking ARM64 comparisons; retain both envelope digests without treating random keys/signatures as equality subjects.
 - [x] Preseed pinned EDK2 with commit- and platform-scoped deterministic stack-cookie lists, then enforce two clean ARM64 component builds for every firmware board.
 - [ ] Approve a checksum-pinned RK3588 DDR/TPL input before firmware equality can cover the final bootable ROCK 5B image.
 - [ ] Verify package floors after digest bumps: systemd target, pam-u2f >= 1.3.1, OpenSSL 3.5+, and Go 1.24+ where relevant.
@@ -179,3 +179,9 @@ Per the planning-cycle doctrine (BLOCKERS.md review-gate rule), the 2026-08-01 r
 - `B-VM-CTAP2` second-pass arm64 proof logged under "Not Current Blockers": run 30697269619 is the first arm64-only end-to-end VM e2e PASS with the in-guest passless CTAP2 authenticator actually enumerated (no skip paths). Linear OMN-48 / yubiOS#25 stays closed; OMN-89 carries the hardware-leg proof point.
 
 No previously active blockers were retired in this review. OMN-150 stays in Backlog until B-VGPU-VM-UNZIP is closed and the negative-tamper-boot proof lands.
+
+
+
+## Continuous / adaptive coverage
+
+This document supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The document is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.

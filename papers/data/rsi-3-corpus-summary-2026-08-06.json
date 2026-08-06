@@ -1,0 +1,191 @@
+{
+  "audit_date": "2026-08-06",
+  "model": "hyper-sphere RSI (single-action-curve-rsi atom)",
+  "primitive_basis": "9-D yubiOS internal-big-picture basis",
+  "geometry": "chordal proxy on S^2, identity-init M\u00f6bius",
+  "corpora": {
+    "skills": {
+      "corpus_dir": "skills/",
+      "corpus_size": 79,
+      "cycles_total": 6,
+      "cumulative_delta_per_cycle": [
+        5.5787,
+        3.0091,
+        1.2833,
+        0.8829,
+        0.5423,
+        0.0
+      ],
+      "sparse_cells_per_cycle": [
+        7,
+        3,
+        2,
+        3,
+        0,
+        0
+      ],
+      "primitive_coverage_pre": [
+        71,
+        63,
+        63,
+        49,
+        35,
+        74,
+        72,
+        70,
+        73
+      ],
+      "primitive_coverage_post": [
+        79,
+        79,
+        79,
+        79,
+        79,
+        79,
+        79,
+        79,
+        79
+      ],
+      "fixpoint_reached": true,
+      "source_pr": "PR #184 (2026-08-06)"
+    },
+    "docs": {
+      "corpus_dir": "docs/",
+      "corpus_size": 21,
+      "cycles_total": 6,
+      "cumulative_delta_per_cycle": [
+        1.9509,
+        1.6691,
+        1.2684,
+        0.4718,
+        0.1808,
+        0.0
+      ],
+      "peak_delta_per_cycle": [
+        0.1206,
+        0.1206,
+        0.1175,
+        0.1003,
+        0.0904,
+        0.0
+      ],
+      "mean_delta_per_cycle": [
+        0.0929,
+        0.0795,
+        0.0604,
+        0.0225,
+        0.0086,
+        0.0
+      ],
+      "sparse_cells_per_cycle": [
+        7,
+        4,
+        3,
+        0,
+        0,
+        0
+      ],
+      "primitive_coverage_pre": [
+        14,
+        15,
+        8,
+        8,
+        1,
+        19,
+        17,
+        19,
+        14
+      ],
+      "primitive_coverage_post": [
+        21,
+        21,
+        21,
+        21,
+        21,
+        21,
+        21,
+        21,
+        21
+      ],
+      "fixpoint_reached": true
+    },
+    "refs": {
+      "corpus_dir": "refs/",
+      "corpus_size": 113,
+      "cycles_total": 7,
+      "cumulative_delta_per_cycle": [
+        9.9559,
+        11.984,
+        10.371,
+        7.4256,
+        2.9221,
+        0.2712,
+        0.0
+      ],
+      "peak_delta_per_cycle": [
+        0.1206,
+        0.1206,
+        0.1175,
+        0.1098,
+        0.1003,
+        0.0904,
+        0.0
+      ],
+      "mean_delta_per_cycle": [
+        0.0881,
+        0.1061,
+        0.0918,
+        0.0657,
+        0.0259,
+        0.0024,
+        0.0
+      ],
+      "sparse_cells_per_cycle": [
+        33,
+        18,
+        4,
+        2,
+        0,
+        0,
+        0
+      ],
+      "primitive_coverage_pre": [
+        42,
+        30,
+        28,
+        23,
+        7,
+        54,
+        48,
+        78,
+        30
+      ],
+      "primitive_coverage_post": [
+        113,
+        113,
+        113,
+        113,
+        113,
+        113,
+        113,
+        113,
+        113
+      ],
+      "fixpoint_reached": true
+    }
+  },
+  "lemma_1_evidence": {
+    "skills_dispatches": 474,
+    "docs_dispatches": 126,
+    "refs_dispatches": 791,
+    "total_dispatches": 1391,
+    "negative_delta_count": 0,
+    "corpora_covered": [
+      "skills",
+      "docs",
+      "refs"
+    ]
+  },
+  "corpus_total_files": 213,
+  "corpus_total_cumulative_delta": 59.7671
+}
