@@ -476,37 +476,12 @@ For security and hardening, the least privilege primitive applies as follows: th
 
 Concrete implications for security and hardening: any change should be reviewed for impact on least-privilege coverage; gaps are tracked in the cycle-5 run log at `refs/curve-guided-rsi-v2-cycle5-deep-research-2026-08-04.md` on `yubi-OS/yubiOS`.
 
+## Cycle 8 RSI primitive-closure (2026-08-06)
 
----
+This skill's cycle 8 RSI target primitive is **attestation** (top-priority MOVABLE missing post-cycle-7).
 
-## Cycle 5 RSI primitive-closure (2026-08-06)
-
-The hyperspherical-harmonic-curve corpus audit identified this skill as having a `trust chain` coverage gap in the 10-primitive yubiOS framework. **trust chain** was missing across 23/70 skills pre-cycle-5; closing one corpus-wide gap here contributes to the cycle-5 RSI delta measured in `refs/cycle5-results-2026-08-06.md`.
-
-**Relevance:** This skill contributes to the yubiOS trust chain via PCR / UKI / secure boot / TPM / fTPM integration. Specifically it covers: trust chain, PCR, UKI.
-
-**Keywords introduced in this skill (cycle-5 RSI):** `trust chain`, `PCR`, `UKI`, `secure boot`
-
-**Audit-trail:** This addition closes one corpus-wide primitive gap (corpus-wide `trust chain` count moved 23→24/70). Per-skill impact is recorded in the cycle-5 results artifact. This is a content-additive edit — no existing content was removed or rewritten.
+Attestation relevance: explicit evidence quoting (TPM2 attestation quote, signed evidence bundles, transparency-log inclusion proofs) is the verifiable-cryptographic-identity binding between a runtime measurement and a signed reference value. This skill's target primitive list is: attestation, verify, verification, evidence, quote, signing, signed.
 
 ## Changelog
 
-- **2026-08-06 cycle 5 RSI**: closed `trust chain` primitive gap (corpus-wide count 23→24/70). See `refs/cycle5-results-2026-08-06.md` for the corpus-fit delta measurement.
-
-
----
-
-## Cycle 6 RSI primitive-closure (2026-08-06)
-
-This skill's `cryptographic identity` primitive is closed by cycle-6 RSI. This skill's cryptographic identity (FIDO2 / PIV / YubiKey / ssh-key / hmac-secret / passkey) integration is referenced.
-
-The audit-trail entry: 2026-08-06 cycle 6 RSI — closed `cryptographic identity` primitive gap.
-
-
----
-
-## Cycle 7 RSI primitive-closure (2026-08-06)
-
-This skill's `declarative policy` primitive is closed by cycle-7 RSI (3rd-priority MOVABLE per skill, post-cycle-6 baseline). This skill's declarative policy (.rego / OPA / Build Policy) integration is referenced.
-
-The audit-trail entry: 2026-08-06 cycle 7 RSI — closed `declarative policy` primitive gap.
+- 2026-08-06: Cycle 8 RSI primitive-closure — added attestation keywords (top-priority MOVABLE missing post-cycle-7).

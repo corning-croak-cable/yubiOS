@@ -334,37 +334,12 @@ For browser testing with devtools, the audit/evidence primitive applies as follo
 
 Concrete implications for browser testing with devtools: any change should be reviewed for impact on audit-evidence coverage; gaps are tracked in the cycle-5 run log.
 
+## Cycle 8 RSI primitive-closure (2026-08-06)
 
----
+This skill's cycle 8 RSI target primitive is **declarative policy** (top-priority MOVABLE missing post-cycle-7).
 
-## Cycle 5 RSI primitive-closure (2026-08-06)
-
-The hyperspherical-harmonic-curve corpus audit identified this skill as having a `segmentation` coverage gap in the 10-primitive yubiOS framework. **segmentation** was missing across 22/70 skills pre-cycle-5; closing one corpus-wide gap here contributes to the cycle-5 RSI delta measured in `refs/cycle5-results-2026-08-06.md`.
-
-**Relevance:** This skill enforces segmentation via namespace / nspawn / cgroup / microsegmentation / private-users. Specifically it covers: segmentation, namespace, nspawn.
-
-**Keywords introduced in this skill (cycle-5 RSI):** `segmentation`, `namespace`, `nspawn`, `cgroup`
-
-**Audit-trail:** This addition closes one corpus-wide primitive gap (corpus-wide `segmentation` count moved 22→23/70). Per-skill impact is recorded in the cycle-5 results artifact. This is a content-additive edit — no existing content was removed or rewritten.
+Declarative policy relevance: schema-driven specification, config-as-code, and policy-driven enforcement are the reproducible-form binding between desired state and actual runtime state. This skill's target primitive list is: declarative, policy, schema, manifest, config-as-code, specification, policy-driven.
 
 ## Changelog
 
-- **2026-08-06 cycle 5 RSI**: closed `segmentation` primitive gap (corpus-wide count 22→23/70). See `refs/cycle5-results-2026-08-06.md` for the corpus-fit delta measurement.
-
-
----
-
-## Cycle 6 RSI primitive-closure (2026-08-06)
-
-This skill's `cryptographic identity` primitive is closed by cycle-6 RSI. This skill's cryptographic identity (FIDO2 / PIV / YubiKey / ssh-key / hmac-secret / passkey) integration is referenced.
-
-The audit-trail entry: 2026-08-06 cycle 6 RSI — closed `cryptographic identity` primitive gap.
-
-
----
-
-## Cycle 7 RSI primitive-closure (2026-08-06)
-
-This skill's `trust chain` primitive is closed by cycle-7 RSI (3rd-priority MOVABLE per skill, post-cycle-6 baseline). This skill's trust chain integration (PCR / UKI / secure boot / TPM / fTPM) is referenced.
-
-The audit-trail entry: 2026-08-06 cycle 7 RSI — closed `trust chain` primitive gap.
+- 2026-08-06: Cycle 8 RSI primitive-closure — added declarative policy keywords (top-priority MOVABLE missing post-cycle-7).

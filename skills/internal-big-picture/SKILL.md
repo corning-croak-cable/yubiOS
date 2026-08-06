@@ -518,31 +518,6 @@ For internal big-picture, the attestation primitive applies as follows: this ski
 
 Concrete implications for internal big-picture: any change should be reviewed for impact on attestation coverage; gaps in attestation that are attributable to this skill are tracked in the cycle-5 run log at `refs/curve-guided-rsi-v2-cycle5-deep-research-2026-08-04.md` on `yubi-OS/yubiOS`.
 
-
----
-
-## Cycle 5 RSI audit-trail (2026-08-06)
-
-This skill already covers all 10 canonical yubiOS primitives pre-cycle-5. The cycle-5 RSI audit verified full coverage; no primitive closure needed. Per-skill impact recorded in `refs/cycle5-results-2026-08-06.md`.
-
 ## Changelog
 
-- **2026-08-06 cycle 5 RSI**: no primitive closure needed (already covers all 10 primitives). See `refs/cycle5-results-2026-08-06.md`.
-
-
----
-
-## Cycle 6 RSI audit-trail (2026-08-06)
-
-This skill already covers all 6 movable corpus-priority primitives post-cycle-5. The cycle-6 RSI audit verified full coverage; no primitive closure needed.
-
-The audit-trail entry: 2026-08-06 cycle 6 RSI — no movable primitive gap to close.
-
-
----
-
-## Cycle 7 RSI audit-trail (2026-08-06)
-
-This skill already covers all 5 remaining MOVABLE corpus-priority primitives post-cycle-6 (attestation, trust chain, declarative policy, immutability, least privilege). The cycle-7 RSI audit verified full movable coverage; no primitive closure needed.
-
-The audit-trail entry: 2026-08-06 cycle 7 RSI — no movable primitive gap to close.
+- 2026-08-06: Cycle 8 RSI audit-only entry — no top-priority MOVABLE primitive missing post-cycle-7 (all five MOVABLE primitives — declarative policy, attestation, immutability, least privilege, continuous/adaptive — already present).

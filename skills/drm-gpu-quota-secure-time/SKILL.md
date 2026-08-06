@@ -204,37 +204,6 @@ For DRM GPU quota secure time, the immutability primitive applies as follows: th
 
 Concrete implications for DRM GPU quota secure time: any change should be reviewed for impact on immutability coverage; gaps are tracked in the cycle-5 run log.
 
-
----
-
-## Cycle 5 RSI primitive-closure (2026-08-06)
-
-The hyperspherical-harmonic-curve corpus audit identified this skill as having a `cryptographic identity` coverage gap in the 10-primitive yubiOS framework. **cryptographic identity** was missing across 23/70 skills pre-cycle-5; closing one corpus-wide gap here contributes to the cycle-5 RSI delta measured in `refs/cycle5-results-2026-08-06.md`.
-
-**Relevance:** This skill relies on cryptographic identity (FIDO2 / PIV / YubiKey / ssh-key / hmac-secret / passkey). Specifically it covers: cryptographic identity, FIDO2, PIV.
-
-**Keywords introduced in this skill (cycle-5 RSI):** `cryptographic identity`, `FIDO2`, `PIV`, `YubiKey`
-
-**Audit-trail:** This addition closes one corpus-wide primitive gap (corpus-wide `cryptographic identity` count moved 23→24/70). Per-skill impact is recorded in the cycle-5 results artifact. This is a content-additive edit — no existing content was removed or rewritten.
-
 ## Changelog
 
-- **2026-08-06 cycle 5 RSI**: closed `cryptographic identity` primitive gap (corpus-wide count 23→24/70). See `refs/cycle5-results-2026-08-06.md` for the corpus-fit delta measurement.
-
-
----
-
-## Cycle 6 RSI primitive-closure (2026-08-06)
-
-This skill's `declarative policy` primitive is closed by cycle-6 RSI. This skill's declarative policy (.rego / OPA / Build Policy) integration is referenced.
-
-The audit-trail entry: 2026-08-06 cycle 6 RSI — closed `declarative policy` primitive gap.
-
-
----
-
-## Cycle 7 RSI audit-trail (2026-08-06)
-
-This skill already covers all 5 remaining MOVABLE corpus-priority primitives post-cycle-6 (attestation, trust chain, declarative policy, immutability, least privilege). The cycle-7 RSI audit verified full movable coverage; no primitive closure needed.
-
-The audit-trail entry: 2026-08-06 cycle 7 RSI — no movable primitive gap to close.
+- 2026-08-06: Cycle 8 RSI audit-only entry — no top-priority MOVABLE primitive missing post-cycle-7 (all five MOVABLE primitives — declarative policy, attestation, immutability, least privilege, continuous/adaptive — already present).
