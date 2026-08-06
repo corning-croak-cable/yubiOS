@@ -1,0 +1,4745 @@
+{
+  "corpus_size": 79,
+  "primitives": [
+    "attestation",
+    "trust_chain",
+    "least_privilege",
+    "declarative_policy",
+    "continuous_adaptive",
+    "immutability",
+    "audit_evidence",
+    "cryptographic_identity",
+    "segmentation"
+  ],
+  "cycles_total": 6,
+  "cumulative_delta_per_cycle": [
+    5.5787,
+    3.0091,
+    1.2833,
+    0.8829,
+    0.5423,
+    0.0
+  ],
+  "sparse_cells_per_cycle": [
+    7,
+    3,
+    2,
+    3,
+    0,
+    0
+  ],
+  "primitive_coverage_per_cycle": [
+    [
+      71,
+      63,
+      63,
+      49,
+      35,
+      74,
+      72,
+      70,
+      73
+    ],
+    [
+      79,
+      71,
+      69,
+      75,
+      54,
+      78,
+      77,
+      70,
+      73
+    ],
+    [
+      79,
+      79,
+      71,
+      78,
+      70,
+      78,
+      77,
+      71,
+      75
+    ],
+    [
+      79,
+      79,
+      79,
+      79,
+      72,
+      79,
+      78,
+      71,
+      79
+    ],
+    [
+      79,
+      79,
+      79,
+      79,
+      79,
+      79,
+      79,
+      73,
+      79
+    ],
+    [
+      79,
+      79,
+      79,
+      79,
+      79,
+      79,
+      79,
+      79,
+      79
+    ]
+  ],
+  "all_cycles": [
+    {
+      "cycle": 1,
+      "slug": "0pointer-mastery",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 1,
+      "slug": "api-and-interface-design",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 1,
+      "slug": "arm-trusted-firmware-optee",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 1,
+      "slug": "ascii-uart-animator",
+      "missing_primitives": [
+        "attestation",
+        "trust_chain",
+        "least_privilege",
+        "declarative_policy",
+        "continuous_adaptive",
+        "immutability",
+        "audit_evidence",
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.9758,
+      "d_post": 1.908,
+      "delta_d": 0.0678,
+      "winner_primitive": "attestation"
+    },
+    {
+      "cycle": 1,
+      "slug": "audit-evidence-packaging",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 1,
+      "slug": "bcvk-virtualization",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 1,
+      "slug": "bootc-images",
+      "missing_primitives": [
+        "trust_chain",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "trust_chain"
+    },
+    {
+      "cycle": 1,
+      "slug": "browser-testing-with-devtools",
+      "missing_primitives": [
+        "declarative_policy"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 1,
+      "slug": "ci-cd-and-automation",
+      "missing_primitives": [
+        "declarative_policy"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 1,
+      "slug": "code-review-and-quality",
+      "missing_primitives": [
+        "least_privilege",
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.4552,
+      "d_post": 1.3454,
+      "delta_d": 0.1098,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 1,
+      "slug": "code-simplification",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 1,
+      "slug": "composefs-kernel-floors",
+      "missing_primitives": [
+        "least_privilege",
+        "declarative_policy",
+        "continuous_adaptive",
+        "audit_evidence"
+      ],
+      "d_pre": 1.5727,
+      "d_post": 1.4552,
+      "delta_d": 0.1175,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 1,
+      "slug": "context-engineering",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 1,
+      "slug": "context-isolation",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 1,
+      "slug": "curve-guided-rsi",
+      "missing_primitives": [
+        "trust_chain"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "trust_chain"
+    },
+    {
+      "cycle": 1,
+      "slug": "curve-guided-rsi-self",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 1,
+      "slug": "debug-with-cli",
+      "missing_primitives": [
+        "attestation",
+        "trust_chain",
+        "least_privilege",
+        "declarative_policy",
+        "continuous_adaptive",
+        "immutability",
+        "audit_evidence"
+      ],
+      "d_pre": 1.908,
+      "d_post": 1.8091,
+      "delta_d": 0.0989,
+      "winner_primitive": "attestation"
+    },
+    {
+      "cycle": 1,
+      "slug": "debugging-and-error-recovery",
+      "missing_primitives": [
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 1,
+      "slug": "deprecation-and-migration",
+      "missing_primitives": [
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 1,
+      "slug": "dm-verity-and-integrity",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 1,
+      "slug": "docker-bake-action",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 1,
+      "slug": "docker-build-policy",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 1,
+      "slug": "docker-build-push-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 1,
+      "slug": "docker-buildx-rootless",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 1,
+      "slug": "docker-login-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 1,
+      "slug": "docker-metadata-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 1,
+      "slug": "docker-setup-buildx-action",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 1,
+      "slug": "docker-setup-qemu-action",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 1,
+      "slug": "documentation-and-adrs",
+      "missing_primitives": [
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 1,
+      "slug": "doubt-driven-development",
+      "missing_primitives": [
+        "least_privilege",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 1,
+      "slug": "drm-gpu-quota-secure-time",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 1,
+      "slug": "fedora-bootc-base-images",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 1,
+      "slug": "frontend-ui-engineering",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 1,
+      "slug": "ftpm-optee-tpm",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 1,
+      "slug": "git-workflow-and-versioning",
+      "missing_primitives": [
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 1,
+      "slug": "github-actions",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 1,
+      "slug": "github-api",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 1,
+      "slug": "github-stacked-pull-requests",
+      "missing_primitives": [
+        "trust_chain"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "trust_chain"
+    },
+    {
+      "cycle": 1,
+      "slug": "human-for-feasibility",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 1,
+      "slug": "hyperspherical-harmonic-curve",
+      "missing_primitives": [
+        "trust_chain",
+        "least_privilege",
+        "declarative_policy",
+        "audit_evidence",
+        "cryptographic_identity",
+        "segmentation"
+      ],
+      "d_pre": 1.8091,
+      "d_post": 1.6933,
+      "delta_d": 0.1158,
+      "winner_primitive": "trust_chain"
+    },
+    {
+      "cycle": 1,
+      "slug": "idea-kill",
+      "missing_primitives": [
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 1,
+      "slug": "idea-refine",
+      "missing_primitives": [
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 1,
+      "slug": "ideate-solo",
+      "missing_primitives": [
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 1,
+      "slug": "incremental-implementation",
+      "missing_primitives": [
+        "declarative_policy"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 1,
+      "slug": "internal-big-picture",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 1,
+      "slug": "internal-nonlex-tokens",
+      "missing_primitives": [
+        "attestation",
+        "trust_chain",
+        "least_privilege",
+        "declarative_policy",
+        "continuous_adaptive",
+        "cryptographic_identity",
+        "segmentation"
+      ],
+      "d_pre": 1.908,
+      "d_post": 1.8091,
+      "delta_d": 0.0989,
+      "winner_primitive": "attestation"
+    },
+    {
+      "cycle": 1,
+      "slug": "interview-me",
+      "missing_primitives": [
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 1,
+      "slug": "learned-latent-curve",
+      "missing_primitives": [
+        "trust_chain"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "trust_chain"
+    },
+    {
+      "cycle": 1,
+      "slug": "linkedin-browser-outreach",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 1,
+      "slug": "mkosi-image-builder",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 1,
+      "slug": "negative-skill-space",
+      "missing_primitives": [
+        "trust_chain",
+        "least_privilege",
+        "immutability",
+        "cryptographic_identity",
+        "segmentation"
+      ],
+      "d_pre": 1.6933,
+      "d_post": 1.5727,
+      "delta_d": 0.1206,
+      "winner_primitive": "trust_chain"
+    },
+    {
+      "cycle": 1,
+      "slug": "novelty-indication",
+      "missing_primitives": [
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 1,
+      "slug": "nspawn-containers",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 1,
+      "slug": "observability-and-instrumentation",
+      "missing_primitives": [
+        "least_privilege"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 1,
+      "slug": "performance-optimization",
+      "missing_primitives": [
+        "declarative_policy"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 1,
+      "slug": "planning-and-task-breakdown",
+      "missing_primitives": [
+        "declarative_policy"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 1,
+      "slug": "play-audio-on-rock1",
+      "missing_primitives": [
+        "attestation",
+        "trust_chain",
+        "least_privilege",
+        "declarative_policy",
+        "continuous_adaptive",
+        "immutability",
+        "audit_evidence",
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.9758,
+      "d_post": 1.908,
+      "delta_d": 0.0678,
+      "winner_primitive": "attestation"
+    },
+    {
+      "cycle": 1,
+      "slug": "pr-launch",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 1,
+      "slug": "prior-art-search",
+      "missing_primitives": [
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 1,
+      "slug": "radio-queue",
+      "missing_primitives": [
+        "attestation",
+        "trust_chain",
+        "least_privilege",
+        "declarative_policy",
+        "continuous_adaptive",
+        "immutability",
+        "audit_evidence",
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.9758,
+      "d_post": 1.908,
+      "delta_d": 0.0678,
+      "winner_primitive": "attestation"
+    },
+    {
+      "cycle": 1,
+      "slug": "recursive-self-improvement",
+      "missing_primitives": [
+        "trust_chain",
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "trust_chain"
+    },
+    {
+      "cycle": 1,
+      "slug": "restful-self",
+      "missing_primitives": [
+        "attestation",
+        "trust_chain",
+        "least_privilege",
+        "declarative_policy",
+        "continuous_adaptive",
+        "audit_evidence",
+        "cryptographic_identity",
+        "segmentation"
+      ],
+      "d_pre": 1.9758,
+      "d_post": 1.908,
+      "delta_d": 0.0678,
+      "winner_primitive": "attestation"
+    },
+    {
+      "cycle": 1,
+      "slug": "rootless-container-builds",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 1,
+      "slug": "security-and-hardening",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 1,
+      "slug": "self-archaeology",
+      "missing_primitives": [
+        "attestation",
+        "trust_chain",
+        "least_privilege",
+        "declarative_policy",
+        "continuous_adaptive",
+        "cryptographic_identity",
+        "segmentation"
+      ],
+      "d_pre": 1.908,
+      "d_post": 1.8091,
+      "delta_d": 0.0989,
+      "winner_primitive": "attestation"
+    },
+    {
+      "cycle": 1,
+      "slug": "shipping-and-launch",
+      "missing_primitives": [
+        "least_privilege",
+        "declarative_policy"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 1,
+      "slug": "sigstore-rekor-v2",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 1,
+      "slug": "single-action-curve-rsi",
+      "missing_primitives": [
+        "attestation",
+        "trust_chain",
+        "least_privilege",
+        "declarative_policy",
+        "segmentation"
+      ],
+      "d_pre": 1.6933,
+      "d_post": 1.5727,
+      "delta_d": 0.1206,
+      "winner_primitive": "attestation"
+    },
+    {
+      "cycle": 1,
+      "slug": "slsa-provenance",
+      "missing_primitives": [
+        "trust_chain",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "trust_chain"
+    },
+    {
+      "cycle": 1,
+      "slug": "source-driven-development",
+      "missing_primitives": [
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 1,
+      "slug": "spec-driven-development",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 1,
+      "slug": "systemd-hardening",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 1,
+      "slug": "systemd-homed",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 1,
+      "slug": "test-driven-development",
+      "missing_primitives": [
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 1,
+      "slug": "the-cult",
+      "missing_primitives": [
+        "declarative_policy"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 1,
+      "slug": "the-follower",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 1,
+      "slug": "token-efficiency",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 1,
+      "slug": "using-agent-skills",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 1,
+      "slug": "yubikey-operations",
+      "missing_primitives": [
+        "least_privilege",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 2,
+      "slug": "0pointer-mastery",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "api-and-interface-design",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "arm-trusted-firmware-optee",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "ascii-uart-animator",
+      "missing_primitives": [
+        "trust_chain",
+        "least_privilege",
+        "continuous_adaptive",
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.5727,
+      "d_post": 1.4552,
+      "delta_d": 0.1175,
+      "winner_primitive": "trust_chain"
+    },
+    {
+      "cycle": 2,
+      "slug": "audit-evidence-packaging",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "bcvk-virtualization",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "bootc-images",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 2,
+      "slug": "browser-testing-with-devtools",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "ci-cd-and-automation",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "code-review-and-quality",
+      "missing_primitives": [
+        "declarative_policy",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 2,
+      "slug": "code-simplification",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "composefs-kernel-floors",
+      "missing_primitives": [
+        "declarative_policy",
+        "continuous_adaptive",
+        "audit_evidence"
+      ],
+      "d_pre": 1.4552,
+      "d_post": 1.3454,
+      "delta_d": 0.1098,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 2,
+      "slug": "context-engineering",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "context-isolation",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "curve-guided-rsi",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "curve-guided-rsi-self",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "debug-with-cli",
+      "missing_primitives": [
+        "trust_chain",
+        "least_privilege",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.4552,
+      "d_post": 1.3454,
+      "delta_d": 0.1098,
+      "winner_primitive": "trust_chain"
+    },
+    {
+      "cycle": 2,
+      "slug": "debugging-and-error-recovery",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 2,
+      "slug": "deprecation-and-migration",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 2,
+      "slug": "dm-verity-and-integrity",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "docker-bake-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "docker-build-policy",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "docker-build-push-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "docker-buildx-rootless",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "docker-login-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "docker-metadata-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "docker-setup-buildx-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "docker-setup-qemu-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "documentation-and-adrs",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 2,
+      "slug": "doubt-driven-development",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 2,
+      "slug": "drm-gpu-quota-secure-time",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "fedora-bootc-base-images",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "frontend-ui-engineering",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "ftpm-optee-tpm",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "git-workflow-and-versioning",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 2,
+      "slug": "github-actions",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "github-api",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "github-stacked-pull-requests",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "human-for-feasibility",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "hyperspherical-harmonic-curve",
+      "missing_primitives": [
+        "least_privilege",
+        "declarative_policy",
+        "audit_evidence",
+        "cryptographic_identity",
+        "segmentation"
+      ],
+      "d_pre": 1.6933,
+      "d_post": 1.5727,
+      "delta_d": 0.1206,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 2,
+      "slug": "idea-kill",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 2,
+      "slug": "idea-refine",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 2,
+      "slug": "ideate-solo",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 2,
+      "slug": "incremental-implementation",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "internal-big-picture",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "internal-nonlex-tokens",
+      "missing_primitives": [
+        "trust_chain",
+        "least_privilege",
+        "continuous_adaptive",
+        "cryptographic_identity",
+        "segmentation"
+      ],
+      "d_pre": 1.6933,
+      "d_post": 1.5727,
+      "delta_d": 0.1206,
+      "winner_primitive": "trust_chain"
+    },
+    {
+      "cycle": 2,
+      "slug": "interview-me",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 2,
+      "slug": "learned-latent-curve",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "linkedin-browser-outreach",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "mkosi-image-builder",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "negative-skill-space",
+      "missing_primitives": [
+        "least_privilege",
+        "immutability",
+        "cryptographic_identity",
+        "segmentation"
+      ],
+      "d_pre": 1.5727,
+      "d_post": 1.4552,
+      "delta_d": 0.1175,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 2,
+      "slug": "novelty-indication",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 2,
+      "slug": "nspawn-containers",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "observability-and-instrumentation",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "performance-optimization",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "planning-and-task-breakdown",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "play-audio-on-rock1",
+      "missing_primitives": [
+        "trust_chain",
+        "least_privilege",
+        "continuous_adaptive",
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.5727,
+      "d_post": 1.4552,
+      "delta_d": 0.1175,
+      "winner_primitive": "trust_chain"
+    },
+    {
+      "cycle": 2,
+      "slug": "pr-launch",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "prior-art-search",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 2,
+      "slug": "radio-queue",
+      "missing_primitives": [
+        "trust_chain",
+        "least_privilege",
+        "continuous_adaptive",
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.5727,
+      "d_post": 1.4552,
+      "delta_d": 0.1175,
+      "winner_primitive": "trust_chain"
+    },
+    {
+      "cycle": 2,
+      "slug": "recursive-self-improvement",
+      "missing_primitives": [
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "cryptographic_identity"
+    },
+    {
+      "cycle": 2,
+      "slug": "restful-self",
+      "missing_primitives": [
+        "trust_chain",
+        "least_privilege",
+        "continuous_adaptive",
+        "cryptographic_identity",
+        "segmentation"
+      ],
+      "d_pre": 1.6933,
+      "d_post": 1.5727,
+      "delta_d": 0.1206,
+      "winner_primitive": "trust_chain"
+    },
+    {
+      "cycle": 2,
+      "slug": "rootless-container-builds",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "security-and-hardening",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "self-archaeology",
+      "missing_primitives": [
+        "trust_chain",
+        "least_privilege",
+        "continuous_adaptive",
+        "cryptographic_identity",
+        "segmentation"
+      ],
+      "d_pre": 1.6933,
+      "d_post": 1.5727,
+      "delta_d": 0.1206,
+      "winner_primitive": "trust_chain"
+    },
+    {
+      "cycle": 2,
+      "slug": "shipping-and-launch",
+      "missing_primitives": [
+        "declarative_policy"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 2,
+      "slug": "sigstore-rekor-v2",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "single-action-curve-rsi",
+      "missing_primitives": [
+        "trust_chain",
+        "least_privilege",
+        "segmentation"
+      ],
+      "d_pre": 1.4552,
+      "d_post": 1.3454,
+      "delta_d": 0.1098,
+      "winner_primitive": "trust_chain"
+    },
+    {
+      "cycle": 2,
+      "slug": "slsa-provenance",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 2,
+      "slug": "source-driven-development",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 2,
+      "slug": "spec-driven-development",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "systemd-hardening",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "systemd-homed",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "test-driven-development",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 2,
+      "slug": "the-cult",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "the-follower",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "token-efficiency",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "using-agent-skills",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 2,
+      "slug": "yubikey-operations",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 3,
+      "slug": "0pointer-mastery",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "api-and-interface-design",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "arm-trusted-firmware-optee",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "ascii-uart-animator",
+      "missing_primitives": [
+        "least_privilege",
+        "continuous_adaptive",
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.4552,
+      "d_post": 1.3454,
+      "delta_d": 0.1098,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 3,
+      "slug": "audit-evidence-packaging",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "bcvk-virtualization",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "bootc-images",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "browser-testing-with-devtools",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "ci-cd-and-automation",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "code-review-and-quality",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 3,
+      "slug": "code-simplification",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "composefs-kernel-floors",
+      "missing_primitives": [
+        "continuous_adaptive",
+        "audit_evidence"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 3,
+      "slug": "context-engineering",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "context-isolation",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "curve-guided-rsi",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "curve-guided-rsi-self",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "debug-with-cli",
+      "missing_primitives": [
+        "least_privilege",
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 3,
+      "slug": "debugging-and-error-recovery",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "deprecation-and-migration",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "dm-verity-and-integrity",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "docker-bake-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "docker-build-policy",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "docker-build-push-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "docker-buildx-rootless",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "docker-login-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "docker-metadata-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "docker-setup-buildx-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "docker-setup-qemu-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "documentation-and-adrs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "doubt-driven-development",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "drm-gpu-quota-secure-time",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "fedora-bootc-base-images",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "frontend-ui-engineering",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "ftpm-optee-tpm",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "git-workflow-and-versioning",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "github-actions",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "github-api",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "github-stacked-pull-requests",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "human-for-feasibility",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "hyperspherical-harmonic-curve",
+      "missing_primitives": [
+        "declarative_policy",
+        "audit_evidence",
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.4552,
+      "d_post": 1.3454,
+      "delta_d": 0.1098,
+      "winner_primitive": "declarative_policy"
+    },
+    {
+      "cycle": 3,
+      "slug": "idea-kill",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "idea-refine",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "ideate-solo",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "incremental-implementation",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "internal-big-picture",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "internal-nonlex-tokens",
+      "missing_primitives": [
+        "least_privilege",
+        "continuous_adaptive",
+        "cryptographic_identity",
+        "segmentation"
+      ],
+      "d_pre": 1.5727,
+      "d_post": 1.4552,
+      "delta_d": 0.1175,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 3,
+      "slug": "interview-me",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "learned-latent-curve",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "linkedin-browser-outreach",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "mkosi-image-builder",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "negative-skill-space",
+      "missing_primitives": [
+        "immutability",
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "immutability"
+    },
+    {
+      "cycle": 3,
+      "slug": "novelty-indication",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "nspawn-containers",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "observability-and-instrumentation",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "performance-optimization",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "planning-and-task-breakdown",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "play-audio-on-rock1",
+      "missing_primitives": [
+        "least_privilege",
+        "continuous_adaptive",
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.4552,
+      "d_post": 1.3454,
+      "delta_d": 0.1098,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 3,
+      "slug": "pr-launch",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "prior-art-search",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "radio-queue",
+      "missing_primitives": [
+        "least_privilege",
+        "continuous_adaptive",
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.4552,
+      "d_post": 1.3454,
+      "delta_d": 0.1098,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 3,
+      "slug": "recursive-self-improvement",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "restful-self",
+      "missing_primitives": [
+        "least_privilege",
+        "continuous_adaptive",
+        "cryptographic_identity",
+        "segmentation"
+      ],
+      "d_pre": 1.5727,
+      "d_post": 1.4552,
+      "delta_d": 0.1175,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 3,
+      "slug": "rootless-container-builds",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "security-and-hardening",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "self-archaeology",
+      "missing_primitives": [
+        "least_privilege",
+        "continuous_adaptive",
+        "cryptographic_identity",
+        "segmentation"
+      ],
+      "d_pre": 1.5727,
+      "d_post": 1.4552,
+      "delta_d": 0.1175,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 3,
+      "slug": "shipping-and-launch",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "sigstore-rekor-v2",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "single-action-curve-rsi",
+      "missing_primitives": [
+        "least_privilege",
+        "segmentation"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "least_privilege"
+    },
+    {
+      "cycle": 3,
+      "slug": "slsa-provenance",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "source-driven-development",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "spec-driven-development",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "systemd-hardening",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "systemd-homed",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "test-driven-development",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "the-cult",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "the-follower",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "token-efficiency",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "using-agent-skills",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 3,
+      "slug": "yubikey-operations",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "0pointer-mastery",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "api-and-interface-design",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "arm-trusted-firmware-optee",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "ascii-uart-animator",
+      "missing_primitives": [
+        "continuous_adaptive",
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 4,
+      "slug": "audit-evidence-packaging",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "bcvk-virtualization",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "bootc-images",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "browser-testing-with-devtools",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "ci-cd-and-automation",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "code-review-and-quality",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "code-simplification",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "composefs-kernel-floors",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "context-engineering",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "context-isolation",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "curve-guided-rsi",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "curve-guided-rsi-self",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "debug-with-cli",
+      "missing_primitives": [
+        "continuous_adaptive"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 4,
+      "slug": "debugging-and-error-recovery",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "deprecation-and-migration",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "dm-verity-and-integrity",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "docker-bake-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "docker-build-policy",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "docker-build-push-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "docker-buildx-rootless",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "docker-login-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "docker-metadata-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "docker-setup-buildx-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "docker-setup-qemu-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "documentation-and-adrs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "doubt-driven-development",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "drm-gpu-quota-secure-time",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "fedora-bootc-base-images",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "frontend-ui-engineering",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "ftpm-optee-tpm",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "git-workflow-and-versioning",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "github-actions",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "github-api",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "github-stacked-pull-requests",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "human-for-feasibility",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "hyperspherical-harmonic-curve",
+      "missing_primitives": [
+        "audit_evidence",
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "audit_evidence"
+    },
+    {
+      "cycle": 4,
+      "slug": "idea-kill",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "idea-refine",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "ideate-solo",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "incremental-implementation",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "internal-big-picture",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "internal-nonlex-tokens",
+      "missing_primitives": [
+        "continuous_adaptive",
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 4,
+      "slug": "interview-me",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "learned-latent-curve",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "linkedin-browser-outreach",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "mkosi-image-builder",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "negative-skill-space",
+      "missing_primitives": [
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "cryptographic_identity"
+    },
+    {
+      "cycle": 4,
+      "slug": "novelty-indication",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "nspawn-containers",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "observability-and-instrumentation",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "performance-optimization",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "planning-and-task-breakdown",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "play-audio-on-rock1",
+      "missing_primitives": [
+        "continuous_adaptive",
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 4,
+      "slug": "pr-launch",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "prior-art-search",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "radio-queue",
+      "missing_primitives": [
+        "continuous_adaptive",
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 4,
+      "slug": "recursive-self-improvement",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "restful-self",
+      "missing_primitives": [
+        "continuous_adaptive",
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 4,
+      "slug": "rootless-container-builds",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "security-and-hardening",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "self-archaeology",
+      "missing_primitives": [
+        "continuous_adaptive",
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.3454,
+      "d_post": 1.2451,
+      "delta_d": 0.1003,
+      "winner_primitive": "continuous_adaptive"
+    },
+    {
+      "cycle": 4,
+      "slug": "shipping-and-launch",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "sigstore-rekor-v2",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "single-action-curve-rsi",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "slsa-provenance",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "source-driven-development",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "spec-driven-development",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "systemd-hardening",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "systemd-homed",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "test-driven-development",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "the-cult",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "the-follower",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "token-efficiency",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "using-agent-skills",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 4,
+      "slug": "yubikey-operations",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "0pointer-mastery",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "api-and-interface-design",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "arm-trusted-firmware-optee",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "ascii-uart-animator",
+      "missing_primitives": [
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "cryptographic_identity"
+    },
+    {
+      "cycle": 5,
+      "slug": "audit-evidence-packaging",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "bcvk-virtualization",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "bootc-images",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "browser-testing-with-devtools",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "ci-cd-and-automation",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "code-review-and-quality",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "code-simplification",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "composefs-kernel-floors",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "context-engineering",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "context-isolation",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "curve-guided-rsi",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "curve-guided-rsi-self",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "debug-with-cli",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "debugging-and-error-recovery",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "deprecation-and-migration",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "dm-verity-and-integrity",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "docker-bake-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "docker-build-policy",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "docker-build-push-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "docker-buildx-rootless",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "docker-login-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "docker-metadata-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "docker-setup-buildx-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "docker-setup-qemu-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "documentation-and-adrs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "doubt-driven-development",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "drm-gpu-quota-secure-time",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "fedora-bootc-base-images",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "frontend-ui-engineering",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "ftpm-optee-tpm",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "git-workflow-and-versioning",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "github-actions",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "github-api",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "github-stacked-pull-requests",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "human-for-feasibility",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "hyperspherical-harmonic-curve",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "idea-kill",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "idea-refine",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "ideate-solo",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "incremental-implementation",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "internal-big-picture",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "internal-nonlex-tokens",
+      "missing_primitives": [
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "cryptographic_identity"
+    },
+    {
+      "cycle": 5,
+      "slug": "interview-me",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "learned-latent-curve",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "linkedin-browser-outreach",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "mkosi-image-builder",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "negative-skill-space",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "novelty-indication",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "nspawn-containers",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "observability-and-instrumentation",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "performance-optimization",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "planning-and-task-breakdown",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "play-audio-on-rock1",
+      "missing_primitives": [
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "cryptographic_identity"
+    },
+    {
+      "cycle": 5,
+      "slug": "pr-launch",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "prior-art-search",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "radio-queue",
+      "missing_primitives": [
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "cryptographic_identity"
+    },
+    {
+      "cycle": 5,
+      "slug": "recursive-self-improvement",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "restful-self",
+      "missing_primitives": [
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "cryptographic_identity"
+    },
+    {
+      "cycle": 5,
+      "slug": "rootless-container-builds",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "security-and-hardening",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "self-archaeology",
+      "missing_primitives": [
+        "cryptographic_identity"
+      ],
+      "d_pre": 1.2451,
+      "d_post": 1.1547,
+      "delta_d": 0.0904,
+      "winner_primitive": "cryptographic_identity"
+    },
+    {
+      "cycle": 5,
+      "slug": "shipping-and-launch",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "sigstore-rekor-v2",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "single-action-curve-rsi",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "slsa-provenance",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "source-driven-development",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "spec-driven-development",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "systemd-hardening",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "systemd-homed",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "test-driven-development",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "the-cult",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "the-follower",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "token-efficiency",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "using-agent-skills",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 5,
+      "slug": "yubikey-operations",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "0pointer-mastery",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "api-and-interface-design",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "arm-trusted-firmware-optee",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "ascii-uart-animator",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "audit-evidence-packaging",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "bcvk-virtualization",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "bootc-images",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "browser-testing-with-devtools",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "ci-cd-and-automation",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "code-review-and-quality",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "code-simplification",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "composefs-kernel-floors",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "context-engineering",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "context-isolation",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "curve-guided-rsi",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "curve-guided-rsi-self",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "debug-with-cli",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "debugging-and-error-recovery",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "deprecation-and-migration",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "dm-verity-and-integrity",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "docker-bake-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "docker-build-policy",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "docker-build-push-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "docker-buildx-rootless",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "docker-login-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "docker-metadata-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "docker-setup-buildx-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "docker-setup-qemu-action",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "documentation-and-adrs",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "doubt-driven-development",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "drm-gpu-quota-secure-time",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "fedora-bootc-base-images",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "frontend-ui-engineering",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "ftpm-optee-tpm",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "git-workflow-and-versioning",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "github-actions",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "github-api",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "github-stacked-pull-requests",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "human-for-feasibility",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "hyperspherical-harmonic-curve",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "idea-kill",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "idea-refine",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "ideate-solo",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "incremental-implementation",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "internal-big-picture",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "internal-nonlex-tokens",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "interview-me",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "learned-latent-curve",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "linkedin-browser-outreach",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "mkosi-image-builder",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "negative-skill-space",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "novelty-indication",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "nspawn-containers",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "observability-and-instrumentation",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "performance-optimization",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "planning-and-task-breakdown",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "play-audio-on-rock1",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "pr-launch",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "prior-art-search",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "radio-queue",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "recursive-self-improvement",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "restful-self",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "rootless-container-builds",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "security-and-hardening",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "self-archaeology",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "shipping-and-launch",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "sigstore-rekor-v2",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "single-action-curve-rsi",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "slsa-provenance",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "source-driven-development",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "spec-driven-development",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "systemd-hardening",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "systemd-homed",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "test-driven-development",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "the-cult",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "the-follower",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "token-efficiency",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "using-agent-skills",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    },
+    {
+      "cycle": 6,
+      "slug": "yubikey-operations",
+      "missing_primitives": [],
+      "d_pre": 0.0,
+      "d_post": 0.0,
+      "delta_d": 0.0,
+      "winner_primitive": null
+    }
+  ],
+  "fixpoint_reached": true
+}
