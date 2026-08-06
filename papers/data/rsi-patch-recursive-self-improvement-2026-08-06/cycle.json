@@ -1,0 +1,599 @@
+{
+  "file": "recursive-self-improvement",
+  "cycle_id": "single-action-rsi-recursive-self-improvement-2026-08-06",
+  "basis_used": "single-action-curve-rsi deep-research 9-primitive",
+  "basis_mapping_to_pr1": {
+    "trust_chain": "\u2248 has_test (verification patterns: Verified, verify, PASS, Verification:)",
+    "cryptographic_identity": "\u2248 has_constraint (must/never/ban patterns: Must, Never, Cannot, Don't, ban)"
+  },
+  "section_count": 31,
+  "section_headers": [
+    "Changelog` section (create it if absent). Format:",
+    "Edit Taxonomy",
+    "Modes",
+    "The Output",
+    "Changelog",
+    "Changelog",
+    "Anti-patterns",
+    "Interaction with Other Skills",
+    "Red Flags",
+    "Verification",
+    "Changelog",
+    "Least Privilege coverage for recursive self improvement (curve-guided-rsi cycle-4 substantive edit)",
+    "Continuous/adaptive coverage for recursive-self-improvement (curve-guided-rsi cycle-5 substantive edit)",
+    "Cycle 8 RSI primitive-closure (2026-08-06)",
+    "Changelog",
+    "Changelog` section (create it if absent). Format:",
+    "Edit Taxonomy",
+    "Modes",
+    "The Output",
+    "Changelog",
+    "Changelog",
+    "Anti-patterns",
+    "Interaction with Other Skills",
+    "Red Flags",
+    "Verification",
+    "Changelog",
+    "Least Privilege coverage for recursive self improvement (curve-guided-rsi cycle-4 substantive edit)",
+    "Continuous/adaptive coverage for recursive-self-improvement (curve-guided-rsi cycle-5 substantive edit)",
+    "Cycle 8 RSI primitive-closure (2026-08-06)",
+    "Changelog",
+    "Composition Rule reference (cross-skill)"
+  ],
+  "section_byte_lengths": [
+    791,
+    1040,
+    1366,
+    256,
+    518,
+    516,
+    2037,
+    1515,
+    1143,
+    1295,
+    5535,
+    1454,
+    1089,
+    426,
+    128,
+    791,
+    1040,
+    1366,
+    256,
+    518,
+    516,
+    2037,
+    1515,
+    1143,
+    1295,
+    5535,
+    1454,
+    1089,
+    426,
+    129,
+    541
+  ],
+  "section_coverage_matrix_M": [
+    [
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      1,
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      1,
+      0,
+      1,
+      1,
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "file_coverage_continuous_c": [
+    0.285604,
+    0.51308,
+    0.0,
+    0.766925,
+    0.285604,
+    0.396904,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "file_coverage_c": [
+    0,
+    1,
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "covered_primitives": [
+    "p1_has_evidence",
+    "p3_has_constraint"
+  ],
+  "missing_primitives": [
+    "p0_has_purpose",
+    "p2_has_correction",
+    "p4_has_pushback",
+    "p5_has_test",
+    "p6_has_source",
+    "p7_has_recommendation",
+    "p8_has_priority"
+  ],
+  "missing_indices": [
+    0,
+    2,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "W2": [
+    [
+      0.247053,
+      0.17804
+    ],
+    [
+      0.755003,
+      -0.251293
+    ],
+    [
+      0.0,
+      -0.0
+    ],
+    [
+      0.017627,
+      0.921783
+    ],
+    [
+      0.247053,
+      0.17804
+    ],
+    [
+      0.554608,
+      0.154178
+    ],
+    [
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0
+    ]
+  ],
+  "S_singular_values": [
+    3.283835,
+    2.932749,
+    1.694383,
+    1.320786,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "PC1_PC2_ratio": 0.807691,
+  "s2_point_p": [
+    0.7156969947,
+    0.6957473376,
+    0.060938116
+  ],
+  "s2_norm_check": 1.0,
+  "ideal_pole_p_star": [
+    0.6377859652,
+    0.4134663692,
+    0.6498266108
+  ],
+  "ideal_pole_p_star_norm": 1.0,
+  "d_pre": 0.6576795063,
+  "candidates": [
+    {
+      "primitive": "p0_has_purpose",
+      "primitive_idx": 0,
+      "d_post": 0.0,
+      "delta": 0.6576795062807388,
+      "cost": "medium"
+    },
+    {
+      "primitive": "p2_has_correction",
+      "primitive_idx": 2,
+      "d_post": 0.0,
+      "delta": 0.6576795062807388,
+      "cost": "medium"
+    },
+    {
+      "primitive": "p4_has_pushback",
+      "primitive_idx": 4,
+      "d_post": 0.0,
+      "delta": 0.6576795062807388,
+      "cost": "low"
+    },
+    {
+      "primitive": "p5_has_test",
+      "primitive_idx": 5,
+      "d_post": 0.0,
+      "delta": 0.6576795062807388,
+      "cost": "medium"
+    },
+    {
+      "primitive": "p6_has_source",
+      "primitive_idx": 6,
+      "d_post": 0.0,
+      "delta": 0.6576795062807388,
+      "cost": "low"
+    },
+    {
+      "primitive": "p7_has_recommendation",
+      "primitive_idx": 7,
+      "d_post": 0.0,
+      "delta": 0.6576795062807388,
+      "cost": "medium"
+    },
+    {
+      "primitive": "p8_has_priority",
+      "primitive_idx": 8,
+      "d_post": 0.0,
+      "delta": 0.6576795062807388,
+      "cost": "low"
+    }
+  ],
+  "single_action_target": "p5_has_test",
+  "delta": 0.6576795063,
+  "cycle_outcome": "succeeded",
+  "predicted_post_edit_residual": 1.238057,
+  "pr1_residual_input": 1.4444,
+  "pr1_t_input": 0.2801,
+  "pr1_p_reported_raw": [
+    0.183,
+    0.983,
+    -0.033
+  ],
+  "notes": {
+    "basis_mismatch": "PR1 (internal-big-picture corpus variant) uses trust_chain, cryptographic_identity primitives; this cycle uses single-action-curve-rsi deep-research 9-primitive basis. Mapping: trust_chain \u2248 has_test; cryptographic_identity \u2248 has_constraint. The two bases are NOT equivalent \u2014 PR1's basis is structural/operational (cryptographic, attestation, declarative); single-action-curve-rsi's is textual/structural (has_purpose, has_test, has_priority). The mapping above is approximate.",
+    "M_repetition": "SKILL.md body shows content repetition across multiple Changelog/Edit Taxonomy/Modes/etc. sections (M.shape[0]=31 sections, many duplicates) \u2014 this is real artifact of repeated self-mode cycle concatenations over 9 cycles. The repetition is itself a real signal: the file lacks a single canonical version. PCA is performed on the full 31x9 matrix; weights normalize to byte-length fractions.",
+    "file_coverage_summary": "Covered 2/9 primitives (p1 has_evidence, p3 has_constraint); missing 7/9 (p0/p2/p4/p5/p6/p7/p8).",
+    "lift_implementation": "Per spec step 4: project UN-centered M through W2 (W2 derived from centered Mc). This produces non-trivial S\u00b2 coordinates vs. the bugged centered-only projection (which always lands at south pole). M\u00f6bius = identity (first cycle on this file).",
+    "degenerate_tie_warning": "All 7 candidates produced identical d_post=0.0 (homogenization collapse in the S\u00b2 lift when any single missing primitive is forced to 1 in every section: M_flip becomes rank-deficient; p_flip and p_star_flip collapse to the same S\u00b2 point). The '\u0394 = d_pre' result for all candidates is a numerical artifact, not a true geodesic convergence. The honest prediction uses \u0394_realistic = d_pre / n_missing = 0.094, which gives a ~14.3% reduction in PR1's residual. Predicted post-edit residual = ~1.238 (vs. PR1 input 1.4444)."
+  },
+  "single_action_target_rationale": "All candidates tie at d_post=0.0 (degenerate S\u00b2 lift collapse: M_flip becomes rank-deficient when any one missing primitive is forced to 1 in every section; both p_flip and p_star_flip land at the same point). Per user's stated PR1 basis mapping (trust_chain \u2248 has_test), the principled single-action target is p5_has_test because PR1 explicitly flagged trust_chain as missing. This is the primitive that BOTH bases agree is missing. has_constraint (cryptographic_identity in PR1) is already covered per the single-action-curve-rsi basis.",
+  "predicted_post_edit_residual_honest": 1.238057,
+  "delta_realistic_estimate": 0.093954,
+  "predicted_residual_reduction_pct": 14.29
+}
