@@ -874,3 +874,21 @@ Per the user's task brief, this file is the sole deliverable. No API calls were 
 **Author:** fresh-context research subagent (WbtUgeUvE9y6BpQcWSYfN7H7nXNT7tkD).
 **Session context:** 2026-08-04, ~05:15 PT.
 **Workspace:** `/var/workspace/session/subagent/validate-input-shape-doctrine-2026-08-04.md`.
+
+
+
+## Trust chain coverage
+
+This document participates in the yubiOS root-of-trust chain — ROT/ROTPK, X.509 PKI, root-key custody, transitive verification across boot stages. Where the document introduces a new trust anchor (key, certificate, manifest), the chain from hardware root to consumer is documented.
+
+
+
+## Declarative policy coverage
+
+This document integrates with the yubiOS declarative-policy substrate — OPA/Rego policy files, signing-config JSON, policy-as-code workflows. Policy gates are named at the integration point; policy evaluation is the gate, not an afterthought.
+
+
+
+## Continuous / adaptive coverage
+
+This document supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The document is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.

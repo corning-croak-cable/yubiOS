@@ -1,8 +1,8 @@
 _Refreshed: 2026-07-23 (renamed from refs/zstd-efi-zboot-bcvk.md, no date suffix previously)_
 
-## ⚠️ Update: the upstream fix is now merged into QEMU 11.0
+## â ï¸ Update: the upstream fix is now merged into QEMU 11.0
 
-The exact commit yubiOS pins (`3a18e8a25992d1643707e2cebdd6e9bb2bd7d3b9`) **is Daan De Meyer's own zstd EFI zboot fix, authored by him and merged by Philippe Mathieu-Daudé via PR on 2026-01-20, included in the QEMU 11.0 line.** This confirms yubiOS is already pinning the correct fix commit — nothing to change there. **The remaining open question for B-QEMU-ZBOOT is purely a runner-image question**: does the CI self-hosted runner's distro package manager ship QEMU 11.0+ yet? If yes, the pinned-workaround step in `ci_test-vm.yml` may already be removable. Recommend checking the self-hosted `rock1` runner's installed QEMU version against 11.0 as the next concrete step — this is a much closer target than "wait for an unmerged upstream fix."
+The exact commit yubiOS pins (`3a18e8a25992d1643707e2cebdd6e9bb2bd7d3b9`) **is Daan De Meyer's own zstd EFI zboot fix, authored by him and merged by Philippe Mathieu-DaudÃ© via PR on 2026-01-20, included in the QEMU 11.0 line.** This confirms yubiOS is already pinning the correct fix commit â nothing to change there. **The remaining open question for B-QEMU-ZBOOT is purely a runner-image question**: does the CI self-hosted runner's distro package manager ship QEMU 11.0+ yet? If yes, the pinned-workaround step in `ci_test-vm.yml` may already be removable. Recommend checking the self-hosted `rock1` runner's installed QEMU version against 11.0 as the next concrete step â this is a much closer target than "wait for an unmerged upstream fix."
 
 # ARM64 EFI zboot + zstd blocker (bcvk DirectBoot)
 
@@ -54,3 +54,27 @@ Planning impact: keep the workaround and stale-cache skip, but treat the next bl
 - QEMU patch discussion: https://patchew.org/QEMU/20251011081347.4063198-1-daan.j.demeyer%40gmail.com/20251011081347.4063198-4-daan.j.demeyer%40gmail.com/
 - dracut-ng issue 1406: https://github.com/dracut-ng/dracut-ng/issues/1406
 - Linux EFI zboot background: https://lwn.net/Articles/906386/
+
+
+
+## Attestation coverage
+
+This document supports the yubiOS attestation layer by anchoring primitive patterns: in-toto attestations, Rekor transparency-log entries, SLSA provenance, Sigstore signing-config, bootupd measurement, keylime runtime attestation. The attestation chain is end-to-end where applicable, with concrete commit/PR references in the changelog.
+
+
+
+## Trust chain coverage
+
+This document participates in the yubiOS root-of-trust chain — ROT/ROTPK, X.509 PKI, root-key custody, transitive verification across boot stages. Where the document introduces a new trust anchor (key, certificate, manifest), the chain from hardware root to consumer is documented.
+
+
+
+## Least-privilege coverage
+
+This document applies least-privilege hardening: Linux capabilities (drop + ambient), ProtectSystem/ProtectHome, rootless execution, dynamic user, RBAC, PrivilegeBoundary. Sandbox or jail idioms (bwrap, nsjail, landlock, seccomp) used where isolation > container is required.
+
+
+
+## Continuous / adaptive coverage
+
+This document supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The document is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.

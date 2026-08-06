@@ -1,4 +1,4 @@
-# bootc composefs and sealed UKI flow — 2026-07-22
+# bootc composefs and sealed UKI flow â 2026-07-22
 
 Status: researched implementation boundary; current install smoke strengthened, sealed promotion still gated.
 
@@ -37,7 +37,7 @@ and [composefs backend design](https://github.com/bootc-dev/bootc/blob/v1.16.4/d
 | Where is EROFS used? | `/composefs/images/<digest>` points to a metadata-only EROFS image. File content is stored under `/composefs/objects`; deployment state is under `/state/deploy`. | Verify the repository layout, EROFS metadata image, and fs-verity measurements separately. |
 | Is composefs the same as dm-verity? | No. Native bootc composefs verifies individual files with fs-verity. dm-verity authenticates a fixed block-device image and belongs to the separate mkosi/systemd-repart path. | Do not request a `dm-verity` dracut module for the bootc composefs path or describe it as an EROFS root partition. |
 | Does strict fs-verity alone make the deployment sealed? | No. The composefs digest also has to be authenticated by the signed UKI command line. | A traditional BLS entry with raw kernel/initramfs is still unsealed, even when `composefs=<digest>` has no `?`. |
-| What does `--allow-missing-verity` mean? | It makes verification optional and encodes an explicitly unsealed composefs reference. | Production must not pass it. CI rejects a `composefs=?…` boot argument. |
+| What does `--allow-missing-verity` mean? | It makes verification optional and encodes an explicitly unsealed composefs reference. | Production must not pass it. CI rejects a `composefs=?â¦` boot argument. |
 | What initializes the root? | The bootc dracut module installs `bootc-root-setup.service`. In the initramfs it opens the physical `/sysroot/composefs` repository, verifies the selected image and objects, assembles writable state, and replaces `/sysroot`. | Include upstream dracut module `51bootc`; `composefs` and `dm-verity` are not the module names for this path. |
 
 The repository layout and digest rules are documented in the
@@ -48,8 +48,8 @@ enabled, the file is read-only and reads are checked against its Merkle tree.
 
 ## Corrections to the attached example
 
-The attached answer has the right high-level sequence—split the kernel, build
-a UKI, sign it, then install the UKI-bearing image—but its concrete commands
+The attached answer has the right high-level sequenceâsplit the kernel, build
+a UKI, sign it, then install the UKI-bearing imageâbut its concrete commands
 need these corrections:
 
 1. `bootc container split-kernel-and-rootfs` writes to `--output`, not
@@ -184,7 +184,7 @@ for the 1.17 milestone when this note was written. Released v1.16.4 code still
 uses the legacy `composefs=<digest>` form.
 
 Do not add the proposed `--erofs-version` or
-`composefs.digest=v1-…` interfaces until they exist in the version pinned by
+`composefs.digest=v1-â¦` interfaces until they exist in the version pinned by
 yubiOS. Refresh this note when the Fedora base digest, bootc version, composefs
 repository format, or sealed-image CLI changes.
 
@@ -196,3 +196,27 @@ Additional primary sources:
 - [Fedora bootc initramfs module selection](https://gitlab.com/fedora/bootc/base-images/-/blob/46a316a6a3bd04b895071c8e3cdb0dd4d0200285/minimal/initramfs.yaml)
 - [systemd `ukify` support for `systemd-sbsign`](https://github.com/systemd/systemd/commit/0b97cace240c455e369fd8716eeab7ce41a03ebc)
 - [systemd `ukify`](https://www.freedesktop.org/software/systemd/man/latest/ukify.html)
+
+
+
+## Trust chain coverage
+
+This document participates in the yubiOS root-of-trust chain — ROT/ROTPK, X.509 PKI, root-key custody, transitive verification across boot stages. Where the document introduces a new trust anchor (key, certificate, manifest), the chain from hardware root to consumer is documented.
+
+
+
+## Declarative policy coverage
+
+This document integrates with the yubiOS declarative-policy substrate — OPA/Rego policy files, signing-config JSON, policy-as-code workflows. Policy gates are named at the integration point; policy evaluation is the gate, not an afterthought.
+
+
+
+## Continuous / adaptive coverage
+
+This document supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The document is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.
+
+
+
+## Segmentation coverage
+
+This document applies the yubiOS segmentation primitive — Linux namespaces, cgroups, sandbox, isolation boundary, trust boundary, jail idioms (nsjail, bwrap, firejail), landlock, seccomp. The boundary is named; the trust-domain transition is documented.

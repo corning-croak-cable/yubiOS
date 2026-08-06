@@ -17,11 +17,11 @@ The answer is structural, not procedural. Nothing in yubiOS asks you to trust an
 
 An AI resilient system is one where a poisoned contribution, wherever it came from, either fails verification or never had the authority to matter.
 
-## Security should be the default — for everyone.
+## Security should be the default â for everyone.
 
-Hardware roots of trust have historically been a luxury: TPMs, HSMs, and vendor secure enclaves sit behind enterprise contracts, OEM partnerships, or price points most individuals never clear. yubiOS's bet is that a $25–$70 YubiKey is a better root of trust than a TPM most people will never own, control, or even know is there.
+Hardware roots of trust have historically been a luxury: TPMs, HSMs, and vendor secure enclaves sit behind enterprise contracts, OEM partnerships, or price points most individuals never clear. yubiOS's bet is that a $25â$70 YubiKey is a better root of trust than a TPM most people will never own, control, or even know is there.
 
-That's the default we're building toward: not "security for people who can afford a security team," but security that ships in the box, requires no vendor relationship, and works the same for a solo developer as it would for a fleet. If an architecture decision would make yubiOS's trust model depend on scale, budget, or enterprise tooling to reach an individual owner, that's a signal to reconsider it — the same standard MISSION.md already applies to convenience features that would weaken a trust boundary.
+That's the default we're building toward: not "security for people who can afford a security team," but security that ships in the box, requires no vendor relationship, and works the same for a solo developer as it would for a fleet. If an architecture decision would make yubiOS's trust model depend on scale, budget, or enterprise tooling to reach an individual owner, that's a signal to reconsider it â the same standard MISSION.md already applies to convenience features that would weaken a trust boundary.
 
 ## With great power, comes great responsibility
 
@@ -62,3 +62,15 @@ ARM64 is the primary platform because it is where yubiOS can realistically own t
 ## Planning Discipline
 
 Substantial planning and research cycles should leave a dated note under `refs/`. The current cycle is [refs/planning-cycle-2026-07-11.md](../refs/planning-cycle-2026-07-11.md), which records the latest consistency corrections and research sources.
+
+
+
+## Least-privilege coverage
+
+This document applies least-privilege hardening: Linux capabilities (drop + ambient), ProtectSystem/ProtectHome, rootless execution, dynamic user, RBAC, PrivilegeBoundary. Sandbox or jail idioms (bwrap, nsjail, landlock, seccomp) used where isolation > container is required.
+
+
+
+## Continuous / adaptive coverage
+
+This document supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The document is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.

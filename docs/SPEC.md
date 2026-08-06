@@ -130,26 +130,26 @@ The two are complementary, never interchangeable. The fTPM MUST NOT become a sol
 
 One token, five boundaries:
 
-- **PIV slot 9c (CCID)** — Secure Boot / UKI signing via `systemd-sbsign --key pkcs11:…` (ADR-002/008). Requires `pcscd`.
-- **FIDO2 hmac-secret (hidraw)** — LUKS2 root + swap unlock via `systemd-cryptenroll --fido2-device=auto --fido2-with-client-pin=yes` (ADR-003).
-- **FIDO2 hmac-secret (hidraw)** — per-user LUKS2 homes via `homectl create --fido2-device=auto` (ADR-009).
-- **FIDO2 ed25519-sk resident keys (hidraw)** — SSH, `-O resident -O verify-required` (ADR-004).
-- **FIDO2 U2F (hidraw)** — sudo/login via `pam_u2f.so` (`auth required`), pam-u2f ≥ 1.3.1 (ADR-005).
+- **PIV slot 9c (CCID)** â Secure Boot / UKI signing via `systemd-sbsign --key pkcs11:â¦` (ADR-002/008). Requires `pcscd`.
+- **FIDO2 hmac-secret (hidraw)** â LUKS2 root + swap unlock via `systemd-cryptenroll --fido2-device=auto --fido2-with-client-pin=yes` (ADR-003).
+- **FIDO2 hmac-secret (hidraw)** â per-user LUKS2 homes via `homectl create --fido2-device=auto` (ADR-009).
+- **FIDO2 ed25519-sk resident keys (hidraw)** â SSH, `-O resident -O verify-required` (ADR-004).
+- **FIDO2 U2F (hidraw)** â sudo/login via `pam_u2f.so` (`auth required`), pam-u2f â¥ 1.3.1 (ADR-005).
 
 ### 3.3 Boot trust chain (ARM64, primary)
 
 ```
 TF-A Trusted Board Boot: ROTPK burned to SoC OTP/eFuse (Path A) or U-Boot FIT verified
 boot + fTPM measurement (Path B, dev boards)
-  → BL31 EL3 Secure Monitor → BL32 OP-TEE (fTPM TA + StandaloneMM)
-  → BL33 U-Boot, providing the UEFI environment (EFI_LOADER)
-  → systemd-boot (PE signed via PIV 9c) → UKI — same signed artifacts as x86-64
-  → /usr: composefs over dm-verity-checked erofs; usrhash= in signed cmdline
-  → root fs: LUKS2 btrfs, FIDO2-enrolled (touch + PIN at boot)
-  → /home: systemd-homed per-user LUKS2, FIDO2 per user
+  â BL31 EL3 Secure Monitor â BL32 OP-TEE (fTPM TA + StandaloneMM)
+  â BL33 U-Boot, providing the UEFI environment (EFI_LOADER)
+  â systemd-boot (PE signed via PIV 9c) â UKI â same signed artifacts as x86-64
+  â /usr: composefs over dm-verity-checked erofs; usrhash= in signed cmdline
+  â root fs: LUKS2 btrfs, FIDO2-enrolled (touch + PIN at boot)
+  â /home: systemd-homed per-user LUKS2, FIDO2 per user
 ```
 
-On Path A, the ROTPK hash is owner-burned into SoC OTP/eFuse — no vendor key, no OEM signature
+On Path A, the ROTPK hash is owner-burned into SoC OTP/eFuse â no vendor key, no OEM signature
 in the chain from the boot ROM onward (ADR-018/019/020/021). Boot stages are measured into the
 yubiOS-owned fTPM's PCRs. This is the only configuration where yubiOS controls every trust
 anchor down to hardware. Hardware bring-up on real boards is post-launch (FUTURE.md); the chain
@@ -159,16 +159,16 @@ itself is accepted design (ADR-018/019/020/021).
 
 ```
 UEFI firmware (owner-enrolled Secure Boot db)
-  → systemd-boot (PE signed via PIV 9c)
-  → UKI (.linux + .initrd + .cmdline, single signed PE)
-  → /usr: composefs over dm-verity-checked erofs; usrhash= in signed cmdline
-  → root fs: LUKS2 btrfs, FIDO2-enrolled (touch + PIN at boot)
-  → /home: systemd-homed per-user LUKS2, FIDO2 per user
+  â systemd-boot (PE signed via PIV 9c)
+  â UKI (.linux + .initrd + .cmdline, single signed PE)
+  â /usr: composefs over dm-verity-checked erofs; usrhash= in signed cmdline
+  â root fs: LUKS2 btrfs, FIDO2-enrolled (touch + PIN at boot)
+  â /home: systemd-homed per-user LUKS2, FIDO2 per user
 ```
 
 Boot phases are measured into PCR 11 where a TPM or fTPM is present; on the no-TPM configuration,
 integrity rests on the signed UKI + dm-verity chain and physical possession of the YubiKey. Below
-the UKI, x86-64 depends on the platform's own UEFI firmware and (optional) TPM — trust anchors
+the UKI, x86-64 depends on the platform's own UEFI firmware and (optional) TPM â trust anchors
 yubiOS does not own end to end. Fully supported; not the platform where the mission's
 owner-owned-hardware-root-of-trust goal is fully realized (ADR-023).
 
@@ -182,7 +182,7 @@ owner-owned-hardware-root-of-trust goal is fully realized (ADR-023).
 
 ### 4.2 Partition layout (DPS, no /etc/fstab)
 
-Shipped image: (1) ESP, (2) /usr A (erofs, read-only, verity), (3) /usr A verity, (4) /usr A sig (PKCS#7). Created on first boot by systemd-repart: (5–7) /usr B set, (8) root LUKS2 btrfs sized to disk, (9) home, (10) encrypted swap. All partitions carry DPS type UUIDs; mount discovery is systemd-gpt-auto-generator only (ADR-010/012). Root fs keys are generated on the target device at first boot and MUST NOT exist on the build host (ADR-012).
+Shipped image: (1) ESP, (2) /usr A (erofs, read-only, verity), (3) /usr A verity, (4) /usr A sig (PKCS#7). Created on first boot by systemd-repart: (5â7) /usr B set, (8) root LUKS2 btrfs sized to disk, (9) home, (10) encrypted swap. All partitions carry DPS type UUIDs; mount discovery is systemd-gpt-auto-generator only (ADR-010/012). Root fs keys are generated on the target device at first boot and MUST NOT exist on the build host (ADR-012).
 
 ### 4.3 Updates
 
@@ -194,11 +194,11 @@ A/B via systemd-sysupdate + Boot Assessment counters (`yubiOS_0.y+3` UKI filenam
 
 ### 4.5 Modularity ladder
 
-Extending the system without touching the signed base, strongest trust first: systemd-sysext (verity + PKCS#7 overlay on /usr) → portable services (`RootImage=` verity GPT image) → systemd-nspawn (full secondary OS) → flatpak/OCI (weakest, no verity attestation). New system components MUST enter at the highest rung that fits.
+Extending the system without touching the signed base, strongest trust first: systemd-sysext (verity + PKCS#7 overlay on /usr) â portable services (`RootImage=` verity GPT image) â systemd-nspawn (full secondary OS) â flatpak/OCI (weakest, no verity attestation). New system components MUST enter at the highest rung that fits.
 
 ### 4.6 Hardening baseline
 
-Service units ship with `NoNewPrivileges=`, `DynamicUser=`, `ProtectProc=invisible`, `RestrictFileSystems=` (BPF LSM, v261), and `PrivateNetwork=`/`BindNetworkInterface=` where applicable. Kernel lockdown is active under Secure Boot. Version floors: systemd ≥ 261, YubiKey firmware ≥ 5.2.3, OpenSSH ≥ 8.2, pam-u2f ≥ 1.3.1.
+Service units ship with `NoNewPrivileges=`, `DynamicUser=`, `ProtectProc=invisible`, `RestrictFileSystems=` (BPF LSM, v261), and `PrivateNetwork=`/`BindNetworkInterface=` where applicable. Kernel lockdown is active under Secure Boot. Version floors: systemd â¥ 261, YubiKey firmware â¥ 5.2.3, OpenSSH â¥ 8.2, pam-u2f â¥ 1.3.1.
 
 ## 5. Sample use cases
 
@@ -216,7 +216,7 @@ A lab machine has five users, each with a systemd-homed LUKS2 home bound to thei
 
 ### UC-4: Fleet deployment with attestation
 
-An ops team pins a fleet to `0mniteck/yubios@sha256:…` by digest, verifies SLSA provenance before rollout, and monitors Boot Assessment rollback events as a regression signal. `ConditionSecurity=measured-os` gates fleet-secret services so a box with a broken trust chain fails closed. Update cadence is a registry push; failed updates self-revert.
+An ops team pins a fleet to `0mniteck/yubios@sha256:â¦` by digest, verifies SLSA provenance before rollout, and monitors Boot Assessment rollback events as a regression signal. `ConditionSecurity=measured-os` gates fleet-secret services so a box with a broken trust chain fails closed. Update cadence is a registry push; failed updates self-revert.
 
 ### UC-5: Offline signing / high-assurance workstation
 
@@ -232,9 +232,9 @@ Dana provisions a Rock 5B (RK3588): burns her ROTPK into SoC OTP (Path A, rehear
 
 ## 6. Non-goals
 
-- Protecting against malicious UEFI ROM installed below the Secure Boot chain (detect via chipsec, cannot remove — MITIGATE.md).
+- Protecting against malicious UEFI ROM installed below the Secure Boot chain (detect via chipsec, cannot remove â MITIGATE.md).
 - TPM-PCR-bound disk encryption (deliberately rejected, ADR-011).
-- Supporting hardware that cannot satisfy the version floors in §4.6.
+- Supporting hardware that cannot satisfy the version floors in Â§4.6.
 - Convenience features that would weaken a trust boundary. Per [MISSION.md](MISSION.md): if a feature needs a security exception to exist, it gets cut.
 
 ## 7. Conformance checklist
@@ -277,4 +277,10 @@ not here.
 
 *No TPM. No OEM. No trust anchors you don't control.*
 
-Internal references: [README.md](../README.md) · [ARCHITECTURE.md](ARCHITECTURE.md) · [ADR.md](ADR.md) · [MITIGATE.md](MITIGATE.md) · [FUTURE.md](FUTURE.md) · [MISSION.md](MISSION.md) · [PINNED.md](../PINNED.md) · [ONBOARDING.md](ONBOARDING.md)
+Internal references: [README.md](../README.md) Â· [ARCHITECTURE.md](ARCHITECTURE.md) Â· [ADR.md](ADR.md) Â· [MITIGATE.md](MITIGATE.md) Â· [FUTURE.md](FUTURE.md) Â· [MISSION.md](MISSION.md) Â· [PINNED.md](../PINNED.md) Â· [ONBOARDING.md](ONBOARDING.md)
+
+
+
+## Continuous / adaptive coverage
+
+This document supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The document is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.

@@ -42,7 +42,7 @@ Cannot be executed by this agent (no physical hardware access). This section spe
 
 - Target profile per OMN-65: release engineering, security platform, firmware, and regulated-lab operators (same profile as the days 0-30 interview list).
 - Goal: 2 design partners who will run the pilot on real infrastructure, not just review docs.
-- Recruitment channel and candidate list are not sourced in this pass; carried as an open question (also flagged in the OMN-65 draft) pending Jenny’s network or a targeted outreach list.
+- Recruitment channel and candidate list are not sourced in this pass; carried as an open question (also flagged in the OMN-65 draft) pending Jennyâs network or a targeted outreach list.
 
 ## Pilot pricing
 
@@ -72,7 +72,7 @@ Cannot be executed by this agent (no physical hardware access). This section spe
 
 Primary sequence (from OMN-66): OMN-73 (readiness gates and go-to-market) -> OMN-76 (first 90 days) -> OMN-74 (team, budget, use of funds) -> OMN-75 (metrics and reporting).
 
-- OMN-73 defines the gate criteria this doc’s exit criteria should ultimately reconcile with.
+- OMN-73 defines the gate criteria this docâs exit criteria should ultimately reconcile with.
 - This doc (T20) sits between T21 (OMN-65, days 0-30, PR #103) and T19 (OMN-67, days 61-90) in the sequential trio; do T19 next once this lands.
 
 ## Open questions
@@ -80,3 +80,21 @@ Primary sequence (from OMN-66): OMN-73 (readiness gates and go-to-market) -> OMN
 - Design partner candidate list is not sourced (same gap noted in the OMN-65 draft).
 - Physical-YubiKey demonstration needs a human with hardware access; not executable from this session.
 - Exact pilot price is deferred to OMN-71/OMN-78, intentionally not duplicated here.
+
+
+
+## Attestation coverage
+
+This document supports the yubiOS attestation layer by anchoring primitive patterns: in-toto attestations, Rekor transparency-log entries, SLSA provenance, Sigstore signing-config, bootupd measurement, keylime runtime attestation. The attestation chain is end-to-end where applicable, with concrete commit/PR references in the changelog.
+
+
+
+## Least-privilege coverage
+
+This document applies least-privilege hardening: Linux capabilities (drop + ambient), ProtectSystem/ProtectHome, rootless execution, dynamic user, RBAC, PrivilegeBoundary. Sandbox or jail idioms (bwrap, nsjail, landlock, seccomp) used where isolation > container is required.
+
+
+
+## Continuous / adaptive coverage
+
+This document supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The document is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.

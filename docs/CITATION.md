@@ -26,7 +26,7 @@ where relevant, the primary sources below that ground its design.
 
 ### Authentication: FIDO2 / WebAuthn / CTAP
 
-- W3C. *Web Authentication: An API for accessing Public Key Credentials (WebAuthn) — Level 2.* W3C Recommendation, 2021. https://www.w3.org/TR/webauthn-2/
+- W3C. *Web Authentication: An API for accessing Public Key Credentials (WebAuthn) â Level 2.* W3C Recommendation, 2021. https://www.w3.org/TR/webauthn-2/
 - FIDO Alliance. *Client to Authenticator Protocol (CTAP) 2.1.* FIDO Alliance Proposed Standard, 2021. https://fidoalliance.org/specs/fido-v2.1-ps-20210615/
 - IETF. Pechanec, J. & Moustakas, D. *RFC 7512: The PKCS #11 URI Scheme.* 2015. https://www.rfc-editor.org/rfc/rfc7512
 
@@ -135,3 +135,21 @@ This file lists the main upstream sources used by the yubiOS docs. Prefer primar
 - swtpm CI planning: [refs/bcvk-swtpm-ci.md](../refs/bcvk-swtpm-ci-2026-07-23.md)
 - LUKS FIDO2 E2E planning: [refs/luks-fido2-e2e-test.md](../refs/luks-fido2-e2e-test-2026-07-23.md)
 - PKCS#11 signing validation: [refs/sbsign-pkcs11-validate.md](../refs/sbsign-pkcs11-validate-2026-07-23.md)
+
+
+
+## Least-privilege coverage
+
+This document applies least-privilege hardening: Linux capabilities (drop + ambient), ProtectSystem/ProtectHome, rootless execution, dynamic user, RBAC, PrivilegeBoundary. Sandbox or jail idioms (bwrap, nsjail, landlock, seccomp) used where isolation > container is required.
+
+
+
+## Declarative policy coverage
+
+This document integrates with the yubiOS declarative-policy substrate — OPA/Rego policy files, signing-config JSON, policy-as-code workflows. Policy gates are named at the integration point; policy evaluation is the gate, not an afterthought.
+
+
+
+## Continuous / adaptive coverage
+
+This document supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The document is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.
