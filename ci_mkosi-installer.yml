@@ -1,0 +1,1073 @@
+name: yubiOS mkosi-installer
+
+# yubiOS mkosi disk-image build + installer publish (#10, ADR-022).
+#
+# Builds the full DPS-partitioned disk image + UKI from the repo's mkosi.conf
+# (minimal profile) with Secure Boot signing driven through PKCS#11 — a SoftHSM
+# token stands in for YubiKey PIV slot 9c, exercising the exact
+# SecureBootKeySource=provider:pkcs11 + systemd-sbsign path the yubiOS profile
+# (yubi-OS/mkosi#2) uses on real hardware. The signed UKI is verified against
+# the mock cert with sbverify before anything is published.
+#
+# HSM plumbing: mkosi's signing/validation sandbox does NOT carry sandbox
+# trees, but it bind-mounts the invoking environment's /run rw whenever the
+# key source is not a file (mkosi's designed path for HSM daemons like pcscd).
+# So the SoftHSM conf + token store live at /run/yubios-hsm — the same absolute
+# path in the DHI job container (where the token is created) and inside the
+# sandbox (where systemd-sbsign signs through pkcs11-provider). The provider is
+# pointed straight at libsofthsm2.so via PKCS11_PROVIDER_MODULE, skipping
+# p11-kit indirection. Debug trail from the campaign: C_Initialize error 5
+# = softhsm can't read SOFTHSM2_CONF inside the sandbox.
+#
+# A push caused by this workflow file's self-trigger validates amd64 plus two
+# clean ARM64 mkosi paths and compares their canonical unsigned subjects without
+# publishing. A dispatch with Docker_push=true publishes architecture-qualified
+# staging images only after that proof, then merges them as
+# 0mniteck/yubios:installer + installer-<sha> per ADR-022.
+#
+# Both the mkosi build and OCI publication run in privileged hardened DHI job
+# containers with writable /run and userns/uidmap plumbing. Each stage installs
+# Docker + Buildx and creates the named builder in the invoking user scope.
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Why are you running this manually?'
+        required: false
+        default: 'manual'
+      Docker_push:
+        description: 'Push installer image to Docker Hub (0mniteck/yubios:installer)?'
+        type: boolean
+        required: false
+        default: false
+      ci_callback:
+        description: 'Internal: call back to ci.yml when this workflow finishes.'
+        required: false
+        default: false
+        type: boolean
+      ci_chain_ref:
+        description: 'Internal: ref carried by the ci.yml orchestrator.'
+        required: false
+        default: ''
+        type: string
+      ci_reason:
+        description: 'Internal: original ci.yml orchestrator reason.'
+        required: false
+        default: 'manual'
+        type: string
+      ci_Docker_push:
+        description: 'Internal: production image push flag carried by ci.yml.'
+        required: false
+        default: false
+        type: boolean
+      ci_Dev_Docker_push:
+        description: 'Internal: dev image push flag carried by ci.yml.'
+        required: false
+        default: false
+        type: boolean
+      ci_Firmware_Docker_push:
+        description: 'Internal: firmware artifact push flag carried by ci.yml.'
+        required: false
+        default: false
+        type: boolean
+      ci_Installer_Docker_push:
+        description: 'Internal: installer artifact push flag carried by ci.yml.'
+        required: false
+        default: false
+        type: boolean
+      ci_fork_run:
+        description: 'Internal: fork workflow flag carried by ci.yml.'
+        required: false
+        default: false
+        type: boolean
+      ci_test_run:
+        description: 'Internal: TEST workflow flag carried by ci.yml.'
+        required: false
+        default: false
+        type: boolean
+      ci_vm_image:
+        description: 'Internal: VM image ref carried by ci.yml.'
+        required: false
+        default: 'docker.io/0mniteck/yubios:dev'
+        type: string
+
+permissions:
+  contents: read
+  actions: write
+
+env:
+  BUILDKIT_IMAGE: docker.io/moby/buildkit:v0.31.2@sha256:2f5adac4ecd194d9f8c10b7b5d7bceb5186853db1b26e5abd3a657af0b7e26ec
+
+jobs:
+  build:
+    name: mkosi disk image — SoftHSM PKCS#11 signed UKI (${{ matrix.artifact_suffix }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            mkosi_arch: x86-64
+            runner: ubuntu-24.04
+            docker_arch: x86_64
+            buildx_arch: linux-amd64
+            artifact_suffix: amd64
+            proof_variant: none
+            publish: true
+          - arch: arm64
+            mkosi_arch: arm64
+            runner: ubuntu-24.04-arm
+            docker_arch: aarch64
+            buildx_arch: linux-arm64
+            artifact_suffix: arm64
+            proof_variant: primary
+            publish: true
+          - arch: arm64
+            mkosi_arch: arm64
+            runner: ubuntu-24.04-arm
+            docker_arch: aarch64
+            buildx_arch: linux-arm64
+            artifact_suffix: arm64-repro
+            proof_variant: rebuild
+            publish: false
+    runs-on: ${{ matrix.runner }}
+    defaults:
+      run:
+        shell: bash
+    container:
+      options: --privileged
+      volumes:
+        - /mnt:/mnt
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:4440cf16b142316744a7fd1c5070eb23df54c7c335d8684c8d72864f0f3eb30e # auto-resolves to ${{ matrix.arch }}
+    steps:
+      - name: Install git for checkout and reproducibility
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends git
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 — see PINNED.md
+
+      - name: Resolve reproducible build environment
+        env:
+          ARCH: ${{ matrix.arch }}
+        run: scripts/lib/reproducible-build.sh . "$GITHUB_SHA" "$ARCH" "$GITHUB_ENV"
+
+      - name: Install docker CLI + buildx (${{ matrix.arch }})
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends \
+            git curl iproute2 iptables jq nftables passwd procps util-linux \
+            uidmap slirp4netns fuse-overlayfs
+          wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-29.6.0.tgz"
+          wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-rootless-extras-29.6.0.tgz"
+          wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.${{ matrix.buildx_arch }}"
+          case "${{ matrix.docker_arch }}" in
+            x86_64)
+              DOCKER_SHA512=42401384ef853dab0a1986a7990420e77d3ee2bc39e178f8817d27ba6c4403998b7aacf3c28c7172135cdeec281cd328a8f2af949b5f57db44a211a093cfd20b
+              ROOTLESS_SHA512=184b583a0f325bef12feaf1ca175ff5ea4a65a168f2136eb1daf9c2ae646eecf02134ed65766c8800bd8eb03ac4d338d1e5d700248bc33632027b5b0b52de48a
+              BUILDX_SHA512=710f4f48a101af939c4a4cace5ca93ab8c1a1a9ae244a4ef73b2a900f228614472b635bd202fae383c851686d383a37cdeddf45e6d54b36cae8458826c272262
+              ;;
+            aarch64)
+              DOCKER_SHA512=04713ac54030bed8b2c096280d034b02f5430ed73ba8bcc4a686f7bbbf4a3444eb027847e896cd9ee91c3237dbe1c25a4cfca43d1dcd922a1a10009c960ace0b
+              ROOTLESS_SHA512=37649acdaacc597c115d2f19b71a4729a0119c6debbba4b4af18da2fd497ac28f5691df13137b7fc59903551ab0e08868f4b976a9a5704e2b7958b3b5b0cc0af
+              BUILDX_SHA512=6dc0d4ed11a7bbd8148dab8897594d7050e7f3bc43e6d130e629aa443e50266e77beed8816737e5dc34b7d43617e7a4eef8121561042ef9a87479aea14383058
+              ;;
+            *)
+              echo "Unsupported Docker artifact architecture: ${{ matrix.docker_arch }}" >&2
+              exit 1
+              ;;
+          esac
+          printf '%s  %s\n' "$DOCKER_SHA512" docker-29.6.0.tgz | sha512sum --check --strict
+          printf '%s  %s\n' "$ROOTLESS_SHA512" docker-rootless-extras-29.6.0.tgz | sha512sum --check --strict
+          printf '%s  %s\n' "$BUILDX_SHA512" "buildx-v0.35.0.${{ matrix.buildx_arch }}" | sha512sum --check --strict
+          tar xzf docker-29.6.0.tgz
+          tar xzf docker-rootless-extras-29.6.0.tgz
+          DOCKER_TOOLS_DIR="${RUNNER_TEMP}/docker-tools"
+          ROOTLESS_USER=docker-rootless
+          ROOTLESS_RUNTIME_DIR=/run/docker-rootless
+          ROOTLESS_SOCKET="${ROOTLESS_RUNTIME_DIR}/docker.sock"
+          ROOTLESS_DATA_DIR="$(mktemp -d /mnt/docker-rootless.XXXXXX)"
+          mkdir -p "$DOCKER_TOOLS_DIR/bin" "$DOCKER_TOOLS_DIR/config/cli-plugins"
+          install -m 0755 docker/* "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 docker-rootless-extras/dockerd-rootless.sh "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 docker-rootless-extras/rootlesskit "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 "buildx-v0.35.0.${{ matrix.buildx_arch }}" "$DOCKER_TOOLS_DIR/config/cli-plugins/docker-buildx"
+          useradd --create-home --shell /bin/sh "$ROOTLESS_USER"
+          printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subuid
+          printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subgid
+          install -d -m 0700 -o "$ROOTLESS_USER" -g "$ROOTLESS_USER" "$ROOTLESS_RUNTIME_DIR"
+          chown "$ROOTLESS_USER:$ROOTLESS_USER" "$ROOTLESS_DATA_DIR"
+          chmod 0700 "$ROOTLESS_DATA_DIR"
+          # RootlessKit needs unprivileged user namespaces on Ubuntu 24.04.
+          if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
+            sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          fi
+          echo "$DOCKER_TOOLS_DIR/bin" >> "$GITHUB_PATH"
+          echo "DOCKER_CONFIG=$DOCKER_TOOLS_DIR/config" >> "$GITHUB_ENV"
+          export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
+          export DOCKER_CONFIG="$DOCKER_TOOLS_DIR/config"
+          export DOCKER_HOST="unix://${ROOTLESS_SOCKET}"
+          setpriv \
+            --reuid="$ROOTLESS_USER" \
+            --regid="$ROOTLESS_USER" \
+            --init-groups \
+            env \
+              HOME="/home/${ROOTLESS_USER}" \
+              USER="$ROOTLESS_USER" \
+              LOGNAME="$ROOTLESS_USER" \
+              XDG_RUNTIME_DIR="$ROOTLESS_RUNTIME_DIR" \
+              PATH="$DOCKER_TOOLS_DIR/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+              DOCKERD_ROOTLESS_ROOTLESSKIT_NET=slirp4netns \
+              dockerd-rootless.sh \
+                --data-root="$ROOTLESS_DATA_DIR" \
+                --storage-driver=fuse-overlayfs \
+                -H "unix://${ROOTLESS_SOCKET}" \
+            > "${RUNNER_TEMP}/dockerd-rootless.log" 2>&1 &
+          ROOTLESS_DOCKER_PID=$!
+          for i in $(seq 1 60); do
+            docker -H "unix://${ROOTLESS_SOCKET}" info >/dev/null 2>&1 && break
+            if ! kill -0 "$ROOTLESS_DOCKER_PID" 2>/dev/null; then
+              cat "${RUNNER_TEMP}/dockerd-rootless.log"
+              exit 1
+            fi
+            sleep 1
+          done
+          if ! docker -H "unix://${ROOTLESS_SOCKET}" info >/dev/null 2>&1; then
+            cat "${RUNNER_TEMP}/dockerd-rootless.log"
+            exit 1
+          fi
+          docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
+            --driver docker-container \
+            --driver-opt "image=${BUILDKIT_IMAGE}" \
+            --use || true
+
+      - name: Install mkosi build deps + mkosi (pinned yubi-OS fork)
+        run: |
+          set -euxo pipefail
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends \
+            btrfs-progs ca-certificates debian-archive-keyring findutils mount openssl procps \
+            python3-pip sbsigntool softhsm2 uidmap zstd
+          mkosi_wheel_dir=$(mktemp -d)
+          python3 -m pip wheel --no-deps --wheel-dir "$mkosi_wheel_dir" \
+            git+https://github.com/yubi-OS/mkosi.git@b2b1ea6ad59621a6f955e4cbceee72580a91889a # release-descendant ref; see PINNED.md
+          python3 -m pip install --break-system-packages "$mkosi_wheel_dir"/mkosi-*.whl
+          mkosi dependencies > "$mkosi_wheel_dir/dependencies"
+          xargs -r -d '\n' apt-get install -y -qq --no-install-recommends \
+            < "$mkosi_wheel_dir/dependencies"
+          # mkosi's dependency set can replace DHI's Python 3.14 with Debian's
+          # Python 3.13. Reinstall the same pure-Python wheel for the final
+          # interpreter, then discard Bash's cached pre-transition launcher.
+          python3 -m pip install --break-system-packages --force-reinstall \
+            "$mkosi_wheel_dir"/mkosi-*.whl
+          hash -r
+          python3 -c 'import mkosi'
+          mkosi --version
+          # The Ubuntu 24.04 runner host may restrict unprivileged userns via
+          # AppArmor; the privileged DHI job container can relax it for mkosi.
+          sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+
+      - name: SoftHSM token in /run — mock of YubiKey PIV slot 9c
+        run: |
+          set -euxo pipefail
+          # /run is bind-mounted into mkosi's signing sandbox at the same
+          # absolute path, so conf + tokens created here are reachable by
+          # systemd-sbsign inside the tools tree without any overlay tricks.
+          mkdir -p /run/yubios-hsm/tokens
+          openssl req -x509 -newkey rsa:3072 -sha256 -days 365 -nodes \
+            -subj "/CN=yubiOS reproducibility test Secure Boot (non-production)/" \
+            -keyout sb.key -out mkosi.secure-boot.pem
+          openssl pkcs8 -topk8 -nocrypt -in sb.key -out sb.p8
+          printf 'directories.tokendir = /run/yubios-hsm/tokens\nobjectstore.backend = file\n' \
+            | tee /run/yubios-hsm/softhsm2.conf
+          SOFTHSM2_CONF=/run/yubios-hsm/softhsm2.conf \
+            softhsm2-util --init-token --free --label yubios-9c --pin 123456 --so-pin 123456
+          SOFTHSM2_CONF=/run/yubios-hsm/softhsm2.conf \
+            softhsm2-util --import sb.p8 --token yubios-9c --label piv-9c --id 9c --pin 123456
+          shred -u sb.key sb.p8
+          chmod -R a+rwX /run/yubios-hsm
+          printf 'pkcs11:token=yubios-9c;object=piv-9c;type=private?pin-value=123456' \
+            > mkosi.secure-boot.pkcs11-uri
+
+      - name: Build disk image (minimal profile, PKCS#11-signed UKI)
+        run: |
+          set -euxo pipefail
+          rm -rf inst mkosi.output mkosi.cache
+          mkosi \
+            --source-date-epoch "$SOURCE_DATE_EPOCH" \
+            --seed "$YUBIOS_MKOSI_SEED" \
+            --incremental=no \
+            --distribution fedora \
+            --release 45 \
+            --architecture "${{ matrix.mkosi_arch }}" \
+            --profile minimal \
+            --package kernel \
+            --package systemd-boot-unsigned \
+            --bootable yes \
+            --tools-tree-package softhsm2 \
+            --tools-tree-package pkcs11-provider \
+            --tools-tree-package distribution-gpg-keys \
+            --tools-tree-package dnf \
+            --tools-tree-package rpm \
+            --environment PKCS11_PROVIDER_MODULE=/usr/lib/softhsm/libsofthsm2.so \
+            --environment SOFTHSM2_CONF=/run/yubios-hsm/softhsm2.conf \
+            --environment PKCS11_PROVIDER_DEBUG=file:/dev/stderr,level:1 \
+            --secure-boot-key-source provider:pkcs11 \
+            --secure-boot-key "$(cat mkosi.secure-boot.pkcs11-uri)" \
+            --secure-boot-certificate mkosi.secure-boot.pem \
+            --secure-boot-sign-tool systemd-sbsign \
+            --sign-expected-pcr-key-source provider:pkcs11 \
+            --sign-expected-pcr-key "$(cat mkosi.secure-boot.pkcs11-uri)" \
+            --sign-expected-pcr-certificate mkosi.secure-boot.pem \
+            build
+          ls -la mkosi.output/
+
+      - name: Verify UKI is signed by the PKCS#11 (SoftHSM) key
+        run: |
+          set -euxo pipefail
+          uki=$(find mkosi.output -name '*.efi' -type f -print -quit)
+          test -n "$uki"
+          sbverify --cert mkosi.secure-boot.pem "$uki"
+          echo "PKCS#11 signing path VERIFIED (systemd-sbsign via provider:pkcs11 against SoftHSM)"
+
+      - name: Assemble /installer payload + MANIFEST
+        run: |
+          set -euxo pipefail
+          source scripts/lib/reproducible-build.sh
+          mkdir -p inst/installer
+          # The full disk image is ImageId.raw (yubiOS.raw); *.esp.raw and
+          # *.root-*.raw are SplitArtifacts partition splits — don't ship those
+          # as the installer payload.
+          raw=mkosi.output/yubiOS.raw
+          test -s "$raw"
+          zstd -T1 -8 --force -o "inst/installer/$(basename "$raw").zst" "$raw"
+          find mkosi.output -maxdepth 1 -name '*.efi' -type f -exec cp {} inst/installer/ \;
+          find mkosi.output -maxdepth 1 -name '*manifest*' -type f -exec cp {} inst/installer/ \; || true
+          cp mkosi.secure-boot.pem inst/installer/ci-secure-boot-cert.pem
+          {
+            echo "yubiOS mkosi installer image (minimal profile)"
+            echo "architecture=${{ matrix.arch }}"
+            echo "yubios_commit=${GITHUB_SHA}"
+            echo "source_date_epoch=${SOURCE_DATE_EPOCH}"
+            echo "mkosi_seed=${YUBIOS_MKOSI_SEED}"
+            echo "mkosi_source=https://github.com/yubi-OS/mkosi@b2b1ea6ad59621a6f955e4cbceee72580a91889a (approved source; release provenance in PINNED.md)"
+            echo "signing=UKI signed via SecureBootKeySource=provider:pkcs11 + systemd-sbsign"
+            echo "signature_envelope=random non-production SoftHSM key; excluded from byte-for-byte proof"
+            echo "NOTE: Signing key is a SoftHSM mock of YubiKey PIV slot 9c."
+            echo "Production images are signed with the real YubiKey (ADR-008); this"
+            echo "image validates the build + PKCS#11 signing path, not a production key."
+            echo "Install flow (ADR-022): write this image to disk, boot; the installed"
+            echo "system tracks 0mniteck/yubios:latest via bootc. ARM64 targets flash"
+            echo "0mniteck/yubios:firmware first (secure world) per ADR-018/019/020."
+          } > inst/installer/MANIFEST.txt
+          normalize_reproducible_tree inst/installer
+          write_reproducible_checksums inst/installer
+          ls -l inst/installer/
+
+      - name: Record unsigned installer subjects and signing boundary
+        if: matrix.proof_variant != 'none'
+        env:
+          BUILD_VARIANT: ${{ matrix.proof_variant }}
+        run: |
+          set -euxo pipefail
+          proof_dir=installer-repro
+          rm -rf "$proof_dir"
+          mkdir -p "$proof_dir"
+
+          root_image=$(find mkosi.output -maxdepth 1 -type f -name 'yubiOS.root-*.raw' -print)
+          test "$(printf '%s\n' "$root_image" | sed '/^$/d' | wc -l)" -eq 1
+          test -s "$root_image"
+          test -s mkosi.output/initrd.cpio.zst
+          test -s mkosi.output/yubiOS.manifest
+
+          record_component() {
+            local source=$1
+            local subject=$2
+            printf '%s %s %s\n' \
+              "$(sha256sum "$source" | cut -d ' ' -f 1)" \
+              "$(stat -c %s "$source")" \
+              "$subject"
+          }
+
+          mount_dir=$(mktemp -d)
+          mounted=false
+          cleanup_mount() {
+            if "$mounted"; then
+              umount "$mount_dir"
+            fi
+            rmdir "$mount_dir"
+          }
+          trap cleanup_mount EXIT
+          mount -o loop,ro "$root_image" "$mount_dir"
+          mounted=true
+          signed_root=usr/lib/systemd/boot/efi/systemd-bootaa64.efi.signed
+          test -s "$mount_dir/$signed_root"
+          signed_root_record=$(record_component \
+            "$mount_dir/$signed_root" systemd-bootaa64.efi.signed)
+          scripts/lib/manifest-filesystem.py \
+            --exclude-content "$signed_root" \
+            "$mount_dir" \
+            > "$proof_dir/root-filesystem.jsonl"
+          umount "$mount_dir"
+          mounted=false
+          rmdir "$mount_dir"
+          trap - EXIT
+
+          {
+            record_component mkosi.output/initrd.cpio.zst initrd.cpio.zst
+            record_component mkosi.output/yubiOS.manifest yubiOS.manifest
+            record_component "$proof_dir/root-filesystem.jsonl" root-filesystem.jsonl
+          } | LC_ALL=C sort -k3,3 > "$proof_dir/UNSIGNED-COMPONENTS"
+          cp mkosi.output/yubiOS.manifest "$proof_dir/yubiOS.manifest"
+
+          {
+            record_component mkosi.secure-boot.pem ci-secure-boot-cert.pem
+            printf '%s\n' "$signed_root_record"
+            record_component mkosi.output/yubiOS.efi yubiOS.efi
+            record_component mkosi.output/yubiOS.esp.raw yubiOS.esp.raw
+            record_component mkosi.output/yubiOS.raw yubiOS.raw
+            record_component "$root_image" yubiOS.root-arm64.raw
+          } | LC_ALL=C sort -k3,3 > "$proof_dir/EXCLUDED-COMPONENTS"
+
+          {
+            echo "architecture=${{ matrix.arch }}"
+            echo "build_variant=${BUILD_VARIANT}"
+            echo "yubios_commit=${GITHUB_SHA}"
+            echo "source_date_epoch=${SOURCE_DATE_EPOCH}"
+            echo "mkosi_seed=${YUBIOS_MKOSI_SEED}"
+            echo "mkosi_source=b2b1ea6ad59621a6f955e4cbceee72580a91889a"
+            echo "scope=canonical unsigned root filesystem content, initrd, and package manifest"
+            echo "signature_boundary=random SoftHSM certificate, signed root bootloader, UKI, ESP, and full disk wrapper"
+            echo "filesystem_boundary=Btrfs block metadata with random device, chunk-tree, and root UUIDs"
+          } > "$proof_dir/METADATA.txt"
+          source scripts/lib/reproducible-build.sh
+          normalize_reproducible_tree "$proof_dir"
+
+
+      - name: Assemble /uki payload + MANIFEST (ADR-032 kernel-side split artifact)
+        run: |
+          set -euxo pipefail
+          source scripts/lib/reproducible-build.sh
+          mkdir -p inst/uki
+          # Same signed UKI that lands in inst/installer/yubiOS.efi; lifted into
+          # a separate payload so the yubios-uki Bake target publishes it as a
+          # standalone OCI artifact (ADR-022 per-artifact tag scheme).
+          find mkosi.output -maxdepth 1 -name '*.efi' -type f -exec cp {} inst/uki/ \;
+          cp mkosi.secure-boot.pem inst/uki/ci-secure-boot-cert.pem
+          {
+            echo "yubiOS signed UKI artifact (kernel side of ADR-032 kernel+rootfs split)"
+            echo "architecture=${{ matrix.arch }}"
+            echo "yubios_commit=${GITHUB_SHA}"
+            echo "source_date_epoch=${SOURCE_DATE_EPOCH}"
+            echo "mkosi_source=https://github.com/yubi-OS/mkosi@b2b1ea6ad59621a6f955e4cbceee72580a91889a (approved source; release provenance in PINNED.md)"
+            echo "signing=UKI signed via SecureBootKeySource=provider:pkcs11 + systemd-sbsign"
+            echo "signature_envelope=random non-production SoftHSM key; excluded from byte-for-byte proof"
+            echo "NOTE: Signing key is a SoftHSM mock of YubiKey PIV slot 9c."
+            echo "Production images are signed with the real YubiKey (ADR-008); this"
+            echo "image validates the build + PKCS#11 signing path, not a production key."
+            echo "Install flow (ADR-022 / ADR-032): pull this artifact, mount the ESP,"
+            echo "copy yubios.efi to /EFI/Linux/bootc/bootc_composefs-<digest>.efi at"
+            echo "install time (the bootc 1.16.3 hard-coded install path), write a BLS"
+            echo ".conf with the uki key (PR bootc-dev/bootc#2269) -- see"
+            echo "refs/kernel-rootfs-split-2026-07-29.md for the Phase 2 install-time"
+            echo "wiring once the bootc-side intake lands."
+            echo "ADR=ADR-032"
+            echo "OMN=OMN-51"
+          } > inst/uki/MANIFEST.txt
+          normalize_reproducible_tree inst/uki
+          write_reproducible_checksums inst/uki
+          ls -l inst/uki/
+      - name: Upload prepared uki payload
+        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true && matrix.publish == true
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
+        with:
+          name: mkosi-uki-payload-${{ matrix.artifact_suffix }}
+          path: inst/uki
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 1
+
+      - name: Upload installer reproducibility subject
+        if: matrix.proof_variant != 'none'
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
+        with:
+          name: mkosi-installer-repro-${{ matrix.proof_variant }}
+          path: installer-repro
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 1
+
+      - name: Upload prepared installer payload
+        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true && matrix.publish == true
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
+        with:
+          name: mkosi-installer-payload-${{ matrix.artifact_suffix }}
+          path: inst/installer
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 1
+
+  installer-reproducibility:
+    name: Prove unsigned mkosi installer subjects (arm64)
+    needs: build
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        shell: bash
+    container:
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:4440cf16b142316744a7fd1c5070eb23df54c7c335d8684c8d72864f0f3eb30e
+    steps:
+
+      - name: Install git for checkout and reproducibility
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends git
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 — see PINNED.md
+
+      - name: Resolve reproducible build environment
+        env:
+          ARCH: arm64
+        run: scripts/lib/reproducible-build.sh . "$GITHUB_SHA" "$ARCH" "$GITHUB_ENV"
+
+      - name: Install verification runtime
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends python3
+
+      - name: Download primary installer subject
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
+        with:
+          name: mkosi-installer-repro-primary
+          path: installer-repro/primary
+
+      - name: Download rebuilt installer subject
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
+        with:
+          name: mkosi-installer-repro-rebuild
+          path: installer-repro/rebuild
+
+      - name: Prove two clean unsigned installer builds match
+        run: |
+          scripts/verify-reproducible-installer.py \
+            installer-repro/primary \
+            installer-repro/rebuild \
+            repro-evidence/installer-arm64.json
+
+      - name: Retain installer reproducibility evidence
+        if: always()
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # PINNED.md
+        with:
+          name: reproducibility-installer-arm64
+          path: repro-evidence/installer-arm64.json
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+
+  installer-publish:
+    name: Publish installer OCI artifact (${{ matrix.arch }})
+    needs: [build, installer-reproducibility]
+    if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
+    permissions:
+      contents: read
+      actions: write
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-24.04
+            docker_arch: x86_64
+            buildx_arch: linux-amd64
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+            docker_arch: aarch64
+            buildx_arch: linux-arm64
+    runs-on: ${{ matrix.runner }}
+    defaults:
+      run:
+        shell: bash
+    container:
+      options: --privileged
+      volumes:
+        - /mnt:/mnt
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:4440cf16b142316744a7fd1c5070eb23df54c7c335d8684c8d72864f0f3eb30e # auto-resolves to ${{ matrix.arch }}
+    steps:
+      - name: Install git for checkout and reproducibility
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends git
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 — see PINNED.md
+
+      - name: Resolve reproducible build environment
+        env:
+          ARCH: ${{ matrix.arch }}
+        run: scripts/lib/reproducible-build.sh . "$GITHUB_SHA" "$ARCH" "$GITHUB_ENV"
+
+      - name: Download prepared installer payload
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
+        with:
+          name: mkosi-installer-payload-${{ matrix.arch }}
+          path: inst/installer
+      - name: Download prepared uki payload
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # PINNED.md
+        with:
+          name: mkosi-uki-payload-${{ matrix.arch }}
+          path: inst/uki
+
+      - name: Install docker CLI + buildx (${{ matrix.arch }})
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends \
+            git curl iproute2 iptables jq nftables passwd procps util-linux \
+            uidmap slirp4netns fuse-overlayfs
+          wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-29.6.0.tgz"
+          wcurl "https://download.docker.com/linux/static/stable/${{ matrix.docker_arch }}/docker-rootless-extras-29.6.0.tgz"
+          wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.${{ matrix.buildx_arch }}"
+          case "${{ matrix.docker_arch }}" in
+            x86_64)
+              DOCKER_SHA512=42401384ef853dab0a1986a7990420e77d3ee2bc39e178f8817d27ba6c4403998b7aacf3c28c7172135cdeec281cd328a8f2af949b5f57db44a211a093cfd20b
+              ROOTLESS_SHA512=184b583a0f325bef12feaf1ca175ff5ea4a65a168f2136eb1daf9c2ae646eecf02134ed65766c8800bd8eb03ac4d338d1e5d700248bc33632027b5b0b52de48a
+              BUILDX_SHA512=710f4f48a101af939c4a4cace5ca93ab8c1a1a9ae244a4ef73b2a900f228614472b635bd202fae383c851686d383a37cdeddf45e6d54b36cae8458826c272262
+              ;;
+            aarch64)
+              DOCKER_SHA512=04713ac54030bed8b2c096280d034b02f5430ed73ba8bcc4a686f7bbbf4a3444eb027847e896cd9ee91c3237dbe1c25a4cfca43d1dcd922a1a10009c960ace0b
+              ROOTLESS_SHA512=37649acdaacc597c115d2f19b71a4729a0119c6debbba4b4af18da2fd497ac28f5691df13137b7fc59903551ab0e08868f4b976a9a5704e2b7958b3b5b0cc0af
+              BUILDX_SHA512=6dc0d4ed11a7bbd8148dab8897594d7050e7f3bc43e6d130e629aa443e50266e77beed8816737e5dc34b7d43617e7a4eef8121561042ef9a87479aea14383058
+              ;;
+            *)
+              echo "Unsupported Docker artifact architecture: ${{ matrix.docker_arch }}" >&2
+              exit 1
+              ;;
+          esac
+          printf '%s  %s\n' "$DOCKER_SHA512" docker-29.6.0.tgz | sha512sum --check --strict
+          printf '%s  %s\n' "$ROOTLESS_SHA512" docker-rootless-extras-29.6.0.tgz | sha512sum --check --strict
+          printf '%s  %s\n' "$BUILDX_SHA512" "buildx-v0.35.0.${{ matrix.buildx_arch }}" | sha512sum --check --strict
+          tar xzf docker-29.6.0.tgz
+          tar xzf docker-rootless-extras-29.6.0.tgz
+          DOCKER_TOOLS_DIR="${RUNNER_TEMP}/docker-tools"
+          ROOTLESS_USER=docker-rootless
+          ROOTLESS_RUNTIME_DIR=/run/docker-rootless
+          ROOTLESS_SOCKET="${ROOTLESS_RUNTIME_DIR}/docker.sock"
+          ROOTLESS_DATA_DIR="$(mktemp -d /mnt/docker-rootless.XXXXXX)"
+          mkdir -p "$DOCKER_TOOLS_DIR/bin" "$DOCKER_TOOLS_DIR/config/cli-plugins"
+          install -m 0755 docker/* "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 docker-rootless-extras/dockerd-rootless.sh "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 docker-rootless-extras/rootlesskit "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 "buildx-v0.35.0.${{ matrix.buildx_arch }}" "$DOCKER_TOOLS_DIR/config/cli-plugins/docker-buildx"
+          useradd --create-home --shell /bin/sh "$ROOTLESS_USER"
+          printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subuid
+          printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subgid
+          install -d -m 0700 -o "$ROOTLESS_USER" -g "$ROOTLESS_USER" "$ROOTLESS_RUNTIME_DIR"
+          chown "$ROOTLESS_USER:$ROOTLESS_USER" "$ROOTLESS_DATA_DIR"
+          chmod 0700 "$ROOTLESS_DATA_DIR"
+          # RootlessKit needs unprivileged user namespaces on Ubuntu 24.04.
+          if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
+            sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          fi
+          echo "$DOCKER_TOOLS_DIR/bin" >> "$GITHUB_PATH"
+          echo "DOCKER_CONFIG=$DOCKER_TOOLS_DIR/config" >> "$GITHUB_ENV"
+          export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
+          export DOCKER_CONFIG="$DOCKER_TOOLS_DIR/config"
+          export DOCKER_HOST="unix://${ROOTLESS_SOCKET}"
+          setpriv \
+            --reuid="$ROOTLESS_USER" \
+            --regid="$ROOTLESS_USER" \
+            --init-groups \
+            env \
+              HOME="/home/${ROOTLESS_USER}" \
+              USER="$ROOTLESS_USER" \
+              LOGNAME="$ROOTLESS_USER" \
+              XDG_RUNTIME_DIR="$ROOTLESS_RUNTIME_DIR" \
+              PATH="$DOCKER_TOOLS_DIR/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+              DOCKERD_ROOTLESS_ROOTLESSKIT_NET=slirp4netns \
+              dockerd-rootless.sh \
+                --data-root="$ROOTLESS_DATA_DIR" \
+                --storage-driver=fuse-overlayfs \
+                -H "unix://${ROOTLESS_SOCKET}" \
+            > "${RUNNER_TEMP}/dockerd-rootless.log" 2>&1 &
+          ROOTLESS_DOCKER_PID=$!
+          for i in $(seq 1 60); do
+            docker -H "unix://${ROOTLESS_SOCKET}" info >/dev/null 2>&1 && break
+            if ! kill -0 "$ROOTLESS_DOCKER_PID" 2>/dev/null; then
+              cat "${RUNNER_TEMP}/dockerd-rootless.log"
+              exit 1
+            fi
+            sleep 1
+          done
+          if ! docker -H "unix://${ROOTLESS_SOCKET}" info >/dev/null 2>&1; then
+            cat "${RUNNER_TEMP}/dockerd-rootless.log"
+            exit 1
+          fi
+          docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
+            --driver docker-container \
+            --driver-opt "image=${BUILDKIT_IMAGE}" \
+            --use || true
+
+      - name: Build and push installer OCI artifact through Bake
+        env:
+          ARCH: ${{ matrix.arch }}
+          PLATFORM: linux/${{ matrix.arch }}
+          GIT_SHA: ${{ github.sha }}
+          INSTALLER_CONTEXT: inst
+          UKI_CONTEXT: inst/uki
+          PUSH: 'true'
+        run: |
+          set -euxo pipefail
+          source scripts/lib/reproducible-build.sh
+          (cd inst/installer && sha256sum --check --strict SHA256SUMS)
+          normalize_reproducible_tree inst/installer
+          echo "${{ secrets.DOCKER }}" | docker -H unix:///run/docker-rootless/docker.sock login -u 0mniteck42 --password-stdin
+          docker -H unix:///run/docker-rootless/docker.sock buildx bake \
+            --builder hardened \
+            --file yubiOS-bake.hcl \
+            installer
+          docker -H unix:///run/docker-rootless/docker.sock buildx bake \
+            --builder hardened \
+            --file yubiOS-bake.hcl \
+            yubios-uki
+          docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "0mniteck/yubios:uki-${{ github.sha }}-${{ matrix.arch }}"
+          docker -H unix:///run/docker-rootless/docker.sock logout
+
+
+      - name: Install cosign v3.1.2 (per-arch installer + uki)
+        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true && matrix.publish == true
+        run: |
+          wcurl "https://github.com/sigstore/cosign/releases/download/v3.1.2/cosign-linux-amd64"
+          COSIGN_SHA512=01174ede4958413aca502e7eafdff34a5a7fab39c25af66b84c24b98e354e5cf2631bf2c07ecdd8c684dfab843f9694237606706eeafc20ae30ed5ed831f1d60
+          printf '%s  %s\n' "$COSIGN_SHA512" cosign-linux-amd64 | sha512sum --check --strict
+          install -D -m 0755 cosign-linux-amd64 /usr/local/bin/cosign
+
+      - name: Resolve per-arch digests + extract BuildKit attestations
+        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true && matrix.publish == true
+        id: resolve
+        env:
+          INSTALLER_TAG: 0mniteck/yubios:installer-${{ github.sha }}-${{ matrix.arch }}
+          UKI_TAG: 0mniteck/yubios:uki-${{ github.sha }}-${{ matrix.arch }}
+        run: |
+          set -euo pipefail
+          : > per-arch-digests.txt
+          for tag in "$INSTALLER_TAG" "$UKI_TAG"; do
+            DIGEST=$(docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "$tag" --format '{{.Manifest.Digest}}')
+            echo "$tag $DIGEST" >> per-arch-digests.txt
+          done
+          docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "$INSTALLER_TAG" --format '{{json .SBOM}}' > sbom.json
+          docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "$INSTALLER_TAG" --format '{{json .Provenance}}' > provenance.json
+          test -s sbom.json
+          test -s provenance.json
+          jq -e . sbom.json
+          jq -e . provenance.json
+
+      - name: Attach SPDX SBOM attestation (cosign attest, per-arch installer)
+        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true && matrix.publish == true
+        run: |
+          cosign initialize >/dev/null
+          INSTALLER_DIGEST=$(grep installer per-arch-digests.txt | cut -d ' ' -f 2)
+          for attempt in 1 2 3 4 5; do
+            cosign attest --key cosign/yubios-omni157.key --signing-config cosign/signing-config.json --type spdxjson --predicate sbom.json "0mniteck/yubios:installer@$INSTALLER_DIGEST" && exit 0
+            echo "::warning::cosign per-arch-spdxjson attempt ${attempt}/5 failed; retry in $((attempt * 15))s" >&2
+            sleep $((attempt * 15))
+          done
+          echo "::error::cosign per-arch-spdxjson failed after 5 attempts" >&2
+          exit 1
+
+
+      - name: Attach SLSA v1.0 provenance attestation (cosign attest, per-arch installer)
+        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true && matrix.publish == true
+        run: |
+          INSTALLER_DIGEST=$(grep installer per-arch-digests.txt | cut -d ' ' -f 2)
+          for attempt in 1 2 3 4 5; do
+            cosign attest --key cosign/yubios-omni157.key --signing-config cosign/signing-config.json --type slsaprovenance1 --predicate provenance.json "0mniteck/yubios:installer@$INSTALLER_DIGEST" && exit 0
+            echo "::warning::cosign per-arch-slsaprovenance1 attempt ${attempt}/5 failed; retry in $((attempt * 15))s" >&2
+            sleep $((attempt * 15))
+          done
+          echo "::error::cosign per-arch-slsaprovenance1 failed after 5 attempts" >&2
+          exit 1
+
+
+      - name: cosign sign per-arch (ukis + installer per-arch)
+        if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true && matrix.publish == true
+        run: |
+          while read -r tag digest; do
+            for attempt in 1 2 3 4 5; do
+            cosign sign --key cosign/yubios-omni157.key --signing-config cosign/signing-config.json "$tag@$digest" && exit 0
+            echo "::warning::cosign per-arch-sign attempt ${attempt}/5 failed; retry in $((attempt * 15))s" >&2
+            sleep $((attempt * 15))
+          done
+          echo "::error::cosign per-arch-sign failed after 5 attempts" >&2
+          exit 1
+
+          done < per-arch-digests.txt
+
+          docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "0mniteck/yubios:installer-${{ github.sha }}-${{ matrix.arch }}"
+
+  # Combine the two native staging images only after both publish legs pass.
+  merge-manifest:
+    name: Merge installer multi-arch manifest
+    needs: installer-publish
+    if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      actions: write
+      id-token: write
+    defaults:
+      run:
+        shell: bash
+    container:
+      options: --privileged
+      volumes:
+        - /mnt:/mnt
+      credentials:
+        username: 0mniteck42
+        password: ${{ secrets.DOCKER }}
+      image: docker://dhi.io/debian-base@sha256:4440cf16b142316744a7fd1c5070eb23df54c7c335d8684c8d72864f0f3eb30e
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 — see PINNED.md
+      - name: Install docker CLI + buildx
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends \
+            git curl iproute2 iptables jq nftables passwd procps util-linux \
+            uidmap slirp4netns fuse-overlayfs
+          wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-29.6.0.tgz"
+          wcurl "https://download.docker.com/linux/static/stable/x86_64/docker-rootless-extras-29.6.0.tgz"
+          wcurl "https://github.com/docker/buildx/releases/download/v0.35.0/buildx-v0.35.0.linux-amd64"
+          printf '%s  %s\n' '42401384ef853dab0a1986a7990420e77d3ee2bc39e178f8817d27ba6c4403998b7aacf3c28c7172135cdeec281cd328a8f2af949b5f57db44a211a093cfd20b' docker-29.6.0.tgz | sha512sum --check --strict
+          printf '%s  %s\n' '184b583a0f325bef12feaf1ca175ff5ea4a65a168f2136eb1daf9c2ae646eecf02134ed65766c8800bd8eb03ac4d338d1e5d700248bc33632027b5b0b52de48a' docker-rootless-extras-29.6.0.tgz | sha512sum --check --strict
+          printf '%s  %s\n' '710f4f48a101af939c4a4cace5ca93ab8c1a1a9ae244a4ef73b2a900f228614472b635bd202fae383c851686d383a37cdeddf45e6d54b36cae8458826c272262' buildx-v0.35.0.linux-amd64 | sha512sum --check --strict
+          tar xzf docker-29.6.0.tgz
+          tar xzf docker-rootless-extras-29.6.0.tgz
+          DOCKER_TOOLS_DIR="${RUNNER_TEMP}/docker-tools"
+          ROOTLESS_USER=docker-rootless
+          ROOTLESS_RUNTIME_DIR=/run/docker-rootless
+          ROOTLESS_SOCKET="${ROOTLESS_RUNTIME_DIR}/docker.sock"
+          ROOTLESS_DATA_DIR="$(mktemp -d /mnt/docker-rootless.XXXXXX)"
+          mkdir -p "$DOCKER_TOOLS_DIR/bin" "$DOCKER_TOOLS_DIR/config/cli-plugins"
+          install -m 0755 docker/* "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 docker-rootless-extras/dockerd-rootless.sh "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 docker-rootless-extras/rootlesskit "$DOCKER_TOOLS_DIR/bin/"
+          install -m 0755 buildx-v0.35.0.linux-amd64 "$DOCKER_TOOLS_DIR/config/cli-plugins/docker-buildx"
+          useradd --create-home --shell /bin/sh "$ROOTLESS_USER"
+          printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subuid
+          printf '%s\n' "${ROOTLESS_USER}:100000:65536" > /etc/subgid
+          install -d -m 0700 -o "$ROOTLESS_USER" -g "$ROOTLESS_USER" "$ROOTLESS_RUNTIME_DIR"
+          chown "$ROOTLESS_USER:$ROOTLESS_USER" "$ROOTLESS_DATA_DIR"
+          chmod 0700 "$ROOTLESS_DATA_DIR"
+          if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
+            sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          fi
+          echo "$DOCKER_TOOLS_DIR/bin" >> "$GITHUB_PATH"
+          echo "DOCKER_CONFIG=$DOCKER_TOOLS_DIR/config" >> "$GITHUB_ENV"
+          export PATH="$DOCKER_TOOLS_DIR/bin:$PATH"
+          export DOCKER_CONFIG="$DOCKER_TOOLS_DIR/config"
+          export DOCKER_HOST="unix://${ROOTLESS_SOCKET}"
+          setpriv \
+            --reuid="$ROOTLESS_USER" \
+            --regid="$ROOTLESS_USER" \
+            --init-groups \
+            env \
+              HOME="/home/${ROOTLESS_USER}" \
+              USER="$ROOTLESS_USER" \
+              LOGNAME="$ROOTLESS_USER" \
+              XDG_RUNTIME_DIR="$ROOTLESS_RUNTIME_DIR" \
+              PATH="$DOCKER_TOOLS_DIR/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
+              DOCKERD_ROOTLESS_ROOTLESSKIT_NET=slirp4netns \
+              dockerd-rootless.sh \
+                --data-root="$ROOTLESS_DATA_DIR" \
+                --storage-driver=fuse-overlayfs \
+                -H "unix://${ROOTLESS_SOCKET}" \
+            > "${RUNNER_TEMP}/dockerd-rootless.log" 2>&1 &
+          ROOTLESS_DOCKER_PID=$!
+          for i in $(seq 1 60); do
+            docker -H "unix://${ROOTLESS_SOCKET}" info >/dev/null 2>&1 && break
+            if ! kill -0 "$ROOTLESS_DOCKER_PID" 2>/dev/null; then
+              cat "${RUNNER_TEMP}/dockerd-rootless.log"
+              exit 1
+            fi
+            sleep 1
+          done
+          if ! docker -H "unix://${ROOTLESS_SOCKET}" info >/dev/null 2>&1; then
+            cat "${RUNNER_TEMP}/dockerd-rootless.log"
+            exit 1
+          fi
+          docker -H unix:///run/docker-rootless/docker.sock buildx create --name hardened \
+            --driver docker-container \
+            --driver-opt "image=${BUILDKIT_IMAGE}" \
+            --use || true
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER }}" | docker -H unix:///run/docker-rootless/docker.sock login -u 0mniteck42 --password-stdin
+
+      - name: Create and push installer multi-arch manifest
+        run: |
+          docker -H unix:///run/docker-rootless/docker.sock buildx imagetools create \
+            -t "0mniteck/yubios:installer-${{ github.sha }}" \
+            -t "0mniteck/yubios:installer" \
+            "0mniteck/yubios:installer-${{ github.sha }}-amd64" \
+            "0mniteck/yubios:installer-${{ github.sha }}-arm64"
+
+      - name: Verify installer manifest list
+        run: docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "0mniteck/yubios:installer-${{ github.sha }}"
+
+      - name: Log out of Docker Hub
+        if: always()
+        run: docker -H unix:///run/docker-rootless/docker.sock logout || true
+
+
+
+      - name: Install cosign v3.1.2
+        run: |
+          wcurl "https://github.com/sigstore/cosign/releases/download/v3.1.2/cosign-linux-amd64"
+          COSIGN_SHA512=01174ede4958413aca502e7eafdff34a5a7fab39c25af66b84c24b98e354e5cf2631bf2c07ecdd8c684dfab843f9694237606706eeafc20ae30ed5ed831f1d60
+          printf '%s  %s\n' "$COSIGN_SHA512" cosign-linux-amd64 | sha512sum --check --strict
+          install -D -m 0755 cosign-linux-amd64 /usr/local/bin/cosign
+
+      - name: Resolve image digest + extract BuildKit attestations
+        id: resolve
+        env:
+          IMAGE_TAG: 0mniteck/yubios:installer-${{ github.sha }}
+        run: |
+          set -euo pipefail
+          DIGEST=$(docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "$IMAGE_TAG" --format '{{.Manifest.Digest}}')
+          echo "DIGEST=$DIGEST" >> "$GITHUB_OUTPUT"
+          docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "$IMAGE_TAG" --format '{{json .SBOM}}' > sbom.json
+          docker -H unix:///run/docker-rootless/docker.sock buildx imagetools inspect "$IMAGE_TAG" --format '{{json .Provenance}}' > provenance.json
+          test -s sbom.json
+          test -s provenance.json
+          jq -e . sbom.json
+          jq -e . provenance.json
+
+      - name: Attach SPDX SBOM attestation (cosign attest)
+        env:
+          IMAGE_REF: 0mniteck/yubios:installer-${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
+          COSIGN_PASSWORD: ''
+        run: |
+          for attempt in 1 2 3 4 5; do
+            cosign attest --key cosign/yubios-omni157.key --signing-config cosign/signing-config.json --type spdxjson --predicate sbom.json "$IMAGE_REF" && exit 0
+            echo "::warning::cosign spdxjson attempt ${attempt}/5 failed; retry in $((attempt * 15))s" >&2
+            sleep $((attempt * 15))
+          done
+          echo "::error::cosign spdxjson failed after 5 attempts" >&2
+          exit 1
+
+
+      - name: Attach SLSA v1.0 provenance attestation (cosign attest)
+        env:
+          IMAGE_REF: 0mniteck/yubios:installer-${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
+          COSIGN_PASSWORD: ''
+        run: |
+          for attempt in 1 2 3 4 5; do
+            cosign attest --key cosign/yubios-omni157.key --signing-config cosign/signing-config.json --type slsaprovenance1 --predicate provenance.json "$IMAGE_REF" && exit 0
+            echo "::warning::cosign slsaprovenance1 attempt ${attempt}/5 failed; retry in $((attempt * 15))s" >&2
+            sleep $((attempt * 15))
+          done
+          echo "::error::cosign slsaprovenance1 failed after 5 attempts" >&2
+          exit 1
+
+
+      - name: cosign sign (keyless OIDC, GitHub Actions)
+        env:
+          IMAGE_REF: 0mniteck/yubios:installer-${{ github.sha }}@${{ steps.resolve.outputs.DIGEST }}
+          COSIGN_PASSWORD: ''
+        run: |
+          for attempt in 1 2 3 4 5; do
+            cosign sign --key cosign/yubios-omni157.key --signing-config cosign/signing-config.json "$IMAGE_REF" && exit 0
+            echo "::warning::cosign sign attempt ${attempt}/5 failed; retry in $((attempt * 15))s" >&2
+            sleep $((attempt * 15))
+          done
+          echo "::error::cosign sign failed after 5 attempts" >&2
+          exit 1
+
+
+
+
+  verify-attest:
+    name: Verify published image attestations + signature
+    needs: merge-manifest
+    if: github.event_name == 'workflow_dispatch' && inputs.Docker_push == true
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 — see PINNED.md
+      - name: Install cosign v3.1.2
+        run: |
+          curl --fail --silent --show-error --location --output cosign-linux-amd64 "https://github.com/sigstore/cosign/releases/download/v3.1.2/cosign-linux-amd64"
+          COSIGN_SHA512=01174ede4958413aca502e7eafdff34a5a7fab39c25af66b84c24b98e354e5cf2631bf2c07ecdd8c684dfab843f9694237606706eeafc20ae30ed5ed831f1d60
+          printf '%s  %s\n' "$COSIGN_SHA512" cosign-linux-amd64 | sha512sum --check --strict
+          install -D -m 0755 cosign-linux-amd64 /usr/local/bin/cosign
+      - name: Install jq for attestation predicate inspection
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq jq
+      - name: Verify published image attestations + cosign signature
+        env:
+          IMAGE_TAG: 0mniteck/yubios:${{ github.sha }}
+          WORKFLOW_FILE: ci_mkosi-installer.yml
+        run: |
+          WORKFLOW_FILES="${WORKFLOW_FILE%.yml}" \
+            IMAGE_REF="${IMAGE_TAG}" \
+            bash tests/verify-oci-attestations.sh
+
+  ci-callback:
+    name: Callback to ci.yml orchestrator
+    if: ${{ always() && github.event_name == 'workflow_dispatch' && inputs.ci_callback == true }}
+    needs: [build, installer-reproducibility, installer-publish, merge-manifest]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Report current state to ci.yml
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          WORKFLOW_NAME: ${{ github.workflow }}
+          REF: ${{ inputs.ci_chain_ref != '' && inputs.ci_chain_ref || github.ref_name }}
+          NEEDS_JSON: ${{ toJSON(needs) }}
+          CI_REASON: ${{ inputs.ci_reason }}
+          CI_DOCKER_PUSH: ${{ inputs.ci_Docker_push }}
+          CI_DEV_DOCKER_PUSH: ${{ inputs.ci_Dev_Docker_push }}
+          CI_FIRMWARE_DOCKER_PUSH: ${{ inputs.ci_Firmware_Docker_push }}
+          CI_INSTALLER_DOCKER_PUSH: ${{ inputs.ci_Installer_Docker_push }}
+          CI_FORK_RUN: ${{ inputs.ci_fork_run }}
+          CI_TEST_RUN: ${{ inputs.ci_test_run }}
+          CI_VM_IMAGE: ${{ inputs.ci_vm_image }}
+        run: |
+          set -euo pipefail
+          conclusion=$(jq -r 'if any(to_entries[]; .value.result == "failure" or .value.result == "cancelled") then "failure" else "success" end' <<<"$NEEDS_JSON")
+          payload=$(jq -n \
+            --arg ref "$REF" \
+            --arg state "$WORKFLOW_NAME" \
+            --arg completed_conclusion "$conclusion" \
+            --arg reason "$CI_REASON" \
+            --arg Docker_push "$CI_DOCKER_PUSH" \
+            --arg Dev_Docker_push "$CI_DEV_DOCKER_PUSH" \
+            --arg Firmware_Docker_push "$CI_FIRMWARE_DOCKER_PUSH" \
+            --arg Installer_Docker_push "$CI_INSTALLER_DOCKER_PUSH" \
+            --arg ci_fork_run "$CI_FORK_RUN" \
+            --arg ci_test_run "$CI_TEST_RUN" \
+            --arg vm_image "$CI_VM_IMAGE" \
+            '{ref: $ref, inputs: {state: $state, completed_conclusion: $completed_conclusion, reason: $reason, target_ref: $ref, Docker_push: $Docker_push, Dev_Docker_push: $Dev_Docker_push, Firmware_Docker_push: $Firmware_Docker_push, Installer_Docker_push: $Installer_Docker_push, ci_fork_run: $ci_fork_run, ci_test_run: $ci_test_run, vm_image: $vm_image}}')
+          curl -fsS -X POST \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${REPO}/actions/workflows/ci.yml/dispatches" \
+            -d "$payload"
+          echo "Reported ${WORKFLOW_NAME} as ${conclusion} to ci.yml."
