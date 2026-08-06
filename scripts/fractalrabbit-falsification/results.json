@@ -1,0 +1,284 @@
+{
+  "harness_version": "0.1.0",
+  "simulator_params": {
+    "n_sites": 80,
+    "n_steps": 2000,
+    "seed": 42,
+    "alpha": 0.1,
+    "beta": 1.5,
+    "burst_prob": 0.6,
+    "heavy_tail_alpha": 1.5,
+    "agp_min_distance": 0.04
+  },
+  "corpus_stats": {
+    "n_observations": 124,
+    "n_primitives_kept": 4,
+    "per_column_coverage": [
+      0.23387096774193547,
+      1.0,
+      0.0,
+      1.0,
+      0.27419354838709675,
+      0.0,
+      0.0,
+      0.1935483870967742,
+      0.1774193548387097
+    ],
+    "inter_event_gap_median": 9,
+    "burst_observations": 32,
+    "quiet_observations": 92
+  },
+  "tests": {
+    "test_1_basic_fit": {
+      "test": "basic_fit",
+      "label": "natural-corpus",
+      "n_items": 124,
+      "n_primitives_kept": 4,
+      "primitives_dropped": [
+        "p1_is_recurrent",
+        "p2_is_first_visit",
+        "p3_near_fract_limit",
+        "p5_inter_event_short",
+        "p6_origin_proximity"
+      ],
+      "pc1": 0.37520260642152814,
+      "pc2": 0.2538484322756974,
+      "pc1_pc2": 0.6290510386972256,
+      "threshold": 0.4,
+      "passed": true
+    },
+    "test_2_sparse_cell_recovery": {
+      "test": "sparse_cell_recovery",
+      "label": "natural-corpus-with-planted-anomalies",
+      "n_natural": 124,
+      "n_planted": 10,
+      "n_recovered": 8,
+      "recovery_rate": 0.8,
+      "threshold": 0.8,
+      "passed": true,
+      "per_plant_record": [
+        {
+          "plant_combo": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          "u": -0.6661342075665724,
+          "v": -0.6775624282894486,
+          "cell": [
+            -14,
+            -14
+          ],
+          "cell_size": 1,
+          "in_sparse_cell": true
+        },
+        {
+          "plant_combo": [
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          "u": 0.038085066247943014,
+          "v": -0.8183364638974284,
+          "cell": [
+            0,
+            -17
+          ],
+          "cell_size": 1,
+          "in_sparse_cell": true
+        },
+        {
+          "plant_combo": [
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "u": -0.054322559993529626,
+          "v": -0.2699891912008856,
+          "cell": [
+            -2,
+            -6
+          ],
+          "cell_size": 2,
+          "in_sparse_cell": false
+        },
+        {
+          "plant_combo": [
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1
+          ],
+          "u": 0.726184243020978,
+          "v": -0.5038420503991188,
+          "cell": [
+            14,
+            -11
+          ],
+          "cell_size": 1,
+          "in_sparse_cell": true
+        },
+        {
+          "plant_combo": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0
+          ],
+          "u": -0.05846298944583564,
+          "v": -0.38154502986948646,
+          "cell": [
+            -2,
+            -8
+          ],
+          "cell_size": 1,
+          "in_sparse_cell": true
+        },
+        {
+          "plant_combo": [
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0
+          ],
+          "u": -0.20996030309622724,
+          "v": 0.4339517452686067,
+          "cell": [
+            -5,
+            8
+          ],
+          "cell_size": 1,
+          "in_sparse_cell": true
+        },
+        {
+          "plant_combo": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0
+          ],
+          "u": -0.8829681198819006,
+          "v": 0.5489649208806326,
+          "cell": [
+            -18,
+            10
+          ],
+          "cell_size": 1,
+          "in_sparse_cell": true
+        },
+        {
+          "plant_combo": [
+            0,
+            1,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          "u": 0.7003399602894954,
+          "v": 0.10453934097411721,
+          "cell": [
+            14,
+            2
+          ],
+          "cell_size": 1,
+          "in_sparse_cell": true
+        },
+        {
+          "plant_combo": [
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            1
+          ],
+          "u": 0.0027331797667949492,
+          "v": -0.9041314425700754,
+          "cell": [
+            0,
+            -19
+          ],
+          "cell_size": 1,
+          "in_sparse_cell": true
+        },
+        {
+          "plant_combo": [
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "u": -0.054322559993529626,
+          "v": -0.2699891912008856,
+          "cell": [
+            -2,
+            -6
+          ],
+          "cell_size": 2,
+          "in_sparse_cell": false
+        }
+      ]
+    },
+    "test_3_lemma_1_invariant": {
+      "test": "lemma_1_invariant",
+      "label": "natural-corpus",
+      "n_items": 124,
+      "n_delta_positive": 124,
+      "n_delta_zero": 0,
+      "n_delta_negative_violations": 0,
+      "passed": true
+    }
+  },
+  "overall_passed": true,
+  "elapsed_seconds": 0.078
+}
