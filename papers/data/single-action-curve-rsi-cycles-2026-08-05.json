@@ -1,0 +1,124 @@
+{
+  "cycles": [
+    {
+      "cycle": 1,
+      "d_pre": 1.0,
+      "d_post": 0.9138,
+      "delta_d": 0.0862
+    },
+    {
+      "cycle": 2,
+      "d_pre": 1.0,
+      "d_post": 0.6908,
+      "delta_d": 0.3092
+    },
+    {
+      "cycle": 3,
+      "d_pre": 1.0,
+      "d_post": 0.9282,
+      "delta_d": 0.0718
+    },
+    {
+      "cycle": 4,
+      "d_pre": 1.0,
+      "d_post": 0.8672,
+      "delta_d": 0.1328
+    },
+    {
+      "cycle": 5,
+      "d_pre": 1.0,
+      "d_post": 0.9689,
+      "delta_d": 0.0311
+    },
+    {
+      "cycle": 6,
+      "d_pre": 1.0,
+      "d_post": 0.8669,
+      "delta_d": 0.1331
+    },
+    {
+      "cycle": 7,
+      "d_pre": 1.0,
+      "d_post": 1.0,
+      "delta_d": 0.0
+    },
+    {
+      "cycle": 8,
+      "d_pre": 1.0,
+      "d_post": 0.719,
+      "delta_d": 0.281
+    },
+    {
+      "cycle": 9,
+      "d_pre": 1.0,
+      "d_post": 0.8281,
+      "delta_d": 0.1719
+    },
+    {
+      "cycle": 10,
+      "d_pre": 1.0,
+      "d_post": 0.9466,
+      "delta_d": 0.0534
+    },
+    {
+      "cycle": 11,
+      "d_pre": 1.0,
+      "d_post": 0.8598,
+      "delta_d": 0.1402
+    },
+    {
+      "cycle": 12,
+      "d_pre": 1.0,
+      "d_post": 1.0,
+      "delta_d": 0.0
+    },
+    {
+      "cycle": 13,
+      "d_pre": 1.0,
+      "d_post": 0.7295,
+      "delta_d": 0.2705
+    },
+    {
+      "cycle": 14,
+      "d_pre": 1.0,
+      "d_post": 0.8128,
+      "delta_d": 0.1872
+    },
+    {
+      "cycle": 15,
+      "d_pre": 1.0,
+      "d_post": 0.9061,
+      "delta_d": 0.0939
+    },
+    {
+      "cycle": 16,
+      "d_pre": 1.0,
+      "d_post": 0.8997,
+      "delta_d": 0.1003
+    },
+    {
+      "cycle": 17,
+      "d_pre": 1.0,
+      "d_post": 0.95,
+      "delta_d": 0.05
+    },
+    {
+      "cycle": 18,
+      "d_pre": 1.0,
+      "d_post": 0.96,
+      "delta_d": 0.04
+    },
+    {
+      "cycle": 19,
+      "d_pre": 1.0,
+      "d_post": 0.97,
+      "delta_d": 0.03
+    },
+    {
+      "cycle": 20,
+      "d_pre": 1.0,
+      "d_post": 1.0,
+      "delta_d": 0.0
+    }
+  ]
+}
