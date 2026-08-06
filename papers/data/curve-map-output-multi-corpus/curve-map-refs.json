@@ -1,0 +1,311 @@
+{
+  "corpus": "refs",
+  "basis": [
+    "has_purpose",
+    "has_evidence",
+    "has_correction",
+    "has_constraint",
+    "has_pushback",
+    "has_test",
+    "has_source",
+    "has_recommendation",
+    "has_priority"
+  ],
+  "primitive_definitions": {
+    "has_purpose": "deep-research 9-primitive variant (#0) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis",
+    "has_evidence": "deep-research 9-primitive variant (#1) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis",
+    "has_correction": "deep-research 9-primitive variant (#2) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis",
+    "has_constraint": "deep-research 9-primitive variant (#3) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis",
+    "has_pushback": "deep-research 9-primitive variant (#4) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis",
+    "has_test": "deep-research 9-primitive variant (#5) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis",
+    "has_source": "deep-research 9-primitive variant (#6) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis",
+    "has_recommendation": "deep-research 9-primitive variant (#7) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis",
+    "has_priority": "deep-research 9-primitive variant (#8) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis"
+  },
+  "n_items": 15,
+  "pc1_explained": 1.0,
+  "pc2_explained": 0.0,
+  "pc1_plus_pc2": 1.0,
+  "ridge_lambda": 0.001,
+  "basis_L": 3,
+  "basis_size": 16,
+  "identity_mobius_frozen": true,
+  "fit_method": "closed-form ridge on real spherical-harmonic basis (L=3, 16 functions)",
+  "distance_metric": "chordal S^2 (bounded [0, 2])",
+  "sub20_warning": true,
+  "saturated_count": 0,
+  "sparse_count": 15,
+  "avg_coverage": 0.06666666666666667,
+  "points": [
+    {
+      "file": "advisor-report-n-sphere-variant-2026-08-05",
+      "lon": 180.0,
+      "lat": -82.37185033141928,
+      "t": 0.0,
+      "residual": 1.491663675886028e-05,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "curve-guided-rsi-corpus-enrichment-prior-art-stream-2-2026-08-05",
+      "lon": 180.0,
+      "lat": -82.37185033141928,
+      "t": 0.0,
+      "residual": 1.491663675886028e-05,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "curve-guided-rsi-rsphere-prior-art-stream-C-2026-08-05",
+      "lon": 180.0,
+      "lat": -82.37185033141928,
+      "t": 0.0,
+      "residual": 1.491663675886028e-05,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "falco-runtime-detection-prior-art-2026-08-05",
+      "lon": 180.0,
+      "lat": -82.37185033141928,
+      "t": 0.0,
+      "residual": 1.491663675886028e-05,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "ideate-hyperspherical-harmonic-curve-yubios-solo-2026-08-05",
+      "lon": 180.0,
+      "lat": -82.37185033141928,
+      "t": 0.0,
+      "residual": 1.491663675886028e-05,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "sealed-uki-vm-comparative-report-2026-07-31",
+      "lon": 180.0,
+      "lat": -82.37185033141928,
+      "t": 0.0,
+      "residual": 1.491663675886028e-05,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "sealed-uki-vm-comparative-report-V52-refresh-2026-07-31",
+      "lon": 180.0,
+      "lat": -82.37185033141928,
+      "t": 0.0,
+      "residual": 1.491663675886028e-05,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "sealed-uki-vm-debugging-journal-2026-07-30",
+      "lon": 180.0,
+      "lat": -82.37185033141928,
+      "t": 0.0,
+      "residual": 1.491663675886028e-05,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "sealed-uki-vm-pkcs11-ecdsa-deepdive-2026-07-31",
+      "lon": 180.0,
+      "lat": -82.37185033141928,
+      "t": 0.0,
+      "residual": 1.491663675886028e-05,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "sealed-uki-vm-pkcs11-ecdsa-deepdive-VERIFIED-2026-07-31",
+      "lon": 0.0,
+      "lat": -3.949868021763941,
+      "t": 1.0,
+      "residual": 0.0002089927488929282,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "sealed-uki-vm-prior-art-report-2026-07-31",
+      "lon": 180.0,
+      "lat": -82.37185033141928,
+      "t": 0.0,
+      "residual": 1.491663675886028e-05,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "sealed-uki-vm-prior-art-report-V52-2026-07-31",
+      "lon": 180.0,
+      "lat": -82.37185033141928,
+      "t": 0.0,
+      "residual": 1.491663675886028e-05,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "sealed-uki-vm-prior-research-report-2026-07-31",
+      "lon": 180.0,
+      "lat": -82.37185033141928,
+      "t": 0.0,
+      "residual": 1.491663675883277e-05,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "yubios-cve-triage-research-2026-08-06",
+      "lon": 180.0,
+      "lat": -82.37185033141928,
+      "t": 0.0,
+      "residual": 1.491663675883277e-05,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "yubios-tpm2-pcr-policy-authoring-research-2026-08-06",
+      "lon": 180.0,
+      "lat": -82.37185033141928,
+      "t": 0.0,
+      "residual": 1.491663675883277e-05,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ]
+}

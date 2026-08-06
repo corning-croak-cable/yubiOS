@@ -1,0 +1,221 @@
+{
+  "corpus": "docs",
+  "basis": [
+    "has_purpose",
+    "has_evidence",
+    "has_correction",
+    "has_constraint",
+    "has_pushback",
+    "has_test",
+    "has_source",
+    "has_recommendation",
+    "has_priority"
+  ],
+  "primitive_definitions": {
+    "has_purpose": "deep-research 9-primitive variant (#0) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis",
+    "has_evidence": "deep-research 9-primitive variant (#1) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis",
+    "has_correction": "deep-research 9-primitive variant (#2) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis",
+    "has_constraint": "deep-research 9-primitive variant (#3) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis",
+    "has_pushback": "deep-research 9-primitive variant (#4) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis",
+    "has_test": "deep-research 9-primitive variant (#5) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis",
+    "has_source": "deep-research 9-primitive variant (#6) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis",
+    "has_recommendation": "deep-research 9-primitive variant (#7) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis",
+    "has_priority": "deep-research 9-primitive variant (#8) from `single-action-curve-rsi` SKILL.md \u00a79-D Primitive Basis"
+  },
+  "n_items": 10,
+  "pc1_explained": 0.5114370283323405,
+  "pc2_explained": 0.303030303030303,
+  "pc1_plus_pc2": 0.8144673313626435,
+  "ridge_lambda": 0.001,
+  "basis_L": 3,
+  "basis_size": 16,
+  "identity_mobius_frozen": true,
+  "fit_method": "closed-form ridge on real spherical-harmonic basis (L=3, 16 functions)",
+  "distance_metric": "chordal S^2 (bounded [0, 2])",
+  "sub20_warning": true,
+  "saturated_count": 0,
+  "sparse_count": 2,
+  "avg_coverage": 3.3,
+  "points": [
+    {
+      "file": "COMPANY",
+      "lon": -5.920083193297409e-15,
+      "lat": -51.22350438456173,
+      "t": 0.7802665652825505,
+      "residual": 0.000137012511043704,
+      "primitives": [
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "RECENT_ACTIVITY",
+      "lon": -5.920083193297409e-15,
+      "lat": -51.22350438456173,
+      "t": 0.7802665652825505,
+      "residual": 0.000137012511043704,
+      "primitives": [
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "RULES",
+      "lon": -75.92676783543438,
+      "lat": -25.469837164760364,
+      "t": 0.6950666413206374,
+      "residual": 0.0002458475391996131,
+      "primitives": [
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "SAUNA_IDENTITY",
+      "lon": 180.0,
+      "lat": 21.370825057661925,
+      "t": 0.0,
+      "residual": 0.0008855090870745219,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "SAUNA_TOOLS",
+      "lon": -5.920083193297409e-15,
+      "lat": -51.22350438456173,
+      "t": 0.7802665652825505,
+      "residual": 0.000137012511043704,
+      "primitives": [
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "SELF-CHANGELOG",
+      "lon": 54.81020619298291,
+      "lat": 22.571233783157062,
+      "t": 1.0,
+      "residual": 0.0006013981246262489,
+      "primitives": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "SELF",
+      "lon": -75.92676783543438,
+      "lat": -25.469837164760364,
+      "t": 0.6950666413206374,
+      "residual": 0.0002458475391996131,
+      "primitives": [
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "USER_PREFERENCES",
+      "lon": -75.92676783543438,
+      "lat": -25.469837164760364,
+      "t": 0.6950666413206374,
+      "residual": 0.0002458475391996131,
+      "primitives": [
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "USER_PROFILE",
+      "lon": -5.920083193297409e-15,
+      "lat": -51.22350438456173,
+      "t": 0.7802665652825505,
+      "residual": 0.00013701251104367856,
+      "primitives": [
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "file": "USER_RELATIONSHIPS",
+      "lon": 154.19962216030632,
+      "lat": 19.194206444969463,
+      "t": 0.08519992396191309,
+      "residual": 0.0010730198365178467,
+      "primitives": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ]
+    }
+  ]
+}
