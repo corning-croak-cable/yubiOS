@@ -1,0 +1,117 @@
+{
+  "label": "papers-corpus",
+  "n_items": 494,
+  "n_primitives": 9,
+  "primitives": [
+    "attestation",
+    "trust_chain",
+    "least_privilege",
+    "declarative_policy",
+    "continuous_adaptive",
+    "immutability",
+    "audit_evidence",
+    "cryptographic_identity",
+    "segmentation"
+  ],
+  "items_sample": [
+    {
+      "id": "0pointer-mastery@c1",
+      "primitive_coverage": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "text": "0pointer-mastery cycle 1",
+      "source": "papers-corpus",
+      "delta_d": 0.0,
+      "d_pre": 0.0,
+      "d_post": 0.0
+    },
+    {
+      "id": "api-and-interface-design@c1",
+      "primitive_coverage": [
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1
+      ],
+      "text": "api-and-interface-design cycle 1",
+      "source": "papers-corpus",
+      "delta_d": 0.0904,
+      "d_pre": 1.2451,
+      "d_post": 1.1547
+    },
+    {
+      "id": "arm-trusted-firmware-optee@c1",
+      "primitive_coverage": [
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1
+      ],
+      "text": "arm-trusted-firmware-optee cycle 1",
+      "source": "papers-corpus",
+      "delta_d": 0.0904,
+      "d_pre": 1.2451,
+      "d_post": 1.1547
+    },
+    {
+      "id": "ascii-uart-animator@c1",
+      "primitive_coverage": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "text": "ascii-uart-animator cycle 1",
+      "source": "papers-corpus",
+      "delta_d": 0.0678,
+      "d_pre": 1.9758,
+      "d_post": 1.908
+    },
+    {
+      "id": "audit-evidence-packaging@c1",
+      "primitive_coverage": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "text": "audit-evidence-packaging cycle 1",
+      "source": "papers-corpus",
+      "delta_d": 0.0,
+      "d_pre": 0.0,
+      "d_post": 0.0
+    }
+  ],
+  "items_count_by_source": {
+    "papers-corpus": 474,
+    "papers-corpus-aggregate": 20
+  }
+}

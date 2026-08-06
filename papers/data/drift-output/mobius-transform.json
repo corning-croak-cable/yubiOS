@@ -1,0 +1,33 @@
+{
+  "a_re": 0.12704011005620172,
+  "a_im": -1.1177332572937615,
+  "b_re": -0.16864179963676035,
+  "b_im": -0.1429432228740932,
+  "c_re": 0.41094549652017326,
+  "c_im": -0.6970007511372484,
+  "d_re": 0.03149368291827897,
+  "d_im": 0.7399483838026413,
+  "alignment_loss_mean_sq": 49.847743000380234,
+  "cross_ratio_max_residual": 2.220446049250313e-15,
+  "primitives_kept_common": [
+    "attestation",
+    "trust_chain",
+    "least_privilege",
+    "declarative_policy",
+    "continuous_adaptive",
+    "immutability",
+    "audit_evidence",
+    "cryptographic_identity",
+    "segmentation"
+  ],
+  "n_papers_items": 494,
+  "n_self_items": 109,
+  "k_frequencies": 8,
+  "D_lift": 384,
+  "lambda_ridge": 0.001,
+  "init": "identity",
+  "frozen_degree_weights": true,
+  "loss_unit": "mean squared chordal (stereograph of C-plane)",
+  "ad_minus_bc_re": 1.0,
+  "ad_minus_bc_im": 0.0
+}
