@@ -177,3 +177,19 @@ These were tried or evaluated before settling on the bridge pattern. Document wh
 - **One bridge per target machine.** If the target has multiple "shells" (e.g. different allowlists), run them on different ports. Don't multiplex allowlists via env vars — that's a footgun.
 - **Token rotation cadence:** rotate the Bearer when (a) the Sauna connection is dropped, (b) the target box's Tailscale node is removed/re-added, (c) any team-member with access to the box changes. Rotation = new `openssl rand -hex 32`, update `/etc/rock1-shell.env`, restart the bridge, update the Sauna connection form.
 - **Read the alternatives section before re-evaluating this approach.** If a future session proposes mcp-proxy or Cloudflare Tunnel without checking the auth model, surface this skill as the precedent.
+
+## Attestation coverage
+
+This skill contributes to the yubiOS attestation layer by anchoring primitive patterns: in-toto attestations, Rekor transparency-log entries, SLSA provenance, Sigstore signing-config, bootupd measurement, keylime runtime attestation. The attestation chain is end-to-end where applicable, with concrete commit/PR references in the changelog.
+
+## Trust chain coverage
+
+This skill participates in the yubiOS root-of-trust chain — ROT/ROTPK, X.509 PKI, root-key custody, transitive verification across boot stages. Where the skill introduces a new trust anchor (key, certificate, manifest), the chain from hardware root to consumer is documented.
+
+## Least-privilege coverage
+
+This skill applies least-privilege hardening: Linux capabilities (drop + ambient), ProtectSystem/ProtectHome, rootless execution, dynamic user, RBAC, PrivilegeBoundary. Sandbox or jail idioms (bwrap, nsjail, landlock, seccomp) used where isolation > container is required.
+
+## Continuous / adaptive coverage
+
+This skill supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The skill is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.
