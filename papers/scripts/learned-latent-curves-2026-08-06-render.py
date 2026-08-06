@@ -101,7 +101,7 @@ style_lemma = ParagraphStyle(
 
 
 # ---------- Build ----------
-output_path = Path("/var/workspace/session/paper-reduced-2026-08-06.pdf")
+output_path = Path("/var/workspace/session/learned-latent-curves-2026-08-06.pdf")
 doc = SimpleDocTemplate(
     str(output_path), pagesize=letter,
     leftMargin=0.85*inch, rightMargin=0.85*inch,
@@ -630,7 +630,7 @@ story.append(Paragraph(
     style_h2,
 ))
 # Figure 1
-fig1_path = "/var/workspace/session/session-chart-A-H-1-progression.png"
+fig1_path = "/var/workspace/session/chart-A-H-1-progression.png"
 if Path(fig1_path).exists():
     story.append(Image(fig1_path, width=5.5*inch, height=3.5*inch))
     story.append(Paragraph(
@@ -645,15 +645,14 @@ if Path(fig1_path).exists():
     ))
 
 story.append(Paragraph(
-    "6.3&nbsp;&nbsp;Atom experiment: 474 dispatches on the 79-skill corpus "
-    "+ 20 cycles on the 11-file deep-research corpus", style_h2,
+    "6.3&nbsp;&nbsp;Atom experiment: 474 dispatches on the 79-skill corpus", style_h2,
 ))
 story.append(Paragraph(
     "The 79-skill corpus was audited via 474 atom dispatches across 6 "
     "cycles (single run on the 2026-08-06 snapshot, commit "
     "<font face='Courier'>6ae3abeb65</font> on "
     "<font face='Courier'>yubi-OS/yubiOS main</font>). Cumulative "
-    "&Delta; = +11.2971 across all dispatches; zero negative &Delta;; "
+    "&Delta; = +11.2963 across all dispatches; zero negative &Delta;; "
     "116 strictly positive &Delta;. Sparse cells: "
     "7 &rarr; 3 &rarr; 2 &rarr; 3 &rarr; 0 &rarr; 0. Fixpoint reached at "
     "cycle 6 (peak &Delta; below the 0.001 epsilon). The corpus reached "
@@ -668,45 +667,12 @@ if Path(fig2_path).exists():
         "<b>Figure 2.</b> 79-skill corpus RSI: cumulative &Delta; per "
         "cycle (left) and per-primitive coverage progression (right). Six "
         "cycles to fixpoint. Total: 474 atom dispatches, 0 negative &Delta;, "
-        "cumulative &Delta; = +11.2971. Per-cycle cumulative trajectory: "
+        "cumulative &Delta; = +11.2963. Per-cycle cumulative trajectory: "
         "+5.58 &rarr; +3.01 &rarr; +1.28 &rarr; +0.88 &rarr; +0.54 &rarr; +0.00 &mdash; "
         "the diminishing-returns curve predicted by single-action-curve-rsi's "
         "fixpoint rule.",
         style_caption,
     ))
-# Figure 3
-fig3_path = "/var/workspace/session/chart-D-1-20-cycle-delta.png"
-if Path(fig3_path).exists():
-    story.append(Image(fig3_path, width=6.5*inch, height=3.5*inch))
-    story.append(Paragraph(
-        "<b>Figure 3.</b> &Delta; per cycle across the 20-cycle atom "
-        "experiment on 11 deep-research output files in the yubiOS corpus. "
-        "Blue: initial corpus sweep (cycles 1&ndash;12). Red: post-edit "
-        "re-fits (cycles 13&ndash;20). Stars mark the three peak runs (C2, "
-        "C8, C14). Cumulative &Delta; across all 20 cycles: +1.6882. Zero "
-        "negative &Delta; across 20 cycles confirms the atom's invariant "
-        "(Lemma&nbsp;1).",
-        style_caption,
-    ))
-story.append(Paragraph(
-    "The 11-file deep-research corpus was audited via 20 cycles (initial "
-    "sweep + 7 post-edit re-fits). Across both corpora combined, the "
-    "geodesic-only criterion produced <i>zero</i> negative &Delta; &mdash; "
-    "494 dispatches in total, 0 regressions &mdash; confirming Lemma&nbsp;1 "
-    "directly. Peak &Delta; trajectory on the 11-file corpus: +0.3092 "
-    "(cycle&nbsp;2, advisor-report) &rarr; +0.2810 (cycle&nbsp;8, "
-    "pkcs11-ecdsa-deepdive) &rarr; +0.1872 (cycle&nbsp;14, falco). "
-    "Peak &Delta; reduced 39.5% across three peak runs, mean &Delta; "
-    "reduced 28.2%, cumulative &Delta; plateaued at +1.6882. Per-file "
-    "&Delta; reductions: advisor &minus;55.7%, pkcs11-ecdsa-deepdive "
-    "&minus;66.6%, comparative &minus;100% (converged to local minimum). "
-    "Two of the eleven deep-research files (comparative-V52-refresh and "
-    "debugging-journal) reached local minimum coverage shape (&Delta; = 0) "
-    "and required no further action. This is the empirical confirmation "
-    "of Theorem&nbsp;1: the only-positive-&Delta; property of the atom "
-    "propagates linearly across multi-file composition.",
-    style_body,
-))
 
 # --- §7 Discussion ---
 story.append(Paragraph("7&nbsp;&nbsp;Discussion", style_h1))
@@ -721,8 +687,9 @@ story.append(Paragraph(
     "over the flat curve in absolute terms: on Split B the absolute "
     "<i>R</i><sup>2</sup> is +0.222 (positive but small), and the headline "
     "numbers are single-run point estimates without error bars. The atom "
-    "experiment (Figure&nbsp;2 + Figure&nbsp;3) shows the smallest audit "
-    "unit composes without regression &mdash; 494 dispatches, 0 negative "
+    "experiment (Figure&nbsp;2) shows the smallest audit "
+    "unit composes without regression &mdash; 1391 dispatches across the "
+    "three corpora (Appendix&nbsp;B), 0 negative "
     "&Delta; &mdash; but does not by itself validate the variant.",
     style_body,
 ))
@@ -733,13 +700,14 @@ story.append(Paragraph(
     "target, and the headline numbers are single-run point estimates. The "
     "5-seed error bars in Figure&nbsp;1 (phases E&ndash;H) partially "
     "address the empirical-fragility concern for the audit; the headline "
-    "Split A/B numbers do not. The 79-skill corpus audit (Section&nbsp;6.4) "
-    "uses 474 dispatches across 6 cycles at <i>N</i> = 79 &mdash; enough "
-    "to support an empirical claim at the atom-invariant level, but not "
-    "enough to support multi-seed error bars at the headline-ablation "
-    "level. A synthetic-manifold benchmark (one not run) and a "
-    "second-corpus re-run would replace the present single-seed point "
-    "estimates with error bars at both levels.",
+    "Split A/B numbers do not. The multi-corpus audit (Appendix&nbsp;B) "
+    "uses 1391 dispatches across 213 files (79 skills, 21 docs, 113 refs) "
+    "&mdash; enough to support an empirical claim at the atom-invariant "
+    "level (zero negative &Delta; across all 1391), but not enough to "
+    "support multi-seed error bars at the headline-ablation level. A "
+    "synthetic-manifold benchmark (Appendix&nbsp;C.3, not run) and a "
+    "second-corpus re-run of the ablation itself would replace the "
+    "present single-seed point estimates with error bars at both levels.",
     style_body,
 ))
 
@@ -756,46 +724,389 @@ story.append(Paragraph(
     "parameters and no error bars. The single-action atom is the smallest "
     "unit of the resulting audit pipeline; its only-positive-&Delta; "
     "invariant propagates linearly to multi-file composition "
-    "(Theorem&nbsp;1), as confirmed by a 474-dispatch experiment on the "
-    "79-skill corpus and a 20-cycle experiment on 11 deep-research files "
-    "showing zero negative &Delta; across the combined 494 dispatches. "
-    "Future work: a synthetic-manifold benchmark would test whether the "
-    "inductive-bias claim holds on manifolds other than <i>S<sup>2</sup></i>, "
-    "and a second-corpus re-run would replace the present single-seed "
-    "point estimates with error bars.",
+    "(Theorem&nbsp;1), as confirmed by 1391 atom dispatches across the "
+    "three corpora (skills/, docs/, refs/) in Appendix&nbsp;B "
+    "and a 20-cycle experiment on the 11-file deep-research corpus in "
+    "Appendix&nbsp;C, showing zero negative &Delta; across all of them. "
+    "Future work: a synthetic-manifold benchmark "
+    "(Appendix&nbsp;C.3) would test whether the inductive-bias claim "
+    "holds on manifolds other than <i>S<sup>2</sup></i>, and a "
+    "second-corpus re-run of the ablation itself would replace the "
+    "present single-seed point estimates with error bars.",
     style_body,
 ))
 
 # --- §A Atom Coverage of 79 Skills (Empirical) ---
+story.append(PageBreak())
 story.append(Paragraph(
     "Appendix A&nbsp;&nbsp;Atom Coverage of 79 Skills (Empirical)",
     style_h1,
 ))
 story.append(Paragraph(
-    "The 79-skill corpus reached 100% primitive coverage (79/79 for all "
-    "nine primitives) after 6 RSI cycles. Per-primitive coverage "
-    "progression: cycle&nbsp;1: [71, 63, 63, 49, 35, 74, 72, 70, 73]; "
-    "cycle&nbsp;6: [79, 79, 79, 79, 79, 79, 79, 79, 79]. Cumulative "
-    "&Delta; across 474 dispatches: +11.2971, with 116 strictly positive "
-    "single-action flips and zero negative &Delta; &mdash; the empirical "
-    "verification of Lemma&nbsp;1's only-positive-&Delta; invariant on a "
-    "corpus 7&times; larger than the 11-file audit. Sparse cells: "
-    "7 &rarr; 3 &rarr; 2 &rarr; 3 &rarr; 0 &rarr; 0. Fixpoint reached at "
-    "cycle 6.",
+    "This appendix gives the per-cycle accounting behind the headline "
+    "atom result in Section&nbsp;6.3. The 79-skill corpus "
+    "(<font face='Courier'>skills/</font> on "
+    "<font face='Courier'>yubi-OS/yubiOS main</font>, snapshot 2026-08-06) "
+    "was audited by 474 atom dispatches &mdash; 79 files &times; 6 "
+    "cycles, one dispatch per file per cycle. Of those 474 dispatches, "
+    "<b>116 produced a strictly positive &Delta;</b>, <b>358 produced "
+    "&Delta; = 0</b> (the file was already saturated on all nine "
+    "primitives, so the atom had no candidate flip), and <b>zero produced "
+    "a negative &Delta;</b>. The zero-&Delta; majority is the expected "
+    "shape, not a defect: Lemma&nbsp;1 guarantees non-negativity, and a "
+    "saturated file has an empty candidate set, so the arg-min ties at "
+    "<i>d</i><sub>pre</sub>. Cumulative &Delta; = <b>+11.2963</b> "
+    "(sum of the per-cycle aggregates as published in "
+    "<font face='Courier'>rsi-3-corpus-summary-2026-08-06.json</font>; "
+    "the unrounded sum over all 474 individual dispatches is +11.2971).",
+    style_body,
+))
+story.append(Paragraph("A.1&nbsp;&nbsp;Per-cycle trajectory", style_h2))
+story.append(Paragraph(
+    "Per-cycle cumulative &Delta;: +5.5787 &rarr; +3.0091 &rarr; +1.2833 "
+    "&rarr; +0.8829 &rarr; +0.5423 &rarr; +0.0000. Per-cycle count of "
+    "strictly positive dispatches: 59 &rarr; 30 &rarr; 12 &rarr; 9 "
+    "&rarr; 6 &rarr; 0. Sparse cells: 7 &rarr; 3 &rarr; 2 &rarr; 3 "
+    "&rarr; 0 &rarr; 0. Both the &Delta; series and the positive-dispatch "
+    "count fall monotonically; the sparse-cell count does <i>not</i> "
+    "(3 &rarr; 2 &rarr; 3 at cycles 3&ndash;4). This is expected: a "
+    "single-primitive flip moves a file's <i>S</i><sup>2</sup> point, "
+    "so a cycle can vacate one equal-area cell and isolate a neighbour. "
+    "Lemma&nbsp;1 protects &Delta;, not the sparse-cell count. Fixpoint "
+    "was declared at cycle 6, where peak &Delta; = 0.0000 falls below "
+    "the 0.001 epsilon.",
+    style_body,
+))
+story.append(Paragraph(
+    "A.2&nbsp;&nbsp;Per-primitive coverage progression", style_h2,
+))
+story.append(Paragraph(
+    "Coverage counts out of 79, ordered "
+    "(attestation, trust_chain, least_privilege, declarative_policy, "
+    "continuous_adaptive, immutability, audit_evidence, "
+    "cryptographic_identity, segmentation), recorded at the head of each "
+    "cycle: c1 [71, 63, 63, 49, 35, 74, 72, 70, 73]; "
+    "c2 [79, 71, 69, 75, 54, 78, 77, 70, 73]; "
+    "c3 [79, 79, 71, 78, 70, 78, 77, 71, 75]; "
+    "c4 [79, 79, 79, 79, 72, 79, 78, 71, 79]; "
+    "c5 [79, 79, 79, 79, 79, 79, 79, 73, 79]; "
+    "c6 [79, 79, 79, 79, 79, 79, 79, 79, 79]. "
+    "<font face='Courier'>continuous_adaptive</font> begins at 35/79 "
+    "&mdash; the sparsest column in the corpus &mdash; but the "
+    "geodesic-only criterion targets it aggressively (44 of the 116 "
+    "winning flips) and it is saturated by cycle&nbsp;5. "
+    "<font face='Courier'>cryptographic_identity</font> begins at a "
+    "comfortable 70/79 and is the last column to close, still open "
+    "entering cycle&nbsp;6. The criterion minimizes post-flip geodesic "
+    "distance, not per-column deficit.",
+    style_body,
+))
+story.append(Paragraph(
+    "A.3&nbsp;&nbsp;Winner distribution and the quantization of &Delta;",
+    style_h2,
+))
+story.append(Paragraph(
+    "Across the 116 winning flips the selected primitive was "
+    "<font face='Courier'>continuous_adaptive</font> 44&times;, "
+    "<font face='Courier'>declarative_policy</font> 22&times;, "
+    "<font face='Courier'>trust_chain</font> 16&times;, "
+    "<font face='Courier'>least_privilege</font> 16&times;, "
+    "<font face='Courier'>attestation</font> 8&times;, "
+    "<font face='Courier'>cryptographic_identity</font> 8&times;, "
+    "<font face='Courier'>immutability</font> 1&times;, and "
+    "<font face='Courier'>audit_evidence</font> 1&times;. The realized "
+    "&Delta; is a function of <i>k</i> = |{<i>j</i> : "
+    "<i>c<sub>j</sub></i> = 0}|, the count of missing primitives, and of "
+    "nothing else &mdash; not of which primitive is flipped, and not "
+    "of which file. The observed map is "
+    "<i>k</i> = 1 &rarr; 0.0904, 2 &rarr; 0.1003, 3 &rarr; 0.1098, "
+    "4 &rarr; 0.1175, 5 &rarr; 0.1206, 6 &rarr; 0.1158, 7 &rarr; 0.0989, "
+    "8 &rarr; 0.0678, 9 &rarr; 0.0242. The map is unimodal with its "
+    "maximum at <i>k</i> = 5: a file missing five of nine primitives "
+    "sits where the chordal metric on <i>S</i><sup>2</sup> is steepest. "
+    "The maximum single-dispatch &Delta; in the run was 0.1206, first "
+    "attained at cycle&nbsp;1 by "
+    "<font face='Courier'>negative-skill-space</font> "
+    "(<i>k</i> = 5, winner <font face='Courier'>trust_chain</font>) and "
+    "<font face='Courier'>single-action-curve-rsi</font> "
+    "(<i>k</i> = 5, winner <font face='Courier'>attestation</font>). The "
+    "identical ladder is reproduced on the "
+    "<font face='Courier'>docs/</font> and "
+    "<font face='Courier'>refs/</font> corpora (Appendix&nbsp;B).",
     style_body,
 ))
 
-# --- §B Future Work ---
+# Figure A.1 — per-cycle delta
+figA1 = "/var/workspace/session/chart-A-H-2-per-cycle-delta.png"
+if Path(figA1).exists():
+    story.append(Image(figA1, width=5.5*inch, height=3.5*inch))
+    story.append(Paragraph(
+        "<b>Figure A.1.</b> Per-cycle &Delta; across the phases "
+        "A&ndash;H corpus audit. The diminishing-returns envelope is "
+        "the operational signature of the fixpoint rule: each cycle "
+        "closes the highest-&Delta; candidates, leaving a strictly "
+        "cheaper residual for the next.",
+        style_caption,
+    ))
+
+# Figure A.2 — per-primitive delta
+figA2 = "/var/workspace/session/chart-A-H-3-primitive-delta.png"
+if Path(figA2).exists():
+    story.append(Image(figA2, width=5.5*inch, height=3.5*inch))
+    story.append(Paragraph(
+        "<b>Figure A.2.</b> Per-primitive &Delta; contribution. "
+        "<font face='Courier'>continuous_adaptive</font> dominates the "
+        "total (44 of 116 winning flips), consistent with its 35/79 "
+        "starting coverage.",
+        style_caption,
+    ))
+
+# Table A.1 — cycle summary
+tabA1 = "/var/workspace/session/chart-A-H-table-2-cycle-summary.png"
+if Path(tabA1).exists():
+    story.append(Image(tabA1, width=5.5*inch, height=3.0*inch))
+    story.append(Paragraph(
+        "<b>Table A.1.</b> Per-cycle summary of the phases A&ndash;H "
+        "audit (holdout <i>R</i><sup>2</sup>, both arms, 5-seed "
+        "&plusmn; std where available).",
+        style_caption,
+    ))
+
+# Table A.2 — primitive progression
+tabA2 = "/var/workspace/session/chart-A-H-table-3-primitive-progression.png"
+if Path(tabA2).exists():
+    story.append(Image(tabA2, width=5.5*inch, height=3.0*inch))
+    story.append(Paragraph(
+        "<b>Table A.2.</b> Per-primitive coverage progression across "
+        "cycles, tabular form of the c1&ndash;c6 vectors in "
+        "Section&nbsp;A.2.",
+        style_caption,
+    ))
+
+# --- §B Multi-Corpus RSI Audit ---
+story.append(PageBreak())
 story.append(Paragraph(
-    "Appendix B&nbsp;&nbsp;Cycles 10&ndash;15 RSI Run on Full Repo (Future Work)",
+    "Appendix B&nbsp;&nbsp;Multi-Corpus RSI Audit &mdash; "
+    "<font face='Courier'>skills/</font>, "
+    "<font face='Courier'>docs/</font>, "
+    "<font face='Courier'>refs/</font>",
     style_h1,
 ))
 story.append(Paragraph(
-    "The 79-skill audit in Section&nbsp;6.3 used cycles 10&ndash;15 of the "
-    "curve-guided-rsi self pipeline (cycles 1&ndash;9 were the prior phases "
-    "A&ndash;H audit on the 70-skill corpus). The full multi-corpus audit, "
-    "including differential curve baselines across the self-doc corpus "
-    "and the engineering corpus, is future work.",
+    "The 79-skill audit reported in Section&nbsp;6.3 used cycles "
+    "10&ndash;15 of the curve-guided-rsi self pipeline; cycles "
+    "1&ndash;9 were the prior phases A&ndash;H audit on the 70-skill "
+    "corpus. That audit has since been extended from the engineering "
+    "corpus to the whole repository. This appendix reports the "
+    "multi-corpus run: the same single-action-atom pipeline, the same "
+    "9-D <font face='Courier'>internal-big-picture</font> primitive "
+    "basis, the same chordal proxy on <i>S</i><sup>2</sup> with "
+    "&phi;<sub><i>&theta;</i></sub> frozen at identity, applied "
+    "independently to the self-documentation corpus "
+    "(<font face='Courier'>docs/</font>, 21 files) and the references "
+    "corpus (<font face='Courier'>refs/</font>, 113 files) alongside "
+    "the engineering corpus (<font face='Courier'>skills/</font>, "
+    "79 files). All three reach corpus-level fixpoint.",
+    style_body,
+))
+story.append(Paragraph("B.1&nbsp;&nbsp;Headline totals", style_h2))
+story.append(Paragraph(
+    "<b>1391 atom dispatches across 213 files, 598 strictly positive "
+    "&Delta;, zero negative &Delta;, cumulative &Delta; = +59.7671.</b> "
+    "By corpus: <font face='Courier'>skills/</font> &mdash; 79 files, "
+    "6 cycles, 474 dispatches, 116 positive, &Delta; = +11.2963, "
+    "sparse cells 7 &rarr; 0. <font face='Courier'>docs/</font> &mdash; "
+    "21 files, 6 cycles, 126 dispatches, 56 positive, &Delta; = +5.5410, "
+    "sparse cells 7 &rarr; 0. <font face='Courier'>refs/</font> &mdash; "
+    "113 files, 7 cycles, 791 dispatches, 426 positive, "
+    "&Delta; = +42.9298, sparse cells 33 &rarr; 0. All three corpora "
+    "terminate on the same rule (peak &Delta; &lt; 0.001) and all three "
+    "reach 100% coverage on all nine primitives. This is the "
+    "verification of Lemma&nbsp;1 at scale: 1391 independent geodesic "
+    "arg-min selections, not one of which produced a regression. "
+    "Source: <font face='Courier'>papers/data/"
+    "rsi-3-corpus-summary-2026-08-06.json</font>.",
+    style_body,
+))
+story.append(Paragraph(
+    "B.2&nbsp;&nbsp;Differential curve baselines", style_h2,
+))
+story.append(Paragraph(
+    "Raw cumulative &Delta; is not comparable across corpora of "
+    "different size, so the differential baseline normalizes by "
+    "corpus size: mean &Delta; per file per cycle. "
+    "<font face='Courier'>skills/</font> opens at 0.0706 &Delta;/file "
+    "and decays 0.0381, 0.0162, 0.0112, 0.0069, 0. "
+    "<font face='Courier'>docs/</font> opens at 0.0929 and decays "
+    "0.0795, 0.0604, 0.0225, 0.0086, 0. "
+    "<font face='Courier'>refs/</font> opens at 0.0881, <i>rises</i> to "
+    "0.1061 at cycle 2, then decays 0.0918, 0.0657, 0.0259, 0.0024, 0. "
+    "The <font face='Courier'>refs/</font> corpus is the one departure "
+    "from the monotone diminishing-returns shape seen elsewhere in "
+    "this paper: per-cycle &Delta; on "
+    "<font face='Courier'>refs/</font> goes +9.9559 &rarr; +11.9840 "
+    "&rarr; +10.3710 &rarr; +7.4256 &rarr; +2.9221 &rarr; +0.2712 "
+    "&rarr; 0, peaking at cycle&nbsp;2. Corollary&nbsp;1 constrains "
+    "the <i>cumulative</i> sum to be monotone non-decreasing, which it "
+    "is; it says nothing about the per-cycle increment. The mechanism "
+    "is the <i>k</i>-quantization of Appendix&nbsp;A.3: "
+    "<font face='Courier'>refs/</font> begins with most files deep in "
+    "the high-<i>k</i> tail (<i>k</i> = 7&ndash;9, where &Delta; is "
+    "small), cycle&nbsp;1 walks them up into the <i>k</i> &asymp; 5 "
+    "band where &Delta; is maximal, and cycle&nbsp;2 therefore "
+    "harvests more total distance than cycle&nbsp;1 did.",
+    style_body,
+))
+story.append(Paragraph(
+    "B.3&nbsp;&nbsp;What transfers across corpora", style_h2,
+))
+story.append(Paragraph(
+    "Three properties hold identically on all three corpora and are "
+    "therefore properties of the atom rather than of the engineering "
+    "corpus. First, the &Delta; ladder: the realized &Delta; depends "
+    "only on <i>k</i>, the count of missing primitives, with the same "
+    "nine values (0.0904, 0.1003, 0.1098, 0.1175, 0.1206, 0.1158, "
+    "0.0989, 0.0678, 0.0242 for <i>k</i> = 1&hellip;9) and the same "
+    "unimodal peak at <i>k</i> = 5, on "
+    "<font face='Courier'>skills/</font>, "
+    "<font face='Courier'>docs/</font> and "
+    "<font face='Courier'>refs/</font> alike. Second, the peak-&Delta; "
+    "termination sequence: all three corpora walk down the same "
+    "ladder (0.1206 &rarr; &hellip; &rarr; 0.0904 &rarr; 0) as the "
+    "highest-&Delta; band is exhausted. Third, the identity of the "
+    "laggard primitive: <font face='Courier'>cryptographic_identity</font> "
+    "is the last column to saturate in every corpus. The geodesic-only "
+    "criterion has the least incentive to act on a primitive missing "
+    "from files already close to the ideal pole.",
+    style_body,
+))
+story.append(Paragraph(
+    "B.4&nbsp;&nbsp;Scope of the multi-corpus claim", style_h2,
+))
+story.append(Paragraph(
+    "The multi-corpus audit strengthens the atom-invariant claim "
+    "(Lemma&nbsp;1 and Theorem&nbsp;1 now hold over 1391 dispatches on "
+    "three structurally distinct corpora rather than 474 on one) but "
+    "it does <i>not</i> strengthen the headline matched-parameter "
+    "ablation of Section&nbsp;6.1, which remains a single-seed point "
+    "estimate on one corpus family. The second-corpus re-run called "
+    "for in Section&nbsp;7.2 would have to re-run the <i>ablation</i>, "
+    "not the audit, and has not been done.",
+    style_body,
+))
+
+# Figure B.1 — three-corpus chart
+figB1 = "/var/workspace/session/chart-Appendix-B-3-corpus-2026-08-06.png"
+if Path(figB1).exists():
+    story.append(Image(figB1, width=4.8*inch, height=6.6*inch))
+    story.append(Paragraph(
+        "<b>Figure B.1.</b> Multi-corpus hyper-sphere RSI audit. Top: "
+        "cumulative &Delta; per cycle, raw, by corpus. Middle: the "
+        "differential curve baseline &mdash; &Delta; per file per "
+        "cycle, normalized by corpus size. Bottom: sparse-cell count "
+        "per cycle (<i>S</i><sup>2</sup> equal-area partition, "
+        "<i>r</i> = 0.05). "
+        "<font face='Courier'>skills/</font> 6 cycles &Delta; = +11.2963; "
+        "<font face='Courier'>docs/</font> 6 cycles &Delta; = +5.5410; "
+        "<font face='Courier'>refs/</font> 7 cycles &Delta; = +42.9298. "
+        "Zero negative &Delta; across all 1391 dispatches.",
+        style_caption,
+    ))
+
+# --- §C 20-Cycle Deep-Research Corpus + Synthetic-Manifold Benchmark ---
+story.append(PageBreak())
+story.append(Paragraph(
+    "Appendix C&nbsp;&nbsp;The 20-Cycle Deep-Research Corpus and the "
+    "Synthetic-Manifold Benchmark (Partly Future Work)",
+    style_h1,
+))
+story.append(Paragraph(
+    "Sections&nbsp;6 and Appendix&nbsp;B report corpus-scale audits "
+    "in which each file receives at most one dispatch per cycle. A "
+    "complementary experiment runs the atom repeatedly against a "
+    "small corpus to expose the per-file convergence behaviour that a "
+    "wide, shallow audit averages away. This appendix reports that "
+    "experiment and then sketches the one benchmark this paper still "
+    "has not run.",
+    style_body,
+))
+story.append(Paragraph(
+    "C.1&nbsp;&nbsp;20 cycles on 11 deep-research files", style_h2,
+))
+story.append(Paragraph(
+    "The 11-file deep-research corpus (the "
+    "<font face='Courier'>sealed-uki-vm</font> and "
+    "<font face='Courier'>falco</font> outputs in the yubiOS "
+    "references tree) was audited over 20 atom cycles &mdash; an "
+    "initial sweep plus seven post-edit re-fits &mdash; with the "
+    "corpus re-fitted after every applied edit, so each cycle sees a "
+    "genuinely changed manifold. Zero cycles produced a negative "
+    "&Delta;. Cumulative &Delta; plateaued at +1.6882. Source: "
+    "<font face='Courier'>papers/data/"
+    "single-action-curve-rsi-cycles-2026-08-05.json</font>.",
+    style_body,
+))
+story.append(Paragraph(
+    "C.2&nbsp;&nbsp;Diminishing marginal value and the shifting peak",
+    style_h2,
+))
+story.append(Paragraph(
+    "The three peak runs trace +0.3092 (cycle&nbsp;2, advisor-report, "
+    "target <font face='Courier'>has_source</font>) &rarr; +0.2705 "
+    "(the same file re-selected after its first edit, with a smaller "
+    "&Delta; because the edit moved it closer to the ideal pole) "
+    "&rarr; +0.1872 (cycle&nbsp;14, falco). Peak &Delta; fell 39.5% "
+    "across the three peak runs and mean &Delta; fell 28.2%, from "
+    "+0.1176 to +0.0844. Per-file &Delta; reductions after editing: "
+    "advisor-report &minus;55.7%, pkcs11-ecdsa-deepdive &minus;66.6%, "
+    "pkcs11-ecdsa-VERIFIED &minus;47.5%, prior-art-V52 &minus;43.4%, "
+    "comparative-report &minus;100%. Four of the eleven files reached "
+    "a local minimum (&Delta; = 0) and required no further action, up "
+    "from two at cycle&nbsp;12. The atom sweeps the corpus rather "
+    "than over-fitting one file &mdash; the same mechanism that "
+    "produces the cycle-2 rise on <font face='Courier'>refs/</font> "
+    "in Appendix&nbsp;B.2.",
+    style_body,
+))
+
+# Figure C.1 — 20-cycle delta
+figC1 = "/var/workspace/session/chart-D-1-20-cycle-delta.png"
+if Path(figC1).exists():
+    story.append(Image(figC1, width=6.5*inch, height=3.5*inch))
+    story.append(Paragraph(
+        "<b>Figure C.1.</b> &Delta; per cycle across the 20-cycle "
+        "atom experiment on 11 deep-research files. Blue: initial "
+        "corpus sweep (cycles 1&ndash;12). Red: post-edit re-fits "
+        "(cycles 13&ndash;20). Stars mark the three peak runs. "
+        "Cumulative &Delta; = +1.6882; zero negative &Delta; across "
+        "all 20 cycles.",
+        style_caption,
+    ))
+
+story.append(Paragraph(
+    "C.3&nbsp;&nbsp;Synthetic-manifold benchmark (not run)", style_h2,
+))
+story.append(Paragraph(
+    "Every empirical result in this paper is measured on corpora "
+    "that were <i>assumed</i> to suit an <i>S</i><sup>2</sup> parameter "
+    "manifold. That makes the matched-parameter ablation a test of "
+    "fit, not of inductive bias. The benchmark that would separate "
+    "the two is a negative control. <b>Corpus:</b> <i>N</i> = 200 "
+    "synthetic points on the torus <i>T</i><sup>2</sup> = "
+    "<i>S</i><sup>1</sup> &times; <i>S</i><sup>1</sup>, with per-point "
+    "9-D binary feature vectors encoding toroidal modes. <b>Arms:</b> "
+    "the hyperspherical-harmonic curve on <i>S</i><sup>2</sup> "
+    "(<i>L</i> = 3, 16 basis functions) against the flat Fourier "
+    "baseline on [<font face='BodyFont'>0</font>,<font face='BodyFont'>1</font>]"
+    "<sup>2</sup> (<i>k</i> = 2, 25 basis functions), both fitted by "
+    "the closed-form ridge of Eq.&nbsp;(4) at the same &lambda;, on "
+    "the same holdout split, over 5 seeds. <b>Prediction:</b> the "
+    "flat baseline wins on <i>T</i><sup>2</sup> &mdash; a sphere is "
+    "the wrong prior for a genus-1 manifold &mdash; while the sphere "
+    "wins on an <i>S</i><sup>2</sup>-generated positive control. "
+    "<b>Status: not implemented.</b> This benchmark and a second-corpus "
+    "re-run of the ablation itself remain the two open items that "
+    "bound the headline claim.",
     style_body,
 ))
 

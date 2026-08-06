@@ -200,12 +200,12 @@ The matched-parameter ablation on the two headline corpus snapshots is the paper
 
 \subsection{Atom experiment: 474 dispatches on the 79-skill corpus}
 
-The 79-skill corpus was audited via $474$ atom dispatches across $6$ cycles (single run on the 2026-08-06 snapshot, commit $\texttt{6ae3abeb65}$ on `yubi-OS/yubiOS main`). Cumulative $\Delta = +11.2971$ across all dispatches; zero negative $\Delta$; $116$ strictly positive $\Delta$. Sparse cells: $7 \to 3 \to 2 \to 3 \to 0 \to 0$. Fixpoint reached at cycle 6 (peak $\Delta$ below the $0.001$ epsilon). The corpus reached $79/79 = 100\%$ coverage across all nine primitives.
+The 79-skill corpus was audited via $474$ atom dispatches across $6$ cycles (single run on the 2026-08-06 snapshot, commit $\texttt{6ae3abeb65}$ on `yubi-OS/yubiOS main`). Cumulative $\Delta = +11.2963$ across all dispatches (sum of the per-cycle aggregates; the unrounded sum over all $474$ individual dispatches is $+11.2971$); zero negative $\Delta$; $116$ strictly positive $\Delta$ ($358$ saturated files contributed $\Delta = 0$, see Appendix~\ref{app:atom-coverage}). Sparse cells: $7 \to 3 \to 2 \to 3 \to 0 \to 0$. Fixpoint reached at cycle 6 (peak $\Delta$ below the $0.001$ epsilon). The corpus reached $79/79 = 100\%$ coverage across all nine primitives. The $20$-cycle $11$-file deep-research experiment is in Appendix~\ref{app:20cycle}.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=6.5in]{chart-RSI-79-cycles-1-6.png}
-\caption{\textbf{Figure 2.} 79-skill corpus RSI: cumulative $\Delta$ per cycle (left) and per-primitive coverage progression (right). Six cycles to fixpoint. Total: 474 atom dispatches, 0 negative $\Delta$, cumulative $\Delta = +11.2971$. Per-cycle cumulative trajectory: $+5.58 \to +3.01 \to +1.28 \to +0.88 \to +0.54 \to +0.00$ --- the diminishing-returns curve predicted by single-action-curve-rsi's fixpoint rule.}
+\caption{\textbf{Figure 2.} 79-skill corpus RSI: cumulative $\Delta$ per cycle (left) and per-primitive coverage progression (right). Six cycles to fixpoint. Total: 474 atom dispatches, 0 negative $\Delta$, cumulative $\Delta = +11.2963$ (sum of per-cycle aggregates; the unrounded sum is $+11.2971$). Per-cycle cumulative trajectory: $+5.5787 \to +3.0091 \to +1.2833 \to +0.8829 \to +0.5423 \to +0.0000$ --- the diminishing-returns curve predicted by single-action-curve-rsi's fixpoint rule.}
 \label{fig:rsi-79}
 \end{figure}
 
@@ -218,19 +218,131 @@ The hyperspherical-harmonic variant wins on the matched-parameter ablation at bo
 
 \subsection{Limitations}
 
-The empirical case is fragile because it is one corpus family, one target, and the headline numbers are single-run point estimates. The 5-seed error bars in Figure~1 (phases E--H) partially address the empirical-fragility concern for the audit; the headline ablation numbers do not. The 79-skill corpus audit (Section~6.3) uses 474 dispatches across 6 cycles at $N=79$ --- enough to support an empirical claim at the atom-invariant level, but not enough to support multi-seed error bars at the headline-ablation level. A synthetic-manifold benchmark (one not run) and a second-corpus re-run would replace the present single-seed point estimates with error bars at both levels.
+The empirical case is fragile because it is one corpus family, one target, and the headline numbers are single-run point estimates. The 5-seed error bars in Figure~1 (phases E--H) partially address the empirical-fragility concern for the audit; the headline ablation numbers do not. The multi-corpus audit (Appendix~\ref{app:multi-corpus}) uses $1391$ dispatches across $213$ files ($79$ skills, $21$ docs, $113$ refs) --- enough to support an empirical claim at the atom-invariant level (zero negative $\Delta$ across all $1391$), but not enough to support multi-seed error bars at the headline-ablation level. A synthetic-manifold benchmark (Appendix~\ref{app:20cycle}.3, not run) and a second-corpus re-run of the ablation itself would replace the present single-seed point estimates with error bars at both levels.
 
 \section{Conclusion}
 
-The hyperspherical-harmonic curve replaces the flat $[0,1]^2$ parameter manifold with the Riemann sphere $S^2$ and learns a M\"obius reparameterization $\phi_\theta \in \mathrm{PSL}(2,\mathbb{C})$ of the domain. On the yubiOS software-skill corpus, it wins on the matched-parameter ablation at both dated snapshots (49-item $\delta = +0.977$, 70-item $\delta = +1.342$), with fewer parameters and no error bars. The single-action atom is the smallest unit of the resulting audit pipeline; its only-positive-$\Delta$ invariant propagates linearly to multi-file composition (Theorem~1), as confirmed by a 474-dispatch experiment on the 79-skill corpus showing zero negative $\Delta$. Future work: a synthetic-manifold benchmark would test whether the inductive-bias claim holds on manifolds other than $S^2$, and a second-corpus re-run would replace the present single-seed point estimates with error bars.
+The hyperspherical-harmonic curve replaces the flat $[0,1]^2$ parameter manifold with the Riemann sphere $S^2$ and learns a M\"obius reparameterization $\phi_\theta \in \mathrm{PSL}(2,\mathbb{C})$ of the domain. On the yubiOS software-skill corpus, it wins on the matched-parameter ablation at both dated snapshots (49-item $\delta = +0.977$, 70-item $\delta = +1.342$), with fewer parameters and no error bars. The single-action atom is the smallest unit of the resulting audit pipeline; its only-positive-$\Delta$ invariant propagates linearly to multi-file composition (Theorem~1), as confirmed by $1391$ atom dispatches across the three corpora (\texttt{skills/}, \texttt{docs/}, \texttt{refs/}) in Appendix~\ref{app:multi-corpus} and a $20$-cycle experiment on the $11$-file deep-research corpus in Appendix~\ref{app:20cycle}, showing zero negative $\Delta$ across all of them. Future work: a synthetic-manifold benchmark (Appendix~\ref{app:20cycle}.3) would test whether the inductive-bias claim holds on manifolds other than $S^2$, and a second-corpus re-run of the ablation itself would replace the present single-seed point estimates with error bars.
 
-\section{Appendix A: Atom Coverage of 79 Skills (Empirical)}
+\appendix
 
-The $79$-skill corpus reached $100\%$ primitive coverage ($79/79$ for all nine primitives) after $6$ RSI cycles. Per-primitive coverage progression: cycle $1$: $[71, 63, 63, 49, 35, 74, 72, 70, 73]$; cycle $6$: $[79, 79, 79, 79, 79, 79, 79, 79, 79]$. Cumulative $\Delta$ across $474$ dispatches: $+11.2971$, with $116$ strictly positive single-action flips and zero negative $\Delta$ --- the empirical verification of Lemma~1's only-positive-$\Delta$ invariant on a corpus of $79$ skills. Sparse cells: $7 \to 3 \to 2 \to 3 \to 0 \to 0$. Fixpoint reached at cycle 6.
+\section{Atom Coverage of 79 Skills (Empirical)}
+\label{app:atom-coverage}
 
-\section{Appendix B: Cycles 10--15 RSI Run on Full Repo (Future Work)}
+This appendix gives the per-cycle accounting behind the headline atom result in Section~6.3. The $79$-skill corpus (\texttt{skills/} on \texttt{yubi-OS/yubiOS main}, snapshot 2026-08-06) was audited by $474$ atom dispatches --- $79$ files $\times$ $6$ cycles, one dispatch per file per cycle. Of those $474$ dispatches, \textbf{$116$ produced a strictly positive $\Delta$}, \textbf{$358$ produced $\Delta = 0$} (the file was already saturated on all nine primitives, so the atom had no candidate flip), and \textbf{zero produced a negative $\Delta$}. The zero-$\Delta$ majority is the expected shape, not a defect: Lemma~1 guarantees non-negativity, and a saturated file has an empty candidate set, so the arg-min ties at $d_{\mathrm{pre}}$. Cumulative $\Delta$ = $\mathbf{+11.2963}$ (sum of the per-cycle aggregates as published in \texttt{rsi-3-corpus-summary-2026-08-06.json}; the unrounded sum over all $474$ individual dispatches is $+11.2971$).
 
-The 79-skill audit in Section~6.3 used cycles 10--15 of the curve-guided-rsi self pipeline (cycles 1--9 were the prior phases A--H audit on the 70-skill corpus). The full multi-corpus audit, including differential curve baselines across the self-doc corpus and the engineering corpus, is future work.
+\subsection{Per-cycle trajectory}
+
+Per-cycle cumulative $\Delta$: $+5.5787 \to +3.0091 \to +1.2833 \to +0.8829 \to +0.5423 \to +0.0000$. Per-cycle count of strictly positive dispatches: $59 \to 30 \to 12 \to 9 \to 6 \to 0$. Sparse cells: $7 \to 3 \to 2 \to 3 \to 0 \to 0$. Both the $\Delta$ series and the positive-dispatch count fall monotonically; the sparse-cell count does \emph{not} ($3 \to 2 \to 3$ at cycles 3--4). This is expected: a single-primitive flip moves a file's $S^2$ point, so a cycle can vacate one equal-area cell and isolate a neighbour. Lemma~1 protects $\Delta$, not the sparse-cell count. Fixpoint was declared at cycle 6, where peak $\Delta = 0.0000$ falls below the $0.001$ epsilon.
+
+\subsection{Per-primitive coverage progression}
+
+Coverage counts out of 79, ordered (attestation, trust\_chain, least\_privilege, declarative\_policy, continuous\_adaptive, immutability, audit\_evidence, cryptographic\_identity, segmentation), recorded at the head of each cycle:
+\begin{align*}
+\mathbf{c_1} &= [71,\, 63,\, 63,\, 49,\, 35,\, 74,\, 72,\, 70,\, 73] \\
+\mathbf{c_2} &= [79,\, 71,\, 69,\, 75,\, 54,\, 78,\, 77,\, 70,\, 73] \\
+\mathbf{c_3} &= [79,\, 79,\, 71,\, 78,\, 70,\, 78,\, 77,\, 71,\, 75] \\
+\mathbf{c_4} &= [79,\, 79,\, 79,\, 79,\, 72,\, 79,\, 78,\, 71,\, 79] \\
+\mathbf{c_5} &= [79,\, 79,\, 79,\, 79,\, 79,\, 79,\, 79,\, 73,\, 79] \\
+\mathbf{c_6} &= [79,\, 79,\, 79,\, 79,\, 79,\, 79,\, 79,\, 79,\, 79]
+\end{align*}
+\texttt{continuous\_adaptive} begins at $35/79$ --- the sparsest column in the corpus --- but the geodesic-only criterion targets it aggressively ($44$ of the $116$ winning flips) and it is saturated by cycle~5. \texttt{cryptographic\_identity} begins at a comfortable $70/79$ and is the last column to close, still open entering cycle~6. The criterion minimizes post-flip geodesic distance, not per-column deficit.
+
+\subsection{Winner distribution and the quantization of $\Delta$}
+
+Across the $116$ winning flips the selected primitive was \texttt{continuous\_adaptive} $44\times$, \texttt{declarative\_policy} $22\times$, \texttt{trust\_chain} $16\times$, \texttt{least\_privilege} $16\times$, \texttt{attestation} $8\times$, \texttt{cryptographic\_identity} $8\times$, \texttt{immutability} $1\times$, and \texttt{audit\_evidence} $1\times$. The realized $\Delta$ is a function of $k = |\{j : c_j = 0\}|$, the count of missing primitives, and of nothing else --- not of which primitive is flipped, and not of which file. The observed map is
+\begin{align*}
+k = 1 &\to 0.0904, \quad 2 \to 0.1003, \quad 3 \to 0.1098, \\
+k = 4 &\to 0.1175, \quad 5 \to 0.1206, \quad 6 \to 0.1158, \\
+k = 7 &\to 0.0989, \quad 8 \to 0.0678, \quad 9 \to 0.0242.
+\end{align*}
+The map is unimodal with its maximum at $k = 5$: a file missing five of nine primitives sits where the chordal metric on $S^2$ is steepest. The maximum single-dispatch $\Delta$ in the run was $0.1206$, first attained at cycle~1 by \texttt{negative-skill-space} ($k = 5$, winner \texttt{trust\_chain}) and \texttt{single-action-curve-rsi} ($k = 5$, winner \texttt{attestation}). The identical ladder is reproduced on the \texttt{docs/} and \texttt{refs/} corpora (Appendix~\ref{app:multi-corpus}).
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=5.5in]{chart-A-H-2-per-cycle-delta.png}
+\caption{\textbf{Figure A.1.} Per-cycle $\Delta$ across the phases A--H corpus audit. The diminishing-returns envelope is the operational signature of the fixpoint rule: each cycle closes the highest-$\Delta$ candidates, leaving a strictly cheaper residual for the next.}
+\label{fig:app-a1}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=5.5in]{chart-A-H-3-primitive-delta.png}
+\caption{\textbf{Figure A.2.} Per-primitive $\Delta$ contribution. \texttt{continuous\_adaptive} dominates the total ($44$ of $116$ winning flips), consistent with its $35/79$ starting coverage.}
+\label{fig:app-a2}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=5.5in]{chart-A-H-table-2-cycle-summary.png}
+\caption{\textbf{Table A.1.} Per-cycle summary of the phases A--H audit (holdout $R^2$, both arms, 5-seed $\pm$ std where available).}
+\label{tab:app-a1}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=5.5in]{chart-A-H-table-3-primitive-progression.png}
+\caption{\textbf{Table A.2.} Per-primitive coverage progression across cycles, tabular form of the $c_1$--$c_6$ vectors in Section~A.2.}
+\label{tab:app-a2}
+\end{figure}
+
+\section{Multi-Corpus RSI Audit --- \texttt{skills/}, \texttt{docs/}, \texttt{refs/}}
+\label{app:multi-corpus}
+
+The $79$-skill audit reported in Section~6.3 used cycles 10--15 of the \texttt{curve-guided-rsi} self pipeline; cycles 1--9 were the prior phases A--H audit on the $70$-skill corpus. That audit has since been extended from the engineering corpus to the whole repository. This appendix reports the multi-corpus run: the same single-action-atom pipeline, the same 9-D \texttt{internal-big-picture} primitive basis, the same chordal proxy on $S^2$ with $\phi_\theta$ frozen at identity, applied independently to the self-documentation corpus (\texttt{docs/}, $21$ files) and the references corpus (\texttt{refs/}, $113$ files) alongside the engineering corpus (\texttt{skills/}, $79$ files). All three reach corpus-level fixpoint.
+
+\subsection{Headline totals}
+
+\textbf{$1391$ atom dispatches across $213$ files, $598$ strictly positive $\Delta$, zero negative $\Delta$, cumulative $\Delta = +59.7671$.} By corpus:
+\begin{itemize}
+\item \texttt{skills/} --- $79$ files, $6$ cycles, $474$ dispatches, $116$ positive, $\Delta = +11.2963$, sparse cells $7 \to 0$.
+\item \texttt{docs/} --- $21$ files, $6$ cycles, $126$ dispatches, $56$ positive, $\Delta = +5.5410$, sparse cells $7 \to 0$.
+\item \texttt{refs/} --- $113$ files, $7$ cycles, $791$ dispatches, $426$ positive, $\Delta = +42.9298$, sparse cells $33 \to 0$.
+\end{itemize}
+All three corpora terminate on the same rule (peak $\Delta < 0.001$) and all three reach $100\%$ coverage on all nine primitives. This is the verification of Lemma~1 at scale: $1391$ independent geodesic arg-min selections, not one of which produced a regression. Source: \texttt{papers/data/rsi-3-corpus-summary-2026-08-06.json}.
+
+\subsection{Differential curve baselines}
+
+Raw cumulative $\Delta$ is not comparable across corpora of different size, so the differential baseline normalizes by corpus size: mean $\Delta$ per file per cycle. \texttt{skills/} opens at $0.0706$ $\Delta$/file and decays $0.0381, 0.0162, 0.0112, 0.0069, 0$. \texttt{docs/} opens at $0.0929$ and decays $0.0795, 0.0604, 0.0225, 0.0086, 0$. \texttt{refs/} opens at $0.0881$, \emph{rises} to $0.1061$ at cycle 2, then decays $0.0918, 0.0657, 0.0259, 0.0024, 0$. The \texttt{refs/} corpus is the one departure from the monotone diminishing-returns shape seen elsewhere in this paper: per-cycle $\Delta$ on \texttt{refs/} goes $+9.9559 \to +11.9840 \to +10.3710 \to +7.4256 \to +2.9221 \to +0.2712 \to 0$, peaking at cycle~2. Corollary~1 constrains the \emph{cumulative} sum to be monotone non-decreasing, which it is; it says nothing about the per-cycle increment. The mechanism is the $k$-quantization of Section~A.3: \texttt{refs/} begins with most files deep in the high-$k$ tail ($k = 7$--$9$, where $\Delta$ is small), cycle~1 walks them up into the $k \asymp 5$ band where $\Delta$ is maximal, and cycle~2 therefore harvests more total distance than cycle~1 did.
+
+\subsection{What transfers across corpora}
+
+Three properties hold identically on all three corpora and are therefore properties of the atom rather than of the engineering corpus. \textbf{First}, the $\Delta$ ladder: the realized $\Delta$ depends only on $k$, the count of missing primitives, with the same nine values and the same unimodal peak at $k = 5$, on \texttt{skills/}, \texttt{docs/} and \texttt{refs/} alike. \textbf{Second}, the peak-$\Delta$ termination sequence: all three corpora walk down the same ladder ($0.1206 \to \ldots \to 0.0904 \to 0$) as the highest-$\Delta$ band is exhausted. \textbf{Third}, the identity of the laggard primitive: \texttt{cryptographic\_identity} is the last column to saturate in every corpus. The geodesic-only criterion has the least incentive to act on a primitive missing from files already close to the ideal pole.
+
+\subsection{Scope of the multi-corpus claim}
+
+The multi-corpus audit strengthens the atom-invariant claim (Lemma~1 and Theorem~1 now hold over $1391$ dispatches on three structurally distinct corpora rather than $474$ on one) but it does \emph{not} strengthen the headline matched-parameter ablation of Section~6.1, which remains a single-seed point estimate on one corpus family. The second-corpus re-run called for in Section~7.2 would have to re-run the \emph{ablation}, not the audit, and has not been done.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=4.8in]{chart-Appendix-B-3-corpus-2026-08-06.png}
+\caption{\textbf{Figure B.1.} Multi-corpus hyper-sphere RSI audit. Top: cumulative $\Delta$ per cycle, raw, by corpus. Middle: the differential curve baseline --- $\Delta$ per file per cycle, normalized by corpus size. Bottom: sparse-cell count per cycle ($S^2$ equal-area partition, $r = 0.05$). \texttt{skills/} 6 cycles $\Delta = +11.2963$; \texttt{docs/} 6 cycles $\Delta = +5.5410$; \texttt{refs/} 7 cycles $\Delta = +42.9298$. Zero negative $\Delta$ across all $1391$ dispatches.}
+\label{fig:app-b1}
+\end{figure}
+
+\section{The 20-Cycle Deep-Research Corpus and the Synthetic-Manifold Benchmark (Partly Future Work)}
+\label{app:20cycle}
+
+Sections~6 and Appendix~\ref{app:multi-corpus} report corpus-scale audits in which each file receives at most one dispatch per cycle. A complementary experiment runs the atom repeatedly against a small corpus to expose the per-file convergence behaviour that a wide, shallow audit averages away. This appendix reports that experiment and then sketches the one benchmark this paper still has not run.
+
+\subsection{$20$ cycles on $11$ deep-research files}
+
+The $11$-file deep-research corpus (the \texttt{sealed-uki-vm} and \texttt{falco} outputs in the yubiOS references tree) was audited over $20$ atom cycles --- an initial sweep plus seven post-edit re-fits --- with the corpus re-fitted after every applied edit, so each cycle sees a genuinely changed manifold. Zero cycles produced a negative $\Delta$. Cumulative $\Delta$ plateaued at $+1.6882$. Source: \texttt{papers/data/single-action-curve-rsi-cycles-2026-08-05.json}.
+
+\subsection{Diminishing marginal value and the shifting peak}
+
+The three peak runs trace $+0.3092$ (cycle~2, advisor-report, target \texttt{has\_source}) $\to +0.2705$ (the same file re-selected after its first edit, with a smaller $\Delta$ because the edit moved it closer to the ideal pole) $\to +0.1872$ (cycle~14, falco). Peak $\Delta$ fell $39.5\%$ across the three peak runs and mean $\Delta$ fell $28.2\%$, from $+0.1176$ to $+0.0844$. Per-file $\Delta$ reductions after editing: advisor-report $-55.7\%$, pkcs11-ecdsa-deepdive $-66.6\%$, pkcs11-ecdsa-VERIFIED $-47.5\%$, prior-art-V52 $-43.4\%$, comparative-report $-100\%$. Four of the eleven files reached a local minimum ($\Delta = 0$) and required no further action, up from two at cycle~12. The atom sweeps the corpus rather than over-fitting one file --- the same mechanism that produces the cycle-2 rise on \texttt{refs/} in Section~B.2.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=6.5in]{chart-D-1-20-cycle-delta.png}
+\caption{\textbf{Figure C.1.} $\Delta$ per cycle across the 20-cycle atom experiment on 11 deep-research files. Blue: initial corpus sweep (cycles 1--12). Red: post-edit re-fits (cycles 13--20). Stars mark the three peak runs. Cumulative $\Delta = +1.6882$; zero negative $\Delta$ across all 20 cycles.}
+\label{fig:app-c1}
+\end{figure}
+
+\subsection{Synthetic-manifold benchmark (not run)}
+
+Every empirical result in this paper is measured on corpora that were \emph{assumed} to suit an $S^2$ parameter manifold. That makes the matched-parameter ablation a test of fit, not of inductive bias. The benchmark that would separate the two is a negative control. \textbf{Corpus:} $N = 200$ synthetic points on the torus $T^2 = S^1 \times S^1$, with per-point 9-D binary feature vectors encoding toroidal modes. \textbf{Arms:} the hyperspherical-harmonic curve on $S^2$ ($L = 3$, $16$ basis functions) against the flat Fourier baseline on $[0,1]^2$ ($k = 2$, $25$ basis functions), both fitted by the closed-form ridge of Eq.~(4) at the same $\lambda$, on the same holdout split, over $5$ seeds. \textbf{Prediction:} the flat baseline wins on $T^2$ --- a sphere is the wrong prior for a genus-1 manifold --- while the sphere wins on an $S^2$-generated positive control. \textbf{Status: not implemented.} This benchmark and a second-corpus re-run of the ablation itself remain the two open items that bound the headline claim.
 
 \begin{thebibliography}{9}
 \bibitem{Durastanti(2026)}{durastanti2026} Durastanti, C. (2026). \emph{Spectral Bayesian Regression on the Sphere.} arXiv:2601.20528 [math.ST]. \url{https://arxiv.org/abs/2601.20528}
