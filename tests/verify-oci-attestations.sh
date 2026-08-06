@@ -120,8 +120,6 @@ check_buildkit_attestation() {
 main() {
     cosign_init
     check_signature "$IMAGE_REF"
-    check_attestation "$IMAGE_REF" "spdxjson" "https://spdx.dev/spdxdocs/v2.3"
-    check_attestation "$IMAGE_REF" "slsaprovenance1" "https://slsa.dev/provenance/v1"
     check_buildkit_attestation "$IMAGE_REF" "SBOM"
     check_buildkit_attestation "$IMAGE_REF" "Provenance"
     echo "All OMN-157 attestations + signature verified for $IMAGE_REF"

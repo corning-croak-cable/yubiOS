@@ -442,7 +442,7 @@ jobs:
           COSIGN_PASSWORD: ''
         run: |
           for attempt in 1 2 3 4 5; do
-            cosign sign --key cosign/yubios-omni157.key "$IMAGE_REF" && exit 0
+            cosign sign --key cosign/yubios-omni157.key --signing-config cosign/signing-config.json "$IMAGE_REF" && exit 0
             echo "::warning::cosign sign attempt ${attempt}/5 failed; retry in $((attempt * 15))s" >&2
             sleep $((attempt * 15))
           done
