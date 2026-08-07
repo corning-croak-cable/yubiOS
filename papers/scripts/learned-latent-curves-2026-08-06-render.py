@@ -99,8 +99,8 @@ style_bullet = ParagraphStyle(
 )
 style_equation = ParagraphStyle(
     "Equation", parent=style_body,
-    fontName=BODY_FONT, fontSize=10.5, leading=15,
-    alignment=TA_CENTER, spaceBefore=6, spaceAfter=6,
+    fontName=BODY_FONT, fontSize=10.5, leading=13.5,
+    alignment=TA_CENTER, spaceBefore=4, spaceAfter=8,
     textColor=HexColor("#222222"),
 )
 style_caption = ParagraphStyle(
@@ -784,7 +784,6 @@ story.append(Paragraph(
 ))
 
 # --- Appendix A Atom Coverage of 79 Skills (Empirical) ---
-story.append(PageBreak())
 story.append(Paragraph(
     "Appendix A&nbsp;&nbsp;Atom Coverage of 79 Skills (Empirical)",
     style_h1,
