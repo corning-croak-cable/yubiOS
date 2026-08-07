@@ -1,9 +1,9 @@
 ---
 name: novelty-indication
-description: "Assesses whether an idea is novel and non-obvious before expanding it. Walks the Graham v. John Deere framework (MPEP 2141) adapted for engineering judgment, distinguishes mechanism vs application vs policy layers, treats the project's own ADRs/PRs/Linear issues as internal prior art, and returns a structured verdict (NOVEL / BORDERLINE / NOT-NOVEL) with cited reasoning. Use when you have an idea in yubiOS and want to know whether it's worth expanding vs filing under existing work, when reviewing a proposal that might duplicate an existing ADR or PR, when answering 'is this novel enough to patent / publish / commit to', or any time 'are we sure this hasn't been done' comes up. Triggers on 'novel', 'prior art', 'obviousness', 'is this original', 'has anyone done this', 'duplicate of', 'redundant with', 'non-obvious', 'patent', 'invention', 'first-of-its-kind'."
-license: "MIT"
+description: Assesses whether an idea is novel and non-obvious before expanding it. Walks the Graham v. John Deere framework (MPEP 2141) adapted for engineering judgment, distinguishes mechanism vs application vs policy layers, treats the project's own ADRs/PRs/Linear issues as internal prior art, and returns a structured verdict (NOVEL / BORDERLINE / NOT-NOVEL) with cited reasoning. Use when you have an idea in yubiOS and want to know whether it's worth expanding vs filing under existing work, when reviewing a proposal that might duplicate an existing ADR or PR, when answering 'is this novel enough to patent / publish / commit to', or any time 'are we sure this hasn't been done' comes up. Triggers on 'novel', 'prior art', 'obviousness', 'is this original', 'has anyone done this', 'duplicate of', 'redundant with', 'non-obvious', 'patent', 'invention', 'first-of-its-kind'.
+license: MIT
 metadata:
-  short-description: "Graham v. John Deere novelty assessment adapted for engineering decisions, with internal prior art awareness"
+  short-description: Graham v. John Deere novelty assessment adapted for engineering decisions, with internal prior art awareness
 ---
 
 # Novelty Indication
@@ -266,3 +266,4 @@ This skill integrates with the yubiOS declarative-policy substrate — OPA/Rego 
 ## Continuous / adaptive coverage
 
 This skill supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The skill is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.
+
