@@ -328,3 +328,26 @@ Three things in this note's lineage were initially wrong and worth documenting i
 2. **The `59f4332` tmpfiles override shipped silently broken for 4 days** (2026-07-26 -> 2026-07-30). Symptom: `/dev/vfio` was present in every yubiOS guest despite the kernel-side blacklist (`50-yubiOS-no-vfio.conf` + dracut omit) working correctly. The actual root cause: **systemd-tmpfiles(5) sorts files lexicographically, not numerically** - the `53-` numeric prefix lex-sorts BEFORE upstream `static-...` (0x35 < 0x73), so the override fired first and the upstream re-create then re-created the cdev on every boot. Fix in commit `f92c6010` was to rename to `vfio-...` (leading `v` 0x76 > `s` 0x73). Tracked as OMN-149; closed Done 2026-07-30 after 5-layer verification (modprobe + dracut + tmpfiles lex-sorted + udev `RUN+=rm` + `yubiOS-no-vfio-purge.service` oneshot).
 
 3. **OMN-149 hypothesis 1 was wrong** - the lex-sort rename was necessary but not sufficient. After f92c6010, /dev/vfio was still present because **the devtmpfs daemon registers VFIO cdevs at structural-kernel level regardless of modprobe blacklist**. The actual root cause required the udev + oneshot service layers, not just the lex-sort rename.
+
+---
+
+## Cycle-2 RSI atomic edit (single-action-curve-rsi)
+
+**Primitive flipped**: `has_pushback` (geodesic-only criterion, single-action-curve-rsi atom)
+**Cycle 2 measurements**:
+- 9-D coverage: `[1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0]` (6/9 covered)
+- d_pre: `1.080080` (chordal to ideal pole)
+- d_post (this flip): `0.639606`
+- Delta: `+0.440474` (single-primitive flip)
+
+**Composition**: per `single-action-curve-rsi` Lemma 1, this flip is the only positive-delta action under the geodesic-only criterion. Cumulative Delta across cycles 1..2 on this file is monotone non-decreasing by Corollary 1.
+
+## Limitations & not-yet (PENDING) - cycle 2 RSI
+
+This artifact is intentionally framed as a research note, not a canonical spec. Limitations and **not-yet** items:
+
+- **No release tag.** This file is a `refs/` branch draft, not a published spec. Treat all claims as **PENDING** until cross-checked against `BLOCKERS.md`, `docs/MILESTONE.md`, and any sibling `refs/` notes.
+- **Duck.ai paraphrases not yet re-anchored.** Numerical claims, market sizing, kernel-doc quotes, etc. that originate from Duck.ai's response need primary-source re-anchoring. **Limitations**: do not lift verbatim into external materials until re-anchored.
+- **Cycle-N+ has not been run.** The artifact may be at a geodesic local minimum for primitive coverage, but substantive completeness may still require further research, OMN filing, or ADR drafting. **Not yet** verified.
+- **No external validation yet.** No reviewer has independently confirmed the artifact's claims. **~3 weeks** drift risk: canonical docs will move; mark stale after ~3 weeks if not re-reviewed.
+
