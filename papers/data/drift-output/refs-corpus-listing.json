@@ -1,6 +1,6 @@
 {
   "label": "refs-corpus",
-  "n_items": 55,
+  "n_items": 1444,
   "n_primitives": 9,
   "primitives": [
     "attestation",
@@ -15,97 +15,829 @@
   ],
   "items_sample": [
     {
-      "id": "refs:TL;DR",
-      "primitive_coverage": [
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        1,
-        1,
-        1
-      ],
-      "text": "refs / TL;DR",
+      "id": "refs:Who / Context",
+      "text": "refs / Who / Context",
       "source": "refs-corpus",
-      "section_header": "TL;DR",
-      "file": "refederated-identity-oidc-sigstore-privacy-2026-08-07.md"
+      "section_header": "Who / Context",
+      "file": "0pointer-poettering-systemd-vision-2026-07-23.md",
+      "repo_path": "yubi-OS/yubiOS/refs/0pointer-poettering-systemd-vision-2026-07-23.md",
+      "blob_sha": "b6284688da71f159d139478787e2c8de2cae86d1"
     },
     {
-      "id": "refs:1. Background \u2014 federated, unfederated, refederated",
-      "primitive_coverage": [
-        1,
-        1,
-        0,
-        0,
-        1,
-        0,
-        1,
-        1,
-        1
-      ],
-      "text": "refs / 1. Background \u2014 federated, unfederated, refederated",
+      "id": "refs:systemd release status (as of 2026-07-23)",
+      "text": "refs / systemd release status (as of 2026-07-23)",
       "source": "refs-corpus",
-      "section_header": "1. Background \u2014 federated, unfederated, refederated",
-      "file": "refederated-identity-oidc-sigstore-privacy-2026-08-07.md"
+      "section_header": "systemd release status (as of 2026-07-23)",
+      "file": "0pointer-poettering-systemd-vision-2026-07-23.md",
+      "repo_path": "yubi-OS/yubiOS/refs/0pointer-poettering-systemd-vision-2026-07-23.md",
+      "blob_sha": "b6284688da71f159d139478787e2c8de2cae86d1"
     },
     {
-      "id": "refs:2. Refederation in OIDC",
-      "primitive_coverage": [
-        1,
-        1,
-        1,
-        0,
-        1,
-        1,
-        1,
-        1,
-        0
-      ],
-      "text": "refs / 2. Refederation in OIDC",
+      "id": "refs:\"Fitting Everything Together\" \u00e2\u0080\u0094 Core Architecture Vision (",
+      "text": "refs / \"Fitting Everything Together\" \u00e2\u0080\u0094 Core Architecture Vision (unchanged, still the foundational reference)",
       "source": "refs-corpus",
-      "section_header": "2. Refederation in OIDC",
-      "file": "refederated-identity-oidc-sigstore-privacy-2026-08-07.md"
+      "section_header": "\"Fitting Everything Together\" \u00e2\u0080\u0094 Core Architecture Vision (unchanged, still the foundational reference)",
+      "file": "0pointer-poettering-systemd-vision-2026-07-23.md",
+      "repo_path": "yubi-OS/yubiOS/refs/0pointer-poettering-systemd-vision-2026-07-23.md",
+      "blob_sha": "b6284688da71f159d139478787e2c8de2cae86d1"
     },
     {
-      "id": "refs:3. Refederation in Sigstore",
-      "primitive_coverage": [
-        1,
-        1,
-        0,
-        0,
-        1,
-        0,
-        1,
-        1,
-        0
-      ],
-      "text": "refs / 3. Refederation in Sigstore",
+      "id": "refs:systemd Versions \u00e2\u0080\u0094 Feature History (v256\u00e2\u0080\u0093v260, unchanged",
+      "text": "refs / systemd Versions \u00e2\u0080\u0094 Feature History (v256\u00e2\u0080\u0093v260, unchanged from prior research; v261 detailed above)",
       "source": "refs-corpus",
-      "section_header": "3. Refederation in Sigstore",
-      "file": "refederated-identity-oidc-sigstore-privacy-2026-08-07.md"
+      "section_header": "systemd Versions \u00e2\u0080\u0094 Feature History (v256\u00e2\u0080\u0093v260, unchanged from prior research; v261 detailed above)",
+      "file": "0pointer-poettering-systemd-vision-2026-07-23.md",
+      "repo_path": "yubi-OS/yubiOS/refs/0pointer-poettering-systemd-vision-2026-07-23.md",
+      "blob_sha": "b6284688da71f159d139478787e2c8de2cae86d1"
     },
     {
-      "id": "refs:4. Multi-federation as a privacy/anonymity lever",
-      "primitive_coverage": [
-        1,
-        1,
-        1,
-        0,
-        1,
-        0,
-        1,
-        1,
-        0
-      ],
-      "text": "refs / 4. Multi-federation as a privacy/anonymity lever",
+      "id": "refs:mkosi (Daan De Meyer re-introduction, unchanged)",
+      "text": "refs / mkosi (Daan De Meyer re-introduction, unchanged)",
       "source": "refs-corpus",
-      "section_header": "4. Multi-federation as a privacy/anonymity lever",
-      "file": "refederated-identity-oidc-sigstore-privacy-2026-08-07.md"
+      "section_header": "mkosi (Daan De Meyer re-introduction, unchanged)",
+      "file": "0pointer-poettering-systemd-vision-2026-07-23.md",
+      "repo_path": "yubi-OS/yubiOS/refs/0pointer-poettering-systemd-vision-2026-07-23.md",
+      "blob_sha": "b6284688da71f159d139478787e2c8de2cae86d1"
     }
   ],
   "items_count_by_source": {
-    "refs-corpus": 55
-  }
+    "refs-corpus": 1444
+  },
+  "files_listed_in_repo": [
+    {
+      "name": "0pointer-poettering-systemd-vision-2026-07-23.md",
+      "sha": "b6284688da71f159d139478787e2c8de2cae86d1",
+      "size": 10263,
+      "path": "refs/0pointer-poettering-systemd-vision-2026-07-23.md"
+    },
+    {
+      "name": "actions-checkout-v6-includeif-investigation-2026-07-29.md",
+      "sha": "9d45f7e73498a1ada8bfa595a9c8d227973dc11b",
+      "size": 12347,
+      "path": "refs/actions-checkout-v6-includeif-investigation-2026-07-29.md"
+    },
+    {
+      "name": "adr-033-misbehavior-cutoff-policy-2026-07-28.md",
+      "sha": "4ca3138be04a25dd038ae20f974d5396b31a9c15",
+      "size": 11956,
+      "path": "refs/adr-033-misbehavior-cutoff-policy-2026-07-28.md"
+    },
+    {
+      "name": "adr-033-prior-art-search-2026-07-28.md",
+      "sha": "f1af229a71f622253d5dcf2b365e460bc77542f4",
+      "size": 16414,
+      "path": "refs/adr-033-prior-art-search-2026-07-28.md"
+    },
+    {
+      "name": "arm64-ftpm-phase-f0-2026-07-23.md",
+      "sha": "d3311cf11566dd1e41bad27282f6a57c066e330a",
+      "size": 4680,
+      "path": "refs/arm64-ftpm-phase-f0-2026-07-23.md"
+    },
+    {
+      "name": "arm64-path-a-b-board-status-2026-07-23.md",
+      "sha": "d01733862b1a227f2edfb3983de8664392bc926e",
+      "size": 4937,
+      "path": "refs/arm64-path-a-b-board-status-2026-07-23.md"
+    },
+    {
+      "name": "arm64-rk-board-status-2026-07-17.md",
+      "sha": "17e2c0b6ec26e38bcfeadcf7c53bcdb917b3e72f",
+      "size": 3337,
+      "path": "refs/arm64-rk-board-status-2026-07-17.md"
+    },
+    {
+      "name": "arm64-zstd-efi-zboot-bcvk-2026-07-23.md",
+      "sha": "a56d533d14c5d5ac486af3f826763753b3f3e247",
+      "size": 5507,
+      "path": "refs/arm64-zstd-efi-zboot-bcvk-2026-07-23.md"
+    },
+    {
+      "name": "arxiv-2607.09967-vs-learned-latent-curve-2026-08-04.md",
+      "sha": "05b356127adfb005a4612b428a9685f1fb2f7b6d",
+      "size": 8810,
+      "path": "refs/arxiv-2607.09967-vs-learned-latent-curve-2026-08-04.md"
+    },
+    {
+      "name": "assets-repo-repoint-verification-2026-07-28.md",
+      "sha": "2d323ed5f6efca18d689a8d01d4c647535481ed0",
+      "size": 8937,
+      "path": "refs/assets-repo-repoint-verification-2026-07-28.md"
+    },
+    {
+      "name": "attested-bootc-gpu-cutover-2026-07-30.md",
+      "sha": "7c517c666a01319d115c26dc51cd6507c62d46e2",
+      "size": 21470,
+      "path": "refs/attested-bootc-gpu-cutover-2026-07-30.md"
+    },
+    {
+      "name": "bcvk-swtpm-ci-2026-07-23.md",
+      "sha": "3cdab1b063b79859c542ff681c5b57f20c64b53c",
+      "size": 3229,
+      "path": "refs/bcvk-swtpm-ci-2026-07-23.md"
+    },
+    {
+      "name": "bootc-composefs-sealed-flow-2026-07-22.md",
+      "sha": "b7c6c9f000a855e15fd5e328ee149fddf67576fe",
+      "size": 11875,
+      "path": "refs/bootc-composefs-sealed-flow-2026-07-22.md"
+    },
+    {
+      "name": "bootc-dev-org-releases-2026-07-23.md",
+      "sha": "63ed8bbf9583b283dc496fd1be2425d7319468ca",
+      "size": 6648,
+      "path": "refs/bootc-dev-org-releases-2026-07-23.md"
+    },
+    {
+      "name": "bootc-uki-libvirt-gpu-passthrough-2026-08-07.md",
+      "sha": "e9cf038fc7d8300f19d67450e6e737d6a94e27d0",
+      "size": 29400,
+      "path": "refs/bootc-uki-libvirt-gpu-passthrough-2026-08-07.md"
+    },
+    {
+      "name": "bootc-upgrade-rollback-sysext-portable-test-spec-2026-08-04.md",
+      "sha": "436a795d1b4b51c2cf351d47849e89d26657e95e",
+      "size": 78864,
+      "path": "refs/bootc-upgrade-rollback-sysext-portable-test-spec-2026-08-04.md"
+    },
+    {
+      "name": "ci-evidence-2026-07-21.md",
+      "sha": "490e60b56539c2771091e4349822a856fb2422c8",
+      "size": 7207,
+      "path": "refs/ci-evidence-2026-07-21.md"
+    },
+    {
+      "name": "covenant-conflict-policy-2026-07-25.md",
+      "sha": "d31b41b2bd3d620d94f0e1cdf1a934409fc9701f",
+      "size": 6466,
+      "path": "refs/covenant-conflict-policy-2026-07-25.md"
+    },
+    {
+      "name": "current-position-evidence-2026-07-25.md",
+      "sha": "d01010ada06554bea8f8a0a10c56d21a978cb148",
+      "size": 8533,
+      "path": "refs/current-position-evidence-2026-07-25.md"
+    },
+    {
+      "name": "curve-guided-rsi-and-self-differential-2026-08-04.md",
+      "sha": "bcbde71f92e0b4d9cf127bcef72b9237479c1948",
+      "size": 16818,
+      "path": "refs/curve-guided-rsi-and-self-differential-2026-08-04.md"
+    },
+    {
+      "name": "curve-guided-rsi-v1-cycle4-all-skills-2026-08-04.md",
+      "sha": "df7980e11db13670532afba49a2a687287b66ec6",
+      "size": 7489,
+      "path": "refs/curve-guided-rsi-v1-cycle4-all-skills-2026-08-04.md"
+    },
+    {
+      "name": "curve-guided-rsi-v1-cycles-2-3-run-2026-08-04.md",
+      "sha": "91414f4c41e56ea21141bb4aa11547bc602720c2",
+      "size": 11135,
+      "path": "refs/curve-guided-rsi-v1-cycles-2-3-run-2026-08-04.md"
+    },
+    {
+      "name": "curve-guided-rsi-v1-fitness-test-run-2026-08-04.md",
+      "sha": "d6c47fee8fe02e4bf72100d1e9befede39fe1faf",
+      "size": 12418,
+      "path": "refs/curve-guided-rsi-v1-fitness-test-run-2026-08-04.md"
+    },
+    {
+      "name": "curve-guided-rsi-v2-cycle5-deep-research-2026-08-04.md",
+      "sha": "3d16e70f35b3bab92cf235daeeb7e66e630e08b2",
+      "size": 12968,
+      "path": "refs/curve-guided-rsi-v2-cycle5-deep-research-2026-08-04.md"
+    },
+    {
+      "name": "customer-roi-model-2026-07-25.md",
+      "sha": "7584228009316cfac4598934569ab4b5323ce53e",
+      "size": 7825,
+      "path": "refs/customer-roi-model-2026-07-25.md"
+    },
+    {
+      "name": "customer-roi-model-2026-07-26.md",
+      "sha": "f65806276d62f1062074402886188727287971dd",
+      "size": 10709,
+      "path": "refs/customer-roi-model-2026-07-26.md"
+    },
+    {
+      "name": "cycle4-results-2026-08-06.md",
+      "sha": "f0ff32e8e3e1cca88b8da36b2edee9efa42b4007",
+      "size": 5520,
+      "path": "refs/cycle4-results-2026-08-06.md"
+    },
+    {
+      "name": "cycle5-results-2026-08-06.md",
+      "sha": "9c2f9ed58c993872abe9538c2a74c6f22998e8a5",
+      "size": 10231,
+      "path": "refs/cycle5-results-2026-08-06.md"
+    },
+    {
+      "name": "days-0-30-safe-offer-2026-07-25.md",
+      "sha": "d72e3991b5a776e3e72157083247feb839b1eb22",
+      "size": 6183,
+      "path": "refs/days-0-30-safe-offer-2026-07-25.md"
+    },
+    {
+      "name": "days-31-60-narrow-product-2026-07-25.md",
+      "sha": "2630191f853ae372de011f711733a95ffb62288c",
+      "size": 8877,
+      "path": "refs/days-31-60-narrow-product-2026-07-25.md"
+    },
+    {
+      "name": "days-61-90-willingness-to-pay-2026-07-25.md",
+      "sha": "c1decb546ad8a2f97679f7d1a4d76ff7677ee095",
+      "size": 7661,
+      "path": "refs/days-61-90-willingness-to-pay-2026-07-25.md"
+    },
+    {
+      "name": "debug-with-cli-2026-08-01.md",
+      "sha": "c295ddd2ff0f88cb5ae1db6392d0ba4decbe4b0f",
+      "size": 9034,
+      "path": "refs/debug-with-cli-2026-08-01.md"
+    },
+    {
+      "name": "decisions-deferrals-rejected-models-2026-07-25.md",
+      "sha": "f7b3daa42d82e2f5f1ab721da8b32e129677804b",
+      "size": 9688,
+      "path": "refs/decisions-deferrals-rejected-models-2026-07-25.md"
+    },
+    {
+      "name": "differential-curve-use-case-skill-land-grab-detection-2026-08-04.md",
+      "sha": "f6cc5da7a7f4975cf87a2f8fbb6a14a28cdb0000",
+      "size": 8081,
+      "path": "refs/differential-curve-use-case-skill-land-grab-detection-2026-08-04.md"
+    },
+    {
+      "name": "digest-bump-checklist-2026-07-25.md",
+      "sha": "1283bd690926a08460ab1044455d74e11993fa83",
+      "size": 11073,
+      "path": "refs/digest-bump-checklist-2026-07-25.md"
+    },
+    {
+      "name": "docker-bake-consolidation-2026-07-17.md",
+      "sha": "6a6737943fa35bb8e8f2964a208c825826da275a",
+      "size": 7404,
+      "path": "refs/docker-bake-consolidation-2026-07-17.md"
+    },
+    {
+      "name": "docker-build-policies-reference-2026-07-23.md",
+      "sha": "a77d28c999310bb5901001286ed42a82369bfd59",
+      "size": 7173,
+      "path": "refs/docker-build-policies-reference-2026-07-23.md"
+    },
+    {
+      "name": "edgeless-reproducible-mkosi-research-2026-07-30.md",
+      "sha": "c080ca383f53cb1da25202f54062b0a0298ebb3b",
+      "size": 31459,
+      "path": "refs/edgeless-reproducible-mkosi-research-2026-07-30.md"
+    },
+    {
+      "name": "endlessh-openwrt-fit-2026-07-17.md",
+      "sha": "6359689b09d348cc86df246c272516ab4fd6e22a",
+      "size": 13864,
+      "path": "refs/endlessh-openwrt-fit-2026-07-17.md"
+    },
+    {
+      "name": "entity-governance-legal-2026-07-25.md",
+      "sha": "009a11c538da9aae94470223237a95af7c19eb8c",
+      "size": 9530,
+      "path": "refs/entity-governance-legal-2026-07-25.md"
+    },
+    {
+      "name": "external-benchmarks-sources-2026-07-25.md",
+      "sha": "c1a81f45491158eada0ad381d9f915e96b99b057",
+      "size": 10313,
+      "path": "refs/external-benchmarks-sources-2026-07-25.md"
+    },
+    {
+      "name": "external-benchmarks-sources-2026-07-26.md",
+      "sha": "6b4257d52f39c175ed505f73d7e7cc2a37d2298e",
+      "size": 11800,
+      "path": "refs/external-benchmarks-sources-2026-07-26.md"
+    },
+    {
+      "name": "fedora-bootc-base-images-status-2026-07-23.md",
+      "sha": "24a9d2fa819a354a299f421ba18d97aa86c5842f",
+      "size": 5979,
+      "path": "refs/fedora-bootc-base-images-status-2026-07-23.md"
+    },
+    {
+      "name": "fido2-ci-emulator-status-2026-07-23.md",
+      "sha": "4c64883386f77e28eb318191d3644137d8985334",
+      "size": 5494,
+      "path": "refs/fido2-ci-emulator-status-2026-07-23.md"
+    },
+    {
+      "name": "firmware-rk-workflow-2026-07-17.md",
+      "sha": "495ef73550fe7335dc86b47e25dc206cbe51ae24",
+      "size": 3366,
+      "path": "refs/firmware-rk-workflow-2026-07-17.md"
+    },
+    {
+      "name": "first-90-days-2026-07-25.md",
+      "sha": "423971667fb9a9e7f60d88ae440f0854c85d4df8",
+      "size": 9222,
+      "path": "refs/first-90-days-2026-07-25.md"
+    },
+    {
+      "name": "first-90-days-2026-07-28.md",
+      "sha": "36ed58e0955596ff392c150ed3bd1e9161cd9522",
+      "size": 10906,
+      "path": "refs/first-90-days-2026-07-28.md"
+    },
+    {
+      "name": "fork-upstream-drift-detection-schedule-2026-08-04.md",
+      "sha": "1afb548cc11df39665d9d06a09f473ac1519c03a",
+      "size": 10854,
+      "path": "refs/fork-upstream-drift-detection-schedule-2026-08-04.md"
+    },
+    {
+      "name": "fractalrabbit-falsification-harness-2026-08-06.md",
+      "sha": "9a08763c4ece0bed70d68abbc7ad12b49ea016e6",
+      "size": 13497,
+      "path": "refs/fractalrabbit-falsification-harness-2026-08-06.md"
+    },
+    {
+      "name": "frost-panfrost-lockout-2026-07-17.md",
+      "sha": "1f04d96fe9ba5a75d9afca7ba4f626724813ee5d",
+      "size": 6704,
+      "path": "refs/frost-panfrost-lockout-2026-07-17.md"
+    },
+    {
+      "name": "gap-map-hyperspherical-harmonic-curve-2026-08-05.md",
+      "sha": "00d7482c7d28d318fb58e3c5478778930a838d4a",
+      "size": 13685,
+      "path": "refs/gap-map-hyperspherical-harmonic-curve-2026-08-05.md"
+    },
+    {
+      "name": "hyperspherical-harmonic-curve-2026-08-05.md",
+      "sha": "712ebbc90487d87b9d937fbd4f8faa8795e1c4f4",
+      "size": 13939,
+      "path": "refs/hyperspherical-harmonic-curve-2026-08-05.md"
+    },
+    {
+      "name": "hyperspherical-harmonic-curve-v1-fit-2026-08-05.md",
+      "sha": "5be819b5a9d5186bf2272058bf17a11bd4227caa",
+      "size": 8729,
+      "path": "refs/hyperspherical-harmonic-curve-v1-fit-2026-08-05.md"
+    },
+    {
+      "name": "image-builder-cli-fork-status-2026-07-23.md",
+      "sha": "59fa49fa5d92546b6f28135a18dc1f03e328d9cb",
+      "size": 4803,
+      "path": "refs/image-builder-cli-fork-status-2026-07-23.md"
+    },
+    {
+      "name": "kernel-rootfs-split-2026-07-29.md",
+      "sha": "70f02338a73b5dd324c037d58bf213bb3b202dbf",
+      "size": 12632,
+      "path": "refs/kernel-rootfs-split-2026-07-29.md"
+    },
+    {
+      "name": "kvm-arm-nested-virtualization-2026-08-07.md",
+      "sha": "44ef17a362ff9824e73a417104fe0685b3fe1fd9",
+      "size": 18584,
+      "path": "refs/kvm-arm-nested-virtualization-2026-08-07.md"
+    },
+    {
+      "name": "learned-latent-curve-rsi-v10-2026-08-03.md",
+      "sha": "2685fcfd88c41739aee3fd2350dff2800c218275",
+      "size": 18161,
+      "path": "refs/learned-latent-curve-rsi-v10-2026-08-03.md"
+    },
+    {
+      "name": "learned-latent-curve-rsi-v11-v12-2026-08-03.md",
+      "sha": "f1bffdd0fd094da648f0e0bda59e404a04d231c5",
+      "size": 11654,
+      "path": "refs/learned-latent-curve-rsi-v11-v12-2026-08-03.md"
+    },
+    {
+      "name": "learned-latent-curve-skill-quality-map-2026-08-03.md",
+      "sha": "814a301cb61906e1905dcc6dec8c6eeb2c09b903",
+      "size": 14239,
+      "path": "refs/learned-latent-curve-skill-quality-map-2026-08-03.md"
+    },
+    {
+      "name": "learned-latent-curve-yubios-artifact-primitives-coverage-flow-2026-08-04.md",
+      "sha": "0ace1bf39dd3668be089dd5ff90a931e4c061a1f",
+      "size": 13953,
+      "path": "refs/learned-latent-curve-yubios-artifact-primitives-coverage-flow-2026-08-04.md"
+    },
+    {
+      "name": "libvfio-user-bundle-decision-2026-07-30.md",
+      "sha": "b228b85539678da8bf4fc98adf66aa264597b627",
+      "size": 7148,
+      "path": "refs/libvfio-user-bundle-decision-2026-07-30.md"
+    },
+    {
+      "name": "luks-fido2-e2e-test-2026-07-23.md",
+      "sha": "607922012d64b09b1f9e787b79ba01c261cf063d",
+      "size": 4923,
+      "path": "refs/luks-fido2-e2e-test-2026-07-23.md"
+    },
+    {
+      "name": "metrics-and-reporting-2026-07-25.md",
+      "sha": "1e17dd90a9158c6c4db86de17d7f1b0f1ce3f8da",
+      "size": 8297,
+      "path": "refs/metrics-and-reporting-2026-07-25.md"
+    },
+    {
+      "name": "mkosi-bcvk-fork-status-2026-07-23.md",
+      "sha": "c37cd9c9d115d8bc1a3001f18f628a103c30e4bb",
+      "size": 6022,
+      "path": "refs/mkosi-bcvk-fork-status-2026-07-23.md"
+    },
+    {
+      "name": "naming-licensing-provenance-2026-07-25.md",
+      "sha": "d8e9a11520b9b94121548ef391a8ab0e86bfa34c",
+      "size": 9853,
+      "path": "refs/naming-licensing-provenance-2026-07-25.md"
+    },
+    {
+      "name": "negative-skill-space-2026-07-28.md",
+      "sha": "fb6338b9ec3fc8536bcd1d4c5b0f6870290d1771",
+      "size": 28660,
+      "path": "refs/negative-skill-space-2026-07-28.md"
+    },
+    {
+      "name": "offer-pricing-architecture-2026-07-25.md",
+      "sha": "f216026b1264b3cd18f6a80a554bf9210a04923e",
+      "size": 9604,
+      "path": "refs/offer-pricing-architecture-2026-07-25.md"
+    },
+    {
+      "name": "openwrt-deception-proof-plan-2026-07-17.md",
+      "sha": "584ae4d6268fa863208c2a27c8131988b7e55679",
+      "size": 5234,
+      "path": "refs/openwrt-deception-proof-plan-2026-07-17.md"
+    },
+    {
+      "name": "openwrt-wireguard-deception-lan-prototype-2026-07-25.md",
+      "sha": "6f5d14a0afc80ab1b91f5e19b2abdc17d9fdf00a",
+      "size": 8633,
+      "path": "refs/openwrt-wireguard-deception-lan-prototype-2026-07-25.md"
+    },
+    {
+      "name": "operating-covenant-2026-07-25.md",
+      "sha": "8d5ba2f1a3020edb6433c696d294b956537f270d",
+      "size": 7730,
+      "path": "refs/operating-covenant-2026-07-25.md"
+    },
+    {
+      "name": "org-state-audit-2026-07-23.md",
+      "sha": "a98e408b882138bd6057d87f49581f7c1419fd6c",
+      "size": 6365,
+      "path": "refs/org-state-audit-2026-07-23.md"
+    },
+    {
+      "name": "osbuild-image-builder-2026-07-23.md",
+      "sha": "74900be7f73d681008c208c02ec0a57114a183aa",
+      "size": 7162,
+      "path": "refs/osbuild-image-builder-2026-07-23.md"
+    },
+    {
+      "name": "package-floor-verification-checklist-2026-08-04.md",
+      "sha": "db7f951e888d5aca22f38d8fade921efc746f10f",
+      "size": 14019,
+      "path": "refs/package-floor-verification-checklist-2026-08-04.md"
+    },
+    {
+      "name": "pilot-collateral-roi-baseline-2026-07-25.md",
+      "sha": "91bf3dadf0c751f0f43d56fcc169939a765ef38b",
+      "size": 8517,
+      "path": "refs/pilot-collateral-roi-baseline-2026-07-25.md"
+    },
+    {
+      "name": "planning-cycle-2026-07-11.md",
+      "sha": "3d161415f46ba6658367321894e97d95c5b9d0b5",
+      "size": 7475,
+      "path": "refs/planning-cycle-2026-07-11.md"
+    },
+    {
+      "name": "post-quantum-tls-adoption-2026-07-23.md",
+      "sha": "83af9edc5ee69de5a7fad50fce5f8a3f3636e1ac",
+      "size": 5872,
+      "path": "refs/post-quantum-tls-adoption-2026-07-23.md"
+    },
+    {
+      "name": "pr-campaign-research-2026-07-16.md",
+      "sha": "2181975ef6737e2c3f848ecbb055507b7cfad74d",
+      "size": 6987,
+      "path": "refs/pr-campaign-research-2026-07-16.md"
+    },
+    {
+      "name": "pr-friend-map-2026-07-17.md",
+      "sha": "52beaba9839b316f57c8c24af84d9630636cd141",
+      "size": 12861,
+      "path": "refs/pr-friend-map-2026-07-17.md"
+    },
+    {
+      "name": "prior-art-autonomous-ideation-skill-2026-07-28.md",
+      "sha": "ee51cb860735af3e5a2e52b4c011a68832b5853e",
+      "size": 20993,
+      "path": "refs/prior-art-autonomous-ideation-skill-2026-07-28.md"
+    },
+    {
+      "name": "prior-art-search-rsi-audit-2026-07-30.md",
+      "sha": "7b4cafe5a0b6dea95c519675e90f24db79a3c441",
+      "size": 12670,
+      "path": "refs/prior-art-search-rsi-audit-2026-07-30.md"
+    },
+    {
+      "name": "prior-art-state-of-art-2026-07-30.md",
+      "sha": "220b41a8eb9757131b094f975d6129e23be81171",
+      "size": 16795,
+      "path": "refs/prior-art-state-of-art-2026-07-30.md"
+    },
+    {
+      "name": "public-security-funding-targets-2026-07-25.md",
+      "sha": "d5fdfdd4f69264cba8028a8c58bf98bca8a927f9",
+      "size": 9130,
+      "path": "refs/public-security-funding-targets-2026-07-25.md"
+    },
+    {
+      "name": "readiness-gates-gtm-2026-07-25.md",
+      "sha": "5d332b334c31217aa86e958d6421dab44cbac15d",
+      "size": 11020,
+      "path": "refs/readiness-gates-gtm-2026-07-25.md"
+    },
+    {
+      "name": "readiness-gates-gtm-2026-07-28.md",
+      "sha": "21a4b1cae7de5e246eaeeed35c50dbcc8774ae08",
+      "size": 14782,
+      "path": "refs/readiness-gates-gtm-2026-07-28.md"
+    },
+    {
+      "name": "recursive-self-improvement-audit-2026-07-28.md",
+      "sha": "0c8aa38866eb11a0f107b14494f28b5882e4ef4b",
+      "size": 13641,
+      "path": "refs/recursive-self-improvement-audit-2026-07-28.md"
+    },
+    {
+      "name": "refederated-identity-oidc-sigstore-privacy-2026-08-07.md",
+      "sha": "dc2973d1d089bfd1401675bb8eb3135469a63a12",
+      "size": 18594,
+      "path": "refs/refederated-identity-oidc-sigstore-privacy-2026-08-07.md"
+    },
+    {
+      "name": "release-gate-checklist-v2-2026-08-04.md",
+      "sha": "e69c73998c109239fb8ba116cd8d9168954175a5",
+      "size": 21608,
+      "path": "refs/release-gate-checklist-v2-2026-08-04.md"
+    },
+    {
+      "name": "repo-history-skill-2026-08-07.md",
+      "sha": "a359cfc655b27c461876f09de15bc35ca4da81f0",
+      "size": 23878,
+      "path": "refs/repo-history-skill-2026-08-07.md"
+    },
+    {
+      "name": "repo-history-skill-cycle-1-2026-08-07.md",
+      "sha": "7e20b03ce50d04f1daf5efaf63a19fa9f61041f3",
+      "size": 1607,
+      "path": "refs/repo-history-skill-cycle-1-2026-08-07.md"
+    },
+    {
+      "name": "repo-history-skill-cycle-2-2026-08-07.md",
+      "sha": "f38aa5a3710e26a77453fe3c3d64a3b69ece4991",
+      "size": 8276,
+      "path": "refs/repo-history-skill-cycle-2-2026-08-07.md"
+    },
+    {
+      "name": "repo-history-skill-cycle-3-2026-08-07.md",
+      "sha": "17b1bea3540290b3d69cdc077718c16f0c64e630",
+      "size": 6505,
+      "path": "refs/repo-history-skill-cycle-3-2026-08-07.md"
+    },
+    {
+      "name": "repo-history-skill-cycle-4-2026-08-07-changelog.md",
+      "sha": "d2ecb702e28e9d0d945f7e363f6089bb1da83c25",
+      "size": 4354,
+      "path": "refs/repo-history-skill-cycle-4-2026-08-07-changelog.md"
+    },
+    {
+      "name": "repo-history-skill-cycle-4-2026-08-07.md",
+      "sha": "78b58ea6b9ff1020dbfa7b568cdd8f345e0f7b12",
+      "size": 8929,
+      "path": "refs/repo-history-skill-cycle-4-2026-08-07.md"
+    },
+    {
+      "name": "repo-history-skill-deep-research-2026-08-07.md",
+      "sha": "a359cfc655b27c461876f09de15bc35ca4da81f0",
+      "size": 23878,
+      "path": "refs/repo-history-skill-deep-research-2026-08-07.md"
+    },
+    {
+      "name": "reproducible-builds-2026-07-22.md",
+      "sha": "68793de79177050a5b09ef06f709a43b5b339ebe",
+      "size": 8971,
+      "path": "refs/reproducible-builds-2026-07-22.md"
+    },
+    {
+      "name": "research-refresh-2026-07-11.md",
+      "sha": "f0227be32eb026ada8ad492bd1718470f15b405e",
+      "size": 6434,
+      "path": "refs/research-refresh-2026-07-11.md"
+    },
+    {
+      "name": "rk3588-ddr-tpl-source-2026-07-29.md",
+      "sha": "d7409b6a8af0eff90ef4b083efef1b6cc1aa30cf",
+      "size": 6375,
+      "path": "refs/rk3588-ddr-tpl-source-2026-07-29.md"
+    },
+    {
+      "name": "roadmap-promotion-gates-2026-07-17.md",
+      "sha": "2ce746028ca4fdd4f2a203d55468b7311e59c7f1",
+      "size": 3987,
+      "path": "refs/roadmap-promotion-gates-2026-07-17.md"
+    },
+    {
+      "name": "rsi-five-skill-pass-2026-07-29.md",
+      "sha": "9c3700ab2fa0e4671e12a623fde95481401b0f2f",
+      "size": 9368,
+      "path": "refs/rsi-five-skill-pass-2026-07-29.md"
+    },
+    {
+      "name": "sbsign-pkcs11-validate-2026-07-23.md",
+      "sha": "278446f169861b0c7ad681194bf7c14e6f1f77fd",
+      "size": 2778,
+      "path": "refs/sbsign-pkcs11-validate-2026-07-23.md"
+    },
+    {
+      "name": "sealed-uki-vm-test-2026-07-30.md",
+      "sha": "73465746228eb961e9c4804df43c3a846465ec62",
+      "size": 10233,
+      "path": "refs/sealed-uki-vm-test-2026-07-30.md"
+    },
+    {
+      "name": "sectime-rk-secure-time-2026-07-17.md",
+      "sha": "6754ebe45c6f15976e9c52c600337d39f547e398",
+      "size": 5412,
+      "path": "refs/sectime-rk-secure-time-2026-07-17.md"
+    },
+    {
+      "name": "slsa-l3-sbom-cosign-integration-spec-2026-08-04.md",
+      "sha": "b0c52350e65f625dc481cbf34d2460f01b7319b9",
+      "size": 82144,
+      "path": "refs/slsa-l3-sbom-cosign-integration-spec-2026-08-04.md"
+    },
+    {
+      "name": "systemd-hardening-audit-2026-07-17.md",
+      "sha": "42ace31b3222b7299a1e38f7cb90d2329c5ece66",
+      "size": 4045,
+      "path": "refs/systemd-hardening-audit-2026-07-17.md"
+    },
+    {
+      "name": "systemd-homed-reference-2026-07-23.md",
+      "sha": "e3fc18f0b58be5af7d7d03a8fe987739bdf7bce5",
+      "size": 10751,
+      "path": "refs/systemd-homed-reference-2026-07-23.md"
+    },
+    {
+      "name": "systemd-unit-directive-reference-2026-07-23.md",
+      "sha": "6264c6be00fa736600fa20e96d9cbf00bbd7098b",
+      "size": 14353,
+      "path": "refs/systemd-unit-directive-reference-2026-07-23.md"
+    },
+    {
+      "name": "systemd-upstream-progress-2026-07-21.md",
+      "sha": "3343c228d48adcc75101e0b9283d451d4ff61009",
+      "size": 10514,
+      "path": "refs/systemd-upstream-progress-2026-07-21.md"
+    },
+    {
+      "name": "systemd-v262-audit-2026-07-14.md",
+      "sha": "2242d3f37ad5d932d441a1519469137d807f92a4",
+      "size": 4550,
+      "path": "refs/systemd-v262-audit-2026-07-14.md"
+    },
+    {
+      "name": "team-budget-use-of-funds-2026-07-25.md",
+      "sha": "1e33316cad1bd76f2937e2fd8e3f9c2521a113f0",
+      "size": 8096,
+      "path": "refs/team-budget-use-of-funds-2026-07-25.md"
+    },
+    {
+      "name": "testing-production-gaps-2026-08-01.md",
+      "sha": "8277241b2209017100fe7294d7717f4596cd8ad4",
+      "size": 14863,
+      "path": "refs/testing-production-gaps-2026-08-01.md"
+    },
+    {
+      "name": "three-year-revenue-cost-model-2026-07-25.md",
+      "sha": "a5a5e1920924bfb54edd19c639afe1d4528c7874",
+      "size": 9197,
+      "path": "refs/three-year-revenue-cost-model-2026-07-25.md"
+    },
+    {
+      "name": "v261-base-image-bump-2026-07-23.md",
+      "sha": "c3d671ba389f3cd543ab15373900358a38824a18",
+      "size": 3470,
+      "path": "refs/v261-base-image-bump-2026-07-23.md"
+    },
+    {
+      "name": "validate-input-shape-doctrine-2026-08-04.md",
+      "sha": "dae1318d6d225d59799c00c7dcd7346dfd6bf873",
+      "size": 72825,
+      "path": "refs/validate-input-shape-doctrine-2026-08-04.md"
+    },
+    {
+      "name": "vgpu-vfio-user-trust-boundary-2026-07-25.md",
+      "sha": "80aaeea592d3efd95d256006b2fa35cde70d89b9",
+      "size": 11652,
+      "path": "refs/vgpu-vfio-user-trust-boundary-2026-07-25.md"
+    },
+    {
+      "name": "vm-e2e-run-29525332901.md",
+      "sha": "b5764d1dbf7d74d14f92d47e23f910ac94789842",
+      "size": 5353,
+      "path": "refs/vm-e2e-run-29525332901.md"
+    },
+    {
+      "name": "who-pays-and-why-2026-07-25.md",
+      "sha": "798a9946db8a6dfc893b380651d1d815430d6682",
+      "size": 8571,
+      "path": "refs/who-pays-and-why-2026-07-25.md"
+    },
+    {
+      "name": "workflow-dispatch-reachability-spec-2026-08-04.md",
+      "sha": "83d6c853c8c4fa0bd13bc40bcfba63719fd88c22",
+      "size": 12297,
+      "path": "refs/workflow-dispatch-reachability-spec-2026-08-04.md"
+    },
+    {
+      "name": "workflow-patterns-deep-dive-2026-07-30.md",
+      "sha": "8f60e3d7cb4be4e1820851d504b9d1cb7ee9d82a",
+      "size": 15311,
+      "path": "refs/workflow-patterns-deep-dive-2026-07-30.md"
+    },
+    {
+      "name": "workflow-token-scope-audit-script-2026-08-04.md",
+      "sha": "bec3d184f86b83bbba79bcbfe96db554ba4c3daa",
+      "size": 13350,
+      "path": "refs/workflow-token-scope-audit-script-2026-08-04.md"
+    },
+    {
+      "name": "y33-fibonacci-sphere-paper-method-equation-block-2026-08-07.md",
+      "sha": "1f641db6b37267593713a13683addb333293bddb",
+      "size": 20036,
+      "path": "refs/y33-fibonacci-sphere-paper-method-equation-block-2026-08-07.md"
+    },
+    {
+      "name": "y33-fibonacci-sphere-paper-revised-passage-2026-08-07.md",
+      "sha": "582b873633284b20fe181b30ef742421bf953302",
+      "size": 17431,
+      "path": "refs/y33-fibonacci-sphere-paper-revised-passage-2026-08-07.md"
+    },
+    {
+      "name": "yubikey-hw-validation-scenarios-2026-07-25.md",
+      "sha": "e246b6d55056b98e1715d365b42712d4cc4ba252",
+      "size": 8002,
+      "path": "refs/yubikey-hw-validation-scenarios-2026-07-25.md"
+    },
+    {
+      "name": "yubios-ci-strategy-history-2026-07-23.md",
+      "sha": "fcd0e40c607d052a9c48356291cd787e41a19602",
+      "size": 4895,
+      "path": "refs/yubios-ci-strategy-history-2026-07-23.md"
+    },
+    {
+      "name": "yubios-reproducibility-equivalents-2026-07-30.md",
+      "sha": "65c5c03f474b62a684e805d23956f3953b2b9120",
+      "size": 10585,
+      "path": "refs/yubios-reproducibility-equivalents-2026-07-30.md"
+    },
+    {
+      "name": "yubios-scamper-product-brief-investor-memo-2026-08-07.md",
+      "sha": "681b97d3dffb20499ad5c776152d41dccac91ce4",
+      "size": 24910,
+      "path": "refs/yubios-scamper-product-brief-investor-memo-2026-08-07.md"
+    },
+    {
+      "name": "yubios-stress-test-assertions-2026-08-07.md",
+      "sha": "ccbd0a031b4c341c76f85e67ca03f447c38e1beb",
+      "size": 18181,
+      "path": "refs/yubios-stress-test-assertions-2026-08-07.md"
+    },
+    {
+      "name": "yubios-trust-proof-playbook-checklist-2026-08-07.md",
+      "sha": "c6fa88f1cd17353afefdf9d7f56141a0a2f9f997",
+      "size": 27710,
+      "path": "refs/yubios-trust-proof-playbook-checklist-2026-08-07.md"
+    },
+    {
+      "name": "yubios-versioning-scheme-2026-08-04.md",
+      "sha": "7ddcb682d2d08ff46b2d0aa4a6acf2528ebd42fe",
+      "size": 9413,
+      "path": "refs/yubios-versioning-scheme-2026-08-04.md"
+    },
+    {
+      "name": "zboot-workaround-runner-qemu-audit-2026-07-25.md",
+      "sha": "6fc6c71e3588705554dc0a2f72e98e2b37dc52a4",
+      "size": 5943,
+      "path": "refs/zboot-workaround-runner-qemu-audit-2026-07-25.md"
+    }
+  ],
+  "n_files_listed_in_repo": 129
 }
