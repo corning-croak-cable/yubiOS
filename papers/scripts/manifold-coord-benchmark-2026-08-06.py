@@ -1,1 +1,0 @@
-{"sauna_error":"connection_id_invalid","error":"X-Sauna-Connection-Id 'conn_1KXnkOHGgyE4' does not cover URL 'https://raw.githubusercontent.com/yubi-OS/yubiOS/cef7858762200d5b883477480dd4ee04800c049c/papers/scripts/manifold-coord-benchmark-2026-08-06.py'.","details":"domains: api.github.com"}
