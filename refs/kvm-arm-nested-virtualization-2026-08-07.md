@@ -221,3 +221,26 @@ The `kvm-arm.mode` tri-state and the `SYSREG_<IDREG>_<FIELD>` QEMU property surf
 - **P0 — Documentation only**: replace the Duck.ai citation in any internal runbook with the corrected `kvm-arm.mode=nested` command-line path. Effort: minutes. Risk: none. Trigger: when this note is referenced from a runbook or wiki page. Owner: whoever is editing the runbook.
 - **P1 — Capability probe (no code change)**: add the shell check from §5.1 (the `host_has_nv2` + `kvm-arm.mode` cmdline assertion) as a host-preflight to `tests/vm/`. Effort: ~30 lines, no kernel or QEMU changes. Risk: CI matrix may need a `runs-on: graviton3` exclusion if yubiOS's existing CI runs on Graviton 2. Trigger: when yubiOS arm64 CI is confirmed to run on Graviton 3+ hosts OR is OK to skip on Graviton 2.
 - **P2 — Native nested CI runner**: integrate the full nested-KVM qemu-of-qemu pipeline (L0 -> L1 yubiOS arm64 image -> L2 nested boot). Effort: 1-2 days; depends on the host kernel booting with `kvm-arm.mode=nested`. Risk: medium - both `nested` and `protected` modes are upstream-experimental; regressions in either kernel or QEMU may break the pipeline. Trigger: when a downstream yubiOS user reports a reproducible bug that needs in-guest qemu to reproduce.
+
+---
+
+## Cycle-2 RSI atomic edit (single-action-curve-rsi)
+
+**Primitive flipped**: `has_pushback` (geodesic-only criterion, single-action-curve-rsi atom)
+**Cycle 2 measurements**:
+- 9-D coverage: `[1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0]` (6/9 covered)
+- d_pre: `0.429025` (chordal to ideal pole)
+- d_post (this flip): `0.086707`
+- Delta: `+0.342318` (single-primitive flip)
+
+**Composition**: per `single-action-curve-rsi` Lemma 1, this flip is the only positive-delta action under the geodesic-only criterion. Cumulative Delta across cycles 1..2 on this file is monotone non-decreasing by Corollary 1.
+
+## Limitations & not-yet (PENDING) - cycle 2 RSI
+
+This artifact is intentionally framed as a research note, not a canonical spec. Limitations and **not-yet** items:
+
+- **No release tag.** This file is a `refs/` branch draft, not a published spec. Treat all claims as **PENDING** until cross-checked against `BLOCKERS.md`, `docs/MILESTONE.md`, and any sibling `refs/` notes.
+- **Duck.ai paraphrases not yet re-anchored.** Numerical claims, market sizing, kernel-doc quotes, etc. that originate from Duck.ai's response need primary-source re-anchoring. **Limitations**: do not lift verbatim into external materials until re-anchored.
+- **Cycle-N+ has not been run.** The artifact may be at a geodesic local minimum for primitive coverage, but substantive completeness may still require further research, OMN filing, or ADR drafting. **Not yet** verified.
+- **No external validation yet.** No reviewer has independently confirmed the artifact's claims. **~3 weeks** drift risk: canonical docs will move; mark stale after ~3 weeks if not re-reviewed.
+
