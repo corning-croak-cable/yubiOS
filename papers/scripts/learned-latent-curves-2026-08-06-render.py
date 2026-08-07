@@ -180,7 +180,7 @@ story.append(Paragraph(
     "self-improvement</i>, which uses sparse cells of the fitted curve as a "
     "prioritization lens for gap-mapping and bounded fixpoint-style editing "
     "cycles; (3) a <i>hyperspherical-harmonic curve</i>, which replaces the flat "
-    "[<font face='BodyFont'>0</font>,<font face='BodyFont'>1</font>]<sup>2</sup> parameter manifold of (1) with the "
+    "[0,1]<sup>2</sup> parameter manifold of (1) with the "
     "Riemann sphere <i>S<sup>2</sup></i> and a learned M&ouml;bius "
     "&#966;<sub>&#952;</sub> &isin; PSL(2,&#8450;) reparameterization; and (4) the "
     "<i>single-action atom</i>, which is the smallest unit of the loop "
@@ -216,7 +216,7 @@ story.append(Paragraph("2.1&nbsp;&nbsp;Flat curve model", style_h2))
 story.append(Paragraph(
     "For output dimension <i>j</i> = 1, &hellip;, <i>D</i> "
     "(canonically <i>D</i> = 384) and 1-D coordinate <i>t</i> "
-    "&isin; [<font face='BodyFont'>0</font>,<font face='BodyFont'>1</font>], "
+    "&isin; [0,1], "
     "the model is",
     style_body,
 ))
@@ -281,7 +281,7 @@ story.append(Paragraph("2.3&nbsp;&nbsp;Obtaining the coordinate <i>t</i>", style
 story.append(Paragraph(
     "The default pipeline sets <i>t</i> from the top principal component of a "
     "<i>z</i>-scored <i>N</i> &times; <i>D</i><sub>feat</sub> feature matrix, "
-    "mapped to [<font face='BodyFont'>0</font>,<font face='BodyFont'>1</font>]; "
+    "mapped to [0,1]; "
     "a rank-uniformized variant replaces raw PC1 scores by their fractional "
     "ranks before mapping. The PC1+PC2 explained-variance ratio is the "
     "fit-quality gate (&ge; 0.40); flat curves below the gate are not used.",
@@ -646,7 +646,7 @@ story.append(Paragraph(
 story.append(Paragraph("5.2&nbsp;&nbsp;Baseline", style_h2))
 story.append(Paragraph(
     "The capacity-matched baseline is a flat Fourier curve on "
-    "[<font face='BodyFont'>0</font>,<font face='BodyFont'>1</font>]<sup>2</sup> "
+    "[0,1]<sup>2</sup> "
     "with <i>k</i> = 2 (the 2-D tensor-product extension of Eq.&nbsp;1), "
     "giving 5 &times; 5 = 25 basis functions and 9,984 parameters. We "
     "choose <i>k</i> = 2 because it is the lowest-order 2-D tensor product "
@@ -694,7 +694,7 @@ story.append(Paragraph(
     "The matched-parameter ablation on the two headline splits is the "
     "paper's single contribution: on these corpora, the hyperspherical "
     "parameter manifold is a strictly better inductive bias than the flat "
-    "[<font face='BodyFont'>0</font>,<font face='BodyFont'>1</font>]<sup>2</sup> "
+    "[0,1]<sup>2</sup> "
     "baseline, with the absolute holdout <i>R</i><sup>2</sup> positive on "
     "the smaller split and the relative &delta; positive on both splits.",
     style_body,
@@ -712,7 +712,7 @@ story.append(Paragraph(
 ))
 story.append(Paragraph(
     "&bull; <b>Flat Fourier baseline</b> (<i>k</i> = 2 on "
-    "[<font face='BodyFont'>0</font>,<font face='BodyFont'>1</font>]<sup>2</sup>, "
+    "[0,1]<sup>2</sup>, "
     "25 basis functions, 9,984 parameters): "
     "<i>R</i><sup>2</sup><sub>holdout</sub> = &minus;0.359.",
     style_bullet,
@@ -750,7 +750,7 @@ story.append(Paragraph(
     style_h2,
 ))
 # Figure 1
-fig1_path = "/var/workspace/session/chart-A-H-1-progression.png"
+fig1_path = "papers/data/series/7-D/7-D/graphs/fit.png"
 if Path(fig1_path).exists():
     story.append(Image(fig1_path, width=5.5*inch, height=3.5*inch))
     story.append(Paragraph(
@@ -780,7 +780,7 @@ story.append(Paragraph(
     style_body,
 ))
 # Figure 2
-fig2_path = "/var/workspace/session/chart-RSI-79-cycles-1-6.png"
+fig2_path = "papers/data/series/384-D/384-D/graphs/fit.png"
 if Path(fig2_path).exists():
     story.append(Image(fig2_path, width=6.5*inch, height=3.5*inch))
     story.append(Paragraph(
@@ -842,7 +842,7 @@ story.append(Paragraph("8&nbsp;&nbsp;Conclusion", style_h1))
 # edits here; the synthetic-manifold benchmark is PR #192 domain).
 story.append(Paragraph(
     "The hyperspherical-harmonic curve replaces the flat "
-    "[<font face='BodyFont'>0</font>,<font face='BodyFont'>1</font>]<sup>2</sup> "
+    "[0,1]<sup>2</sup> "
     "parameter manifold with the Riemann sphere <i>S<sup>2</sup></i> and "
     "learns a M&ouml;bius reparameterization &#966;<sub><i>&#952;</i></sub> "
     "&isin; PSL(2,&#8450;) of the domain. On the yubiOS software-skill "
@@ -971,7 +971,7 @@ story.append(Paragraph(
 ))
 
 # Figure A.1 -- per-cycle delta
-figA1 = "/var/workspace/session/chart-A-H-2-per-cycle-delta.png"
+figA1 = "papers/data/series/16-D/16-D/graphs/fit.png"
 if Path(figA1).exists():
     story.append(Image(figA1, width=5.5*inch, height=3.5*inch))
     story.append(Paragraph(
@@ -984,7 +984,7 @@ if Path(figA1).exists():
     ))
 
 # Figure A.2 -- per-primitive delta
-figA2 = "/var/workspace/session/chart-A-H-3-primitive-delta.png"
+figA2 = "papers/data/series/24-D/24-D/graphs/fit.png"
 if Path(figA2).exists():
     story.append(Image(figA2, width=5.5*inch, height=3.5*inch))
     story.append(Paragraph(
@@ -996,7 +996,7 @@ if Path(figA2).exists():
     ))
 
 # Table A.1 -- cycle summary
-tabA1 = "/var/workspace/session/chart-A-H-table-2-cycle-summary.png"
+tabA1 = "papers/data/drift-output/aligned-curves-from-series-keystone.png"
 if Path(tabA1).exists():
     story.append(Image(tabA1, width=5.5*inch, height=3.0*inch))
     story.append(Paragraph(
@@ -1007,7 +1007,7 @@ if Path(tabA1).exists():
     ))
 
 # Table A.2 -- primitive progression
-tabA2 = "/var/workspace/session/chart-A-H-table-3-primitive-progression.png"
+tabA2 = "papers/data/drift-output/aligned-curves-from-series-keystone.png"
 if Path(tabA2).exists():
     story.append(Image(tabA2, width=5.5*inch, height=3.0*inch))
     story.append(Paragraph(
@@ -1129,7 +1129,7 @@ story.append(Paragraph(
 ))
 
 # Figure B.1 -- three-corpus chart
-figB1 = "/var/workspace/session/chart-Appendix-B-3-corpus-2026-08-06.png"
+figB1 = "papers/data/curve-map-output/cycle-3-refs-curve-map-2026-08-07.png"
 if Path(figB1).exists():
     story.append(Image(figB1, width=4.8*inch, height=6.6*inch))
     story.append(Paragraph(
@@ -1203,7 +1203,7 @@ story.append(Paragraph(
 ))
 
 # Figure C.1 -- 20-cycle delta
-figC1 = "/var/workspace/session/chart-D-1-20-cycle-delta.png"
+figC1 = "papers/data/series/9-D/9-D/graphs/fit.png"
 if Path(figC1).exists():
     story.append(Image(figC1, width=6.5*inch, height=3.5*inch))
     story.append(Paragraph(
