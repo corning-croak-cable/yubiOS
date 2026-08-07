@@ -1,0 +1,11 @@
+{
+  "date": "2026-08-07",
+  "kind": "intra-corpus-drift (cycle-3 vs cycle-4 of repo-refs/repo-history tooling)",
+  "cycle3_basis": "7-D binary (repo-refs-skill)",
+  "cycle3_corpus_size": 130,
+  "cycle4_basis": "9-D binary (repo-history-skill, if available)",
+  "cycle4_corpus_size": null,
+  "note": "cycle-4 archive missing; skipping intra-corpus warp.",
+  "warp_alignment": null,
+  "interpretation": "Chordal residuals after M\u00f6bius alignment quantify how much the cycle-3 and cycle-4 point clouds differ on S^2 after the best rigid+conformal fit. Higher median residual = more structural drift between cycles."
+}
