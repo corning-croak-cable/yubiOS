@@ -73,6 +73,12 @@ style_h1 = ParagraphStyle(
     spaceBefore=12, spaceAfter=5, textColor=HexColor("#1a3a5c"),
     keepWithNext=1,
 )
+style_h3 = ParagraphStyle(
+    "H3", parent=styles["Heading3"],
+    fontName=BODY_FONT, fontSize=11, leading=14,
+    spaceBefore=8, spaceAfter=4, textColor=HexColor("#1a3a5c"),
+)
+
 style_h2 = ParagraphStyle(
     "H2", parent=styles["Heading2"],
     fontName=BODY_FONT, fontSize=11.5, leading=14,
