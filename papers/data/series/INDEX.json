@@ -1,0 +1,129 @@
+{
+  "timestamp": "2026-08-07T20:55:00Z",
+  "schema_version": "1.0",
+  "dimensions": [
+    "7-D",
+    "9-D",
+    "16-D",
+    "24-D"
+  ],
+  "primitives": {
+    "7-D": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_evidence",
+      "has_cross_reference",
+      "has_verification_plan",
+      "has_source_citation",
+      "has_priority_signal"
+    ],
+    "9-D": [
+      "attestation",
+      "trust_chain",
+      "least_privilege",
+      "declarative_policy",
+      "continuous_adaptive",
+      "immutability",
+      "audit_evidence",
+      "cryptographic_identity",
+      "segmentation"
+    ],
+    "16-D": [
+      "sh_L3_m0",
+      "sh_L3_m-1",
+      "sh_L3_m0",
+      "sh_L3_m1",
+      "sh_L3_m-2",
+      "sh_L3_m-1",
+      "sh_L3_m0",
+      "sh_L3_m1",
+      "sh_L3_m2",
+      "sh_L3_m-3",
+      "sh_L3_m-2",
+      "sh_L3_m-1",
+      "sh_L3_m0",
+      "sh_L3_m1",
+      "sh_L3_m2",
+      "sh_L3_m3"
+    ],
+    "24-D": [
+      "attestation",
+      "trust_chain",
+      "least_privilege",
+      "declarative_policy",
+      "continuous_adaptive",
+      "immutability",
+      "audit_evidence",
+      "cryptographic_identity",
+      "segmentation",
+      "audience",
+      "inputs",
+      "outputs",
+      "mode",
+      "assumption_set",
+      "adjacent_problems",
+      "failure_modes",
+      "lifecycle",
+      "composition",
+      "knowledge_sources",
+      "calibration",
+      "recursion",
+      "size_log",
+      "age_log",
+      "is_rsi"
+    ]
+  },
+  "corpora": {
+    "self": {
+      "n_items": 114,
+      "source": "workspace:memory/personal-WbtUgeUv/*.md"
+    },
+    "docs": {
+      "n_items": 310,
+      "source": "yubi-OS/yubiOS/docs/*.md"
+    },
+    "refs": {
+      "n_items": 1862,
+      "source": "yubi-OS/yubiOS/refs/*.md",
+      "n_items_7d": 1862
+    },
+    "cycle4": {
+      "n_items": 324,
+      "source": "yubi-OS/yubiOS/papers/data/repo-history-skill-cycle-4-archive-2026-08-07.json"
+    },
+    "cycle3": {
+      "n_items": 130,
+      "source": "yubi-OS/yubiOS/papers/data/repo-refs-skill-cycle-3-archive-2026-08-07.json"
+    }
+  },
+  "fit_summary": {
+    "7-D": {
+      "refs": {
+        "pc1_plus_pc2": 1.0,
+        "median_residual": 0.0017065677690861218,
+        "n_items": 1862
+      }
+    },
+    "9-D": {
+      "all": {
+        "pc1_plus_pc2": 0.45652548310392427,
+        "median_residual": 0.2828920612271615,
+        "n_items": 2286
+      }
+    },
+    "16-D": {
+      "all": {
+        "pc1_plus_pc2": 0.46274036340563074,
+        "median_residual": 0.037197936834057685,
+        "n_items": 2286
+      }
+    },
+    "24-D": {
+      "all": {
+        "pc1_plus_pc2": 0.2992565732428335,
+        "median_residual": 0.49691745423240313,
+        "n_items": 2286
+      }
+    }
+  }
+}
