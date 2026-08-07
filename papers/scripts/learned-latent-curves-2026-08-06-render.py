@@ -71,11 +71,13 @@ style_h1 = ParagraphStyle(
     "H1", parent=styles["Heading1"],
     fontName=BODY_FONT, fontSize=13, leading=17,
     spaceBefore=12, spaceAfter=5, textColor=HexColor("#1a3a5c"),
+    keepWithNext=1,
 )
 style_h2 = ParagraphStyle(
     "H2", parent=styles["Heading2"],
     fontName=BODY_FONT, fontSize=11.5, leading=14,
     spaceBefore=8, spaceAfter=3, textColor=HexColor("#1a3a5c"),
+    keepWithNext=1,
 )
 style_body = ParagraphStyle(
     "Body", parent=styles["Normal"],
@@ -139,14 +141,14 @@ doc = SimpleDocTemplate(
     str(output_path), pagesize=letter,
     leftMargin=0.75*inch, rightMargin=0.75*inch,
     topMargin=0.7*inch, bottomMargin=0.7*inch,
-    title="Learned Latent Curves and the Hyperspherical-Harmonic Variant (Reduced, 2026-08-06)",
+    title="Learned Latent Curves and the Hyperspherical-Harmonic (Reduced, 2026-08-06)",
     author="Shant Tchatalbachian",
 )
 story = []
 
 # --- Title block ---
 story.append(Paragraph(
-    "Learned Latent Curves and the Hyperspherical-Harmonic Variant",
+    "Learned Latent Curves and the Hyperspherical-Harmonic",
     style_title,
 ))
 story.append(Paragraph(
@@ -931,7 +933,6 @@ if Path(tabA2).exists():
     ))
 
 # --- Appendix B Multi-Corpus RSI Audit ---
-story.append(PageBreak())
 story.append(Paragraph(
     "Appendix B&nbsp;&nbsp;Multi-Corpus RSI Audit &mdash; "
     "<font face='Courier'>skills/</font>, "
@@ -1061,7 +1062,6 @@ if Path(figB1).exists():
     ))
 
 # --- Appendix C 20-Cycle Deep-Research Corpus + Synthetic-Manifold Benchmark ---
-story.append(PageBreak())
 story.append(Paragraph(
     "Appendix C&nbsp;&nbsp;The 20-Cycle Deep-Research Corpus and the "
     "Synthetic-Manifold Benchmark",
@@ -1498,7 +1498,6 @@ story.append(Paragraph(
 ))
 
 # --- Appendix E: Use Cases ---
-story.append(PageBreak())
 story.append(Paragraph("E&nbsp;&nbsp;Use Cases", style_h1))
 story.append(Paragraph(
     "The RSI pipeline produces a family of corpus-scale visualizations. "
