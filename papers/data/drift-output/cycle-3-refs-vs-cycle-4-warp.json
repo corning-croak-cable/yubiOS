@@ -1,11 +1,28 @@
 {
   "date": "2026-08-07",
   "kind": "intra-corpus-drift (cycle-3 vs cycle-4 of repo-refs/repo-history tooling)",
-  "cycle3_basis": "7-D binary (repo-refs-skill)",
+  "cycle3_basis": "7-D binary (repo-refs-skill, repo-pushed schema)",
   "cycle3_corpus_size": 130,
-  "cycle4_basis": "9-D binary (repo-history-skill, if available)",
-  "cycle4_corpus_size": null,
-  "note": "cycle-4 archive missing; skipping intra-corpus warp.",
-  "warp_alignment": null,
-  "interpretation": "Chordal residuals after M\u00f6bius alignment quantify how much the cycle-3 and cycle-4 point clouds differ on S^2 after the best rigid+conformal fit. Higher median residual = more structural drift between cycles."
+  "cycle3_source": "REPO-SOURCED: papers/data/repo-refs-skill-cycle-3-archive-2026-08-07.json",
+  "cycle4_basis": "9-D binary (repo-history-skill)",
+  "cycle4_corpus_size": 324,
+  "cycle4_source": "REPO-SOURCED: papers/data/repo-history-skill-cycle-4-archive-2026-08-07.json",
+  "warp_alignment": {
+    "a_re": -0.6817556495823984,
+    "a_im": 0.0,
+    "b_re": -0.3641831883086509,
+    "b_im": 0.0,
+    "c_re": 1.123464097074916,
+    "c_im": 0.0,
+    "d_re": 1.8220604272456598,
+    "d_im": 0.0,
+    "iterations": 400,
+    "median_chordal_residual": 1.0375644984721633,
+    "mean_chordal_residual": 1.0411858228037787,
+    "max_chordal_residual": 1.5358556707187183,
+    "method": "identity-init M\u00f6bius (scalar complex a,b,c,d) via gradient descent on chordal residual",
+    "frozen": true,
+    "common_prefix_subset_size": 130
+  },
+  "shape_comparison_note": "Cycle-3 (7-D repo-refs-skill basis) and cycle-4 (9-D repo-history-skill basis) are projected independently onto S\u00b2 via PCA top-2 \u2192 stereographic. The M\u00f6bius warp aligns the two point clouds \u2014 same shape-on-shape comparison as mobius-transform.json's cross-corpus case but for the cycle-3 \u2192 cycle-4 axis. Higher median residual = more structural drift between cycles."
 }
