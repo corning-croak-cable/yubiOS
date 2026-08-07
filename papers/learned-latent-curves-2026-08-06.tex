@@ -7,6 +7,15 @@
 % ---------- Math ----------
 \usepackage{amsmath,amssymb,amsthm,mathtools}
 
+% ---------- Theorem environments ----------
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+\theoremstyle{plain}
+
 % ---------- Tables, links, bibliography ----------
 \usepackage{booktabs}
 \usepackage{graphicx}
@@ -32,7 +41,7 @@ We describe a closed-loop framework for auditing and prioritizing improvement wo
 
 \section{Introduction}
 
-The paper is organized so each main-body section earns its place by improving fit, clarifying the geometry, or sharpening the claim. Sections~2--4 give the family background (flat curve model, hyperspherical variant, atom) at the level of governing equations. Sections~5--6 give the dataset, evaluation protocol, and headline results, with the 79-skill corpus audit reported as the primary empirical exhibit. Sections~7--8 are scope and conclusion. Two appendices carry the remaining material.
+The paper is organized so each main-body section earns its place by improving fit, clarifying the geometry, or sharpening the claim. Sections~2--4 give the family background (flat curve model, hyperspherical variant, atom) at the level of governing equations. Sections~5--6 give the dataset, evaluation protocol, and headline results, with the 79-skill corpus audit reported as the primary empirical exhibit. Sections~7--8 are scope and conclusion. Five appendices (A--E) carry the remaining material: A gives the per-cycle accounting behind the headline atom result, B extends the audit to the multi-corpus run, C reports the 20-cycle deep-research corpus and the synthetic-manifold benchmark, D re-tests the inductive-bias claim with a partial-in-span design, and E is the use-cases gallery.
 
 \section{Background: The Learned-Latent-Curve Family}
 \label{sec:family}
@@ -74,9 +83,28 @@ The default pipeline sets $t$ from the top principal component of a $z$-scored $
 \subsection{Model}
 
 For $\mathbf{x} \in S^2 \subset \mathbb{R}^3$ (the Riemann sphere),
+\begin{equation}
+\gamma(\mathbf{x}) = \mathbf{b} + \sum_{\ell=0}^{L} \sum_{m} \mathbf{a}_{\ell,m}\, Y^{S^2}_{\ell,m}\!\big(\phi_\theta(\mathbf{x})\big),
+\label{eq:hyperspherical}
+\end{equation}
+where $\mathbf{b} \in \mathbb{R}^D$ is the per-dim bias, $\mathbf{a}_{\ell,m} \in \mathbb{R}^D$ are the per-dim per-basis coefficients, and $\phi_\theta$ is the M\"obius reparameterization.
+
+The parameter count is $D \cdot n_{\mathrm{basis}} + D + n_{\mathrm{M\"obius}}$, where $n_{\mathrm{basis}} = \sum_{\ell=0}^{L}(2\ell+1)$ and $n_{\mathrm{M\"obius}}$ is the real dimension of $\mathrm{PSL}(2,\mathbb{C})$ (Section~\ref{sec:mobius}). At $L=3$ on $S^2$, $n_{\mathrm{basis}}=16$; at $D=384$: $P_{\mathrm{sphere}} = 384 \cdot 16 + 384 + 6 = 6{,}534$.
+
+\subsection{M\"obius reparameterization}
+\label{sec:mobius}
+
+$\phi_\theta(z) = (az+b)/(cz+d)$ with $a,b,c,d \in \mathbb{C}$ and $ad-bc=+1$. The four complex coefficients $a,b,c,d$ carry $8$ real components. The constraint $ad-bc=+1$ is a \emph{complex} constraint (real part equals 1, imaginary part equals 0), so it removes $2$ real degrees of freedom, leaving $6$ real degrees of freedom. The $\mathrm{PSL}(2,\mathbb{C})$ identification (matrices $M$ and $-M$ map to the same M\"obius transformation) is a discrete identification and does not further reduce the real dimension. So $\phi_\theta$ has $6$ real degrees of freedom, parameterised by the real and imaginary parts of $a,b,c,d$ subject to $ad-bc=1$.
+
+We refine $\theta$ via L-BFGS-B with the closed-form ridge (Eq.~\ref{eq:ridge}) re-solved at each step. The basis is fixed; only the domain is reparameterized. Because every $\varphi \in \mathrm{PSL}(2,\mathbb{C})$ preserves the cross-ratio identically by definition, the cross-ratio check verifies implementation consistency: it fails if $\varphi_\theta$ is miscoded, not if the learned map is a poor fit.
+
+\subsection{Operational instantiation}
+\label{sec:operational}
+
+All material in this subsection was added on 2026-08-07 in PR~\#200; the title-page date 2026-08-06 reflects the body of the paper as submitted.
 
 \begin{remark}[Fibonacci sampling and $Y_3^3$ angular probe --- operationalized as \texttt{rsi-phi-skill}, 2026-08-07]
-The hyperspherical-harmonic variant above is operationalized today (2026-08-07) as the \texttt{rsi-phi-skill} agent skill, which sits in the corpus as the bounded-recursive-self-improvement loop on the Fibonacci-sphere parameter manifold. The two design moves that operationalize the variant are:
+The hyperspherical-harmonic variant of Eq.~\ref{eq:hyperspherical} is operationalized today (2026-08-07) as the \texttt{rsi-phi-skill} agent skill, which sits in the corpus as the bounded-recursive-self-improvement loop on the Fibonacci-sphere parameter manifold. The two design moves that operationalize the variant are:
 \begin{enumerate}
 \item \textbf{Fibonacci index $i$ plays the role of $t$.} Sampling on $S^2$ is done with Vogel's golden-angle Fibonacci scheme,
 \[
@@ -96,17 +124,6 @@ K \;=\; \sqrt{\frac{245}{64\pi}}
 For 384 symmetric azimuthal lobes, the per-item basis vector is $b_i = (\sin^3\theta_i\,\cos(m_1\phi_i),\ldots,\sin^3\theta_i\,\cos(m_{384}\phi_i))$ with $m_k = 3k$ for $k = 1,\ldots,128$ ($384 = 2^7 \cdot 3$). The skill \texttt{rsi-phi-skill} tests BOTH orderings $(\ell{=}128,\,m{=}256)$ and $(\ell{=}256,\,m{=}128)$ per cycle and picks the higher $\mathrm{PC1}{+}\mathrm{PC2}$ --- the gate that drives the regime. Today's data: $384$-D passes the $\mathrm{PC1}{+}\mathrm{PC2} \ge 0.40$ gate on the chosen variant $(\ell{=}384,\,m{=}3,\,\sin^{384}\theta\,\text{polar})$.
 \end{remark}
 
-
-\begin{equation}
-\gamma(\mathbf{x}) = \mathbf{b} + \sum_{\ell=0}^{L} \sum_{m} \mathbf{a}_{\ell,m}\, Y^{S^2}_{\ell,m}\!\big(\phi_\theta(\mathbf{x})\big),
-\label{eq:hyperspherical}
-\end{equation}
-where $\mathbf{b} \in \mathbb{R}^D$ is the per-dim bias, $\mathbf{a}_{\ell,m} \in \mathbb{R}^D$ are the per-dim per-basis coefficients, and $\phi_\theta$ is the M\"obius reparameterization.
-
-The parameter count is $D \cdot n_{\mathrm{basis}} + D + n_{\mathrm{M\"obius}}$, where $n_{\mathrm{basis}} = \sum_{\ell=0}^{L}(2\ell+1)$ and $n_{\mathrm{M\"obius}}$ is the real dimension of $\mathrm{PSL}(2,\mathbb{C})$ (Section~\ref{sec:mobius}). At $L=3$ on $S^2$, $n_{\mathrm{basis}}=16$; at $D=384$: $P_{\mathrm{sphere}} = 384 \cdot 16 + 384 + 6 = 6{,}534$.
-
-
-
 The Fibonacci-sphere sampling and $Y_3^3$ angular-probe primitive above are the operational basis of the \texttt{rsi-phi-skill} agent skill (added 2026-08-07 to both \texttt{yubi-OS/yubiOS} and \texttt{yubi-OS/agent-skills}). The companion artifacts are:
 \begin{itemize}
 \item \texttt{papers/refs/y33-fibonacci-sphere-paper-method-equation-block-2026-08-07.md} --- the 3-equation LaTeX block (or 4-equation explicit-real form) defining $z_i$, $\phi_i$, $\theta_i$, and $Y_3^3$ evaluation, drop-in for the Methods section.
@@ -117,13 +134,6 @@ The Fibonacci-sphere sampling and $Y_3^3$ angular-probe primitive above are the 
 \item \texttt{papers/playbooks/papers-8-6-iteration-2026-08-07.md} --- today's iteration summary.
 \end{itemize}
 The \texttt{papers/data/series/} time-series library stores per-cycle fits at $5$ dimensions ($7$-D, $9$-D, $16$-D, $24$-D, $384$-D), each with $\mathrm{fit.json}$, $\mathrm{points.json}$, $\mathrm{curve.json}$, and $\mathrm{graphs/fit.png}$. The keystone diagram at \texttt{papers/data/drift-output/aligned-curves-from-series-keystone.png} shows all $5$ dims with primitive guides and gate status. As of $2026$-$08$-$07$, the gate status is: $7$-D $\checkmark$, $9$-D $\checkmark$, $16$-D $\checkmark$, $24$-D $\boldsymbol{\times}$, $384$-D $\checkmark$ (via the chosen $(\ell{=}384,\,m{=}3)$ variant).
-
-\subsection{M\"obius reparameterization}
-\label{sec:mobius}
-
-$\phi_\theta(z) = (az+b)/(cz+d)$ with $a,b,c,d \in \mathbb{C}$ and $ad-bc=+1$. The four complex coefficients $a,b,c,d$ carry $8$ real components. The constraint $ad-bc=+1$ is a \emph{complex} constraint (real part equals 1, imaginary part equals 0), so it removes $2$ real degrees of freedom, leaving $6$ real degrees of freedom. The $\mathrm{PSL}(2,\mathbb{C})$ identification (matrices $M$ and $-M$ map to the same M\"obius transformation) is a discrete identification and does not further reduce the real dimension. So $\phi_\theta$ has $6$ real degrees of freedom, parameterised by the real and imaginary parts of $a,b,c,d$ subject to $ad-bc=1$.
-
-We refine $\theta$ via L-BFGS-B with the closed-form ridge (Eq.~\ref{eq:ridge}) re-solved at each step. The basis is fixed; only the domain is reparameterized. Because every $\varphi \in \mathrm{PSL}(2,\mathbb{C})$ preserves the cross-ratio identically by definition, the cross-ratio check verifies implementation consistency: it fails if $\varphi_\theta$ is miscoded, not if the learned map is a poor fit.
 
 \section{The Single-Action Atom and Linear Composition}
 \label{sec:atom}
@@ -139,7 +149,7 @@ For a single corpus item $f$ (a file with $N_{\mathrm{sec}} \geq 2$ sections), t
 \item A \textbf{section coverage matrix} $M \in \{0,1\}^{N_{\mathrm{sec}} \times 9}$, PCA top-$2$ via SVD giving $(\bar u, \bar v)$ for the file aggregate.
 \item A \textbf{stereographic lift} $\sigma: \mathbb{R}^2 \to S^2$ with
 \begin{equation}
-\sigma(u,v) = \frac{1}{1+u^2+v^2}\big(2u,\; 2v,\; u^2+v^2-1\big) \in S^2,
+\sigma(u,v) = \frac{1}{1+u^2+v^2}\big(2u,\; 2v,\; u^2+v^2-1\big) \in S^2,$
 \label{eq:stereographic}
 \end{equation}
 giving one point $p = \sigma(\bar u, \bar v) \in S^2$ per file.
@@ -173,6 +183,16 @@ If every atomic $\Delta \geq 0$, then $\Delta_{\mathrm{corpus}} \geq 0$, and $\D
 Each $\alpha_i$ operates on its own file $f_i$ independently: the per-file coverage matrix and $S^2$ point are unchanged for all $f_j$ with $j \neq i$. The geodesic distance $d_{f_i}$ is a function of $f_i$'s coverage alone. Linear sum of non-negative scalars is non-negative.
 \end{proof}
 
+\subsection{Corollary 1 (cumulative monotonicity)}
+
+\begin{corollary}[Cumulative monotonicity]
+If every atomic $\Delta_{f_i} \geq 0$, the corpus-level cumulative $\Delta_{\mathrm{corpus}}$ is monotone non-decreasing as further cycles are appended: writing $\Delta^{(n)}_{\mathrm{corpus}} = \sum_{c=1}^{n} \sum_{i} \Delta^{(c)}_{f_i}$ for the running total after $n$ cycles, $\Delta^{(n+1)}_{\mathrm{corpus}} \geq \Delta^{(n)}_{\mathrm{corpus}}$ for every $n$. The per-cycle increment $\sum_i \Delta^{(c)}_{f_i}$ is not constrained in shape and need not decrease monotonically in $c$.
+\end{corollary}
+
+\begin{proof}
+Each cycle contributes $\sum_i \Delta^{(c)}_{f_i} \geq 0$ by Lemma~1 and Eq.~\ref{eq:composition}; appending a non-negative term to a running sum cannot decrease it. No claim is made about the ordering of successive increments, since Lemma~1 bounds each $\Delta_{f_i}$ from below only.
+\end{proof}
+
 \subsection{M\"obius refinement strategy}
 
 The corpus-level $\phi_\theta \in \mathrm{PSL}(2,\mathbb{C})$ is one M\"obius transformation applied uniformly to all files; the atom-bound composition rule (Theorem~1) requires it \emph{stable across per-cycle atom dispatches}, otherwise per-file $\Delta$s are measured in different charts and the linear sum does not apply to the reported cycles. Reported runs use the \emph{refine-once, $\phi_\theta$ frozen} mode ($\phi_\theta$ fit at corpus creation, frozen for all subsequent cycles); the joint-refine-per-cycle mode is reserved for $N_{\mathrm{items}} < 30$ or corpus growth $> 25\%$ since last refine.
@@ -182,7 +202,7 @@ The corpus-level $\phi_\theta \in \mathrm{PSL}(2,\mathbb{C})$ is one M\"obius tr
 
 \subsection{Dataset}
 
-The corpus consists of software-skill specifications (engineering artifacts) in the yubiOS repository. Each item has a 9-dimensional binary feature vector recording which of nine primitive capabilities the skill implements. The corpus has grown across three dated snapshots: the alphabetical-first-half (49 items, $N_{\mathrm{train}}=35$, $N_{\mathrm{holdout}}=14$), the full directory at the time of the headline ablation (70 items, $N_{\mathrm{train}}=49$, $N_{\mathrm{holdout}}=21$), and the complete skill directory at this paper's revision (79 items, dated 2026-08-06, used for the corpus-audit RSI in Section~6.3 and the 474-dispatch atom experiment in Section~6.4).
+The corpus consists of software-skill specifications (engineering artifacts) in the yubiOS repository. Each item has a 9-dimensional binary feature vector recording which of nine primitive capabilities the skill implements. The corpus has grown across three dated snapshots: the alphabetical-first-half (49 items, $N_{\mathrm{train}}=35$, $N_{\mathrm{holdout}}=14$), the full directory at the time of the headline ablation (70 items, $N_{\mathrm{train}}=49$, $N_{\mathrm{holdout}}=21$), and the complete skill directory at this paper's revision (79 items, dated 2026-08-06, used for the corpus-audit RSI in Section~\ref{sec:results-audit} and the 474-dispatch atom experiment in Section~\ref{sec:results-atom}).
 
 The 9-D binary feature space has principal-component concentration $\mathrm{PC1}+\mathrm{PC2} = 0.652$ at the 49-item snapshot and $0.548$ at the 70-item snapshot; both clear the $\mathrm{PC1} \geq 0.40$ gate (Section~\ref{sec:family}).
 
@@ -196,13 +216,15 @@ The headline metric is \emph{matched-parameter ablation}: holdout $R^2$ at fewer
 
 \subsection{Reproducibility}
 
-All headline ablation numbers are single-run point estimates (no error bars) on a fixed holdout split, with a shared ridge regularisation $\lambda$ across both arms. The audit-phase numbers (Sections~6.3) carry 5-seed $\pm$ std error bars for phases E--H, where the 5-seed multi-cycle stress test was run; the headline ablation does not. All audit runs reported in this paper use the 79-skill corpus dated 2026-08-06 (single dated snapshot, referenced throughout).
+All headline ablation numbers are single-run point estimates (no error bars) on a fixed holdout split, with a shared ridge regularisation $\lambda$ across both arms. The audit-phase numbers (Section~\ref{sec:results-audit}) carry 5-seed $\pm$ std error bars for phases E--H, where the 5-seed multi-cycle stress test was run; the headline ablation does not. All audit runs reported in this paper use the 79-skill corpus dated 2026-08-06 (single dated snapshot, referenced throughout).
 
 \section{Results}
+\label{sec:results}
 
 \subsection{Hyperspherical-harmonic variant: matched-parameter ablation}
+\label{sec:results-ablation}
 
-The matched-parameter ablation on the two headline corpus snapshots is the paper's single contribution: on these corpora, the hyperspherical parameter manifold is a strictly better inductive bias than the flat $[0,1]^2$ baseline, with the absolute holdout $R^2$ positive on the smaller snapshot and the relative $\delta$ positive on both snapshots.
+The matched-parameter ablation on the two headline corpus snapshots is the paper's central empirical claim: on these corpora, the hyperspherical parameter manifold is a strictly better inductive bias than the flat $[0,1]^2$ baseline, with the absolute holdout $R^2$ positive on the smaller snapshot and the relative $\delta$ positive on both snapshots.
 
 \textbf{49-item snapshot ($N_{\mathrm{train}}=35$, $N_{\mathrm{holdout}}=14$):}
 \begin{itemize}
@@ -219,6 +241,7 @@ The matched-parameter ablation on the two headline corpus snapshots is the paper
 \end{itemize}
 
 \subsection{Corpus audit across cycles 5--9 (phases A--H)}
+\label{sec:results-audit}
 
 \begin{figure}[h]
 \centering
@@ -235,6 +258,7 @@ The matched-parameter ablation on the two headline corpus snapshots is the paper
 \end{table}
 
 \subsection{Atom experiment: 474 dispatches on the 79-skill corpus}
+\label{sec:results-atom}
 
 The 79-skill corpus was audited via $474$ atom dispatches across $6$ cycles (single run on the 2026-08-06 snapshot, commit $\texttt{6ae3abeb65}$ on `yubi-OS/yubiOS main`). Cumulative $\Delta = +11.2963$ across all dispatches (sum of the per-cycle aggregates; the unrounded sum over all $474$ individual dispatches is $+11.2971$); zero negative $\Delta$; $116$ strictly positive $\Delta$ ($358$ saturated files contributed $\Delta = 0$, see Appendix~\ref{app:atom-coverage}). Sparse cells: $7 \to 3 \to 2 \to 3 \to 0 \to 0$. Fixpoint reached at cycle 6 (peak $\Delta$ below the $0.001$ epsilon). The corpus reached $79/79 = 100\%$ coverage across all nine primitives. The $20$-cycle $11$-file deep-research experiment is in Appendix~\ref{app:20cycle}.
 
@@ -247,19 +271,21 @@ The 79-skill corpus was audited via $474$ atom dispatches across $6$ cycles (sin
 
 
 \section{Discussion}
+\label{sec:discussion}
 
 \subsection{What this result does and does not show}
 
 The hyperspherical-harmonic variant wins on the matched-parameter ablation at both corpus snapshots by a margin (49-item $\delta = +0.977$, 70-item $\delta = +1.342$) that is hard to attribute to noise. We do \emph{not} claim the variant is a strict improvement over the flat curve in absolute terms: on the 70-item snapshot the absolute $R^2$ is $+0.222$ (positive but small), and the headline numbers are single-run point estimates without error bars. The atom experiment (Figure~2) shows the smallest audit unit composes without regression --- 474 dispatches, 0 negative $\Delta$ --- but does not by itself validate the variant.
 
 \subsection{Limitations}
+\label{sec:limitations}
 
-The matched-parameter ablation in Section~6.1 reports single-seed point estimates of $\delta = +0.977$ (49-item) and $\delta = +1.342$ (70-item) on the yubiOS software-skill corpus. A second-corpus re-run of the ablation itself would replace these with error bars at the headline-ablation level and is the remaining open item. The synthetic-manifold benchmark (Appendix~\ref{app:20cycle}.3, executed, see Figure~C.2) now stress-tests the inductive-bias claim with off-span targets: the $T^2$ target is in the flat Fourier $K{=}2$ span but not the sphere arm's stereo-lifted span (flat wins $50/50$ seeds, paired $p < 10^{-15}$); the $S^2$ target is in the SH $L{=}3$ span but not the flat Fourier $K{=}2$ span (sphere wins $50/50$ seeds, paired $p \ll 0.05$). Both predictions hold under the v4 off-span protocol; the v3 $S^2$ result was a numerical-noise artifact and is fixed in v4.
+The matched-parameter ablation in Section~\ref{sec:results-ablation} reports single-seed point estimates of $\delta = +0.977$ (49-item) and $\delta = +1.342$ (70-item) on the yubiOS software-skill corpus. A second-corpus re-run of the ablation itself would replace these with error bars at the headline-ablation level and is the one remaining open item. Separately, the risk that the ablation measures fit rather than inductive bias is addressed by the synthetic-manifold benchmark of Appendix~\ref{app:20cycle}.3, which runs the same matched-capacity comparison against off-span targets on a known $T^2$ negative control and a known $S^2$ positive control; the prediction check and its statistics are reported there.
 
 
 \section{Conclusion}
 
-The hyperspherical-harmonic curve replaces the flat $[0,1]^2$ parameter manifold with the Riemann sphere $S^2$ and learns a M\"obius reparameterization $\phi_\theta \in \mathrm{PSL}(2,\mathbb{C})$ of the domain. On the yubiOS software-skill corpus, it wins on the matched-parameter ablation at both dated snapshots (49-item $\delta = +0.977$, 70-item $\delta = +1.342$), with fewer parameters and no error bars. The single-action atom is the smallest unit of the resulting audit pipeline; its only-positive-$\Delta$ invariant propagates linearly to multi-file composition (Theorem~1), as confirmed by $1391$ atom dispatches across the three corpora (\texttt{skills/}, \texttt{docs/}, \texttt{refs/}) in Appendix~\ref{app:multi-corpus} and a $20$-cycle experiment on the $11$-file deep-research corpus in Appendix~\ref{app:20cycle}, showing zero negative $\Delta$ across all of them. The synthetic-manifold benchmark in Appendix~\ref{app:20cycle}.3 now stress-tests the inductive-bias claim with off-span targets: $T^2$ target is in the flat Fourier $K{=}2$ span but not the sphere arm's stereo-lifted span (flat wins $50/50$ seeds, paired $p \ll 0.05$); $S^2$ target is in the SH $L{=}3$ span but not the flat Fourier $K{=}2$ span (sphere wins $50/50$ seeds, paired $p \ll 0.05$). Both predictions of the inductive-bias claim hold. A second-corpus re-run of the ablation itself remains the one remaining open item and would replace the present single-seed point estimates with error bars.
+The hyperspherical-harmonic curve replaces the flat $[0,1]^2$ parameter manifold with the Riemann sphere $S^2$ and learns a M\"obius reparameterization $\phi_\theta \in \mathrm{PSL}(2,\mathbb{C})$ of the domain. On the yubiOS software-skill corpus, it wins on the matched-parameter ablation at both dated snapshots (49-item $\delta = +0.977$, 70-item $\delta = +1.342$), with fewer parameters and no error bars. The single-action atom is the smallest unit of the resulting audit pipeline; its only-positive-$\Delta$ invariant propagates linearly to multi-file composition (Theorem~1) and to the cumulative total across cycles (Corollary~1), as confirmed by $1391$ atom dispatches across the three corpora (\texttt{skills/}, \texttt{docs/}, \texttt{refs/}) in Appendix~\ref{app:multi-corpus} and a $20$-cycle experiment on the $11$-file deep-research corpus in Appendix~\ref{app:20cycle}, showing zero negative $\Delta$ across all of them. The synthetic-manifold benchmark in Appendix~\ref{app:20cycle}.3 stress-tests the inductive-bias claim with off-span targets on both a negative and a positive control; the headline numbers are reported there. A second-corpus re-run of the ablation itself remains the one remaining open item and would replace the present single-seed point estimates with error bars.
 
 
 \appendix
@@ -267,7 +293,7 @@ The hyperspherical-harmonic curve replaces the flat $[0,1]^2$ parameter manifold
 \section{Atom Coverage of 79 Skills (Empirical)}
 \label{app:atom-coverage}
 
-This appendix gives the per-cycle accounting behind the headline atom result in Section~6.3. The $79$-skill corpus (\texttt{skills/} on \texttt{yubi-OS/yubiOS main}, snapshot 2026-08-06) was audited by $474$ atom dispatches --- $79$ files $\times$ $6$ cycles, one dispatch per file per cycle. Of those $474$ dispatches, \textbf{$116$ produced a strictly positive $\Delta$}, \textbf{$358$ produced $\Delta = 0$} (the file was already saturated on all nine primitives, so the atom had no candidate flip), and \textbf{zero produced a negative $\Delta$}. The zero-$\Delta$ majority is the expected shape, not a defect: Lemma~1 guarantees non-negativity, and a saturated file has an empty candidate set, so the arg-min ties at $d_{\mathrm{pre}}$. Cumulative $\Delta$ = $\mathbf{+11.2963}$ (sum of the per-cycle aggregates as published in \texttt{rsi-3-corpus-summary-2026-08-06.json}; the unrounded sum over all $474$ individual dispatches is $+11.2971$).
+This appendix gives the per-cycle accounting behind the headline atom result in Section~\ref{sec:results-atom}. The $79$-skill corpus (\texttt{skills/} on \texttt{yubi-OS/yubiOS main}, snapshot 2026-08-06) was audited by $474$ atom dispatches --- $79$ files $\times$ $6$ cycles, one dispatch per file per cycle. Of those $474$ dispatches, \textbf{$116$ produced a strictly positive $\Delta$}, \textbf{$358$ produced $\Delta = 0$} (the file was already saturated on all nine primitives, so the atom had no candidate flip), and \textbf{zero produced a negative $\Delta$}. The zero-$\Delta$ majority is the expected shape, not a defect: Lemma~1 guarantees non-negativity, and a saturated file has an empty candidate set, so the arg-min ties at $d_{\mathrm{pre}}$. Cumulative $\Delta$ = $\mathbf{+11.2963}$ (sum of the per-cycle aggregates as published in \texttt{rsi-3-corpus-summary-2026-08-06.json}; the unrounded sum over all $474$ individual dispatches is $+11.2971$).
 
 \subsection{Per-cycle trajectory}
 
@@ -327,7 +353,7 @@ The map is unimodal with its maximum at $k = 5$: a file missing five of nine pri
 \section{Multi-Corpus RSI Audit --- \texttt{skills/}, \texttt{docs/}, \texttt{refs/}}
 \label{app:multi-corpus}
 
-The $79$-skill audit reported in Section~6.3 used cycles 10--15 of the \texttt{curve-guided-rsi} self pipeline; cycles 1--9 were the prior phases A--H audit on the $70$-skill corpus. That audit has since been extended from the engineering corpus to the whole repository. This appendix reports the multi-corpus run: the same single-action-atom pipeline, the same 9-D \texttt{internal-big-picture} primitive basis, the same chordal proxy on $S^2$ with $\phi_\theta$ frozen at identity, applied independently to the self-documentation corpus (\texttt{docs/}, $21$ files) and the references corpus (\texttt{refs/}, $113$ files) alongside the engineering corpus (\texttt{skills/}, $79$ files). All three reach corpus-level fixpoint.
+The $79$-skill audit reported in Section~\ref{sec:results-atom} used cycles 10--15 of the \texttt{curve-guided-rsi} self pipeline; cycles 1--9 were the prior phases A--H audit on the $70$-skill corpus. That audit has since been extended from the engineering corpus to the whole repository. This appendix reports the multi-corpus run: the same single-action-atom pipeline, the same 9-D \texttt{internal-big-picture} primitive basis, the same chordal proxy on $S^2$ with $\phi_\theta$ frozen at identity, applied independently to the self-documentation corpus (\texttt{docs/}, $21$ files) and the references corpus (\texttt{refs/}, $113$ files) alongside the engineering corpus (\texttt{skills/}, $79$ files). All three reach corpus-level fixpoint.
 
 \subsection{Headline totals}
 
@@ -349,7 +375,7 @@ Three properties hold identically on all three corpora and are therefore propert
 
 \subsection{Scope of the multi-corpus claim}
 
-The multi-corpus audit strengthens the atom-invariant claim (Lemma~1 and Theorem~1 now hold over $1391$ dispatches on three structurally distinct corpora rather than $474$ on one) but it does \emph{not} strengthen the headline matched-parameter ablation of Section~6.1, which remains a single-seed point estimate on one corpus family. The second-corpus re-run called for in Section~7.2 would have to re-run the \emph{ablation}, not the audit, and has not been done.
+The multi-corpus audit strengthens the atom-invariant claim (Lemma~1 and Theorem~1 now hold over $1391$ dispatches on three structurally distinct corpora rather than $474$ on one) but it does \emph{not} strengthen the headline matched-parameter ablation of Section~\ref{sec:results-ablation}, which remains a single-seed point estimate on one corpus family. The second-corpus re-run called for in Section~\ref{sec:limitations} would have to re-run the \emph{ablation}, not the audit, and has not been done.
 
 \begin{figure}[h]
 \centering
@@ -361,7 +387,7 @@ The multi-corpus audit strengthens the atom-invariant claim (Lemma~1 and Theorem
 \section{The 20-Cycle Deep-Research Corpus and the Synthetic-Manifold Benchmark}
 \label{app:20cycle}
 
-Sections~6 and Appendix~\ref{app:multi-corpus} report corpus-scale audits in which each file receives at most one dispatch per cycle. A complementary experiment runs the atom repeatedly against a small corpus to expose the per-file convergence behaviour that a wide, shallow audit averages away. This appendix reports that experiment and then reports the synthetic-manifold benchmark that stress-tests the inductive-bias claim.
+Section~\ref{sec:results} and Appendix~\ref{app:multi-corpus} report corpus-scale audits in which each file receives at most one dispatch per cycle. A complementary experiment runs the atom repeatedly against a small corpus to expose the per-file convergence behaviour that a wide, shallow audit averages away. This appendix reports that experiment and then reports the synthetic-manifold benchmark that stress-tests the inductive-bias claim.
 
 \subsection{$20$ cycles on $11$ deep-research files}
 
@@ -400,9 +426,9 @@ $S^2$ (sphere) --- positive control (v4 $Y_3^3$-class, $\sigma = 0.01$) & $+0.99
 \end{tabular}
 \end{table}
 
-\textbf{Prediction check (paired $p < 0.05$):} \emph{both predictions of the inductive-bias claim hold under the v4 off-span protocol.} On $T^2$ the periodic flat arm decisively wins ($+1.0000 \pm 0.0000$ vs sphere's $+0.9814 \pm 0.0110$, paired $p = 3.87 \times 10^{-16}$, flat wins $50/50$ seeds) --- the periodic 2-D Fourier basis on raw angles is the natural prior for a periodic target, while the stereographic lift to $S^2$ prevents the sphere arm from wrapping at $\theta = 2\pi$, so the 16 spherical-harmonic functions cannot fit the periodic target perfectly. On $S^2$ the sphere arm decisively wins ($+0.9995 \pm 0.0001$ vs flat's $-0.0825 \pm 0.0840$, paired $p = 2.47 \times 10^{-56}$, sphere wins $50/50$ seeds) --- the sphere arm fits the in-span $Y_3^3$-class target to the noise floor ($\sigma = 0.01$ noise caps $R^2$ at $\approx 0.9995$), while the flat arm's 16-function Fourier basis on (lon, lat) cannot represent $\cos^3(\mathrm{lat}) \cdot \cos(3 \cdot \mathrm{lon})$ above its 16-D truncation subspace (residual mean $R^2 \approx -0.08$). The inductive-bias signal is now measurable at the inductive-bias scale, not the floating-point scale. The synthetic $T^2$ target is the 3-term smooth function $\sin\theta + 0.5\cos\phi + 0.3\sin(\theta+\phi)$, well within the capacity of either basis; a noisier or higher-mode $T^2$ target is the natural next step (Section~7.2). The v3 reported sphere-wins-$S^2$ at 50 seeds with paired $p = 0.0002$ was a paired-t statistic on $\mathrm{np.linalg.solve}$ round-off residue (both arms reached $R^2 = 1.0000$ on the in-span target); v4 fixes this by moving the $S^2$ target out of the flat arm's span. The v1 reported flat-on-$T^2$ at 5 seeds was an artifact of (i) PCA-on-9-bits train/holdout leakage, (ii) a fixed $\lambda = 10^{-3}$ that mis-conditioned the sphere Gram matrix, and (iii) one outlier flat-arm seed at $R^2 = -7.35$ on the $S^2$ test; all three are closed in v2/v3.
+\textbf{Prediction check (paired $p < 0.05$):} \emph{both predictions of the inductive-bias claim hold under the v4 off-span protocol.} On $T^2$ the periodic flat arm decisively wins ($+1.0000 \pm 0.0000$ vs sphere's $+0.9814 \pm 0.0110$, paired $p = 3.87 \times 10^{-16}$, flat wins $50/50$ seeds) --- the periodic 2-D Fourier basis on raw angles is the natural prior for a periodic target, while the stereographic lift to $S^2$ prevents the sphere arm from wrapping at $\theta = 2\pi$, so the 16 spherical-harmonic functions cannot fit the periodic target perfectly. On $S^2$ the sphere arm decisively wins ($+0.9995 \pm 0.0001$ vs flat's $-0.0825 \pm 0.0840$, paired $p = 2.47 \times 10^{-56}$, sphere wins $50/50$ seeds) --- the sphere arm fits the in-span $Y_3^3$-class target to the noise floor ($\sigma = 0.01$ noise caps $R^2$ at $\approx 0.9995$), while the flat arm's 16-function Fourier basis on (lon, lat) cannot represent $\cos^3(\mathrm{lat}) \cdot \cos(3 \cdot \mathrm{lon})$ above its 16-D truncation subspace (residual mean $R^2 \approx -0.08$). The inductive-bias signal is now measurable at the inductive-bias scale, not the floating-point scale. The synthetic $T^2$ target is the 3-term smooth function $\sin\theta + 0.5\cos\phi + 0.3\sin(\theta+\phi)$, well within the capacity of either basis; a noisier or higher-mode $T^2$ target is the natural next step (Section~\ref{sec:limitations}). The v3 reported sphere-wins-$S^2$ at 50 seeds with paired $p = 0.0002$ was a paired-t statistic on $\mathrm{np.linalg.solve}$ round-off residue (both arms reached $R^2 = 1.0000$ on the in-span target); v4 fixes this by moving the $S^2$ target out of the flat arm's span. The v1 reported flat-on-$T^2$ at 5 seeds was an artifact of (i) PCA-on-9-bits train/holdout leakage, (ii) a fixed $\lambda = 10^{-3}$ that mis-conditioned the sphere Gram matrix, and (iii) one outlier flat-arm seed at $R^2 = -7.35$ on the $S^2$ test; all three are closed in v2/v3.
 
-\textbf{Implication:} the synthetic-manifold benchmark demonstrates that the inductive-bias claim holds \emph{when the targets are out-of-span for both bases}. The hyperspherical-harmonic variant wins on real $S^2$-structured corpora \emph{because} $S^2$ is the right manifold for that data, not because of capacity alone --- capacity is matched at 16 functions per arm, and the v4 $S^2$ target is chosen so that the flat arm's 16-function basis genuinely cannot fit it (residual $R^2 \approx -0.08$, not a floating-point artifact). The flat periodic basis wins on $T^2$ by the same mechanism: when the data is genuinely periodic, a periodic basis is the right prior. The benchmark discriminates: matching the basis to the manifold matters, and the right basis is not always the sphere. The remaining open item is a second-corpus re-run of the headline ablation itself (Section~7.2).
+\textbf{Implication:} the synthetic-manifold benchmark demonstrates that the inductive-bias claim holds \emph{when the targets are out-of-span for both bases}. The hyperspherical-harmonic variant wins on real $S^2$-structured corpora \emph{because} $S^2$ is the right manifold for that data, not because of capacity alone --- capacity is matched at 16 functions per arm, and the v4 $S^2$ target is chosen so that the flat arm's 16-function basis genuinely cannot fit it (residual $R^2 \approx -0.08$, not a floating-point artifact). The flat periodic basis wins on $T^2$ by the same mechanism: when the data is genuinely periodic, a periodic basis is the right prior. The benchmark discriminates: matching the basis to the manifold matters, and the right basis is not always the sphere. The remaining open item is a second-corpus re-run of the headline ablation itself (Section~\ref{sec:limitations}).
 
 \begin{figure}[h]
 \centering
@@ -415,13 +441,13 @@ $S^2$ (sphere) --- positive control (v4 $Y_3^3$-class, $\sigma = 0.01$) & $+0.99
 \section{Manifold-Coordinate Benchmark (Rigorous Re-Test)}
 \label{app:manifold-coord}
 
-This appendix complements PR~\#192~v4's primary synthetic-manifold benchmark (Appendix~\ref{app:20cycle}.3, 50 seeds, off-span targets at PR~\#192's basis capacity) with a second test that specifically probes the input-representation inductive bias on PR~\#193's smaller flat $K{=}2$ basis (rank 9 effective). PR~\#192~v4's protocol runs against PR~\#193's flat basis and observes the sphere winning $T^2$ by capacity alone (16 SH functions $>$ 9 flat effective); the v3 re-run here confirms both predictions of the inductive-bias claim under a \emph{partial-in-span} target design that gives the flat arm a realistic fitting advantage on the in-span component.
+This appendix complements the primary synthetic-manifold benchmark (Appendix~\ref{app:20cycle}.3, 50 seeds, off-span targets, capacity-matched at 16 basis functions per arm) with a second test that specifically probes the input-representation inductive bias on the smaller flat $K{=}2$ basis (rank 9 effective). Under the primary off-span protocol, that smaller flat basis loses $T^2$ to the sphere by capacity alone (16 SH functions $>$ 9 flat effective); the re-test reported here confirms both predictions of the inductive-bias claim under a \emph{partial-in-span} target design that gives the flat arm a realistic fitting advantage on the in-span component.
 
 \subsection{Fix A targets (verified by lstsq at $N = 4000$)}
 
 The Fix A design splits the in-span and out-of-span contributions to discriminate the topology signal from the capacity signal:
 \begin{itemize}
-\item \textbf{$T^2$ target: $\sin\theta\cos\phi + 0.5\sin(2\theta)\cos(2\phi)$.} The mode-1 component $\sin\theta\cos\phi$ IS in PR~\#193's flat $K{=}2$ span (lstsq $R^2 = 1.0000$ on this component alone, fitted exactly by the periodic Fourier basis at $K{=}2$). The mode-2 component $\sin(2\theta)\cos(2\phi)$ is OUT of flat $K{=}2$ span (lstsq $R^2 = 0.0019$ on this component alone --- $K{=}2$ has no $\sin(2\theta)\cos(2\phi)$ basis function). On the COMBINED target (1:0.5 mode weighting): flat lstsq $R^2 = 0.8001$, sphere lstsq $R^2 = 0.5775$ --- flat wins $T^2$ at lstsq because the in-span component is dominant and the sphere arm's stereographic lift cannot wrap at $\theta = 2\pi$ (the stereo lift is discontinuous across the seam, so the sphere arm fits the periodic mode-1 component only partially).
+\item \textbf{$T^2$ target: $\sin\theta\cos\phi + 0.5\sin(2\theta)\cos(2\phi)$.} The mode-1 component $\sin\theta\cos\phi$ IS in the smaller flat $K{=}2$ span (lstsq $R^2 = 1.0000$ on this component alone, fitted exactly by the periodic Fourier basis at $K{=}2$). The mode-2 component $\sin(2\theta)\cos(2\phi)$ is OUT of flat $K{=}2$ span (lstsq $R^2 = 0.0019$ on this component alone --- $K{=}2$ has no $\sin(2\theta)\cos(2\phi)$ basis function). On the COMBINED target (1:0.5 mode weighting): flat lstsq $R^2 = 0.8001$, sphere lstsq $R^2 = 0.5775$ --- flat wins $T^2$ at lstsq because the in-span component is dominant and the sphere arm's stereographic lift cannot wrap at $\theta = 2\pi$ (the stereo lift is discontinuous across the seam, so the sphere arm fits the periodic mode-1 component only partially).
 \item \textbf{$S^2$ target: real $Y_3^3 = \sin^3(\mathrm{colatitude})\cos(3\phi)$}, where colatitude $\theta_c = \arccos(z)$ and azimuth $\phi = \mathrm{atan2}(y, x)$. This IS the $Y_3^3$ basis function (in SH $L{=}3$ span, lstsq $R^2 = 1.0000$ exactly). It is NOT in flat periodic Fourier $K{=}2$ span on (lon, lat): $\cos(3\phi)$ requires mode 3 which $K{=}2$ does not have, and $\sin^3(\mathrm{lat})$ is not in the $K{=}2$ tensor-product Fourier span (which contains only $\{1, \sin\mathrm{lat}, \cos\mathrm{lat}, \sin 2\mathrm{lat}, \cos 2\mathrm{lat}\}$ in the lat axis). On the COMBINED target: sphere lstsq $R^2 = 1.0000$, flat lstsq $R^2 = 0.0022$ --- sphere wins $S^2$ at lstsq.
 \end{itemize}
 
@@ -452,23 +478,23 @@ Paired statistics (per-seed $\Delta = \mathrm{sphere} - \mathrm{flat}$):
 \begin{figure}[h]
 \centering
 \includegraphics[width=6.0in]{chart-manifold-coord-2026-08-06-v3.png}
-\caption{\textbf{Figure D.1.} Manifold-coordinate benchmark (v3 Fix A). 10-seed holdout $R^2$, mean $\pm$ std error bars (matching Table~D.1), bars anchored at the $R^2 = 0$ baseline (dashed line). Capacity: sphere arm rank 16 SH vs flat arm rank 9 effective periodic Fourier (7 of 16 raw columns identically zero), per-arm $\lambda$ tuning, no leakage. On $T^2$ the flat arm wins ($+0.779$ vs $+0.457$, paired $p = 5.4 \times 10^{-6}$) --- the in-span mode-1 component gives flat a fitting advantage that the out-of-span mode-2 component cannot overcome (the sphere arm's stereo lift cannot wrap at $\theta = 2\pi$, so mode 1 is only partially fit and mode 2 fails entirely). On $S^2$ the sphere arm wins decisively ($+1.000$ vs $-0.110$, paired $p = 8.1 \times 10^{-13}$) --- the $Y_3^3$ target IS in the SH $L{=}3$ span and NOT in the flat $K{=}2$ span on (lon, lat). The benchmark confirms BOTH predictions of the inductive-bias claim under the partial-in-span design on PR~\#193's smaller flat basis: where the basis matches the manifold, that arm wins.}
+\caption{\textbf{Figure D.1.} Manifold-coordinate benchmark (v3 Fix A). 10-seed holdout $R^2$, mean $\pm$ std error bars (matching Table~D.1), bars anchored at the $R^2 = 0$ baseline (dashed line). Capacity: sphere arm rank 16 SH vs flat arm rank 9 effective periodic Fourier (7 of 16 raw columns identically zero), per-arm $\lambda$ tuning, no leakage. On $T^2$ the flat arm wins ($+0.779$ vs $+0.457$, paired $p = 5.4 \times 10^{-6}$) --- the in-span mode-1 component gives flat a fitting advantage that the out-of-span mode-2 component cannot overcome (the sphere arm's stereo lift cannot wrap at $\theta = 2\pi$, so mode 1 is only partially fit and mode 2 fails entirely). On $S^2$ the sphere arm wins decisively ($+1.000$ vs $-0.110$, paired $p = 8.1 \times 10^{-13}$) --- the $Y_3^3$ target IS in the SH $L{=}3$ span and NOT in the flat $K{=}2$ span on (lon, lat). The benchmark confirms BOTH predictions of the inductive-bias claim under the partial-in-span design on the smaller flat $K{=}2$ basis: where the basis matches the manifold, that arm wins.}
 \label{fig:manifold-coord}
 \end{figure}
 
 \subsection{Interpretation}
 
-Both predictions of the inductive-bias claim hold under the Fix A partial-in-span design on PR~\#193's smaller flat basis. The honest read is that the claim \emph{survives the more rigorous test at both controls, at PR~\#193's smaller basis capacity}. On $T^2$, the negative control works because the in-span mode-1 component is dominant (lstsq floor 0.80) and the sphere arm's stereo lift cannot wrap at $\theta = 2\pi$. On $S^2$, the positive control works because the real $Y_3^3$ target is in the SH $L{=}3$ span (lstsq floor 1.0) and out of the flat $K{=}2$ span on (lon, lat) (lstsq floor 0.002).
+Both predictions of the inductive-bias claim hold under the Fix A partial-in-span design on the smaller flat $K{=}2$ basis. The honest read is that the claim \emph{survives the more rigorous test at both controls, at the smaller basis capacity}. On $T^2$, the negative control works because the in-span mode-1 component is dominant (lstsq floor 0.80) and the sphere arm's stereo lift cannot wrap at $\theta = 2\pi$. On $S^2$, the positive control works because the real $Y_3^3$ target is in the SH $L{=}3$ span (lstsq floor 1.0) and out of the flat $K{=}2$ span on (lon, lat) (lstsq floor 0.002).
 
-\textbf{Capacity-confound context.} PR~\#193's flat basis has rank 9 effective (7 zero columns from $\sin(0\!\cdot\!\theta)=0$, $\sin(0\!\cdot\!\phi)=0$, and the four zero-multiplications in the tensor product). The sphere arm has rank 16 SH. Without the Fix A partial-in-span design --- for example, when PR~\#192~v4's off-span targets are run against PR~\#193's flat basis --- the sphere arm wins $T^2$ by capacity alone (16 SH $>$ 9 flat effective), as observed in the v3 re-run of PR~\#192~v4's protocol on PR~\#193's basis. Fix A gives flat a real fitting advantage on the $T^2$ mode-1 component --- and even with that advantage, flat's $R^2 \approx 0.78$ reflects genuine partial-fit on the 1:0.5 mode weighting (the lstsq floor on the combined target is 0.80, not 1.0). The benchmark discriminates: the in-span mode-1 component is exactly fit (lstsq 1.0), the out-of-span mode-2 component is not (lstsq 0.002), and the measured $R^2 = 0.78$ is the in-span-fit share of the target's $R^2$-weighted signal.
+\textbf{Capacity-confound context.} The flat basis has rank 9 effective (7 zero columns from $\sin(0\!\cdot\!\theta)=0$, $\sin(0\!\cdot\!\phi)=0$, and the four zero-multiplications in the tensor product). The sphere arm has rank 16 SH. Without the Fix A partial-in-span design --- for example, when the primary protocol's off-span targets are run against this smaller flat basis --- the sphere arm wins $T^2$ by capacity alone (16 SH $>$ 9 flat effective), as observed in the corresponding re-run. Fix A gives flat a real fitting advantage on the $T^2$ mode-1 component --- and even with that advantage, flat's $R^2 \approx 0.78$ reflects genuine partial-fit on the 1:0.5 mode weighting (the lstsq floor on the combined target is 0.80, not 1.0). The benchmark discriminates: the in-span mode-1 component is exactly fit (lstsq 1.0), the out-of-span mode-2 component is not (lstsq 0.002), and the measured $R^2 = 0.78$ is the in-span-fit share of the target's $R^2$-weighted signal.
 
-\textbf{Limitations specific to manifold-coord parameterization.} (1) The $T^2$ target has a 0.5-weight mode-2 component that is genuinely out of span for both arms --- the lstsq floor on the combined target is 0.80, not 1.0. A pure mode-1 target would let flat reach 1.0 and would not test extrapolation; a pure mode-2 target would let neither arm reach a meaningful level. The 1:0.5 mode weighting is a deliberate balance. (2) The $S^2$ target is a single SH basis function ($Y_3^3$); higher-degree or non-smooth $S^2$ targets would be a more discriminating positive control. PR~\#192~v4's primary benchmark adds $\sigma = 0.01$ Gaussian noise to the $S^2$ target; PR~\#193's benchmark omits noise (clean basis-fit + topology-only comparison). (3) Both targets are noiseless here; adding noise would test generalization rather than exact interpolation, but the lstsq verification is cleaner without noise. (4) The benchmark uses PR~\#193's smaller flat basis (rank 9 effective); PR~\#192~v4's primary benchmark uses a flat basis with the same $K{=}2$ (rank 9 effective at $K{=}2$) but at PR~\#192~v4's basis protocol. The two PRs converge on the same conclusion --- the inductive-bias claim holds when the target is chosen out-of-span for both bases.
+\textbf{Limitations specific to manifold-coord parameterization.} (1) The $T^2$ target has a 0.5-weight mode-2 component that is genuinely out of span for both arms --- the lstsq floor on the combined target is 0.80, not 1.0. A pure mode-1 target would let flat reach 1.0 and would not test extrapolation; a pure mode-2 target would let neither arm reach a meaningful level. The 1:0.5 mode weighting is a deliberate balance. (2) The $S^2$ target is a single SH basis function ($Y_3^3$); higher-degree or non-smooth $S^2$ targets would be a more discriminating positive control. The primary benchmark adds $\sigma = 0.01$ Gaussian noise to the $S^2$ target; the re-test reported here omits noise (clean basis-fit + topology-only comparison). (3) Both targets are noiseless here; adding noise would test generalization rather than exact interpolation, but the lstsq verification is cleaner without noise. (4) The benchmark uses the smaller flat $K{=}2$ basis (rank 9 effective); the primary benchmark in Appendix~\ref{app:20cycle}.3 uses a flat basis at the same $K{=}2$ (rank 9 effective at $K{=}2$) but under the primary off-span protocol. Both protocols converge on the same conclusion --- the inductive-bias claim holds when the target is chosen out-of-span for both bases.
 
-\textbf{Open-item status update} (Section~\ref{sec:discussion}). PR~\#192~v4's protocol (Appendix~\ref{app:20cycle}.3, 50 seeds, off-span targets at PR~\#192's basis capacity, $\sigma = 0.01$ noise on the $S^2$ target) is the primary test of the inductive-bias claim; this appendix is the second test at PR~\#193's smaller basis capacity under the Fix A partial-in-span design (no noise). Both controls work in both PRs; the remaining open items are a higher-degree $S^2$ positive control and a second-corpus re-run of the ablation itself.
+\textbf{Open-item status update} (Section~\ref{sec:limitations}). The primary protocol in Appendix~\ref{app:20cycle}.3 (50 seeds, off-span targets, capacity-matched at 16 basis functions per arm, $\sigma = 0.01$ noise on the $S^2$ target) is the primary test of the inductive-bias claim; this appendix is the second test at the smaller basis capacity under the Fix A partial-in-span design (no noise). Both controls work under both protocols; the remaining open items are a higher-degree $S^2$ positive control and a second-corpus re-run of the ablation itself.
 
 
 \section{Use Cases}\label{app:use-cases}
-The RSI pipeline produces a family of corpus-scale visualizations committed to \texttt{papers/data/}. The figures below are the operational evidence behind the headline numbers in Sections~5--6.
+The RSI pipeline produces a family of corpus-scale visualizations committed to \texttt{papers/data/}. The figures below are the operational evidence behind the headline numbers in Sections~\ref{sec:dataset}--\ref{sec:results}.
 
 \subsection{Full corpus curve map}\label{app:use-cases:full}
 2D stereographic projection of $S^2$ (see Figure~\ref{fig:use-cases:full}).
@@ -525,17 +551,17 @@ Aligned curves + warp regions (see Figure~\ref{fig:use-cases:drift}).
 \end{figure}
 
 \begin{thebibliography}{9}
-\bibitem{Durastanti(2026)}{durastanti2026} Durastanti, C. (2026). \emph{Spectral Bayesian Regression on the Sphere.} arXiv:2601.20528 [math.ST]. \url{https://arxiv.org/abs/2601.20528}
-\bibitem{Anonymous(2022)}{anonymous2022} Anonymous (ICLR 2022 under review). \emph{Generalized Fourier Features for Coordinate-Based Learning on Manifolds.} OpenReview \texttt{g6UqpVislvH}.
-\bibitem{Rahimi and Recht(2007)}{rahimi2007} Rahimi, A., \& Recht, B. (2007). \emph{Random Features for Large-Scale Kernel Machines.} NeurIPS 2007.
-\bibitem{Tancik et~al.(2020)}{tancik2020} Tancik, M., et al. (2020). \emph{Fourier Features Let Networks Learn High Frequency Functions in Low Dimensional Domains.} NeurIPS 2020.
-\bibitem{Sitzmann et~al.(2020)}{sitzmann2020} Sitzmann, V., Martel, J., Bergman, A., Lindell, D., \& Wetzstein, G. (2020). \emph{Implicit Neural Representations with Periodic Activation Functions.} NeurIPS 2020 (SIREN).
-\bibitem{Mildenhall et~al.(2020)}{mildenhall2020} Mildenhall, B., et al. (2020). \emph{NeRF: Representing Scenes as Neural Fields for View Synthesis.} ECCV 2020.
-\bibitem{Cohen et~al.(2018)}{cohen2018} Cohen, T. S., et al. (2018). \emph{Spherical CNNs.} ICLR 2018.
-\bibitem{Nickel and Kiela(2017)}{nickel2017} Nickel, M. \& Kiela, D. (2017). \emph{Poincar\'e Embeddings for Learning Hierarchical Representations.} NeurIPS 2017.
-\bibitem{Ahlfors(1979)}{ahlfors1979} Ahlfors, L. V. (1979). \emph{Complex Analysis,} 3rd~ed. McGraw-Hill.
-\bibitem{do~Carmo(1976)}{docarmo1976} do Carmo, M. P. (1976). \emph{Differential Geometry of Curves and Surfaces.} Prentice-Hall.
-\bibitem{Smith(2026)}{smith2026} Smith, E. (2026). \emph{Learning in Curved Weight Space: Exponential-Linear Weight Reparameterization for Improved Optimization.} arXiv:2607.09967 [cs.LG].
+\bibitem[Durastanti(2026)]{durastanti2026} Durastanti, C. (2026). \emph{Spectral Bayesian Regression on the Sphere.} arXiv:2601.20528 [math.ST]. \url{https://arxiv.org/abs/2601.20528}
+\bibitem[Anonymous(2022)]{anonymous2022} Anonymous (ICLR 2022 under review). \emph{Generalized Fourier Features for Coordinate-Based Learning on Manifolds.} OpenReview \texttt{g6UqpVislvH}.
+\bibitem[Rahimi and Recht(2007)]{rahimi2007} Rahimi, A., \& Recht, B. (2007). \emph{Random Features for Large-Scale Kernel Machines.} NeurIPS 2007.
+\bibitem[Tancik et~al.(2020)]{tancik2020} Tancik, M., et al. (2020). \emph{Fourier Features Let Networks Learn High Frequency Functions in Low Dimensional Domains.} NeurIPS 2020.
+\bibitem[Sitzmann et~al.(2020)]{sitzmann2020} Sitzmann, V., Martel, J., Bergman, A., Lindell, D., \& Wetzstein, G. (2020). \emph{Implicit Neural Representations with Periodic Activation Functions.} NeurIPS 2020 (SIREN).
+\bibitem[Mildenhall et~al.(2020)]{mildenhall2020} Mildenhall, B., et al. (2020). \emph{NeRF: Representing Scenes as Neural Fields for View Synthesis.} ECCV 2020.
+\bibitem[Cohen et~al.(2018)]{cohen2018} Cohen, T. S., et al. (2018). \emph{Spherical CNNs.} ICLR 2018.
+\bibitem[Nickel and Kiela(2017)]{nickel2017} Nickel, M. \& Kiela, D. (2017). \emph{Poincar\'e Embeddings for Learning Hierarchical Representations.} NeurIPS 2017.
+\bibitem[Ahlfors(1979)]{ahlfors1979} Ahlfors, L. V. (1979). \emph{Complex Analysis,} 3rd~ed. McGraw-Hill.
+\bibitem[do~Carmo(1976)]{docarmo1976} do Carmo, M. P. (1976). \emph{Differential Geometry of Curves and Surfaces.} Prentice-Hall.
+\bibitem[Smith(2026)]{smith2026} Smith, E. (2026). \emph{Learning in Curved Weight Space: Exponential-Linear Weight Reparameterization for Improved Optimization.} arXiv:2607.09967 [cs.LG].
 \end{thebibliography}
 
 \end{document}
