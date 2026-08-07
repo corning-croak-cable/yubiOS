@@ -1,5 +1,997 @@
 [
   {
+    "name": "curve-map-output-384d",
+    "path": "papers/data/curve-map-output-384d",
+    "sha": "d8ac4f7c2b23279adcfb42cbb5249d75ee003354",
+    "size": 0,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-384d?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/tree/main/papers/data/curve-map-output-384d",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/trees/d8ac4f7c2b23279adcfb42cbb5249d75ee003354",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-384d?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/trees/d8ac4f7c2b23279adcfb42cbb5249d75ee003354",
+      "html": "https://github.com/yubi-OS/yubiOS/tree/main/papers/data/curve-map-output-384d"
+    }
+  },
+  {
+    "name": "README-cycle-4-2026-08-07.md",
+    "path": "papers/data/curve-map-output-384d/README-cycle-4-2026-08-07.md",
+    "sha": "e3fafa3a1414ce555de96e6c19e0d03f8bc37ad3",
+    "size": 2730,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-384d/README-cycle-4-2026-08-07.md?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-384d/README-cycle-4-2026-08-07.md",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/e3fafa3a1414ce555de96e6c19e0d03f8bc37ad3",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output-384d/README-cycle-4-2026-08-07.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-384d/README-cycle-4-2026-08-07.md?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/e3fafa3a1414ce555de96e6c19e0d03f8bc37ad3",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-384d/README-cycle-4-2026-08-07.md"
+    }
+  },
+  {
+    "name": "README.md",
+    "path": "papers/data/curve-map-output-384d/README.md",
+    "sha": "65ffb407b4420449ff429bd88dbcf07b592cc336",
+    "size": 7968,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-384d/README.md?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-384d/README.md",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/65ffb407b4420449ff429bd88dbcf07b592cc336",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output-384d/README.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-384d/README.md?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/65ffb407b4420449ff429bd88dbcf07b592cc336",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-384d/README.md"
+    }
+  },
+  {
+    "name": "RSI-priority-list-cycle-4-2026-08-07.md",
+    "path": "papers/data/curve-map-output-384d/RSI-priority-list-cycle-4-2026-08-07.md",
+    "sha": "fbcbe16ccbccf37da54e979a0be59cc334dc7422",
+    "size": 1913,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-384d/RSI-priority-list-cycle-4-2026-08-07.md?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-384d/RSI-priority-list-cycle-4-2026-08-07.md",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/fbcbe16ccbccf37da54e979a0be59cc334dc7422",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output-384d/RSI-priority-list-cycle-4-2026-08-07.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-384d/RSI-priority-list-cycle-4-2026-08-07.md?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/fbcbe16ccbccf37da54e979a0be59cc334dc7422",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-384d/RSI-priority-list-cycle-4-2026-08-07.md"
+    }
+  },
+  {
+    "name": "RSI-priority-list.md",
+    "path": "papers/data/curve-map-output-384d/RSI-priority-list.md",
+    "sha": "e31217a28bee60d8061d1fe9d8522778b3a93b40",
+    "size": 3160,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-384d/RSI-priority-list.md?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-384d/RSI-priority-list.md",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/e31217a28bee60d8061d1fe9d8522778b3a93b40",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output-384d/RSI-priority-list.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-384d/RSI-priority-list.md?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/e31217a28bee60d8061d1fe9d8522778b3a93b40",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-384d/RSI-priority-list.md"
+    }
+  },
+  {
+    "name": "corpus-listing.json",
+    "path": "papers/data/curve-map-output-384d/corpus-listing.json",
+    "sha": "ee3864c1d4a3974e5ccde8166df201d5c9f9d5e4",
+    "size": 92795,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-384d/corpus-listing.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-384d/corpus-listing.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/ee3864c1d4a3974e5ccde8166df201d5c9f9d5e4",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output-384d/corpus-listing.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-384d/corpus-listing.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/ee3864c1d4a3974e5ccde8166df201d5c9f9d5e4",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-384d/corpus-listing.json"
+    }
+  },
+  {
+    "name": "curve-map.json",
+    "path": "papers/data/curve-map-output-384d/curve-map.json",
+    "sha": "4c5724336fa85945f680bc3987c9ea239f1d6e1a",
+    "size": 29036,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-384d/curve-map.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-384d/curve-map.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/4c5724336fa85945f680bc3987c9ea239f1d6e1a",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output-384d/curve-map.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-384d/curve-map.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/4c5724336fa85945f680bc3987c9ea239f1d6e1a",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-384d/curve-map.json"
+    }
+  },
+  {
+    "name": "curve-map.png",
+    "path": "papers/data/curve-map-output-384d/curve-map.png",
+    "sha": "c020e4cbba0a6f0281e01146a439e049b3dbfc3e",
+    "size": 260623,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-384d/curve-map.png?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-384d/curve-map.png",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/c020e4cbba0a6f0281e01146a439e049b3dbfc3e",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output-384d/curve-map.png",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-384d/curve-map.png?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/c020e4cbba0a6f0281e01146a439e049b3dbfc3e",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-384d/curve-map.png"
+    }
+  },
+  {
+    "name": "cycle-4-fit-curve-map-2026-08-07.json",
+    "path": "papers/data/curve-map-output-384d/cycle-4-fit-curve-map-2026-08-07.json",
+    "sha": "c94384a5de082e1389065212bbfb293759f32435",
+    "size": 121843,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-384d/cycle-4-fit-curve-map-2026-08-07.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-384d/cycle-4-fit-curve-map-2026-08-07.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/c94384a5de082e1389065212bbfb293759f32435",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output-384d/cycle-4-fit-curve-map-2026-08-07.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-384d/cycle-4-fit-curve-map-2026-08-07.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/c94384a5de082e1389065212bbfb293759f32435",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-384d/cycle-4-fit-curve-map-2026-08-07.json"
+    }
+  },
+  {
+    "name": "cycle-4-fit-curve-map-2026-08-07.png",
+    "path": "papers/data/curve-map-output-384d/cycle-4-fit-curve-map-2026-08-07.png",
+    "sha": "2ff3b0b7d8aa37d77fb8393426053b601f3a11aa",
+    "size": 262531,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-384d/cycle-4-fit-curve-map-2026-08-07.png?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-384d/cycle-4-fit-curve-map-2026-08-07.png",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/2ff3b0b7d8aa37d77fb8393426053b601f3a11aa",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output-384d/cycle-4-fit-curve-map-2026-08-07.png",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-384d/cycle-4-fit-curve-map-2026-08-07.png?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/2ff3b0b7d8aa37d77fb8393426053b601f3a11aa",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-384d/cycle-4-fit-curve-map-2026-08-07.png"
+    }
+  },
+  {
+    "name": "curve-map-output-multi-corpus",
+    "path": "papers/data/curve-map-output-multi-corpus",
+    "sha": "51e5529ca961dc26eb0857841d41d56559dcd6a0",
+    "size": 0,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-multi-corpus?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/tree/main/papers/data/curve-map-output-multi-corpus",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/trees/51e5529ca961dc26eb0857841d41d56559dcd6a0",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-multi-corpus?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/trees/51e5529ca961dc26eb0857841d41d56559dcd6a0",
+      "html": "https://github.com/yubi-OS/yubiOS/tree/main/papers/data/curve-map-output-multi-corpus"
+    }
+  },
+  {
+    "name": "README.md",
+    "path": "papers/data/curve-map-output-multi-corpus/README.md",
+    "sha": "b4f98dd0e8ef214a7b333bc01e57f7d8972226c8",
+    "size": 6341,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-multi-corpus/README.md?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-multi-corpus/README.md",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/b4f98dd0e8ef214a7b333bc01e57f7d8972226c8",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output-multi-corpus/README.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-multi-corpus/README.md?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/b4f98dd0e8ef214a7b333bc01e57f7d8972226c8",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-multi-corpus/README.md"
+    }
+  },
+  {
+    "name": "RSI-priority-docs.md",
+    "path": "papers/data/curve-map-output-multi-corpus/RSI-priority-docs.md",
+    "sha": "08d73c6f1249626fc54e4b348b9b989420777ef8",
+    "size": 3190,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-multi-corpus/RSI-priority-docs.md?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-multi-corpus/RSI-priority-docs.md",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/08d73c6f1249626fc54e4b348b9b989420777ef8",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output-multi-corpus/RSI-priority-docs.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-multi-corpus/RSI-priority-docs.md?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/08d73c6f1249626fc54e4b348b9b989420777ef8",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-multi-corpus/RSI-priority-docs.md"
+    }
+  },
+  {
+    "name": "RSI-priority-refs.md",
+    "path": "papers/data/curve-map-output-multi-corpus/RSI-priority-refs.md",
+    "sha": "489c9320719ab9c6d72796d2c077132c1cbcb4f3",
+    "size": 4050,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-multi-corpus/RSI-priority-refs.md?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-multi-corpus/RSI-priority-refs.md",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/489c9320719ab9c6d72796d2c077132c1cbcb4f3",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output-multi-corpus/RSI-priority-refs.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-multi-corpus/RSI-priority-refs.md?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/489c9320719ab9c6d72796d2c077132c1cbcb4f3",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-multi-corpus/RSI-priority-refs.md"
+    }
+  },
+  {
+    "name": "RSI-priority-skills.md",
+    "path": "papers/data/curve-map-output-multi-corpus/RSI-priority-skills.md",
+    "sha": "7dc4beec50f32678b7b68b6e64f37cf5f28ffdde",
+    "size": 3544,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-multi-corpus/RSI-priority-skills.md?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-multi-corpus/RSI-priority-skills.md",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/7dc4beec50f32678b7b68b6e64f37cf5f28ffdde",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output-multi-corpus/RSI-priority-skills.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-multi-corpus/RSI-priority-skills.md?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/7dc4beec50f32678b7b68b6e64f37cf5f28ffdde",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-multi-corpus/RSI-priority-skills.md"
+    }
+  },
+  {
+    "name": "curve-map-docs.json",
+    "path": "papers/data/curve-map-output-multi-corpus/curve-map-docs.json",
+    "sha": "7eeb9ea50ae0f5097c2a16431b2ec07a129376cd",
+    "size": 4951,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-multi-corpus/curve-map-docs.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-multi-corpus/curve-map-docs.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/7eeb9ea50ae0f5097c2a16431b2ec07a129376cd",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output-multi-corpus/curve-map-docs.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-multi-corpus/curve-map-docs.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/7eeb9ea50ae0f5097c2a16431b2ec07a129376cd",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-multi-corpus/curve-map-docs.json"
+    }
+  },
+  {
+    "name": "curve-map-docs.png",
+    "path": "papers/data/curve-map-output-multi-corpus/curve-map-docs.png",
+    "sha": "e1b3fd80a1c7ef1489b7d5b360b4de125ba193f0",
+    "size": 245010,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-multi-corpus/curve-map-docs.png?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-multi-corpus/curve-map-docs.png",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/e1b3fd80a1c7ef1489b7d5b360b4de125ba193f0",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output-multi-corpus/curve-map-docs.png",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-multi-corpus/curve-map-docs.png?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/e1b3fd80a1c7ef1489b7d5b360b4de125ba193f0",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-multi-corpus/curve-map-docs.png"
+    }
+  },
+  {
+    "name": "curve-map-refs.json",
+    "path": "papers/data/curve-map-output-multi-corpus/curve-map-refs.json",
+    "sha": "54f6e6e46f65a3061c4f0de1fbe2ecd869e5899e",
+    "size": 6622,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-multi-corpus/curve-map-refs.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-multi-corpus/curve-map-refs.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/54f6e6e46f65a3061c4f0de1fbe2ecd869e5899e",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output-multi-corpus/curve-map-refs.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-multi-corpus/curve-map-refs.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/54f6e6e46f65a3061c4f0de1fbe2ecd869e5899e",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-multi-corpus/curve-map-refs.json"
+    }
+  },
+  {
+    "name": "curve-map-refs.png",
+    "path": "papers/data/curve-map-output-multi-corpus/curve-map-refs.png",
+    "sha": "4f00e200dc6c679a6e1f042ada191153d9fe8758",
+    "size": 196005,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-multi-corpus/curve-map-refs.png?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-multi-corpus/curve-map-refs.png",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/4f00e200dc6c679a6e1f042ada191153d9fe8758",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output-multi-corpus/curve-map-refs.png",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-multi-corpus/curve-map-refs.png?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/4f00e200dc6c679a6e1f042ada191153d9fe8758",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-multi-corpus/curve-map-refs.png"
+    }
+  },
+  {
+    "name": "curve-map-skills.json",
+    "path": "papers/data/curve-map-output-multi-corpus/curve-map-skills.json",
+    "sha": "155fa10a00df2c04b8caaa0daaabbce458b2c22f",
+    "size": 24453,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-multi-corpus/curve-map-skills.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-multi-corpus/curve-map-skills.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/155fa10a00df2c04b8caaa0daaabbce458b2c22f",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output-multi-corpus/curve-map-skills.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-multi-corpus/curve-map-skills.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/155fa10a00df2c04b8caaa0daaabbce458b2c22f",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-multi-corpus/curve-map-skills.json"
+    }
+  },
+  {
+    "name": "curve-map-skills.png",
+    "path": "papers/data/curve-map-output-multi-corpus/curve-map-skills.png",
+    "sha": "204828ede92f5757b646b37f4a1d310975189a48",
+    "size": 229895,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-multi-corpus/curve-map-skills.png?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-multi-corpus/curve-map-skills.png",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/204828ede92f5757b646b37f4a1d310975189a48",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output-multi-corpus/curve-map-skills.png",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output-multi-corpus/curve-map-skills.png?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/204828ede92f5757b646b37f4a1d310975189a48",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output-multi-corpus/curve-map-skills.png"
+    }
+  },
+  {
+    "name": "curve-map-output",
+    "path": "papers/data/curve-map-output",
+    "sha": "df61806f943f5909becf80398e0ce0bfea13837e",
+    "size": 0,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/tree/main/papers/data/curve-map-output",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/trees/df61806f943f5909becf80398e0ce0bfea13837e",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/trees/df61806f943f5909becf80398e0ce0bfea13837e",
+      "html": "https://github.com/yubi-OS/yubiOS/tree/main/papers/data/curve-map-output"
+    }
+  },
+  {
+    "name": "README.md",
+    "path": "papers/data/curve-map-output/README.md",
+    "sha": "e9c43ea6798ccdb59996eff4d204179c179f7b64",
+    "size": 5489,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output/README.md?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output/README.md",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/e9c43ea6798ccdb59996eff4d204179c179f7b64",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output/README.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output/README.md?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/e9c43ea6798ccdb59996eff4d204179c179f7b64",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output/README.md"
+    }
+  },
+  {
+    "name": "RSI-priority-list.md",
+    "path": "papers/data/curve-map-output/RSI-priority-list.md",
+    "sha": "4a45d182a7589cbb2a626caf7c30f0060bf582d8",
+    "size": 2611,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output/RSI-priority-list.md?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output/RSI-priority-list.md",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/4a45d182a7589cbb2a626caf7c30f0060bf582d8",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output/RSI-priority-list.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output/RSI-priority-list.md?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/4a45d182a7589cbb2a626caf7c30f0060bf582d8",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output/RSI-priority-list.md"
+    }
+  },
+  {
+    "name": "corpus-listing.json",
+    "path": "papers/data/curve-map-output/corpus-listing.json",
+    "sha": "a82e86d5de431075c7392c06736e6b4054ae96f2",
+    "size": 2237,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output/corpus-listing.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output/corpus-listing.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/a82e86d5de431075c7392c06736e6b4054ae96f2",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output/corpus-listing.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output/corpus-listing.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/a82e86d5de431075c7392c06736e6b4054ae96f2",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output/corpus-listing.json"
+    }
+  },
+  {
+    "name": "curve-map.json",
+    "path": "papers/data/curve-map-output/curve-map.json",
+    "sha": "29b2febfe861b0904e0ac39dc90cfafa5f216209",
+    "size": 26329,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output/curve-map.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output/curve-map.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/29b2febfe861b0904e0ac39dc90cfafa5f216209",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output/curve-map.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output/curve-map.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/29b2febfe861b0904e0ac39dc90cfafa5f216209",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output/curve-map.json"
+    }
+  },
+  {
+    "name": "curve-map.png",
+    "path": "papers/data/curve-map-output/curve-map.png",
+    "sha": "045449fd4baa977880dd7a6f8544f7ee81e1981b",
+    "size": 254901,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output/curve-map.png?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output/curve-map.png",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/045449fd4baa977880dd7a6f8544f7ee81e1981b",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output/curve-map.png",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output/curve-map.png?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/045449fd4baa977880dd7a6f8544f7ee81e1981b",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output/curve-map.png"
+    }
+  },
+  {
+    "name": "drift-output",
+    "path": "papers/data/drift-output",
+    "sha": "b3d899c32188a71b8d92ee13f5d72dfa286eb69c",
+    "size": 0,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/drift-output?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/tree/main/papers/data/drift-output",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/trees/b3d899c32188a71b8d92ee13f5d72dfa286eb69c",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/drift-output?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/trees/b3d899c32188a71b8d92ee13f5d72dfa286eb69c",
+      "html": "https://github.com/yubi-OS/yubiOS/tree/main/papers/data/drift-output"
+    }
+  },
+  {
+    "name": "README.md",
+    "path": "papers/data/drift-output/README.md",
+    "sha": "64b2d5e2fba6d6967bdc4044e1ca8b8ef6ef7cc5",
+    "size": 5857,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/drift-output/README.md?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/drift-output/README.md",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/64b2d5e2fba6d6967bdc4044e1ca8b8ef6ef7cc5",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/drift-output/README.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/drift-output/README.md?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/64b2d5e2fba6d6967bdc4044e1ca8b8ef6ef7cc5",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/drift-output/README.md"
+    }
+  },
+  {
+    "name": "aligned-curves.png",
+    "path": "papers/data/drift-output/aligned-curves.png",
+    "sha": "2bf3891f982855b4be9cbe988618e189d1f2acc7",
+    "size": 36612,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/drift-output/aligned-curves.png?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/drift-output/aligned-curves.png",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/2bf3891f982855b4be9cbe988618e189d1f2acc7",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/drift-output/aligned-curves.png",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/drift-output/aligned-curves.png?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/2bf3891f982855b4be9cbe988618e189d1f2acc7",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/drift-output/aligned-curves.png"
+    }
+  },
+  {
+    "name": "drift-priority-list.md",
+    "path": "papers/data/drift-output/drift-priority-list.md",
+    "sha": "6175ba1bfe4e6677828a847fdfc6075eca4d4d97",
+    "size": 9684,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/drift-output/drift-priority-list.md?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/drift-output/drift-priority-list.md",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/6175ba1bfe4e6677828a847fdfc6075eca4d4d97",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/drift-output/drift-priority-list.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/drift-output/drift-priority-list.md?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/6175ba1bfe4e6677828a847fdfc6075eca4d4d97",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/drift-output/drift-priority-list.md"
+    }
+  },
+  {
+    "name": "mobius-transform.json",
+    "path": "papers/data/drift-output/mobius-transform.json",
+    "sha": "063057430ae086ca8925b7615ee9606d02ee2829",
+    "size": 872,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/drift-output/mobius-transform.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/drift-output/mobius-transform.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/063057430ae086ca8925b7615ee9606d02ee2829",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/drift-output/mobius-transform.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/drift-output/mobius-transform.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/063057430ae086ca8925b7615ee9606d02ee2829",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/drift-output/mobius-transform.json"
+    }
+  },
+  {
+    "name": "papers-corpus-listing.json",
+    "path": "papers/data/drift-output/papers-corpus-listing.json",
+    "sha": "bf1b377dd39a2e59ca0b5e5e93e1c0158bbbd0a3",
+    "size": 2109,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/drift-output/papers-corpus-listing.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/drift-output/papers-corpus-listing.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/bf1b377dd39a2e59ca0b5e5e93e1c0158bbbd0a3",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/drift-output/papers-corpus-listing.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/drift-output/papers-corpus-listing.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/bf1b377dd39a2e59ca0b5e5e93e1c0158bbbd0a3",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/drift-output/papers-corpus-listing.json"
+    }
+  },
+  {
+    "name": "self-corpus-listing.json",
+    "path": "papers/data/drift-output/self-corpus-listing.json",
+    "sha": "cd56eaffa894f2cb66da9dbcf9ece0e8e13ae5b3",
+    "size": 1975,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/drift-output/self-corpus-listing.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/drift-output/self-corpus-listing.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/cd56eaffa894f2cb66da9dbcf9ece0e8e13ae5b3",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/drift-output/self-corpus-listing.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/drift-output/self-corpus-listing.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/cd56eaffa894f2cb66da9dbcf9ece0e8e13ae5b3",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/drift-output/self-corpus-listing.json"
+    }
+  },
+  {
+    "name": "warp-by-region.csv",
+    "path": "papers/data/drift-output/warp-by-region.csv",
+    "sha": "636588eab56cd0f5105d9fc11a5ee433b9dc413a",
+    "size": 2019,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/drift-output/warp-by-region.csv?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/drift-output/warp-by-region.csv",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/636588eab56cd0f5105d9fc11a5ee433b9dc413a",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/drift-output/warp-by-region.csv",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/drift-output/warp-by-region.csv?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/636588eab56cd0f5105d9fc11a5ee433b9dc413a",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/drift-output/warp-by-region.csv"
+    }
+  },
+  {
+    "name": "fonts",
+    "path": "papers/data/fonts",
+    "sha": "ec9a409f690f1787e7c739e724f479201b6d3006",
+    "size": 0,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/fonts?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/tree/main/papers/data/fonts",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/trees/ec9a409f690f1787e7c739e724f479201b6d3006",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/fonts?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/trees/ec9a409f690f1787e7c739e724f479201b6d3006",
+      "html": "https://github.com/yubi-OS/yubiOS/tree/main/papers/data/fonts"
+    }
+  },
+  {
+    "name": "DejaVuSans.ttf",
+    "path": "papers/data/fonts/DejaVuSans.ttf",
+    "sha": "5267218852f631928716a8005d7bf4b492aaf83d",
+    "size": 756072,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/fonts/DejaVuSans.ttf?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/fonts/DejaVuSans.ttf",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/5267218852f631928716a8005d7bf4b492aaf83d",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/fonts/DejaVuSans.ttf",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/fonts/DejaVuSans.ttf?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/5267218852f631928716a8005d7bf4b492aaf83d",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/fonts/DejaVuSans.ttf"
+    }
+  },
+  {
+    "name": "DejaVuSerif.ttf",
+    "path": "papers/data/fonts/DejaVuSerif.ttf",
+    "sha": "39dd3946d3d06442d8d25556e7c1c37663893688",
+    "size": 379740,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/fonts/DejaVuSerif.ttf?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/fonts/DejaVuSerif.ttf",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/39dd3946d3d06442d8d25556e7c1c37663893688",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/fonts/DejaVuSerif.ttf",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/fonts/DejaVuSerif.ttf?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/39dd3946d3d06442d8d25556e7c1c37663893688",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/fonts/DejaVuSerif.ttf"
+    }
+  },
+  {
+    "name": "manifold-coord-benchmark-2026-08-06",
+    "path": "papers/data/manifold-coord-benchmark-2026-08-06",
+    "sha": "5e1064f62f668fbee7333fb3648a4e965c3ed69f",
+    "size": 0,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/manifold-coord-benchmark-2026-08-06?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/tree/main/papers/data/manifold-coord-benchmark-2026-08-06",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/trees/5e1064f62f668fbee7333fb3648a4e965c3ed69f",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/manifold-coord-benchmark-2026-08-06?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/trees/5e1064f62f668fbee7333fb3648a4e965c3ed69f",
+      "html": "https://github.com/yubi-OS/yubiOS/tree/main/papers/data/manifold-coord-benchmark-2026-08-06"
+    }
+  },
+  {
+    "name": "manifold-coord-benchmark-results.json",
+    "path": "papers/data/manifold-coord-benchmark-2026-08-06/manifold-coord-benchmark-results.json",
+    "sha": "86e5bcab98d89df90f4748993130b913185c0379",
+    "size": 5029,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/manifold-coord-benchmark-2026-08-06/manifold-coord-benchmark-results.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/manifold-coord-benchmark-2026-08-06/manifold-coord-benchmark-results.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/86e5bcab98d89df90f4748993130b913185c0379",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/manifold-coord-benchmark-2026-08-06/manifold-coord-benchmark-results.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/manifold-coord-benchmark-2026-08-06/manifold-coord-benchmark-results.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/86e5bcab98d89df90f4748993130b913185c0379",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/manifold-coord-benchmark-2026-08-06/manifold-coord-benchmark-results.json"
+    }
+  },
+  {
+    "name": "mode_d",
+    "path": "papers/data/mode_d",
+    "sha": "a78313c3da4976e67eb6c2dd05557dbc13e674e2",
+    "size": 0,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/mode_d?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/tree/main/papers/data/mode_d",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/trees/a78313c3da4976e67eb6c2dd05557dbc13e674e2",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/mode_d?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/trees/a78313c3da4976e67eb6c2dd05557dbc13e674e2",
+      "html": "https://github.com/yubi-OS/yubiOS/tree/main/papers/data/mode_d"
+    }
+  },
+  {
+    "name": "mode-d-batches-combined-2026-08-07.md",
+    "path": "papers/data/mode_d/mode-d-batches-combined-2026-08-07.md",
+    "sha": "3ea33b3331e8b87eb8f3c680ece2e690749e5dbc",
+    "size": 16987,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/mode_d/mode-d-batches-combined-2026-08-07.md?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/mode_d/mode-d-batches-combined-2026-08-07.md",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/3ea33b3331e8b87eb8f3c680ece2e690749e5dbc",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/mode_d/mode-d-batches-combined-2026-08-07.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/mode_d/mode-d-batches-combined-2026-08-07.md?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/3ea33b3331e8b87eb8f3c680ece2e690749e5dbc",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/mode_d/mode-d-batches-combined-2026-08-07.md"
+    }
+  },
+  {
+    "name": "nd-viewer-output",
+    "path": "papers/data/nd-viewer-output",
+    "sha": "f6e0e8c75d9a439e3cb15deed024736cc1684f32",
+    "size": 0,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/nd-viewer-output?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/tree/main/papers/data/nd-viewer-output",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/trees/f6e0e8c75d9a439e3cb15deed024736cc1684f32",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/nd-viewer-output?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/trees/f6e0e8c75d9a439e3cb15deed024736cc1684f32",
+      "html": "https://github.com/yubi-OS/yubiOS/tree/main/papers/data/nd-viewer-output"
+    }
+  },
+  {
+    "name": "README.md",
+    "path": "papers/data/nd-viewer-output/README.md",
+    "sha": "8a9769deb93a84dad994e6e82b19571af53315ab",
+    "size": 7107,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/nd-viewer-output/README.md?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/nd-viewer-output/README.md",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/8a9769deb93a84dad994e6e82b19571af53315ab",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/nd-viewer-output/README.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/nd-viewer-output/README.md?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/8a9769deb93a84dad994e6e82b19571af53315ab",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/nd-viewer-output/README.md"
+    }
+  },
+  {
+    "name": "corpus-listing.json",
+    "path": "papers/data/nd-viewer-output/corpus-listing.json",
+    "sha": "8b6ec3789f36b35ce4a61edc35d4b0ff7d41dc14",
+    "size": 2238,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/nd-viewer-output/corpus-listing.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/nd-viewer-output/corpus-listing.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/8b6ec3789f36b35ce4a61edc35d4b0ff7d41dc14",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/nd-viewer-output/corpus-listing.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/nd-viewer-output/corpus-listing.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/8b6ec3789f36b35ce4a61edc35d4b0ff7d41dc14",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/nd-viewer-output/corpus-listing.json"
+    }
+  },
+  {
+    "name": "nd-axis-correlation.csv",
+    "path": "papers/data/nd-viewer-output/nd-axis-correlation.csv",
+    "sha": "288a55f50fc971d500a3d09befe6b501b9cab174",
+    "size": 4276,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/nd-viewer-output/nd-axis-correlation.csv?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/nd-viewer-output/nd-axis-correlation.csv",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/288a55f50fc971d500a3d09befe6b501b9cab174",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/nd-viewer-output/nd-axis-correlation.csv",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/nd-viewer-output/nd-axis-correlation.csv?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/288a55f50fc971d500a3d09befe6b501b9cab174",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/nd-viewer-output/nd-axis-correlation.csv"
+    }
+  },
+  {
+    "name": "nd-pca-static.png",
+    "path": "papers/data/nd-viewer-output/nd-pca-static.png",
+    "sha": "d29fa9ced2c2d97f13dca06f0ccfd48cc55c1140",
+    "size": 50060,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/nd-viewer-output/nd-pca-static.png?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/nd-viewer-output/nd-pca-static.png",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/d29fa9ced2c2d97f13dca06f0ccfd48cc55c1140",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/nd-viewer-output/nd-pca-static.png",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/nd-viewer-output/nd-pca-static.png?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/d29fa9ced2c2d97f13dca06f0ccfd48cc55c1140",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/nd-viewer-output/nd-pca-static.png"
+    }
+  },
+  {
+    "name": "nd-vectors.json",
+    "path": "papers/data/nd-viewer-output/nd-vectors.json",
+    "sha": "6af5f40cc0ffb4c722d91aea720ec60f02d82a27",
+    "size": 427695,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/nd-viewer-output/nd-vectors.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/nd-viewer-output/nd-vectors.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/6af5f40cc0ffb4c722d91aea720ec60f02d82a27",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/nd-viewer-output/nd-vectors.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/nd-viewer-output/nd-vectors.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/6af5f40cc0ffb4c722d91aea720ec60f02d82a27",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/nd-viewer-output/nd-vectors.json"
+    }
+  },
+  {
+    "name": "nd-viewer.html",
+    "path": "papers/data/nd-viewer-output/nd-viewer.html",
+    "sha": "8a0c14f46ec48803c022f99203f65a1c770df108",
+    "size": 391343,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/nd-viewer-output/nd-viewer.html?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/nd-viewer-output/nd-viewer.html",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/8a0c14f46ec48803c022f99203f65a1c770df108",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/nd-viewer-output/nd-viewer.html",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/nd-viewer-output/nd-viewer.html?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/8a0c14f46ec48803c022f99203f65a1c770df108",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/nd-viewer-output/nd-viewer.html"
+    }
+  },
+  {
+    "name": "radar-output",
+    "path": "papers/data/radar-output",
+    "sha": "c404febe253b622a9fd304015199627433d0b2f3",
+    "size": 0,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/radar-output?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/tree/main/papers/data/radar-output",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/trees/c404febe253b622a9fd304015199627433d0b2f3",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/radar-output?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/trees/c404febe253b622a9fd304015199627433d0b2f3",
+      "html": "https://github.com/yubi-OS/yubiOS/tree/main/papers/data/radar-output"
+    }
+  },
+  {
+    "name": "README.md",
+    "path": "papers/data/radar-output/README.md",
+    "sha": "da22a1a9ff404508909fca8b1de3905b69da1e45",
+    "size": 5565,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/radar-output/README.md?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/radar-output/README.md",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/da22a1a9ff404508909fca8b1de3905b69da1e45",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/radar-output/README.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/radar-output/README.md?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/da22a1a9ff404508909fca8b1de3905b69da1e45",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/radar-output/README.md"
+    }
+  },
+  {
+    "name": "corpus-listing.json",
+    "path": "papers/data/radar-output/corpus-listing.json",
+    "sha": "d7513ee432277bcdba91a7b560f4c08ebec3cbb2",
+    "size": 2046,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/radar-output/corpus-listing.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/radar-output/corpus-listing.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/d7513ee432277bcdba91a7b560f4c08ebec3cbb2",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/radar-output/corpus-listing.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/radar-output/corpus-listing.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/d7513ee432277bcdba91a7b560f4c08ebec3cbb2",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/radar-output/corpus-listing.json"
+    }
+  },
+  {
+    "name": "radar-grid.png",
+    "path": "papers/data/radar-output/radar-grid.png",
+    "sha": "1650a2e70194cfcbace882c944bfcb0fd03977a4",
+    "size": 181169,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/radar-output/radar-grid.png?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/radar-output/radar-grid.png",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/1650a2e70194cfcbace882c944bfcb0fd03977a4",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/radar-output/radar-grid.png",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/radar-output/radar-grid.png?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/1650a2e70194cfcbace882c944bfcb0fd03977a4",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/radar-output/radar-grid.png"
+    }
+  },
+  {
+    "name": "radar-heatmap.png",
+    "path": "papers/data/radar-output/radar-heatmap.png",
+    "sha": "e8128953af25af6b7b7af73df20be055e4beb624",
+    "size": 176406,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/radar-output/radar-heatmap.png?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/radar-output/radar-heatmap.png",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/e8128953af25af6b7b7af73df20be055e4beb624",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/radar-output/radar-heatmap.png",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/radar-output/radar-heatmap.png?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/e8128953af25af6b7b7af73df20be055e4beb624",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/radar-output/radar-heatmap.png"
+    }
+  },
+  {
+    "name": "radar-scores.json",
+    "path": "papers/data/radar-output/radar-scores.json",
+    "sha": "c99383e88fd063adcaa95bb27d32a67b2bd4969f",
+    "size": 17191,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/radar-output/radar-scores.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/radar-output/radar-scores.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/c99383e88fd063adcaa95bb27d32a67b2bd4969f",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/radar-output/radar-scores.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/radar-output/radar-scores.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/c99383e88fd063adcaa95bb27d32a67b2bd4969f",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/radar-output/radar-scores.json"
+    }
+  },
+  {
+    "name": "radar-viewer.html",
+    "path": "papers/data/radar-output/radar-viewer.html",
+    "sha": "32aec7efad7322e5f1fa163024e232a604144686",
+    "size": 15755,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/radar-output/radar-viewer.html?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/radar-output/radar-viewer.html",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/32aec7efad7322e5f1fa163024e232a604144686",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/radar-output/radar-viewer.html",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/radar-output/radar-viewer.html?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/32aec7efad7322e5f1fa163024e232a604144686",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/radar-output/radar-viewer.html"
+    }
+  },
+  {
+    "name": "repo-history-skill-cycle-1-2026-08-07.json",
+    "path": "papers/data/repo-history-skill-cycle-1-2026-08-07.json",
+    "sha": "943cd94c69af6e2abe8901b2c6a6eb7bc94ef4ee",
+    "size": 1428,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/repo-history-skill-cycle-1-2026-08-07.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/repo-history-skill-cycle-1-2026-08-07.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/943cd94c69af6e2abe8901b2c6a6eb7bc94ef4ee",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/repo-history-skill-cycle-1-2026-08-07.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/repo-history-skill-cycle-1-2026-08-07.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/943cd94c69af6e2abe8901b2c6a6eb7bc94ef4ee",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/repo-history-skill-cycle-1-2026-08-07.json"
+    }
+  },
+  {
+    "name": "repo-history-skill-cycle-2-2026-08-07.json",
+    "path": "papers/data/repo-history-skill-cycle-2-2026-08-07.json",
+    "sha": "9abfcacf067c68ac727ca6ffb0b92981d155b189",
+    "size": 1720,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/repo-history-skill-cycle-2-2026-08-07.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/repo-history-skill-cycle-2-2026-08-07.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/9abfcacf067c68ac727ca6ffb0b92981d155b189",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/repo-history-skill-cycle-2-2026-08-07.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/repo-history-skill-cycle-2-2026-08-07.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/9abfcacf067c68ac727ca6ffb0b92981d155b189",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/repo-history-skill-cycle-2-2026-08-07.json"
+    }
+  },
+  {
+    "name": "repo-history-skill-cycle-3-2026-08-07.json",
+    "path": "papers/data/repo-history-skill-cycle-3-2026-08-07.json",
+    "sha": "67c734adf83daa72b32dcd435023e93ef9517e6e",
+    "size": 9800,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/repo-history-skill-cycle-3-2026-08-07.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/repo-history-skill-cycle-3-2026-08-07.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/67c734adf83daa72b32dcd435023e93ef9517e6e",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/repo-history-skill-cycle-3-2026-08-07.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/repo-history-skill-cycle-3-2026-08-07.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/67c734adf83daa72b32dcd435023e93ef9517e6e",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/repo-history-skill-cycle-3-2026-08-07.json"
+    }
+  },
+  {
+    "name": "repo-history-skill-cycle-4-archive-2026-08-07.json",
+    "path": "papers/data/repo-history-skill-cycle-4-archive-2026-08-07.json",
+    "sha": "beec015d52c91f33af42387c930b38051ac7f8f3",
+    "size": 167897,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/repo-history-skill-cycle-4-archive-2026-08-07.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/repo-history-skill-cycle-4-archive-2026-08-07.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/beec015d52c91f33af42387c930b38051ac7f8f3",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/repo-history-skill-cycle-4-archive-2026-08-07.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/repo-history-skill-cycle-4-archive-2026-08-07.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/beec015d52c91f33af42387c930b38051ac7f8f3",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/repo-history-skill-cycle-4-archive-2026-08-07.json"
+    }
+  },
+  {
+    "name": "repo-history-skill-cycle-4-post-mode-d-2026-08-07.json",
+    "path": "papers/data/repo-history-skill-cycle-4-post-mode-d-2026-08-07.json",
+    "sha": "c8894d5e3adbf247d0dc81c1ec4b598d380bd690",
+    "size": 9419,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/repo-history-skill-cycle-4-post-mode-d-2026-08-07.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/repo-history-skill-cycle-4-post-mode-d-2026-08-07.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/c8894d5e3adbf247d0dc81c1ec4b598d380bd690",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/repo-history-skill-cycle-4-post-mode-d-2026-08-07.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/repo-history-skill-cycle-4-post-mode-d-2026-08-07.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/c8894d5e3adbf247d0dc81c1ec4b598d380bd690",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/repo-history-skill-cycle-4-post-mode-d-2026-08-07.json"
+    }
+  },
+  {
+    "name": "rsi-3-corpus-summary-2026-08-06.json",
+    "path": "papers/data/rsi-3-corpus-summary-2026-08-06.json",
+    "sha": "c1d12cf4a847bc94efe5f738154ea99f4bec600d",
+    "size": 3246,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/rsi-3-corpus-summary-2026-08-06.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/rsi-3-corpus-summary-2026-08-06.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/c1d12cf4a847bc94efe5f738154ea99f4bec600d",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/rsi-3-corpus-summary-2026-08-06.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/rsi-3-corpus-summary-2026-08-06.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/c1d12cf4a847bc94efe5f738154ea99f4bec600d",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/rsi-3-corpus-summary-2026-08-06.json"
+    }
+  },
+  {
     "name": "rsi-79-corpus-multi-cycle-2026-08-06.json",
     "path": "papers/data/rsi-79-corpus-multi-cycle-2026-08-06.json",
     "sha": "aa36353df0ce95d094ee469e04066024f21121c1",
@@ -13,6 +1005,118 @@
       "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/rsi-79-corpus-multi-cycle-2026-08-06.json?ref=main",
       "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/aa36353df0ce95d094ee469e04066024f21121c1",
       "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/rsi-79-corpus-multi-cycle-2026-08-06.json"
+    }
+  },
+  {
+    "name": "rsi-docs-21-corpus-2026-08-06.json",
+    "path": "papers/data/rsi-docs-21-corpus-2026-08-06.json",
+    "sha": "cb00278d45bac6d2d6944d299de42efb722f364a",
+    "size": 33088,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/rsi-docs-21-corpus-2026-08-06.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/rsi-docs-21-corpus-2026-08-06.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/cb00278d45bac6d2d6944d299de42efb722f364a",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/rsi-docs-21-corpus-2026-08-06.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/rsi-docs-21-corpus-2026-08-06.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/cb00278d45bac6d2d6944d299de42efb722f364a",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/rsi-docs-21-corpus-2026-08-06.json"
+    }
+  },
+  {
+    "name": "rsi-patch-recursive-self-improvement-2026-08-06",
+    "path": "papers/data/rsi-patch-recursive-self-improvement-2026-08-06",
+    "sha": "8673342997bfe42c32035d079fe4d9e94a490285",
+    "size": 0,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/rsi-patch-recursive-self-improvement-2026-08-06?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/tree/main/papers/data/rsi-patch-recursive-self-improvement-2026-08-06",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/trees/8673342997bfe42c32035d079fe4d9e94a490285",
+    "download_url": null,
+    "type": "dir",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/rsi-patch-recursive-self-improvement-2026-08-06?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/trees/8673342997bfe42c32035d079fe4d9e94a490285",
+      "html": "https://github.com/yubi-OS/yubiOS/tree/main/papers/data/rsi-patch-recursive-self-improvement-2026-08-06"
+    }
+  },
+  {
+    "name": "README.md",
+    "path": "papers/data/rsi-patch-recursive-self-improvement-2026-08-06/README.md",
+    "sha": "d04064c4c8c703d9f8dbdd18448e663df15f1a72",
+    "size": 3038,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/rsi-patch-recursive-self-improvement-2026-08-06/README.md?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/rsi-patch-recursive-self-improvement-2026-08-06/README.md",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/d04064c4c8c703d9f8dbdd18448e663df15f1a72",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/rsi-patch-recursive-self-improvement-2026-08-06/README.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/rsi-patch-recursive-self-improvement-2026-08-06/README.md?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/d04064c4c8c703d9f8dbdd18448e663df15f1a72",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/rsi-patch-recursive-self-improvement-2026-08-06/README.md"
+    }
+  },
+  {
+    "name": "cycle.json",
+    "path": "papers/data/rsi-patch-recursive-self-improvement-2026-08-06/cycle.json",
+    "sha": "cfcc54a0a5c7cf7055065d60408556dc5fcae753",
+    "size": 10241,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/rsi-patch-recursive-self-improvement-2026-08-06/cycle.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/rsi-patch-recursive-self-improvement-2026-08-06/cycle.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/cfcc54a0a5c7cf7055065d60408556dc5fcae753",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/rsi-patch-recursive-self-improvement-2026-08-06/cycle.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/rsi-patch-recursive-self-improvement-2026-08-06/cycle.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/cfcc54a0a5c7cf7055065d60408556dc5fcae753",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/rsi-patch-recursive-self-improvement-2026-08-06/cycle.json"
+    }
+  },
+  {
+    "name": "patch-report.md",
+    "path": "papers/data/rsi-patch-recursive-self-improvement-2026-08-06/patch-report.md",
+    "sha": "14e3a6caae408e5d1a81dbc6c867dafbb9183660",
+    "size": 10809,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/rsi-patch-recursive-self-improvement-2026-08-06/patch-report.md?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/rsi-patch-recursive-self-improvement-2026-08-06/patch-report.md",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/14e3a6caae408e5d1a81dbc6c867dafbb9183660",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/rsi-patch-recursive-self-improvement-2026-08-06/patch-report.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/rsi-patch-recursive-self-improvement-2026-08-06/patch-report.md?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/14e3a6caae408e5d1a81dbc6c867dafbb9183660",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/rsi-patch-recursive-self-improvement-2026-08-06/patch-report.md"
+    }
+  },
+  {
+    "name": "proposed-edit.md",
+    "path": "papers/data/rsi-patch-recursive-self-improvement-2026-08-06/proposed-edit.md",
+    "sha": "d1500d20fe02ed826813f05605828222c8ee092f",
+    "size": 5480,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/rsi-patch-recursive-self-improvement-2026-08-06/proposed-edit.md?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/rsi-patch-recursive-self-improvement-2026-08-06/proposed-edit.md",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/d1500d20fe02ed826813f05605828222c8ee092f",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/rsi-patch-recursive-self-improvement-2026-08-06/proposed-edit.md",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/rsi-patch-recursive-self-improvement-2026-08-06/proposed-edit.md?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/d1500d20fe02ed826813f05605828222c8ee092f",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/rsi-patch-recursive-self-improvement-2026-08-06/proposed-edit.md"
+    }
+  },
+  {
+    "name": "rsi-refs-113-corpus-2026-08-06.json",
+    "path": "papers/data/rsi-refs-113-corpus-2026-08-06.json",
+    "sha": "7e3200ee5fdd2bf5eb69d59645887cd845fa38b3",
+    "size": 241490,
+    "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/rsi-refs-113-corpus-2026-08-06.json?ref=main",
+    "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/rsi-refs-113-corpus-2026-08-06.json",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/7e3200ee5fdd2bf5eb69d59645887cd845fa38b3",
+    "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/rsi-refs-113-corpus-2026-08-06.json",
+    "type": "file",
+    "_links": {
+      "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/rsi-refs-113-corpus-2026-08-06.json?ref=main",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/7e3200ee5fdd2bf5eb69d59645887cd845fa38b3",
+      "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/rsi-refs-113-corpus-2026-08-06.json"
     }
   },
   {
