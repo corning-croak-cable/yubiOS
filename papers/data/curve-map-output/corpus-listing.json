@@ -482,32 +482,32 @@
   {
     "name": "curve-map-output",
     "path": "papers/data/curve-map-output",
-    "sha": "04da7cf503cd7bd861c95b21553af6b5d663ec25",
+    "sha": "0caf287e5e4097cd37287959defa3f03203f3f31",
     "size": 0,
     "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output?ref=main",
     "html_url": "https://github.com/yubi-OS/yubiOS/tree/main/papers/data/curve-map-output",
-    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/trees/04da7cf503cd7bd861c95b21553af6b5d663ec25",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/trees/0caf287e5e4097cd37287959defa3f03203f3f31",
     "download_url": null,
     "type": "dir",
     "_links": {
       "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output?ref=main",
-      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/trees/04da7cf503cd7bd861c95b21553af6b5d663ec25",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/trees/0caf287e5e4097cd37287959defa3f03203f3f31",
       "html": "https://github.com/yubi-OS/yubiOS/tree/main/papers/data/curve-map-output"
     }
   },
   {
     "name": "README-cycle-3-refs-2026-08-07.md",
     "path": "papers/data/curve-map-output/README-cycle-3-refs-2026-08-07.md",
-    "sha": "307a2473d654ead4b422fdaeb552cf372f8a9d79",
-    "size": 1770,
+    "sha": "a22d3c2ad4ba1e32d138cf54106177cb80c6a3d7",
+    "size": 1801,
     "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output/README-cycle-3-refs-2026-08-07.md?ref=main",
     "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output/README-cycle-3-refs-2026-08-07.md",
-    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/307a2473d654ead4b422fdaeb552cf372f8a9d79",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/a22d3c2ad4ba1e32d138cf54106177cb80c6a3d7",
     "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output/README-cycle-3-refs-2026-08-07.md",
     "type": "file",
     "_links": {
       "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output/README-cycle-3-refs-2026-08-07.md?ref=main",
-      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/307a2473d654ead4b422fdaeb552cf372f8a9d79",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/a22d3c2ad4ba1e32d138cf54106177cb80c6a3d7",
       "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output/README-cycle-3-refs-2026-08-07.md"
     }
   },
@@ -530,32 +530,32 @@
   {
     "name": "README.md",
     "path": "papers/data/curve-map-output/README.md",
-    "sha": "1f8814a932d9b7032bb440496fcadaf1de0f8122",
+    "sha": "59ca11e96309b86175a2942953a9cc85f69fc18c",
     "size": 5489,
     "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output/README.md?ref=main",
     "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output/README.md",
-    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/1f8814a932d9b7032bb440496fcadaf1de0f8122",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/59ca11e96309b86175a2942953a9cc85f69fc18c",
     "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output/README.md",
     "type": "file",
     "_links": {
       "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output/README.md?ref=main",
-      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/1f8814a932d9b7032bb440496fcadaf1de0f8122",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/59ca11e96309b86175a2942953a9cc85f69fc18c",
       "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output/README.md"
     }
   },
   {
     "name": "RSI-priority-list-cycle-3-refs-2026-08-07.md",
     "path": "papers/data/curve-map-output/RSI-priority-list-cycle-3-refs-2026-08-07.md",
-    "sha": "d0dd00de2773acb7dbf9c69e24faa0aba96b968c",
-    "size": 2128,
+    "sha": "523868d0e0acdb2887cba3bd5a779324c2dae669",
+    "size": 2162,
     "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output/RSI-priority-list-cycle-3-refs-2026-08-07.md?ref=main",
     "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output/RSI-priority-list-cycle-3-refs-2026-08-07.md",
-    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/d0dd00de2773acb7dbf9c69e24faa0aba96b968c",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/523868d0e0acdb2887cba3bd5a779324c2dae669",
     "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output/RSI-priority-list-cycle-3-refs-2026-08-07.md",
     "type": "file",
     "_links": {
       "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output/RSI-priority-list-cycle-3-refs-2026-08-07.md?ref=main",
-      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/d0dd00de2773acb7dbf9c69e24faa0aba96b968c",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/523868d0e0acdb2887cba3bd5a779324c2dae669",
       "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output/RSI-priority-list-cycle-3-refs-2026-08-07.md"
     }
   },
@@ -594,16 +594,16 @@
   {
     "name": "corpus-listing.json",
     "path": "papers/data/curve-map-output/corpus-listing.json",
-    "sha": "4af0d8271ae181676f485a6fbcf0f802cadac1b1",
-    "size": 88850,
+    "sha": "8031a05ff35f600b0f216e25990424ddd5b8be48",
+    "size": 125477,
     "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output/corpus-listing.json?ref=main",
     "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output/corpus-listing.json",
-    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/4af0d8271ae181676f485a6fbcf0f802cadac1b1",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/8031a05ff35f600b0f216e25990424ddd5b8be48",
     "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output/corpus-listing.json",
     "type": "file",
     "_links": {
       "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output/corpus-listing.json?ref=main",
-      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/4af0d8271ae181676f485a6fbcf0f802cadac1b1",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/8031a05ff35f600b0f216e25990424ddd5b8be48",
       "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output/corpus-listing.json"
     }
   },
@@ -642,16 +642,16 @@
   {
     "name": "cycle-3-refs-curve-map-2026-08-07.json",
     "path": "papers/data/curve-map-output/cycle-3-refs-curve-map-2026-08-07.json",
-    "sha": "969ad4bd7790540ff02c9fc31114673e623f2b56",
-    "size": 51669,
+    "sha": "2e1c0c0ccea056fa0d9dabf36fc03a9e9f8a76d7",
+    "size": 51667,
     "url": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output/cycle-3-refs-curve-map-2026-08-07.json?ref=main",
     "html_url": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output/cycle-3-refs-curve-map-2026-08-07.json",
-    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/969ad4bd7790540ff02c9fc31114673e623f2b56",
+    "git_url": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/2e1c0c0ccea056fa0d9dabf36fc03a9e9f8a76d7",
     "download_url": "https://raw.githubusercontent.com/yubi-OS/yubiOS/main/papers/data/curve-map-output/cycle-3-refs-curve-map-2026-08-07.json",
     "type": "file",
     "_links": {
       "self": "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/curve-map-output/cycle-3-refs-curve-map-2026-08-07.json?ref=main",
-      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/969ad4bd7790540ff02c9fc31114673e623f2b56",
+      "git": "https://api.github.com/repos/yubi-OS/yubiOS/git/blobs/2e1c0c0ccea056fa0d9dabf36fc03a9e9f8a76d7",
       "html": "https://github.com/yubi-OS/yubiOS/blob/main/papers/data/curve-map-output/cycle-3-refs-curve-map-2026-08-07.json"
     }
   },
