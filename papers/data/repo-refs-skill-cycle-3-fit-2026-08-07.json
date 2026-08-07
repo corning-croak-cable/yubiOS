@@ -1,0 +1,323 @@
+{
+  "cycle": 3,
+  "basis_dim": 7,
+  "date": "2026-08-07",
+  "corpus_size": 130,
+  "repos": [
+    "yubi-OS/yubiOS"
+  ],
+  "basis_state": "Stable 7-D from cycle-2; 2 near-constant primitives already dropped",
+  "primitive_coverage": {
+    "has_problem_statement": 27,
+    "has_recommendation": 43,
+    "has_evidence": 107,
+    "has_cross_reference": 98,
+    "has_verification_plan": 24,
+    "has_source_citation": 88,
+    "has_priority_signal": 106
+  },
+  "primitive_coverage_pct": {
+    "has_problem_statement": 20.77,
+    "has_recommendation": 33.08,
+    "has_evidence": 82.31,
+    "has_cross_reference": 75.38,
+    "has_verification_plan": 18.46,
+    "has_source_citation": 67.69,
+    "has_priority_signal": 81.54
+  },
+  "surviving_primitives": [
+    "has_problem_statement",
+    "has_recommendation",
+    "has_evidence",
+    "has_cross_reference",
+    "has_verification_plan",
+    "has_source_citation",
+    "has_priority_signal"
+  ],
+  "dropped_primitives": [],
+  "pc1": 0.30346757565507315,
+  "pc2": 0.16517864516824216,
+  "pc1_pc2_ratio": 0.4686462208233153,
+  "gate_PC1_PC2_min": 0.4,
+  "norm_ok": true,
+  "p_norm_min": 0.9999999999999999,
+  "p_norm_max": 1.0,
+  "sparse_cell_count": 49,
+  "sparse_cell_pct": 37.69,
+  "mode_d_total_count": 49,
+  "cycle_progression": {
+    "cycle_1_9d": {
+      "N": 130,
+      "primitive_survival": 7,
+      "pc1_pc2": 0.4447,
+      "sparse_count": 66,
+      "mode_d": 65,
+      "max_delta": 1.0531
+    },
+    "cycle_2_7d": {
+      "N": 130,
+      "primitive_survival": 7,
+      "pc1_pc2": 0.4604,
+      "sparse_count": 57,
+      "mode_d": 56,
+      "max_delta": 0.9361
+    },
+    "cycle_3_7d_post_merge": {
+      "N": 130,
+      "primitive_survival": 7,
+      "pc1_pc2": 0.4686462208233153,
+      "sparse_count": 49,
+      "mode_d": 49,
+      "max_delta": 0.7273029822942785
+    }
+  },
+  "fixpoint_status": {
+    "condition_1_no_new_gaps": "PASS \u2014 pure appends, no detection-pattern edits, no join-key changes",
+    "condition_2_old_gaps_closed": "PASS \u2014 sparse cells reduced 66\u219257\u219249 across 3 cycles; 25 of 49 addressed in cycle-3 batch (\u0394 >= 0.4); 24 remain (\u0394 < 0.4, standard convergence per chosen threshold)",
+    "condition_3_no_new_anti_patterns": "PASS \u2014 no fabricated SHAs/PRs/timestamps; templates use placeholders; basis unchanged from cycle-2"
+  },
+  "red_flag_status": {
+    "cycle_1": "TRIGGERED (50.8% sparse cells > 50% gate)",
+    "cycle_2": "CLOSED (43.8% sparse cells < 50% gate)",
+    "cycle_3": "STABLE CLOSED (37.7% sparse cells)"
+  },
+  "top_isolated": [
+    {
+      "idx": 0,
+      "file": "curve-guided-rsi-v1-fitness-test-run-2026-08-04.md",
+      "d_pre": 1.2917,
+      "target_primitive": "has_cross_reference",
+      "delta": 0.7273,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_problem_statement"
+      ]
+    },
+    {
+      "idx": 1,
+      "file": "sbsign-pkcs11-validate-2026-07-23.md",
+      "d_pre": 1.7894,
+      "target_primitive": "has_problem_statement",
+      "delta": 0.6732,
+      "missing_primitives": [
+        "has_evidence",
+        "has_problem_statement",
+        "has_recommendation",
+        "has_source_citation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 2,
+      "file": "yubios-ci-strategy-history-2026-07-23.md",
+      "d_pre": 1.7894,
+      "target_primitive": "has_problem_statement",
+      "delta": 0.6732,
+      "missing_primitives": [
+        "has_evidence",
+        "has_problem_statement",
+        "has_recommendation",
+        "has_source_citation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 3,
+      "file": "cycle5-results-2026-08-06.md",
+      "d_pre": 1.1948,
+      "target_primitive": "has_problem_statement",
+      "delta": 0.6727,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 4,
+      "file": "pr-campaign-research-2026-07-16.md",
+      "d_pre": 1.6942,
+      "target_primitive": "has_cross_reference",
+      "delta": 0.6587,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 5,
+      "file": "reproducible-builds-2026-07-22.md",
+      "d_pre": 1.6942,
+      "target_primitive": "has_cross_reference",
+      "delta": 0.6587,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 6,
+      "file": "bootc-composefs-sealed-flow-2026-07-22.md",
+      "d_pre": 1.0354,
+      "target_primitive": "has_recommendation",
+      "delta": 0.6561,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 7,
+      "file": "current-position-evidence-2026-07-25.md",
+      "d_pre": 1.0354,
+      "target_primitive": "has_recommendation",
+      "delta": 0.6561,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 8,
+      "file": "days-0-30-safe-offer-2026-07-25.md",
+      "d_pre": 1.0354,
+      "target_primitive": "has_recommendation",
+      "delta": 0.6561,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 9,
+      "file": "days-31-60-narrow-product-2026-07-25.md",
+      "d_pre": 1.0354,
+      "target_primitive": "has_recommendation",
+      "delta": 0.6561,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 10,
+      "file": "slsa-l3-sbom-cosign-integration-spec-2026-08-04.md",
+      "d_pre": 1.0354,
+      "target_primitive": "has_recommendation",
+      "delta": 0.6561,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 11,
+      "file": "kernel-rootfs-split-2026-07-29.md",
+      "d_pre": 1.3798,
+      "target_primitive": "has_recommendation",
+      "delta": 0.6471,
+      "missing_primitives": [
+        "has_evidence",
+        "has_problem_statement",
+        "has_recommendation"
+      ]
+    },
+    {
+      "idx": 12,
+      "file": "systemd-hardening-audit-2026-07-17.md",
+      "d_pre": 1.5392,
+      "target_primitive": "has_cross_reference",
+      "delta": 0.5959,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_recommendation",
+        "has_source_citation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 13,
+      "file": "endlessh-openwrt-fit-2026-07-17.md",
+      "d_pre": 1.6705,
+      "target_primitive": "has_cross_reference",
+      "delta": 0.59,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 14,
+      "file": "gap-map-hyperspherical-harmonic-curve-2026-08-05.md",
+      "d_pre": 1.6705,
+      "target_primitive": "has_cross_reference",
+      "delta": 0.59,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 15,
+      "file": "kvm-arm-nested-virtualization-2026-08-07.md",
+      "d_pre": 1.6705,
+      "target_primitive": "has_cross_reference",
+      "delta": 0.59,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 16,
+      "file": "y33-fibonacci-sphere-paper-method-equation-block-2026-08-07.md",
+      "d_pre": 1.6705,
+      "target_primitive": "has_cross_reference",
+      "delta": 0.59,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 17,
+      "file": "yubikey-hw-validation-scenarios-2026-07-25.md",
+      "d_pre": 1.2038,
+      "target_primitive": "has_recommendation",
+      "delta": 0.5601,
+      "missing_primitives": [
+        "has_evidence",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 18,
+      "file": "external-benchmarks-sources-2026-07-25.md",
+      "d_pre": 1.3679,
+      "target_primitive": "has_recommendation",
+      "delta": 0.5594,
+      "missing_primitives": [
+        "has_priority_signal",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 19,
+      "file": "validate-input-shape-doctrine-2026-08-04.md",
+      "d_pre": 0.552,
+      "target_primitive": "has_recommendation",
+      "delta": 0.552,
+      "missing_primitives": [
+        "has_recommendation"
+      ]
+    }
+  ]
+}
