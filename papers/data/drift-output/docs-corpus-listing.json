@@ -1,6 +1,6 @@
 {
   "label": "docs-corpus",
-  "n_items": 37,
+  "n_items": 284,
   "n_primitives": 9,
   "primitives": [
     "attestation",
@@ -15,97 +15,181 @@
   ],
   "items_sample": [
     {
-      "id": "docs:1. Release notes / changelog",
-      "primitive_coverage": [
-        0,
-        1,
-        0,
-        0,
-        0,
-        0,
-        1,
-        1,
-        0
-      ],
-      "text": "docs / 1. Release notes / changelog",
+      "id": "docs:ADR-001: YubiKey as TPM replacement",
+      "text": "docs / ADR-001: YubiKey as TPM replacement",
       "source": "docs-corpus",
-      "section_header": "1. Release notes / changelog",
-      "file": "bootc-uki-blsconfig-reference.md"
+      "section_header": "ADR-001: YubiKey as TPM replacement",
+      "file": "ADR.md",
+      "repo_path": "yubi-OS/yubiOS/docs/ADR.md",
+      "blob_sha": "22c116303623ae5d31a7f6d61daefa3ed1b430c9"
     },
     {
-      "id": "docs:2. Source code for the BLSConfig `uki` feature",
-      "primitive_coverage": [
-        1,
-        1,
-        1,
-        0,
-        1,
-        1,
-        1,
-        1,
-        0
-      ],
-      "text": "docs / 2. Source code for the BLSConfig `uki` feature",
+      "id": "docs:ADR-002: Secure Boot signing via PIV (CCID), not FIDO2 (hidr",
+      "text": "docs / ADR-002: Secure Boot signing via PIV (CCID), not FIDO2 (hidraw)",
       "source": "docs-corpus",
-      "section_header": "2. Source code for the BLSConfig `uki` feature",
-      "file": "bootc-uki-blsconfig-reference.md"
+      "section_header": "ADR-002: Secure Boot signing via PIV (CCID), not FIDO2 (hidraw)",
+      "file": "ADR.md",
+      "repo_path": "yubi-OS/yubiOS/docs/ADR.md",
+      "blob_sha": "22c116303623ae5d31a7f6d61daefa3ed1b430c9"
     },
     {
-      "id": "docs:3. Test / fixture coverage of the uki BLSConfig path",
-      "primitive_coverage": [
-        0,
-        1,
-        1,
-        0,
-        1,
-        1,
-        0,
-        1,
-        0
-      ],
-      "text": "docs / 3. Test / fixture coverage of the uki BLSConfig path",
+      "id": "docs:ADR-003: LUKS2 + FIDO2 via systemd-cryptenroll (no TPM)",
+      "text": "docs / ADR-003: LUKS2 + FIDO2 via systemd-cryptenroll (no TPM)",
       "source": "docs-corpus",
-      "section_header": "3. Test / fixture coverage of the uki BLSConfig path",
-      "file": "bootc-uki-blsconfig-reference.md"
+      "section_header": "ADR-003: LUKS2 + FIDO2 via systemd-cryptenroll (no TPM)",
+      "file": "ADR.md",
+      "repo_path": "yubi-OS/yubiOS/docs/ADR.md",
+      "blob_sha": "22c116303623ae5d31a7f6d61daefa3ed1b430c9"
     },
     {
-      "id": "docs:4. Practical install-time behavior",
-      "primitive_coverage": [
-        0,
-        1,
-        1,
-        0,
-        1,
-        0,
-        0,
-        1,
-        0
-      ],
-      "text": "docs / 4. Practical install-time behavior",
+      "id": "docs:ADR-004: ed25519-sk resident keys for SSH",
+      "text": "docs / ADR-004: ed25519-sk resident keys for SSH",
       "source": "docs-corpus",
-      "section_header": "4. Practical install-time behavior",
-      "file": "bootc-uki-blsconfig-reference.md"
+      "section_header": "ADR-004: ed25519-sk resident keys for SSH",
+      "file": "ADR.md",
+      "repo_path": "yubi-OS/yubiOS/docs/ADR.md",
+      "blob_sha": "22c116303623ae5d31a7f6d61daefa3ed1b430c9"
     },
     {
-      "id": "docs:5. Edge cases and pitfalls",
-      "primitive_coverage": [
-        1,
-        1,
-        1,
-        0,
-        1,
-        0,
-        1,
-        1,
-        0
-      ],
-      "text": "docs / 5. Edge cases and pitfalls",
+      "id": "docs:ADR-005: pam-u2f >= 1.3.1 required (CVE-2025-23013)",
+      "text": "docs / ADR-005: pam-u2f >= 1.3.1 required (CVE-2025-23013)",
       "source": "docs-corpus",
-      "section_header": "5. Edge cases and pitfalls",
-      "file": "bootc-uki-blsconfig-reference.md"
+      "section_header": "ADR-005: pam-u2f >= 1.3.1 required (CVE-2025-23013)",
+      "file": "ADR.md",
+      "repo_path": "yubi-OS/yubiOS/docs/ADR.md",
+      "blob_sha": "22c116303623ae5d31a7f6d61daefa3ed1b430c9"
     }
   ],
   "items_count_by_source": {
-    "docs-corpus": 37
-  }
+    "docs-corpus": 284
+  },
+  "files_listed_in_repo": [
+    {
+      "name": "ADR.md",
+      "sha": "22c116303623ae5d31a7f6d61daefa3ed1b430c9",
+      "size": 64175,
+      "path": "docs/ADR.md"
+    },
+    {
+      "name": "ARCHITECTURE.md",
+      "sha": "34a9df805dce292b6ddbf8bfc7efaa45ffcb9484",
+      "size": 24662,
+      "path": "docs/ARCHITECTURE.md"
+    },
+    {
+      "name": "BLOCKERS.md",
+      "sha": "3a1b5f47ce2a38afa88a2553b2427b46b3f63d93",
+      "size": 17209,
+      "path": "docs/BLOCKERS.md"
+    },
+    {
+      "name": "CITATION.md",
+      "sha": "646b2ec44c93cee101eedfa56dbef03f820f2fd8",
+      "size": 8658,
+      "path": "docs/CITATION.md"
+    },
+    {
+      "name": "CI_MAP.md",
+      "sha": "b65e573cb27f84be59922ad31309e0000eb81e39",
+      "size": 39943,
+      "path": "docs/CI_MAP.md"
+    },
+    {
+      "name": "FUTURE.md",
+      "sha": "273dce09781978ca4dc81da6565409bd409a01df",
+      "size": 13392,
+      "path": "docs/FUTURE.md"
+    },
+    {
+      "name": "LEARN.md",
+      "sha": "113907836314f6a788820bc267beefe670db8298",
+      "size": 2310,
+      "path": "docs/LEARN.md"
+    },
+    {
+      "name": "MAINTAINER.md",
+      "sha": "a297ed82060dbeab2b4b242a087b477cbf285c00",
+      "size": 4404,
+      "path": "docs/MAINTAINER.md"
+    },
+    {
+      "name": "MILESTONE.md",
+      "sha": "4a73e2d5643b0ed2a0ca8372c87daed7f7447fe6",
+      "size": 9443,
+      "path": "docs/MILESTONE.md"
+    },
+    {
+      "name": "MISSION.md",
+      "sha": "ec6c16c0ae2f7409e97fcd88d96f2006a78a16c4",
+      "size": 5796,
+      "path": "docs/MISSION.md"
+    },
+    {
+      "name": "MITIGATE.md",
+      "sha": "776cbd3c7f4a2f210b7c0c60fd650537a890f212",
+      "size": 24425,
+      "path": "docs/MITIGATE.md"
+    },
+    {
+      "name": "ONBOARDING.md",
+      "sha": "ae6f2095d5a0b9067f32af2cfe5adbdcd726da9b",
+      "size": 4533,
+      "path": "docs/ONBOARDING.md"
+    },
+    {
+      "name": "OPTS.md",
+      "sha": "80e6f307c5a1d8a45f5ad9db09c653fed89be1f6",
+      "size": 31832,
+      "path": "docs/OPTS.md"
+    },
+    {
+      "name": "PLAN.md",
+      "sha": "f4f97259b47866ddebbd21436d8b677dc9120b37",
+      "size": 33602,
+      "path": "docs/PLAN.md"
+    },
+    {
+      "name": "PR.md",
+      "sha": "4432b0a2815c2adc9665b47bc01cc025fcf34db8",
+      "size": 39847,
+      "path": "docs/PR.md"
+    },
+    {
+      "name": "SELF.md",
+      "sha": "218de88dc560d24be0b5e83535bb9517764ee62e",
+      "size": 24328,
+      "path": "docs/SELF.md"
+    },
+    {
+      "name": "SER.md",
+      "sha": "5bd7982ea615ef8dc389891ca1f409dee2ef3268",
+      "size": 4512,
+      "path": "docs/SER.md"
+    },
+    {
+      "name": "SOUL.md",
+      "sha": "3bac38edd07563388e494c290ef44916fbacc381",
+      "size": 32005,
+      "path": "docs/SOUL.md"
+    },
+    {
+      "name": "SPEC.md",
+      "sha": "29528dd496c651bfd6219095831ff9e8f3aa6004",
+      "size": 21497,
+      "path": "docs/SPEC.md"
+    },
+    {
+      "name": "THREAT_MODEL.md",
+      "sha": "9a8c8fe9033c1f8c80482ea31ac6c53f22643f83",
+      "size": 29664,
+      "path": "docs/THREAT_MODEL.md"
+    },
+    {
+      "name": "TODO.md",
+      "sha": "4ab541418b5a7f18a3a56b3c463e145c1ee71322",
+      "size": 28170,
+      "path": "docs/TODO.md"
+    }
+  ],
+  "n_files_listed_in_repo": 21
 }
