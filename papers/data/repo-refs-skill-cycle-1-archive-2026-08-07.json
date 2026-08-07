@@ -1,0 +1,3340 @@
+{
+  "cycle": 1,
+  "date": "2026-08-07",
+  "corpus_size": 130,
+  "corpus_breakdown": {
+    "refs_md_files": 130
+  },
+  "primitives": [
+    "has_topic_anchor",
+    "has_problem_statement",
+    "has_recommendation",
+    "has_evidence",
+    "has_cross_reference",
+    "has_temporal_anchor",
+    "has_verification_plan",
+    "has_source_citation",
+    "has_priority_signal"
+  ],
+  "items": [
+    {
+      "idx": 0,
+      "kind": "refs_doc",
+      "label": "0pointer-poettering-systemd-vision-2026-07-23.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/0pointer-poettering-systemd-vision-2026-07-23.md",
+      "sha": "b6284688da71f159d139478787e2c8de2cae86d1",
+      "size": 10172,
+      "coverage": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 1,
+      "kind": "refs_doc",
+      "label": "actions-checkout-v6-includeif-investigation-2026-07-29.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/actions-checkout-v6-includeif-investigation-2026-07-29.md",
+      "sha": "9d45f7e73498a1ada8bfa595a9c8d227973dc11b",
+      "size": 12245,
+      "coverage": [
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_evidence",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 2,
+      "kind": "refs_doc",
+      "label": "arm64-path-a-b-board-status-2026-07-23.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/arm64-path-a-b-board-status-2026-07-23.md",
+      "sha": "d01733862b1a227f2edfb3983de8664392bc926e",
+      "size": 4927,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 3,
+      "kind": "refs_doc",
+      "label": "arm64-rk-board-status-2026-07-17.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/arm64-rk-board-status-2026-07-17.md",
+      "sha": "17e2c0b6ec26e38bcfeadcf7c53bcdb917b3e72f",
+      "size": 3333,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_source_citation",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 4,
+      "kind": "refs_doc",
+      "label": "adr-033-misbehavior-cutoff-policy-2026-07-28.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/adr-033-misbehavior-cutoff-policy-2026-07-28.md",
+      "sha": "4ca3138be04a25dd038ae20f974d5396b31a9c15",
+      "size": 11844,
+      "coverage": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "missing": [
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 5,
+      "kind": "refs_doc",
+      "label": "arm64-ftpm-phase-f0-2026-07-23.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/arm64-ftpm-phase-f0-2026-07-23.md",
+      "sha": "d3311cf11566dd1e41bad27282f6a57c066e330a",
+      "size": 4666,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 6,
+      "kind": "refs_doc",
+      "label": "attested-bootc-gpu-cutover-2026-07-30.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/attested-bootc-gpu-cutover-2026-07-30.md",
+      "sha": "7c517c666a01319d115c26dc51cd6507c62d46e2",
+      "size": 21105,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 7,
+      "kind": "refs_doc",
+      "label": "arm64-zstd-efi-zboot-bcvk-2026-07-23.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/arm64-zstd-efi-zboot-bcvk-2026-07-23.md",
+      "sha": "a56d533d14c5d5ac486af3f826763753b3f3e247",
+      "size": 5489,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 8,
+      "kind": "refs_doc",
+      "label": "adr-033-prior-art-search-2026-07-28.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/adr-033-prior-art-search-2026-07-28.md",
+      "sha": "f1af229a71f622253d5dcf2b365e460bc77542f4",
+      "size": 16306,
+      "coverage": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 9,
+      "kind": "refs_doc",
+      "label": "bcvk-swtpm-ci-2026-07-23.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/bcvk-swtpm-ci-2026-07-23.md",
+      "sha": "3cdab1b063b79859c542ff681c5b57f20c64b53c",
+      "size": 3222,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_source_citation",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 10,
+      "kind": "refs_doc",
+      "label": "assets-repo-repoint-verification-2026-07-28.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/assets-repo-repoint-verification-2026-07-28.md",
+      "sha": "2d323ed5f6efca18d689a8d01d4c647535481ed0",
+      "size": 8859,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 11,
+      "kind": "refs_doc",
+      "label": "bootc-dev-org-releases-2026-07-23.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/bootc-dev-org-releases-2026-07-23.md",
+      "sha": "63ed8bbf9583b283dc496fd1be2425d7319468ca",
+      "size": 6525,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 12,
+      "kind": "refs_doc",
+      "label": "bootc-composefs-sealed-flow-2026-07-22.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/bootc-composefs-sealed-flow-2026-07-22.md",
+      "sha": "b7c6c9f000a855e15fd5e328ee149fddf67576fe",
+      "size": 11852,
+      "coverage": [
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 13,
+      "kind": "refs_doc",
+      "label": "arxiv-2607.09967-vs-learned-latent-curve-2026-08-04.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/arxiv-2607.09967-vs-learned-latent-curve-2026-08-04.md",
+      "sha": "05b356127adfb005a4612b428a9685f1fb2f7b6d",
+      "size": 8681,
+      "coverage": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_cross_reference",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 14,
+      "kind": "refs_doc",
+      "label": "bootc-uki-libvirt-gpu-passthrough-2026-08-07.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/bootc-uki-libvirt-gpu-passthrough-2026-08-07.md",
+      "sha": "e9cf038fc7d8300f19d67450e6e737d6a94e27d0",
+      "size": 29222,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 15,
+      "kind": "refs_doc",
+      "label": "ci-evidence-2026-07-21.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/ci-evidence-2026-07-21.md",
+      "sha": "490e60b56539c2771091e4349822a856fb2422c8",
+      "size": 7198,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 16,
+      "kind": "refs_doc",
+      "label": "covenant-conflict-policy-2026-07-25.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/covenant-conflict-policy-2026-07-25.md",
+      "sha": "d31b41b2bd3d620d94f0e1cdf1a934409fc9701f",
+      "size": 6410,
+      "coverage": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 17,
+      "kind": "refs_doc",
+      "label": "curve-guided-rsi-and-self-differential-2026-08-04.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/curve-guided-rsi-and-self-differential-2026-08-04.md",
+      "sha": "bcbde71f92e0b4d9cf127bcef72b9237479c1948",
+      "size": 16612,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_verification_plan",
+        "has_source_citation",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 18,
+      "kind": "refs_doc",
+      "label": "curve-guided-rsi-v1-cycles-2-3-run-2026-08-04.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/curve-guided-rsi-v1-cycles-2-3-run-2026-08-04.md",
+      "sha": "91414f4c41e56ea21141bb4aa11547bc602720c2",
+      "size": 10935,
+      "coverage": [
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_evidence",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 19,
+      "kind": "refs_doc",
+      "label": "current-position-evidence-2026-07-25.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/current-position-evidence-2026-07-25.md",
+      "sha": "d01010ada06554bea8f8a0a10c56d21a978cb148",
+      "size": 8515,
+      "coverage": [
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 20,
+      "kind": "refs_doc",
+      "label": "curve-guided-rsi-v2-cycle5-deep-research-2026-08-04.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/curve-guided-rsi-v2-cycle5-deep-research-2026-08-04.md",
+      "sha": "3d16e70f35b3bab92cf235daeeb7e66e630e08b2",
+      "size": 12849,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement"
+      ]
+    },
+    {
+      "idx": 21,
+      "kind": "refs_doc",
+      "label": "curve-guided-rsi-v1-cycle4-all-skills-2026-08-04.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/curve-guided-rsi-v1-cycle4-all-skills-2026-08-04.md",
+      "sha": "df7980e11db13670532afba49a2a687287b66ec6",
+      "size": 7393,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 22,
+      "kind": "refs_doc",
+      "label": "customer-roi-model-2026-07-25.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/customer-roi-model-2026-07-25.md",
+      "sha": "7584228009316cfac4598934569ab4b5323ce53e",
+      "size": 7776,
+      "coverage": [
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "missing": [
+        "has_recommendation",
+        "has_verification_plan",
+        "has_source_citation",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 23,
+      "kind": "refs_doc",
+      "label": "curve-guided-rsi-v1-fitness-test-run-2026-08-04.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/curve-guided-rsi-v1-fitness-test-run-2026-08-04.md",
+      "sha": "d6c47fee8fe02e4bf72100d1e9befede39fe1faf",
+      "size": 12283,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_cross_reference",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 24,
+      "kind": "refs_doc",
+      "label": "bootc-upgrade-rollback-sysext-portable-test-spec-2026-08-04.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/bootc-upgrade-rollback-sysext-portable-test-spec-2026-08-04.md",
+      "sha": "436a795d1b4b51c2cf351d47849e89d26657e95e",
+      "size": 78837,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 25,
+      "kind": "refs_doc",
+      "label": "customer-roi-model-2026-07-26.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/customer-roi-model-2026-07-26.md",
+      "sha": "f65806276d62f1062074402886188727287971dd",
+      "size": 10705,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_source_citation",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 26,
+      "kind": "refs_doc",
+      "label": "cycle5-results-2026-08-06.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/cycle5-results-2026-08-06.md",
+      "sha": "9c2f9ed58c993872abe9538c2a74c6f22998e8a5",
+      "size": 10038,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_source_citation",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 27,
+      "kind": "refs_doc",
+      "label": "days-0-30-safe-offer-2026-07-25.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/days-0-30-safe-offer-2026-07-25.md",
+      "sha": "d72e3991b5a776e3e72157083247feb839b1eb22",
+      "size": 6181,
+      "coverage": [
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 28,
+      "kind": "refs_doc",
+      "label": "cycle4-results-2026-08-06.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/cycle4-results-2026-08-06.md",
+      "sha": "f0ff32e8e3e1cca88b8da36b2edee9efa42b4007",
+      "size": 5492,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 29,
+      "kind": "refs_doc",
+      "label": "days-31-60-narrow-product-2026-07-25.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/days-31-60-narrow-product-2026-07-25.md",
+      "sha": "2630191f853ae372de011f711733a95ffb62288c",
+      "size": 8869,
+      "coverage": [
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 30,
+      "kind": "refs_doc",
+      "label": "decisions-deferrals-rejected-models-2026-07-25.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/decisions-deferrals-rejected-models-2026-07-25.md",
+      "sha": "f7b3daa42d82e2f5f1ab721da8b32e129677804b",
+      "size": 9557,
+      "coverage": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 31,
+      "kind": "refs_doc",
+      "label": "differential-curve-use-case-skill-land-grab-detection-2026-08-04.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/differential-curve-use-case-skill-land-grab-detection-2026-08-04.md",
+      "sha": "f6cc5da7a7f4975cf87a2f8fbb6a14a28cdb0000",
+      "size": 8014,
+      "coverage": [
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_evidence",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 32,
+      "kind": "refs_doc",
+      "label": "debug-with-cli-2026-08-01.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/debug-with-cli-2026-08-01.md",
+      "sha": "c295ddd2ff0f88cb5ae1db6392d0ba4decbe4b0f",
+      "size": 8881,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement"
+      ]
+    },
+    {
+      "idx": 33,
+      "kind": "refs_doc",
+      "label": "digest-bump-checklist-2026-07-25.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/digest-bump-checklist-2026-07-25.md",
+      "sha": "1283bd690926a08460ab1044455d74e11993fa83",
+      "size": 10979,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 34,
+      "kind": "refs_doc",
+      "label": "docker-bake-consolidation-2026-07-17.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/docker-bake-consolidation-2026-07-17.md",
+      "sha": "6a6737943fa35bb8e8f2964a208c825826da275a",
+      "size": 7397,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 35,
+      "kind": "refs_doc",
+      "label": "days-61-90-willingness-to-pay-2026-07-25.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/days-61-90-willingness-to-pay-2026-07-25.md",
+      "sha": "c1decb546ad8a2f97679f7d1a4d76ff7677ee095",
+      "size": 7655,
+      "coverage": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "missing": [
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 36,
+      "kind": "refs_doc",
+      "label": "edgeless-reproducible-mkosi-research-2026-07-30.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/edgeless-reproducible-mkosi-research-2026-07-30.md",
+      "sha": "c080ca383f53cb1da25202f54062b0a0298ebb3b",
+      "size": 31015,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 37,
+      "kind": "refs_doc",
+      "label": "entity-governance-legal-2026-07-25.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/entity-governance-legal-2026-07-25.md",
+      "sha": "009a11c538da9aae94470223237a95af7c19eb8c",
+      "size": 9446,
+      "coverage": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 38,
+      "kind": "refs_doc",
+      "label": "external-benchmarks-sources-2026-07-26.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/external-benchmarks-sources-2026-07-26.md",
+      "sha": "6b4257d52f39c175ed505f73d7e7cc2a37d2298e",
+      "size": 11798,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 39,
+      "kind": "refs_doc",
+      "label": "docker-build-policies-reference-2026-07-23.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/docker-build-policies-reference-2026-07-23.md",
+      "sha": "a77d28c999310bb5901001286ed42a82369bfd59",
+      "size": 7138,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 40,
+      "kind": "refs_doc",
+      "label": "fedora-bootc-base-images-status-2026-07-23.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/fedora-bootc-base-images-status-2026-07-23.md",
+      "sha": "24a9d2fa819a354a299f421ba18d97aa86c5842f",
+      "size": 5957,
+      "coverage": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 41,
+      "kind": "refs_doc",
+      "label": "endlessh-openwrt-fit-2026-07-17.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/endlessh-openwrt-fit-2026-07-17.md",
+      "sha": "6359689b09d348cc86df246c272516ab4fd6e22a",
+      "size": 13858,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_cross_reference",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 42,
+      "kind": "refs_doc",
+      "label": "external-benchmarks-sources-2026-07-25.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/external-benchmarks-sources-2026-07-25.md",
+      "sha": "c1a81f45491158eada0ad381d9f915e96b99b057",
+      "size": 10272,
+      "coverage": [
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_recommendation",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 43,
+      "kind": "refs_doc",
+      "label": "fido2-ci-emulator-status-2026-07-23.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/fido2-ci-emulator-status-2026-07-23.md",
+      "sha": "4c64883386f77e28eb318191d3644137d8985334",
+      "size": 5460,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 44,
+      "kind": "refs_doc",
+      "label": "firmware-rk-workflow-2026-07-17.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/firmware-rk-workflow-2026-07-17.md",
+      "sha": "495ef73550fe7335dc86b47e25dc206cbe51ae24",
+      "size": 3362,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 45,
+      "kind": "refs_doc",
+      "label": "first-90-days-2026-07-25.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/first-90-days-2026-07-25.md",
+      "sha": "423971667fb9a9e7f60d88ae440f0854c85d4df8",
+      "size": 9158,
+      "coverage": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "missing": [
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 46,
+      "kind": "refs_doc",
+      "label": "fork-upstream-drift-detection-schedule-2026-08-04.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/fork-upstream-drift-detection-schedule-2026-08-04.md",
+      "sha": "1afb548cc11df39665d9d06a09f473ac1519c03a",
+      "size": 10751,
+      "coverage": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 47,
+      "kind": "refs_doc",
+      "label": "fractalrabbit-falsification-harness-2026-08-06.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/fractalrabbit-falsification-harness-2026-08-06.md",
+      "sha": "059c4d6b7376b0139bc08684e9e3754c5b882cd9",
+      "size": 13338,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 48,
+      "kind": "refs_doc",
+      "label": "frost-panfrost-lockout-2026-07-17.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/frost-panfrost-lockout-2026-07-17.md",
+      "sha": "1f04d96fe9ba5a75d9afca7ba4f626724813ee5d",
+      "size": 6698,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 49,
+      "kind": "refs_doc",
+      "label": "gap-map-hyperspherical-harmonic-curve-2026-08-05.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/gap-map-hyperspherical-harmonic-curve-2026-08-05.md",
+      "sha": "00d7482c7d28d318fb58e3c5478778930a838d4a",
+      "size": 13446,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_cross_reference",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 50,
+      "kind": "refs_doc",
+      "label": "kvm-arm-nested-virtualization-2026-08-07.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/kvm-arm-nested-virtualization-2026-08-07.md",
+      "sha": "44ef17a362ff9824e73a417104fe0685b3fe1fd9",
+      "size": 18473,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_cross_reference",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 51,
+      "kind": "refs_doc",
+      "label": "kernel-rootfs-split-2026-07-29.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/kernel-rootfs-split-2026-07-29.md",
+      "sha": "70f02338a73b5dd324c037d58bf213bb3b202dbf",
+      "size": 12550,
+      "coverage": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence"
+      ]
+    },
+    {
+      "idx": 52,
+      "kind": "refs_doc",
+      "label": "hyperspherical-harmonic-curve-2026-08-05.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/hyperspherical-harmonic-curve-2026-08-05.md",
+      "sha": "712ebbc90487d87b9d937fbd4f8faa8795e1c4f4",
+      "size": 13550,
+      "coverage": [
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1
+      ],
+      "missing": [
+        "has_cross_reference",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 53,
+      "kind": "refs_doc",
+      "label": "learned-latent-curve-skill-quality-map-2026-08-03.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/learned-latent-curve-skill-quality-map-2026-08-03.md",
+      "sha": "814a301cb61906e1905dcc6dec8c6eeb2c09b903",
+      "size": 13982,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_cross_reference",
+        "has_source_citation",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 54,
+      "kind": "refs_doc",
+      "label": "learned-latent-curve-rsi-v10-2026-08-03.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/learned-latent-curve-rsi-v10-2026-08-03.md",
+      "sha": "2685fcfd88c41739aee3fd2350dff2800c218275",
+      "size": 18007,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_cross_reference",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 55,
+      "kind": "refs_doc",
+      "label": "learned-latent-curve-rsi-v11-v12-2026-08-03.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/learned-latent-curve-rsi-v11-v12-2026-08-03.md",
+      "sha": "f1bffdd0fd094da648f0e0bda59e404a04d231c5",
+      "size": 11505,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_cross_reference",
+        "has_source_citation",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 56,
+      "kind": "refs_doc",
+      "label": "image-builder-cli-fork-status-2026-07-23.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/image-builder-cli-fork-status-2026-07-23.md",
+      "sha": "59fa49fa5d92546b6f28135a18dc1f03e328d9cb",
+      "size": 4772,
+      "coverage": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 57,
+      "kind": "refs_doc",
+      "label": "libvfio-user-bundle-decision-2026-07-30.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/libvfio-user-bundle-decision-2026-07-30.md",
+      "sha": "b228b85539678da8bf4fc98adf66aa264597b627",
+      "size": 7112,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 58,
+      "kind": "refs_doc",
+      "label": "learned-latent-curve-yubios-artifact-primitives-coverage-flow-2026-08-04.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/learned-latent-curve-yubios-artifact-primitives-coverage-flow-2026-08-04.md",
+      "sha": "0ace1bf39dd3668be089dd5ff90a931e4c061a1f",
+      "size": 13707,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement"
+      ]
+    },
+    {
+      "idx": 59,
+      "kind": "refs_doc",
+      "label": "hyperspherical-harmonic-curve-v1-fit-2026-08-05.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/hyperspherical-harmonic-curve-v1-fit-2026-08-05.md",
+      "sha": "5be819b5a9d5186bf2272058bf17a11bd4227caa",
+      "size": 8526,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 60,
+      "kind": "refs_doc",
+      "label": "luks-fido2-e2e-test-2026-07-23.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/luks-fido2-e2e-test-2026-07-23.md",
+      "sha": "607922012d64b09b1f9e787b79ba01c261cf063d",
+      "size": 4913,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 61,
+      "kind": "refs_doc",
+      "label": "mkosi-bcvk-fork-status-2026-07-23.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/mkosi-bcvk-fork-status-2026-07-23.md",
+      "sha": "c37cd9c9d115d8bc1a3001f18f628a103c30e4bb",
+      "size": 5978,
+      "coverage": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 62,
+      "kind": "refs_doc",
+      "label": "naming-licensing-provenance-2026-07-25.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/naming-licensing-provenance-2026-07-25.md",
+      "sha": "d8e9a11520b9b94121548ef391a8ab0e86bfa34c",
+      "size": 9791,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 63,
+      "kind": "refs_doc",
+      "label": "metrics-and-reporting-2026-07-25.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/metrics-and-reporting-2026-07-25.md",
+      "sha": "1e17dd90a9158c6c4db86de17d7f1b0f1ce3f8da",
+      "size": 8235,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 64,
+      "kind": "refs_doc",
+      "label": "negative-skill-space-2026-07-28.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/negative-skill-space-2026-07-28.md",
+      "sha": "fb6338b9ec3fc8536bcd1d4c5b0f6870290d1771",
+      "size": 28287,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 65,
+      "kind": "refs_doc",
+      "label": "offer-pricing-architecture-2026-07-25.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/offer-pricing-architecture-2026-07-25.md",
+      "sha": "f216026b1264b3cd18f6a80a554bf9210a04923e",
+      "size": 9521,
+      "coverage": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 66,
+      "kind": "refs_doc",
+      "label": "first-90-days-2026-07-28.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/first-90-days-2026-07-28.md",
+      "sha": "36ed58e0955596ff392c150ed3bd1e9161cd9522",
+      "size": 10828,
+      "coverage": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "missing": [
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 67,
+      "kind": "refs_doc",
+      "label": "openwrt-deception-proof-plan-2026-07-17.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/openwrt-deception-proof-plan-2026-07-17.md",
+      "sha": "584ae4d6268fa863208c2a27c8131988b7e55679",
+      "size": 5228,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 68,
+      "kind": "refs_doc",
+      "label": "openwrt-wireguard-deception-lan-prototype-2026-07-25.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/openwrt-wireguard-deception-lan-prototype-2026-07-25.md",
+      "sha": "6f5d14a0afc80ab1b91f5e19b2abdc17d9fdf00a",
+      "size": 8559,
+      "coverage": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 69,
+      "kind": "refs_doc",
+      "label": "osbuild-image-builder-2026-07-23.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/osbuild-image-builder-2026-07-23.md",
+      "sha": "74900be7f73d681008c208c02ec0a57114a183aa",
+      "size": 7123,
+      "coverage": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 70,
+      "kind": "refs_doc",
+      "label": "operating-covenant-2026-07-25.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/operating-covenant-2026-07-25.md",
+      "sha": "8d5ba2f1a3020edb6433c696d294b956537f270d",
+      "size": 7683,
+      "coverage": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 71,
+      "kind": "refs_doc",
+      "label": "planning-cycle-2026-07-11.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/planning-cycle-2026-07-11.md",
+      "sha": "3d161415f46ba6658367321894e97d95c5b9d0b5",
+      "size": 7471,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 72,
+      "kind": "refs_doc",
+      "label": "package-floor-verification-checklist-2026-08-04.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/package-floor-verification-checklist-2026-08-04.md",
+      "sha": "db7f951e888d5aca22f38d8fade921efc746f10f",
+      "size": 13830,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 73,
+      "kind": "refs_doc",
+      "label": "org-state-audit-2026-07-23.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/org-state-audit-2026-07-23.md",
+      "sha": "a98e408b882138bd6057d87f49581f7c1419fd6c",
+      "size": 6307,
+      "coverage": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_cross_reference",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 74,
+      "kind": "refs_doc",
+      "label": "post-quantum-tls-adoption-2026-07-23.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/post-quantum-tls-adoption-2026-07-23.md",
+      "sha": "83af9edc5ee69de5a7fad50fce5f8a3f3636e1ac",
+      "size": 5846,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 75,
+      "kind": "refs_doc",
+      "label": "pilot-collateral-roi-baseline-2026-07-25.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/pilot-collateral-roi-baseline-2026-07-25.md",
+      "sha": "91bf3dadf0c751f0f43d56fcc169939a765ef38b",
+      "size": 8408,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 76,
+      "kind": "refs_doc",
+      "label": "pr-campaign-research-2026-07-16.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/pr-campaign-research-2026-07-16.md",
+      "sha": "2181975ef6737e2c3f848ecbb055507b7cfad74d",
+      "size": 6917,
+      "coverage": [
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 77,
+      "kind": "refs_doc",
+      "label": "prior-art-state-of-art-2026-07-30.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/prior-art-state-of-art-2026-07-30.md",
+      "sha": "220b41a8eb9757131b094f975d6129e23be81171",
+      "size": 16500,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 78,
+      "kind": "refs_doc",
+      "label": "prior-art-search-rsi-audit-2026-07-30.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/prior-art-search-rsi-audit-2026-07-30.md",
+      "sha": "7b4cafe5a0b6dea95c519675e90f24db79a3c441",
+      "size": 12511,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_source_citation",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 79,
+      "kind": "refs_doc",
+      "label": "recursive-self-improvement-audit-2026-07-28.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/recursive-self-improvement-audit-2026-07-28.md",
+      "sha": "0c8aa38866eb11a0f107b14494f28b5882e4ef4b",
+      "size": 13456,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 80,
+      "kind": "refs_doc",
+      "label": "readiness-gates-gtm-2026-07-25.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/readiness-gates-gtm-2026-07-25.md",
+      "sha": "5d332b334c31217aa86e958d6421dab44cbac15d",
+      "size": 10983,
+      "coverage": [
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "missing": [
+        "has_recommendation",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 81,
+      "kind": "refs_doc",
+      "label": "release-gate-checklist-v2-2026-08-04.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/release-gate-checklist-v2-2026-08-04.md",
+      "sha": "e69c73998c109239fb8ba116cd8d9168954175a5",
+      "size": 21460,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 82,
+      "kind": "refs_doc",
+      "label": "refederated-identity-oidc-sigstore-privacy-2026-08-07.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/refederated-identity-oidc-sigstore-privacy-2026-08-07.md",
+      "sha": "dc2973d1d089bfd1401675bb8eb3135469a63a12",
+      "size": 18460,
+      "coverage": [
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_evidence",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 83,
+      "kind": "refs_doc",
+      "label": "readiness-gates-gtm-2026-07-28.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/readiness-gates-gtm-2026-07-28.md",
+      "sha": "21a4b1cae7de5e246eaeeed35c50dbcc8774ae08",
+      "size": 14748,
+      "coverage": [
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "missing": [
+        "has_recommendation",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 84,
+      "kind": "refs_doc",
+      "label": "repo-history-skill-2026-08-07.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/repo-history-skill-2026-08-07.md",
+      "sha": "a359cfc655b27c461876f09de15bc35ca4da81f0",
+      "size": 23605,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 85,
+      "kind": "refs_doc",
+      "label": "prior-art-autonomous-ideation-skill-2026-07-28.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/prior-art-autonomous-ideation-skill-2026-07-28.md",
+      "sha": "ee51cb860735af3e5a2e52b4c011a68832b5853e",
+      "size": 20716,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 86,
+      "kind": "refs_doc",
+      "label": "repo-history-skill-cycle-1-2026-08-07.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/repo-history-skill-cycle-1-2026-08-07.md",
+      "sha": "7e20b03ce50d04f1daf5efaf63a19fa9f61041f3",
+      "size": 1590,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 87,
+      "kind": "refs_doc",
+      "label": "repo-history-skill-cycle-2-2026-08-07.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/repo-history-skill-cycle-2-2026-08-07.md",
+      "sha": "f38aa5a3710e26a77453fe3c3d64a3b69ece4991",
+      "size": 8147,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 88,
+      "kind": "refs_doc",
+      "label": "repo-history-skill-cycle-3-2026-08-07.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/repo-history-skill-cycle-3-2026-08-07.md",
+      "sha": "17b1bea3540290b3d69cdc077718c16f0c64e630",
+      "size": 6405,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 89,
+      "kind": "refs_doc",
+      "label": "repo-history-skill-cycle-4-2026-08-07-changelog.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/repo-history-skill-cycle-4-2026-08-07-changelog.md",
+      "sha": "d2ecb702e28e9d0d945f7e363f6089bb1da83c25",
+      "size": 4287,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 90,
+      "kind": "refs_doc",
+      "label": "reproducible-builds-2026-07-22.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/reproducible-builds-2026-07-22.md",
+      "sha": "68793de79177050a5b09ef06f709a43b5b339ebe",
+      "size": 8962,
+      "coverage": [
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 91,
+      "kind": "refs_doc",
+      "label": "repo-refs-skill-deep-research-2026-08-07.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/repo-refs-skill-deep-research-2026-08-07.md",
+      "sha": "35f2117caf717fc9c10906becc137aa61058580e",
+      "size": 17182,
+      "coverage": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "missing": []
+    },
+    {
+      "idx": 92,
+      "kind": "refs_doc",
+      "label": "research-refresh-2026-07-11.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/research-refresh-2026-07-11.md",
+      "sha": "f0227be32eb026ada8ad492bd1718470f15b405e",
+      "size": 6430,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 93,
+      "kind": "refs_doc",
+      "label": "rk3588-ddr-tpl-source-2026-07-29.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/rk3588-ddr-tpl-source-2026-07-29.md",
+      "sha": "d7409b6a8af0eff90ef4b083efef1b6cc1aa30cf",
+      "size": 6348,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 94,
+      "kind": "refs_doc",
+      "label": "repo-history-skill-deep-research-2026-08-07.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/repo-history-skill-deep-research-2026-08-07.md",
+      "sha": "a359cfc655b27c461876f09de15bc35ca4da81f0",
+      "size": 23605,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 95,
+      "kind": "refs_doc",
+      "label": "roadmap-promotion-gates-2026-07-17.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/roadmap-promotion-gates-2026-07-17.md",
+      "sha": "2ce746028ca4fdd4f2a203d55468b7311e59c7f1",
+      "size": 3977,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_source_citation",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 96,
+      "kind": "refs_doc",
+      "label": "rsi-five-skill-pass-2026-07-29.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/rsi-five-skill-pass-2026-07-29.md",
+      "sha": "9c3700ab2fa0e4671e12a623fde95481401b0f2f",
+      "size": 9224,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 97,
+      "kind": "refs_doc",
+      "label": "repo-history-skill-cycle-4-2026-08-07.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/repo-history-skill-cycle-4-2026-08-07.md",
+      "sha": "78b58ea6b9ff1020dbfa7b568cdd8f345e0f7b12",
+      "size": 8787,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 98,
+      "kind": "refs_doc",
+      "label": "pr-friend-map-2026-07-17.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/pr-friend-map-2026-07-17.md",
+      "sha": "52beaba9839b316f57c8c24af84d9630636cd141",
+      "size": 12857,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 99,
+      "kind": "refs_doc",
+      "label": "sbsign-pkcs11-validate-2026-07-23.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/sbsign-pkcs11-validate-2026-07-23.md",
+      "sha": "278446f169861b0c7ad681194bf7c14e6f1f77fd",
+      "size": 2771,
+      "coverage": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 100,
+      "kind": "refs_doc",
+      "label": "sealed-uki-vm-test-2026-07-30.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/sealed-uki-vm-test-2026-07-30.md",
+      "sha": "73465746228eb961e9c4804df43c3a846465ec62",
+      "size": 10211,
+      "coverage": [
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "missing": [
+        "has_recommendation",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 101,
+      "kind": "refs_doc",
+      "label": "sectime-rk-secure-time-2026-07-17.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/sectime-rk-secure-time-2026-07-17.md",
+      "sha": "6754ebe45c6f15976e9c52c600337d39f547e398",
+      "size": 5404,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 102,
+      "kind": "refs_doc",
+      "label": "slsa-l3-sbom-cosign-integration-spec-2026-08-04.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/slsa-l3-sbom-cosign-integration-spec-2026-08-04.md",
+      "sha": "b0c52350e65f625dc481cbf34d2460f01b7319b9",
+      "size": 81886,
+      "coverage": [
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 103,
+      "kind": "refs_doc",
+      "label": "public-security-funding-targets-2026-07-25.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/public-security-funding-targets-2026-07-25.md",
+      "sha": "d5fdfdd4f69264cba8028a8c58bf98bca8a927f9",
+      "size": 9057,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 104,
+      "kind": "refs_doc",
+      "label": "systemd-unit-directive-reference-2026-07-23.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/systemd-unit-directive-reference-2026-07-23.md",
+      "sha": "6264c6be00fa736600fa20e96d9cbf00bbd7098b",
+      "size": 14301,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 105,
+      "kind": "refs_doc",
+      "label": "systemd-homed-reference-2026-07-23.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/systemd-homed-reference-2026-07-23.md",
+      "sha": "e3fc18f0b58be5af7d7d03a8fe987739bdf7bce5",
+      "size": 10696,
+      "coverage": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_cross_reference",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 106,
+      "kind": "refs_doc",
+      "label": "systemd-hardening-audit-2026-07-17.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/systemd-hardening-audit-2026-07-17.md",
+      "sha": "42ace31b3222b7299a1e38f7cb90d2329c5ece66",
+      "size": 4037,
+      "coverage": [
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "missing": [
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_source_citation",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 107,
+      "kind": "refs_doc",
+      "label": "systemd-upstream-progress-2026-07-21.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/systemd-upstream-progress-2026-07-21.md",
+      "sha": "3343c228d48adcc75101e0b9283d451d4ff61009",
+      "size": 10499,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 108,
+      "kind": "refs_doc",
+      "label": "team-budget-use-of-funds-2026-07-25.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/team-budget-use-of-funds-2026-07-25.md",
+      "sha": "1e33316cad1bd76f2937e2fd8e3f9c2521a113f0",
+      "size": 8022,
+      "coverage": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 109,
+      "kind": "refs_doc",
+      "label": "testing-production-gaps-2026-08-01.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/testing-production-gaps-2026-08-01.md",
+      "sha": "8277241b2209017100fe7294d7717f4596cd8ad4",
+      "size": 14675,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 110,
+      "kind": "refs_doc",
+      "label": "systemd-v262-audit-2026-07-14.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/systemd-v262-audit-2026-07-14.md",
+      "sha": "2242d3f37ad5d932d441a1519469137d807f92a4",
+      "size": 4544,
+      "coverage": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 111,
+      "kind": "refs_doc",
+      "label": "validate-input-shape-doctrine-2026-08-04.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/validate-input-shape-doctrine-2026-08-04.md",
+      "sha": "dae1318d6d225d59799c00c7dcd7346dfd6bf873",
+      "size": 72819,
+      "coverage": [
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "missing": [
+        "has_recommendation"
+      ]
+    },
+    {
+      "idx": 112,
+      "kind": "refs_doc",
+      "label": "vm-e2e-run-29525332901.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/vm-e2e-run-29525332901.md",
+      "sha": "b5764d1dbf7d74d14f92d47e23f910ac94789842",
+      "size": 5349,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 113,
+      "kind": "refs_doc",
+      "label": "vgpu-vfio-user-trust-boundary-2026-07-25.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/vgpu-vfio-user-trust-boundary-2026-07-25.md",
+      "sha": "80aaeea592d3efd95d256006b2fa35cde70d89b9",
+      "size": 11595,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 114,
+      "kind": "refs_doc",
+      "label": "workflow-patterns-deep-dive-2026-07-30.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/workflow-patterns-deep-dive-2026-07-30.md",
+      "sha": "8f60e3d7cb4be4e1820851d504b9d1cb7ee9d82a",
+      "size": 15144,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 115,
+      "kind": "refs_doc",
+      "label": "workflow-token-scope-audit-script-2026-08-04.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/workflow-token-scope-audit-script-2026-08-04.md",
+      "sha": "bec3d184f86b83bbba79bcbfe96db554ba4c3daa",
+      "size": 13293,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 116,
+      "kind": "refs_doc",
+      "label": "y33-fibonacci-sphere-paper-revised-passage-2026-08-07.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/y33-fibonacci-sphere-paper-revised-passage-2026-08-07.md",
+      "sha": "582b873633284b20fe181b30ef742421bf953302",
+      "size": 17113,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 117,
+      "kind": "refs_doc",
+      "label": "yubikey-hw-validation-scenarios-2026-07-25.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/yubikey-hw-validation-scenarios-2026-07-25.md",
+      "sha": "e246b6d55056b98e1715d365b42712d4cc4ba252",
+      "size": 7962,
+      "coverage": [
+        1,
+        1,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 118,
+      "kind": "refs_doc",
+      "label": "y33-fibonacci-sphere-paper-method-equation-block-2026-08-07.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/y33-fibonacci-sphere-paper-method-equation-block-2026-08-07.md",
+      "sha": "1f641db6b37267593713a13683addb333293bddb",
+      "size": 19825,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_cross_reference",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 119,
+      "kind": "refs_doc",
+      "label": "who-pays-and-why-2026-07-25.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/who-pays-and-why-2026-07-25.md",
+      "sha": "798a9946db8a6dfc893b380651d1d815430d6682",
+      "size": 8498,
+      "coverage": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 120,
+      "kind": "refs_doc",
+      "label": "yubios-reproducibility-equivalents-2026-07-30.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/yubios-reproducibility-equivalents-2026-07-30.md",
+      "sha": "65c5c03f474b62a684e805d23956f3953b2b9120",
+      "size": 10488,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 121,
+      "kind": "refs_doc",
+      "label": "three-year-revenue-cost-model-2026-07-25.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/three-year-revenue-cost-model-2026-07-25.md",
+      "sha": "a5a5e1920924bfb54edd19c639afe1d4528c7874",
+      "size": 9091,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 122,
+      "kind": "refs_doc",
+      "label": "yubios-ci-strategy-history-2026-07-23.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/yubios-ci-strategy-history-2026-07-23.md",
+      "sha": "fcd0e40c607d052a9c48356291cd787e41a19602",
+      "size": 4857,
+      "coverage": [
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 123,
+      "kind": "refs_doc",
+      "label": "v261-base-image-bump-2026-07-23.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/v261-base-image-bump-2026-07-23.md",
+      "sha": "c3d671ba389f3cd543ab15373900358a38824a18",
+      "size": 3458,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_source_citation",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 124,
+      "kind": "refs_doc",
+      "label": "workflow-dispatch-reachability-spec-2026-08-04.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/workflow-dispatch-reachability-spec-2026-08-04.md",
+      "sha": "83d6c853c8c4fa0bd13bc40bcfba63719fd88c22",
+      "size": 12249,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 125,
+      "kind": "refs_doc",
+      "label": "yubios-scamper-product-brief-investor-memo-2026-08-07.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/yubios-scamper-product-brief-investor-memo-2026-08-07.md",
+      "sha": "681b97d3dffb20499ad5c776152d41dccac91ce4",
+      "size": 24674,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 126,
+      "kind": "refs_doc",
+      "label": "yubios-stress-test-assertions-2026-08-07.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/yubios-stress-test-assertions-2026-08-07.md",
+      "sha": "ccbd0a031b4c341c76f85e67ca03f447c38e1beb",
+      "size": 18107,
+      "coverage": [
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 127,
+      "kind": "refs_doc",
+      "label": "yubios-versioning-scheme-2026-08-04.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/yubios-versioning-scheme-2026-08-04.md",
+      "sha": "7ddcb682d2d08ff46b2d0aa4a6acf2528ebd42fe",
+      "size": 9331,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "idx": 128,
+      "kind": "refs_doc",
+      "label": "yubios-trust-proof-playbook-checklist-2026-08-07.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/yubios-trust-proof-playbook-checklist-2026-08-07.md",
+      "sha": "c6fa88f1cd17353afefdf9d7f56141a0a2f9f997",
+      "size": 26964,
+      "coverage": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "missing": [
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 129,
+      "kind": "refs_doc",
+      "label": "zboot-workaround-runner-qemu-audit-2026-07-25.md",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/blob/main/refs/zboot-workaround-runner-qemu-audit-2026-07-25.md",
+      "sha": "6fc6c71e3588705554dc0a2f72e98e2b37dc52a4",
+      "size": 5880,
+      "coverage": [
+        1,
+        0,
+        0,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "missing": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_source_citation",
+        "has_priority_signal"
+      ]
+    }
+  ],
+  "fit_metrics": {
+    "pc1": 0.2517639399113778,
+    "pc2": 0.19297696806031484,
+    "pc1_pc2_ratio": 0.44474090797169263,
+    "p_norm_min": 0.9999999999999999,
+    "p_norm_max": 1.0,
+    "sparse_cell_count": 66,
+    "mode_d_total": 65
+  }
+}
