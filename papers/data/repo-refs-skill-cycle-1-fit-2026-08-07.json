@@ -1,0 +1,453 @@
+{
+  "cycle": 1,
+  "date": "2026-08-07",
+  "corpus_size": 130,
+  "repos": [
+    "yubi-OS/yubiOS"
+  ],
+  "primitive_coverage": {
+    "has_topic_anchor": 130,
+    "has_problem_statement": 23,
+    "has_recommendation": 43,
+    "has_evidence": 104,
+    "has_cross_reference": 98,
+    "has_temporal_anchor": 130,
+    "has_verification_plan": 18,
+    "has_source_citation": 88,
+    "has_priority_signal": 85
+  },
+  "primitive_coverage_pct": {
+    "has_topic_anchor": 100.0,
+    "has_problem_statement": 17.69,
+    "has_recommendation": 33.08,
+    "has_evidence": 80.0,
+    "has_cross_reference": 75.38,
+    "has_temporal_anchor": 100.0,
+    "has_verification_plan": 13.85,
+    "has_source_citation": 67.69,
+    "has_priority_signal": 65.38
+  },
+  "surviving_primitives": [
+    "has_problem_statement",
+    "has_recommendation",
+    "has_evidence",
+    "has_cross_reference",
+    "has_verification_plan",
+    "has_source_citation",
+    "has_priority_signal"
+  ],
+  "dropped_primitives": [
+    "has_topic_anchor",
+    "has_temporal_anchor"
+  ],
+  "pc1": 0.2517639399113778,
+  "pc2": 0.19297696806031484,
+  "pc1_pc2_ratio": 0.44474090797169263,
+  "gate_PC1_PC2_min": 0.4,
+  "norm_ok": true,
+  "p_norm_min": 0.9999999999999999,
+  "p_norm_max": 1.0,
+  "sparse_cell_count": 66,
+  "sparse_cell_pct": 50.77,
+  "mode_d_total_count": 65,
+  "top_isolated": [
+    {
+      "idx": 0,
+      "file": "assets-repo-repoint-verification-2026-07-28.md",
+      "nearest_chordal": 1.2502,
+      "target_primitive": "has_priority_signal",
+      "delta": 1.0531,
+      "missing_primitives": [
+        "has_priority_signal",
+        "has_problem_statement"
+      ]
+    },
+    {
+      "idx": 1,
+      "file": "customer-roi-model-2026-07-25.md",
+      "nearest_chordal": 1.5213,
+      "target_primitive": "has_priority_signal",
+      "delta": 0.9792,
+      "missing_primitives": [
+        "has_priority_signal",
+        "has_recommendation",
+        "has_source_citation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 2,
+      "file": "validate-input-shape-doctrine-2026-08-04.md",
+      "nearest_chordal": 0.9128,
+      "target_primitive": "has_recommendation",
+      "delta": 0.9128,
+      "missing_primitives": [
+        "has_recommendation"
+      ]
+    },
+    {
+      "idx": 3,
+      "file": "sbsign-pkcs11-validate-2026-07-23.md",
+      "nearest_chordal": 1.2036,
+      "target_primitive": "has_recommendation",
+      "delta": 0.909,
+      "missing_primitives": [
+        "has_evidence",
+        "has_problem_statement",
+        "has_recommendation",
+        "has_source_citation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 4,
+      "file": "yubios-ci-strategy-history-2026-07-23.md",
+      "nearest_chordal": 1.2036,
+      "target_primitive": "has_recommendation",
+      "delta": 0.909,
+      "missing_primitives": [
+        "has_evidence",
+        "has_problem_statement",
+        "has_recommendation",
+        "has_source_citation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 5,
+      "file": "cycle5-results-2026-08-06.md",
+      "nearest_chordal": 1.5268,
+      "target_primitive": "has_priority_signal",
+      "delta": 0.8826,
+      "missing_primitives": [
+        "has_priority_signal",
+        "has_problem_statement",
+        "has_recommendation",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 6,
+      "file": "curve-guided-rsi-and-self-differential-2026-08-04.md",
+      "nearest_chordal": 1.0966,
+      "target_primitive": "has_priority_signal",
+      "delta": 0.8682,
+      "missing_primitives": [
+        "has_priority_signal",
+        "has_problem_statement",
+        "has_source_citation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 7,
+      "file": "bcvk-swtpm-ci-2026-07-23.md",
+      "nearest_chordal": 1.6657,
+      "target_primitive": "has_priority_signal",
+      "delta": 0.867,
+      "missing_primitives": [
+        "has_priority_signal",
+        "has_problem_statement",
+        "has_recommendation",
+        "has_source_citation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 8,
+      "file": "customer-roi-model-2026-07-26.md",
+      "nearest_chordal": 1.6657,
+      "target_primitive": "has_priority_signal",
+      "delta": 0.867,
+      "missing_primitives": [
+        "has_priority_signal",
+        "has_problem_statement",
+        "has_recommendation",
+        "has_source_citation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 9,
+      "file": "v261-base-image-bump-2026-07-23.md",
+      "nearest_chordal": 1.6657,
+      "target_primitive": "has_priority_signal",
+      "delta": 0.867,
+      "missing_primitives": [
+        "has_priority_signal",
+        "has_problem_statement",
+        "has_recommendation",
+        "has_source_citation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 10,
+      "file": "zboot-workaround-runner-qemu-audit-2026-07-25.md",
+      "nearest_chordal": 1.6657,
+      "target_primitive": "has_priority_signal",
+      "delta": 0.867,
+      "missing_primitives": [
+        "has_priority_signal",
+        "has_problem_statement",
+        "has_recommendation",
+        "has_source_citation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 11,
+      "file": "curve-guided-rsi-v1-cycle4-all-skills-2026-08-04.md",
+      "nearest_chordal": 1.4123,
+      "target_primitive": "has_priority_signal",
+      "delta": 0.8668,
+      "missing_primitives": [
+        "has_priority_signal",
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 12,
+      "file": "yubios-reproducibility-equivalents-2026-07-30.md",
+      "nearest_chordal": 1.4123,
+      "target_primitive": "has_priority_signal",
+      "delta": 0.8668,
+      "missing_primitives": [
+        "has_priority_signal",
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 13,
+      "file": "ci-evidence-2026-07-21.md",
+      "nearest_chordal": 1.6361,
+      "target_primitive": "has_recommendation",
+      "delta": 0.8429,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 14,
+      "file": "prior-art-autonomous-ideation-skill-2026-07-28.md",
+      "nearest_chordal": 1.6361,
+      "target_primitive": "has_recommendation",
+      "delta": 0.8429,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 15,
+      "file": "research-refresh-2026-07-11.md",
+      "nearest_chordal": 1.6361,
+      "target_primitive": "has_recommendation",
+      "delta": 0.8429,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 16,
+      "file": "systemd-upstream-progress-2026-07-21.md",
+      "nearest_chordal": 1.6361,
+      "target_primitive": "has_recommendation",
+      "delta": 0.8429,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 17,
+      "file": "bootc-composefs-sealed-flow-2026-07-22.md",
+      "nearest_chordal": 1.2117,
+      "target_primitive": "has_recommendation",
+      "delta": 0.8361,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 18,
+      "file": "current-position-evidence-2026-07-25.md",
+      "nearest_chordal": 1.2117,
+      "target_primitive": "has_recommendation",
+      "delta": 0.8361,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 19,
+      "file": "days-0-30-safe-offer-2026-07-25.md",
+      "nearest_chordal": 1.2117,
+      "target_primitive": "has_recommendation",
+      "delta": 0.8361,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 20,
+      "file": "days-31-60-narrow-product-2026-07-25.md",
+      "nearest_chordal": 1.2117,
+      "target_primitive": "has_recommendation",
+      "delta": 0.8361,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 21,
+      "file": "slsa-l3-sbom-cosign-integration-spec-2026-08-04.md",
+      "nearest_chordal": 1.2117,
+      "target_primitive": "has_recommendation",
+      "delta": 0.8361,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 22,
+      "file": "kernel-rootfs-split-2026-07-29.md",
+      "nearest_chordal": 1.4766,
+      "target_primitive": "has_recommendation",
+      "delta": 0.7834,
+      "missing_primitives": [
+        "has_evidence",
+        "has_problem_statement",
+        "has_recommendation"
+      ]
+    },
+    {
+      "idx": 23,
+      "file": "curve-guided-rsi-v1-fitness-test-run-2026-08-04.md",
+      "nearest_chordal": 1.5037,
+      "target_primitive": "has_priority_signal",
+      "delta": 0.7325,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_priority_signal",
+        "has_problem_statement"
+      ]
+    },
+    {
+      "idx": 24,
+      "file": "arxiv-2607.09967-vs-learned-latent-curve-2026-08-04.md",
+      "nearest_chordal": 1.7971,
+      "target_primitive": "has_recommendation",
+      "delta": 0.6921,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_evidence",
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 25,
+      "file": "org-state-audit-2026-07-23.md",
+      "nearest_chordal": 1.7971,
+      "target_primitive": "has_recommendation",
+      "delta": 0.6921,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_evidence",
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 26,
+      "file": "systemd-homed-reference-2026-07-23.md",
+      "nearest_chordal": 1.7971,
+      "target_primitive": "has_recommendation",
+      "delta": 0.6921,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_evidence",
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 27,
+      "file": "external-benchmarks-sources-2026-07-25.md",
+      "nearest_chordal": 1.8497,
+      "target_primitive": "has_recommendation",
+      "delta": 0.6607,
+      "missing_primitives": [
+        "has_priority_signal",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 28,
+      "file": "actions-checkout-v6-includeif-investigation-2026-07-29.md",
+      "nearest_chordal": 1.663,
+      "target_primitive": "has_priority_signal",
+      "delta": 0.6359,
+      "missing_primitives": [
+        "has_evidence",
+        "has_priority_signal",
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 29,
+      "file": "prior-art-search-rsi-audit-2026-07-30.md",
+      "nearest_chordal": 1.102,
+      "target_primitive": "has_priority_signal",
+      "delta": 0.5943,
+      "missing_primitives": [
+        "has_priority_signal",
+        "has_problem_statement",
+        "has_source_citation"
+      ]
+    }
+  ],
+  "cycle_progression": {
+    "cycle_0_derivation": {
+      "measurement_corpus_size": 5,
+      "predicted_survivors": 4,
+      "fit_status": "PENDING (initial derivation only)"
+    },
+    "cycle_1_live_fit": {
+      "N_files": 130,
+      "primitive_survival": 7,
+      "pc1_pc2_ratio": 0.44474090797169263,
+      "sparse_count": 66,
+      "mode_d_candidates": 65
+    }
+  },
+  "red_flags": {
+    "sparse_cell_count_pct": 50.8,
+    "red_flag_rule": "Sparse-cell count > 50% of corpus \u2192 re-derive basis via NSS",
+    "cause": "2 primitives at 100% coverage (has_topic_anchor, has_temporal_anchor) dominate PCA",
+    "cycle_2_fix": "Drop the 2 near-constant primitives from basis, re-fit on 7-D"
+  }
+}
