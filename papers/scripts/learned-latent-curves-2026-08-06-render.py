@@ -81,6 +81,7 @@ style_body = ParagraphStyle(
     "Body", parent=styles["Normal"],
     fontName=BODY_FONT, fontSize=10, leading=14,
     alignment=TA_JUSTIFY, spaceAfter=5, firstLineIndent=12,
+    widows=2, orphans=2,
 )
 style_abstract = ParagraphStyle(
     "Abstract", parent=styles["Normal"],
@@ -1279,8 +1280,6 @@ if Path(figC2).exists():
         "protocol.",
         style_caption,
     ))
-story.append(PageBreak())
-
 # --- Appendix D Manifold-Coordinate Benchmark (v3 - Fix A targets) ---
 story.append(Paragraph(
     "Appendix D&nbsp;&nbsp;Manifold-Coordinate Benchmark (Rigorous Re-Test)",
