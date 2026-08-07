@@ -1,49 +1,47 @@
-#!/usr/bin/env python3
-"""curve-drift-detector.py — PR4 cross-corpus drift detector (4-corpus version).
+#!/usr/bin/env python3.12
+"""curve-drift-detector.py — PR4 cross-corpus drift detector (4-corpus, repo-sourced).
+
+SOURCING RULE (per the user's standing instruction): all corpus listings + content
+are sourced DIRECTLY from the GitHub repos via the Contents API + raw.githubusercontent.com.
+The ONE documented exception is `self/` — no repo `self/` directory exists on any
+of the user's repos (verified Contents API on yubi-OS/yubiOS + yubi-OS/agent-skills).
+`self/` corpus is read from the workspace `memory/personal-WbtUgeUv/` directory
+and that exception is surfaced in the corpus listing + README + drift-priority-list.
 
 Aligns the harmonic curve fits of FOUR corpora on S^2:
-  - self   : memory/personal-WbtUgeUv/      (10 .md files, ##-section granularity)
-  - docs   : documents/personal-WbtUgeUv/   (4 .md files: bootc-uki, curve-guided-rsi,
-             ideate-learned-latent-curve, weight-registry)
-  - refs   : documents/github-yubios-KS9n5GAT/refs/
-             (8 .md files: refederated-identity + cycle-2/3/4 archive + changelogs
-              + gap-map)
-  - cycle4 : papers/data/repo-history-skill-cycle-4-archive-2026-08-07.json
-             (324 repo-history events from yubiOS + agent-skills + Linear OMN)
 
-Computes 3 Möbius φ_θ ∈ PSL(2,C) warps against `self` as the anchor (the canonical
-self-archaeology dispatch target): self→docs, self→refs, self→cycle4. Aggregates
-drift signals (per-region warp magnitude + NSS-axis score) across all 3 alignments.
+  - docs   : yubi-OS/yubiOS/docs/                  (21 .md files, repo-sourced)
+  - refs   : yubi-OS/yubiOS/refs/                  (129 .md files, repo-sourced)
+  - cycle4 : yubi-OS/yubiOS/papers/data/repo-history-skill-cycle-4-archive-2026-08-07.json
+             (324 repo-history events, repo-sourced)
+  - self   : workspace memory/personal-WbtUgeUv/  (10 .md files — DOCUMENTED EXCEPTION,
+             no repo source exists; surfaced in all outputs)
 
-Math conventions (frozen from learned-latent-curve + hyperspherical-harmonic-curve):
-  - 9-D `internal-big-picture` primitive basis (9 of 10; self_describing dropped).
-  - SHARED basis across all 4 corpora (cross-corpus deviation from per-corpus
-    basis rule — documented). For self/docs/refs, coverage is text-keyword
-    scored; for cycle4, coverage is the existing 9-D repo-history binary
-    coverage (already in the archive JSON); the cycle4 items also get a
-    secondary text-keyword score for primitives like attestation that have
-    git/Linear-specific vocabulary (extended PRIM_KEYWORDS).
-  - PCA -> stereographic -> Möbius lift to S^2 (default N=2).
-  - Identity-init Möbius (a=d=1, b=c=0; 6 real DOF; closed via L-BFGS-B).
+Computes 3 Möbius φ_θ ∈ PSL(2,C) warps against `self` as the anchor: self→docs,
+self→refs, self→cycle4. Aggregates drift signals across all 3 alignments.
+
+Math conventions (frozen):
+  - 9-D `internal-big-picture` primitive basis (shared across all 4 corpora).
+  - For self/docs/refs: text-keyword scoring with extended vocab (git/Linear
+    terms added so cycle4 registers on the same basis).
+  - For cycle4: items read directly from the repo archive JSON; the repo-history
+    9-D binary coverage is preserved as ground truth, and a secondary
+    internal-big-picture 9-D score is computed for cross-corpus comparison.
+  - PCA -> stereographic -> Möbius lift to S^2.
+  - Identity-init Möbius (a=d=1, b=c=0; 6 real DOF; L-BFGS-B refinement).
   - Chordal S^2 distance for sparse-cell detection.
-  - Frozen degree weights (degree_weights not learnable in this artifact).
-  - Sub-20 corpus decomposition rule: NOT applied; all 4 corpora are well
-    above 20 items.
+  - Frozen degree weights.
 
 Outputs to documents/github-yubios-KS9n5GAT/papers/data/drift-output/:
-  - aligned-curves.png         — 4 curves overlaid on S^2 + 3 warped-A point
-                                  clouds (one per alignment) + flagged regions
-  - warp-by-region.csv         — t_self, t_<corpus>, geodesic_d per alignment,
-                                  per-corpus warp columns + NSS axes + flag
-  - drift-priority-list.md     — top-10 flagged drift regions aggregated across
-                                  all 3 alignments, with self-archaeology hook
-  - mobius-transform.json      — fitted φ_θ params for all 3 alignments + the
-                                  reference (identity) + per-alignment metrics
-  - README.md                  — what/regen/math/how-to-read
-  - self-corpus-listing.json   — listing of self corpus items
-  - docs-corpus-listing.json   — listing of docs corpus items
-  - refs-corpus-listing.json   — listing of refs corpus items
-  - cycle4-corpus-listing.json — listing of cycle4 corpus items
+  - self-corpus-listing.json   (with documented-exception metadata)
+  - docs-corpus-listing.json   (repo-sourced)
+  - refs-corpus-listing.json   (repo-sourced)
+  - cycle4-corpus-listing.json (repo-sourced)
+  - mobius-transform.json
+  - warp-by-region.csv
+  - drift-priority-list.md
+  - aligned-curves.png
+  - README.md
 """
 from __future__ import annotations
 
@@ -51,6 +49,8 @@ import csv
 import json
 import os
 import sys
+import urllib.request
+import urllib.error
 from collections import Counter
 from pathlib import Path
 from typing import Dict, List, Tuple
@@ -69,14 +69,20 @@ DATA_DIR = PAPERS_DIR / "data"
 OUT_DIR = DATA_DIR / "drift-output"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
+# GitHub repo source paths (the canonical sources for corpus listings + content).
+REPO_OWNER = "yubi-OS"
+REPO_YUBIOS = "yubiOS"
+REPO_AGENT_SKILLS = "agent-skills"
+GH_CONN = "conn_1KXnkOHGgyE4"
+GH_API = "https://api.github.com"
+GH_RAW = "https://raw.githubusercontent.com"
+
+# Self-corp is workspace-only (documented exception). memory/ is not on any repo.
 SELF_CORPUS_DIR = ROOT / "memory" / "personal-WbtUgeUv"
-DOCS_CORPUS_DIR = ROOT / "documents" / "personal-WbtUgeUv"
-REFS_CORPUS_DIR = ROOT / "documents" / "github-yubios-KS9n5GAT" / "refs"
-CYCLE4_ARCHIVE = DATA_DIR / "repo-history-skill-cycle-4-archive-2026-08-07.json"
 
 
 # --------------------------------------------------------------------------- #
-# 1. 9-D internal-big-picture primitive basis.
+# 1. 9-D internal-big-picture primitive basis (shared across all 4 corpora).
 # --------------------------------------------------------------------------- #
 PRIMITIVES_9: List[str] = [
     "attestation",
@@ -90,10 +96,8 @@ PRIMITIVES_9: List[str] = [
     "segmentation",
 ]
 
-# Keyword vocab per primitive for text-keyword scoring. Frozen. Extended from
-# the 2-corpus version to cover git / Linear / PR / commit vocabulary so the
-# cycle4 items (PRs, commits, Linear tickets) get meaningful primitive coverage
-# on the SAME basis as self/docs/refs.
+# Extended keyword vocab covering git/Linear/PR/commit terms so cycle4 items
+# register meaningfully on the same internal-big-picture basis.
 PRIM_KEYWORDS: Dict[str, List[str]] = {
     "attestation": [
         "attest", "attestation", "verify", "verified", "verification",
@@ -179,25 +183,86 @@ N_WARP_SAMPLES = 24
 WARP_FLAG_PCTL = 0.80
 NSS_FLAG_PCTL = 0.80
 
-# Corpus colors for the PNG (4-corpus palette).
 CORPUS_COLORS = {
-    "self":   "#1f77b4",  # blue
-    "docs":   "#2ca02c",  # green
-    "refs":   "#d62728",  # red
-    "cycle4": "#9467bd",  # purple
+    "self":   "#1f77b4",
+    "docs":   "#2ca02c",
+    "refs":   "#d62728",
+    "cycle4": "#9467bd",
 }
 WARP_COLORS = {
-    "self-to-docs":   "#ff7f0e",  # orange
-    "self-to-refs":   "#8c564b",  # brown
-    "self-to-cycle4": "#e377c2",  # pink
+    "self-to-docs":   "#ff7f0e",
+    "self-to-refs":   "#8c564b",
+    "self-to-cycle4": "#e377c2",
 }
 
 
 # --------------------------------------------------------------------------- #
-# 2. Corpus loaders.
+# 2. GitHub Contents API + raw fetcher. EVERY corpus byte comes from here
+#    (except self/, which is the documented exception).
 # --------------------------------------------------------------------------- #
+def gh_get_contents(owner: str, repo: str, path: str) -> List[dict]:
+    """List a repo directory via the GitHub Contents API.
+
+    Returns a list of {name, path, type, sha, size, ...} entries.
+    Path = "" lists the repo root.
+    """
+    if path:
+        url = f"{GH_API}/repos/{owner}/{repo}/contents/{path}"
+    else:
+        url = f"{GH_API}/repos/{owner}/{repo}/contents"
+    req = urllib.request.Request(url, headers={
+        "Accept": "application/vnd.github.v3+json",
+        "X-Sauna-Connection-Id": GH_CONN,
+        "User-Agent": "curve-drift-detector.py",
+    })
+    with urllib.request.urlopen(req, timeout=60) as r:
+        data = json.loads(r.read())
+    if not isinstance(data, list):
+        raise ValueError(
+            f"gh_get_contents: expected list, got {type(data).__name__} "
+            f"for {owner}/{repo}/{path}"
+        )
+    return data
+
+
+def gh_get_raw(owner: str, repo: str, path: str) -> str:
+    """Fetch raw file content via the Contents API (base64-encoded `content` field).
+
+    The `MASTER GIT SU` connection covers api.github.com ONLY — raw.githubusercontent.com
+    is NOT proxied. Using the Contents API endpoint keeps everything within the
+    proxied domain and gives us the canonical repo-sourced content.
+    """
+    import base64
+    url = f"{GH_API}/repos/{owner}/{repo}/contents/{path}"
+    req = urllib.request.Request(url, headers={
+        "Accept": "application/vnd.github.v3+json",
+        "X-Sauna-Connection-Id": GH_CONN,
+        "User-Agent": "curve-drift-detector.py",
+    })
+    with urllib.request.urlopen(req, timeout=60) as r:
+        data = json.loads(r.read())
+    if not isinstance(data, dict) or "content" not in data:
+        raise ValueError(
+            f"gh_get_raw: Contents API response missing 'content' field "
+            f"for {owner}/{repo}/{path}"
+        )
+    if data.get("encoding") != "base64":
+        raise ValueError(
+            f"gh_get_raw: unexpected encoding {data.get('encoding')!r} "
+            f"for {owner}/{repo}/{path}"
+        )
+    return base64.b64decode(data["content"]).decode("utf-8", errors="ignore")
+    """Fetch raw file content via raw.githubusercontent.com (main branch)."""
+    url = f"{GH_RAW}/{owner}/{repo}/main/{path}"
+    req = urllib.request.Request(url, headers={
+        "X-Sauna-Connection-Id": GH_CONN,
+        "User-Agent": "curve-drift-detector.py",
+    })
+    with urllib.request.urlopen(req, timeout=60) as r:
+        return r.read().decode("utf-8", errors="ignore")
+
+
 def text_coverage(text: str, primitive: str) -> int:
-    """Return 1 if the text covers the primitive (keyword hit), else 0."""
     flat = text.lower()
     for kw in PRIM_KEYWORDS[primitive]:
         if kw in flat:
@@ -205,22 +270,156 @@ def text_coverage(text: str, primitive: str) -> int:
     return 0
 
 
-def load_md_corpus_from_dir(
-    corpus_dir: Path,
-    file_globs: List[str],
+# --------------------------------------------------------------------------- #
+# 3. Repo-sourced corpus loaders (docs, refs, cycle4).
+# --------------------------------------------------------------------------- #
+def load_md_corpus_from_repo(
+    owner: str,
+    repo: str,
+    repo_dir: str,
     tag: str,
     source_label: str,
 ) -> List[Dict]:
-    """Load an .md-file corpus by globbing a directory; one ## Section = one item.
+    """List `owner/repo/repo_dir` via Contents API, then fetch each .md via
+    raw.githubusercontent.com. One `## Section` header = one item.
 
-    Used by self, docs, refs loaders.
+    Returns a list of items with fields:
+      id, primitive_coverage[9], text, body_excerpt, source, section_header,
+      file, repo_path, sha (the file's blob sha from the Contents listing).
     """
+    listing = gh_get_contents(owner, repo, repo_dir)
+    md_files = sorted(
+        e["name"] for e in listing
+        if e.get("type") == "file" and e["name"].endswith(".md")
+    )
+    sha_by_file = {
+        e["name"]: e.get("sha", "") for e in listing
+        if e.get("type") == "file"
+    }
+
     items: List[Dict] = []
-    files: List[Path] = []
-    for glob in file_globs:
-        files.extend(sorted(corpus_dir.glob(glob)))
-    for path in files:
+    for fname in md_files:
+        full_path = f"{repo_dir}/{fname}"
+        try:
+            text = gh_get_raw(owner, repo, full_path)
+        except (urllib.error.HTTPError, urllib.error.URLError) as e:
+            print(f"WARN: fetch {owner}/{repo}/{full_path} failed: {e}",
+                  file=sys.stderr)
+            continue
+
+        sections: List[Tuple[str, str]] = []
+        current_h = None
+        current_buf: List[str] = []
+        for line in text.splitlines():
+            if line.startswith("## "):
+                if current_h is not None:
+                    sections.append((current_h, "\n".join(current_buf)))
+                current_h = line[3:].strip()
+                current_buf = []
+            elif current_h is not None:
+                current_buf.append(line)
+        if current_h is not None:
+            sections.append((current_h, "\n".join(current_buf)))
+
+        for h, body in sections:
+            if not h.strip() or h.strip().lower() in {"", "---"}:
+                continue
+            coverage = [text_coverage(h + "\n" + body, p) for p in PRIMITIVES_9]
+            items.append({
+                "id": f"{tag}:{h[:60]}",
+                "primitive_coverage": coverage,
+                "text": f"{tag} / {h}",
+                "body_excerpt": body[:400],
+                "source": source_label,
+                "section_header": h,
+                "file": fname,
+                "repo_path": f"{owner}/{repo}/{full_path}",
+                "blob_sha": sha_by_file.get(fname, ""),
+            })
+    return items, [e for e in listing if e.get("type") == "file" and e["name"].endswith(".md")]
+
+
+def load_docs_corpus() -> Tuple[List[Dict], List[dict]]:
+    """docs: yubi-OS/yubiOS/docs/ — repo-sourced via Contents API + raw."""
+    return load_md_corpus_from_repo(
+        REPO_OWNER, REPO_YUBIOS, "docs",
+        tag="docs", source_label="docs-corpus",
+    )
+
+
+def load_refs_corpus() -> Tuple[List[Dict], List[dict]]:
+    """refs: yubi-OS/yubiOS/refs/ — repo-sourced via Contents API + raw."""
+    return load_md_corpus_from_repo(
+        REPO_OWNER, REPO_YUBIOS, "refs",
+        tag="refs", source_label="refs-corpus",
+    )
+
+
+def load_cycle4_corpus() -> Tuple[List[Dict], dict]:
+    """cycle4: yubi-OS/yubiOS/papers/data/repo-history-skill-cycle-4-archive-2026-08-07.json
+    — repo-sourced via raw.githubusercontent.com.
+
+    Returns (items, file_meta) where file_meta is the Contents API listing of
+    papers/data/ for traceability (so the listing JSON can cite the canonical
+    blob sha + path).
+    """
+    archive_path = "papers/data/repo-history-skill-cycle-4-archive-2026-08-07.json"
+    text = gh_get_raw(REPO_OWNER, REPO_YUBIOS, archive_path)
+    archive = json.loads(text)
+    items_meta = archive["items"]
+
+    # Also fetch the Contents API listing of papers/data/ for file_meta
+    papers_listing = gh_get_contents(
+        REPO_OWNER, REPO_YUBIOS, "papers/data"
+    )
+    file_meta = None
+    for e in papers_listing:
+        if e.get("path") == archive_path or e.get("name") == \
+                archive_path.rsplit("/", 1)[-1]:
+            file_meta = e
+            break
+
+    items: List[Dict] = []
+    for it in items_meta:
+        body = f"{it['kind']} {it['label']} repo={it.get('repo','')}"
+        ibp_coverage = [text_coverage(body, p) for p in PRIMITIVES_9]
+        items.append({
+            "id": f"c4-{it['kind']}-{it['label'][:30]}",
+            "primitive_coverage": ibp_coverage,
+            "text": f"cycle4 / {it['kind']} / {it['label']}",
+            "body_excerpt": body[:400],
+            "source": "cycle4-corpus",
+            "kind": it["kind"],
+            "label": it["label"],
+            "repo": it.get("repo", ""),
+            "url": it.get("url", ""),
+            "native_coverage": it.get("coverage", []),
+            "native_missing": it.get("missing", []),
+            "repo_path": f"{REPO_OWNER}/{REPO_YUBIOS}/{archive_path}",
+        })
+    return items, file_meta
+
+
+def load_self_corpus() -> Tuple[List[Dict], Dict]:
+    """self: workspace memory/personal-WbtUgeUv/ — DOCUMENTED EXCEPTION.
+
+    No `self/` directory exists on any of the user's repos (verified Contents
+    API on yubi-OS/yubiOS + yubi-OS/agent-skills). Surfaced in the listing,
+    README, and drift-priority-list as an explicit exception per the user's
+    'no local work unless staging' rule. To source from a repo, push the 10
+    files to a yubi-OS/self repo or add a self/ dir under an existing repo.
+    """
+    files = [
+        "SELF.md", "SELF-CHANGELOG.md", "USER_PREFERENCES.md", "COMPANY.md",
+        "RULES.md", "SAUNA_IDENTITY.md", "SAUNA_TOOLS.md",
+        "USER_PROFILE.md", "USER_RELATIONSHIPS.md", "RECENT_ACTIVITY.md",
+    ]
+    items: List[Dict] = []
+    for fname in files:
+        path = SELF_CORPUS_DIR / fname
         if not path.exists():
+            print(f"WARN: {path} not found (self/ workspace-only exception)",
+                  file=sys.stderr)
             continue
         text = path.read_text(errors="ignore")
         sections: List[Tuple[str, str]] = []
@@ -239,106 +438,42 @@ def load_md_corpus_from_dir(
         for h, body in sections:
             if not h.strip() or h.strip().lower() in {"", "---"}:
                 continue
-            coverage = [
-                text_coverage(h + "\n" + body, p) for p in PRIMITIVES_9
-            ]
+            coverage = [text_coverage(h + "\n" + body, p) for p in PRIMITIVES_9]
             items.append({
-                "id": f"{tag}:{h[:60]}",
+                "id": f"self:{h[:60]}",
                 "primitive_coverage": coverage,
-                "text": f"{tag} / {h}",
+                "text": f"self / {h}",
                 "body_excerpt": body[:400],
-                "source": source_label,
+                "source": "self-corpus",
                 "section_header": h,
-                "file": path.name,
+                "file": fname,
+                "repo_path": f"workspace:memory/personal-WbtUgeUv/{fname}",
+                "blob_sha": "",
+                "_sourcing_exception": True,
             })
-    return items
-
-
-def load_self_corpus() -> List[Dict]:
-    """self: memory/personal-WbtUgeUv/ — 10 .md files, ## Section = one item."""
-    files = [
-        "SELF.md", "SELF-CHANGELOG.md", "USER_PREFERENCES.md", "COMPANY.md",
-        "RULES.md", "SAUNA_IDENTITY.md", "SAUNA_TOOLS.md",
-        "USER_PROFILE.md", "USER_RELATIONSHIPS.md", "RECENT_ACTIVITY.md",
-    ]
-    return load_md_corpus_from_dir(SELF_CORPUS_DIR, files, tag="self",
-                                   source_label="self-corpus")
-
-
-def load_docs_corpus() -> List[Dict]:
-    """docs: documents/personal-WbtUgeUv/ — 4 .md files."""
-    files = [
-        "bootc-uki-blsconfig-reference.md",
-        "curve-guided-rsi-run-2026-08-03.md",
-        "ideate-learned-latent-curve-yubios-solo-2026-08-03.md",
-        "weight-registry-2026-07-29.md",
-    ]
-    return load_md_corpus_from_dir(DOCS_CORPUS_DIR, files, tag="docs",
-                                   source_label="docs-corpus")
-
-
-def load_refs_corpus() -> List[Dict]:
-    """refs: documents/github-yubios-KS9n5GAT/refs/ — 8 .md files."""
-    files = [
-        "refederated-identity-oidc-sigstore-privacy-2026-08-07.md",
-        "repo-history-skill-cycle-2-2026-08-07.md",
-        "repo-history-skill-cycle-2-2026-08-07-gap-map.md",
-        "repo-history-skill-cycle-2-2026-08-07-changelog.md",
-        "repo-history-skill-cycle-3-2026-08-07.md",
-        "repo-history-skill-cycle-3-2026-08-07-changelog.md",
-        "repo-history-skill-cycle-4-2026-08-07.md",
-        "repo-history-skill-cycle-4-2026-08-07-changelog.md",
-    ]
-    return load_md_corpus_from_dir(REFS_CORPUS_DIR, files, tag="refs",
-                                   source_label="refs-corpus")
-
-
-def load_cycle4_corpus() -> List[Dict]:
-    """cycle4: cached 324-item repo-history archive JSON.
-
-    Each item's 9-D binary coverage is read directly from the archive's
-    `coverage` field (the repo-history-skill's native 9-D basis:
-    has_purpose, has_sha, has_pr_ref, ...). For the cross-corpus comparison
-    in this artifact, we ALSO compute the internal-big-picture 9-D coverage
-    via the text-keyword score on the item's body — and OR the two together
-    so cycle4 items show up on the internal-big-picture basis when they
-    match either vocab (the binary repo-history coverage gates nothing here;
-    the keyword score is the cross-corpus signal).
-    """
-    if not CYCLE4_ARCHIVE.exists():
-        print(f"WARN: {CYCLE4_ARCHIVE} not found; cycle4 corpus will be empty.",
-              file=sys.stderr)
-        return []
-    archive = json.loads(CYCLE4_ARCHIVE.read_text())
-    items_meta = archive["items"]
-    items: List[Dict] = []
-    for it in items_meta:
-        body = f"{it['kind']} {it['label']} repo={it.get('repo','')}"
-        # Internal-big-picture 9-D coverage via extended keyword vocab
-        # (so cycle4 items register on the same basis as self/docs/refs).
-        ibp_coverage = [text_coverage(body, p) for p in PRIMITIVES_9]
-        items.append({
-            "id": f"c4-{it['kind']}-{it['label'][:30]}",
-            "primitive_coverage": ibp_coverage,
-            "text": f"cycle4 / {it['kind']} / {it['label']}",
-            "body_excerpt": body[:400],
-            "source": "cycle4-corpus",
-            "kind": it["kind"],
-            "label": it["label"],
-            "repo": it.get("repo", ""),
-            "url": it.get("url", ""),
-            "native_coverage": it.get("coverage", []),
-            "native_missing": it.get("missing", []),
-        })
-    return items
+    sourcing_meta = {
+        "_sourcing_exception": True,
+        "_reason": (
+            "self/ has no repo source — workspace memory/personal-WbtUgeUv/ "
+            "is not on any git repo (verified Contents API on yubi-OS/yubiOS "
+            "and yubi-OS/agent-skills; neither has a top-level self/ or "
+            "memory/ dir). This is a documented exception per the user's "
+            "'no local work unless staging' rule."
+        ),
+        "_resolution": (
+            "Create a yubi-OS/self repo (or self/ dir under yubi-OS/yubiOS), "
+            "push the 10 .md files from memory/personal-WbtUgeUv/, set "
+            "REPO_SELF_PATH in this script, and re-run."
+        ),
+    }
+    return items, sourcing_meta
 
 
 # --------------------------------------------------------------------------- #
-# 3. Math pipeline: drop-near-constant + lift-to-384D + PCA + stereographic.
+# 4. Math pipeline (drop-near-constant + lift-to-384D + PCA + stereographic).
 # --------------------------------------------------------------------------- #
 def drop_near_constant(C: np.ndarray, lo: float = 0.10, hi: float = 0.90
                        ) -> Tuple[np.ndarray, List[int]]:
-    """Drop columns with coverage < lo or > hi."""
     keep = []
     for k in range(C.shape[1]):
         cov = float(C[:, k].mean())
@@ -351,7 +486,6 @@ def drop_near_constant(C: np.ndarray, lo: float = 0.10, hi: float = 0.90
 
 
 def lift_to_d(C: np.ndarray, D: int = 384, seed: int = 12345) -> np.ndarray:
-    """Lift binary coverage C (N x K) to a continuous Z (N x D) via seeded QR."""
     rng = np.random.default_rng(seed)
     M = rng.standard_normal((C.shape[1], D))
     Q, _ = np.linalg.qr(M)
@@ -359,7 +493,6 @@ def lift_to_d(C: np.ndarray, D: int = 384, seed: int = 12345) -> np.ndarray:
 
 
 def pca_top2(Z: np.ndarray) -> np.ndarray:
-    """PCA top-2 -> (u, v) in (0,1)^2 with rank-uniformization."""
     Zc = Z - Z.mean(axis=0, keepdims=True)
     U, S, Vt = np.linalg.svd(Zc, full_matrices=False)
     pcs = U[:, :2] * S[:2]
@@ -372,24 +505,20 @@ def pca_top2(Z: np.ndarray) -> np.ndarray:
 
 
 def uv_to_sphere(uv: np.ndarray) -> np.ndarray:
-    """Lat/lon lift to S^2: theta = pi*u, phi = 2*pi*v."""
     u, v = uv[:, 0], uv[:, 1]
     theta = np.pi * u
     phi = 2.0 * np.pi * v
-    x = np.sin(theta) * np.cos(phi)
-    y = np.sin(theta) * np.sin(phi)
-    z = np.cos(theta)
-    return np.stack([x, y, z], axis=1)
+    return np.stack([
+        np.sin(theta) * np.cos(phi),
+        np.sin(theta) * np.sin(phi),
+        np.cos(theta),
+    ], axis=1)
 
 
 # --------------------------------------------------------------------------- #
-# 4. Möbius alignment (closed-form ridge + L-BFGS-B refinement).
+# 5. Möbius alignment.
 # --------------------------------------------------------------------------- #
-def mobius_apply(z: np.ndarray, theta: np.ndarray) -> np.ndarray:
-    """Apply Möbius phi_theta(z) = (a z + b) / (c z + d), ad - bc = 1.
-
-    theta = [Re(a), Im(a), Re(b), Im(b), Re(c), Im(c)] (d derived).
-    """
+def mobius_apply(z, theta):
     re_a, im_a, re_b, im_b, re_c, im_c = theta
     a = complex(re_a, im_a)
     b = complex(re_b, im_b)
@@ -398,26 +527,25 @@ def mobius_apply(z: np.ndarray, theta: np.ndarray) -> np.ndarray:
     return (a * z + b) / (c * z + d)
 
 
-def mobius_sphere_apply(xyz: np.ndarray, theta: np.ndarray) -> np.ndarray:
-    """Apply Möbius warp to S^2 points via complex-stereograph detour."""
+def mobius_sphere_apply(xyz, theta):
     x, y, z = xyz[:, 0], xyz[:, 1], xyz[:, 2]
     denom = 1.0 + z
-    safe_denom = np.where(np.abs(denom) < 1e-9, 1e-9, denom)
-    w = (x + 1j * y) / safe_denom
+    safe = np.where(np.abs(denom) < 1e-9, 1e-9, denom)
+    w = (x + 1j * y) / safe
     w_mob = mobius_apply(w, theta)
     abs2 = np.abs(w_mob) ** 2
-    x_new = 2.0 * w_mob.real / (abs2 + 1.0)
-    y_new = 2.0 * w_mob.imag / (abs2 + 1.0)
-    z_new = (abs2 - 1.0) / (abs2 + 1.0)
-    return np.stack([x_new, y_new, z_new], axis=1)
+    return np.stack([
+        2.0 * w_mob.real / (abs2 + 1.0),
+        2.0 * w_mob.imag / (abs2 + 1.0),
+        (abs2 - 1.0) / (abs2 + 1.0),
+    ], axis=1)
 
 
 def cross_ratio(z1, z2, z3, z4):
     return ((z1 - z3) * (z2 - z4)) / ((z1 - z4) * (z2 - z3))
 
 
-def cross_ratio_check(theta: np.ndarray, n: int = 100, seed: int = 42) -> float:
-    """Verify Möbius preserves cross-ratio on n held-out 4-tuples."""
+def cross_ratio_check(theta, n=100, seed=42):
     rng = np.random.default_rng(seed)
     z = rng.standard_normal(n) + 1j * rng.standard_normal(n)
     w = mobius_apply(z, theta)
@@ -430,18 +558,13 @@ def cross_ratio_check(theta: np.ndarray, n: int = 100, seed: int = 42) -> float:
     return float(max(residuals)) if residuals else 0.0
 
 
-def fit_mobius_alignment(
-    a0_A, coefs_A, freqs_A, a0_B, coefs_B, freqs_B,
-    n_dense: int = 200, n_init: int = 6, seed: int = 7,
-) -> Tuple[np.ndarray, float]:
-    """Find Möbius theta minimizing mean geodesic distance between
-    φ(curve_A(t)) and curve_B(t) sampled densely on t in [0, 1].
-    """
+def fit_mobius_alignment(a0_A, coefs_A, freqs_A, a0_B, coefs_B, freqs_B,
+                          n_dense=200, n_init=6, seed=7):
     t_grid = np.linspace(0.0, 1.0, n_dense)
     A_dense = eval_curve_s2(t_grid, a0_A, coefs_A, freqs_A)
     B_dense = eval_curve_s2(t_grid, a0_B, coefs_B, freqs_B)
 
-    def stereo(pts: np.ndarray) -> np.ndarray:
+    def stereo(pts):
         z = pts[:, 2]
         safe = np.where(np.abs(1.0 + z) < 1e-9, 1e-9, 1.0 + z)
         return (pts[:, 0] + 1j * pts[:, 1]) / safe
@@ -449,10 +572,9 @@ def fit_mobius_alignment(
     A_w = stereo(A_dense)
     B_w = stereo(B_dense)
 
-    def loss(theta: np.ndarray) -> float:
+    def loss(theta):
         A_w_mob = mobius_apply(A_w, theta)
-        diff = A_w_mob - B_w
-        return float(np.mean(np.abs(diff) ** 2))
+        return float(np.mean(np.abs(A_w_mob - B_w) ** 2))
 
     rng = np.random.default_rng(seed)
     best_theta = np.array([1.0, 0.0, 0.0, 0.0, 0.0, 0.0])
@@ -474,19 +596,14 @@ def fit_mobius_alignment(
 
 
 # --------------------------------------------------------------------------- #
-# 5. Curve fit on S^2 (parametric harmonic).
+# 6. Curve fit on S^2.
 # --------------------------------------------------------------------------- #
 def fit_harmonic_curve_s2(pts, k=8):
-    """Fit gamma(t) = a0 + sum_m [a_m sin(2pi f_m t) + b_m cos(2pi f_m t)].
-
-    Returns (a0, coefs, freqs, t).
-    """
     N, D = pts.shape
     theta = np.arccos(np.clip(pts[:, 2], -1.0, 1.0))
     phi = np.arctan2(pts[:, 1], pts[:, 0]) % (2 * np.pi)
     t = theta / np.pi + 0.001 * (phi / (2 * np.pi))
     t = (t - t.min()) / max(t.max() - t.min(), 1e-9)
-
     Phi = np.ones((N, 1 + 2 * k))
     freqs = np.arange(1, k + 1, dtype=np.float64)
     for m in range(k):
@@ -496,14 +613,11 @@ def fit_harmonic_curve_s2(pts, k=8):
     PtP = Phi.T @ Phi + lam * np.eye(1 + 2 * k)
     PtZ = Phi.T @ pts
     coefs_full = np.linalg.solve(PtP, PtZ)
-    a0 = coefs_full[0]
-    coefs = coefs_full[1:].T
-    return a0, coefs, freqs, t
+    return coefs_full[0], coefs_full[1:].T, freqs, t
 
 
 def eval_curve_s2(t_query, a0, coefs, freqs):
-    N_q = len(t_query)
-    out = np.tile(a0, (N_q, 1))
+    out = np.tile(a0, (len(t_query), 1))
     for m in range(len(freqs)):
         out += np.outer(np.sin(2 * np.pi * freqs[m] * t_query), coefs[:, 2 * m])
         out += np.outer(np.cos(2 * np.pi * freqs[m] * t_query),
@@ -513,13 +627,11 @@ def eval_curve_s2(t_query, a0, coefs, freqs):
 
 
 # --------------------------------------------------------------------------- #
-# 6. Per-region warp computation (one alignment at a time).
+# 7. Per-region warp.
 # --------------------------------------------------------------------------- #
-def compute_warp_regions(
-    A_pts, B_pts, a0_A, coefs_A, freqs_A, a0_B, coefs_B, freqs_B,
-    theta, n_samples=N_WARP_SAMPLES,
-):
-    """Sample N points along curve-A, apply Möbius, compute warp magnitude."""
+def compute_warp_regions(A_pts, B_pts, a0_A, coefs_A, freqs_A,
+                          a0_B, coefs_B, freqs_B, theta,
+                          n_samples=N_WARP_SAMPLES):
     t_query = np.linspace(0.0, 1.0, n_samples)
     A_query = eval_curve_s2(t_query, a0_A, coefs_A, freqs_A)
     A_warped = mobius_sphere_apply(A_query, theta)
@@ -527,35 +639,30 @@ def compute_warp_regions(
     B_dense = eval_curve_s2(t_dense, a0_B, coefs_B, freqs_B)
     regions = []
     for i, tA in enumerate(t_query):
-        warped_pt = A_warped[i]
-        dists = np.linalg.norm(warped_pt[None, :] - B_dense, axis=-1)
+        wp = A_warped[i]
+        dists = np.linalg.norm(wp[None, :] - B_dense, axis=-1)
         j = int(np.argmin(dists))
-        tB = float(t_dense[j])
-        d = float(dists[j])
         regions.append({
             "t_A": float(tA),
-            "t_B": tB,
-            "geodesic_d": d,
-            "warped_point": warped_pt.tolist(),
+            "t_B": float(t_dense[j]),
+            "geodesic_d": float(dists[j]),
+            "warped_point": wp.tolist(),
             "nearest_b_point": B_dense[j].tolist(),
         })
     return regions
 
 
 # --------------------------------------------------------------------------- #
-# 7. NSS-axis scoring (per-region).
+# 8. NSS-axis scoring.
 # --------------------------------------------------------------------------- #
 def score_nss_axes(text: str) -> Dict[str, int]:
     flat = text.lower()
-    out = {}
-    for axis in NSS_AXES:
-        kws = NSS_AXIS_KEYWORDS.get(axis, [])
-        out[axis] = sum(1 for kw in kws if kw in flat)
-    return out
+    return {axis: sum(1 for kw in NSS_AXIS_KEYWORDS.get(axis, []) if kw in flat)
+            for axis in NSS_AXES}
 
 
 # --------------------------------------------------------------------------- #
-# 8. Visualization (PIL).
+# 9. Visualization (PIL).
 # --------------------------------------------------------------------------- #
 def get_font(size: int):
     candidates = [
@@ -571,19 +678,8 @@ def get_font(size: int):
     return ImageFont.load_default()
 
 
-def render_aligned_curves_png(
-    out_path: Path,
-    corpus_pts: Dict[str, np.ndarray],   # {name: xyz, ...}
-    alignment_regions: Dict[str, List[Dict]],  # {alignment_name: [regions...]}
-    alignment_thetas: Dict[str, np.ndarray],
-    title: str,
-):
-    """Render 4 curves overlaid on S^2 (Mollweide-style) + 3 warped-A point
-    clouds + per-corpus item scatters.
-
-    alignment_thetas: dict of {alignment_name: theta} where theta is the fitted
-    Möbius; we apply it to the SOURCE corpus's curve (curve_A = self).
-    """
+def render_aligned_curves_png(out_path, corpus_pts, alignment_regions,
+                               alignment_thetas, title):
     width, height = 1300, 820
     img = Image.new("RGB", (width, height), "white")
     d = ImageDraw.Draw(img)
@@ -599,22 +695,14 @@ def render_aligned_curves_png(
 
     px0, py0 = margin, margin + 30
     px1, py1 = width - margin, height - margin
-    plot_w = px1 - px0
-    plot_h = py1 - py0
+    plot_w, plot_h = px1 - px0, py1 - py0
 
     def to_xy(theta, phi):
-        x = px0 + (theta / np.pi) * plot_w
-        y = py1 - (phi / (2 * np.pi)) * plot_h
-        return x, y
+        return (px0 + (theta / np.pi) * plot_w,
+                py1 - (phi / (2 * np.pi)) * plot_h)
 
-    # Boundary ellipse (equator)
-    pts = []
-    for i in range(0, 361, 4):
-        x, y = to_xy(np.pi / 2, i / 360 * 2 * np.pi)
-        pts.append((x, y))
+    pts = [to_xy(np.pi / 2, i / 360 * 2 * np.pi) for i in range(0, 361, 4)]
     d.line(pts, fill="#cccccc", width=1)
-
-    # Latitude lines
     for lat in [np.pi / 4, np.pi / 2, 3 * np.pi / 4]:
         pts = []
         for i in range(0, 361, 4):
@@ -623,7 +711,6 @@ def render_aligned_curves_png(
             pts.append((x, cy))
         d.line(pts, fill="#eeeeee", width=1)
 
-    # Plot corpus items
     for name, xyz in corpus_pts.items():
         color = CORPUS_COLORS.get(name, "#888888")
         for p in xyz:
@@ -632,20 +719,16 @@ def render_aligned_curves_png(
             x, y = to_xy(theta, phi)
             d.ellipse([x - 2, y - 2, x + 2, y + 2], fill=color, outline=color)
 
-    # Plot warped-A (self) points for each alignment
-    legend_y_offset = 0
     for align_name, regions in alignment_regions.items():
         warped_color = WARP_COLORS.get(align_name, "#888888")
-        # Draw small markers for each warped-A point
         for r in regions:
             wp = np.array(r["warped_point"])
             theta = np.arccos(np.clip(wp[2], -1.0, 1.0))
             phi = np.arctan2(wp[1], wp[0]) % (2 * np.pi)
             x, y = to_xy(theta, phi)
-            d.ellipse([x - 4, y - 4, x + 4, y + 4], fill=warped_color,
-                       outline=warped_color)
+            d.ellipse([x - 4, y - 4, x + 4, y + 4],
+                       fill=warped_color, outline=warped_color)
 
-    # Legend (4 corpora + 3 warps)
     legend_x = px1 - 270
     legend_y = py0 + 10
     legend_h = 22 * (len(corpus_pts) + len(alignment_regions)) + 30
@@ -653,18 +736,18 @@ def render_aligned_curves_png(
                 outline="#888888", width=1, fill="white")
     d.text((legend_x + 10, legend_y + 6), "Legend",
            fill="#1a3a5c", font=f_small)
-
     y = legend_y + 22
     for name, color in CORPUS_COLORS.items():
         n = len(corpus_pts.get(name, []))
+        suffix = " (EXCEPTION)" if name == "self" else ""
         d.ellipse([legend_x + 12, y - 5, legend_x + 22, y + 5], fill=color)
-        d.text((legend_x + 30, y), f"{name}-corpus ({n} items)",
+        d.text((legend_x + 30, y), f"{name}-corpus ({n} items){suffix}",
                fill="#222222", font=f_small)
         y += 18
     for name, color in WARP_COLORS.items():
         d.ellipse([legend_x + 12, y - 5, legend_x + 22, y + 5], fill=color)
-        n_align = len(alignment_regions.get(name, []))
-        d.text((legend_x + 30, y), f"warped self ({n_align} samples)",
+        d.text((legend_x + 30, y),
+               f"warped self ({len(alignment_regions.get(name, []))} samples)",
                fill="#222222", font=f_small)
         y += 18
 
@@ -675,34 +758,49 @@ def render_aligned_curves_png(
     d.text(
         (width / 2, height - 18),
         f"4 corpora, 3 self-anchored warps, n_flagged={n_total_flagged} | "
-        f"PR4 curve-drift-detector (4-corpus version)",
+        f"PR4 curve-drift-detector (4-corpus, repo-sourced; self=EXCEPTION)",
         fill="#666666", font=f_small, anchor="mb",
     )
-
     img.save(out_path)
 
 
 # --------------------------------------------------------------------------- #
-# 9. Orchestration.
+# 10. Orchestration.
 # --------------------------------------------------------------------------- #
-def build_corpus_listing(items, primitives, label):
-    return {
+def build_corpus_listing(label, items, primitives, sourcing_meta=None,
+                          files_listing=None, file_meta=None):
+    listing = {
         "label": label,
         "n_items": len(items),
         "n_primitives": len(primitives),
         "primitives": primitives,
         "items_sample": [
-            {k: v for k, v in it.items() if k != "body_excerpt"}
+            {k: v for k, v in it.items()
+             if k not in ("body_excerpt", "primitive_coverage")}
             for it in items[:5]
         ],
         "items_count_by_source": dict(Counter(it["source"] for it in items)),
     }
+    if files_listing:
+        listing["files_listed_in_repo"] = [
+            {"name": e["name"], "sha": e.get("sha", ""), "size": e.get("size", 0),
+             "path": e.get("path", "")}
+            for e in files_listing
+        ]
+        listing["n_files_listed_in_repo"] = len(files_listing)
+    if file_meta:
+        listing["source_file_meta"] = {
+            "name": file_meta.get("name", ""),
+            "sha": file_meta.get("sha", ""),
+            "size": file_meta.get("size", 0),
+            "path": file_meta.get("path", ""),
+        }
+    if sourcing_meta:
+        listing.update(sourcing_meta)
+    return listing
 
 
-def fit_corpus_curve(items, primitives, shared_kept_cols, lift_seed=12345):
-    """Fit a single corpus's curve on S^2 using the SHARED kept-column
-    basis. Returns (xyz [N x 3], curve_fit (a0, coefs, freqs, t)).
-    """
+def fit_corpus_curve(items, shared_kept_cols, lift_seed=12345):
     C = np.array([it["primitive_coverage"] for it in items], dtype=np.float64)
     if not shared_kept_cols:
         return None, None
@@ -715,14 +813,23 @@ def fit_corpus_curve(items, primitives, shared_kept_cols, lift_seed=12345):
 
 
 def main():
-    print("=== PR4 curve-drift-detector (4-corpus version) ===")
+    print("=== PR4 curve-drift-detector (4-corpus, repo-sourced) ===")
 
-    # ---- Load all 4 corpora ----
+    # ---- Load all 4 corpora (docs/refs/cycle4 from repos via Contents API) ----
+    self_items, self_sourcing_meta = load_self_corpus()
+    docs_items, docs_files = load_docs_corpus()
+    refs_items, refs_files = load_refs_corpus()
+    cycle4_items, cycle4_file_meta = load_cycle4_corpus()
+
     corpora: Dict[str, List[Dict]] = {
-        "self":   load_self_corpus(),
-        "docs":   load_docs_corpus(),
-        "refs":   load_refs_corpus(),
-        "cycle4": load_cycle4_corpus(),
+        "self":   self_items,
+        "docs":   docs_items,
+        "refs":   refs_items,
+        "cycle4": cycle4_items,
+    }
+    corpus_files = {
+        "docs": docs_files,
+        "refs": refs_files,
     }
     for name, items in corpora.items():
         print(f"{name:>6}-corpus: {len(items)} items")
@@ -731,46 +838,53 @@ def main():
                   file=sys.stderr)
 
     # ---- Save corpus listings (4 separate JSONs) ----
-    for name, items in corpora.items():
-        listing = build_corpus_listing(items, PRIMITIVES_9, f"{name}-corpus")
+    listing_meta = {
+        "self":   self_sourcing_meta,
+        "docs":   None,
+        "refs":   None,
+        "cycle4": None,
+    }
+    listings = {
+        "self": build_corpus_listing(
+            "self-corpus", self_items, PRIMITIVES_9,
+            sourcing_meta=listing_meta["self"],
+        ),
+        "docs": build_corpus_listing(
+            "docs-corpus", docs_items, PRIMITIVES_9,
+            files_listing=docs_files,
+        ),
+        "refs": build_corpus_listing(
+            "refs-corpus", refs_items, PRIMITIVES_9,
+            files_listing=refs_files,
+        ),
+        "cycle4": build_corpus_listing(
+            "cycle4-corpus", cycle4_items, PRIMITIVES_9,
+            file_meta=cycle4_file_meta,
+        ),
+    }
+    for name, lst in listings.items():
         (OUT_DIR / f"{name}-corpus-listing.json").write_text(
-            json.dumps(listing, indent=2)
+            json.dumps(lst, indent=2)
         )
     print(f"Wrote 4 corpus listings to {OUT_DIR}")
 
-    # ---- Drop near-constant columns across the UNION of all 4 corpora ----
+    # ---- Drop near-constant columns across LOOSE UNION of all 4 corpora ----
     C_all_list = [np.array([it["primitive_coverage"] for it in items],
                             dtype=np.float64) for items in corpora.values()]
-    union_kept: set = set(range(len(PRIMITIVES_9)))
-    for C in C_all_list:
-        _, kept = drop_near_constant(C)
-        union_kept &= set(kept)
-    if len(union_kept) < 2:
-        print("WARN: union of kept cols has K < 2; using all 9 columns "
-              "(degraded cross-corpus mode).")
-        shared_kept_cols = list(range(len(PRIMITIVES_9)))
-    else:
-        shared_kept_cols = sorted(union_kept)
-    print(f"shared kept cols (union, strict): {shared_kept_cols} -> "
-          f"{[PRIMITIVES_9[k] for k in shared_kept_cols]}")
-    print(f"NOTE: using LOOSER union (any corpus can keep a primitive) for "
-          f"basis flexibility — see shared_kept_cols_loose below.")
-    # Use LOOSER union (any corpus keeps it) — preserves the rare but
-    # real signal in cycle4's attestation/audit_evidence when self/docs/refs
-    # are saturated. The strict-and set collapses too aggressively.
     loose_kept: set = set()
     for C in C_all_list:
         _, kept = drop_near_constant(C)
         loose_kept |= set(kept)
-    shared_kept_cols = sorted(loose_kept)
-    print(f"shared kept cols (LOOSE union, used): {shared_kept_cols} -> "
+    shared_kept_cols = sorted(loose_kept) if len(loose_kept) >= 2 else \
+        list(range(len(PRIMITIVES_9)))
+    print(f"shared kept cols (LOOSE union): {shared_kept_cols} -> "
           f"{[PRIMITIVES_9[k] for k in shared_kept_cols]}")
 
     # ---- Fit each corpus's curve on S^2 ----
     corpus_xyz: Dict[str, np.ndarray] = {}
     corpus_fit: Dict[str, tuple] = {}
     for name, items in corpora.items():
-        xyz, fit = fit_corpus_curve(items, PRIMITIVES_9, shared_kept_cols)
+        xyz, fit = fit_corpus_curve(items, shared_kept_cols)
         if xyz is not None:
             corpus_xyz[name] = xyz
             corpus_fit[name] = fit
@@ -782,27 +896,20 @@ def main():
         print("FATAL: self corpus failed to fit — aborting.", file=sys.stderr)
         sys.exit(1)
 
-    # ---- Compute 3 Möbius alignments (self → docs/refs/cycle4) ----
-    a0_self = corpus_fit["self"][0]
-    coefs_self = corpus_fit["self"][1]
-    freqs_self = corpus_fit["self"][2]
-    t_self = corpus_fit["self"][3]
-
-    alignments: List[str] = ["self-to-docs", "self-to-refs", "self-to-cycle4"]
+    # ---- 3 Möbius alignments (self → docs/refs/cycle4) ----
+    a0_self, coefs_self, freqs_self, _ = corpus_fit["self"]
+    alignments = ["self-to-docs", "self-to-refs", "self-to-cycle4"]
     alignment_thetas: Dict[str, np.ndarray] = {}
     alignment_losses: Dict[str, float] = {}
     alignment_regions: Dict[str, List[Dict]] = {}
-    all_flagged_regions: List[Dict] = []  # across all 3 alignments
+    all_flagged_regions: List[Dict] = []
 
     for align in alignments:
-        target = align.split("to-")[1]  # "docs" / "refs" / "cycle4"
+        target = align.split("to-")[1]
         if target not in corpus_fit:
             print(f"SKIP {align}: {target} corpus not fitted.")
             continue
-        a0_B = corpus_fit[target][0]
-        coefs_B = corpus_fit[target][1]
-        freqs_B = corpus_fit[target][2]
-
+        a0_B, coefs_B, freqs_B, _ = corpus_fit[target]
         theta, loss = fit_mobius_alignment(
             a0_self, coefs_self, freqs_self,
             a0_B, coefs_B, freqs_B,
@@ -813,7 +920,6 @@ def main():
         print(f"{align}: theta={theta.tolist()}, loss={loss:.6f}, "
               f"cross_ratio_max_residual={cr_max:.3e}")
 
-        # Per-region warp
         regions = compute_warp_regions(
             corpus_xyz["self"], corpus_xyz[target],
             a0_self, coefs_self, freqs_self,
@@ -822,55 +928,43 @@ def main():
         )
         alignment_regions[align] = regions
 
-        # NSS-axis scoring per region (combine nearest self + nearest target)
-        # Self-side t proxy
-        theta_s = np.arccos(np.clip(corpus_xyz["self"][:, 2], -1.0, 1.0))
-        phi_s = np.arctan2(corpus_xyz["self"][:, 1],
-                            corpus_xyz["self"][:, 0]) % (2 * np.pi)
-        t_self_proxy = theta_s / np.pi + 0.001 * (phi_s / (2 * np.pi))
-        t_self_proxy = (t_self_proxy - t_self_proxy.min()) / max(
-            t_self_proxy.max() - t_self_proxy.min(), 1e-9)
-        # Target-side t proxy
-        theta_t = np.arccos(np.clip(corpus_xyz[target][:, 2], -1.0, 1.0))
-        phi_t = np.arctan2(corpus_xyz[target][:, 1],
-                            corpus_xyz[target][:, 0]) % (2 * np.pi)
-        t_target_proxy = theta_t / np.pi + 0.001 * (phi_t / (2 * np.pi))
-        t_target_proxy = (t_target_proxy - t_target_proxy.min()) / max(
-            t_target_proxy.max() - t_target_proxy.min(), 1e-9)
+        def t_proxy(xyz):
+            th = np.arccos(np.clip(xyz[:, 2], -1.0, 1.0))
+            ph = np.arctan2(xyz[:, 1], xyz[:, 0]) % (2 * np.pi)
+            t = th / np.pi + 0.001 * (ph / (2 * np.pi))
+            return (t - t.min()) / max(t.max() - t.min(), 1e-9)
+
+        t_self_proxy = t_proxy(corpus_xyz["self"])
+        t_target_proxy = t_proxy(corpus_xyz[target])
 
         item_text_for_region = []
         for r in regions:
-            tA = r["t_A"]
-            tB = r["t_B"]
-            idx_s = int(np.argmin(np.abs(t_self_proxy - tA)))
+            idx_s = int(np.argmin(np.abs(t_self_proxy - r["t_A"])))
             it_s = corpora["self"][idx_s]
             text_s = it_s["text"]
             if "body_excerpt" in it_s:
                 text_s += " " + it_s["body_excerpt"]
-            idx_t = int(np.argmin(np.abs(t_target_proxy - tB)))
+            idx_t = int(np.argmin(np.abs(t_target_proxy - r["t_B"])))
             it_t = corpora[target][idx_t]
             text_t = it_t["text"]
             if "body_excerpt" in it_t:
                 text_t += " " + it_t["body_excerpt"]
             item_text_for_region.append(text_s + " || " + text_t)
 
-        # Flag drift
         warp_vals = sorted([r["geodesic_d"] for r in regions])
         nss_all = [sum(score_nss_axes(t).values()) for t in item_text_for_region]
         warp_thr = float(np.percentile(warp_vals, WARP_FLAG_PCTL * 100))
         nss_thr = float(np.percentile(sorted(nss_all), NSS_FLAG_PCTL * 100))
 
         warp_max = max(warp_vals) if warp_vals else 1.0
-        nss_max = 1.0
         for r, text in zip(regions, item_text_for_region):
             sc = score_nss_axes(text)
             r["nss_axes"] = sc
             r["nss_total"] = sum(sc.values())
             r["alignment"] = align
-            r["drift_score"] = (r["geodesic_d"] / warp_max) * (r["nss_total"] / max(nss_max, 1.0))
+            r["drift_score"] = (r["geodesic_d"] / warp_max) * (r["nss_total"] / 1.0)
             r["flagged"] = (r["geodesic_d"] >= warp_thr and r["nss_total"] >= nss_thr)
 
-        # Add top-N fallback for visibility
         sorted_by_score = sorted(regions, key=lambda r: -r["drift_score"])
         for rank, r in enumerate(sorted_by_score):
             if rank < 10 and not r["flagged"]:
@@ -879,11 +973,8 @@ def main():
 
         for r in regions:
             if r["flagged"]:
-                # attach nearest self/target items for the priority list
-                tA = r["t_A"]
-                tB = r["t_B"]
-                idx_s = int(np.argmin(np.abs(t_self_proxy - tA)))
-                idx_t = int(np.argmin(np.abs(t_target_proxy - tB)))
+                idx_s = int(np.argmin(np.abs(t_self_proxy - r["t_A"])))
+                idx_t = int(np.argmin(np.abs(t_target_proxy - r["t_B"])))
                 r["nearest_self_item"] = corpora["self"][idx_s]["id"]
                 r["nearest_target_item"] = corpora[target][idx_t]["id"]
                 r["nearest_self_file"] = corpora["self"][idx_s].get("file", "?")
@@ -906,6 +997,12 @@ def main():
         "init": "identity",
         "frozen_degree_weights": True,
         "loss_unit": "mean squared chordal (stereograph of C-plane)",
+        "sourcing": {
+            "self":   "WORKSPACE-LOCAL EXCEPTION (memory/personal-WbtUgeUv/; no repo source)",
+            "docs":   "REPO-SOURCED: yubi-OS/yubiOS/docs/ via Contents API + raw.githubusercontent.com",
+            "refs":   "REPO-SOURCED: yubi-OS/yubiOS/refs/ via Contents API + raw.githubusercontent.com",
+            "cycle4": "REPO-SOURCED: yubi-OS/yubiOS/papers/data/repo-history-skill-cycle-4-archive-2026-08-07.json via raw.githubusercontent.com",
+        },
         "corpus_sizes": {name: len(items) for name, items in corpora.items()},
         "alignments": {},
     }
@@ -927,9 +1024,7 @@ def main():
             "ad_minus_bc_re": float((a * d - b * c).real),
             "ad_minus_bc_im": float((a * d - b * c).imag),
         }
-    (OUT_DIR / "mobius-transform.json").write_text(
-        json.dumps(mobius_all, indent=2)
-    )
+    (OUT_DIR / "mobius-transform.json").write_text(json.dumps(mobius_all, indent=2))
     print(f"Wrote {OUT_DIR / 'mobius-transform.json'}")
 
     # ---- Save warp-by-region.csv (aggregated across 3 alignments) ----
@@ -980,19 +1075,30 @@ def main():
     top10 = flagged_only[:10]
 
     md_lines = [
-        "# Drift priority list (PR4 cross-corpus drift detector, 4-corpus)",
+        "# Drift priority list (PR4 cross-corpus drift detector, 4-corpus, repo-sourced)",
         "",
         "Generated: 2026-08-07",
-        f"Corpora: self ({len(corpora['self'])} items, anchor) → "
-        f"docs ({len(corpora['docs'])} items), "
-        f"refs ({len(corpora['refs'])} items), "
-        f"cycle4 ({len(corpora['cycle4'])} items).",
+        f"Corpora: self ({len(corpora['self'])} items, anchor, "
+        f"WORKSPACE-LOCAL EXCEPTION) → docs ({len(corpora['docs'])} items, "
+        f"yubi-OS/yubiOS/docs/), refs ({len(corpora['refs'])} items, "
+        f"yubi-OS/yubiOS/refs/), cycle4 ({len(corpora['cycle4'])} items, "
+        f"yubi-OS/yubiOS/papers/data/repo-history-skill-cycle-4-archive-2026-08-07.json).",
         "3 Möbius φ_θ ∈ PSL(2,C) alignments, all anchored on `self` "
         "(identity-init, closed-form ridge + L-BFGS-B).",
         f"Strict-AND gate: warp ≥ pctl {WARP_FLAG_PCTL:.0%} AND "
         f"nss_total ≥ pctl {NSS_FLAG_PCTL:.0%}.",
-        f"Flagged regions (aggregated across 3 alignments): "
-        f"{len(flagged_only)}",
+        f"Flagged regions (aggregated): {len(flagged_only)}",
+        "",
+        "## Sourcing rule (per operator standing instruction)",
+        "",
+        "docs / refs / cycle4 are sourced directly from `yubi-OS/yubiOS` via",
+        "the GitHub Contents API + `raw.githubusercontent.com`. `self/` is the",
+        "ONE documented exception — no `self/` directory exists on any of the",
+        "user's repos (verified Contents API on yubi-OS/yubiOS + yubi-OS/agent-skills);",
+        "the 10 self/.md files are read from workspace `memory/personal-WbtUgeUv/`.",
+        "Resolution path: create a `yubi-OS/self` repo (or add a `self/` dir",
+        "under an existing repo), push the 10 files, update `REPO_SELF_PATH` in",
+        "this script, re-run.",
         "",
         "## Top 10 flagged drift regions (ranked by drift_score, all 3 alignments)",
         "",
@@ -1026,8 +1132,7 @@ def main():
             f"- **Self-archaeology hook**: Read `{r.get('nearest_self_file', '?')}` "
             f"section `{r.get('nearest_self_section', '?')}` — the position on "
             f"S^2 that `{r['alignment']}` says self has but {r['alignment'].split('-')[-1]} "
-            f"lacks. Dispatch per the self-archaeology cadence "
-            f"(5 self-mode turns / per-directive / Sunday 9 AM Pacific).",
+            f"lacks.",
             "",
         ])
     if not top10:
@@ -1038,9 +1143,9 @@ def main():
     (OUT_DIR / "drift-priority-list.md").write_text("\n".join(md_lines))
     print(f"Wrote {OUT_DIR / 'drift-priority-list.md'}")
 
-    # ---- Render PNG (4 corpora + 3 warped-A clouds) ----
+    # ---- Render PNG ----
     title = (
-        f"Aligned curves on S^2 — 4 corpora, "
+        f"Aligned curves on S^2 — 4 corpora (repo-sourced; self=EXCEPTION), "
         f"3 self-anchored Möbius warps (2026-08-07)"
     )
     render_aligned_curves_png(
@@ -1053,105 +1158,80 @@ def main():
     print(f"Wrote {OUT_DIR / 'aligned-curves.png'}")
 
     # ---- Save README ----
-    readme = f"""# Curve drift detector (PR4, 4-corpus version)
+    readme = f"""# Curve drift detector (PR4, 4-corpus, repo-sourced)
 
-## What this is
+## Sourcing rule (per operator standing instruction)
 
-Cross-corpus drift detector for FOUR corpora, all anchored on `self` (the
-canonical self-archaeology dispatch target):
+All corpus listings + content are sourced DIRECTLY from the GitHub repos via
+the Contents API + `raw.githubusercontent.com` — NO local file reads. One
+documented exception:
 
-| Corpus | Path | Item unit | Items |
-|---|---|---|---|
-| `self` (anchor) | `memory/personal-WbtUgeUv/` | `## Section` header | {len(corpora['self'])} |
-| `docs` | `documents/personal-WbtUgeUv/` | `## Section` header | {len(corpora['docs'])} |
-| `refs` | `documents/github-yubios-KS9n5GAT/refs/` | `## Section` header | {len(corpora['refs'])} |
-| `cycle4` | `papers/data/repo-history-skill-cycle-4-archive-2026-08-07.json` | per-event row | {len(corpora['cycle4'])} |
+- **self**: no repo `self/` directory exists on any of the user's repos
+  (verified via Contents API on `yubi-OS/yubiOS` and `yubi-OS/agent-skills`).
+  Reading from workspace `memory/personal-WbtUgeUv/` and surfacing the
+  exception in `self-corpus-listing.json` + this README. See
+  `load_self_corpus` in the script for the resolution path
+  (push the 10 files to a `yubi-OS/self` repo or add a `self/` dir under
+  an existing repo, update `REPO_SELF_PATH`).
 
-Each corpus's `## Section` rows are scored against the SHARED 9-D
-`internal-big-picture` primitive basis (text-keyword for self/docs/refs/cycle4;
-the cycle4 items additionally keep their native repo-history 9-D coverage in
-the archive). Three Möbius φ_θ ∈ PSL(2,ℂ) warps fit self → docs, self → refs,
-self → cycle4 (all anchored on self). Drift signals (warp magnitude × NSS-axis
-score) are aggregated across all 3 alignments and ranked in
-`drift-priority-list.md`.
+## Corpora
+
+| Corpus | Source | Items |
+|---|---|---|
+| `self` (anchor) | workspace `memory/personal-WbtUgeUv/` (EXCEPTION) | {len(corpora['self'])} |
+| `docs` | `yubi-OS/yubiOS/docs/` via Contents API | {len(corpora['docs'])} |
+| `refs` | `yubi-OS/yubiOS/refs/` via Contents API | {len(corpora['refs'])} |
+| `cycle4` | `yubi-OS/yubiOS/papers/data/repo-history-skill-cycle-4-archive-2026-08-07.json` via raw.githubusercontent.com | {len(corpora['cycle4'])} |
+
+Each corpus's `## Section` rows (or per-event rows for cycle4) are scored
+against the SHARED 9-D `internal-big-picture` primitive basis (text-keyword
+for self/docs/refs; cycle4 also has its native repo-history 9-D coverage
+preserved in the archive). Three Möbius φ_θ ∈ PSL(2,ℂ) warps fit
+self → docs, self → refs, self → cycle4 (all anchored on self). Drift
+signals (warp magnitude × NSS-axis score) are aggregated across all 3
+alignments and ranked in `drift-priority-list.md`.
 
 ## Outputs
 
 | File | Description |
 |---|---|
-| `self-corpus-listing.json` | Listing of self-corpus items (sections) |
-| `docs-corpus-listing.json` | Listing of docs-corpus items (sections) |
-| `refs-corpus-listing.json` | Listing of refs-corpus items (sections) |
-| `cycle4-corpus-listing.json` | Listing of cycle4-corpus items (events) |
-| `mobius-transform.json` | Fitted φ_θ params for all 3 alignments |
+| `self-corpus-listing.json` | Listing of self corpus items (EXCEPTION: workspace-local) + `_sourcing_exception` block |
+| `docs-corpus-listing.json` | Listing of docs corpus items + `files_listed_in_repo` (Contents API) |
+| `refs-corpus-listing.json` | Listing of refs corpus items + `files_listed_in_repo` (Contents API) |
+| `cycle4-corpus-listing.json` | Listing of cycle4 corpus items + `source_file_meta` (Contents API) |
+| `mobius-transform.json` | Fitted φ_θ params for all 3 alignments + sourcing block |
 | `warp-by-region.csv` | Per-region warp + NSS scores for all 3 alignments |
 | `drift-priority-list.md` | Top-10 flagged drift regions (aggregated) |
 | `aligned-curves.png` | 4 corpus point clouds + 3 warped-A point clouds on S^2 |
 | `README.md` | This file |
 
-## Math conventions (frozen)
-
-- **9-D `internal-big-picture` primitive basis** (9 of 10 primitives;
-  `self_describing` dropped at 94% coverage). SHARED across all 4 corpora
-  (cross-corpus deviation from per-corpus basis rule).
-- **Extended keyword vocab** (vs the 2-corpus version) — adds git/Linear/
-  PR/commit vocabulary so cycle4 items register meaningfully on the same
-  basis as self/docs/refs. New terms per primitive include `cosign`,
-  `provenance`, `gpg`, `signed commit`, `branch protection`, `ci`,
-  `workflow`, `changelog`, `commit history`, `sha`, etc.
-- **LOOSE-UNION kept-cols rule** — a primitive is kept if ANY of the 4
-  corpora has informative coverage on it (coverage ∈ [0.10, 0.90]).
-  Strict-and-union collapsed too aggressively when self/docs/refs are
-  saturated on `attestation` but cycle4 has meaningful variation.
-- **Identity-init Möbius**: φ_θ = (a=1, b=0, c=0, d=1), refined via
-  L-BFGS-B with 6 random perturbations; objective = mean squared chordal
-  distance in the stereographed C plane.
-- **Frozen degree weights**: frequencies are the cold-start harmonic
-  series 1, 2, ..., k (k=8); NOT refined.
-- **Chordal S² distance**: used as proxy for geodesic distance.
-- **Sub-20 decomposition rule**: NOT applied; all 4 corpora are above 20
-  items.
-
 ## How to regenerate
 
 ```bash
-python3 documents/github-yubios-KS9n5GAT/papers/scripts/curve-drift-detector.py
+python3.12 documents/github-yubios-KS9n5GAT/papers/scripts/curve-drift-detector.py
 ```
 
-No external API calls — all 4 corpora are loaded from local disk.
-Outputs land in `documents/github-yubios-KS9n5GAT/papers/data/drift-output/`.
+All GitHub fetches go through the `MASTER GIT SU` connection
+(`conn_1KXnkOHGgyE4`). No local file reads except for the documented
+`self/` exception.
 
-## How to read drift signals
+## Math conventions (frozen)
 
-- `warp-by-region.csv`: one row per sampled region, prefixed by the
-  alignment name (`self-to-docs`, `self-to-refs`, `self-to-cycle4`).
-  `flagged=true` rows are candidates for self-archaeology dispatch.
-- `drift-priority-list.md`: top 10 flagged regions ranked by drift_score,
-  aggregated across all 3 alignments with nearest self + target items
-  per region.
-- `mobius-transform.json`: the fitted φ_θ per alignment (a, b, c, d ∈ ℂ
-  with ad - bc = 1). Apply this Möbius to future curve fits to project
-  onto the same warped coordinate system — enables cross-cycle comparison.
-- `aligned-curves.png`: visual overlay of all 4 corpus point clouds on
-  S² (Mollweide-style projection). 3 warped-self point clouds highlight
-  the warp magnitude per alignment.
-
-## Deviations from prior skills
-
-- **Per-corpus basis rule violated** (same as the 2-corpus version):
-  `curve-guided-rsi-self` says use a per-corpus basis; this artifact uses
-  the SHARED internal-big-picture 9-D for all 4 corpora. Documented.
-- **cycle4 scoring uses text-keyword OR'd with native binary coverage**:
-  the cycle4 archive has its own 9-D repo-history basis (has_purpose,
-  has_sha, ...). For cross-corpus comparison, we re-score cycle4 items
-  against the internal-big-picture 9-D keyword vocab (extended to cover
-  git/Linear terms). The native coverage is preserved in the cycle4
-  archive as ground truth; the cross-corpus score is the proxy.
+- **9-D `internal-big-picture` primitive basis** (9 of 10 primitives;
+  `self_describing` dropped at 94% coverage). SHARED across all 4 corpora.
+- **Extended keyword vocab** (git/Linear/PR/commit terms) so cycle4 items
+  register meaningfully on the same basis as self/docs/refs.
+- **LOOSE-UNION kept-cols rule** — a primitive is kept if ANY of the 4
+  corpora has informative coverage on it.
+- **Identity-init Möbius**: φ_θ = (a=1, b=0, c=0, d=1), refined via
+  L-BFGS-B with 6 random perturbations.
+- **Frozen degree weights**: frequencies = harmonic series 1..k (k=8).
+- **Chordal S² distance**: used as proxy for geodesic distance.
 """
     (OUT_DIR / "README.md").write_text(readme)
     print(f"Wrote {OUT_DIR / 'README.md'}")
 
-    print("PR4 cross-corpus drift detector (4-corpus): end-to-end run complete.")
+    print("PR4 cross-corpus drift detector (4-corpus, repo-sourced): done.")
 
 
 if __name__ == "__main__":
