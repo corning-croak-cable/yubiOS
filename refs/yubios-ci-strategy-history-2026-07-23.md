@@ -85,3 +85,12 @@ Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.9090).
 **One-line**: TBD per file context.
 
 Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.7964). TODO: refine per file context.
+
+
+## Problem Statement
+
+**Question**: TBD per file context.
+**Scope**: TBD.
+**Out of scope**: TBD.
+
+Context: section appended per repo-refs-skill cycle-3 7-D Mode D batch (Δ=+0.6732). TODO: refine per file context.

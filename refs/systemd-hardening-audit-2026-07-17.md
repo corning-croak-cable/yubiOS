@@ -76,3 +76,13 @@ This document applies the yubiOS segmentation primitive — Linux namespaces, cg
 **Owner**: TBD
 
 Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.5896). TODO: refine per file context.
+
+
+## Cross-references
+
+**Related Linear issues (OMN-*)**: TBD per file context.
+**Related PRs**: TBD.
+**Related ADRs**: TBD.
+**Related refs/ docs**: TBD.
+
+Context: section appended per repo-refs-skill cycle-3 7-D Mode D batch (Δ=+0.5959). TODO: refine per file context.

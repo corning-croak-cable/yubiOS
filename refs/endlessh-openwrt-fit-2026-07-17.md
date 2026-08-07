@@ -238,3 +238,13 @@ This document manages cryptographic identity — FIDO2/CTAP2 YubiKey, softhsm/PK
 **Related refs/ docs**: TBD.
 
 Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.6466). TODO: refine per file context.
+
+
+## Cross-references
+
+**Related Linear issues (OMN-*)**: TBD per file context.
+**Related PRs**: TBD.
+**Related ADRs**: TBD.
+**Related refs/ docs**: TBD.
+
+Context: section appended per repo-refs-skill cycle-3 7-D Mode D batch (Δ=+0.5900). TODO: refine per file context.
