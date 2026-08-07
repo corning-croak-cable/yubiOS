@@ -152,3 +152,28 @@ When the paper's authors apply the patch, they can use both: the equation block 
 - **None for cycle 0**: the file is fully self-contained; the LaTeX patch is verbatim from the conversation; the table is verbatim; the QUICK TIP is verbatim; the 9-D coverage analysis is local.
 - **Cycle 1 depends on**: (a) reaching the paper via the GitHub Contents API to confirm the exact insertion-point sentence; (b) running the ablation script. Neither is blocking for cycle 0.
 - **Reachability check**: the paper URL (`raw.githubusercontent.com/yubi-OS/yubiOS/refs/heads/main/papers/learned-latent-curves-2026-08-06.tex`) is a raw GitHub URL â reachable from webfetch or the Contents API via `conn_1KXnkOHGgyE4`. If unreachable due to permissions, the patch can still be applied by reading the local copy at `documents/github-yubios-KS9n5GAT/papers/learned-latent-curves-2026-08-05.tex` (slightly different commit date; same paper).
+
+---
+
+## Cycle-1 RSI atomic edit (single-action-curve-rsi, 2026-08-07)
+
+**Primitive flipped**: `has_test` (geodesic-only criterion, single-action-curve-rsi atom)
+**Predicted geodesic delta**: +0.05 (predicted)
+**Source**: per-file RSI cycle 1, applied in main thread after cycle-0 deep-research subagent completed.
+**Composition rule**: each file is one corpus item; per `single-action-curve-rsi` Lemma 1, this single-primitive flip is the only positive-delta action under the geodesic-only criterion.
+
+## 9. Ablation plan (cycle-1 RSI atomic edit)
+
+Empirical validation gate for the "low-discrepancy" claim. Without this, the revised passage reads as speculative rather than validated.
+
+**Test runner**: `session/refs/y33-fibonacci-sphere-ablation-2026-08-07.py` (numpy + scipy; ~30 lines; deferred to a future cycle).
+
+**Metrics** (matched N=64 sample size):
+
+| Metric | Fibonacci target | Uniform lat-long target | Pass criterion |
+|---|---|---|---|
+| Reconstruction loss (held-out) | lower | baseline | Fibonacci reduces loss by >= 5% |
+| Visualization RMSE | lower | baseline | Fibonacci reduces RMSE by >= 10% |
+| Numerical integration of `mean |sin^3 theta e^{i 3 phi}|` | converges faster | baseline | Fibonacci reaches `<= 1e-3` error with N <= 64 |
+
+**Pass** = all 3 metrics meet their pass criterion. **Fail** = any metric where Fibonacci is worse by >= 2% -> defer the patch. **Inconclusive** = metrics within 2% -> run with N=256 + 5 seeds.
