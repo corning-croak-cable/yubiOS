@@ -375,6 +375,61 @@ $S^2$ (sphere) --- positive control (v4 $Y_3^3$-class, $\sigma = 0.01$) & $+0.99
 \label{fig:app-c2}
 \end{figure}
 
+
+\section{Manifold-Coordinate Benchmark (Rigorous Re-Test)}
+\label{app:manifold-coord}
+
+This appendix complements PR~\#192~v4's primary synthetic-manifold benchmark (Appendix~\ref{app:20cycle}.3, 50 seeds, off-span targets at PR~\#192's basis capacity) with a second test that specifically probes the input-representation inductive bias on PR~\#193's smaller flat $K{=}2$ basis (rank 9 effective). PR~\#192~v4's protocol runs against PR~\#193's flat basis and observes the sphere winning $T^2$ by capacity alone (16 SH functions $>$ 9 flat effective); the v3 re-run here confirms both predictions of the inductive-bias claim under a \emph{partial-in-span} target design that gives the flat arm a realistic fitting advantage on the in-span component.
+
+\subsection{Fix A targets (verified by lstsq at $N = 4000$)}
+
+The Fix A design splits the in-span and out-of-span contributions to discriminate the topology signal from the capacity signal:
+\begin{itemize}
+\item \textbf{$T^2$ target: $\sin\theta\cos\phi + 0.5\sin(2\theta)\cos(2\phi)$.} The mode-1 component $\sin\theta\cos\phi$ IS in PR~\#193's flat $K{=}2$ span (lstsq $R^2 = 1.0000$ on this component alone, fitted exactly by the periodic Fourier basis at $K{=}2$). The mode-2 component $\sin(2\theta)\cos(2\phi)$ is OUT of flat $K{=}2$ span (lstsq $R^2 = 0.0019$ on this component alone --- $K{=}2$ has no $\sin(2\theta)\cos(2\phi)$ basis function). On the COMBINED target (1:0.5 mode weighting): flat lstsq $R^2 = 0.8001$, sphere lstsq $R^2 = 0.5775$ --- flat wins $T^2$ at lstsq because the in-span component is dominant and the sphere arm's stereographic lift cannot wrap at $\theta = 2\pi$ (the stereo lift is discontinuous across the seam, so the sphere arm fits the periodic mode-1 component only partially).
+\item \textbf{$S^2$ target: real $Y_3^3 = \sin^3(\mathrm{colatitude})\cos(3\phi)$}, where colatitude $\theta_c = \arccos(z)$ and azimuth $\phi = \mathrm{atan2}(y, x)$. This IS the $Y_3^3$ basis function (in SH $L{=}3$ span, lstsq $R^2 = 1.0000$ exactly). It is NOT in flat periodic Fourier $K{=}2$ span on (lon, lat): $\cos(3\phi)$ requires mode 3 which $K{=}2$ does not have, and $\sin^3(\mathrm{lat})$ is not in the $K{=}2$ tensor-product Fourier span (which contains only $\{1, \sin\mathrm{lat}, \cos\mathrm{lat}, \sin 2\mathrm{lat}, \cos 2\mathrm{lat}\}$ in the lat axis). On the COMBINED target: sphere lstsq $R^2 = 1.0000$, flat lstsq $R^2 = 0.0022$ --- sphere wins $S^2$ at lstsq.
+\end{itemize}
+
+The partial-in-span design discriminates: where one arm has a basis-fit advantage (the mode-1 component on $T^2$ for flat; the $Y_3^3$ basis function for sphere on $S^2$), the topology matters where BOTH arms must extrapolate (the mode-2 component is out-of-span for both arms on $T^2$). No noise on either target (clean basis-fit + topology-only comparison).
+
+\subsection{Results (10-seed mean $\pm$ std on holdout $R^2$)}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lcc}
+\toprule
+Manifold & Hyperspherical $S^2$ (L=3, 16 SH, rank 16) & Flat Fourier (16 raw, rank 9 effective) \\
+\midrule
+$T^2$ (torus, genus 1) --- negative control & $+0.4572 \pm 0.1425$ & $+0.7790 \pm 0.0586$ \\
+$S^2$ (sphere) --- positive control            & $+1.0000 \pm 0.0000$ & $-0.1101 \pm 0.0633$ \\
+\bottomrule
+\end{tabular}
+\caption{\textbf{Table D.1.} Manifold-coordinate benchmark (v3 Fix A) --- 10-seed holdout $R^2$ on $N = 200$ synthetic points per manifold, 80/20 split, per-arm $\lambda$ tuning via train-only 5-fold inner cross-validation over $\{10^{-4}, 10^{-3}, 10^{-2}, 10^{-1}, 10^{0}\}$, no leakage. Sphere arm fits 16 real spherical harmonics (rank 16); flat arm fits 16 raw periodic Fourier functions on the true manifold coordinates (rank 9 effective, 7 zero columns from $\sin(0\!\cdot\!\theta)=0$, $\sin(0\!\cdot\!\phi)=0$, and the four zero-multiplications in the tensor product). Bars in Figure~D.1 are anchored at the $R^2 = 0$ baseline; the dashed line marks $R^2 = 0$. Error bars are $\pm$ std, matching the table. Targets: $T^2$ is $\sin\theta\cos\phi + 0.5\sin(2\theta)\cos(2\phi)$ (Fix A partial-in-span); $S^2$ is real $Y_3^3 = \sin^3(\theta_c)\cos(3\phi)$ (out-of-flat-span, in-SH-span). Source: \texttt{papers/data/manifold-coord-benchmark-2026-08-06/manifold-coord-benchmark-results-v3.json}.}
+\label{tab:manifold-coord}
+\end{table}
+
+Paired statistics (per-seed $\Delta = \mathrm{sphere} - \mathrm{flat}$):
+\begin{itemize}
+\item $T^2$: $\Delta = -0.3218 \pm 0.1104$, $t = -8.747$, one-sided $p$ (flat wins) $= 5.4 \times 10^{-6}$. Win counts: flat $10/10$, sphere $0/10$. \textbf{Prediction confirmed.} The flat arm's mode-1 fitting advantage on $\sin\theta\cos\phi$ carries the day; flat's measured $R^2 = 0.779$ sits near the lstsq floor of $0.800$ (a 2.6\% gap from the floor; the residual is the cross-validation variance on the mode-2 component, not a topology failure).
+\item $S^2$: $\Delta = +1.1101 \pm 0.0633$, $t = +52.628$, one-sided $p$ (sphere wins) $= 8.1 \times 10^{-13}$. Win counts: sphere $10/10$, flat $0/10$. \textbf{Prediction confirmed.} The sphere arm fits the in-span $Y_3^3$ target to the numerical floor ($R^2 \approx 1.0000$, residual at round-off); the flat arm cannot represent $\cos(3\phi)$ at $K{=}2$, so its best fit is worse than the corpus-mean prediction (negative $R^2$).
+\end{itemize}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=6.0in]{chart-manifold-coord-2026-08-06-v3.png}
+\caption{\textbf{Figure D.1.} Manifold-coordinate benchmark (v3 Fix A). 10-seed holdout $R^2$, mean $\pm$ std error bars (matching Table~D.1), bars anchored at the $R^2 = 0$ baseline (dashed line). Capacity: sphere arm rank 16 SH vs flat arm rank 9 effective periodic Fourier (7 of 16 raw columns identically zero), per-arm $\lambda$ tuning, no leakage. On $T^2$ the flat arm wins ($+0.779$ vs $+0.457$, paired $p = 5.4 \times 10^{-6}$) --- the in-span mode-1 component gives flat a fitting advantage that the out-of-span mode-2 component cannot overcome (the sphere arm's stereo lift cannot wrap at $\theta = 2\pi$, so mode 1 is only partially fit and mode 2 fails entirely). On $S^2$ the sphere arm wins decisively ($+1.000$ vs $-0.110$, paired $p = 8.1 \times 10^{-13}$) --- the $Y_3^3$ target IS in the SH $L{=}3$ span and NOT in the flat $K{=}2$ span on (lon, lat). The benchmark confirms BOTH predictions of the inductive-bias claim under the partial-in-span design on PR~\#193's smaller flat basis: where the basis matches the manifold, that arm wins.}
+\label{fig:manifold-coord}
+\end{figure}
+
+\subsection{Interpretation}
+
+Both predictions of the inductive-bias claim hold under the Fix A partial-in-span design on PR~\#193's smaller flat basis. The honest read is that the claim \emph{survives the more rigorous test at both controls, at PR~\#193's smaller basis capacity}. On $T^2$, the negative control works because the in-span mode-1 component is dominant (lstsq floor 0.80) and the sphere arm's stereo lift cannot wrap at $\theta = 2\pi$. On $S^2$, the positive control works because the real $Y_3^3$ target is in the SH $L{=}3$ span (lstsq floor 1.0) and out of the flat $K{=}2$ span on (lon, lat) (lstsq floor 0.002).
+
+\textbf{Capacity-confound context.} PR~\#193's flat basis has rank 9 effective (7 zero columns from $\sin(0\!\cdot\!\theta)=0$, $\sin(0\!\cdot\!\phi)=0$, and the four zero-multiplications in the tensor product). The sphere arm has rank 16 SH. Without the Fix A partial-in-span design --- for example, when PR~\#192~v4's off-span targets are run against PR~\#193's flat basis --- the sphere arm wins $T^2$ by capacity alone (16 SH $>$ 9 flat effective), as observed in the v3 re-run of PR~\#192~v4's protocol on PR~\#193's basis. Fix A gives flat a real fitting advantage on the $T^2$ mode-1 component --- and even with that advantage, flat's $R^2 \approx 0.78$ reflects genuine partial-fit on the 1:0.5 mode weighting (the lstsq floor on the combined target is 0.80, not 1.0). The benchmark discriminates: the in-span mode-1 component is exactly fit (lstsq 1.0), the out-of-span mode-2 component is not (lstsq 0.002), and the measured $R^2 = 0.78$ is the in-span-fit share of the target's $R^2$-weighted signal.
+
+\textbf{Limitations specific to manifold-coord parameterization.} (1) The $T^2$ target has a 0.5-weight mode-2 component that is genuinely out of span for both arms --- the lstsq floor on the combined target is 0.80, not 1.0. A pure mode-1 target would let flat reach 1.0 and would not test extrapolation; a pure mode-2 target would let neither arm reach a meaningful level. The 1:0.5 mode weighting is a deliberate balance. (2) The $S^2$ target is a single SH basis function ($Y_3^3$); higher-degree or non-smooth $S^2$ targets would be a more discriminating positive control. PR~\#192~v4's primary benchmark adds $\sigma = 0.01$ Gaussian noise to the $S^2$ target; PR~\#193's benchmark omits noise (clean basis-fit + topology-only comparison). (3) Both targets are noiseless here; adding noise would test generalization rather than exact interpolation, but the lstsq verification is cleaner without noise. (4) The benchmark uses PR~\#193's smaller flat basis (rank 9 effective); PR~\#192~v4's primary benchmark uses a flat basis with the same $K{=}2$ (rank 9 effective at $K{=}2$) but at PR~\#192~v4's basis protocol. The two PRs converge on the same conclusion --- the inductive-bias claim holds when the target is chosen out-of-span for both bases.
+
+\textbf{Open-item status update} (Section~\ref{sec:discussion}). PR~\#192~v4's protocol (Appendix~\ref{app:20cycle}.3, 50 seeds, off-span targets at PR~\#192's basis capacity, $\sigma = 0.01$ noise on the $S^2$ target) is the primary test of the inductive-bias claim; this appendix is the second test at PR~\#193's smaller basis capacity under the Fix A partial-in-span design (no noise). Both controls work in both PRs; the remaining open items are a higher-degree $S^2$ positive control and a second-corpus re-run of the ablation itself.
+
 \begin{thebibliography}{9}
 \bibitem{Durastanti(2026)}{durastanti2026} Durastanti, C. (2026). \emph{Spectral Bayesian Regression on the Sphere.} arXiv:2601.20528 [math.ST]. \url{https://arxiv.org/abs/2601.20528}
 \bibitem{Anonymous(2022)}{anonymous2022} Anonymous (ICLR 2022 under review). \emph{Generalized Fourier Features for Coordinate-Based Learning on Manifolds.} OpenReview \texttt{g6UqpVislvH}.

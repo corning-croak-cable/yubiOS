@@ -26,9 +26,9 @@ flowchart LR
   K --> L
 ```
 
-<img src="https://raw.githubusercontent.com/yubi-OS/assets/refs/heads/main/Latent_Space_Learning.jpeg">
+  <img src="https://raw.githubusercontent.com/yubi-OS/assets/refs/heads/main/Latent_Space_Learning.jpeg">
 
-<img src="https://raw.githubusercontent.com/yubi-OS/assets/refs/heads/main/Y33_Latent_Sphere.jpeg">
+
 
 ## Attestation coverage
 
