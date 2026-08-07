@@ -1,0 +1,2 @@
+region,n_items,mean_chordal_residual_after_warp,max_chordal_residual_after_warp,interpretation
+no_warp_computed,0,n/a,n/a,cycle-4 archive missing; skipping intra-corpus warp.
