@@ -292,9 +292,6 @@ story.append(Paragraph(
 ))
 
 # --- y33 Fibonacci-sphere + rsi-phi-skill additions (2026-08-07) ---
-# Operationalizes the two y33 papers into the rendered PDF mirror of the .tex.
-
-# Insertion 1: rsi-phi-skill remark after the Riemann-sphere paragraph
 story.append(Paragraph("3.1.1&nbsp;&nbsp;Fibonacci-sphere sampling and Y<sub>3</sub><sup>3</sup> angular probe (operationalized as rsi-phi-skill, 2026-08-07)", style_h3))
 story.append(Paragraph(
     "<b>The Riemann-sphere parameter manifold above is operationalized today (2026-08-07) as the rsi-phi-skill agent skill.</b> "
@@ -415,7 +412,6 @@ story.append(Paragraph(
 ))
 
 
-# Insertion 2: companion artifacts + 5-dim time-series gate status
 story.append(Paragraph("3.3&nbsp;&nbsp;Companion artifacts (added 2026-08-07)", style_h2))
 story.append(Paragraph(
     "The Fibonacci-sphere sampling and Y<sub>3</sub><sup>3</sup> angular-probe primitive above "
