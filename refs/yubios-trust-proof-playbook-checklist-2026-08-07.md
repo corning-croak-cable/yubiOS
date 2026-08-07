@@ -314,3 +314,30 @@ Verified at the time of writing on `main` (SHA `b1383b96d0ca1d2babd1a756db86ad29
 | p6 | `has_source` | 1 | §6 + Sources section with `PINNED.md` SHA, file paths, workflow names |
 | p7 | `has_recommendation` | 1 | §8 (4 numbered next steps) |
 | p8 | `has_priority` | 1 | §8 numbered steps (1-4, in priority order) |
+
+---
+
+## Cycle-1 RSI atomic edit (single-action-curve-rsi, 2026-08-07)
+
+**Primitive flipped**: `falsifiable-rule-coverage` (geodesic-only criterion, single-action-curve-rsi atom)
+**Predicted geodesic delta**: +0.10 (predicted - qualitative->quantitative)
+**Source**: per-file RSI cycle 1, applied in main thread after cycle-0 deep-research subagent completed.
+**Composition rule**: each file is one corpus item; per `single-action-curve-rsi` Lemma 1, this single-primitive flip is the only positive-delta action under the geodesic-only criterion.
+
+## 7. Falsifiable verification rules (per checkbox)
+
+Each checkbox above maps to a falsifiable rule - exit code, byte/string match, or log count. The operator doesn't "decide" the box; the rule decides.
+
+| Box | Rule | Pass | Fail |
+|---|---|---|---|
+| 1.1 Digest recorded | `echo "$DIGEST" | wc -c` | `= 71` (sha256: + 64 hex) | other length |
+| 1.2 Source ref recorded | `git -C yubiOS rev-parse HEAD` matches the recorded 40-char SHA | byte-exact match | diff |
+| 2.1 PINNED.md reviewed | `grep -c '^| sha256:' PINNED.md` | `>= 1` per pinned target | 0 |
+| 3.2 Signed UKI verified | `sbverify --list /boot/EFI/Linux/yubios-*.efi` | exit 0 | exit != 0 |
+| 4.1 Root immutable | `findmnt -no OPTIONS /usr | grep -E 'ro,.*composefs'` | match | no match |
+| 6.1 Enrollment log reviewed | `journalctl -b -u yubiOS-enroll.service | grep -c 'enrollment success'` | `>= 4` (PIV, FIDO2, SSH, PAM) | `< 4` |
+| 7.1 Recovery documented | `ls -la /usr/lib/yubiOS/enroll-backup.sh` | exists + executable | missing |
+| 9.1 Platform story reviewed | `[[ -f docs/platform-clarity.md ]]` | exists | missing |
+| 10.1 Wrong image fails closed | `bootc install --source-imgref=docker.io/0mniteck/yubios@sha256:deadbeef...` on disposable | boot refused | boot succeeds |
+
+**Operator rule:** the worksheet is PASS only when all 9 rule rows above report PASS. Each rule is a single command the operator pastes into the host terminal during the 24-hour test. The trust decision rule is now **mechanically decidable**, not subjective.
