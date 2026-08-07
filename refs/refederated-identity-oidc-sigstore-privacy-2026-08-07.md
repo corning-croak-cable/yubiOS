@@ -186,3 +186,13 @@ These rules promote the section 5 sketch from "design intent" to "auditable cont
 - NEVER use a long-lived workload cert where a per-event short-lived cert is feasible.
 
 These constraints are research-level - Jenny's prior art is the authoritative source for the full constraint set (deployment-specific considerations: lost-IdP recovery, key escrow, compelled disclosure are out of scope here).
+
+
+## Evidence inventory
+
+**Run IDs**: TBD per file context.
+**Commit SHAs**: TBD.
+**Measured metrics**: TBD.
+**Test outcomes**: TBD.
+
+Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.4816). TODO: refine per file context.

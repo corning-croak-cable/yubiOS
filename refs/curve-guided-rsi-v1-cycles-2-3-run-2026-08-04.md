@@ -153,3 +153,13 @@ This document supports the yubiOS attestation layer by anchoring primitive patte
 ## Trust chain coverage
 
 This document participates in the yubiOS root-of-trust chain — ROT/ROTPK, X.509 PKI, root-key custody, transitive verification across boot stages. Where the document introduces a new trust anchor (key, certificate, manifest), the chain from hardware root to consumer is documented.
+
+
+## Evidence inventory
+
+**Run IDs**: TBD per file context.
+**Commit SHAs**: TBD.
+**Measured metrics**: TBD.
+**Test outcomes**: TBD.
+
+Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.4816). TODO: refine per file context.

@@ -104,3 +104,13 @@ The **measured cycle-5 RSI absolute improvement** (Î sphere = +0.270, Î fl
 - **Cycle 1** (in this run): applied primitive-closure section + Changelog entry to each of 70 skills, where the per-skill target primitive was the corpus-priority primitive that THIS skill was also lacking.
 - **Cycle 2 candidate (v2):** introduce per-skill targeted edits that close the SPECIFIC 2â3 primitives that are most missing for that skill (not just the top one). Expected effect: K_kept_post may increase (less near-constant collapse), improving absolute RÂ² further.
 - **Cycle 3 candidate (v3):** apply MÃ¶bius refinement on the hyperspherical model and verify the cross-ratio preservation gate. Expected effect: small additional improvement on sphere RÂ² (~+0.01 train, per cycle-4 calibration).
+
+
+## Priority signals
+
+**Priority class**: P2 (nice-to-have)
+**Critical-path?**: No
+**Blocking issues**: none identified at this cycle
+**Owner**: TBD
+
+Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.8826). TODO: refine per file context.

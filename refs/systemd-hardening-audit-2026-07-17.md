@@ -66,3 +66,13 @@ This document manages cryptographic identity — FIDO2/CTAP2 YubiKey, softhsm/PK
 ## Segmentation coverage
 
 This document applies the yubiOS segmentation primitive — Linux namespaces, cgroups, sandbox, isolation boundary, trust boundary, jail idioms (nsjail, bwrap, firejail), landlock, seccomp. The boundary is named; the trust-domain transition is documented.
+
+
+## Priority signals
+
+**Priority class**: P2 (nice-to-have)
+**Critical-path?**: No
+**Blocking issues**: none identified at this cycle
+**Owner**: TBD
+
+Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.5896). TODO: refine per file context.

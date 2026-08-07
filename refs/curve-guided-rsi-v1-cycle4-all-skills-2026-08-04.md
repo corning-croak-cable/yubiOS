@@ -114,3 +114,13 @@ The skill is now deployed to production:
 - Re-run cadence formalized per `## Lifecycle`: every â¥25% growth OR every 6 months
 
 The `curve-guided-rsi` v1 meta-skill is ready for ongoing use. The 5 remaining "isolated" skills are intrinsic corners (not gaps) and will be addressed in future v2 work that targets corner-skill mitigation specifically (likely by re-running with a finer `r` threshold or by adding specific corner-skill primitives that bring them into clusters).
+
+
+## Priority signals
+
+**Priority class**: P2 (nice-to-have)
+**Critical-path?**: No
+**Blocking issues**: none identified at this cycle
+**Owner**: TBD
+
+Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.8668). TODO: refine per file context.

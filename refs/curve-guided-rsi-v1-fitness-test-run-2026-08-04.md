@@ -163,3 +163,13 @@ This document participates in the yubiOS root-of-trust chain — ROT/ROTPK, X.50
 ## Cryptographic identity coverage
 
 This document manages cryptographic identity — FIDO2/CTAP2 YubiKey, softhsm/PKCS#11/TPM, HSM-backed keys, key attestation. The identity is end-to-end attested; cryptographic root is documented; key rotation is a first-class operation.
+
+
+## Priority signals
+
+**Priority class**: P2 (nice-to-have)
+**Critical-path?**: No
+**Blocking issues**: none identified at this cycle
+**Owner**: TBD
+
+Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.7325). TODO: refine per file context.
