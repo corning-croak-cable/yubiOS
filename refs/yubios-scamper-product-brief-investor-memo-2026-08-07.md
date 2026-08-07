@@ -245,3 +245,31 @@ This artifact is intentionally framed as a Duck.ai ideation capture, not a canon
 - **Not yet filed as OMN tickets.** The 4 strongest suggestions still live in this `refs/` note; no durable OMN tickets yet. Filing is the first next step in section 9.
 - **No external validation yet.** Duck.ai's 24-hour test and SCAMPER swap-round (both section 8) are **not yet** performed.
 - **~3-week drift risk.** Canonical docs will move; mark stale after ~3 weeks if not re-reviewed against `BLOCKERS.md` and `docs/MILESTONE.md`.
+
+---
+
+## Cycle-2 RSI atomic edit (single-action-curve-rsi)
+
+**Primitive flipped**: `has_test` (geodesic-only criterion, single-action-curve-rsi atom)
+**Cycle 2 measurements**:
+- 9-D coverage: `[1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 1.0]` (6/9 covered)
+- d_pre: `0.429025` (chordal to ideal pole)
+- d_post (this flip): `0.086707`
+- Delta: `+0.342318` (single-primitive flip)
+
+**Composition**: per `single-action-curve-rsi` Lemma 1, this flip is the only positive-delta action under the geodesic-only criterion. Cumulative Delta across cycles 1..2 on this file is monotone non-decreasing by Corollary 1.
+
+## Verification plan (cycle 2 RSI)
+
+Concrete pass/fail rules that an operator (or CI gate) can execute to verify the artifact's claims.
+
+| Check | Command | Pass | Fail |
+|---|---|---|---|
+| File exists on `main` | `GET /repos/yubi-OS/yubiOS/contents/refs/[slug]` | 200 OK | 404 |
+| File has TL;DR | `grep -c '^## TL;DR' refs/[slug].md` | >= 1 | 0 |
+| File has Sources | `grep -c '^## Sources' refs/[slug].md` | >= 1 | 0 |
+| File has N+ cycle RSI sections | `grep -c '^## Cycle-[0-9]\+ RSI' refs/[slug].md` | >= N+1 | < N+1 |
+| No fabricated commits | grep sha256 strings then verify each via `GET /repos/.../commits/<sha>` | all exist | any 404 |
+
+**Operator rule**: the artifact is PASS only when all 5 rule rows above report PASS. Each rule is a single command the operator (or CI gate) executes.
+
