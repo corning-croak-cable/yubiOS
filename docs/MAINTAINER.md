@@ -2,7 +2,7 @@
 
 Last reviewed: 2026-07-11
 
-Maintained-By:
+yubi-OS org and project yubiOS is Maintained-By:
  - Shant Tchatalbachian (0mniteck) shant@omniteck.com
  - +18186415757 (sms)
  - Omniteck.42 (signal)
