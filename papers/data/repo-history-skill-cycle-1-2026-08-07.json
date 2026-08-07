@@ -1,0 +1,75 @@
+{
+  "cycle": 1,
+  "date": "2026-08-07",
+  "corpus_size": 34,
+  "repos": [
+    "yubi-OS/yubiOS",
+    "yubi-OS/agent-skills"
+  ],
+  "primitive_coverage": {
+    "has_purpose": 9,
+    "has_sha": 4,
+    "has_pr_ref": 19,
+    "has_linear_ref": 0,
+    "has_state_progression": 34,
+    "has_author": 34,
+    "has_cross_corpus_link": 0,
+    "has_evidence": 34,
+    "has_temporal_anchor": 0
+  },
+  "surviving_primitives": [
+    "has_purpose",
+    "has_sha",
+    "has_pr_ref"
+  ],
+  "dropped_primitives": [
+    "has_linear_ref",
+    "has_state_progression",
+    "has_author",
+    "has_cross_corpus_link",
+    "has_evidence",
+    "has_temporal_anchor"
+  ],
+  "pc1": 0.27623997665491784,
+  "pc2": 0.20853901212139847,
+  "pc1_pc2_ratio": 0.7310779911384772,
+  "norm_ok": true,
+  "sparse_count": 0,
+  "top_isolated": [
+    {
+      "idx": 0,
+      "nearest": 0,
+      "nearestIdx": 4,
+      "repo": "yubi-OS/yubiOS",
+      "number": 194
+    },
+    {
+      "idx": 1,
+      "nearest": 0,
+      "nearestIdx": 5,
+      "repo": "yubi-OS/yubiOS",
+      "number": 195
+    },
+    {
+      "idx": 2,
+      "nearest": 0,
+      "nearestIdx": 3,
+      "repo": "yubi-OS/yubiOS",
+      "number": 193
+    },
+    {
+      "idx": 3,
+      "nearest": 0,
+      "nearestIdx": 2,
+      "repo": "yubi-OS/yubiOS",
+      "number": 192
+    },
+    {
+      "idx": 4,
+      "nearest": 0,
+      "nearestIdx": 0,
+      "repo": "yubi-OS/yubiOS",
+      "number": 191
+    }
+  ]
+}
