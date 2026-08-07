@@ -1,7 +1,7 @@
 # Falsification harness for `curve-rsi` against synthetic stochastic corpora
 
 **Date:** 2026-08-06
-**PR scope:** Adds `scripts/fractalrabbit-falsification/` (3 Python files + README) to
+**PR scope:** Adds `papers/fractalrabbit-falsification/` (3 Python files + README) to
 `yubi-OS/yubiOS` and this `refs/` writeup. Lands the harness, the simulator,
 the curve-fit pipeline, and the falsification test results — no changes to
 existing code.
@@ -49,11 +49,11 @@ stress-testing the curve-rsi pipeline. This PR:
    downstream).
 2. Defines a 9-D binary primitive basis for the synthetic corpus (each
    primitive grounded in a specific fractalrabbit tier — see
-   `scripts/fractalrabbit-falsification/curve_fit_pipeline.py`).
+   `papers/fractalrabbit-falsification/curve_fit_pipeline.py`).
 3. Implements the full `single-action-curve-rsi` pipeline (PCA → stereographic
    lift → chordal-distance atom → sparse-cell grid) as a reusable module.
 4. Runs the falsification tests with clear pass/fail gates.
-5. Reports results in this `refs/` writeup + `scripts/fractalrabbit-falsification/results.json`
+5. Reports results in this `refs/` writeup + `papers/fractalrabbit-falsification/results.json`
    and `multi_seed_results.json`.
 
 The simulator is faithful to the published model (see Darling 2018, DOI
@@ -64,7 +64,7 @@ The simulator is faithful to the published model (see Darling 2018, DOI
 ## What's in the PR
 
 ```
-scripts/fractalrabbit-falsification/
+papers/fractalrabbit-falsification/
 ├── README.md                          # how to run + reproduce
 ├── fractalrabbit_sim.py               # Darling's three tiers in Python (~250 LOC)
 ├── curve_fit_pipeline.py              # 9-D → S² → sparse-cell → atom (~250 LOC)
@@ -77,7 +77,7 @@ scripts/fractalrabbit-falsification/
 ## How to reproduce
 
 ```bash
-cd scripts/fractalrabbit-falsification
+cd papers/fractalrabbit-falsification
 python3 falsification_harness.py         # 1-seed run
 python3 multi_seed_sweep.py               # 10-seed sweep
 ```
@@ -234,13 +234,13 @@ holds on the synthetic corpus** — the atom's invariant is preserved.
 ## Files
 
 - `refs/fractalrabbit-falsification-harness-2026-08-06.md` (this file)
-- `scripts/fractalrabbit-falsification/README.md` (how to run)
-- `scripts/fractalrabbit-falsification/fractalrabbit_sim.py`
-- `scripts/fractalrabbit-falsification/curve_fit_pipeline.py`
-- `scripts/fractalrabbit-falsification/falsification_harness.py`
-- `scripts/fractalrabbit-falsification/multi_seed_sweep.py`
-- `scripts/fractalrabbit-falsification/results.json` (1-seed output, seed=42)
-- `scripts/fractalrabbit-falsification/multi_seed_results.json` (10-seed output)
+- `papers/fractalrabbit-falsification/README.md` (how to run)
+- `papers/fractalrabbit-falsification/fractalrabbit_sim.py`
+- `papers/fractalrabbit-falsification/curve_fit_pipeline.py`
+- `papers/fractalrabbit-falsification/falsification_harness.py`
+- `papers/fractalrabbit-falsification/multi_seed_sweep.py`
+- `papers/fractalrabbit-falsification/results.json` (1-seed output, seed=42)
+- `papers/fractalrabbit-falsification/multi_seed_results.json` (10-seed output)
 
 ## Provenance
 

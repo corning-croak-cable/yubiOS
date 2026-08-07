@@ -21,7 +21,7 @@ pass/fail gates.
 ## How to run
 
 ```bash
-cd scripts/fractalrabbit-falsification
+cd papers/fractalrabbit-falsification
 python3 falsification_harness.py        # 1-seed run
 python3 multi_seed_sweep.py              # 10-seed sweep
 ```
