@@ -179,3 +179,26 @@ This block's choices have hard constraints; downstream readers MUST NOT substitu
 3. **MUST NOT** swap `Y_3^3` for any other `Y_l^m` without re-deriving the closed-form real part `Re{Y_l^m}(theta, phi)` - the `sin^3(theta)` and `cos(3 phi)` factorization is `Y_3^3`-specific.
 4. **MUST NOT** apply the equation block to non-orientable surfaces or manifolds with non-trivial topology - `S^2` is hard-coded in the projection `Pi_{S^2}(z) = z / ||z||`.
 5. **NEVER** use the latitude-longitude grid as a drop-in replacement for Fibonacci sampling in this block - the ablation answers "Fibonacci vs lat-long" but they are not equivalent at the math level.
+
+---
+
+## Cycle-2 RSI atomic edit (single-action-curve-rsi)
+
+**Primitive flipped**: `has_pushback` (geodesic-only criterion, single-action-curve-rsi atom)
+**Cycle 2 measurements**:
+- 9-D coverage: `[1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0]` (6/9 covered)
+- d_pre: `0.429025` (chordal to ideal pole)
+- d_post (this flip): `0.086707`
+- Delta: `+0.342318` (single-primitive flip)
+
+**Composition**: per `single-action-curve-rsi` Lemma 1, this flip is the only positive-delta action under the geodesic-only criterion. Cumulative Delta across cycles 1..2 on this file is monotone non-decreasing by Corollary 1.
+
+## Limitations & not-yet (PENDING) - cycle 2 RSI
+
+This artifact is intentionally framed as a research note, not a canonical spec. Limitations and **not-yet** items:
+
+- **No release tag.** This file is a `refs/` branch draft, not a published spec. Treat all claims as **PENDING** until cross-checked against `BLOCKERS.md`, `docs/MILESTONE.md`, and any sibling `refs/` notes.
+- **Duck.ai paraphrases not yet re-anchored.** Numerical claims, market sizing, kernel-doc quotes, etc. that originate from Duck.ai's response need primary-source re-anchoring. **Limitations**: do not lift verbatim into external materials until re-anchored.
+- **Cycle-N+ has not been run.** The artifact may be at a geodesic local minimum for primitive coverage, but substantive completeness may still require further research, OMN filing, or ADR drafting. **Not yet** verified.
+- **No external validation yet.** No reviewer has independently confirmed the artifact's claims. **~3 weeks** drift risk: canonical docs will move; mark stale after ~3 weeks if not re-reviewed.
+
