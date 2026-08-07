@@ -1,0 +1,111 @@
+{
+  "label": "docs-corpus",
+  "n_items": 37,
+  "n_primitives": 9,
+  "primitives": [
+    "attestation",
+    "trust_chain",
+    "least_privilege",
+    "declarative_policy",
+    "continuous_adaptive",
+    "immutability",
+    "audit_evidence",
+    "cryptographic_identity",
+    "segmentation"
+  ],
+  "items_sample": [
+    {
+      "id": "docs:1. Release notes / changelog",
+      "primitive_coverage": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0
+      ],
+      "text": "docs / 1. Release notes / changelog",
+      "source": "docs-corpus",
+      "section_header": "1. Release notes / changelog",
+      "file": "bootc-uki-blsconfig-reference.md"
+    },
+    {
+      "id": "docs:2. Source code for the BLSConfig `uki` feature",
+      "primitive_coverage": [
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0
+      ],
+      "text": "docs / 2. Source code for the BLSConfig `uki` feature",
+      "source": "docs-corpus",
+      "section_header": "2. Source code for the BLSConfig `uki` feature",
+      "file": "bootc-uki-blsconfig-reference.md"
+    },
+    {
+      "id": "docs:3. Test / fixture coverage of the uki BLSConfig path",
+      "primitive_coverage": [
+        0,
+        1,
+        1,
+        0,
+        1,
+        1,
+        0,
+        1,
+        0
+      ],
+      "text": "docs / 3. Test / fixture coverage of the uki BLSConfig path",
+      "source": "docs-corpus",
+      "section_header": "3. Test / fixture coverage of the uki BLSConfig path",
+      "file": "bootc-uki-blsconfig-reference.md"
+    },
+    {
+      "id": "docs:4. Practical install-time behavior",
+      "primitive_coverage": [
+        0,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0
+      ],
+      "text": "docs / 4. Practical install-time behavior",
+      "source": "docs-corpus",
+      "section_header": "4. Practical install-time behavior",
+      "file": "bootc-uki-blsconfig-reference.md"
+    },
+    {
+      "id": "docs:5. Edge cases and pitfalls",
+      "primitive_coverage": [
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0
+      ],
+      "text": "docs / 5. Edge cases and pitfalls",
+      "source": "docs-corpus",
+      "section_header": "5. Edge cases and pitfalls",
+      "file": "bootc-uki-blsconfig-reference.md"
+    }
+  ],
+  "items_count_by_source": {
+    "docs-corpus": 37
+  }
+}
