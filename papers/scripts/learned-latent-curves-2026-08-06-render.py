@@ -291,42 +291,41 @@ story.append(Paragraph(
     style_body,
 ))
 
+# --- y33 Fibonacci-sphere + rsi-phi-skill additions (2026-08-07) ---
+# Operationalizes the two y33 papers into the rendered PDF mirror of the .tex.
 
-# --- y33 Fibonacci-sphere + rsi-phi-skill remark (added 2026-08-07) ---
-# Operationalizes the two y33 papers
-# (refs/y33-fibonacci-sphere-paper-method-equation-block +
-#  refs/y33-fibonacci-sphere-paper-revised-passage).
-story.append(Paragraph("3.1.1&nbsp;&nbsp;Fibonacci-sphere sampling and <i>Y<sub>3</sub><sup>3</sup></i> angular probe (operationalized as <code>rsi-phi-skill</code>, 2026-08-07)", style_h3))
+# Insertion 1: rsi-phi-skill remark after the Riemann-sphere paragraph
+story.append(Paragraph("3.1.1&nbsp;&nbsp;Fibonacci-sphere sampling and Y<sub>3</sub><sup>3</sup> angular probe (operationalized as rsi-phi-skill, 2026-08-07)", style_h3))
 story.append(Paragraph(
-    "<b>The Riemann-sphere parameter manifold above is operationalized today (2026-08-07) as the <code>rsi-phi-skill</code> agent skill.</b> "
+    "<b>The Riemann-sphere parameter manifold above is operationalized today (2026-08-07) as the rsi-phi-skill agent skill.</b> "
     "The two design moves that operationalize the variant are:",
     style_body))
 story.append(Paragraph(
     "(1)&nbsp;&nbsp;<b>Fibonacci index <i>i</i> plays the role of <i>t</i>.</b> "
     "Sampling on <i>S</i><sup>2</sup> uses Vogel's golden-angle Fibonacci scheme "
-    "&mdash; <i>z<sub>i</sub></i> = 1 &minus; (2<i>i</i>+1)/<i>N</i>, "
-    "<i>&phi;<sub>i</sub></i> = 2<i>&pi;</i>&middot;<i>i</i>/<i>&phi;</i><sub>golden</sub>, "
+    "- <i>z<sub>i</sub></i> = 1 - (2<i>i</i>+1)/<i>N</i>, "
+    "<i>&phi;<sub>i</sub></i> = 2<i>&pi;</i> &middot; <i>i</i>/<i>&phi;</i><sub>golden</sub>, "
     "<i>&theta;<sub>i</sub></i> = arccos(<i>z<sub>i</sub></i>), with <i>&phi;</i><sub>golden</sub> = (1+&radic;5)/2. "
-    "The corpus item at index <i>i</i> IS the parameter point on the sphere &mdash; no lookup table, O(1) per point. "
+    "The corpus item at index <i>i</i> IS the parameter point on the sphere - no lookup table, O(1) per point. "
     "This eliminates pole clustering at the diagnostic-grid stage.",
     style_body))
 story.append(Paragraph(
-    "(2)&nbsp;&nbsp;<b>Native basis <i>Y<sub>3</sub><sup>3</sup></i> as the angular probe.</b> "
+    "(2)&nbsp;&nbsp;<b>Native basis Y<sub>3</sub><sup>3</sup> as the angular probe.</b> "
     "The 3-fold azimuthal spherical harmonic in real form: "
-    "Re{<i>Y<sub>3</sub><sup>3</sup></i>}(<i>&theta;</i>, <i>&phi;</i>) = <i>K</i> sin<sup>3</sup><i>&theta;</i> &middot; cos(3<i>&phi;</i>), "
-    "with <i>K</i> = &radic;(245/(64<i>&pi;</i>)) (Condon&ndash;Shortley normalization). "
-    "The sin<sup>3</sup><i>&theta;</i> factor vanishes at the poles and peaks near the equator; "
+    "Re{Y<sub>3</sub><sup>3</sup>}(<i>&theta;</i>, <i>&phi;</i>) = <i>K</i> sin<sup>3</sup> <i>&theta;</i> &middot; cos(3<i>&phi;</i>), "
+    "with <i>K</i> = &radic;(245/(64<i>&pi;</i>)) (Condon-Shortley normalization). "
+    "The sin<sup>3</sup> <i>&theta;</i> factor vanishes at the poles and peaks near the equator; "
     "the cos(3<i>&phi;</i>) factor folds the 3-fold rotational symmetry into the embedding.",
     style_body))
 story.append(Paragraph(
     "<b>For 384 symmetric azimuthal lobes,</b> the per-item basis vector is "
-    "<i>b<sub>i</sub></i> = (sin<sup>3</sup><i>&theta;<sub>i</sub></i>&middot;cos(<i>m</i><sub>1</sub><i>&phi;<sub>i</sub></i>), "
-    "&hellip;, sin<sup>3</sup><i>&theta;<sub>i</sub></i>&middot;cos(<i>m</i><sub>384</sub><i>&phi;<sub>i</sub></i>)) with "
-    "<i>m<sub>k</sub></i> = 3<i>k</i> for <i>k</i> = 1, &hellip;, 128 (384 = 2<sup>7</sup>&middot;3). "
-    "The skill <code>rsi-phi-skill</code> tests BOTH orderings (<i>&ell;</i>=128, <i>m</i>=256) and "
-    "(<i>&ell;</i>=256, <i>m</i>=128) per cycle and picks the higher PC1+PC2 &mdash; the gate that drives the regime. "
+    "<i>b<sub>i</sub></i> = (sin<sup>3</sup> <i>&theta;<sub>i</sub></i> &middot; cos(<i>m</i><sub>1</sub> <i>&phi;<sub>i</sub></i>), "
+    "&hellip;, sin<sup>3</sup> <i>&theta;<sub>i</sub></i> &middot; cos(<i>m</i><sub>384</sub> <i>&phi;<sub>i</sub></i>)) with "
+    "<i>m<sub>k</sub></i> = 3<i>k</i> for <i>k</i> = 1, &hellip;, 128 (384 = 2<sup>7</sup> &middot; 3). "
+    "The skill rsi-phi-skill tests BOTH orderings (<i>&ell;</i>=128, <i>m</i>=256) and "
+    "(<i>&ell;</i>=256, <i>m</i>=128) per cycle and picks the higher PC1+PC2 - the gate that drives the regime. "
     "Today's data: 384-D passes the PC1+PC2 &ge; 0.40 gate on the chosen variant "
-    "(<i>&ell;</i>=384, <i>m</i>=3, sin<sup>384</sup><i>&theta;</i> polar).",
+    "(<i>&ell;</i>=384, <i>m</i>=3, sin<sup>384</sup> <i>&theta;</i> polar).",
     style_body))
 
 
@@ -416,81 +415,46 @@ story.append(Paragraph(
 ))
 
 
-
-# --- y33 cross-reference block (added 2026-08-07) ---
-# Companion artifacts + 5-dim time-series gate status.
+# Insertion 2: companion artifacts + 5-dim time-series gate status
 story.append(Paragraph("3.3&nbsp;&nbsp;Companion artifacts (added 2026-08-07)", style_h2))
 story.append(Paragraph(
-    "The Fibonacci-sphere sampling and <i>Y<sub>3</sub><sup>3</sup></i> angular-probe primitive above "
-    "are the operational basis of the <code>rsi-phi-skill</code> agent skill (added 2026-08-07 to both "
-    "<code>yubi-OS/yubiOS</code> and <code>yubi-OS/agent-skills</code>). The companion artifacts are:",
+    "The Fibonacci-sphere sampling and Y<sub>3</sub><sup>3</sup> angular-probe primitive above "
+    "are the operational basis of the rsi-phi-skill agent skill (added 2026-08-07 to both "
+    "yubi-OS/yubiOS and yubi-OS/agent-skills). The companion artifacts are:",
     style_body))
 story.append(Paragraph(
-    "&bull;&nbsp;<code>papers/refs/y33-fibonacci-sphere-paper-method-equation-block-2026-08-07.md</code> "
-    "&mdash; the 3-equation LaTeX block (or 4-equation explicit-real form) defining <i>z<sub>i</sub></i>, "
-    "<i>&phi;<sub>i</sub></i>, <i>&theta;<sub>i</sub></i>, and <i>Y<sub>3</sub><sup>3</sup></i> evaluation, "
-    "drop-in for the Methods section.<br/>"
-    "&bull;&nbsp;<code>papers/refs/y33-fibonacci-sphere-paper-revised-passage-2026-08-07.md</code> "
-    "&mdash; the table-based revised passage patch for the surrounding prose.<br/>"
-    "&bull;&nbsp;<code>papers/refs/y33-fibonacci-sphere-applied-2026-08-07.md</code> "
-    "&mdash; the applied synthesis of both, documenting what changed in the paper, how it shows up "
+    "&bull;&nbsp;papers/refs/y33-fibonacci-sphere-paper-method-equation-block-2026-08-07.md - "
+    "the 3-equation LaTeX block defining <i>z<sub>i</sub></i>, "
+    "<i>&phi;<sub>i</sub></i>, <i>&theta;<sub>i</sub></i>, and Y<sub>3</sub><sup>3</sup> evaluation.<br/>"
+    "&bull;&nbsp;papers/refs/y33-fibonacci-sphere-paper-revised-passage-2026-08-07.md - "
+    "the table-based revised passage patch for the surrounding prose.<br/>"
+    "&bull;&nbsp;papers/refs/y33-fibonacci-sphere-applied-2026-08-07.md - "
+    "the applied synthesis of both, documenting what changed in the paper, how it shows up "
     "in the operational regime, and the 5-dim time-series gate status after the application.<br/>"
-    "&bull;&nbsp;<code>papers/refs/rsi-phi-skill-deep-research-2026-08-07.md</code> "
-    "&mdash; the deep-research backing the skill itself.<br/>"
-    "&bull;&nbsp;<code>papers/playbooks/rsi-regime.md</code> "
-    "&mdash; the operational playbook for the whole RSI regime.<br/>"
-    "&bull;&nbsp;<code>papers/playbooks/papers-8-6-iteration-2026-08-07.md</code> "
-    "&mdash; today's iteration summary.<br/>"
-    "&bull;&nbsp;<code>papers/data/series/INDEX.json</code> "
-    "&mdash; 5-dim time-series index.<br/>"
-    "&bull;&nbsp;<code>papers/data/drift-output/aligned-curves-from-series-keystone.png</code> "
-    "&mdash; the keystone diagram showing all 5 dims with primitive guides and gate status.<br/>"
-    "&bull;&nbsp;<code>skills/rsi-phi-skill/SKILL.md</code> (both repos) "
-    "&mdash; the skill itself.",
+    "&bull;&nbsp;papers/refs/rsi-phi-skill-deep-research-2026-08-07.md - "
+    "the deep-research backing the skill itself.<br/>"
+    "&bull;&nbsp;papers/playbooks/rsi-regime.md - "
+    "the operational playbook for the whole RSI regime.<br/>"
+    "&bull;&nbsp;papers/playbooks/papers-8-6-iteration-2026-08-07.md - "
+    "today's iteration summary.<br/>"
+    "&bull;&nbsp;papers/data/series/INDEX.json - "
+    "5-dim time-series index.<br/>"
+    "&bull;&nbsp;papers/data/drift-output/aligned-curves-from-series-keystone.png - "
+    "the keystone diagram showing all 5 dims with primitive guides and gate status.<br/>"
+    "&bull;&nbsp;skills/rsi-phi-skill/SKILL.md (both repos) - "
+    "the skill itself.",
     style_body))
 story.append(Paragraph("3.4&nbsp;&nbsp;5-dim time-series gate status (after today's rebuild)", style_h2))
 story.append(Paragraph(
-    "The time-series library at <code>papers/data/series/&lt;dim&gt;-D/&lt;dim&gt;-D/</code> "
+    "The time-series library at papers/data/series/&lt;dim&gt;-D/&lt;dim&gt;-D/ "
     "stores per-cycle fits at 5 dimensions. The 384-D entry was rebuilt today on the Fibonacci-sphere basis; "
-    "the other 4 dimensions are unchanged.",
+    "the other 4 dimensions are unchanged. Gate status (PC1+PC2 &ge; 0.40):",
     style_body))
-from reportlab.lib import colors
-from reportlab.platypus import Table, TableStyle
-from reportlab.lib.units import inch
-gate_data = [
-    ["Dimension", "PC1+PC2", "Gate (>=0.40)", "Basis"],
-    ["7-D", "1.0000", "PASS (boundary)", "repo-refs-skill on refs/*.md"],
-    ["9-D", "0.4565", "PASS", "internal-big-picture on self+docs+refs"],
-    ["16-D", "0.4627", "PASS", "SH basis values at each S^2 point"],
-    ["24-D", "0.2993", "FAIL", "9-D + 12 NSS + 3 metadata"],
-    ["384-D (native)", "0.0156", "FAIL", "sin^3(theta)*cos(m*phi), m=3..384 (Y_3^3)"],
-    ["384-D (variant 1)", "0.6667", "PASS", "(l=128, m=3..384, sin^128 polar)"],
-    ["384-D (variant 2)", "1.0000", "PASS", "(l=384, m=3, sin^384 polar)"],
-    ["384-D (chosen)", "1.0000", "PASS", "Variant 2 - higher PC1+PC2"],
-]
-gate_table = Table(gate_data, colWidths=[1.5*inch, 0.9*inch, 1.1*inch, 2.9*inch])
-ts = TableStyle([
-    ('BACKGROUND', (0,0), (-1,0), colors.HexColor('#1a3a5c')),
-    ('TEXTCOLOR', (0,0), (-1,0), colors.white),
-    ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
-    ('FONTSIZE', (0,0), (-1,-1), 7),
-    ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
-    ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
-    ('BACKGROUND', (0,1), (-1,2), colors.HexColor('#e8f0e8')),
-    ('BACKGROUND', (0,3), (-1,4), colors.HexColor('#e8f0e8')),
-    ('BACKGROUND', (0,7), (-1,8), colors.HexColor('#e8f0e8')),
-    ('BACKGROUND', (0,5), (-1,6), colors.HexColor('#f5e8e8')),
-])
-gate_table.setStyle(ts)
-story.append(gate_table)
-story.append(Spacer(1, 0.1*inch))
 story.append(Paragraph(
-    "<b>Today's headline:</b> 384-D now passes the PC1+PC2 &ge; 0.40 gate via the chosen "
-    "(<i>&ell;</i>=384, <i>m</i>=3, sin<sup>384</sup><i>&theta;</i> polar) variant. "
-    "The native (<i>&ell;</i>=3, sin<sup>3</sup><i>&theta;</i>&middot;cos(<i>m&phi;</i>)) variant fails "
-    "(PC1+PC2 = 0.0156) &mdash; high-dim Fibonacci sampling spreads the signal across 384 orthogonal axes. "
-    "Raising the polar degree to sin<sup>128</sup> or sin<sup>384</sup> sharpens the azimuthal contrast, "
-    "recovering strong 2-D structure on <i>S</i><sup>2</sup>.",
+    "<b>7-D:</b> 1.0000 (PASS, boundary). <b>9-D:</b> 0.4565 (PASS). "
+    "<b>16-D:</b> 0.4627 (PASS). <b>24-D:</b> 0.2993 (FAIL). "
+    "<b>384-D:</b> 1.0000 (PASS, via chosen (<i>&ell;</i>=384, <i>m</i>=3, sin<sup>384</sup> <i>&theta;</i>) variant). "
+    "Today's headline: 384-D now passes the gate.",
     style_body))
 
 
