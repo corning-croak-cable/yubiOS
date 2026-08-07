@@ -16,96 +16,59 @@
   "items_sample": [
     {
       "id": "self:Soul",
-      "primitive_coverage": [
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1
-      ],
       "text": "self / Soul",
       "source": "self-corpus",
       "section_header": "Soul",
-      "file": "SELF.md"
+      "file": "SELF.md",
+      "repo_path": "workspace:memory/personal-WbtUgeUv/SELF.md",
+      "blob_sha": "",
+      "_sourcing_exception": true
     },
     {
       "id": "self:Strengths",
-      "primitive_coverage": [
-        1,
-        1,
-        0,
-        1,
-        1,
-        1,
-        1,
-        0,
-        0
-      ],
       "text": "self / Strengths",
       "source": "self-corpus",
       "section_header": "Strengths",
-      "file": "SELF.md"
+      "file": "SELF.md",
+      "repo_path": "workspace:memory/personal-WbtUgeUv/SELF.md",
+      "blob_sha": "",
+      "_sourcing_exception": true
     },
     {
       "id": "self:Biases",
-      "primitive_coverage": [
-        1,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0,
-        1
-      ],
       "text": "self / Biases",
       "source": "self-corpus",
       "section_header": "Biases",
-      "file": "SELF.md"
+      "file": "SELF.md",
+      "repo_path": "workspace:memory/personal-WbtUgeUv/SELF.md",
+      "blob_sha": "",
+      "_sourcing_exception": true
     },
     {
       "id": "self:Anti-patterns I police in myself",
-      "primitive_coverage": [
-        1,
-        1,
-        0,
-        1,
-        1,
-        1,
-        1,
-        1,
-        0
-      ],
       "text": "self / Anti-patterns I police in myself",
       "source": "self-corpus",
       "section_header": "Anti-patterns I police in myself",
-      "file": "SELF.md"
+      "file": "SELF.md",
+      "repo_path": "workspace:memory/personal-WbtUgeUv/SELF.md",
+      "blob_sha": "",
+      "_sourcing_exception": true
     },
     {
       "id": "self:The four energies",
-      "primitive_coverage": [
-        1,
-        0,
-        0,
-        0,
-        1,
-        1,
-        1,
-        1,
-        0
-      ],
       "text": "self / The four energies",
       "source": "self-corpus",
       "section_header": "The four energies",
-      "file": "SELF.md"
+      "file": "SELF.md",
+      "repo_path": "workspace:memory/personal-WbtUgeUv/SELF.md",
+      "blob_sha": "",
+      "_sourcing_exception": true
     }
   ],
   "items_count_by_source": {
     "self-corpus": 111
-  }
+  },
+  "_sourcing_exception": true,
+  "_reason": "self/ has no repo source \u2014 workspace memory/personal-WbtUgeUv/ is not on any git repo (verified Contents API on yubi-OS/yubiOS and yubi-OS/agent-skills; neither has a top-level self/ or memory/ dir). This is a documented exception per the user's 'no local work unless staging' rule.",
+  "_resolution": "Create a yubi-OS/self repo (or self/ dir under yubi-OS/yubiOS), push the 10 .md files from memory/personal-WbtUgeUv/, set REPO_SELF_PATH in this script, and re-run."
 }
