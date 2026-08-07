@@ -1,2 +1,6 @@
 region,n_items,mean_chordal_residual_after_warp,max_chordal_residual_after_warp,interpretation
-no_warp_computed,0,n/a,n/a,cycle-4 archive missing; skipping intra-corpus warp.
+lat[-90°..-30°]_lon[-90°..+0°],22,0.9454,1.0892,high drift
+lat[-90°..-30°]_lon[+90°..+180°],8,0.4653,0.7290,high drift
+lat[-30°..+30°]_lon[-180°..-90°],41,0.9622,1.4346,high drift
+lat[-30°..+30°]_lon[+0°..+90°],20,1.2046,1.4630,high drift
+lat[-30°..+30°]_lon[+90°..+180°],39,1.2126,1.5359,high drift
