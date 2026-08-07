@@ -1,0 +1,208 @@
+{
+  "label": "cycle4-corpus",
+  "n_items": 324,
+  "n_primitives": 9,
+  "primitives": [
+    "attestation",
+    "trust_chain",
+    "least_privilege",
+    "declarative_policy",
+    "continuous_adaptive",
+    "immutability",
+    "audit_evidence",
+    "cryptographic_identity",
+    "segmentation"
+  ],
+  "items_sample": [
+    {
+      "id": "c4-PR-195",
+      "primitive_coverage": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "text": "cycle4 / PR / 195",
+      "source": "cycle4-corpus",
+      "kind": "PR",
+      "label": "195",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/pull/195",
+      "native_coverage": [
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1
+      ],
+      "native_missing": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "id": "c4-PR-194",
+      "primitive_coverage": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "text": "cycle4 / PR / 194",
+      "source": "cycle4-corpus",
+      "kind": "PR",
+      "label": "194",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/pull/194",
+      "native_coverage": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1
+      ],
+      "native_missing": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "id": "c4-PR-193",
+      "primitive_coverage": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "text": "cycle4 / PR / 193",
+      "source": "cycle4-corpus",
+      "kind": "PR",
+      "label": "193",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/pull/193",
+      "native_coverage": [
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1
+      ],
+      "native_missing": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "id": "c4-PR-192",
+      "primitive_coverage": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "text": "cycle4 / PR / 192",
+      "source": "cycle4-corpus",
+      "kind": "PR",
+      "label": "192",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/pull/192",
+      "native_coverage": [
+        1,
+        0,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1
+      ],
+      "native_missing": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "id": "c4-PR-191",
+      "primitive_coverage": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "text": "cycle4 / PR / 191",
+      "source": "cycle4-corpus",
+      "kind": "PR",
+      "label": "191",
+      "repo": "yubi-OS/yubiOS",
+      "url": "https://github.com/yubi-OS/yubiOS/pull/191",
+      "native_coverage": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1
+      ],
+      "native_missing": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    }
+  ],
+  "items_count_by_source": {
+    "cycle4-corpus": 324
+  }
+}
