@@ -129,3 +129,12 @@ This produces a yubiOS-specific primitive-coverage map. The most useful operatio
 - `internal-big-picture` referenced by name (the 10 primitive names are in its description; full load would be token-costly for no new signal).
 - Single-thread execution (no subagents) per `ideate-solo`'s "Solo only" rule.
 - v4 pivoted to ONNX Runtime + pre-converted MiniLM (Xenova/all-MiniLM-L6-v2) to fit sandbox disk budget (985 MB tmpfs); full torch install (~900 MB wheel) was infeasible.
+
+
+## Problem Statement
+
+**Question**: TBD per file context.
+**Scope**: TBD.
+**Out of scope**: TBD.
+
+Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.4341). TODO: refine per file context.
