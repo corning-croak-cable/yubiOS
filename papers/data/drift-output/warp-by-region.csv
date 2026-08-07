@@ -1,52 +1,52 @@
 alignment,t_self,t_target,geodesic_d,nss_audience,nss_inputs,nss_outputs,nss_mode,nss_assumption_set,nss_adjacent_problems,nss_failure_modes,nss_lifecycle,nss_composition,nss_knowledge_sources,nss_calibration,nss_recursion,nss_total,drift_score,flagged,nearest_self_item,nearest_self_file,nearest_self_section,nearest_target_item,nearest_target_file,nearest_target_section
-self-to-docs,0.000000,0.266332,0.184645,1,1,1,2,0,0,0,0,0,1,2,2,10,2.670643,false,,,,,,
-self-to-docs,0.043478,0.000000,0.691388,0,2,0,0,0,0,0,0,0,1,0,2,5,5.000000,true,self:WeHo Auto (#weho-auto space),RECENT_ACTIVITY.md,WeHo Auto (#weho-auto space),docs:Note on <primitive> coverage (curve-guided-rsi v1 gap-fix),curve-guided-rsi-run-2026-08-03.md,Note on <primitive> coverage (curve-guided-rsi v1 gap-fix)
-self-to-docs,0.086957,0.261307,0.591643,0,0,1,1,0,0,0,1,0,2,0,2,7,5.990129,true,self:2026-08-06,RECENT_ACTIVITY.md,2026-08-06,docs:Layer 1 — System prompt (model_weights_analogue),weight-registry-2026-07-29.md,Layer 1 — System prompt (model_weights_analogue)
-self-to-docs,0.130435,0.261307,0.618670,0,0,1,1,0,0,0,1,1,1,0,1,6,5.368938,true,self:2026-07-31 — v0.8 — ci_test-vgpu-vm: extract-script + symlin,SELF-CHANGELOG.md,2026-07-31 — v0.8 — ci_test-vgpu-vm: extract-script + symlink fixes landed; composefs tamper amd64 reaches QEMU baseline (first time),docs:Layer 1 — System prompt (model_weights_analogue),weight-registry-2026-07-29.md,Layer 1 — System prompt (model_weights_analogue)
-self-to-docs,0.173913,0.000000,0.605292,0,1,0,0,0,0,0,0,0,2,0,3,6,5.252845,true,self:2026-08-07 — v0.27 — `repo-history-skill` shipped (hyper-sph,SELF-CHANGELOG.md,2026-08-07 — v0.27 — `repo-history-skill` shipped (hyper-sphere RSI archive of git + Linear history),docs:Note on <primitive> coverage (curve-guided-rsi v1 gap-fix),curve-guided-rsi-run-2026-08-03.md,Note on <primitive> coverage (curve-guided-rsi v1 gap-fix)
-self-to-docs,0.217391,0.000000,0.530946,0,1,0,0,0,0,1,0,0,0,0,2,4,3.071768,true,"self:2026-08-05 — v0.27 — rock1 shell bridge recovered; stale ""br",SELF-CHANGELOG.md,"2026-08-05 — v0.27 — rock1 shell bridge recovered; stale ""bridge down"" docs cleaned + upbeat radio playlist seeded",docs:Note on <primitive> coverage (curve-guided-rsi v1 gap-fix),curve-guided-rsi-run-2026-08-03.md,Note on <primitive> coverage (curve-guided-rsi v1 gap-fix)
-self-to-docs,0.260870,0.000000,0.502336,0,2,0,2,0,0,0,0,0,0,0,2,6,4.359373,true,self:Anti-patterns I police in myself,SELF.md,Anti-patterns I police in myself,docs:Note on <primitive> coverage (curve-guided-rsi v1 gap-fix),curve-guided-rsi-run-2026-08-03.md,Note on <primitive> coverage (curve-guided-rsi v1 gap-fix)
-self-to-docs,0.304348,0.542714,0.575103,1,1,0,0,0,0,0,0,0,0,0,1,3,2.495427,false,,,,,,
-self-to-docs,0.347826,0.542714,0.467929,1,0,0,2,1,0,0,3,0,0,1,2,10,6.767971,true,self:2026-08-02 — v0.16 — First weekly Sunday cadence fire (12-ax,SELF-CHANGELOG.md,2026-08-02 — v0.16 — First weekly Sunday cadence fire (12-axis sweep + register drift signal),docs:Layer 5 — Documents (artifact_weights),weight-registry-2026-07-29.md,Layer 5 — Documents (artifact_weights)
-self-to-docs,0.391304,0.547739,0.352736,1,0,0,0,0,0,0,0,0,0,0,2,3,1.530558,false,,,,,,
-self-to-docs,0.434783,0.537688,0.168984,1,0,1,1,0,0,0,3,0,1,0,2,9,2.199717,false,,,,,,
-self-to-docs,0.478261,0.527638,0.331979,0,0,1,0,0,0,0,3,0,0,0,2,6,2.880981,true,self:Mission,COMPANY.md,Mission,docs:Not Doing (and Why),ideate-learned-latent-curve-yubios-solo-2026-08-03.md,Not Doing (and Why)
-self-to-docs,0.521739,0.527638,0.059173,1,2,1,0,0,0,0,3,0,3,0,2,12,1.027035,false,,,,,,
-self-to-docs,0.565217,0.517588,0.089983,0,1,1,0,0,0,0,3,0,1,0,2,8,1.041190,false,,,,,,
-self-to-docs,0.608696,0.713568,0.397638,0,0,0,0,0,0,0,0,0,0,0,1,1,0.575130,false,,,,,,
-self-to-docs,0.652174,0.708543,0.422478,0,1,0,0,0,0,0,0,0,0,0,2,3,1.833172,false,,,,,,
-self-to-docs,0.695652,0.477387,0.133915,0,2,1,0,0,0,0,0,1,1,0,1,6,1.162137,false,,,,,,
-self-to-docs,0.739130,0.422111,0.430053,0,0,0,0,0,0,0,1,0,1,3,2,7,4.354099,true,self:Key Quotes,USER_PROFILE.md,Key Quotes,docs:Stage 5: Re-fit + verification (CLOSED LOOP),curve-guided-rsi-run-2026-08-03.md,Stage 5: Re-fit + verification (CLOSED LOOP)
-self-to-docs,0.782609,0.100503,0.374013,1,1,0,0,1,0,0,0,0,2,0,2,7,3.786722,true,self:Differential Awareness,SAUNA_IDENTITY.md,Differential Awareness,docs:Layer 2 — Memory files (curated_user_weights),weight-registry-2026-07-29.md,Layer 2 — Memory files (curated_user_weights)
-self-to-docs,0.826087,0.311558,0.237133,0,0,2,0,0,0,0,0,0,0,2,1,5,1.714903,false,,,,,,
-self-to-docs,0.869565,0.090452,0.229143,0,0,0,0,0,0,0,0,0,1,0,1,2,0.662848,false,,,,,,
-self-to-docs,0.913043,0.085427,0.394090,0,0,0,0,0,0,0,0,0,1,0,1,2,1.139997,false,,,,,,
-self-to-docs,0.956522,0.115578,0.002397,1,0,0,0,0,0,0,0,0,1,0,2,4,0.013865,false,,,,,,
-self-to-docs,1.000000,0.266332,0.184645,0,0,1,0,0,0,0,0,0,1,2,2,6,1.602386,false,,,,,,
-self-to-refs,0.000000,0.402010,0.112736,2,1,0,2,0,1,0,0,0,1,0,3,10,2.099706,true,self:2026-08-01 — v0.15 — `playbooks/` seeded from whole-self syn,SELF-CHANGELOG.md,"2026-08-01 — v0.15 — `playbooks/` seeded from whole-self synthesis (PR #156, OMN-152, OMN-156..162)",refs:Cycle 3 Audit (gap-map for cycle 4+),repo-history-skill-cycle-3-2026-08-07-changelog.md,Cycle 3 Audit (gap-map for cycle 4+)
-self-to-refs,0.043478,0.371859,0.345703,0,1,0,0,0,0,0,0,0,2,0,2,5,3.219354,true,self:WeHo Auto (#weho-auto space),RECENT_ACTIVITY.md,WeHo Auto (#weho-auto space),refs:RSI dispatch (Stage 3),repo-history-skill-cycle-2-2026-08-07.md,RSI dispatch (Stage 3)
-self-to-refs,0.086957,0.371859,0.227049,0,0,0,0,0,0,0,0,0,2,0,2,4,1.691512,false,,,,,,
-self-to-refs,0.130435,0.371859,0.208672,0,0,0,0,0,0,0,0,1,1,0,2,4,1.554606,false,,,,,,
-self-to-refs,0.173913,0.366834,0.312863,0,0,0,0,0,0,0,0,0,2,0,3,5,2.913529,true,self:2026-08-07 — v0.27 — `repo-history-skill` shipped (hyper-sph,SELF-CHANGELOG.md,2026-08-07 — v0.27 — `repo-history-skill` shipped (hyper-sphere RSI archive of git + Linear history),refs:RSI dispatch (Stage 3),repo-history-skill-cycle-2-2026-08-07.md,RSI dispatch (Stage 3)
-self-to-refs,0.217391,0.361809,0.196619,0,0,0,0,0,0,1,0,0,1,0,2,4,1.464809,false,,,,,,
-self-to-refs,0.260870,0.361809,0.238076,0,1,0,2,0,0,0,0,0,1,0,2,6,2.660493,true,self:Anti-patterns I police in myself,SELF.md,Anti-patterns I police in myself,refs:RSI dispatch (Stage 3),repo-history-skill-cycle-2-2026-08-07.md,RSI dispatch (Stage 3)
-self-to-refs,0.304348,0.547739,0.521868,0,1,0,0,0,0,0,0,0,1,0,1,3,2.915928,true,self:Basics,COMPANY.md,Basics,refs:TL;DR,repo-history-skill-cycle-3-2026-08-07.md,TL;DR
-self-to-refs,0.347826,0.613065,0.471002,1,0,0,2,1,0,0,3,0,0,1,4,12,10.526879,true,self:2026-08-02 — v0.16 — First weekly Sunday cadence fire (12-ax,SELF-CHANGELOG.md,2026-08-02 — v0.16 — First weekly Sunday cadence fire (12-axis sweep + register drift signal),refs:RSI loop terminates at v3 (cycle 3 = cycle 3 of repo-history,repo-history-skill-cycle-3-2026-08-07-changelog.md,"RSI loop terminates at v3 (cycle 3 = cycle 3 of repo-history-skill, NOT to be confused with hyperspherical-harmonic-curve cycle 3 which is also at v5)"
-self-to-refs,0.391304,0.603015,0.477434,1,0,0,0,0,0,0,0,0,0,0,3,4,3.556876,true,self:Strengths,SELF.md,Strengths,refs:RSI loop terminates at v3 (cycle 3 = cycle 3 of repo-history,repo-history-skill-cycle-3-2026-08-07-changelog.md,"RSI loop terminates at v3 (cycle 3 = cycle 3 of repo-history-skill, NOT to be confused with hyperspherical-harmonic-curve cycle 3 which is also at v5)"
-self-to-refs,0.434783,0.618090,0.066188,1,0,0,1,0,0,0,0,0,1,0,3,6,0.739646,false,,,,,,
-self-to-refs,0.478261,0.547739,0.245689,0,0,0,0,0,0,0,0,0,1,0,1,2,0.915190,false,,,,,,
-self-to-refs,0.521739,0.638191,0.096724,1,2,0,0,0,0,0,0,0,3,0,1,7,1.261036,false,,,,,,
-self-to-refs,0.565217,0.653266,0.133850,0,1,0,0,0,0,0,0,0,2,2,2,7,1.745071,false,,,,,,
-self-to-refs,0.608696,0.693467,0.141988,1,0,0,0,0,0,0,0,0,1,0,1,3,0.793358,false,,,,,,
-self-to-refs,0.652174,0.718593,0.125753,0,1,0,0,0,0,0,0,0,0,2,2,5,1.171069,false,,,,,,
-self-to-refs,0.695652,0.683417,0.333347,1,1,0,0,0,0,0,0,0,2,0,1,5,3.104283,true,self:Research Preferences,USER_PREFERENCES.md,Research Preferences,refs:Edits applied,repo-history-skill-cycle-4-2026-08-07-changelog.md,Edits applied
-self-to-refs,0.739130,0.000000,0.414523,0,1,0,1,0,0,0,0,0,2,0,1,5,3.860233,true,self:Key Quotes,USER_PROFILE.md,Key Quotes,refs:Result (live fit on 2026-08-07 11:32 UTC),repo-history-skill-cycle-3-2026-08-07-changelog.md,Result (live fit on 2026-08-07 11:32 UTC)
-self-to-refs,0.782609,0.422111,0.448916,0,1,0,0,1,0,0,0,1,1,0,1,5,4.180518,true,self:Differential Awareness,SAUNA_IDENTITY.md,Differential Awareness,refs:7. Recommended next steps,refederated-identity-oidc-sigstore-privacy-2026-08-07.md,7. Recommended next steps
-self-to-refs,0.826087,0.150754,0.093693,1,1,0,0,0,0,0,0,0,0,0,1,3,0.523506,false,,,,,,
-self-to-refs,0.869565,0.417085,0.389951,0,0,0,0,0,0,0,0,1,0,0,1,2,1.452563,false,,,,,,
-self-to-refs,0.913043,0.417085,0.536914,0,0,0,0,0,0,0,0,1,0,0,1,2,2.000000,false,,,,,,
-self-to-refs,0.956522,0.180905,0.143297,1,0,0,0,0,0,0,0,0,0,0,1,2,0.533781,false,,,,,,
-self-to-refs,1.000000,0.402010,0.112736,1,0,0,0,0,1,0,0,0,1,0,3,6,1.259824,false,,,,,,
+self-to-docs,0.000000,0.402010,0.351702,1,3,0,2,0,0,1,0,0,2,0,1,10,3.708568,true,self:2026-08-01 — v0.15 — `playbooks/` seeded from whole-self syn,SELF-CHANGELOG.md,"2026-08-01 — v0.15 — `playbooks/` seeded from whole-self synthesis (PR #156, OMN-152, OMN-156..162)",docs:8. PLAN.md â my stewardship,SOUL.md,8. PLAN.md â my stewardship
+self-to-docs,0.043478,0.814070,0.789803,0,1,0,0,0,0,0,0,0,2,1,1,5,4.164091,true,self:WeHo Auto (#weho-auto space),RECENT_ACTIVITY.md,WeHo Auto (#weho-auto space),docs:Continuous / adaptive coverage,SELF.md,Continuous / adaptive coverage
+self-to-docs,0.086957,0.396985,0.948350,2,1,2,2,0,0,0,0,0,1,0,2,10,10.000000,true,self:2026-08-06,RECENT_ACTIVITY.md,2026-08-06,docs:Growth edges,SELF.md,Growth edges
+self-to-docs,0.130435,0.391960,0.920231,0,2,0,1,1,0,1,0,1,0,0,1,7,6.792447,true,self:2026-07-31 — v0.8 — ci_test-vgpu-vm: extract-script + symlin,SELF-CHANGELOG.md,2026-07-31 — v0.8 — ci_test-vgpu-vm: extract-script + symlink fixes landed; composefs tamper amd64 reaches QEMU baseline (first time),docs:Threat Model Summary,MITIGATE.md,Threat Model Summary
+self-to-docs,0.173913,0.804020,0.943815,0,0,0,0,0,0,0,0,0,3,1,3,7,6.966523,true,self:2026-08-07 — v0.27 — `repo-history-skill` shipped (hyper-sph,SELF-CHANGELOG.md,2026-08-07 — v0.27 — `repo-history-skill` shipped (hyper-sphere RSI archive of git + Linear history),docs:Continuous / adaptive coverage,CITATION.md,Continuous / adaptive coverage
+self-to-docs,0.217391,0.386935,0.615511,0,0,0,0,0,0,1,0,0,0,0,2,3,1.947100,true,"self:2026-08-05 — v0.27 — rock1 shell bridge recovered; stale ""br",SELF-CHANGELOG.md,"2026-08-05 — v0.27 — rock1 shell bridge recovered; stale ""bridge down"" docs cleaned + upbeat radio playlist seeded",docs:What yubiOS Cannot Fully Prevent,MITIGATE.md,What yubiOS Cannot Fully Prevent
+self-to-docs,0.260870,0.381910,0.659730,0,1,0,2,0,0,0,0,0,0,0,2,5,3.478305,true,self:Anti-patterns I police in myself,SELF.md,Anti-patterns I police in myself,docs:Strengths,SELF.md,Strengths
+self-to-docs,0.304348,0.804020,0.207460,0,1,0,0,0,0,0,0,0,1,1,1,4,0.875036,false,,,,,,
+self-to-docs,0.347826,0.783920,0.024302,0,0,0,2,1,0,0,3,0,0,1,2,9,0.230634,false,,,,,,
+self-to-docs,0.391304,0.753769,0.660051,1,0,0,0,1,0,0,0,0,0,0,2,4,2.783996,true,self:Strengths,SELF.md,Strengths,docs:ADR-001: YubiKey as TPM replacement,ADR.md,ADR-001: YubiKey as TPM replacement
+self-to-docs,0.434783,0.608040,0.073836,1,0,0,1,0,0,0,0,0,1,0,2,5,0.389286,false,,,,,,
+self-to-docs,0.478261,0.000000,0.102809,0,2,0,0,0,0,0,0,0,1,0,1,4,0.433632,false,,,,,,
+self-to-docs,0.521739,0.442211,0.256720,2,3,3,0,0,0,0,0,0,4,0,1,13,3.519117,true,self:Source/evidence,SELF.md,Source/evidence,docs:Pushback: what the corpus doesn't show,SOUL.md,Pushback: what the corpus doesn't show
+self-to-docs,0.565217,0.437186,0.047108,0,3,0,0,1,0,0,0,0,1,0,2,7,0.347716,false,,,,,,
+self-to-docs,0.608696,0.291457,0.324112,0,0,0,0,0,0,0,0,0,0,0,1,1,0.341764,false,,,,,,
+self-to-docs,0.652174,0.286432,0.197759,0,1,0,0,1,1,0,0,0,1,0,2,6,1.251175,false,,,,,,
+self-to-docs,0.695652,0.010050,0.304780,0,1,0,0,0,0,0,0,0,1,0,1,3,0.964137,false,,,,,,
+self-to-docs,0.739130,0.170854,0.128283,0,0,0,0,0,0,0,0,0,0,0,1,1,0.135270,false,,,,,,
+self-to-docs,0.782609,0.140704,0.043563,0,1,0,0,1,0,0,0,0,1,0,1,4,0.183742,false,,,,,,
+self-to-docs,0.826087,0.065327,0.192412,0,0,0,0,0,0,0,0,0,0,0,1,1,0.202891,false,,,,,,
+self-to-docs,0.869565,0.090452,0.027706,0,3,2,0,0,0,0,0,0,0,0,1,6,0.175291,false,,,,,,
+self-to-docs,0.913043,0.195980,0.094092,0,1,0,0,0,0,0,0,0,0,1,2,4,0.396868,false,,,,,,
+self-to-docs,0.956522,0.110553,0.081135,0,0,0,0,0,0,0,0,0,0,0,1,1,0.085553,false,,,,,,
+self-to-docs,1.000000,0.402010,0.351702,0,2,0,1,0,0,1,0,0,2,0,1,7,2.595998,true,self:Advisors,USER_RELATIONSHIPS.md,Advisors,docs:8. PLAN.md â my stewardship,SOUL.md,8. PLAN.md â my stewardship
+self-to-refs,0.000000,0.442211,0.150503,1,1,0,2,0,0,0,0,0,0,0,1,5,0.770781,false,,,,,,
+self-to-refs,0.043478,0.582915,0.161053,0,1,0,1,0,0,0,0,0,1,0,1,4,0.659847,false,,,,,,
+self-to-refs,0.086957,0.587940,0.362730,0,2,0,0,0,0,0,0,0,2,0,2,6,2.229210,true,self:2026-08-06,RECENT_ACTIVITY.md,2026-08-06,refs:2026-07-23 correction and update,docker-build-policies-reference-2026-07-23.md,2026-07-23 correction and update
+self-to-refs,0.130435,0.587940,0.324062,0,2,0,0,0,0,0,0,1,1,0,1,5,1.659638,true,self:2026-07-31 — v0.8 — ci_test-vgpu-vm: extract-script + symlin,SELF-CHANGELOG.md,2026-07-31 — v0.8 — ci_test-vgpu-vm: extract-script + symlink fixes landed; composefs tamper amd64 reaches QEMU baseline (first time),refs:2026-07-23 correction and update,docker-build-policies-reference-2026-07-23.md,2026-07-23 correction and update
+self-to-refs,0.173913,0.597990,0.147154,0,0,0,0,0,0,0,0,0,2,0,3,5,0.753629,false,,,,,,
+self-to-refs,0.217391,0.477387,0.308825,0,3,0,0,0,0,1,0,0,0,0,1,5,1.581604,true,"self:2026-08-05 — v0.27 — rock1 shell bridge recovered; stale ""br",SELF-CHANGELOG.md,"2026-08-05 — v0.27 — rock1 shell bridge recovered; stale ""bridge down"" docs cleaned + upbeat radio playlist seeded",refs:3. Pre-bump verification (BEFORE updating PINNED.md),package-floor-verification-checklist-2026-08-04.md,3. Pre-bump verification (BEFORE updating PINNED.md)
+self-to-refs,0.260870,0.482412,0.350666,0,1,0,2,0,0,0,0,0,0,0,3,6,2.155068,true,self:Anti-patterns I police in myself,SELF.md,Anti-patterns I police in myself,refs:Process protocol used,learned-latent-curve-rsi-v10-2026-08-03.md,Process protocol used
+self-to-refs,0.304348,0.648241,0.092132,1,1,1,0,0,0,0,0,0,0,0,1,4,0.377472,false,,,,,,
+self-to-refs,0.347826,0.653266,0.071355,0,1,0,3,1,0,0,3,0,0,1,2,11,0.803951,true,self:2026-08-02 — v0.16 — First weekly Sunday cadence fire (12-ax,SELF-CHANGELOG.md,2026-08-02 — v0.16 — First weekly Sunday cadence fire (12-axis sweep + register drift signal),refs:Meta-lessons (worth inheriting across sessions),recursive-self-improvement-audit-2026-07-28.md,Meta-lessons (worth inheriting across sessions)
+self-to-refs,0.391304,0.542714,0.066193,0,1,0,0,0,0,0,0,0,1,0,2,4,0.271198,false,,,,,,
+self-to-refs,0.434783,0.698492,0.019161,1,0,0,1,0,0,0,0,0,1,0,2,5,0.098129,false,,,,,,
+self-to-refs,0.478261,0.859296,0.075419,1,0,0,0,0,0,0,0,0,0,0,1,2,0.154499,false,,,,,,
+self-to-refs,0.521739,0.889447,0.058046,2,2,0,0,0,0,0,0,0,3,0,1,8,0.475642,false,,,,,,
+self-to-refs,0.565217,0.994975,0.034706,0,1,0,0,0,0,0,0,0,2,0,2,5,0.177741,false,,,,,,
+self-to-refs,0.608696,0.994975,0.847243,0,1,0,0,0,0,0,0,0,1,0,1,3,2.603425,true,self:Voice,SAUNA_IDENTITY.md,Voice,refs:3. Missing business-readiness evidence blocking stronger mar,current-position-evidence-2026-07-25.md,3. Missing business-readiness evidence blocking stronger market claims
+self-to-refs,0.652174,1.000000,0.976302,0,1,0,0,0,0,0,0,1,1,0,2,5,5.000000,true,self:Differential-Aware Task Handling,USER_PREFERENCES.md,Differential-Aware Task Handling,refs:Evidence requirement before OMN-53 moves to Done,sealed-uki-vm-test-2026-07-30.md,Evidence requirement before OMN-53 moves to Done
+self-to-refs,0.695652,1.000000,0.539848,0,1,0,0,0,0,0,0,1,2,0,1,5,2.764757,true,self:Research Preferences,USER_PREFERENCES.md,Research Preferences,refs:Evidence requirement before OMN-53 moves to Done,sealed-uki-vm-test-2026-07-30.md,Evidence requirement before OMN-53 moves to Done
+self-to-refs,0.739130,0.120603,0.545890,1,0,0,0,0,0,0,0,0,0,0,1,2,1.118281,true,self:Key Quotes,USER_PROFILE.md,Key Quotes,refs:Least-privilege coverage,customer-roi-model-2026-07-26.md,Least-privilege coverage
+self-to-refs,0.782609,0.110553,0.178558,1,1,0,0,1,0,0,0,0,1,0,1,5,0.914459,true,self:Differential Awareness,SAUNA_IDENTITY.md,Differential Awareness,refs:Least-privilege coverage,release-gate-checklist-v2-2026-08-04.md,Least-privilege coverage
+self-to-refs,0.826087,0.005025,0.122542,0,0,0,0,0,0,0,0,0,1,0,1,2,0.251033,false,,,,,,
+self-to-refs,0.869565,0.095477,0.030640,1,0,0,0,0,0,0,0,0,0,0,1,2,0.062768,false,,,,,,
+self-to-refs,0.913043,0.140704,0.051216,1,0,0,0,0,0,0,0,0,0,0,1,2,0.104918,false,,,,,,
+self-to-refs,0.956522,0.010050,0.059698,0,0,0,0,0,0,0,0,0,0,0,1,1,0.061147,false,,,,,,
+self-to-refs,1.000000,0.442211,0.150503,0,0,0,0,0,0,0,0,0,0,0,1,1,0.154156,false,,,,,,
 self-to-cycle4,0.000000,0.326633,0.143568,1,1,0,2,0,0,0,0,0,0,0,1,5,0.794302,false,,,,,,
 self-to-cycle4,0.043478,0.477387,0.830961,0,1,0,0,0,0,0,0,0,1,0,1,3,2.758419,true,self:WeHo Auto (#weho-auto space),RECENT_ACTIVITY.md,WeHo Auto (#weho-auto space),c4-Commit-dccb2b3,?,c4-Commit-dccb2b3
 self-to-cycle4,0.086957,0.452261,0.668120,0,0,0,0,0,0,0,0,0,1,0,2,3,2.217858,true,self:2026-08-06,RECENT_ACTIVITY.md,2026-08-06,c4-Commit-c8da01e,?,c4-Commit-c8da01e
