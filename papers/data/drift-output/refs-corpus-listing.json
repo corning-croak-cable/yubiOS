@@ -1,0 +1,111 @@
+{
+  "label": "refs-corpus",
+  "n_items": 55,
+  "n_primitives": 9,
+  "primitives": [
+    "attestation",
+    "trust_chain",
+    "least_privilege",
+    "declarative_policy",
+    "continuous_adaptive",
+    "immutability",
+    "audit_evidence",
+    "cryptographic_identity",
+    "segmentation"
+  ],
+  "items_sample": [
+    {
+      "id": "refs:TL;DR",
+      "primitive_coverage": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1
+      ],
+      "text": "refs / TL;DR",
+      "source": "refs-corpus",
+      "section_header": "TL;DR",
+      "file": "refederated-identity-oidc-sigstore-privacy-2026-08-07.md"
+    },
+    {
+      "id": "refs:1. Background \u2014 federated, unfederated, refederated",
+      "primitive_coverage": [
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        1
+      ],
+      "text": "refs / 1. Background \u2014 federated, unfederated, refederated",
+      "source": "refs-corpus",
+      "section_header": "1. Background \u2014 federated, unfederated, refederated",
+      "file": "refederated-identity-oidc-sigstore-privacy-2026-08-07.md"
+    },
+    {
+      "id": "refs:2. Refederation in OIDC",
+      "primitive_coverage": [
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0
+      ],
+      "text": "refs / 2. Refederation in OIDC",
+      "source": "refs-corpus",
+      "section_header": "2. Refederation in OIDC",
+      "file": "refederated-identity-oidc-sigstore-privacy-2026-08-07.md"
+    },
+    {
+      "id": "refs:3. Refederation in Sigstore",
+      "primitive_coverage": [
+        1,
+        1,
+        0,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0
+      ],
+      "text": "refs / 3. Refederation in Sigstore",
+      "source": "refs-corpus",
+      "section_header": "3. Refederation in Sigstore",
+      "file": "refederated-identity-oidc-sigstore-privacy-2026-08-07.md"
+    },
+    {
+      "id": "refs:4. Multi-federation as a privacy/anonymity lever",
+      "primitive_coverage": [
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        1,
+        1,
+        0
+      ],
+      "text": "refs / 4. Multi-federation as a privacy/anonymity lever",
+      "source": "refs-corpus",
+      "section_header": "4. Multi-federation as a privacy/anonymity lever",
+      "file": "refederated-identity-oidc-sigstore-privacy-2026-08-07.md"
+    }
+  ],
+  "items_count_by_source": {
+    "refs-corpus": 55
+  }
+}
