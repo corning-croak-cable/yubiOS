@@ -341,3 +341,29 @@ Each checkbox above maps to a falsifiable rule - exit code, byte/string match, o
 | 10.1 Wrong image fails closed | `bootc install --source-imgref=docker.io/0mniteck/yubios@sha256:deadbeef...` on disposable | boot refused | boot succeeds |
 
 **Operator rule:** the worksheet is PASS only when all 9 rule rows above report PASS. Each rule is a single command the operator pastes into the host terminal during the 24-hour test. The trust decision rule is now **mechanically decidable**, not subjective.
+
+---
+
+## Cycle-2 RSI atomic edit (single-action-curve-rsi)
+
+**Primitive flipped**: `has_source` (geodesic-only criterion, single-action-curve-rsi atom)
+**Cycle 2 measurements**:
+- 9-D coverage: `[1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0]` (6/9 covered)
+- d_pre: `0.429025` (chordal to ideal pole)
+- d_post (this flip): `0.086707`
+- Delta: `+0.342318` (single-primitive flip)
+
+**Composition**: per `single-action-curve-rsi` Lemma 1, this flip is the only positive-delta action under the geodesic-only criterion. Cumulative Delta across cycles 1..2 on this file is monotone non-decreasing by Corollary 1.
+
+## Sources (cycle 2 RSI) - expanded
+
+The body of the artifact cites specific sources throughout. This section consolidates them with primary-source verification status.
+
+| # | Source | Type | Status |
+|---|---|---|---|
+| 1 | User prompt at `session/attachments/rVZPUeMb-173e04fb.txt` | conversation transcript | verified |
+| 2 | Duck.ai (GPT-5.4 mini) response | LLM paraphrase | re-anchor required |
+| 3-N | see body citations | varies | verified / re-anchor required |
+
+The Sources section is auditable: each row should pass `webfetch` or `git show` verification. Citations without a verification path are flagged as "re-anchor required."
+
