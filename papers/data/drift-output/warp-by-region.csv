@@ -1,25 +1,73 @@
-t_A,t_B,geodesic_d,nss_audience,nss_inputs,nss_outputs,nss_mode,nss_assumption_set,nss_adjacent_problems,nss_failure_modes,nss_lifecycle,nss_composition,nss_knowledge_sources,nss_calibration,nss_recursion,nss_total,drift_score,flagged,flag_reason
-0.869565,0.613065,0.870786,0,2,0,0,0,0,0,0,0,3,0,1,6,5.398912,true,strict_AND
-0.782609,0.613065,0.721714,0,2,0,0,0,0,0,0,0,3,0,1,6,4.474661,true,topN_rank2
-0.956522,0.271357,0.839142,0,1,0,2,0,0,0,0,0,1,0,1,5,4.335602,true,topN_rank3
-0.652174,0.683417,0.410888,1,0,3,2,0,0,0,1,0,1,0,1,9,3.821291,true,topN_rank4
-0.826087,0.613065,0.589514,0,2,0,0,0,0,0,0,0,3,0,1,6,3.655016,true,topN_rank5
-0.478261,0.562814,0.789448,0,1,1,0,0,0,0,0,0,2,0,0,4,3.263075,true,topN_rank6
-0.913043,0.623116,0.967735,0,0,1,0,0,0,1,0,0,1,0,0,3,3.000000,true,topN_rank7
-0.173913,0.577889,0.443365,0,2,0,0,0,0,0,0,0,2,0,0,4,1.832589,true,topN_rank8
-0.521739,0.562814,0.856838,0,0,1,0,0,0,0,0,0,1,0,0,2,1.770811,true,topN_rank9
-0.434783,0.562814,0.827609,0,0,1,0,0,0,0,0,0,1,0,0,2,1.710404,true,topN_rank10
-0.043478,0.577889,0.395273,0,2,0,0,0,0,0,0,0,2,0,0,4,1.633809,false,
-0.695652,0.472362,0.214156,0,1,0,0,0,0,2,0,0,3,0,1,7,1.549076,false,
-0.086957,0.577889,0.308960,0,2,0,0,0,0,0,0,0,2,0,0,4,1.277044,false,
-1.000000,0.562814,0.382416,0,0,1,0,0,0,0,0,0,1,0,1,3,1.185499,false,
-0.130435,0.572864,0.356468,0,0,0,0,1,0,0,0,0,2,0,0,3,1.105060,false,
-0.739130,0.256281,0.160189,0,1,0,2,0,0,0,0,0,1,0,2,6,0.993179,false,
-0.217391,0.572864,0.302443,0,0,0,0,1,0,0,0,0,2,0,0,3,0.937579,false,
-0.565217,0.437186,0.809191,0,0,0,0,0,0,0,0,0,1,0,0,1,0.836170,false,
-0.000000,0.562814,0.382416,0,0,1,0,0,0,0,0,0,1,0,0,2,0.790332,false,
-0.608696,0.472362,0.130074,0,1,0,0,0,0,0,0,0,3,0,1,5,0.672055,false,
-0.260870,0.567839,0.304965,0,0,1,0,0,0,0,0,0,1,0,0,2,0.630266,false,
-0.304348,0.567839,0.175086,0,0,1,0,0,0,0,0,0,1,0,0,2,0.361847,false,
-0.391304,0.562814,0.168498,0,0,1,0,0,0,0,0,0,1,0,0,2,0.348232,false,
-0.347826,0.552764,0.065405,1,1,0,0,0,0,0,0,0,1,0,0,3,0.202757,false,
+alignment,t_self,t_target,geodesic_d,nss_audience,nss_inputs,nss_outputs,nss_mode,nss_assumption_set,nss_adjacent_problems,nss_failure_modes,nss_lifecycle,nss_composition,nss_knowledge_sources,nss_calibration,nss_recursion,nss_total,drift_score,flagged,nearest_self_item,nearest_self_file,nearest_self_section,nearest_target_item,nearest_target_file,nearest_target_section
+self-to-docs,0.000000,0.266332,0.184645,1,1,1,2,0,0,0,0,0,1,2,2,10,2.670643,false,,,,,,
+self-to-docs,0.043478,0.000000,0.691388,0,2,0,0,0,0,0,0,0,1,0,2,5,5.000000,true,self:WeHo Auto (#weho-auto space),RECENT_ACTIVITY.md,WeHo Auto (#weho-auto space),docs:Note on <primitive> coverage (curve-guided-rsi v1 gap-fix),curve-guided-rsi-run-2026-08-03.md,Note on <primitive> coverage (curve-guided-rsi v1 gap-fix)
+self-to-docs,0.086957,0.261307,0.591643,0,0,1,1,0,0,0,1,0,2,0,2,7,5.990129,true,self:2026-08-06,RECENT_ACTIVITY.md,2026-08-06,docs:Layer 1 — System prompt (model_weights_analogue),weight-registry-2026-07-29.md,Layer 1 — System prompt (model_weights_analogue)
+self-to-docs,0.130435,0.261307,0.618670,0,0,1,1,0,0,0,1,1,1,0,1,6,5.368938,true,self:2026-07-31 — v0.8 — ci_test-vgpu-vm: extract-script + symlin,SELF-CHANGELOG.md,2026-07-31 — v0.8 — ci_test-vgpu-vm: extract-script + symlink fixes landed; composefs tamper amd64 reaches QEMU baseline (first time),docs:Layer 1 — System prompt (model_weights_analogue),weight-registry-2026-07-29.md,Layer 1 — System prompt (model_weights_analogue)
+self-to-docs,0.173913,0.000000,0.605292,0,1,0,0,0,0,0,0,0,2,0,3,6,5.252845,true,self:2026-08-07 — v0.27 — `repo-history-skill` shipped (hyper-sph,SELF-CHANGELOG.md,2026-08-07 — v0.27 — `repo-history-skill` shipped (hyper-sphere RSI archive of git + Linear history),docs:Note on <primitive> coverage (curve-guided-rsi v1 gap-fix),curve-guided-rsi-run-2026-08-03.md,Note on <primitive> coverage (curve-guided-rsi v1 gap-fix)
+self-to-docs,0.217391,0.000000,0.530946,0,1,0,0,0,0,1,0,0,0,0,2,4,3.071768,true,"self:2026-08-05 — v0.27 — rock1 shell bridge recovered; stale ""br",SELF-CHANGELOG.md,"2026-08-05 — v0.27 — rock1 shell bridge recovered; stale ""bridge down"" docs cleaned + upbeat radio playlist seeded",docs:Note on <primitive> coverage (curve-guided-rsi v1 gap-fix),curve-guided-rsi-run-2026-08-03.md,Note on <primitive> coverage (curve-guided-rsi v1 gap-fix)
+self-to-docs,0.260870,0.000000,0.502336,0,2,0,2,0,0,0,0,0,0,0,2,6,4.359373,true,self:Anti-patterns I police in myself,SELF.md,Anti-patterns I police in myself,docs:Note on <primitive> coverage (curve-guided-rsi v1 gap-fix),curve-guided-rsi-run-2026-08-03.md,Note on <primitive> coverage (curve-guided-rsi v1 gap-fix)
+self-to-docs,0.304348,0.542714,0.575103,1,1,0,0,0,0,0,0,0,0,0,1,3,2.495427,false,,,,,,
+self-to-docs,0.347826,0.542714,0.467929,1,0,0,2,1,0,0,3,0,0,1,2,10,6.767971,true,self:2026-08-02 — v0.16 — First weekly Sunday cadence fire (12-ax,SELF-CHANGELOG.md,2026-08-02 — v0.16 — First weekly Sunday cadence fire (12-axis sweep + register drift signal),docs:Layer 5 — Documents (artifact_weights),weight-registry-2026-07-29.md,Layer 5 — Documents (artifact_weights)
+self-to-docs,0.391304,0.547739,0.352736,1,0,0,0,0,0,0,0,0,0,0,2,3,1.530558,false,,,,,,
+self-to-docs,0.434783,0.537688,0.168984,1,0,1,1,0,0,0,3,0,1,0,2,9,2.199717,false,,,,,,
+self-to-docs,0.478261,0.527638,0.331979,0,0,1,0,0,0,0,3,0,0,0,2,6,2.880981,true,self:Mission,COMPANY.md,Mission,docs:Not Doing (and Why),ideate-learned-latent-curve-yubios-solo-2026-08-03.md,Not Doing (and Why)
+self-to-docs,0.521739,0.527638,0.059173,1,2,1,0,0,0,0,3,0,3,0,2,12,1.027035,false,,,,,,
+self-to-docs,0.565217,0.517588,0.089983,0,1,1,0,0,0,0,3,0,1,0,2,8,1.041190,false,,,,,,
+self-to-docs,0.608696,0.713568,0.397638,0,0,0,0,0,0,0,0,0,0,0,1,1,0.575130,false,,,,,,
+self-to-docs,0.652174,0.708543,0.422478,0,1,0,0,0,0,0,0,0,0,0,2,3,1.833172,false,,,,,,
+self-to-docs,0.695652,0.477387,0.133915,0,2,1,0,0,0,0,0,1,1,0,1,6,1.162137,false,,,,,,
+self-to-docs,0.739130,0.422111,0.430053,0,0,0,0,0,0,0,1,0,1,3,2,7,4.354099,true,self:Key Quotes,USER_PROFILE.md,Key Quotes,docs:Stage 5: Re-fit + verification (CLOSED LOOP),curve-guided-rsi-run-2026-08-03.md,Stage 5: Re-fit + verification (CLOSED LOOP)
+self-to-docs,0.782609,0.100503,0.374013,1,1,0,0,1,0,0,0,0,2,0,2,7,3.786722,true,self:Differential Awareness,SAUNA_IDENTITY.md,Differential Awareness,docs:Layer 2 — Memory files (curated_user_weights),weight-registry-2026-07-29.md,Layer 2 — Memory files (curated_user_weights)
+self-to-docs,0.826087,0.311558,0.237133,0,0,2,0,0,0,0,0,0,0,2,1,5,1.714903,false,,,,,,
+self-to-docs,0.869565,0.090452,0.229143,0,0,0,0,0,0,0,0,0,1,0,1,2,0.662848,false,,,,,,
+self-to-docs,0.913043,0.085427,0.394090,0,0,0,0,0,0,0,0,0,1,0,1,2,1.139997,false,,,,,,
+self-to-docs,0.956522,0.115578,0.002397,1,0,0,0,0,0,0,0,0,1,0,2,4,0.013865,false,,,,,,
+self-to-docs,1.000000,0.266332,0.184645,0,0,1,0,0,0,0,0,0,1,2,2,6,1.602386,false,,,,,,
+self-to-refs,0.000000,0.402010,0.112736,2,1,0,2,0,1,0,0,0,1,0,3,10,2.099706,true,self:2026-08-01 — v0.15 — `playbooks/` seeded from whole-self syn,SELF-CHANGELOG.md,"2026-08-01 — v0.15 — `playbooks/` seeded from whole-self synthesis (PR #156, OMN-152, OMN-156..162)",refs:Cycle 3 Audit (gap-map for cycle 4+),repo-history-skill-cycle-3-2026-08-07-changelog.md,Cycle 3 Audit (gap-map for cycle 4+)
+self-to-refs,0.043478,0.371859,0.345703,0,1,0,0,0,0,0,0,0,2,0,2,5,3.219354,true,self:WeHo Auto (#weho-auto space),RECENT_ACTIVITY.md,WeHo Auto (#weho-auto space),refs:RSI dispatch (Stage 3),repo-history-skill-cycle-2-2026-08-07.md,RSI dispatch (Stage 3)
+self-to-refs,0.086957,0.371859,0.227049,0,0,0,0,0,0,0,0,0,2,0,2,4,1.691512,false,,,,,,
+self-to-refs,0.130435,0.371859,0.208672,0,0,0,0,0,0,0,0,1,1,0,2,4,1.554606,false,,,,,,
+self-to-refs,0.173913,0.366834,0.312863,0,0,0,0,0,0,0,0,0,2,0,3,5,2.913529,true,self:2026-08-07 — v0.27 — `repo-history-skill` shipped (hyper-sph,SELF-CHANGELOG.md,2026-08-07 — v0.27 — `repo-history-skill` shipped (hyper-sphere RSI archive of git + Linear history),refs:RSI dispatch (Stage 3),repo-history-skill-cycle-2-2026-08-07.md,RSI dispatch (Stage 3)
+self-to-refs,0.217391,0.361809,0.196619,0,0,0,0,0,0,1,0,0,1,0,2,4,1.464809,false,,,,,,
+self-to-refs,0.260870,0.361809,0.238076,0,1,0,2,0,0,0,0,0,1,0,2,6,2.660493,true,self:Anti-patterns I police in myself,SELF.md,Anti-patterns I police in myself,refs:RSI dispatch (Stage 3),repo-history-skill-cycle-2-2026-08-07.md,RSI dispatch (Stage 3)
+self-to-refs,0.304348,0.547739,0.521868,0,1,0,0,0,0,0,0,0,1,0,1,3,2.915928,true,self:Basics,COMPANY.md,Basics,refs:TL;DR,repo-history-skill-cycle-3-2026-08-07.md,TL;DR
+self-to-refs,0.347826,0.613065,0.471002,1,0,0,2,1,0,0,3,0,0,1,4,12,10.526879,true,self:2026-08-02 — v0.16 — First weekly Sunday cadence fire (12-ax,SELF-CHANGELOG.md,2026-08-02 — v0.16 — First weekly Sunday cadence fire (12-axis sweep + register drift signal),refs:RSI loop terminates at v3 (cycle 3 = cycle 3 of repo-history,repo-history-skill-cycle-3-2026-08-07-changelog.md,"RSI loop terminates at v3 (cycle 3 = cycle 3 of repo-history-skill, NOT to be confused with hyperspherical-harmonic-curve cycle 3 which is also at v5)"
+self-to-refs,0.391304,0.603015,0.477434,1,0,0,0,0,0,0,0,0,0,0,3,4,3.556876,true,self:Strengths,SELF.md,Strengths,refs:RSI loop terminates at v3 (cycle 3 = cycle 3 of repo-history,repo-history-skill-cycle-3-2026-08-07-changelog.md,"RSI loop terminates at v3 (cycle 3 = cycle 3 of repo-history-skill, NOT to be confused with hyperspherical-harmonic-curve cycle 3 which is also at v5)"
+self-to-refs,0.434783,0.618090,0.066188,1,0,0,1,0,0,0,0,0,1,0,3,6,0.739646,false,,,,,,
+self-to-refs,0.478261,0.547739,0.245689,0,0,0,0,0,0,0,0,0,1,0,1,2,0.915190,false,,,,,,
+self-to-refs,0.521739,0.638191,0.096724,1,2,0,0,0,0,0,0,0,3,0,1,7,1.261036,false,,,,,,
+self-to-refs,0.565217,0.653266,0.133850,0,1,0,0,0,0,0,0,0,2,2,2,7,1.745071,false,,,,,,
+self-to-refs,0.608696,0.693467,0.141988,1,0,0,0,0,0,0,0,0,1,0,1,3,0.793358,false,,,,,,
+self-to-refs,0.652174,0.718593,0.125753,0,1,0,0,0,0,0,0,0,0,2,2,5,1.171069,false,,,,,,
+self-to-refs,0.695652,0.683417,0.333347,1,1,0,0,0,0,0,0,0,2,0,1,5,3.104283,true,self:Research Preferences,USER_PREFERENCES.md,Research Preferences,refs:Edits applied,repo-history-skill-cycle-4-2026-08-07-changelog.md,Edits applied
+self-to-refs,0.739130,0.000000,0.414523,0,1,0,1,0,0,0,0,0,2,0,1,5,3.860233,true,self:Key Quotes,USER_PROFILE.md,Key Quotes,refs:Result (live fit on 2026-08-07 11:32 UTC),repo-history-skill-cycle-3-2026-08-07-changelog.md,Result (live fit on 2026-08-07 11:32 UTC)
+self-to-refs,0.782609,0.422111,0.448916,0,1,0,0,1,0,0,0,1,1,0,1,5,4.180518,true,self:Differential Awareness,SAUNA_IDENTITY.md,Differential Awareness,refs:7. Recommended next steps,refederated-identity-oidc-sigstore-privacy-2026-08-07.md,7. Recommended next steps
+self-to-refs,0.826087,0.150754,0.093693,1,1,0,0,0,0,0,0,0,0,0,1,3,0.523506,false,,,,,,
+self-to-refs,0.869565,0.417085,0.389951,0,0,0,0,0,0,0,0,1,0,0,1,2,1.452563,false,,,,,,
+self-to-refs,0.913043,0.417085,0.536914,0,0,0,0,0,0,0,0,1,0,0,1,2,2.000000,false,,,,,,
+self-to-refs,0.956522,0.180905,0.143297,1,0,0,0,0,0,0,0,0,0,0,1,2,0.533781,false,,,,,,
+self-to-refs,1.000000,0.402010,0.112736,1,0,0,0,0,1,0,0,0,1,0,3,6,1.259824,false,,,,,,
+self-to-cycle4,0.000000,0.326633,0.143568,1,1,0,2,0,0,0,0,0,0,0,1,5,0.794302,false,,,,,,
+self-to-cycle4,0.043478,0.477387,0.830961,0,1,0,0,0,0,0,0,0,1,0,1,3,2.758419,true,self:WeHo Auto (#weho-auto space),RECENT_ACTIVITY.md,WeHo Auto (#weho-auto space),c4-Commit-dccb2b3,?,c4-Commit-dccb2b3
+self-to-cycle4,0.086957,0.452261,0.668120,0,0,0,0,0,0,0,0,0,1,0,2,3,2.217858,true,self:2026-08-06,RECENT_ACTIVITY.md,2026-08-06,c4-Commit-c8da01e,?,c4-Commit-c8da01e
+self-to-cycle4,0.130435,0.462312,0.591160,0,0,0,0,0,0,0,0,1,1,0,1,3,1.962385,true,self:2026-07-31 — v0.8 — ci_test-vgpu-vm: extract-script + symlin,SELF-CHANGELOG.md,2026-07-31 — v0.8 — ci_test-vgpu-vm: extract-script + symlink fixes landed; composefs tamper amd64 reaches QEMU baseline (first time),c4-Commit-9f0e59d,?,c4-Commit-9f0e59d
+self-to-cycle4,0.173913,0.487437,0.642599,0,0,0,0,0,0,0,0,0,2,0,3,5,3.555233,true,self:2026-08-07 — v0.27 — `repo-history-skill` shipped (hyper-sph,SELF-CHANGELOG.md,2026-08-07 — v0.27 — `repo-history-skill` shipped (hyper-sphere RSI archive of git + Linear history),c4-Commit-1bdcd74,?,c4-Commit-1bdcd74
+self-to-cycle4,0.217391,0.492462,0.134251,0,0,0,0,0,0,1,0,0,1,0,1,3,0.445653,false,,,,,,
+self-to-cycle4,0.260870,0.502513,0.201119,0,1,0,2,0,0,0,0,0,1,0,2,6,1.335251,false,,,,,,
+self-to-cycle4,0.304348,0.974874,0.363671,0,1,0,0,0,0,0,0,0,0,0,1,2,0.804816,false,,,,,,
+self-to-cycle4,0.347826,0.974874,0.222358,0,0,0,2,1,0,0,3,0,0,1,2,9,2.214387,true,self:2026-08-02 — v0.16 — First weekly Sunday cadence fire (12-ax,SELF-CHANGELOG.md,2026-08-02 — v0.16 — First weekly Sunday cadence fire (12-axis sweep + register drift signal),c4-Linear-OMN-61,?,c4-Linear-OMN-61
+self-to-cycle4,0.391304,0.713568,0.128648,0,0,0,0,0,0,0,0,0,0,0,2,2,0.284703,false,,,,,,
+self-to-cycle4,0.434783,0.879397,0.325250,1,0,0,1,0,0,0,0,0,1,0,2,5,1.799475,true,self:2026-07-31 — v0.7 — `internal-nonlex-tokens` skill shipped v,SELF-CHANGELOG.md,2026-07-31 — v0.7 — `internal-nonlex-tokens` skill shipped via ideate-solo + 10-cycle RSI,c4-Linear-OMN-123,?,c4-Linear-OMN-123
+self-to-cycle4,0.478261,1.000000,0.465847,0,0,0,0,0,0,0,0,0,0,0,1,1,0.515468,false,,,,,,
+self-to-cycle4,0.521739,1.000000,0.454674,1,2,0,0,0,0,0,0,0,3,0,1,7,3.521731,true,self:Source/evidence,SELF.md,Source/evidence,c4-Linear-OMN-18,?,c4-Linear-OMN-18
+self-to-cycle4,0.565217,1.000000,0.380603,0,1,0,0,0,0,0,0,0,1,0,2,4,1.684574,true,self:Differential Awareness,RULES.md,Differential Awareness,c4-Linear-OMN-18,?,c4-Linear-OMN-18
+self-to-cycle4,0.608696,0.000000,0.786369,0,0,0,0,0,0,0,0,0,0,0,1,1,0.870131,false,,,,,,
+self-to-cycle4,0.652174,0.000000,0.903736,0,1,0,0,0,0,0,0,0,0,0,2,3,3.000000,true,self:Differential-Aware Task Handling,USER_PREFERENCES.md,Differential-Aware Task Handling,c4-PR-195,?,c4-PR-195
+self-to-cycle4,0.695652,0.000000,0.705449,0,1,0,0,0,0,0,0,0,1,0,1,3,2.341774,true,self:Research Preferences,USER_PREFERENCES.md,Research Preferences,c4-PR-195,?,c4-PR-195
+self-to-cycle4,0.739130,0.005025,0.586786,0,0,0,0,0,0,0,0,0,0,0,1,1,0.649289,false,,,,,,
+self-to-cycle4,0.782609,0.005025,0.367069,0,1,0,0,1,0,0,0,0,1,0,1,4,1.624674,false,,,,,,
+self-to-cycle4,0.826087,0.005025,0.156383,0,0,0,0,0,0,0,0,0,0,0,1,1,0.173040,false,,,,,,
+self-to-cycle4,0.869565,0.015075,0.268007,0,0,0,0,0,0,0,0,0,0,0,1,1,0.296554,false,,,,,,
+self-to-cycle4,0.913043,0.015075,0.357431,0,0,0,0,0,0,0,0,0,0,0,1,1,0.395504,false,,,,,,
+self-to-cycle4,0.956522,0.010050,0.127069,0,0,0,0,0,0,0,0,0,0,0,1,1,0.140604,false,,,,,,
+self-to-cycle4,1.000000,0.326633,0.143568,0,0,0,0,0,0,0,0,0,0,0,1,1,0.158860,false,,,,,,
