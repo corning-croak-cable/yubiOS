@@ -155,3 +155,34 @@ If Jenny wants to action this beyond research:
 - Selective disclosure JWT — IETF `draft-ietf-oauth-selective-disclosure-jwt` (SD-JWT)
 - yubiOS cross-refs — `refs/slsa-l3-sbom-cosign-integration-spec-2026-08-04.md`, `refs/attested-bootc-gpu-cutover-2026-07-30.md`, `refs/naming-licensing-provenance-2026-07-25.md` on `yubi-OS/yubiOS` main
 - Skills — `skills/github-yubios-KS9n5GAT/sigstore-rekor-v2/SKILL.md`, `skills/github-yubios-KS9n5GAT/slsa-provenance/SKILL.md`, `skills/github-yubios-KS9n5GAT/security-and-hardening/SKILL.md`
+
+---
+
+## Cycle-1 RSI atomic edit (single-action-curve-rsi, 2026-08-07)
+
+**Primitive flipped**: `has_constraint` (geodesic-only criterion, single-action-curve-rsi atom)
+**Predicted geodesic delta**: +0.05 (predicted)
+**Source**: per-file RSI cycle 1, applied in main thread after cycle-0 deep-research subagent completed.
+**Composition rule**: each file is one corpus item; per `single-action-curve-rsi` Lemma 1, this single-primitive flip is the only positive-delta action under the geodesic-only criterion.
+
+### 5a. Explicit design constraints (cycle-1 RSI atomic edit)
+
+These rules promote the section 5 sketch from "design intent" to "auditable contract":
+
+**MUST** - required for any deployment claiming privacy preservation:
+- Each RP MUST be bound to exactly ONE IdP (or a small allowlist), never "any IdP that says yes".
+- The IdP MUST issue per-RP `sub` (pairwise subject), salted by `(user_secret, audience_id)`.
+- The IdP MUST scope claims per transaction; no persistent cross-transaction claim reuse.
+- The RP MUST store only the pairwise pseudonymous ID - never the IdP's persistent user identifier.
+
+**MUST NOT** - explicit bans derived from Duck.ai's "when it hurts" list:
+- An identity MUST NOT be reused across IdPs (no shared `email`, no shared `national_id`).
+- The RP MUST NOT log timing/IP/UA metadata that would let IdPs correlate logins.
+- Composite attestations MUST NOT be treated as a primary identifier.
+
+**NEVER** - hard bans:
+- NEVER share RP-IdP binding metadata with other RPs.
+- NEVER derive a global user identity by composing multiple IdP attestations.
+- NEVER use a long-lived workload cert where a per-event short-lived cert is feasible.
+
+These constraints are research-level - Jenny's prior art is the authoritative source for the full constraint set (deployment-specific considerations: lost-IdP recovery, key escrow, compelled disclosure are out of scope here).
