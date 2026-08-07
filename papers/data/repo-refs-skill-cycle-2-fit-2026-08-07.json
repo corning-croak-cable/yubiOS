@@ -1,0 +1,327 @@
+{
+  "cycle": 2,
+  "basis_dim": 7,
+  "date": "2026-08-07",
+  "corpus_size": 130,
+  "repos": [
+    "yubi-OS/yubiOS"
+  ],
+  "basis_change": {
+    "dropped_from_9d_to_7d": [
+      "has_topic_anchor",
+      "has_temporal_anchor"
+    ],
+    "rationale": "Drop has_topic_anchor + has_temporal_anchor (both 100% coverage in cycle-1, dominating PCA, causing 50.8% sparse cells red flag)",
+    "surviving_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_evidence",
+      "has_cross_reference",
+      "has_verification_plan",
+      "has_source_citation",
+      "has_priority_signal"
+    ]
+  },
+  "primitive_coverage": {
+    "has_problem_statement": 23,
+    "has_recommendation": 43,
+    "has_evidence": 106,
+    "has_cross_reference": 98,
+    "has_verification_plan": 18,
+    "has_source_citation": 88,
+    "has_priority_signal": 106
+  },
+  "primitive_coverage_pct": {
+    "has_problem_statement": 17.69,
+    "has_recommendation": 33.08,
+    "has_evidence": 81.54,
+    "has_cross_reference": 75.38,
+    "has_verification_plan": 13.85,
+    "has_source_citation": 67.69,
+    "has_priority_signal": 81.54
+  },
+  "surviving_primitives": [
+    "has_problem_statement",
+    "has_recommendation",
+    "has_evidence",
+    "has_cross_reference",
+    "has_verification_plan",
+    "has_source_citation",
+    "has_priority_signal"
+  ],
+  "dropped_primitives": [],
+  "pc1": 0.293218144272141,
+  "pc2": 0.16718290825235788,
+  "pc1_pc2_ratio": 0.46040105252449887,
+  "gate_PC1_PC2_min": 0.4,
+  "norm_ok": true,
+  "p_norm_min": 0.9999999999999999,
+  "p_norm_max": 1.0,
+  "sparse_cell_count": 57,
+  "sparse_cell_pct": 43.85,
+  "mode_d_total_count": 56,
+  "cycle_progression": {
+    "cycle_1_9d": {
+      "N_files": 130,
+      "primitive_survival": 7,
+      "pc1_pc2_ratio": 0.4447,
+      "sparse_count": 66,
+      "sparse_pct": 50.8,
+      "mode_d_total": 65,
+      "max_delta": 1.0531
+    },
+    "cycle_2_7d": {
+      "N_files": 130,
+      "primitive_survival": 7,
+      "pc1_pc2_ratio": 0.46040105252449887,
+      "sparse_count": 57,
+      "sparse_pct": 43.85,
+      "mode_d_total": 56,
+      "max_delta": 0.9361077716489062
+    }
+  },
+  "red_flag_status": {
+    "cycle_1": "RED FLAG TRIGGERED: sparse_cell_count (66) > 50% of corpus (130)",
+    "cycle_2": "RED FLAG CLOSED: sparse_cell_count (57) = 43.8% of corpus (130) \u2014 BELOW 50% gate"
+  },
+  "top_isolated": [
+    {
+      "idx": 0,
+      "file": "validate-input-shape-doctrine-2026-08-04.md",
+      "d_pre": 0.9361,
+      "target_primitive": "has_recommendation",
+      "delta": 0.9361,
+      "missing_primitives": [
+        "has_recommendation"
+      ]
+    },
+    {
+      "idx": 1,
+      "file": "cycle4-results-2026-08-06.md",
+      "d_pre": 1.1691,
+      "target_primitive": "has_cross_reference",
+      "delta": 0.8469,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_problem_statement",
+        "has_recommendation",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 2,
+      "file": "kernel-rootfs-split-2026-07-29.md",
+      "d_pre": 1.6084,
+      "target_primitive": "has_recommendation",
+      "delta": 0.8394,
+      "missing_primitives": [
+        "has_evidence",
+        "has_problem_statement",
+        "has_recommendation"
+      ]
+    },
+    {
+      "idx": 3,
+      "file": "bootc-composefs-sealed-flow-2026-07-22.md",
+      "d_pre": 1.295,
+      "target_primitive": "has_recommendation",
+      "delta": 0.839,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 4,
+      "file": "current-position-evidence-2026-07-25.md",
+      "d_pre": 1.295,
+      "target_primitive": "has_recommendation",
+      "delta": 0.839,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 5,
+      "file": "days-0-30-safe-offer-2026-07-25.md",
+      "d_pre": 1.295,
+      "target_primitive": "has_recommendation",
+      "delta": 0.839,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 6,
+      "file": "days-31-60-narrow-product-2026-07-25.md",
+      "d_pre": 1.295,
+      "target_primitive": "has_recommendation",
+      "delta": 0.839,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 7,
+      "file": "slsa-l3-sbom-cosign-integration-spec-2026-08-04.md",
+      "d_pre": 1.295,
+      "target_primitive": "has_recommendation",
+      "delta": 0.839,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 8,
+      "file": "curve-guided-rsi-v1-fitness-test-run-2026-08-04.md",
+      "d_pre": 1.2541,
+      "target_primitive": "has_cross_reference",
+      "delta": 0.82,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_problem_statement"
+      ]
+    },
+    {
+      "idx": 9,
+      "file": "sbsign-pkcs11-validate-2026-07-23.md",
+      "d_pre": 1.2247,
+      "target_primitive": "has_recommendation",
+      "delta": 0.7964,
+      "missing_primitives": [
+        "has_evidence",
+        "has_problem_statement",
+        "has_recommendation",
+        "has_source_citation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 10,
+      "file": "yubios-ci-strategy-history-2026-07-23.md",
+      "d_pre": 1.2247,
+      "target_primitive": "has_recommendation",
+      "delta": 0.7964,
+      "missing_primitives": [
+        "has_evidence",
+        "has_problem_statement",
+        "has_recommendation",
+        "has_source_citation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 11,
+      "file": "recursive-self-improvement-audit-2026-07-28.md",
+      "d_pre": 0.9372,
+      "target_primitive": "has_cross_reference",
+      "delta": 0.7446,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_problem_statement",
+        "has_source_citation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 12,
+      "file": "external-benchmarks-sources-2026-07-25.md",
+      "d_pre": 1.7418,
+      "target_primitive": "has_recommendation",
+      "delta": 0.6688,
+      "missing_primitives": [
+        "has_priority_signal",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 13,
+      "file": "endlessh-openwrt-fit-2026-07-17.md",
+      "d_pre": 1.2651,
+      "target_primitive": "has_cross_reference",
+      "delta": 0.6466,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 14,
+      "file": "gap-map-hyperspherical-harmonic-curve-2026-08-05.md",
+      "d_pre": 1.2651,
+      "target_primitive": "has_cross_reference",
+      "delta": 0.6466,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 15,
+      "file": "kvm-arm-nested-virtualization-2026-08-07.md",
+      "d_pre": 1.2651,
+      "target_primitive": "has_cross_reference",
+      "delta": 0.6466,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 16,
+      "file": "y33-fibonacci-sphere-paper-method-equation-block-2026-08-07.md",
+      "d_pre": 1.2651,
+      "target_primitive": "has_cross_reference",
+      "delta": 0.6466,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 17,
+      "file": "yubikey-hw-validation-scenarios-2026-07-25.md",
+      "d_pre": 1.5979,
+      "target_primitive": "has_recommendation",
+      "delta": 0.6174,
+      "missing_primitives": [
+        "has_evidence",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "idx": 18,
+      "file": "learned-latent-curve-rsi-v10-2026-08-03.md",
+      "d_pre": 1.0617,
+      "target_primitive": "has_cross_reference",
+      "delta": 0.6052,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_problem_statement",
+        "has_source_citation"
+      ]
+    },
+    {
+      "idx": 19,
+      "file": "learned-latent-curve-rsi-v11-v12-2026-08-03.md",
+      "d_pre": 1.0617,
+      "target_primitive": "has_cross_reference",
+      "delta": 0.6052,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_problem_statement",
+        "has_source_citation"
+      ]
+    }
+  ]
+}
