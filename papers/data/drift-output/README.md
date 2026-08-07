@@ -48,7 +48,7 @@ signals. Drift signals feed self-archaeology cadence dispatch.
   `hyperspherical-harmonic-curve` `## Empirical Validation — v2`).
 - **Sub-20 decomposition rule**: NOT applied; both corpora are well above
   the ≥20 gate (`papers-corpus` = 494 items,
-  `self-corpus` = 109 items).
+  `self-corpus` = 111 items).
 - **Pipeline**:
   1. 9-D binary coverage → drop near-constant cols (coverage ∈ [0.10, 0.90])
   2. INTERSECTION of kept cols across corpora for cross-corpus comparison
