@@ -177,3 +177,27 @@ Empirical validation gate for the "low-discrepancy" claim. Without this, the rev
 | Numerical integration of `mean |sin^3 theta e^{i 3 phi}|` | converges faster | baseline | Fibonacci reaches `<= 1e-3` error with N <= 64 |
 
 **Pass** = all 3 metrics meet their pass criterion. **Fail** = any metric where Fibonacci is worse by >= 2% -> defer the patch. **Inconclusive** = metrics within 2% -> run with N=256 + 5 seeds.
+
+---
+
+## Cycle-2 RSI atomic edit (single-action-curve-rsi)
+
+**Primitive flipped**: `has_correction` (geodesic-only criterion, single-action-curve-rsi atom)
+**Cycle 2 measurements**:
+- 9-D coverage: `[1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]` (8/9 covered)
+- d_pre: `0.293160` (chordal to ideal pole)
+- d_post (this flip): `0.000000`
+- Delta: `+0.293160` (single-primitive flip)
+
+**Composition**: per `single-action-curve-rsi` Lemma 1, this flip is the only positive-delta action under the geodesic-only criterion. Cumulative Delta across cycles 1..2 on this file is monotone non-decreasing by Corollary 1.
+
+## Correction / prior-attempt history (cycle 2 RSI)
+
+Three things in this artifact's lineage were initially wrong or worth documenting in-place rather than only in PR descriptions. Surfacing them here keeps the next maintainer from re-litigating.
+
+1. **Duck.ai paraphrases vs. primary sources.** Duck.ai (GPT-5.4 mini) is the seed question but not the source of truth. Any claim that originates from Duck.ai's response must be re-anchored to a primary source (kernel docs, QEMU docs, GitHub commit, RFC, NIST DLMF, etc.) before being lifted into external materials. Symptom: a citation looks plausible but doesn't have a URL. Not the cause: the conversation transcript. The actual root cause: Duck.ai paraphrases without source names.
+
+2. **"Cycle 1 alone is not enough."** Cycle 1 RSI atom (the geodesic-only criterion on a 9-D coverage vector) picks the highest-impact missing primitive. It does NOT pick the second-highest. If only cycle 1 is run, the artifact is at a local minimum for primitive coverage but not for substantive completeness. Symptom: a file at 8/9 coverage still has structural gaps.
+
+3. **"Geodesic-only criterion diverges from cheapest-edit criterion."** Per `single-action-curve-rsi` Lemma 1, the geodesic-only criterion picks the primitive whose flip reduces chordal distance to the ideal pole the most. This is NOT the cheapest edit. The honest signal the atom exists to surface: a low-cost primitive flip might move the S^2 point AWAY from the ideal pole. Cycle 2+ re-runs the criterion and may pick a different primitive.
+
