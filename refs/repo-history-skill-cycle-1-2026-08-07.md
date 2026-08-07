@@ -32,3 +32,11 @@
 | Sparse-cell count | 0 / 34 | n/a | corpus well-connected |
 
 **Closed-loop metric FIRES** — the hyper-sphere RSI substrate validates on the live repo corpus. The skill is shippable; cycle 2 will close the 3 detection-pattern regex false-negatives flagged in the audit.
+
+
+## Recommendation
+
+**Verdict**: REVISE — context-dependent
+**One-line**: TBD per file context.
+
+Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.4408). TODO: refine per file context.
