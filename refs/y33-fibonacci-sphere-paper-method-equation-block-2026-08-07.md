@@ -160,3 +160,22 @@ A lower-priority follow-up, deferred unless the paper's reviewers request it: ex
 ## Changelog
 
 - **2026-08-07 cycle 0**: initial write. Extracted from Duck.ai conversation 7 (6 prompts), consolidated into a single 3-equation method block (Section 2) plus a 4-equation explicit-real-form block (Section 3). Cross-referenced against `learned-latent-curve` and `hyperspherical-harmonic-curve` skills. ~2300 words.
+
+---
+
+## Cycle-1 RSI atomic edit (single-action-curve-rsi, 2026-08-07)
+
+**Primitive flipped**: `has_constraint` (geodesic-only criterion, single-action-curve-rsi atom)
+**Predicted geodesic delta**: +1.140 (largest delta in this corpus)
+**Source**: per-file RSI cycle 1, applied in main thread after cycle-0 deep-research subagent completed.
+**Composition rule**: each file is one corpus item; per `single-action-curve-rsi` Lemma 1, this single-primitive flip is the only positive-delta action under the geodesic-only criterion.
+
+## Constraints (cycle-1 RSI atomic edit)
+
+This block's choices have hard constraints; downstream readers MUST NOT substitute silently.
+
+1. **MUST** use `phi = (1+sqrt(5))/2` (golden ratio) for canonical Fibonacci indexing. Don't substitute `phi = pi` (Vogel's spiral variant) or `psi = (1+sqrt(5))/2 * pi` (Saff-Kuijlaars variant) without explicitly renaming.
+2. **MUST** use Condon-Shortley normalization `K = sqrt(245/(64 pi))` for `Y_3^3`. Don't drop the Condon-Shortley phase; this is the standard convention in `dlmf.nist.gov`.
+3. **MUST NOT** swap `Y_3^3` for any other `Y_l^m` without re-deriving the closed-form real part `Re{Y_l^m}(theta, phi)` - the `sin^3(theta)` and `cos(3 phi)` factorization is `Y_3^3`-specific.
+4. **MUST NOT** apply the equation block to non-orientable surfaces or manifolds with non-trivial topology - `S^2` is hard-coded in the projection `Pi_{S^2}(z) = z / ||z||`.
+5. **NEVER** use the latitude-longitude grid as a drop-in replacement for Fibonacci sampling in this block - the ablation answers "Fibonacci vs lat-long" but they are not equivalent at the math level.
