@@ -1,0 +1,383 @@
+{
+  "cycle": 3,
+  "date": "2026-08-07",
+  "mode": "B (incremental refresh) + cycle-3 RSI (Mode D per-item)",
+  "final_cycle_under_3cycle_cap": true,
+  "corpus_size": 279,
+  "corpus_breakdown": {
+    "PRs": 34,
+    "Issues": 31,
+    "Commits": 60,
+    "Releases": 16,
+    "Linear_OMN": 138,
+    "Linear_OMN_with_creator": 133
+  },
+  "repos": [
+    "yubi-OS/yubiOS",
+    "yubi-OS/agent-skills",
+    "linear://OMN"
+  ],
+  "primitive_coverage": {
+    "has_purpose": 66,
+    "has_sha": 111,
+    "has_pr_ref": 78,
+    "has_linear_ref": 144,
+    "has_state_progression": 37,
+    "has_author": 274,
+    "has_cross_corpus_link": 24,
+    "has_evidence": 210,
+    "has_temporal_anchor": 110
+  },
+  "surviving_primitives": [
+    "has_purpose",
+    "has_sha",
+    "has_pr_ref",
+    "has_linear_ref",
+    "has_state_progression",
+    "has_evidence",
+    "has_temporal_anchor"
+  ],
+  "dropped_primitives": [
+    "has_author",
+    "has_cross_corpus_link"
+  ],
+  "cycle3_edits_applied": [
+    "broaden Linear GraphQL query to include creator { name email } (cycle-2 audit gap #2)",
+    "use since=2024-01-01 for issues endpoint + filter PRs (cycle-2 audit gap #3)",
+    "replace centroid-loss with spread-preserving M\u00f6bius loss (cycle-2 audit gap #4)"
+  ],
+  "pc1": 0.3878078537245212,
+  "pc2": 0.18432202584134563,
+  "pc1_pc2_ratio": 0.5721298795658668,
+  "norm_ok": true,
+  "sparse_count": 16,
+  "nearest_chordal_mean": 0.012391420695209729,
+  "nearest_chordal_max": 0.3653294401352007,
+  "chordal_radius": 0.095,
+  "mobius_status": "identity (cross-ratio gate failed)",
+  "mobius_params": {
+    "a": 1.0,
+    "b": 0.0,
+    "c": 0.0,
+    "d": 1.0
+  },
+  "primitive_geodesic_impact": {
+    "has_purpose": {
+      "n_flip_candidates": 213,
+      "mean_geodesic_delta": -0.28025082770290727,
+      "would_hurt_count": 0,
+      "would_help_count": 213
+    },
+    "has_sha": {
+      "n_flip_candidates": 168,
+      "mean_geodesic_delta": 0.23788617368761872,
+      "would_hurt_count": 106,
+      "would_help_count": 62
+    },
+    "has_pr_ref": {
+      "n_flip_candidates": 201,
+      "mean_geodesic_delta": -0.7604651302612567,
+      "would_hurt_count": 0,
+      "would_help_count": 201
+    },
+    "has_linear_ref": {
+      "n_flip_candidates": 135,
+      "mean_geodesic_delta": 0.05860652314104559,
+      "would_hurt_count": 86,
+      "would_help_count": 49
+    },
+    "has_state_progression": {
+      "n_flip_candidates": 242,
+      "mean_geodesic_delta": -0.18476735193756327,
+      "would_hurt_count": 4,
+      "would_help_count": 238
+    },
+    "has_author": {
+      "n_flip_candidates": 5,
+      "mean_geodesic_delta": 0.01684139925972148,
+      "would_hurt_count": 4,
+      "would_help_count": 1
+    },
+    "has_cross_corpus_link": {
+      "n_flip_candidates": 255,
+      "mean_geodesic_delta": -0.3600310427587546,
+      "would_hurt_count": 3,
+      "would_help_count": 252
+    },
+    "has_evidence": {
+      "n_flip_candidates": 69,
+      "mean_geodesic_delta": -0.2583565041048281,
+      "would_hurt_count": 0,
+      "would_help_count": 69
+    },
+    "has_temporal_anchor": {
+      "n_flip_candidates": 169,
+      "mean_geodesic_delta": -0.25920499575920464,
+      "would_hurt_count": 44,
+      "would_help_count": 125
+    }
+  },
+  "mode_d_actions": [
+    {
+      "item_idx": 6,
+      "kind": "PR",
+      "label": 177,
+      "d_pre": 1.3781726124928773,
+      "d_post_target": 0.7266405807132057,
+      "delta": 0.6515320317796716,
+      "missing_primitive": "has_pr_ref",
+      "all_missing": [
+        "has_purpose",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "item_idx": 42,
+      "kind": "Issue",
+      "label": 20,
+      "d_pre": 1.0864970584514373,
+      "d_post_target": 0.5773325300938684,
+      "delta": 0.5091645283575689,
+      "missing_primitive": "has_temporal_anchor",
+      "all_missing": [
+        "has_purpose",
+        "has_sha",
+        "has_linear_ref",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "item_idx": 56,
+      "kind": "Issue",
+      "label": 63,
+      "d_pre": 2.0478542887373967,
+      "d_post_target": 1.1518152260341568,
+      "delta": 0.89603906270324,
+      "missing_primitive": "has_pr_ref",
+      "all_missing": [
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "item_idx": 58,
+      "kind": "Issue",
+      "label": 70,
+      "d_pre": 1.7186125796473228,
+      "d_post_target": 0.6345457589026617,
+      "delta": 1.084066820744661,
+      "missing_primitive": "has_pr_ref",
+      "all_missing": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "item_idx": 62,
+      "kind": "Issue",
+      "label": 9,
+      "d_pre": 0.6345457589026617,
+      "d_post_target": 0.28523410622289996,
+      "delta": 0.3493116526797618,
+      "missing_primitive": "has_temporal_anchor",
+      "all_missing": [
+        "has_sha",
+        "has_linear_ref",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "item_idx": 118,
+      "kind": "Commit",
+      "label": "e791e5d",
+      "d_pre": 1.0493919960458475,
+      "d_post_target": 0.6214212275298808,
+      "delta": 0.4279707685159667,
+      "missing_primitive": "has_cross_corpus_link",
+      "all_missing": [
+        "has_purpose",
+        "has_linear_ref",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "item_idx": 132,
+      "kind": "Release",
+      "label": "v0.6.7",
+      "d_pre": 0.5003295970094707,
+      "d_post_target": 0.3743380457650395,
+      "delta": 0.12599155124443118,
+      "missing_primitive": "has_state_progression",
+      "all_missing": [
+        "has_sha",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "item_idx": 141,
+      "kind": "Linear",
+      "label": "OMN-164",
+      "d_pre": 1.2895218567704658,
+      "d_post_target": 0.429587730925614,
+      "delta": 0.8599341258448518,
+      "missing_primitive": "has_pr_ref",
+      "all_missing": [
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "item_idx": 145,
+      "kind": "Linear",
+      "label": "OMN-140",
+      "d_pre": 0.4000769598571434,
+      "d_post_target": 0.1308178913903164,
+      "delta": 0.269259068466827,
+      "missing_primitive": "has_purpose",
+      "all_missing": [
+        "has_purpose",
+        "has_state_progression"
+      ]
+    },
+    {
+      "item_idx": 184,
+      "kind": "Linear",
+      "label": "OMN-99",
+      "d_pre": 1.3188097282902658,
+      "d_post_target": 0.8528711627904998,
+      "delta": 0.465938565499766,
+      "missing_primitive": "has_temporal_anchor",
+      "all_missing": [
+        "has_purpose",
+        "has_sha",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "item_idx": 185,
+      "kind": "Linear",
+      "label": "OMN-101",
+      "d_pre": 1.8445479928754585,
+      "d_post_target": 0.7741134684943624,
+      "delta": 1.070434524381096,
+      "missing_primitive": "has_pr_ref",
+      "all_missing": [
+        "has_purpose",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "item_idx": 188,
+      "kind": "Linear",
+      "label": "OMN-100",
+      "d_pre": 0.8528711627904998,
+      "d_post_target": 0.5003295970094707,
+      "delta": 0.35254156578102913,
+      "missing_primitive": "has_purpose",
+      "all_missing": [
+        "has_purpose",
+        "has_sha",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "item_idx": 194,
+      "kind": "Linear",
+      "label": "OMN-97",
+      "d_pre": 0.6531047246395896,
+      "d_post_target": 0.3743380457650395,
+      "delta": 0.2787666788745501,
+      "missing_primitive": "has_purpose",
+      "all_missing": [
+        "has_purpose",
+        "has_sha",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "item_idx": 248,
+      "kind": "Linear",
+      "label": "OMN-94",
+      "d_pre": 0.6516457070079249,
+      "d_post_target": 0.35287673643921846,
+      "delta": 0.29876897056870644,
+      "missing_primitive": "has_sha",
+      "all_missing": [
+        "has_sha",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "item_idx": 263,
+      "kind": "Linear",
+      "label": "OMN-5",
+      "d_pre": 0.7909907173165445,
+      "d_post_target": 0.38588477006444705,
+      "delta": 0.4051059472520974,
+      "missing_primitive": "has_temporal_anchor",
+      "all_missing": [
+        "has_sha",
+        "has_author",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "item_idx": 269,
+      "kind": "Linear",
+      "label": "OMN-33",
+      "d_pre": 0.22901595720997214,
+      "d_post_target": 1.4901161193847656e-08,
+      "delta": 0.22901594230881095,
+      "missing_primitive": "has_purpose",
+      "all_missing": [
+        "has_purpose"
+      ]
+    }
+  ],
+  "fit_quality_gate": "PASS",
+  "cycle_progression": {
+    "cycle_1": {
+      "date": "2026-08-07T10:42Z",
+      "N": 34,
+      "primitive_survival": 3,
+      "pc1_pc2": 0.7311,
+      "sparse_count": 0,
+      "mobius": "identity"
+    },
+    "cycle_2": {
+      "date": "2026-08-07T11:06Z",
+      "N": 248,
+      "primitive_survival": 7,
+      "pc1_pc2": 0.7437,
+      "sparse_count": 3,
+      "mobius": "identity (frozen)"
+    },
+    "cycle_3": {
+      "date": "2026-08-07T11:30Z",
+      "N": 279,
+      "primitive_survival": 7,
+      "pc1_pc2": 0.5721298795658668,
+      "sparse_count": 16,
+      "mobius": "identity (cross-ratio gate failed)"
+    }
+  }
+}
