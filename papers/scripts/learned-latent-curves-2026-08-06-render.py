@@ -35,8 +35,11 @@ from reportlab.platypus import (
 # ---------- Register Noto Sans ----------
 # DejaVu Sans has the full math-symbol range we need (sum, int, partial, le, ge, ne, subset, in, etc.)
 # Noto Sans (the prior default) is missing these glyphs.
-NOTO_REGULAR = "/var/workspace/documents/github-yubios-KS9n5GAT/subagents/f_double_prime/fonts/DejaVuSans.ttf"
-NOTO_ITALIC = "/var/workspace/documents/github-yubios-KS9n5GAT/subagents/f_double_prime/fonts/DejaVuSerif.ttf"
+_SCRIPT_DIR = Path(__file__).resolve().parent
+_PAPERS_DIR = _SCRIPT_DIR.parent
+_FONTS_DIR  = _PAPERS_DIR / "data" / "fonts"
+NOTO_REGULAR = str(_FONTS_DIR / "DejaVuSans.ttf")
+NOTO_ITALIC  = str(_FONTS_DIR / "DejaVuSerif.ttf")
 try:
     pdfmetrics.registerFont(TTFont("BodyFont", NOTO_REGULAR))
     pdfmetrics.registerFont(TTFont("BodyFontItalic", NOTO_ITALIC))
@@ -116,7 +119,7 @@ style_lemma = ParagraphStyle(
 
 # ---------- Build ----------
 # FIX: canonical session path, not the subagent scratch path.
-output_path = Path("/var/workspace/documents/github-yubios-KS9n5GAT/subagents/f_double_prime/learned-latent-curves-2026-08-06-v3.pdf")
+output_path = _PAPERS_DIR / "learned-latent-curves-2026-08-06.pdf"
 doc = SimpleDocTemplate(
     str(output_path), pagesize=letter,
     leftMargin=0.85*inch, rightMargin=0.85*inch,
