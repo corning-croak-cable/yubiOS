@@ -69,18 +69,21 @@ style_author = ParagraphStyle(
 )
 style_h1 = ParagraphStyle(
     "H1", parent=styles["Heading1"],
-    fontName=BODY_FONT, fontSize=12, leading=16,
+    fontName=BODY_FONT, fontSize=13, leading=17,
     spaceBefore=12, spaceAfter=5, textColor=HexColor("#1a3a5c"),
+    keepWithNext=1,
 )
 style_h2 = ParagraphStyle(
     "H2", parent=styles["Heading2"],
-    fontName=BODY_FONT, fontSize=10.5, leading=13,
+    fontName=BODY_FONT, fontSize=11.5, leading=14,
     spaceBefore=8, spaceAfter=3, textColor=HexColor("#1a3a5c"),
+    keepWithNext=1,
 )
 style_body = ParagraphStyle(
     "Body", parent=styles["Normal"],
-    fontName=BODY_FONT, fontSize=9.5, leading=13,
+    fontName=BODY_FONT, fontSize=10, leading=14,
     alignment=TA_JUSTIFY, spaceAfter=5, firstLineIndent=12,
+    widows=2, orphans=2,
 )
 style_abstract = ParagraphStyle(
     "Abstract", parent=styles["Normal"],
@@ -99,13 +102,13 @@ style_bullet = ParagraphStyle(
 )
 style_equation = ParagraphStyle(
     "Equation", parent=style_body,
-    fontName=BODY_FONT, fontSize=10, leading=14,
-    alignment=TA_CENTER, spaceBefore=6, spaceAfter=6,
+    fontName=BODY_FONT, fontSize=10.5, leading=13.5,
+    alignment=TA_CENTER, spaceBefore=4, spaceAfter=8,
     textColor=HexColor("#222222"),
 )
 style_caption = ParagraphStyle(
     "Caption", parent=styles["Normal"],
-    fontName=BODY_FONT, fontSize=9, leading=11.5,
+    fontName=BODY_FONT, fontSize=9.5, leading=12.5,
     alignment=TA_CENTER, spaceAfter=10, spaceBefore=4,
     textColor=HexColor("#444444"),
 )
@@ -116,22 +119,36 @@ style_lemma = ParagraphStyle(
     textColor=HexColor("#222222"),
 )
 
+# ---------- Table cell styles (design fix: wrap cells in Paragraphs) ----------
+style_cell_hdr = ParagraphStyle(
+    "CellHdr", parent=style_body, fontSize=8.5, leading=10.5,
+    alignment=TA_CENTER, textColor=HexColor("#ffffff"),
+    spaceBefore=2, spaceAfter=2,
+)
+style_cell_body = ParagraphStyle(
+    "CellBody", parent=style_body, fontSize=8.5, leading=10.5,
+    alignment=TA_CENTER, spaceBefore=1, spaceAfter=1,
+)
+style_cell_left = ParagraphStyle(
+    "CellLeft", parent=style_cell_body, alignment=TA_LEFT,
+)
+
 
 # ---------- Build ----------
 # FIX: canonical session path, not the subagent scratch path.
 output_path = _PAPERS_DIR / "learned-latent-curves-2026-08-06.pdf"
 doc = SimpleDocTemplate(
     str(output_path), pagesize=letter,
-    leftMargin=0.85*inch, rightMargin=0.85*inch,
+    leftMargin=0.75*inch, rightMargin=0.75*inch,
     topMargin=0.7*inch, bottomMargin=0.7*inch,
-    title="Learned Latent Curves and the Hyperspherical-Harmonic Variant (Reduced, 2026-08-06)",
+    title="Learned Latent Curves and the Hyperspherical-Harmonic (Reduced, 2026-08-06)",
     author="Shant Tchatalbachian",
 )
 story = []
 
 # --- Title block ---
 story.append(Paragraph(
-    "Learned Latent Curves and the Hyperspherical-Harmonic Variant",
+    "Learned Latent Curves and the Hyperspherical-Harmonic",
     style_title,
 ))
 story.append(Paragraph(
@@ -770,7 +787,6 @@ story.append(Paragraph(
 ))
 
 # --- Appendix A Atom Coverage of 79 Skills (Empirical) ---
-story.append(PageBreak())
 story.append(Paragraph(
     "Appendix A&nbsp;&nbsp;Atom Coverage of 79 Skills (Empirical)",
     style_h1,
@@ -917,7 +933,6 @@ if Path(tabA2).exists():
     ))
 
 # --- Appendix B Multi-Corpus RSI Audit ---
-story.append(PageBreak())
 story.append(Paragraph(
     "Appendix B&nbsp;&nbsp;Multi-Corpus RSI Audit &mdash; "
     "<font face='Courier'>skills/</font>, "
@@ -1047,7 +1062,6 @@ if Path(figB1).exists():
     ))
 
 # --- Appendix C 20-Cycle Deep-Research Corpus + Synthetic-Manifold Benchmark ---
-story.append(PageBreak())
 story.append(Paragraph(
     "Appendix C&nbsp;&nbsp;The 20-Cycle Deep-Research Corpus and the "
     "Synthetic-Manifold Benchmark",
@@ -1177,20 +1191,20 @@ story.append(Paragraph(
     style_body,
 ))
 table_c2_data = [
-    ["Manifold",
-     "Sphere (SH L=3, 16)",
-     "Flat periodic Fourier (16)",
-     "Delta paired p"],
-    ["T^2 (torus, genus 1) -- negative control",
-     "+0.9814 +/- 0.0110",
-     "+1.0000 +/- 0.0000",
-     "p < 10^-15"],
-    ["S^2 (sphere) -- positive control (v4 Y_3^3-class, sigma = 0.01)",
-     "+0.9995 +/- 0.0001",
-     "-0.0825 +/- 0.0840",
-     "p < 10^-55"],
+    [Paragraph("<b>Manifold</b>", style_cell_hdr),
+     Paragraph("<b>Sphere (SH L=3, 16)</b>", style_cell_hdr),
+     Paragraph("<b>Flat periodic Fourier (16)</b>", style_cell_hdr),
+     Paragraph("<b>Delta paired <i>p</i></b>", style_cell_hdr)],
+    [Paragraph("<b>T<sup>2</sup></b> (torus, genus 1) &mdash; negative control", style_cell_left),
+     Paragraph("+0.9814 &plusmn; 0.0110", style_cell_body),
+     Paragraph("+1.0000 &plusmn; 0.0000", style_cell_body),
+     Paragraph("<i>p</i> &lt; 10<sup>&minus;15</sup>", style_cell_body)],
+    [Paragraph("<b>S<sup>2</sup></b> (sphere) &mdash; positive control (v4 <i>Y</i><sub>3</sub><sup>3</sup>-class, &sigma; = 0.01)", style_cell_left),
+     Paragraph("+0.9995 &plusmn; 0.0001", style_cell_body),
+     Paragraph("&minus;0.0825 &plusmn; 0.0840", style_cell_body),
+     Paragraph("<i>p</i> &lt; 10<sup>&minus;55</sup>", style_cell_body)],
 ]
-table_c2 = Table(table_c2_data, colWidths=[2.6*inch, 1.6*inch, 1.6*inch, 1.2*inch])
+table_c2 = Table(table_c2_data, colWidths=[2.6*inch, 1.7*inch, 1.7*inch, 1.0*inch])
 table_c2.setStyle(TableStyle([
     ("BACKGROUND", (0, 0), (-1, 0), HexColor("#1a3a5c")),
     ("TEXTCOLOR", (0, 0), (-1, 0), HexColor("#ffffff")),
@@ -1266,8 +1280,6 @@ if Path(figC2).exists():
         "protocol.",
         style_caption,
     ))
-story.append(PageBreak())
-
 # --- Appendix D Manifold-Coordinate Benchmark (v3 - Fix A targets) ---
 story.append(Paragraph(
     "Appendix D&nbsp;&nbsp;Manifold-Coordinate Benchmark (Rigorous Re-Test)",
@@ -1340,17 +1352,17 @@ story.append(Paragraph(
 
 story.append(Paragraph("D.1&nbsp;&nbsp;Results (10-seed mean &plusmn; std on holdout <i>R</i><sup>2</sup>)", style_h2))
 table_d1_data = [
-    ["Manifold",
-     "Hyperspherical S^2 (L=3, 16 SH, rank 16)",
-     "Flat Fourier (16 raw, rank 9 effective)"],
-    ["T^2 (torus, genus 1) -- negative control",
-     "+0.4572 +/- 0.1425",
-     "+0.7790 +/- 0.0586"],
-    ["S^2 (sphere) -- positive control",
-     "+1.0000 +/- 0.0000",
-     "-0.1101 +/- 0.0633"],
+    [Paragraph("<b>Manifold</b>", style_cell_hdr),
+     Paragraph("<b>Hyperspherical <i>S</i><sup>2</sup></b> (L=3, 16 SH, rank 16)", style_cell_hdr),
+     Paragraph("<b>Flat Fourier</b> (16 raw, rank 9 effective)", style_cell_hdr)],
+    [Paragraph("<b>T<sup>2</sup></b> (torus, genus 1) &mdash; negative control", style_cell_left),
+     Paragraph("+0.4572 &plusmn; 0.1425", style_cell_body),
+     Paragraph("+0.7790 &plusmn; 0.0586", style_cell_body)],
+    [Paragraph("<b>S<sup>2</sup></b> (sphere) &mdash; positive control", style_cell_left),
+     Paragraph("+1.0000 &plusmn; 0.0000", style_cell_body),
+     Paragraph("&minus;0.1101 &plusmn; 0.0633", style_cell_body)],
 ]
-table_d1 = Table(table_d1_data, colWidths=[2.6*inch, 2.0*inch, 2.0*inch])
+table_d1 = Table(table_d1_data, colWidths=[2.6*inch, 2.2*inch, 2.2*inch])
 table_d1.setStyle(TableStyle([
     ("BACKGROUND", (0, 0), (-1, 0), HexColor("#1a3a5c")),
     ("TEXTCOLOR", (0, 0), (-1, 0), HexColor("#ffffff")),
@@ -1484,6 +1496,97 @@ story.append(Paragraph(
     "re-run of the ablation itself.",
     style_body,
 ))
+
+# --- Appendix E: Use Cases ---
+story.append(Paragraph("E&nbsp;&nbsp;Use Cases", style_h1))
+story.append(Paragraph(
+    "The RSI pipeline produces a family of corpus-scale visualizations. "
+    "The PNGs below are generated by the scripts in <font face='Courier'>papers/scripts/</font> "
+    "and committed alongside the benchmark outputs in <font face='Courier'>papers/data/</font>. "
+    "They are the operational evidence behind the headline numbers in Sections&nbsp;5&ndash;6.",
+    style_body,
+))
+story.append(Spacer(1, 8))
+
+# E.1 Full corpus curve map
+story.append(Paragraph("E.1&nbsp;&nbsp;Full corpus curve map", style_h2))
+ecm1_path = "papers/data/curve-map-output/curve-map.png"
+if Path(ecm1_path).exists():
+    story.append(Image(ecm1_path, width=6.0*inch, height=4.5*inch))
+    story.append(Paragraph(
+        "<b>Figure E.1.</b> Full corpus curve map (2D stereographic projection of <i>S</i><sup>2</sup>). "
+        "Each file in the yubiOS corpus is mapped to a point on <i>S</i><sup>2</sup> via 9-D primitive "
+        "coverage &rarr; PCA top-2 &rarr; stereographic lift &rarr; M&ouml;bius reparameterization. "
+        "Dense regions indicate corpus parts that share primitive-closure patterns.",
+        style_caption,
+    ))
+story.append(Spacer(1, 6))
+
+# E.2 384-dimensional variant
+story.append(Paragraph("E.2&nbsp;&nbsp;384-dimensional variant", style_h2))
+ecm2_path = "papers/data/curve-map-output-384d/curve-map.png"
+if Path(ecm2_path).exists():
+    story.append(Image(ecm2_path, width=6.0*inch, height=4.5*inch))
+    story.append(Paragraph(
+        "<b>Figure E.2.</b> 384-dimensional primitive-closure curve map. "
+        "Doubles the primitive basis from 9 to 384; the <i>S</i><sup>2</sup> manifold structure is preserved "
+        "but the density gradient shifts to expose finer corpus parts (skills at the top, docs and refs "
+        "in the lower hemisphere).",
+        style_caption,
+    ))
+story.append(Spacer(1, 6))
+
+# E.3 Skills subset
+story.append(Paragraph("E.3&nbsp;&nbsp;Multi-corpus subset &mdash; skills", style_h2))
+ecm3_path = "papers/data/curve-map-output-multi-corpus/curve-map-skills.png"
+if Path(ecm3_path).exists():
+    story.append(Image(ecm3_path, width=6.0*inch, height=4.5*inch))
+    story.append(Paragraph(
+        "<b>Figure E.3.</b> Skills-corpus curve map (70&ndash;79 skills). "
+        "Shows the per-corpus primitive coverage pattern &mdash; the density gradient runs from "
+        "compliance-heavy skills at the top to primitive-lacking skills at the bottom.",
+        style_caption,
+    ))
+story.append(Spacer(1, 6))
+
+# E.4 Radar
+story.append(Paragraph("E.4&nbsp;&nbsp;9-D primitive radar", style_h2))
+radar_path = "papers/data/radar-output/radar-grid.png"
+if Path(radar_path).exists():
+    story.append(Image(radar_path, width=6.0*inch, height=4.5*inch))
+    story.append(Paragraph(
+        "<b>Figure E.4.</b> 9-D primitive coverage radar across all corpus files. "
+        "Each cell shows one file's coverage score for one primitive (0&ndash;9 scale); "
+        "rows are files, columns are primitives. Use this to identify primitive-sparse files "
+        "that need targeted RSI.",
+        style_caption,
+    ))
+story.append(Spacer(1, 6))
+
+# E.5 Drift
+story.append(Paragraph("E.5&nbsp;&nbsp;Drift detection across corpora", style_h2))
+drift_path = "papers/data/drift-output/aligned-curves.png"
+if Path(drift_path).exists():
+    story.append(Image(drift_path, width=6.0*inch, height=3.0*inch))
+    story.append(Paragraph(
+        "<b>Figure E.5.</b> Aligned curves across the two corpora (papers-corpus vs self-corpus). "
+        "Warp regions are flagged when the geodesic distance between aligned points exceeds "
+        "the per-cycle tolerance; the drift detector then schedules self-archaeology cadence.",
+        style_caption,
+    ))
+story.append(Spacer(1, 6))
+
+# E.6 N-D PCA
+story.append(Paragraph("E.6&nbsp;&nbsp;N-dimensional PCA viewer", style_h2))
+nd_path = "papers/data/nd-viewer-output/nd-pca-static.png"
+if Path(nd_path).exists():
+    story.append(Image(nd_path, width=6.0*inch, height=3.0*inch))
+    story.append(Paragraph(
+        "<b>Figure E.6.</b> 24-D primitive-closure PCA static export. "
+        "Complements the interactive HTML viewer; the same projection is used in the headline "
+        "ablation in Section&nbsp;6.",
+        style_caption,
+    ))
 
 # --- References ---
 story.append(Paragraph("References", style_h1))
