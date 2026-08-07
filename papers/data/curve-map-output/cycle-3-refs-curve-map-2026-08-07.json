@@ -1,0 +1,1872 @@
+{
+  "cycle": 3,
+  "date": "2026-08-07",
+  "skill": "repo-refs-skill",
+  "basis": "7-D binary (repo-refs-skill cycle-3 fixpoint)",
+  "primitives": [
+    "has_problem_statement",
+    "has_recommendation",
+    "has_evidence",
+    "has_cross_reference",
+    "has_verification_plan",
+    "has_source_citation",
+    "has_priority_signal"
+  ],
+  "corpus_size": 130,
+  "source_corpus": "yubi-OS/yubiOS refs/*.md (130 files)",
+  "pc1_explained": 0.3034675756550733,
+  "pc2_explained": 0.16517864516824224,
+  "pc1_plus_pc2": 0.46864622082331553,
+  "sparse_cell_count_archive": null,
+  "mode_d_total_archive": null,
+  "ridge_lambda": 0.001,
+  "basis_L": 3,
+  "basis_size": 16,
+  "identity_mobius_frozen": true,
+  "fit_method": "closed-form ridge on real spherical-harmonic basis (L=3, 16 functions)",
+  "distance_metric": "chordal S^2 (bounded [0, 2])",
+  "source_archive_json": "papers/data/repo-refs-skill-cycle-3-archive-2026-08-07.json",
+  "note": "Sibling render of fit-full-curve-map.py for the 130-file refs/ corpus, using repo-refs-skill's own 7-D primitive basis (not the 79-skill internal-big-picture basis).",
+  "points": [
+    {
+      "file": "0pointer-poettering-systemd-vision-2026-07-23.md",
+      "sha": "b628468",
+      "size": 10172,
+      "lon": -155.97283682348277,
+      "lat": -19.74329631375398,
+      "t": 0.16645285676555288,
+      "residual": 0.21614892034128824,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "actions-checkout-v6-includeif-investigation-2026-07-29.md",
+      "sha": "1012280",
+      "size": 12756,
+      "lon": -48.18193852752891,
+      "lat": -53.855865834582794,
+      "t": 0.5267087831325845,
+      "residual": 0.5208139924763556,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "adr-033-misbehavior-cutoff-policy-2026-07-28.md",
+      "sha": "4ca3138",
+      "size": 11844,
+      "lon": -15.429376806222221,
+      "lat": 0.9047893612179279,
+      "t": 0.8457382329466312,
+      "residual": 0.23430541524153622,
+      "missing_primitives": [
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "adr-033-prior-art-search-2026-07-28.md",
+      "sha": "1b6d13e",
+      "size": 16532,
+      "lon": -44.14146962730841,
+      "lat": 11.452211354306076,
+      "t": 0.8031338350152385,
+      "residual": 0.13181929665315248,
+      "missing_primitives": []
+    },
+    {
+      "file": "arm64-ftpm-phase-f0-2026-07-23.md",
+      "sha": "d3311cf",
+      "size": 4666,
+      "lon": 65.37958810305527,
+      "lat": -54.293522945395985,
+      "t": 0.4917835162094487,
+      "residual": 0.10055311450806079,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "arm64-path-a-b-board-status-2026-07-23.md",
+      "sha": "d017338",
+      "size": 4927,
+      "lon": 65.37958810305527,
+      "lat": -54.293522945395985,
+      "t": 0.4917835162094487,
+      "residual": 0.10055311450806079,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "arm64-rk-board-status-2026-07-17.md",
+      "sha": "87a6305",
+      "size": 3865,
+      "lon": 82.59006834070937,
+      "lat": 2.273741564000432,
+      "t": 0.49178582506928387,
+      "residual": 1.0261786632170353,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "arm64-zstd-efi-zboot-bcvk-2026-07-23.md",
+      "sha": "a56d533",
+      "size": 5489,
+      "lon": -157.2518743415329,
+      "lat": -49.97819755484472,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "arxiv-2607.09967-vs-learned-latent-curve-2026-08-04.md",
+      "sha": "969bc31",
+      "size": 9103,
+      "lon": 144.8454518335503,
+      "lat": -13.669662239908371,
+      "t": 0.16645516562538804,
+      "residual": 0.7578378384213962,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_cross_reference",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "assets-repo-repoint-verification-2026-07-28.md",
+      "sha": "0f16ee6",
+      "size": 9336,
+      "lon": -44.14146962730841,
+      "lat": 11.452211354306076,
+      "t": 0.8031338350152385,
+      "residual": 0.13181929665315248,
+      "missing_primitives": []
+    },
+    {
+      "file": "attested-bootc-gpu-cutover-2026-07-30.md",
+      "sha": "7c517c6",
+      "size": 21105,
+      "lon": -48.18193852752891,
+      "lat": -53.855865834582794,
+      "t": 0.5267087831325845,
+      "residual": 0.5208139924763556,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "bcvk-swtpm-ci-2026-07-23.md",
+      "sha": "d851843",
+      "size": 3484,
+      "lon": 65.37958810305527,
+      "lat": -54.293522945395985,
+      "t": 0.4917835162094487,
+      "residual": 0.10055311450806079,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "bootc-composefs-sealed-flow-2026-07-22.md",
+      "sha": "057ae8f",
+      "size": 12274,
+      "lon": -94.19938723997016,
+      "lat": -27.805614730081356,
+      "t": 0.41708525377364264,
+      "residual": 0.8292987126933199,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "bootc-dev-org-releases-2026-07-23.md",
+      "sha": "63ed8bb",
+      "size": 6525,
+      "lon": -157.2518743415329,
+      "lat": -49.97819755484472,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "bootc-uki-libvirt-gpu-passthrough-2026-08-07.md",
+      "sha": "e9cf038",
+      "size": 29222,
+      "lon": -48.18193852752891,
+      "lat": -53.855865834582794,
+      "t": 0.5267087831325845,
+      "residual": 0.5208139924763556,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "bootc-upgrade-rollback-sysext-portable-test-spec-2026-08-04.md",
+      "sha": "436a795",
+      "size": 78837,
+      "lon": -157.2518743415329,
+      "lat": -49.97819755484472,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "ci-evidence-2026-07-21.md",
+      "sha": "c7ed05a",
+      "size": 7620,
+      "lon": 119.31260860299147,
+      "lat": -21.099195998070787,
+      "t": 0.29492196894435746,
+      "residual": 1.0043967119313109,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "covenant-conflict-policy-2026-07-25.md",
+      "sha": "d31b41b",
+      "size": 6410,
+      "lon": -155.97283682348277,
+      "lat": -19.74329631375398,
+      "t": 0.16645285676555288,
+      "residual": 0.21614892034128824,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "current-position-evidence-2026-07-25.md",
+      "sha": "b0dca5c",
+      "size": 8937,
+      "lon": -94.19938723997016,
+      "lat": -27.805614730081356,
+      "t": 0.41708525377364264,
+      "residual": 0.8292987126933199,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "curve-guided-rsi-and-self-differential-2026-08-04.md",
+      "sha": "a3811e0",
+      "size": 16874,
+      "lon": 15.480735196839118,
+      "lat": -18.98425742693716,
+      "t": 0.7235726392575109,
+      "residual": 0.15640836001167388,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "curve-guided-rsi-v1-cycle4-all-skills-2026-08-04.md",
+      "sha": "ff6dd6b",
+      "size": 7655,
+      "lon": -48.18193852752891,
+      "lat": -53.855865834582794,
+      "t": 0.5267087831325845,
+      "residual": 0.5208139924763556,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "curve-guided-rsi-v1-cycles-2-3-run-2026-08-04.md",
+      "sha": "f858cea",
+      "size": 11180,
+      "lon": -48.18193852752891,
+      "lat": -53.855865834582794,
+      "t": 0.5267087831325845,
+      "residual": 0.5208139924763556,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "curve-guided-rsi-v1-fitness-test-run-2026-08-04.md",
+      "sha": "f8cffb2",
+      "size": 12815,
+      "lon": 30.712951233662604,
+      "lat": -21.452471971948615,
+      "t": 0.6809705501859533,
+      "residual": 0.18014752644775467,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_cross_reference"
+      ]
+    },
+    {
+      "file": "curve-guided-rsi-v2-cycle5-deep-research-2026-08-04.md",
+      "sha": "d6a4c3b",
+      "size": 13064,
+      "lon": -44.14146962730841,
+      "lat": 11.452211354306076,
+      "t": 0.8031338350152385,
+      "residual": 0.13181929665315248,
+      "missing_primitives": []
+    },
+    {
+      "file": "customer-roi-model-2026-07-25.md",
+      "sha": "8312253",
+      "size": 8264,
+      "lon": -21.6764878058131,
+      "lat": -8.963941122239973,
+      "t": 0.7682085680921027,
+      "residual": 0.0682744054727612,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "customer-roi-model-2026-07-26.md",
+      "sha": "22b453b",
+      "size": 10967,
+      "lon": 65.37958810305527,
+      "lat": -54.293522945395985,
+      "t": 0.4917835162094487,
+      "residual": 0.10055311450806079,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "cycle4-results-2026-08-06.md",
+      "sha": "671e8c9",
+      "size": 6028,
+      "lon": 60.38562016509849,
+      "lat": 0.9596445124222639,
+      "t": 0.6460452832628174,
+      "residual": 0.7077957564069685,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "cycle5-results-2026-08-06.md",
+      "sha": "5498b0a",
+      "size": 10300,
+      "lon": 16.102131243813517,
+      "lat": -34.779065796045835,
+      "t": 0.6460429744029823,
+      "residual": 0.2579448253985049,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "days-0-30-safe-offer-2026-07-25.md",
+      "sha": "f59dcf6",
+      "size": 6603,
+      "lon": -94.19938723997016,
+      "lat": -27.805614730081356,
+      "t": 0.41708525377364264,
+      "residual": 0.8292987126933199,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "days-31-60-narrow-product-2026-07-25.md",
+      "sha": "e8988e2",
+      "size": 9291,
+      "lon": -94.19938723997016,
+      "lat": -27.805614730081356,
+      "t": 0.41708525377364264,
+      "residual": 0.8292987126933199,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "days-61-90-willingness-to-pay-2026-07-25.md",
+      "sha": "c1decb5",
+      "size": 7655,
+      "lon": -15.429376806222221,
+      "lat": 0.9047893612179279,
+      "t": 0.8457382329466312,
+      "residual": 0.23430541524153622,
+      "missing_primitives": [
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "debug-with-cli-2026-08-01.md",
+      "sha": "d8acf54",
+      "size": 9096,
+      "lon": -44.14146962730841,
+      "lat": 11.452211354306076,
+      "t": 0.8031338350152385,
+      "residual": 0.13181929665315248,
+      "missing_primitives": []
+    },
+    {
+      "file": "decisions-deferrals-rejected-models-2026-07-25.md",
+      "sha": "f7b3daa",
+      "size": 9557,
+      "lon": -164.99301258766758,
+      "lat": 4.232694736154603,
+      "t": 0.0,
+      "residual": 0.002960989183596351,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "file": "differential-curve-use-case-skill-land-grab-detection-2026-08-04.md",
+      "sha": "f6cc5da",
+      "size": 8014,
+      "lon": -7.823917534444975,
+      "lat": -15.80406918534415,
+      "t": 0.7493652941320752,
+      "residual": 0.08534889724708866,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_evidence",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "digest-bump-checklist-2026-07-25.md",
+      "sha": "1283bd6",
+      "size": 10979,
+      "lon": -157.2518743415329,
+      "lat": -49.97819755484472,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "docker-bake-consolidation-2026-07-17.md",
+      "sha": "6a67379",
+      "size": 7397,
+      "lon": 140.43693436967,
+      "lat": -2.866989203992523,
+      "t": 0.12846911217880452,
+      "residual": 0.4880211498169394,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "file": "docker-build-policies-reference-2026-07-23.md",
+      "sha": "a77d28c",
+      "size": 7138,
+      "lon": -169.70706273225613,
+      "lat": -16.60704710294499,
+      "t": 0.12846680331896937,
+      "residual": 0.3929476242660224,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "file": "edgeless-reproducible-mkosi-research-2026-07-30.md",
+      "sha": "c080ca3",
+      "size": 31015,
+      "lon": -48.18193852752891,
+      "lat": -53.855865834582794,
+      "t": 0.5267087831325845,
+      "residual": 0.5208139924763556,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "endlessh-openwrt-fit-2026-07-17.md",
+      "sha": "2949eb2",
+      "size": 14128,
+      "lon": 66.30631343203667,
+      "lat": -33.13356570581614,
+      "t": 0.5267110919924197,
+      "residual": 0.7835045115809698,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_cross_reference",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "entity-governance-legal-2026-07-25.md",
+      "sha": "009a11c",
+      "size": 9446,
+      "lon": -155.97283682348277,
+      "lat": -19.74329631375398,
+      "t": 0.16645285676555288,
+      "residual": 0.21614892034128824,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "external-benchmarks-sources-2026-07-25.md",
+      "sha": "08c55c0",
+      "size": 10694,
+      "lon": -126.63312839042673,
+      "lat": -16.990972520909903,
+      "t": 0.2506323970080897,
+      "residual": 0.9932509125967102,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "file": "external-benchmarks-sources-2026-07-26.md",
+      "sha": "6b4257d",
+      "size": 11798,
+      "lon": -169.70706273225613,
+      "lat": -16.60704710294499,
+      "t": 0.12846680331896937,
+      "residual": 0.3929476242660224,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "file": "fedora-bootc-base-images-status-2026-07-23.md",
+      "sha": "24a9d2f",
+      "size": 5957,
+      "lon": -155.97283682348277,
+      "lat": -19.74329631375398,
+      "t": 0.16645285676555288,
+      "residual": 0.21614892034128824,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "fido2-ci-emulator-status-2026-07-23.md",
+      "sha": "4c64883",
+      "size": 5460,
+      "lon": -157.2518743415329,
+      "lat": -49.97819755484472,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "firmware-rk-workflow-2026-07-17.md",
+      "sha": "495ef73",
+      "size": 3362,
+      "lon": 140.43693436967,
+      "lat": -2.866989203992523,
+      "t": 0.12846911217880452,
+      "residual": 0.4880211498169394,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "file": "first-90-days-2026-07-25.md",
+      "sha": "4239716",
+      "size": 9158,
+      "lon": -15.429376806222221,
+      "lat": 0.9047893612179279,
+      "t": 0.8457382329466312,
+      "residual": 0.23430541524153622,
+      "missing_primitives": [
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "first-90-days-2026-07-28.md",
+      "sha": "36ed58e",
+      "size": 10828,
+      "lon": -15.429376806222221,
+      "lat": 0.9047893612179279,
+      "t": 0.8457382329466312,
+      "residual": 0.23430541524153622,
+      "missing_primitives": [
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "fork-upstream-drift-detection-schedule-2026-08-04.md",
+      "sha": "1afb548",
+      "size": 10751,
+      "lon": -164.99301258766758,
+      "lat": 4.232694736154603,
+      "t": 0.0,
+      "residual": 0.002960989183596351,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "file": "fractalrabbit-falsification-harness-2026-08-06.md",
+      "sha": "059c4d6",
+      "size": 13338,
+      "lon": -48.18193852752891,
+      "lat": -53.855865834582794,
+      "t": 0.5267087831325845,
+      "residual": 0.5208139924763556,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "frost-panfrost-lockout-2026-07-17.md",
+      "sha": "1f04d96",
+      "size": 6698,
+      "lon": 140.43693436967,
+      "lat": -2.866989203992523,
+      "t": 0.12846911217880452,
+      "residual": 0.4880211498169394,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "file": "gap-map-hyperspherical-harmonic-curve-2026-08-05.md",
+      "sha": "3fc909d",
+      "size": 13716,
+      "lon": 66.30631343203667,
+      "lat": -33.13356570581614,
+      "t": 0.5267110919924197,
+      "residual": 0.7835045115809698,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_cross_reference",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "hyperspherical-harmonic-curve-2026-08-05.md",
+      "sha": "712ebbc",
+      "size": 13550,
+      "lon": 13.396464679211453,
+      "lat": 18.352358778403598,
+      "t": 1.0,
+      "residual": 0.0169593261698162,
+      "missing_primitives": [
+        "has_cross_reference",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "hyperspherical-harmonic-curve-v1-fit-2026-08-05.md",
+      "sha": "5be819b",
+      "size": 8526,
+      "lon": -48.18193852752891,
+      "lat": -53.855865834582794,
+      "t": 0.5267087831325845,
+      "residual": 0.5208139924763556,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "image-builder-cli-fork-status-2026-07-23.md",
+      "sha": "59fa49f",
+      "size": 4772,
+      "lon": -164.99301258766758,
+      "lat": 4.232694736154603,
+      "t": 0.0,
+      "residual": 0.002960989183596351,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "file": "kernel-rootfs-split-2026-07-29.md",
+      "sha": "aacc2ec",
+      "size": 12972,
+      "lon": -122.27879366440807,
+      "lat": -35.63152853975327,
+      "t": 0.3207123149590865,
+      "residual": 0.40403426461763947,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence"
+      ]
+    },
+    {
+      "file": "kvm-arm-nested-virtualization-2026-08-07.md",
+      "sha": "90932a4",
+      "size": 18743,
+      "lon": 66.30631343203667,
+      "lat": -33.13356570581614,
+      "t": 0.5267110919924197,
+      "residual": 0.7835045115809698,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_cross_reference",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "learned-latent-curve-rsi-v10-2026-08-03.md",
+      "sha": "c7c66a4",
+      "size": 18543,
+      "lon": 36.51185181868485,
+      "lat": 15.446357506496918,
+      "t": 0.8778344063108797,
+      "residual": 0.2625995502721667,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_cross_reference",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "learned-latent-curve-rsi-v11-v12-2026-08-03.md",
+      "sha": "06ce6ed",
+      "size": 12037,
+      "lon": 36.51185181868485,
+      "lat": 15.446357506496918,
+      "t": 0.8778344063108797,
+      "residual": 0.2625995502721667,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_cross_reference",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "learned-latent-curve-skill-quality-map-2026-08-03.md",
+      "sha": "5cf342d",
+      "size": 14514,
+      "lon": 36.51185181868485,
+      "lat": 15.446357506496918,
+      "t": 0.8778344063108797,
+      "residual": 0.2625995502721667,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_cross_reference",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "learned-latent-curve-yubios-artifact-primitives-coverage-flow-2026-08-04.md",
+      "sha": "3164642",
+      "size": 13922,
+      "lon": -44.14146962730841,
+      "lat": 11.452211354306076,
+      "t": 0.8031338350152385,
+      "residual": 0.13181929665315248,
+      "missing_primitives": []
+    },
+    {
+      "file": "libvfio-user-bundle-decision-2026-07-30.md",
+      "sha": "b228b85",
+      "size": 7112,
+      "lon": 15.480735196839118,
+      "lat": -18.98425742693716,
+      "t": 0.7235726392575109,
+      "residual": 0.15640836001167388,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "luks-fido2-e2e-test-2026-07-23.md",
+      "sha": "6079220",
+      "size": 4913,
+      "lon": -157.2518743415329,
+      "lat": -49.97819755484472,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "metrics-and-reporting-2026-07-25.md",
+      "sha": "1e17dd9",
+      "size": 8235,
+      "lon": -157.2518743415329,
+      "lat": -49.97819755484472,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "mkosi-bcvk-fork-status-2026-07-23.md",
+      "sha": "c37cd9c",
+      "size": 5978,
+      "lon": -164.99301258766758,
+      "lat": 4.232694736154603,
+      "t": 0.0,
+      "residual": 0.002960989183596351,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "file": "naming-licensing-provenance-2026-07-25.md",
+      "sha": "d8e9a11",
+      "size": 9791,
+      "lon": -157.2518743415329,
+      "lat": -49.97819755484472,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "negative-skill-space-2026-07-28.md",
+      "sha": "ebe424e",
+      "size": 28766,
+      "lon": 82.59006834070937,
+      "lat": 2.273741564000432,
+      "t": 0.49178582506928387,
+      "residual": 1.0261786632170353,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "offer-pricing-architecture-2026-07-25.md",
+      "sha": "f216026",
+      "size": 9521,
+      "lon": -155.97283682348277,
+      "lat": -19.74329631375398,
+      "t": 0.16645285676555288,
+      "residual": 0.21614892034128824,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "openwrt-deception-proof-plan-2026-07-17.md",
+      "sha": "584ae4d",
+      "size": 5228,
+      "lon": 140.43693436967,
+      "lat": -2.866989203992523,
+      "t": 0.12846911217880452,
+      "residual": 0.4880211498169394,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "file": "openwrt-wireguard-deception-lan-prototype-2026-07-25.md",
+      "sha": "6f5d14a",
+      "size": 8559,
+      "lon": -164.99301258766758,
+      "lat": 4.232694736154603,
+      "t": 0.0,
+      "residual": 0.002960989183596351,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "file": "operating-covenant-2026-07-25.md",
+      "sha": "8d5ba2f",
+      "size": 7683,
+      "lon": -164.99301258766758,
+      "lat": 4.232694736154603,
+      "t": 0.0,
+      "residual": 0.002960989183596351,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "file": "org-state-audit-2026-07-23.md",
+      "sha": "192b119",
+      "size": 6729,
+      "lon": 144.8454518335503,
+      "lat": -13.669662239908371,
+      "t": 0.16645516562538804,
+      "residual": 0.7578378384213962,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_cross_reference",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "osbuild-image-builder-2026-07-23.md",
+      "sha": "74900be",
+      "size": 7123,
+      "lon": -155.97283682348277,
+      "lat": -19.74329631375398,
+      "t": 0.16645285676555288,
+      "residual": 0.21614892034128824,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "package-floor-verification-checklist-2026-08-04.md",
+      "sha": "db7f951",
+      "size": 13830,
+      "lon": -157.2518743415329,
+      "lat": -49.97819755484472,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "pilot-collateral-roi-baseline-2026-07-25.md",
+      "sha": "91bf3da",
+      "size": 8408,
+      "lon": -169.70706273225613,
+      "lat": -16.60704710294499,
+      "t": 0.12846680331896937,
+      "residual": 0.3929476242660224,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "file": "planning-cycle-2026-07-11.md",
+      "sha": "3d16141",
+      "size": 7471,
+      "lon": -157.2518743415329,
+      "lat": -49.97819755484472,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "post-quantum-tls-adoption-2026-07-23.md",
+      "sha": "83af9ed",
+      "size": 5846,
+      "lon": -169.70706273225613,
+      "lat": -16.60704710294499,
+      "t": 0.12846680331896937,
+      "residual": 0.3929476242660224,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "file": "pr-campaign-research-2026-07-16.md",
+      "sha": "0912fca",
+      "size": 7392,
+      "lon": 107.8132657664668,
+      "lat": -73.57059525272193,
+      "t": 0.4170875626334778,
+      "residual": 0.4965070919063823,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "pr-friend-map-2026-07-17.md",
+      "sha": "52beaba",
+      "size": 12857,
+      "lon": -157.2518743415329,
+      "lat": -49.97819755484472,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "prior-art-autonomous-ideation-skill-2026-07-28.md",
+      "sha": "c6e261b",
+      "size": 21138,
+      "lon": 119.31260860299147,
+      "lat": -21.099195998070787,
+      "t": 0.29492196894435746,
+      "residual": 1.0043967119313109,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "prior-art-search-rsi-audit-2026-07-30.md",
+      "sha": "56f2cf1",
+      "size": 12773,
+      "lon": 2.3154110235924583,
+      "lat": 3.1634318887452135,
+      "t": 0.8778320974510445,
+      "residual": 0.37501734765529016,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "prior-art-state-of-art-2026-07-30.md",
+      "sha": "220b41a",
+      "size": 16500,
+      "lon": -157.2518743415329,
+      "lat": -49.97819755484472,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "public-security-funding-targets-2026-07-25.md",
+      "sha": "d5fdfdd",
+      "size": 9057,
+      "lon": -157.2518743415329,
+      "lat": -49.97819755484472,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "readiness-gates-gtm-2026-07-25.md",
+      "sha": "d9c29a7",
+      "size": 11209,
+      "lon": -21.6764878058131,
+      "lat": -8.963941122239973,
+      "t": 0.7682085680921027,
+      "residual": 0.0682744054727612,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "readiness-gates-gtm-2026-07-28.md",
+      "sha": "3992561",
+      "size": 14974,
+      "lon": -21.6764878058131,
+      "lat": -8.963941122239973,
+      "t": 0.7682085680921027,
+      "residual": 0.0682744054727612,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "recursive-self-improvement-audit-2026-07-28.md",
+      "sha": "0deb288",
+      "size": 13992,
+      "lon": 53.50511559456378,
+      "lat": 8.284251510884687,
+      "t": 0.7235749481173461,
+      "residual": 0.6419426591530819,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "refederated-identity-oidc-sigstore-privacy-2026-08-07.md",
+      "sha": "e78a35a",
+      "size": 18705,
+      "lon": -48.18193852752891,
+      "lat": -53.855865834582794,
+      "t": 0.5267087831325845,
+      "residual": 0.5208139924763556,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "release-gate-checklist-v2-2026-08-04.md",
+      "sha": "e69c739",
+      "size": 21460,
+      "lon": -157.2518743415329,
+      "lat": -49.97819755484472,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "repo-history-skill-2026-08-07.md",
+      "sha": "a359cfc",
+      "size": 23605,
+      "lon": 65.37958810305527,
+      "lat": -54.293522945395985,
+      "t": 0.4917835162094487,
+      "residual": 0.10055311450806079,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "repo-history-skill-cycle-1-2026-08-07.md",
+      "sha": "1b15417",
+      "size": 2069,
+      "lon": 82.59006834070937,
+      "lat": 2.273741564000432,
+      "t": 0.49178582506928387,
+      "residual": 1.0261786632170353,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "repo-history-skill-cycle-2-2026-08-07.md",
+      "sha": "f38aa5a",
+      "size": 8147,
+      "lon": 15.480735196839118,
+      "lat": -18.98425742693716,
+      "t": 0.7235726392575109,
+      "residual": 0.15640836001167388,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "repo-history-skill-cycle-3-2026-08-07.md",
+      "sha": "17b1bea",
+      "size": 6405,
+      "lon": 15.480735196839118,
+      "lat": -18.98425742693716,
+      "t": 0.7235726392575109,
+      "residual": 0.15640836001167388,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "repo-history-skill-cycle-4-2026-08-07-changelog.md",
+      "sha": "d2ecb70",
+      "size": 4287,
+      "lon": 65.37958810305527,
+      "lat": -54.293522945395985,
+      "t": 0.4917835162094487,
+      "residual": 0.10055311450806079,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "repo-history-skill-cycle-4-2026-08-07.md",
+      "sha": "78b58ea",
+      "size": 8787,
+      "lon": 15.480735196839118,
+      "lat": -18.98425742693716,
+      "t": 0.7235726392575109,
+      "residual": 0.15640836001167388,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "repo-history-skill-deep-research-2026-08-07.md",
+      "sha": "a359cfc",
+      "size": 23605,
+      "lon": 65.37958810305527,
+      "lat": -54.293522945395985,
+      "t": 0.4917835162094487,
+      "residual": 0.10055311450806079,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "repo-refs-skill-deep-research-2026-08-07.md",
+      "sha": "35f2117",
+      "size": 17182,
+      "lon": -44.14146962730841,
+      "lat": 11.452211354306076,
+      "t": 0.8031338350152385,
+      "residual": 0.13181929665315248,
+      "missing_primitives": []
+    },
+    {
+      "file": "reproducible-builds-2026-07-22.md",
+      "sha": "488e050",
+      "size": 9437,
+      "lon": 107.8132657664668,
+      "lat": -73.57059525272193,
+      "t": 0.4170875626334778,
+      "residual": 0.4965070919063823,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "research-refresh-2026-07-11.md",
+      "sha": "d120c91",
+      "size": 6852,
+      "lon": 119.31260860299147,
+      "lat": -21.099195998070787,
+      "t": 0.29492196894435746,
+      "residual": 1.0043967119313109,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "rk3588-ddr-tpl-source-2026-07-29.md",
+      "sha": "d7409b6",
+      "size": 6348,
+      "lon": -157.2518743415329,
+      "lat": -49.97819755484472,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "roadmap-promotion-gates-2026-07-17.md",
+      "sha": "32a7a90",
+      "size": 4509,
+      "lon": 82.59006834070937,
+      "lat": 2.273741564000432,
+      "t": 0.49178582506928387,
+      "residual": 1.0261786632170353,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "rsi-five-skill-pass-2026-07-29.md",
+      "sha": "9c3700a",
+      "size": 9224,
+      "lon": 128.54533317306064,
+      "lat": -29.285582045274506,
+      "t": 0.28272857037233806,
+      "residual": 0.7051969946838826,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "file": "sbsign-pkcs11-validate-2026-07-23.md",
+      "sha": "bb1fac4",
+      "size": 3193,
+      "lon": 139.53914009849717,
+      "lat": -64.44464579838838,
+      "t": 0.3633167128904793,
+      "residual": 0.8559998319033212,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "sealed-uki-vm-test-2026-07-30.md",
+      "sha": "a4bbd30",
+      "size": 10437,
+      "lon": -21.6764878058131,
+      "lat": -8.963941122239973,
+      "t": 0.7682085680921027,
+      "residual": 0.0682744054727612,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "sectime-rk-secure-time-2026-07-17.md",
+      "sha": "6754ebe",
+      "size": 5404,
+      "lon": 140.43693436967,
+      "lat": -2.866989203992523,
+      "t": 0.12846911217880452,
+      "residual": 0.4880211498169394,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "file": "slsa-l3-sbom-cosign-integration-spec-2026-08-04.md",
+      "sha": "32037a0",
+      "size": 82308,
+      "lon": -94.19938723997016,
+      "lat": -27.805614730081356,
+      "t": 0.41708525377364264,
+      "residual": 0.8292987126933199,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "systemd-hardening-audit-2026-07-17.md",
+      "sha": "ffd016f",
+      "size": 4299,
+      "lon": 53.286337190304714,
+      "lat": -19.068659962137396,
+      "t": 0.6139514187584042,
+      "residual": 0.9705207008651694,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "systemd-homed-reference-2026-07-23.md",
+      "sha": "242e12c",
+      "size": 11118,
+      "lon": 144.8454518335503,
+      "lat": -13.669662239908371,
+      "t": 0.16645516562538804,
+      "residual": 0.7578378384213962,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_cross_reference",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "systemd-unit-directive-reference-2026-07-23.md",
+      "sha": "6264c6b",
+      "size": 14301,
+      "lon": 140.43693436967,
+      "lat": -2.866989203992523,
+      "t": 0.12846911217880452,
+      "residual": 0.4880211498169394,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "file": "systemd-upstream-progress-2026-07-21.md",
+      "sha": "89d81ef",
+      "size": 10921,
+      "lon": 119.31260860299147,
+      "lat": -21.099195998070787,
+      "t": 0.29492196894435746,
+      "residual": 1.0043967119313109,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_cross_reference",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "systemd-v262-audit-2026-07-14.md",
+      "sha": "2242d3f",
+      "size": 4544,
+      "lon": -164.99301258766758,
+      "lat": 4.232694736154603,
+      "t": 0.0,
+      "residual": 0.002960989183596351,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "file": "team-budget-use-of-funds-2026-07-25.md",
+      "sha": "1e33316",
+      "size": 8022,
+      "lon": -155.97283682348277,
+      "lat": -19.74329631375398,
+      "t": 0.16645285676555288,
+      "residual": 0.21614892034128824,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "testing-production-gaps-2026-08-01.md",
+      "sha": "8277241",
+      "size": 14675,
+      "lon": 15.480735196839118,
+      "lat": -18.98425742693716,
+      "t": 0.7235726392575109,
+      "residual": 0.15640836001167388,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "three-year-revenue-cost-model-2026-07-25.md",
+      "sha": "a5a5e19",
+      "size": 9091,
+      "lon": -169.70706273225613,
+      "lat": -16.60704710294499,
+      "t": 0.12846680331896937,
+      "residual": 0.3929476242660224,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "file": "v261-base-image-bump-2026-07-23.md",
+      "sha": "9aa26c1",
+      "size": 3720,
+      "lon": 65.37958810305527,
+      "lat": -54.293522945395985,
+      "t": 0.4917835162094487,
+      "residual": 0.10055311450806079,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "validate-input-shape-doctrine-2026-08-04.md",
+      "sha": "90b9671",
+      "size": 73241,
+      "lon": -66.60664245059895,
+      "lat": -11.54297563988484,
+      "t": 0.5713447119671762,
+      "residual": 0.7657862193203163,
+      "missing_primitives": [
+        "has_recommendation"
+      ]
+    },
+    {
+      "file": "vgpu-vfio-user-trust-boundary-2026-07-25.md",
+      "sha": "80aaeea",
+      "size": 11595,
+      "lon": 65.37958810305527,
+      "lat": -54.293522945395985,
+      "t": 0.4917835162094487,
+      "residual": 0.10055311450806079,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "vm-e2e-run-29525332901.md",
+      "sha": "b5764d1",
+      "size": 5349,
+      "lon": -157.2518743415329,
+      "lat": -49.97819755484472,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "who-pays-and-why-2026-07-25.md",
+      "sha": "798a994",
+      "size": 8498,
+      "lon": -164.99301258766758,
+      "lat": 4.232694736154603,
+      "t": 0.0,
+      "residual": 0.002960989183596351,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "file": "workflow-dispatch-reachability-spec-2026-08-04.md",
+      "sha": "83d6c85",
+      "size": 12249,
+      "lon": -169.70706273225613,
+      "lat": -16.60704710294499,
+      "t": 0.12846680331896937,
+      "residual": 0.3929476242660224,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "file": "workflow-patterns-deep-dive-2026-07-30.md",
+      "sha": "8f60e3d",
+      "size": 15144,
+      "lon": 15.480735196839118,
+      "lat": -18.98425742693716,
+      "t": 0.7235726392575109,
+      "residual": 0.15640836001167388,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "workflow-token-scope-audit-script-2026-08-04.md",
+      "sha": "bec3d18",
+      "size": 13293,
+      "lon": -169.70706273225613,
+      "lat": -16.60704710294499,
+      "t": 0.12846680331896937,
+      "residual": 0.3929476242660224,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "file": "y33-fibonacci-sphere-paper-method-equation-block-2026-08-07.md",
+      "sha": "2672cb0",
+      "size": 20095,
+      "lon": 66.30631343203667,
+      "lat": -33.13356570581614,
+      "t": 0.5267110919924197,
+      "residual": 0.7835045115809698,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_cross_reference",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "y33-fibonacci-sphere-paper-revised-passage-2026-08-07.md",
+      "sha": "582b873",
+      "size": 17113,
+      "lon": -48.18193852752891,
+      "lat": -53.855865834582794,
+      "t": 0.5267087831325845,
+      "residual": 0.5208139924763556,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "yubikey-hw-validation-scenarios-2026-07-25.md",
+      "sha": "5d30521",
+      "size": 8437,
+      "lon": -115.1560072100613,
+      "lat": -10.921471757314782,
+      "t": 0.28861845045467327,
+      "residual": 1.0563569946345006,
+      "missing_primitives": [
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "yubios-ci-strategy-history-2026-07-23.md",
+      "sha": "dc05186",
+      "size": 5279,
+      "lon": 139.53914009849717,
+      "lat": -64.44464579838838,
+      "t": 0.3633167128904793,
+      "residual": 0.8559998319033212,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_evidence",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "yubios-reproducibility-equivalents-2026-07-30.md",
+      "sha": "0ac3854",
+      "size": 10750,
+      "lon": -48.18193852752891,
+      "lat": -53.855865834582794,
+      "t": 0.5267087831325845,
+      "residual": 0.5208139924763556,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "yubios-scamper-product-brief-investor-memo-2026-08-07.md",
+      "sha": "681b97d",
+      "size": 24674,
+      "lon": 2.3154110235924583,
+      "lat": 3.1634318887452135,
+      "t": 0.8778320974510445,
+      "residual": 0.37501734765529016,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_source_citation"
+      ]
+    },
+    {
+      "file": "yubios-stress-test-assertions-2026-08-07.md",
+      "sha": "ccbd0a0",
+      "size": 18107,
+      "lon": -48.18193852752891,
+      "lat": -53.855865834582794,
+      "t": 0.5267087831325845,
+      "residual": 0.5208139924763556,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_verification_plan"
+      ]
+    },
+    {
+      "file": "yubios-trust-proof-playbook-checklist-2026-08-07.md",
+      "sha": "907f212",
+      "size": 27190,
+      "lon": -44.14146962730841,
+      "lat": 11.452211354306076,
+      "t": 0.8031338350152385,
+      "residual": 0.13181929665315248,
+      "missing_primitives": []
+    },
+    {
+      "file": "yubios-versioning-scheme-2026-08-04.md",
+      "sha": "7ddcb68",
+      "size": 9331,
+      "lon": -169.70706273225613,
+      "lat": -16.60704710294499,
+      "t": 0.12846680331896937,
+      "residual": 0.3929476242660224,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_priority_signal"
+      ]
+    },
+    {
+      "file": "zboot-workaround-runner-qemu-audit-2026-07-25.md",
+      "sha": "e1b8060",
+      "size": 6142,
+      "lon": 65.37958810305527,
+      "lat": -54.293522945395985,
+      "t": 0.4917835162094487,
+      "residual": 0.10055311450806075,
+      "missing_primitives": [
+        "has_problem_statement",
+        "has_recommendation",
+        "has_verification_plan",
+        "has_source_citation"
+      ]
+    }
+  ]
+}
