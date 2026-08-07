@@ -17,7 +17,7 @@
   "pc1_explained": 0.3034675756550733,
   "pc2_explained": 0.16517864516824224,
   "pc1_plus_pc2": 0.46864622082331553,
-  "sparse_cell_count_archive": null,
+  "sparse_cell_count_archive": 49,
   "mode_d_total_archive": null,
   "ridge_lambda": 0.001,
   "basis_L": 3,
