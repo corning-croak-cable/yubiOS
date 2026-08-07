@@ -123,3 +123,11 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 **One-line**: TBD per file context.
 
 Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.7834). TODO: refine per file context.
+
+
+## Recommendation
+
+**Verdict**: REVISE — context-dependent
+**One-line**: TBD per file context.
+
+Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.8394). TODO: refine per file context.
