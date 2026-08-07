@@ -1,0 +1,4874 @@
+{
+  "cycle": 4,
+  "date": "2026-08-07",
+  "basis": "9-D binary (repo-history-skill)",
+  "primitives": [
+    "has_purpose",
+    "has_sha",
+    "has_pr_ref",
+    "has_linear_ref",
+    "has_state_progression",
+    "has_author",
+    "has_cross_corpus_link",
+    "has_evidence",
+    "has_temporal_anchor"
+  ],
+  "corpus_size": 324,
+  "corpus_breakdown": {
+    "PRs": 39,
+    "Issues": 31,
+    "Commits": 100,
+    "Releases": 16,
+    "Linear_OMN": 138
+  },
+  "pc1_explained": 0.3415821825207145,
+  "pc2_explained": 0.18432228269545337,
+  "pc1_plus_pc2": 0.5259044652161678,
+  "ridge_lambda": 0.001,
+  "basis_L": 3,
+  "basis_size": 16,
+  "identity_mobius_frozen": true,
+  "fit_method": "closed-form ridge on real spherical-harmonic basis (L=3, 16 functions)",
+  "distance_metric": "chordal S^2 (bounded [0, 2])",
+  "source_archive_json": "documents/github-yubios-KS9n5GAT/papers/data/repo-history-skill-cycle-4-archive-2026-08-07.json",
+  "note": "Sibling render of render-cycle-4-fit.py, written into the PLAIN curve-map-output/ directory (not -384d) alongside the unrelated 79-skill/internal-big-picture fit owned by fit-full-curve-map.py. Different corpus, different 9-D primitive basis \u2014 files are cycle-4-repo-history-prefixed to avoid collision.",
+  "points": [
+    {
+      "file": "PR-195",
+      "lon": 167.37949665860776,
+      "lat": 7.162378807934105,
+      "t": 0.13401690043346065,
+      "residual": 0.041605220002692414,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-194",
+      "lon": -156.9995447623691,
+      "lat": -18.425318798816043,
+      "t": 0.33002794625897164,
+      "residual": 0.28706173719823386,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-193",
+      "lon": 167.37949665860776,
+      "lat": 7.162378807934105,
+      "t": 0.13401690043346065,
+      "residual": 0.041605220002692414,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-192",
+      "lon": 167.37949665860776,
+      "lat": 7.162378807934105,
+      "t": 0.13401690043346065,
+      "residual": 0.041605220002692414,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-191",
+      "lon": -156.9995447623691,
+      "lat": -18.425318798816043,
+      "t": 0.33002794625897164,
+      "residual": 0.28706173719823386,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-190",
+      "lon": 111.30113948571139,
+      "lat": -63.109126078842436,
+      "t": 0.5854623282750152,
+      "residual": 0.2546443083355462,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "PR-189",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "PR-188",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-187",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-186",
+      "lon": -166.559276398823,
+      "lat": -17.86521725911113,
+      "t": 0.31017939229565133,
+      "residual": 0.0555087272881628,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-185",
+      "lon": 167.37949665860776,
+      "lat": 7.162378807934105,
+      "t": 0.13401690043346065,
+      "residual": 0.041605220002692414,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-184",
+      "lon": 110.85093180023938,
+      "lat": -76.53026897319964,
+      "t": 0.6053108822383355,
+      "residual": 0.6285984707740236,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "PR-183",
+      "lon": -156.9995447623691,
+      "lat": -18.425318798816043,
+      "t": 0.33002794625897164,
+      "residual": 0.28706173719823386,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-182",
+      "lon": 161.51214039701858,
+      "lat": 13.615680123837477,
+      "t": 0.08999703335136587,
+      "residual": 0.05195474219939971,
+      "missing_primitives": [
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-181",
+      "lon": 114.89523127669243,
+      "lat": -45.27462186301932,
+      "t": 0.5472226243907808,
+      "residual": 1.370249142187482,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "PR-180",
+      "lon": 167.37949665860776,
+      "lat": 7.162378807934105,
+      "t": 0.13401690043346065,
+      "residual": 0.041605220002692414,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-179",
+      "lon": 167.37949665860776,
+      "lat": 7.162378807934105,
+      "t": 0.13401690043346065,
+      "residual": 0.041605220002692414,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-178",
+      "lon": 157.57959818887193,
+      "lat": 16.47149566240359,
+      "t": 0.0759286425859059,
+      "residual": 0.04167499755896137,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-177",
+      "lon": 173.64323023783206,
+      "lat": -9.621747817738488,
+      "t": 0.25209113444809667,
+      "residual": 0.0787318757409965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_linear_ref",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-176",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-175",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "PR-174",
+      "lon": -156.9995447623691,
+      "lat": -18.425318798816043,
+      "t": 0.33002794625897164,
+      "residual": 0.28706173719823386,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-173",
+      "lon": 167.37949665860776,
+      "lat": 7.162378807934105,
+      "t": 0.13401690043346065,
+      "residual": 0.041605220002692414,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-172",
+      "lon": -156.9995447623691,
+      "lat": -18.425318798816043,
+      "t": 0.33002794625897164,
+      "residual": 0.28706173719823386,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-171",
+      "lon": 167.37949665860776,
+      "lat": 7.162378807934105,
+      "t": 0.13401690043346065,
+      "residual": 0.041605220002692414,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-170",
+      "lon": -156.9995447623691,
+      "lat": -18.425318798816043,
+      "t": 0.33002794625897164,
+      "residual": 0.28706173719823386,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-169",
+      "lon": -156.9995447623691,
+      "lat": -18.425318798816043,
+      "t": 0.33002794625897164,
+      "residual": 0.28706173719823386,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-168",
+      "lon": -156.9995447623691,
+      "lat": -18.425318798816043,
+      "t": 0.33002794625897164,
+      "residual": 0.28706173719823386,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-167",
+      "lon": 179.0226152564406,
+      "lat": -24.51297407133935,
+      "t": 0.33915599198451546,
+      "residual": 0.05307700419200392,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-166",
+      "lon": 179.0226152564406,
+      "lat": -24.51297407133935,
+      "t": 0.33915599198451546,
+      "residual": 0.05307700419200392,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Issue-92",
+      "lon": 70.84382791951438,
+      "lat": -7.741957668609846,
+      "t": 0.7508410413668504,
+      "residual": 1.1340509869529225,
+      "missing_primitives": [
+        "has_purpose",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Issue-90",
+      "lon": 70.84382791951438,
+      "lat": -7.741957668609846,
+      "t": 0.7508410413668504,
+      "residual": 1.1340509869529225,
+      "missing_primitives": [
+        "has_purpose",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Issue-87",
+      "lon": 153.51858652354713,
+      "lat": 22.38534240762044,
+      "t": 0.031908775503811236,
+      "residual": 0.1187055667043674,
+      "missing_primitives": [
+        "has_linear_ref",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Issue-84",
+      "lon": 153.51858652354713,
+      "lat": 22.38534240762044,
+      "t": 0.031908775503811236,
+      "residual": 0.1187055667043674,
+      "missing_primitives": [
+        "has_linear_ref",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Issue-82",
+      "lon": 165.15069989268858,
+      "lat": -1.6636552558240845,
+      "t": 0.2080712673660018,
+      "residual": 0.15412892255915597,
+      "missing_primitives": [
+        "has_purpose",
+        "has_linear_ref",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Issue-70",
+      "lon": 157.57959818887193,
+      "lat": 16.47149566240359,
+      "t": 0.0759286425859059,
+      "residual": 0.04167499755896137,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Issue-65",
+      "lon": 43.03929115034286,
+      "lat": -11.424813084036916,
+      "t": 0.8887638293448066,
+      "residual": 0.032896223713032795,
+      "missing_primitives": [
+        "has_purpose",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Issue-63",
+      "lon": 124.05763842679755,
+      "lat": 13.87082455397282,
+      "t": 0.3071917114831751,
+      "residual": 1.1766251828779657,
+      "missing_primitives": [
+        "has_linear_ref",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Issue-62",
+      "lon": 153.51858652354713,
+      "lat": 22.38534240762044,
+      "t": 0.031908775503811236,
+      "residual": 0.1187055667043674,
+      "missing_primitives": [
+        "has_linear_ref",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Issue-60",
+      "lon": 43.03929115034286,
+      "lat": -11.424813084036916,
+      "t": 0.8887638293448066,
+      "residual": 0.032896223713032795,
+      "missing_primitives": [
+        "has_purpose",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Issue-59",
+      "lon": -30.534185220919884,
+      "lat": -56.85476836934381,
+      "t": 0.7374535070184314,
+      "residual": 0.866591667803937,
+      "missing_primitives": [
+        "has_purpose",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Issue-57",
+      "lon": 117.27852196652545,
+      "lat": -28.51718634294079,
+      "t": 0.5032027573086861,
+      "residual": 1.6021920982580662,
+      "missing_primitives": [
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Issue-55",
+      "lon": 118.01854434585073,
+      "lat": -56.490690329092246,
+      "t": 0.5612910151562407,
+      "residual": 1.0501489292402957,
+      "missing_primitives": [
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Issue-53",
+      "lon": 65.05836806780614,
+      "lat": -13.679753309246532,
+      "t": 0.7706895953301707,
+      "residual": 1.3024017010164666,
+      "missing_primitives": [
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Issue-41",
+      "lon": 110.85093180023938,
+      "lat": -76.53026897319964,
+      "t": 0.6053108822383355,
+      "residual": 0.6285984707740236,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Issue-26",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Issue-25",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Issue-24",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Issue-23",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Issue-22",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Issue-21",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Issue-20",
+      "lon": 173.64323023783206,
+      "lat": -9.621747817738488,
+      "t": 0.25209113444809667,
+      "residual": 0.0787318757409965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_linear_ref",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Issue-19",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Issue-18",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Issue-17",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Issue-16",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Issue-15",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Issue-14",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Issue-11",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Issue-10",
+      "lon": 127.1450939382384,
+      "lat": -12.504024711700877,
+      "t": 0.4092998364128246,
+      "residual": 0.15969787395604762,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Issue-9",
+      "lon": 157.57959818887193,
+      "lat": 16.47149566240359,
+      "t": 0.0759286425859059,
+      "residual": 0.04167499755896137,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-fa30385",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-19396e3",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-e5a6229",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-265d7cc",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-d3f7a35",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-c8677d3",
+      "lon": 93.04288540924111,
+      "lat": -46.044691066044045,
+      "t": 0.6144389279638793,
+      "residual": 0.2836943870207107,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-f172d44",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-f727b09",
+      "lon": 27.007422155025072,
+      "lat": -2.75452879271961,
+      "t": 1.0,
+      "residual": 0.09626695761411752,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-056d53a",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-c348849",
+      "lon": -2.1242305831689077,
+      "lat": -48.728998145454376,
+      "t": 0.79060141982607,
+      "residual": 0.31560434538569204,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-b6fb9ec",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-8b2d190",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-c69e3b6",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-7b6a004",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-f810858",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-edc3f32",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-805af32",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-c7dea91",
+      "lon": 52.2882897720094,
+      "lat": -19.692995190175008,
+      "t": 0.8147094624122655,
+      "residual": 0.9465277892070616,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-9632579",
+      "lon": 52.2882897720094,
+      "lat": -19.692995190175008,
+      "t": 0.8147094624122655,
+      "residual": 0.9465277892070616,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-90bd790",
+      "lon": 52.2882897720094,
+      "lat": -19.692995190175008,
+      "t": 0.8147094624122655,
+      "residual": 0.9465277892070616,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-b337063",
+      "lon": 110.85093180023938,
+      "lat": -76.53026897319964,
+      "t": 0.6053108822383355,
+      "residual": 0.6285984707740236,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-f355223",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-12096db",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-6676ccb",
+      "lon": -166.559276398823,
+      "lat": -17.86521725911113,
+      "t": 0.31017939229565133,
+      "residual": 0.0555087272881628,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-c9bd6ef",
+      "lon": 167.37949665860776,
+      "lat": 7.162378807934105,
+      "t": 0.13401690043346065,
+      "residual": 0.041605220002692414,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-3cc8088",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-e00c8f6",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-a79394d",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-fadcf3f",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-35caa6c",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-ca3d6ab",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-108c64c",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-fcca816",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-7e3797f",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-5e4a55d",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-bb0dfc2",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-dc5247b",
+      "lon": -166.559276398823,
+      "lat": -17.86521725911113,
+      "t": 0.31017939229565133,
+      "residual": 0.0555087272881628,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-58c0e95",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-5f73678",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-8117060",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-5870c1f",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-f77dbfe",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-748c6a7",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-93ff9b1",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-e6cd574",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-76853d1",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-ea5d988",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-b8f3229",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-bde9512",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-815ab5d",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Release-v0.7.5",
+      "lon": 127.1450939382384,
+      "lat": -12.504024711700877,
+      "t": 0.4092998364128246,
+      "residual": 0.15969787395604762,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Release-v0.7.4",
+      "lon": 116.45729570962857,
+      "lat": 2.324740490883516,
+      "t": 0.41842788213836846,
+      "residual": 0.3849920243392978,
+      "missing_primitives": [
+        "has_sha",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Release-v0.7.3",
+      "lon": 127.1450939382384,
+      "lat": -12.504024711700877,
+      "t": 0.4092998364128246,
+      "residual": 0.15969787395604762,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Release-v0.7.2",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Release-v0.7.1",
+      "lon": 150.82590153354312,
+      "lat": 16.916329921435036,
+      "t": 0.10210812492964931,
+      "residual": 0.24515023683540935,
+      "missing_primitives": [
+        "has_sha",
+        "has_state_progression"
+      ]
+    },
+    {
+      "file": "Release-v0.6.9",
+      "lon": 117.93402786984132,
+      "lat": 9.833641333499978,
+      "t": 0.37739106090901325,
+      "residual": 0.7398671994880754,
+      "missing_primitives": [
+        "has_sha",
+        "has_state_progression",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Release-v0.6.8",
+      "lon": 116.45729570962857,
+      "lat": 2.324740490883516,
+      "t": 0.41842788213836846,
+      "residual": 0.3849920243392978,
+      "missing_primitives": [
+        "has_sha",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Release-v0.6.7",
+      "lon": 153.53850825393425,
+      "lat": 10.975339873855637,
+      "t": 0.14314494615900453,
+      "residual": 0.19798767815420212,
+      "missing_primitives": [
+        "has_sha",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Release-v0.6.6",
+      "lon": 116.45729570962857,
+      "lat": 2.324740490883516,
+      "t": 0.41842788213836846,
+      "residual": 0.3849920243392978,
+      "missing_primitives": [
+        "has_sha",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Release-v0.6.5",
+      "lon": 127.1450939382384,
+      "lat": -12.504024711700877,
+      "t": 0.4092998364128246,
+      "residual": 0.15969787395604762,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Release-v0.6.0",
+      "lon": 90.62257644404394,
+      "lat": 4.748277894648286,
+      "t": 0.6186984165867545,
+      "residual": 0.529988189489468,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Release-v0.5.0",
+      "lon": 90.62257644404394,
+      "lat": 4.748277894648286,
+      "t": 0.6186984165867545,
+      "residual": 0.529988189489468,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Release-v0.4.0",
+      "lon": 90.62257644404394,
+      "lat": 4.748277894648286,
+      "t": 0.6186984165867545,
+      "residual": 0.529988189489468,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Release-v0.2.0",
+      "lon": 90.62257644404394,
+      "lat": 4.748277894648286,
+      "t": 0.6186984165867545,
+      "residual": 0.529988189489468,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Release-v0.1.0",
+      "lon": 127.1450939382384,
+      "lat": -12.504024711700877,
+      "t": 0.4092998364128246,
+      "residual": 0.15969787395604762,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Release-v0.0.1",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "PR-9",
+      "lon": -156.9995447623691,
+      "lat": -18.425318798816043,
+      "t": 0.33002794625897164,
+      "residual": 0.28706173719823386,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-8",
+      "lon": 114.89523127669243,
+      "lat": -45.27462186301932,
+      "t": 0.5472226243907808,
+      "residual": 1.370249142187482,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "PR-7",
+      "lon": 167.37949665860776,
+      "lat": 7.162378807934105,
+      "t": 0.13401690043346065,
+      "residual": 0.041605220002692414,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-6",
+      "lon": 167.37949665860776,
+      "lat": 7.162378807934105,
+      "t": 0.13401690043346065,
+      "residual": 0.041605220002692414,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-5",
+      "lon": 165.15069989268858,
+      "lat": -1.6636552558240845,
+      "t": 0.2080712673660018,
+      "residual": 0.15412892255915597,
+      "missing_primitives": [
+        "has_purpose",
+        "has_linear_ref",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-4",
+      "lon": -179.01546868287843,
+      "lat": -12.13039589330383,
+      "t": 0.26615952521355646,
+      "residual": 0.08356453053810671,
+      "missing_primitives": [
+        "has_purpose",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-3",
+      "lon": -179.01546868287843,
+      "lat": -12.13039589330383,
+      "t": 0.26615952521355646,
+      "residual": 0.08356453053810671,
+      "missing_primitives": [
+        "has_purpose",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-2",
+      "lon": 167.37949665860776,
+      "lat": 7.162378807934105,
+      "t": 0.13401690043346065,
+      "residual": 0.041605220002692414,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "PR-1",
+      "lon": 167.37949665860776,
+      "lat": 7.162378807934105,
+      "t": 0.13401690043346065,
+      "residual": 0.041605220002692414,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-f19d5aa",
+      "lon": 52.2882897720094,
+      "lat": -19.692995190175008,
+      "t": 0.8147094624122655,
+      "residual": 0.9465277892070616,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-fb3a12f",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-26354be",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-a3b3a26",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-ccc8775",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-f456810",
+      "lon": 110.85093180023938,
+      "lat": -76.53026897319964,
+      "t": 0.6053108822383355,
+      "residual": 0.6285984707740236,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-1cd9412",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-de8100f",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-9d8a67a",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-6fa61c9",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-c8da01e",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-dcba0de",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-ffbe861",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-9f0e59d",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-8f3b7d1",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-854b141",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-3e8faa8",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-fec3a85",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-dccb2b3",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-e11e70f",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-127270e",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-1bdcd74",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-33b99f2",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-e700ce9",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-80d1049",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-92faa0b",
+      "lon": 74.71502128209801,
+      "lat": -1.9523335477754615,
+      "t": 0.7367726506013905,
+      "residual": 0.7525122322774911,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_linear_ref",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-e791e5d",
+      "lon": 116.34316243979954,
+      "lat": -18.85120152165834,
+      "t": 0.4833542033453658,
+      "residual": 1.5130215643815863,
+      "missing_primitives": [
+        "has_purpose",
+        "has_linear_ref",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-e1a73a7",
+      "lon": 74.71502128209801,
+      "lat": -1.9523335477754615,
+      "t": 0.7367726506013905,
+      "residual": 0.7525122322774911,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_linear_ref",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-fccc6bb",
+      "lon": 74.71502128209801,
+      "lat": -1.9523335477754615,
+      "t": 0.7367726506013905,
+      "residual": 0.7525122322774911,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_linear_ref",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-adf7333",
+      "lon": 74.71502128209801,
+      "lat": -1.9523335477754615,
+      "t": 0.7367726506013905,
+      "residual": 0.7525122322774911,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_linear_ref",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-e660427",
+      "lon": -166.559276398823,
+      "lat": -17.86521725911113,
+      "t": 0.31017939229565133,
+      "residual": 0.0555087272881628,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-2b1840f",
+      "lon": 74.71502128209801,
+      "lat": -1.9523335477754615,
+      "t": 0.7367726506013905,
+      "residual": 0.7525122322774911,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_linear_ref",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-a32fa57",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-d18d744",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-33ce994",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-1e53f6c",
+      "lon": 167.37949665860776,
+      "lat": 7.162378807934105,
+      "t": 0.13401690043346065,
+      "residual": 0.041605220002692414,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-779a82b",
+      "lon": 167.37949665860776,
+      "lat": 7.162378807934105,
+      "t": 0.13401690043346065,
+      "residual": 0.041605220002692414,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-c0b95e2",
+      "lon": -2.1242305831689077,
+      "lat": -48.728998145454376,
+      "t": 0.79060141982607,
+      "residual": 0.31560434538569204,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-c5c023c",
+      "lon": -2.1242305831689077,
+      "lat": -48.728998145454376,
+      "t": 0.79060141982607,
+      "residual": 0.31560434538569204,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-c1c3b9c",
+      "lon": 93.04288540924111,
+      "lat": -46.044691066044045,
+      "t": 0.6144389279638793,
+      "residual": 0.2836943870207107,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-5baa398",
+      "lon": -2.1242305831689077,
+      "lat": -48.728998145454376,
+      "t": 0.79060141982607,
+      "residual": 0.31560434538569204,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-d3bbc94",
+      "lon": -2.1242305831689077,
+      "lat": -48.728998145454376,
+      "t": 0.79060141982607,
+      "residual": 0.31560434538569204,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-140c3d9",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-366ef74",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-3542468",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-b27827b",
+      "lon": 179.0226152564406,
+      "lat": -24.51297407133935,
+      "t": 0.33915599198451546,
+      "residual": 0.05307700419200392,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-9af9745",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Commit-08ee8e0",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-022018b",
+      "lon": 110.85093180023938,
+      "lat": -76.53026897319964,
+      "t": 0.6053108822383355,
+      "residual": 0.6285984707740236,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Commit-e9ae9eb",
+      "lon": -156.9995447623691,
+      "lat": -18.425318798816043,
+      "t": 0.33002794625897164,
+      "residual": 0.28706173719823386,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Linear-OMN-94",
+      "lon": 142.62697617381718,
+      "lat": 31.143030752430768,
+      "t": 0.0,
+      "residual": 0.13754559923420429,
+      "missing_primitives": []
+    },
+    {
+      "file": "Linear-OMN-33",
+      "lon": 171.316329231906,
+      "lat": -5.741961563074775,
+      "t": 0.22791982132932215,
+      "residual": 0.18296344627420738,
+      "missing_primitives": [
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Linear-OMN-140",
+      "lon": 147.5231342724264,
+      "lat": 23.12480334846749,
+      "t": 0.05808825784755464,
+      "residual": 0.09146053892688233,
+      "missing_primitives": [
+        "has_state_progression"
+      ]
+    },
+    {
+      "file": "Linear-OMN-97",
+      "lon": 157.57959818887193,
+      "lat": 16.47149566240359,
+      "t": 0.0759286425859059,
+      "residual": 0.04167499755896137,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Linear-OMN-5",
+      "lon": 157.57959818887193,
+      "lat": 16.47149566240359,
+      "t": 0.0759286425859059,
+      "residual": 0.04167499755896137,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Linear-OMN-100",
+      "lon": 167.37949665860776,
+      "lat": 7.162378807934105,
+      "t": 0.13401690043346065,
+      "residual": 0.041605220002692414,
+      "missing_primitives": [
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Linear-OMN-14",
+      "lon": -159.17373045732847,
+      "lat": -46.13213147480166,
+      "t": 0.4572302259991515,
+      "residual": 0.7924990535809081,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Linear-OMN-99",
+      "lon": -166.559276398823,
+      "lat": -17.86521725911113,
+      "t": 0.31017939229565133,
+      "residual": 0.0555087272881628,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Linear-OMN-164",
+      "lon": -170.6031831551095,
+      "lat": -14.567221477642011,
+      "t": 0.28600807917687676,
+      "residual": 0.06490936430952268,
+      "missing_primitives": [
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Linear-OMN-101",
+      "lon": 155.75627972741597,
+      "lat": -2.0451822610108694,
+      "t": 0.23425074970974522,
+      "residual": 0.13889081139732207,
+      "missing_primitives": [
+        "has_purpose",
+        "has_state_progression"
+      ]
+    },
+    {
+      "file": "Linear-OMN-108",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Linear-OMN-157",
+      "lon": -166.559276398823,
+      "lat": -17.86521725911113,
+      "t": 0.31017939229565133,
+      "residual": 0.0555087272881628,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Linear-OMN-163",
+      "lon": -156.9995447623691,
+      "lat": -18.425318798816043,
+      "t": 0.33002794625897164,
+      "residual": 0.28706173719823386,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Linear-OMN-72",
+      "lon": 27.007422155025072,
+      "lat": -2.75452879271961,
+      "t": 1.0,
+      "residual": 0.09626695761411752,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-160",
+      "lon": -166.559276398823,
+      "lat": -17.86521725911113,
+      "t": 0.31017939229565133,
+      "residual": 0.0555087272881628,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Linear-OMN-62",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-104",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-159",
+      "lon": 162.85238965980668,
+      "lat": -11.52001515377263,
+      "t": 0.27827061679183995,
+      "residual": 0.3628398461824091,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_state_progression"
+      ]
+    },
+    {
+      "file": "Linear-OMN-161",
+      "lon": -166.559276398823,
+      "lat": -17.86521725911113,
+      "t": 0.31017939229565133,
+      "residual": 0.0555087272881628,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Linear-OMN-142",
+      "lon": -159.17373045732847,
+      "lat": -46.13213147480166,
+      "t": 0.4572302259991515,
+      "residual": 0.7924990535809081,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Linear-OMN-156",
+      "lon": -166.559276398823,
+      "lat": -17.86521725911113,
+      "t": 0.31017939229565133,
+      "residual": 0.0555087272881628,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Linear-OMN-158",
+      "lon": -166.559276398823,
+      "lat": -17.86521725911113,
+      "t": 0.31017939229565133,
+      "residual": 0.0555087272881628,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Linear-OMN-45",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-106",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-42",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-151",
+      "lon": 45.42859246006861,
+      "lat": -51.486744995390765,
+      "t": 0.7325131619785155,
+      "residual": 0.40786147761245406,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-150",
+      "lon": 162.85238965980668,
+      "lat": -11.52001515377263,
+      "t": 0.27827061679183995,
+      "residual": 0.3628398461824091,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_state_progression"
+      ]
+    },
+    {
+      "file": "Linear-OMN-89",
+      "lon": 117.93402786984132,
+      "lat": 9.833641333499978,
+      "t": 0.37739106090901325,
+      "residual": 0.7398671994880754,
+      "missing_primitives": [
+        "has_sha",
+        "has_state_progression",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-107",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-152",
+      "lon": 162.85238965980668,
+      "lat": -11.52001515377263,
+      "t": 0.27827061679183995,
+      "residual": 0.3628398461824091,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_state_progression"
+      ]
+    },
+    {
+      "file": "Linear-OMN-162",
+      "lon": 162.85238965980668,
+      "lat": -11.52001515377263,
+      "t": 0.27827061679183995,
+      "residual": 0.3628398461824091,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_state_progression"
+      ]
+    },
+    {
+      "file": "Linear-OMN-155",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-154",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-153",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-149",
+      "lon": 150.82590153354312,
+      "lat": 16.916329921435036,
+      "t": 0.10210812492964931,
+      "residual": 0.24515023683540935,
+      "missing_primitives": [
+        "has_sha",
+        "has_state_progression"
+      ]
+    },
+    {
+      "file": "Linear-OMN-53",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-47",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-52",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-43",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-37",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-56",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-85",
+      "lon": 27.007422155025072,
+      "lat": -2.75452879271961,
+      "t": 1.0,
+      "residual": 0.09626695761411752,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-46",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-54",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-55",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-57",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-58",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-105",
+      "lon": 30.021255161189394,
+      "lat": -12.303957106616139,
+      "t": 0.9327836964269015,
+      "residual": 0.12063727338041506,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-83",
+      "lon": 27.007422155025072,
+      "lat": -2.75452879271961,
+      "t": 1.0,
+      "residual": 0.09626695761411752,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-141",
+      "lon": -121.13212278659047,
+      "lat": -39.24971063589479,
+      "t": 0.5153184838467061,
+      "residual": 0.2739240404006878,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Linear-OMN-102",
+      "lon": 114.1784749073812,
+      "lat": -33.951185581514935,
+      "t": 0.5273740704274607,
+      "residual": 1.5812671683517365,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_linear_ref",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-143",
+      "lon": -159.17373045732847,
+      "lat": -46.13213147480166,
+      "t": 0.4572302259991515,
+      "residual": 0.7924990535809081,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Linear-OMN-148",
+      "lon": 114.1784749073812,
+      "lat": -33.951185581514935,
+      "t": 0.5273740704274607,
+      "residual": 1.5812671683517365,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_linear_ref",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-135",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-128",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-127",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-126",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-146",
+      "lon": -2.1242305831689077,
+      "lat": -48.728998145454376,
+      "t": 0.79060141982607,
+      "residual": 0.31560434538569204,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-147",
+      "lon": 179.0226152564406,
+      "lat": -24.51297407133935,
+      "t": 0.33915599198451546,
+      "residual": 0.05307700419200392,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Linear-OMN-145",
+      "lon": 179.0226152564406,
+      "lat": -24.51297407133935,
+      "t": 0.33915599198451546,
+      "residual": 0.05307700419200392,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Linear-OMN-144",
+      "lon": -121.13212278659047,
+      "lat": -39.24971063589479,
+      "t": 0.5153184838467061,
+      "residual": 0.2739240404006878,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Linear-OMN-51",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-103",
+      "lon": 74.71502128209801,
+      "lat": -1.9523335477754615,
+      "t": 0.7367726506013905,
+      "residual": 0.7525122322774911,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_linear_ref",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-96",
+      "lon": 93.04288540924111,
+      "lat": -46.044691066044045,
+      "t": 0.6144389279638793,
+      "residual": 0.2836943870207107,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-139",
+      "lon": 110.85093180023938,
+      "lat": -76.53026897319964,
+      "t": 0.6053108822383355,
+      "residual": 0.6285984707740236,
+      "missing_primitives": [
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-76",
+      "lon": 27.007422155025072,
+      "lat": -2.75452879271961,
+      "t": 1.0,
+      "residual": 0.09626695761411752,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-73",
+      "lon": 27.007422155025072,
+      "lat": -2.75452879271961,
+      "t": 1.0,
+      "residual": 0.09626695761411752,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-68",
+      "lon": -2.1242305831689077,
+      "lat": -48.728998145454376,
+      "t": 0.79060141982607,
+      "residual": 0.31560434538569204,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-67",
+      "lon": 27.007422155025072,
+      "lat": -2.75452879271961,
+      "t": 1.0,
+      "residual": 0.09626695761411752,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-66",
+      "lon": 27.007422155025072,
+      "lat": -2.75452879271961,
+      "t": 1.0,
+      "residual": 0.09626695761411752,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-65",
+      "lon": 27.007422155025072,
+      "lat": -2.75452879271961,
+      "t": 1.0,
+      "residual": 0.09626695761411752,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-41",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-40",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-36",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-60",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-39",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-98",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-78",
+      "lon": 151.08061954389896,
+      "lat": 2.326951831578116,
+      "t": 0.22018235894428534,
+      "residual": 0.15561352370132162,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha"
+      ]
+    },
+    {
+      "file": "Linear-OMN-80",
+      "lon": 151.08061954389896,
+      "lat": 2.326951831578116,
+      "t": 0.22018235894428534,
+      "residual": 0.15561352370132162,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha"
+      ]
+    },
+    {
+      "file": "Linear-OMN-44",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-64",
+      "lon": -121.13212278659047,
+      "lat": -39.24971063589479,
+      "t": 0.5153184838467061,
+      "residual": 0.2739240404006878,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Linear-OMN-111",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-131",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-120",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-121",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-112",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-130",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-122",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-132",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-116",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-137",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-136",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-110",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-109",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-117",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-113",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-125",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-124",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-123",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-133",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-138",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-129",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-119",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-118",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-115",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-134",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-114",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-90",
+      "lon": -2.1242305831689077,
+      "lat": -48.728998145454376,
+      "t": 0.79060141982607,
+      "residual": 0.31560434538569204,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-95",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-93",
+      "lon": -2.1242305831689077,
+      "lat": -48.728998145454376,
+      "t": 0.79060141982607,
+      "residual": 0.31560434538569204,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-92",
+      "lon": 104.09441794265065,
+      "lat": -23.75264078025357,
+      "t": 0.5535535527712039,
+      "residual": 1.5864317200404128,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_state_progression",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-81",
+      "lon": 27.007422155025072,
+      "lat": -2.75452879271961,
+      "t": 1.0,
+      "residual": 0.09626695761411752,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-71",
+      "lon": 27.007422155025072,
+      "lat": -2.75452879271961,
+      "t": 1.0,
+      "residual": 0.09626695761411752,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-84",
+      "lon": 27.007422155025072,
+      "lat": -2.75452879271961,
+      "t": 1.0,
+      "residual": 0.09626695761411752,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-86",
+      "lon": 27.007422155025072,
+      "lat": -2.75452879271961,
+      "t": 1.0,
+      "residual": 0.09626695761411752,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-70",
+      "lon": 27.007422155025072,
+      "lat": -2.75452879271961,
+      "t": 1.0,
+      "residual": 0.09626695761411752,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-82",
+      "lon": 27.007422155025072,
+      "lat": -2.75452879271961,
+      "t": 1.0,
+      "residual": 0.09626695761411752,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-69",
+      "lon": 27.007422155025072,
+      "lat": -2.75452879271961,
+      "t": 1.0,
+      "residual": 0.09626695761411752,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-91",
+      "lon": -110.83168933176056,
+      "lat": -16.443368714144246,
+      "t": 0.5061904381211623,
+      "residual": 0.14376044661757229,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link"
+      ]
+    },
+    {
+      "file": "Linear-OMN-4",
+      "lon": 27.007422155025072,
+      "lat": -2.75452879271961,
+      "t": 1.0,
+      "residual": 0.09626695761411752,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-3",
+      "lon": -2.1242305831689077,
+      "lat": -48.728998145454376,
+      "t": 0.79060141982607,
+      "residual": 0.31560434538569204,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-2",
+      "lon": -2.1242305831689077,
+      "lat": -48.728998145454376,
+      "t": 0.79060141982607,
+      "residual": 0.31560434538569204,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-1",
+      "lon": 45.42859246006861,
+      "lat": -51.486744995390765,
+      "t": 0.7325131619785155,
+      "residual": 0.40786147761245406,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-38",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-48",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-19",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-50",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-49",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-87",
+      "lon": 111.30113948571139,
+      "lat": -63.109126078842436,
+      "t": 0.5854623282750152,
+      "residual": 0.2546443083355462,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-61",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-79",
+      "lon": 27.007422155025072,
+      "lat": -2.75452879271961,
+      "t": 1.0,
+      "residual": 0.09626695761411752,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-77",
+      "lon": 27.007422155025072,
+      "lat": -2.75452879271961,
+      "t": 1.0,
+      "residual": 0.09626695761411752,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-74",
+      "lon": 27.007422155025072,
+      "lat": -2.75452879271961,
+      "t": 1.0,
+      "residual": 0.09626695761411752,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-75",
+      "lon": 27.007422155025072,
+      "lat": -2.75452879271961,
+      "t": 1.0,
+      "residual": 0.09626695761411752,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-63",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-59",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-88",
+      "lon": 9.600321528700242,
+      "lat": -9.9212989959786,
+      "t": 0.9908719542744561,
+      "residual": 0.04800581029356965,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_evidence",
+        "has_temporal_anchor"
+      ]
+    },
+    {
+      "file": "Linear-OMN-18",
+      "lon": -40.75952335183966,
+      "lat": -39.68894035399068,
+      "t": 0.7814733741005262,
+      "residual": 0.16793315663818828,
+      "missing_primitives": [
+        "has_purpose",
+        "has_sha",
+        "has_pr_ref",
+        "has_linear_ref",
+        "has_state_progression",
+        "has_cross_corpus_link",
+        "has_temporal_anchor"
+      ]
+    }
+  ]
+}
