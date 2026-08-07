@@ -99,3 +99,12 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 **Owner**: TBD
 
 Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.9792). TODO: refine per file context.
+
+
+## Verification plan
+
+**Run cmd**: TBD per file context.
+**Expected output**: TBD.
+**Pass criterion**: TBD.
+
+Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.4144). TODO: refine per file context.
