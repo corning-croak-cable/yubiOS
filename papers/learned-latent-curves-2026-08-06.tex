@@ -430,6 +430,64 @@ Both predictions of the inductive-bias claim hold under the Fix A partial-in-spa
 
 \textbf{Open-item status update} (Section~\ref{sec:discussion}). PR~\#192~v4's protocol (Appendix~\ref{app:20cycle}.3, 50 seeds, off-span targets at PR~\#192's basis capacity, $\sigma = 0.01$ noise on the $S^2$ target) is the primary test of the inductive-bias claim; this appendix is the second test at PR~\#193's smaller basis capacity under the Fix A partial-in-span design (no noise). Both controls work in both PRs; the remaining open items are a higher-degree $S^2$ positive control and a second-corpus re-run of the ablation itself.
 
+
+\section{Use Cases}\label{app:use-cases}
+The RSI pipeline produces a family of corpus-scale visualizations committed to \texttt{papers/data/}. The figures below are the operational evidence behind the headline numbers in Sections~5--6.
+
+\subsection{Full corpus curve map}\label{app:use-cases:full}
+2D stereographic projection of $S^2$ (see Figure~\ref{fig:use-cases:full}).
+
+\subsection{384-dimensional variant}\label{app:use-cases:384d}
+Doubled basis (9$\to$384 primitives; see Figure~\ref{fig:use-cases:384d}).
+
+\subsection{Multi-corpus subset --- skills}\label{app:use-cases:skills}
+Skills-only view (see Figure~\ref{fig:use-cases:skills}).
+
+\subsection{9-D primitive radar}\label{app:use-cases:radar}
+Per-file coverage grid (see Figure~\ref{fig:use-cases:radar}).
+
+\subsection{Drift detection across corpora}\label{app:use-cases:drift}
+Aligned curves + warp regions (see Figure~\ref{fig:use-cases:drift}).
+
+\subsection{N-dimensional PCA viewer}\label{app:use-cases:nd}
+24-D PCA static export (see Figure~\ref{fig:use-cases:nd}).
+
+\begin{figure}[h]
+\centering\includegraphics[width=6.0in]{papers/data/curve-map-output/curve-map.png}
+\caption{Full corpus curve map (2D stereographic projection of $S^2$).}
+\label{fig:use-cases:full}
+\end{figure}
+
+\begin{figure}[h]
+\centering\includegraphics[width=6.0in]{papers/data/curve-map-output-384d/curve-map.png}
+\caption{384-dimensional primitive-closure curve map.}
+\label{fig:use-cases:384d}
+\end{figure}
+
+\begin{figure}[h]
+\centering\includegraphics[width=6.0in]{papers/data/curve-map-output-multi-corpus/curve-map-skills.png}
+\caption{Skills-corpus curve map (70--79 skills).}
+\label{fig:use-cases:skills}
+\end{figure}
+
+\begin{figure}[h]
+\centering\includegraphics[width=6.0in]{papers/data/radar-output/radar-grid.png}
+\caption{9-D primitive coverage radar across all corpus files.}
+\label{fig:use-cases:radar}
+\end{figure}
+
+\begin{figure}[h]
+\centering\includegraphics[width=6.0in]{papers/data/drift-output/aligned-curves.png}
+\caption{Aligned curves across the two corpora (papers-corpus vs self-corpus).}
+\label{fig:use-cases:drift}
+\end{figure}
+
+\begin{figure}[h]
+\centering\includegraphics[width=6.0in]{papers/data/nd-viewer-output/nd-pca-static.png}
+\caption{24-D primitive-closure PCA static export.}
+\label{fig:use-cases:nd}
+\end{figure}
+
 \begin{thebibliography}{9}
 \bibitem{Durastanti(2026)}{durastanti2026} Durastanti, C. (2026). \emph{Spectral Bayesian Regression on the Sphere.} arXiv:2601.20528 [math.ST]. \url{https://arxiv.org/abs/2601.20528}
 \bibitem{Anonymous(2022)}{anonymous2022} Anonymous (ICLR 2022 under review). \emph{Generalized Fourier Features for Coordinate-Based Learning on Manifolds.} OpenReview \texttt{g6UqpVislvH}.
