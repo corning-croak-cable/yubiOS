@@ -175,6 +175,7 @@ def save_corpus_listing(listing: List[dict], out_path: Path) -> None:
 def load_corpus_from_local() -> dict | None:
     """Try to load the rsi-79 corpus from the local mirror under DATA_DIR."""
     candidates = [
+        DATA_DIR / "rsi-85-corpus-multi-cycle-2026-08-07.json",
         DATA_DIR / "rsi-79-corpus-multi-cycle-2026-08-06.json",
         ROOT / "session" / "cache" / "rsi-79-corpus.json",
     ]
