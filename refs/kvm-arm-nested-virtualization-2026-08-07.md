@@ -206,3 +206,18 @@ The `kvm-arm.mode` tri-state and the `SYSREG_<IDREG>_<FIELD>` QEMU property surf
 - <https://patchew.org/QEMU/20260726153221.24773-1-eric.auger@redhat.com/> — Eric Auger, customizable aarch64 KVM host model (2026-07)
 - <https://lists.infradead.org/pipermail/linux-arm-kernel/2024-October/973399.html> — Earlier thread on `kvm-arm.mode` semantics
 - <https://github.com/yubi-OS/yubiOS/tree/main/refs> — yubios refs/ directory, verified via GitHub Contents API on 2026-08-07 (no existing `kvm-arm-nested-*` file)
+
+---
+
+## Cycle-1 RSI atomic edit (single-action-curve-rsi, 2026-08-07)
+
+**Primitive flipped**: `has_priority` (geodesic-only criterion, single-action-curve-rsi atom)
+**Predicted geodesic delta**: +0.05 (predicted)
+**Source**: per-file RSI cycle 1, applied in main thread after cycle-0 deep-research subagent completed.
+**Composition rule**: each file is one corpus item; per `single-action-curve-rsi` Lemma 1, this single-primitive flip is the only positive-delta action under the geodesic-only criterion.
+
+### 5.4 Priority ranking (P0-P2)
+
+- **P0 — Documentation only**: replace the Duck.ai citation in any internal runbook with the corrected `kvm-arm.mode=nested` command-line path. Effort: minutes. Risk: none. Trigger: when this note is referenced from a runbook or wiki page. Owner: whoever is editing the runbook.
+- **P1 — Capability probe (no code change)**: add the shell check from §5.1 (the `host_has_nv2` + `kvm-arm.mode` cmdline assertion) as a host-preflight to `tests/vm/`. Effort: ~30 lines, no kernel or QEMU changes. Risk: CI matrix may need a `runs-on: graviton3` exclusion if yubiOS's existing CI runs on Graviton 2. Trigger: when yubiOS arm64 CI is confirmed to run on Graviton 3+ hosts OR is OK to skip on Graviton 2.
+- **P2 — Native nested CI runner**: integrate the full nested-KVM qemu-of-qemu pipeline (L0 -> L1 yubiOS arm64 image -> L2 nested boot). Effort: 1-2 days; depends on the host kernel booting with `kvm-arm.mode=nested`. Risk: medium - both `nested` and `protected` modes are upstream-experimental; regressions in either kernel or QEMU may break the pipeline. Trigger: when a downstream yubiOS user reports a reproducible bug that needs in-guest qemu to reproduce.
