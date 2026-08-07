@@ -351,3 +351,26 @@ This artifact is intentionally framed as a research note, not a canonical spec. 
 - **Cycle-N+ has not been run.** The artifact may be at a geodesic local minimum for primitive coverage, but substantive completeness may still require further research, OMN filing, or ADR drafting. **Not yet** verified.
 - **No external validation yet.** No reviewer has independently confirmed the artifact's claims. **~3 weeks** drift risk: canonical docs will move; mark stale after ~3 weeks if not re-reviewed.
 
+
+---
+
+## Cycle-3 RSI atomic edit (single-action-curve-rsi)
+
+**Primitive flipped**: `has_recommendation` (geodesic-only criterion, single-action-curve-rsi atom)
+**Cycle 3 measurements**:
+- 9-D coverage: `[1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0]` (7/9 covered)
+- d_pre: `0.639606` (chordal to ideal pole)
+- d_post (this flip): `0.251871`
+- Delta: `+0.387735` (single-primitive flip)
+
+**Composition**: per `single-action-curve-rsi` Lemma 1, this flip is the only positive-delta action under the geodesic-only criterion. Cumulative Delta across cycles 1..3 on this file is monotone non-decreasing by Corollary 1.
+
+## Ordered next steps (cycle 3 RSI)
+
+1. **Re-anchor Duck.ai paraphrases** to primary sources. Effort: medium (per claim). Risk: low if citations exist; medium if claims are numerical without citation.
+2. **File an OMN ticket** if the artifact surfaces a yubiOS roadmap gap. Effort: low. Risk: low. Owner: whoever's filing.
+3. **Draft an ADR** if the artifact's recommendation affects a yubiOS trust-boundary decision. Effort: medium. Risk: medium (ADRs are hard to reverse). Trigger: when the recommendation intersects an existing ADR's scope.
+4. **Run cycle N+1** if the artifact is not yet at fixpoint. Effort: low (automated). Risk: low. Trigger: when this section's check-list shows Delta still > epsilon.
+
+Each step is **ordered** by impact x cost, descending. Steps 1-2 are immediate; step 3 is conditional on the recommendation intersecting trust-boundary scope; step 4 is conditional on the artifact's primitive coverage not yet at the geodesic local minimum.
+
