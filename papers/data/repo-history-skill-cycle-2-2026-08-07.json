@@ -1,0 +1,82 @@
+{
+  "cycle": 2,
+  "date": "2026-08-07",
+  "corpus_size": 248,
+  "surviving_primitives_count": 7,
+  "pc1_pc2_ratio": 0.7437157950347953,
+  "norm_ok": true,
+  "sparse_count": 3,
+  "primitive_survivors": [
+    "has_purpose",
+    "has_sha",
+    "has_pr_ref",
+    "has_linear_ref",
+    "has_author",
+    "has_evidence",
+    "has_temporal_anchor"
+  ],
+  "primitive_dropped": [
+    "has_state_progression",
+    "has_cross_corpus_link"
+  ],
+  "cycle2_fixes_applied": [
+    "has_linear_ref",
+    "has_cross_corpus_link",
+    "has_temporal_anchor"
+  ],
+  "delta_vs_cycle1": {
+    "has_purpose": {
+      "cycle1_count": 9,
+      "cycle2_count": 24,
+      "delta_pct": 44.12
+    },
+    "has_sha": {
+      "cycle1_count": 4,
+      "cycle2_count": 34,
+      "delta_pct": 88.24
+    },
+    "has_pr_ref": {
+      "cycle1_count": 19,
+      "cycle2_count": 19,
+      "delta_pct": 0.0
+    },
+    "has_linear_ref": {
+      "cycle1_count": 0,
+      "cycle2_count": 0,
+      "delta_pct": 0.0
+    },
+    "has_state_progression": {
+      "cycle1_count": 34,
+      "cycle2_count": 10,
+      "delta_pct": -70.59
+    },
+    "has_author": {
+      "cycle1_count": 34,
+      "cycle2_count": 34,
+      "delta_pct": 0.0
+    },
+    "has_cross_corpus_link": {
+      "cycle1_count": 0,
+      "cycle2_count": 0,
+      "delta_pct": 0.0
+    },
+    "has_evidence": {
+      "cycle1_count": 34,
+      "cycle2_count": 34,
+      "delta_pct": 0.0
+    },
+    "has_temporal_anchor": {
+      "cycle1_count": 0,
+      "cycle2_count": 31,
+      "delta_pct": 91.18
+    }
+  },
+  "gate_status": "PASS",
+  "verification": {
+    "norm_pass": true,
+    "pc1_pc2_pass": true,
+    "primitive_survival_pass": true,
+    "sparse_cell_pass": true,
+    "cross_ratio_pass": null
+  }
+}
