@@ -1,11 +1,12 @@
 {
-  "timestamp": "2026-08-07T20:55:00Z",
+  "timestamp": "2026-08-07T21:00:00Z",
   "schema_version": "1.0",
   "dimensions": [
     "7-D",
     "9-D",
     "16-D",
-    "24-D"
+    "24-D",
+    "384-D"
   ],
   "primitives": {
     "7-D": [
@@ -71,7 +72,8 @@
       "size_log",
       "age_log",
       "is_rsi"
-    ]
+    ],
+    "384-D": "384-D TF-IDF vector (sklearn TfidfVectorizer, n_features=384, 1-2 grams, English stopwords)"
   },
   "corpora": {
     "self": {
@@ -122,6 +124,13 @@
       "all": {
         "pc1_plus_pc2": 0.2992565732428335,
         "median_residual": 0.49691745423240313,
+        "n_items": 2286
+      }
+    },
+    "384-D": {
+      "all": {
+        "pc1_plus_pc2": 0.10853993211608491,
+        "median_residual": 0.07326458112672503,
         "n_items": 2286
       }
     }
