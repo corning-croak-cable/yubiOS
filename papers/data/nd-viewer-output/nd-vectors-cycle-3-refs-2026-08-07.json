@@ -1,0 +1,4182 @@
+{
+  "0pointer-poettering-systemd-vision-2026-07-23.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 0.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.16645285676555288,
+      "residual": 0.21614892034128824
+    },
+    "pca": [
+      -2.029884353784536,
+      -1.435183182748529
+    ],
+    "sha": "b628468",
+    "size": 10172,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_evidence",
+      "has_verification_plan"
+    ],
+    "t": 0.16645285676555288,
+    "residual": 0.21614892034128824
+  },
+  "actions-checkout-v6-includeif-investigation-2026-07-29.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.5267087831325845,
+      "residual": 0.5208139924763556
+    },
+    "pca": [
+      1.2425788449864097,
+      0.903498423603764
+    ],
+    "sha": "1012280",
+    "size": 12756,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_verification_plan"
+    ],
+    "t": 0.5267087831325845,
+    "residual": 0.5208139924763556
+  },
+  "adr-033-misbehavior-cutoff-policy-2026-07-28.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.8457382329466312,
+      "residual": 0.23430541524153622
+    },
+    "pca": [
+      2.0577938784227463,
+      -1.8146417843456621
+    ],
+    "sha": "4ca3138",
+    "size": 11844,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.8457382329466312,
+    "residual": 0.23430541524153622
+  },
+  "adr-033-prior-art-search-2026-07-28.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 1.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.8031338350152385,
+      "residual": 0.13181929665315248
+    },
+    "pca": [
+      3.251034884177426,
+      -0.8165385825749661
+    ],
+    "sha": "1b6d13e",
+    "size": 16532,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [],
+    "t": 0.8031338350152385,
+    "residual": 0.13181929665315248
+  },
+  "arm64-ftpm-phase-f0-2026-07-23.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 1.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.4917835162094487,
+      "residual": 0.10055311450806079
+    },
+    "pca": [
+      -0.17555673648499212,
+      0.3846131581789694
+    ],
+    "sha": "d3311cf",
+    "size": 4666,
+    "size_bucket": "size_3to6k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.4917835162094487,
+    "residual": 0.10055311450806079
+  },
+  "arm64-path-a-b-board-status-2026-07-23.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 1.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.4917835162094487,
+      "residual": 0.10055311450806079
+    },
+    "pca": [
+      -0.17555673648499212,
+      0.3846131581789694
+    ],
+    "sha": "d017338",
+    "size": 4927,
+    "size_bucket": "size_3to6k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.4917835162094487,
+    "residual": 0.10055311450806079
+  },
+  "arm64-rk-board-status-2026-07-17.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 1.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.49178582506928387,
+      "residual": 1.0261786632170353
+    },
+    "pca": [
+      -0.2535947224900232,
+      2.88964189628024
+    ],
+    "sha": "87a6305",
+    "size": 3865,
+    "size_bucket": "size_3to6k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_cross_reference",
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.49178582506928387,
+    "residual": 1.0261786632170353
+  },
+  "arm64-zstd-efi-zboot-bcvk-2026-07-23.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 1.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562
+    },
+    "pca": [
+      -1.1474425366372298,
+      0.5559095592212606
+    ],
+    "sha": "a56d533",
+    "size": 5489,
+    "size_bucket": "size_3to6k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan"
+    ],
+    "t": 0.29491966008452225,
+    "residual": 0.167458507136562
+  },
+  "arxiv-2607.09967-vs-learned-latent-curve-2026-08-04.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 0.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.16645516562538804,
+      "residual": 0.7578378384213962
+    },
+    "pca": [
+      -2.063336997064953,
+      0.5003407193240361
+    ],
+    "sha": "969bc31",
+    "size": 9103,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_evidence",
+      "has_cross_reference",
+      "has_verification_plan"
+    ],
+    "t": 0.16645516562538804,
+    "residual": 0.7578378384213962
+  },
+  "assets-repo-repoint-verification-2026-07-28.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 1.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.8031338350152385,
+      "residual": 0.13181929665315248
+    },
+    "pca": [
+      2.268136746448033,
+      -2.373387838545474
+    ],
+    "sha": "0f16ee6",
+    "size": 9336,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [],
+    "t": 0.8031338350152385,
+    "residual": 0.13181929665315248
+  },
+  "attested-bootc-gpu-cutover-2026-07-30.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.5267087831325845,
+      "residual": 0.5208139924763556
+    },
+    "pca": [
+      1.2425788449864097,
+      0.903498423603764
+    ],
+    "sha": "7c517c6",
+    "size": 21105,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_verification_plan"
+    ],
+    "t": 0.5267087831325845,
+    "residual": 0.5208139924763556
+  },
+  "bcvk-swtpm-ci-2026-07-23.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 1.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.4917835162094487,
+      "residual": 0.10055311450806079
+    },
+    "pca": [
+      -0.17555673648499212,
+      0.3846131581789694
+    ],
+    "sha": "d851843",
+    "size": 3484,
+    "size_bucket": "size_3to6k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.4917835162094487,
+    "residual": 0.10055311450806079
+  },
+  "bootc-composefs-sealed-flow-2026-07-22.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.41708525377364264,
+      "residual": 0.8292987126933199
+    },
+    "pca": [
+      0.6951724515362105,
+      0.8049180224329807
+    ],
+    "sha": "057ae8f",
+    "size": 12274,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_recommendation",
+      "has_verification_plan"
+    ],
+    "t": 0.41708525377364264,
+    "residual": 0.8292987126933199
+  },
+  "bootc-dev-org-releases-2026-07-23.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562
+    },
+    "pca": [
+      -1.0115938330336758,
+      -1.0694083676057493
+    ],
+    "sha": "63ed8bb",
+    "size": 6525,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan"
+    ],
+    "t": 0.29491966008452225,
+    "residual": 0.167458507136562
+  },
+  "bootc-uki-libvirt-gpu-passthrough-2026-08-07.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 1.0,
+      "t": 0.5267087831325845,
+      "residual": 0.5208139924763556
+    },
+    "pca": [
+      0.8863821878898164,
+      0.5677775164711977
+    ],
+    "sha": "e9cf038",
+    "size": 29222,
+    "size_bucket": "size_ge25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_verification_plan"
+    ],
+    "t": 0.5267087831325845,
+    "residual": 0.5208139924763556
+  },
+  "bootc-upgrade-rollback-sysext-portable-test-spec-2026-08-04.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 1.0,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562
+    },
+    "pca": [
+      -0.3848923524008756,
+      0.15171998123219219
+    ],
+    "sha": "436a795",
+    "size": 78837,
+    "size_bucket": "size_ge25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan"
+    ],
+    "t": 0.29491966008452225,
+    "residual": 0.167458507136562
+  },
+  "ci-evidence-2026-07-21.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.29492196894435746,
+      "residual": 1.0043967119313109
+    },
+    "pca": [
+      -1.0793328391855086,
+      1.3040677463789752
+    ],
+    "sha": "c7ed05a",
+    "size": 7620,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_cross_reference",
+      "has_verification_plan"
+    ],
+    "t": 0.29492196894435746,
+    "residual": 1.0043967119313109
+  },
+  "covenant-conflict-policy-2026-07-25.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 0.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.16645285676555288,
+      "residual": 0.21614892034128824
+    },
+    "pca": [
+      -2.029884353784536,
+      -1.435183182748529
+    ],
+    "sha": "d31b41b",
+    "size": 6410,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_evidence",
+      "has_verification_plan"
+    ],
+    "t": 0.16645285676555288,
+    "residual": 0.21614892034128824
+  },
+  "current-position-evidence-2026-07-25.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.41708525377364264,
+      "residual": 0.8292987126933199
+    },
+    "pca": [
+      -0.287725686193183,
+      -0.7519312335375269
+    ],
+    "sha": "b0dca5c",
+    "size": 8937,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_recommendation",
+      "has_verification_plan"
+    ],
+    "t": 0.41708525377364264,
+    "residual": 0.8292987126933199
+  },
+  "curve-guided-rsi-and-self-differential-2026-08-04.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.7235726392575109,
+      "residual": 0.15640836001167388
+    },
+    "pca": [
+      2.2490124040540316,
+      0.29091090368883166
+    ],
+    "sha": "a3811e0",
+    "size": 16874,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.7235726392575109,
+    "residual": 0.15640836001167388
+  },
+  "curve-guided-rsi-v1-cycle4-all-skills-2026-08-04.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.5267087831325845,
+      "residual": 0.5208139924763556
+    },
+    "pca": [
+      0.2596807072570161,
+      -0.6533508323667437
+    ],
+    "sha": "ff6dd6b",
+    "size": 7655,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_verification_plan"
+    ],
+    "t": 0.5267087831325845,
+    "residual": 0.5208139924763556
+  },
+  "curve-guided-rsi-v1-cycles-2-3-run-2026-08-04.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.5267087831325845,
+      "residual": 0.5208139924763556
+    },
+    "pca": [
+      0.2596807072570161,
+      -0.6533508323667437
+    ],
+    "sha": "f858cea",
+    "size": 11180,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_verification_plan"
+    ],
+    "t": 0.5267087831325845,
+    "residual": 0.5208139924763556
+  },
+  "curve-guided-rsi-v1-fitness-test-run-2026-08-04.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 1.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.6809705501859533,
+      "residual": 0.18014752644775467
+    },
+    "pca": [
+      2.4741491022834925,
+      1.051418957685203
+    ],
+    "sha": "f8cffb2",
+    "size": 12815,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_cross_reference"
+    ],
+    "t": 0.6809705501859533,
+    "residual": 0.18014752644775467
+  },
+  "curve-guided-rsi-v2-cycle5-deep-research-2026-08-04.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 1.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.8031338350152385,
+      "residual": 0.13181929665315248
+    },
+    "pca": [
+      3.251034884177426,
+      -0.8165385825749661
+    ],
+    "sha": "d6a4c3b",
+    "size": 13064,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [],
+    "t": 0.8031338350152385,
+    "residual": 0.13181929665315248
+  },
+  "customer-roi-model-2026-07-25.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 1.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.7682085680921027,
+      "residual": 0.0682744054727612
+    },
+    "pca": [
+      1.927323710585992,
+      -2.431614144489149
+    ],
+    "sha": "8312253",
+    "size": 8264,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_recommendation",
+      "has_source_citation"
+    ],
+    "t": 0.7682085680921027,
+    "residual": 0.0682744054727612
+  },
+  "customer-roi-model-2026-07-26.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.4917835162094487,
+      "residual": 0.10055311450806079
+    },
+    "pca": [
+      -0.03970803288143802,
+      -1.2407047686480404
+    ],
+    "sha": "22b453b",
+    "size": 10967,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.4917835162094487,
+    "residual": 0.10055311450806079
+  },
+  "cycle4-results-2026-08-06.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 1.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.6460452832628174,
+      "residual": 0.7077957564069685
+    },
+    "pca": [
+      1.0817845473273529,
+      0.31327806325620994
+    ],
+    "sha": "671e8c9",
+    "size": 6028,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_cross_reference",
+      "has_source_citation"
+    ],
+    "t": 0.6460452832628174,
+    "residual": 0.7077957564069685
+  },
+  "cycle5-results-2026-08-06.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 1.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.6460429744029823,
+      "residual": 0.2579448253985049
+    },
+    "pca": [
+      1.1045723365613582,
+      -1.486019770251928
+    ],
+    "sha": "5498b0a",
+    "size": 10300,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_source_citation"
+    ],
+    "t": 0.6460429744029823,
+    "residual": 0.2579448253985049
+  },
+  "days-0-30-safe-offer-2026-07-25.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.41708525377364264,
+      "residual": 0.8292987126933199
+    },
+    "pca": [
+      -0.287725686193183,
+      -0.7519312335375269
+    ],
+    "sha": "f59dcf6",
+    "size": 6603,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_recommendation",
+      "has_verification_plan"
+    ],
+    "t": 0.41708525377364264,
+    "residual": 0.8292987126933199
+  },
+  "days-31-60-narrow-product-2026-07-25.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.41708525377364264,
+      "residual": 0.8292987126933199
+    },
+    "pca": [
+      -0.287725686193183,
+      -0.7519312335375269
+    ],
+    "sha": "e8988e2",
+    "size": 9291,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_recommendation",
+      "has_verification_plan"
+    ],
+    "t": 0.41708525377364264,
+    "residual": 0.8292987126933199
+  },
+  "days-61-90-willingness-to-pay-2026-07-25.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.8457382329466312,
+      "residual": 0.23430541524153622
+    },
+    "pca": [
+      2.0577938784227463,
+      -1.8146417843456621
+    ],
+    "sha": "c1decb5",
+    "size": 7655,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.8457382329466312,
+    "residual": 0.23430541524153622
+  },
+  "debug-with-cli-2026-08-01.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 1.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.8031338350152385,
+      "residual": 0.13181929665315248
+    },
+    "pca": [
+      2.268136746448033,
+      -2.373387838545474
+    ],
+    "sha": "d8acf54",
+    "size": 9096,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [],
+    "t": 0.8031338350152385,
+    "residual": 0.13181929665315248
+  },
+  "decisions-deferrals-rejected-models-2026-07-25.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 0.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 0.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.0,
+      "residual": 0.002960989183596351
+    },
+    "pca": [
+      -3.194443507312602,
+      -1.6784980872318254
+    ],
+    "sha": "f7b3daa",
+    "size": 9557,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_evidence",
+      "has_verification_plan",
+      "has_priority_signal"
+    ],
+    "t": 0.0,
+    "residual": 0.002960989183596351
+  },
+  "differential-curve-use-case-skill-land-grab-detection-2026-08-04.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 0.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 1.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.7493652941320752,
+      "residual": 0.08534889724708866
+    },
+    "pca": [
+      1.4242876881576587,
+      -2.2881206811514456
+    ],
+    "sha": "f6cc5da",
+    "size": 8014,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_evidence",
+      "has_source_citation"
+    ],
+    "t": 0.7493652941320752,
+    "residual": 0.08534889724708866
+  },
+  "digest-bump-checklist-2026-07-25.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562
+    },
+    "pca": [
+      -1.0115938330336758,
+      -1.0694083676057493
+    ],
+    "sha": "1283bd6",
+    "size": 10979,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan"
+    ],
+    "t": 0.29491966008452225,
+    "residual": 0.167458507136562
+  },
+  "docker-bake-consolidation-2026-07-17.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 0.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.12846911217880452,
+      "residual": 0.4880211498169394
+    },
+    "pca": [
+      -2.2086837751128567,
+      0.6110254434677227
+    ],
+    "sha": "6a67379",
+    "size": 7397,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_cross_reference",
+      "has_verification_plan",
+      "has_priority_signal"
+    ],
+    "t": 0.12846911217880452,
+    "residual": 0.4880211498169394
+  },
+  "docker-build-policies-reference-2026-07-23.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 0.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.12846680331896937,
+      "residual": 0.3929476242660224
+    },
+    "pca": [
+      -2.2270951603034574,
+      -0.6620203161217396
+    ],
+    "sha": "a77d28c",
+    "size": 7138,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan",
+      "has_priority_signal"
+    ],
+    "t": 0.12846680331896937,
+    "residual": 0.3929476242660224
+  },
+  "edgeless-reproducible-mkosi-research-2026-07-30.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 1.0,
+      "t": 0.5267087831325845,
+      "residual": 0.5208139924763556
+    },
+    "pca": [
+      0.8863821878898164,
+      0.5677775164711977
+    ],
+    "sha": "c080ca3",
+    "size": 31015,
+    "size_bucket": "size_ge25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_verification_plan"
+    ],
+    "t": 0.5267087831325845,
+    "residual": 0.5208139924763556
+  },
+  "endlessh-openwrt-fit-2026-07-17.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.5267110919924197,
+      "residual": 0.7835045115809698
+    },
+    "pca": [
+      1.2415254005466096,
+      2.425175547887621
+    ],
+    "sha": "2949eb2",
+    "size": 14128,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_cross_reference",
+      "has_verification_plan"
+    ],
+    "t": 0.5267110919924197,
+    "residual": 0.7835045115809698
+  },
+  "entity-governance-legal-2026-07-25.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 0.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.16645285676555288,
+      "residual": 0.21614892034128824
+    },
+    "pca": [
+      -2.029884353784536,
+      -1.435183182748529
+    ],
+    "sha": "009a11c",
+    "size": 9446,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_evidence",
+      "has_verification_plan"
+    ],
+    "t": 0.16645285676555288,
+    "residual": 0.21614892034128824
+  },
+  "external-benchmarks-sources-2026-07-25.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 0.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.2506323970080897,
+      "residual": 0.9932509125967102
+    },
+    "pca": [
+      -1.49608092651563,
+      -0.4358227557090513
+    ],
+    "sha": "08c55c0",
+    "size": 10694,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_recommendation",
+      "has_verification_plan",
+      "has_priority_signal"
+    ],
+    "t": 0.2506323970080897,
+    "residual": 0.9932509125967102
+  },
+  "external-benchmarks-sources-2026-07-26.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 0.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.12846680331896937,
+      "residual": 0.3929476242660224
+    },
+    "pca": [
+      -2.2270951603034574,
+      -0.6620203161217396
+    ],
+    "sha": "6b4257d",
+    "size": 11798,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan",
+      "has_priority_signal"
+    ],
+    "t": 0.12846680331896937,
+    "residual": 0.3929476242660224
+  },
+  "fedora-bootc-base-images-status-2026-07-23.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 0.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 1.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.16645285676555288,
+      "residual": 0.21614892034128824
+    },
+    "pca": [
+      -2.16573305738809,
+      0.19013474407848055
+    ],
+    "sha": "24a9d2f",
+    "size": 5957,
+    "size_bucket": "size_3to6k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_evidence",
+      "has_verification_plan"
+    ],
+    "t": 0.16645285676555288,
+    "residual": 0.21614892034128824
+  },
+  "fido2-ci-emulator-status-2026-07-23.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 1.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562
+    },
+    "pca": [
+      -1.1474425366372298,
+      0.5559095592212606
+    ],
+    "sha": "4c64883",
+    "size": 5460,
+    "size_bucket": "size_3to6k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan"
+    ],
+    "t": 0.29491966008452225,
+    "residual": 0.167458507136562
+  },
+  "firmware-rk-workflow-2026-07-17.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 0.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 1.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.12846911217880452,
+      "residual": 0.4880211498169394
+    },
+    "pca": [
+      -2.344532478716411,
+      2.236343370294732
+    ],
+    "sha": "495ef73",
+    "size": 3362,
+    "size_bucket": "size_3to6k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_cross_reference",
+      "has_verification_plan",
+      "has_priority_signal"
+    ],
+    "t": 0.12846911217880452,
+    "residual": 0.4880211498169394
+  },
+  "first-90-days-2026-07-25.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.8457382329466312,
+      "residual": 0.23430541524153622
+    },
+    "pca": [
+      2.0577938784227463,
+      -1.8146417843456621
+    ],
+    "sha": "4239716",
+    "size": 9158,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.8457382329466312,
+    "residual": 0.23430541524153622
+  },
+  "first-90-days-2026-07-28.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.8457382329466312,
+      "residual": 0.23430541524153622
+    },
+    "pca": [
+      2.0577938784227463,
+      -1.8146417843456621
+    ],
+    "sha": "36ed58e",
+    "size": 10828,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.8457382329466312,
+    "residual": 0.23430541524153622
+  },
+  "fork-upstream-drift-detection-schedule-2026-08-04.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 0.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 0.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.0,
+      "residual": 0.002960989183596351
+    },
+    "pca": [
+      -3.194443507312602,
+      -1.6784980872318254
+    ],
+    "sha": "1afb548",
+    "size": 10751,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_evidence",
+      "has_verification_plan",
+      "has_priority_signal"
+    ],
+    "t": 0.0,
+    "residual": 0.002960989183596351
+  },
+  "fractalrabbit-falsification-harness-2026-08-06.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.5267087831325845,
+      "residual": 0.5208139924763556
+    },
+    "pca": [
+      1.2425788449864097,
+      0.903498423603764
+    ],
+    "sha": "059c4d6",
+    "size": 13338,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_verification_plan"
+    ],
+    "t": 0.5267087831325845,
+    "residual": 0.5208139924763556
+  },
+  "frost-panfrost-lockout-2026-07-17.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 0.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.12846911217880452,
+      "residual": 0.4880211498169394
+    },
+    "pca": [
+      -2.2086837751128567,
+      0.6110254434677227
+    ],
+    "sha": "1f04d96",
+    "size": 6698,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_cross_reference",
+      "has_verification_plan",
+      "has_priority_signal"
+    ],
+    "t": 0.12846911217880452,
+    "residual": 0.4880211498169394
+  },
+  "gap-map-hyperspherical-harmonic-curve-2026-08-05.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.5267110919924197,
+      "residual": 0.7835045115809698
+    },
+    "pca": [
+      1.2415254005466096,
+      2.425175547887621
+    ],
+    "sha": "3fc909d",
+    "size": 13716,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_cross_reference",
+      "has_verification_plan"
+    ],
+    "t": 0.5267110919924197,
+    "residual": 0.7835045115809698
+  },
+  "hyperspherical-harmonic-curve-2026-08-05.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 1.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 1.0,
+      "residual": 0.0169593261698162
+    },
+    "pca": [
+      4.257941469355732,
+      0.07305285698393213
+    ],
+    "sha": "712ebbc",
+    "size": 13550,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_cross_reference",
+      "has_source_citation"
+    ],
+    "t": 1.0,
+    "residual": 0.0169593261698162
+  },
+  "hyperspherical-harmonic-curve-v1-fit-2026-08-05.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.5267087831325845,
+      "residual": 0.5208139924763556
+    },
+    "pca": [
+      0.2596807072570161,
+      -0.6533508323667437
+    ],
+    "sha": "5be819b",
+    "size": 8526,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_verification_plan"
+    ],
+    "t": 0.5267087831325845,
+    "residual": 0.5208139924763556
+  },
+  "image-builder-cli-fork-status-2026-07-23.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 0.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 0.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 1.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.0,
+      "residual": 0.002960989183596351
+    },
+    "pca": [
+      -3.3302922109161557,
+      -0.05318016040481554
+    ],
+    "sha": "59fa49f",
+    "size": 4772,
+    "size_bucket": "size_3to6k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_evidence",
+      "has_verification_plan",
+      "has_priority_signal"
+    ],
+    "t": 0.0,
+    "residual": 0.002960989183596351
+  },
+  "kernel-rootfs-split-2026-07-29.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 0.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 1.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.3207123149590865,
+      "residual": 0.40403426461763947
+    },
+    "pca": [
+      0.09375302449562153,
+      -0.07841679813969822
+    ],
+    "sha": "aacc2ec",
+    "size": 12972,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_evidence"
+    ],
+    "t": 0.3207123149590865,
+    "residual": 0.40403426461763947
+  },
+  "kvm-arm-nested-virtualization-2026-08-07.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.5267110919924197,
+      "residual": 0.7835045115809698
+    },
+    "pca": [
+      1.2415254005466096,
+      2.425175547887621
+    ],
+    "sha": "90932a4",
+    "size": 18743,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_cross_reference",
+      "has_verification_plan"
+    ],
+    "t": 0.5267110919924197,
+    "residual": 0.7835045115809698
+  },
+  "learned-latent-curve-rsi-v10-2026-08-03.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 1.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.8778344063108797,
+      "residual": 0.2625995502721667
+    },
+    "pca": [
+      3.4286904995583365,
+      1.1016689374281063
+    ],
+    "sha": "c7c66a4",
+    "size": 18543,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_cross_reference",
+      "has_source_citation"
+    ],
+    "t": 0.8778344063108797,
+    "residual": 0.2625995502721667
+  },
+  "learned-latent-curve-rsi-v11-v12-2026-08-03.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 1.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.8778344063108797,
+      "residual": 0.2625995502721667
+    },
+    "pca": [
+      3.4286904995583365,
+      1.1016689374281063
+    ],
+    "sha": "06ce6ed",
+    "size": 12037,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_cross_reference",
+      "has_source_citation"
+    ],
+    "t": 0.8778344063108797,
+    "residual": 0.2625995502721667
+  },
+  "learned-latent-curve-skill-quality-map-2026-08-03.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 1.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.8778344063108797,
+      "residual": 0.2625995502721667
+    },
+    "pca": [
+      3.4286904995583365,
+      1.1016689374281063
+    ],
+    "sha": "5cf342d",
+    "size": 14514,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_cross_reference",
+      "has_source_citation"
+    ],
+    "t": 0.8778344063108797,
+    "residual": 0.2625995502721667
+  },
+  "learned-latent-curve-yubios-artifact-primitives-coverage-flow-2026-08-04.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 1.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.8031338350152385,
+      "residual": 0.13181929665315248
+    },
+    "pca": [
+      3.251034884177426,
+      -0.8165385825749661
+    ],
+    "sha": "3164642",
+    "size": 13922,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [],
+    "t": 0.8031338350152385,
+    "residual": 0.13181929665315248
+  },
+  "libvfio-user-bundle-decision-2026-07-30.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.7235726392575109,
+      "residual": 0.15640836001167388
+    },
+    "pca": [
+      1.2661142663246383,
+      -1.265938352281676
+    ],
+    "sha": "b228b85",
+    "size": 7112,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.7235726392575109,
+    "residual": 0.15640836001167388
+  },
+  "luks-fido2-e2e-test-2026-07-23.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 1.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562
+    },
+    "pca": [
+      -1.1474425366372298,
+      0.5559095592212606
+    ],
+    "sha": "6079220",
+    "size": 4913,
+    "size_bucket": "size_3to6k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan"
+    ],
+    "t": 0.29491966008452225,
+    "residual": 0.167458507136562
+  },
+  "metrics-and-reporting-2026-07-25.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562
+    },
+    "pca": [
+      -1.0115938330336758,
+      -1.0694083676057493
+    ],
+    "sha": "1e17dd9",
+    "size": 8235,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan"
+    ],
+    "t": 0.29491966008452225,
+    "residual": 0.167458507136562
+  },
+  "mkosi-bcvk-fork-status-2026-07-23.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 0.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 0.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 1.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.0,
+      "residual": 0.002960989183596351
+    },
+    "pca": [
+      -3.3302922109161557,
+      -0.05318016040481554
+    ],
+    "sha": "c37cd9c",
+    "size": 5978,
+    "size_bucket": "size_3to6k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_evidence",
+      "has_verification_plan",
+      "has_priority_signal"
+    ],
+    "t": 0.0,
+    "residual": 0.002960989183596351
+  },
+  "naming-licensing-provenance-2026-07-25.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562
+    },
+    "pca": [
+      -1.0115938330336758,
+      -1.0694083676057493
+    ],
+    "sha": "d8e9a11",
+    "size": 9791,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan"
+    ],
+    "t": 0.29491966008452225,
+    "residual": 0.167458507136562
+  },
+  "negative-skill-space-2026-07-28.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 1.0,
+      "t": 0.49178582506928387,
+      "residual": 1.0261786632170353
+    },
+    "pca": [
+      0.5089554617463312,
+      2.4854523182911716
+    ],
+    "sha": "ebe424e",
+    "size": 28766,
+    "size_bucket": "size_ge25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_cross_reference",
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.49178582506928387,
+    "residual": 1.0261786632170353
+  },
+  "offer-pricing-architecture-2026-07-25.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 0.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.16645285676555288,
+      "residual": 0.21614892034128824
+    },
+    "pca": [
+      -2.029884353784536,
+      -1.435183182748529
+    ],
+    "sha": "f216026",
+    "size": 9521,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_evidence",
+      "has_verification_plan"
+    ],
+    "t": 0.16645285676555288,
+    "residual": 0.21614892034128824
+  },
+  "openwrt-deception-proof-plan-2026-07-17.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 0.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 1.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.12846911217880452,
+      "residual": 0.4880211498169394
+    },
+    "pca": [
+      -2.344532478716411,
+      2.236343370294732
+    ],
+    "sha": "584ae4d",
+    "size": 5228,
+    "size_bucket": "size_3to6k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_cross_reference",
+      "has_verification_plan",
+      "has_priority_signal"
+    ],
+    "t": 0.12846911217880452,
+    "residual": 0.4880211498169394
+  },
+  "openwrt-wireguard-deception-lan-prototype-2026-07-25.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 0.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 0.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.0,
+      "residual": 0.002960989183596351
+    },
+    "pca": [
+      -3.194443507312602,
+      -1.6784980872318254
+    ],
+    "sha": "6f5d14a",
+    "size": 8559,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_evidence",
+      "has_verification_plan",
+      "has_priority_signal"
+    ],
+    "t": 0.0,
+    "residual": 0.002960989183596351
+  },
+  "operating-covenant-2026-07-25.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 0.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 0.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.0,
+      "residual": 0.002960989183596351
+    },
+    "pca": [
+      -3.194443507312602,
+      -1.6784980872318254
+    ],
+    "sha": "8d5ba2f",
+    "size": 7683,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_evidence",
+      "has_verification_plan",
+      "has_priority_signal"
+    ],
+    "t": 0.0,
+    "residual": 0.002960989183596351
+  },
+  "org-state-audit-2026-07-23.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 0.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.16645516562538804,
+      "residual": 0.7578378384213962
+    },
+    "pca": [
+      -2.063336997064953,
+      0.5003407193240361
+    ],
+    "sha": "192b119",
+    "size": 6729,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_evidence",
+      "has_cross_reference",
+      "has_verification_plan"
+    ],
+    "t": 0.16645516562538804,
+    "residual": 0.7578378384213962
+  },
+  "osbuild-image-builder-2026-07-23.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 0.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.16645285676555288,
+      "residual": 0.21614892034128824
+    },
+    "pca": [
+      -2.029884353784536,
+      -1.435183182748529
+    ],
+    "sha": "74900be",
+    "size": 7123,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_evidence",
+      "has_verification_plan"
+    ],
+    "t": 0.16645285676555288,
+    "residual": 0.21614892034128824
+  },
+  "package-floor-verification-checklist-2026-08-04.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562
+    },
+    "pca": [
+      -0.02869569530428221,
+      0.48744088836475846
+    ],
+    "sha": "db7f951",
+    "size": 13830,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan"
+    ],
+    "t": 0.29491966008452225,
+    "residual": 0.167458507136562
+  },
+  "pilot-collateral-roi-baseline-2026-07-25.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 0.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.12846680331896937,
+      "residual": 0.3929476242660224
+    },
+    "pca": [
+      -2.2270951603034574,
+      -0.6620203161217396
+    ],
+    "sha": "91bf3da",
+    "size": 8408,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan",
+      "has_priority_signal"
+    ],
+    "t": 0.12846680331896937,
+    "residual": 0.3929476242660224
+  },
+  "planning-cycle-2026-07-11.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562
+    },
+    "pca": [
+      -1.0115938330336758,
+      -1.0694083676057493
+    ],
+    "sha": "3d16141",
+    "size": 7471,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan"
+    ],
+    "t": 0.29491966008452225,
+    "residual": 0.167458507136562
+  },
+  "post-quantum-tls-adoption-2026-07-23.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 0.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 1.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.12846680331896937,
+      "residual": 0.3929476242660224
+    },
+    "pca": [
+      -2.3629438639070117,
+      0.9632976107052702
+    ],
+    "sha": "83af9ed",
+    "size": 5846,
+    "size_bucket": "size_3to6k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan",
+      "has_priority_signal"
+    ],
+    "t": 0.12846680331896937,
+    "residual": 0.3929476242660224
+  },
+  "pr-campaign-research-2026-07-16.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.4170875626334778,
+      "residual": 0.4965070919063823
+    },
+    "pca": [
+      -0.21962767912921696,
+      -0.1135508081945471
+    ],
+    "sha": "0912fca",
+    "size": 7392,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_recommendation",
+      "has_cross_reference",
+      "has_verification_plan"
+    ],
+    "t": 0.4170875626334778,
+    "residual": 0.4965070919063823
+  },
+  "pr-friend-map-2026-07-17.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562
+    },
+    "pca": [
+      -0.02869569530428221,
+      0.48744088836475846
+    ],
+    "sha": "52beaba",
+    "size": 12857,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan"
+    ],
+    "t": 0.29491966008452225,
+    "residual": 0.167458507136562
+  },
+  "prior-art-autonomous-ideation-skill-2026-07-28.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.29492196894435746,
+      "residual": 1.0043967119313109
+    },
+    "pca": [
+      -0.09643470145611502,
+      2.8609170023494834
+    ],
+    "sha": "c6e261b",
+    "size": 21138,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_cross_reference",
+      "has_verification_plan"
+    ],
+    "t": 0.29492196894435746,
+    "residual": 1.0043967119313109
+  },
+  "prior-art-search-rsi-audit-2026-07-30.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 1.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.8778320974510445,
+      "residual": 0.37501734765529016
+    },
+    "pca": [
+      3.3861838053834252,
+      0.1364013433431398
+    ],
+    "sha": "56f2cf1",
+    "size": 12773,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_source_citation"
+    ],
+    "t": 0.8778320974510445,
+    "residual": 0.37501734765529016
+  },
+  "prior-art-state-of-art-2026-07-30.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562
+    },
+    "pca": [
+      -0.02869569530428221,
+      0.48744088836475846
+    ],
+    "sha": "220b41a",
+    "size": 16500,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan"
+    ],
+    "t": 0.29491966008452225,
+    "residual": 0.167458507136562
+  },
+  "public-security-funding-targets-2026-07-25.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562
+    },
+    "pca": [
+      -1.0115938330336758,
+      -1.0694083676057493
+    ],
+    "sha": "d5fdfdd",
+    "size": 9057,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan"
+    ],
+    "t": 0.29491966008452225,
+    "residual": 0.167458507136562
+  },
+  "readiness-gates-gtm-2026-07-25.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 1.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.7682085680921027,
+      "residual": 0.0682744054727612
+    },
+    "pca": [
+      1.927323710585992,
+      -2.431614144489149
+    ],
+    "sha": "d9c29a7",
+    "size": 11209,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_recommendation",
+      "has_source_citation"
+    ],
+    "t": 0.7682085680921027,
+    "residual": 0.0682744054727612
+  },
+  "readiness-gates-gtm-2026-07-28.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 1.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.7682085680921027,
+      "residual": 0.0682744054727612
+    },
+    "pca": [
+      2.9102218483153854,
+      -0.8747648885186412
+    ],
+    "sha": "3992561",
+    "size": 14974,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_recommendation",
+      "has_source_citation"
+    ],
+    "t": 0.7682085680921027,
+    "residual": 0.0682744054727612
+  },
+  "recursive-self-improvement-audit-2026-07-28.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.7235749481173461,
+      "residual": 0.6419426591530819
+    },
+    "pca": [
+      2.2220808184983003,
+      2.143138958218648
+    ],
+    "sha": "0deb288",
+    "size": 13992,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_cross_reference",
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.7235749481173461,
+    "residual": 0.6419426591530819
+  },
+  "refederated-identity-oidc-sigstore-privacy-2026-08-07.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.5267087831325845,
+      "residual": 0.5208139924763556
+    },
+    "pca": [
+      1.2425788449864097,
+      0.903498423603764
+    ],
+    "sha": "e78a35a",
+    "size": 18705,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_verification_plan"
+    ],
+    "t": 0.5267087831325845,
+    "residual": 0.5208139924763556
+  },
+  "release-gate-checklist-v2-2026-08-04.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562
+    },
+    "pca": [
+      -0.02869569530428221,
+      0.48744088836475846
+    ],
+    "sha": "e69c739",
+    "size": 21460,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan"
+    ],
+    "t": 0.29491966008452225,
+    "residual": 0.167458507136562
+  },
+  "repo-history-skill-2026-08-07.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.4917835162094487,
+      "residual": 0.10055311450806079
+    },
+    "pca": [
+      0.9431901048479555,
+      0.3161444873224674
+    ],
+    "sha": "a359cfc",
+    "size": 23605,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.4917835162094487,
+    "residual": 0.10055311450806079
+  },
+  "repo-history-skill-cycle-1-2026-08-07.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 1.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.49178582506928387,
+      "residual": 1.0261786632170353
+    },
+    "pca": [
+      0.3071000759403026,
+      4.924119850355293
+    ],
+    "sha": "1b15417",
+    "size": 2069,
+    "size_bucket": "size_lt3k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_cross_reference",
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.49178582506928387,
+    "residual": 1.0261786632170353
+  },
+  "repo-history-skill-cycle-2-2026-08-07.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.7235726392575109,
+      "residual": 0.15640836001167388
+    },
+    "pca": [
+      1.2661142663246383,
+      -1.265938352281676
+    ],
+    "sha": "f38aa5a",
+    "size": 8147,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.7235726392575109,
+    "residual": 0.15640836001167388
+  },
+  "repo-history-skill-cycle-3-2026-08-07.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.7235726392575109,
+      "residual": 0.15640836001167388
+    },
+    "pca": [
+      1.2661142663246383,
+      -1.265938352281676
+    ],
+    "sha": "17b1bea",
+    "size": 6405,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.7235726392575109,
+    "residual": 0.15640836001167388
+  },
+  "repo-history-skill-cycle-4-2026-08-07-changelog.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 1.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.4917835162094487,
+      "residual": 0.10055311450806079
+    },
+    "pca": [
+      -0.17555673648499212,
+      0.3846131581789694
+    ],
+    "sha": "d2ecb70",
+    "size": 4287,
+    "size_bucket": "size_3to6k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.4917835162094487,
+    "residual": 0.10055311450806079
+  },
+  "repo-history-skill-cycle-4-2026-08-07.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.7235726392575109,
+      "residual": 0.15640836001167388
+    },
+    "pca": [
+      1.2661142663246383,
+      -1.265938352281676
+    ],
+    "sha": "78b58ea",
+    "size": 8787,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.7235726392575109,
+    "residual": 0.15640836001167388
+  },
+  "repo-history-skill-deep-research-2026-08-07.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.4917835162094487,
+      "residual": 0.10055311450806079
+    },
+    "pca": [
+      0.9431901048479555,
+      0.3161444873224674
+    ],
+    "sha": "a359cfc",
+    "size": 23605,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.4917835162094487,
+    "residual": 0.10055311450806079
+  },
+  "repo-refs-skill-deep-research-2026-08-07.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 1.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.8031338350152385,
+      "residual": 0.13181929665315248
+    },
+    "pca": [
+      3.251034884177426,
+      -0.8165385825749661
+    ],
+    "sha": "35f2117",
+    "size": 17182,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [],
+    "t": 0.8031338350152385,
+    "residual": 0.13181929665315248
+  },
+  "reproducible-builds-2026-07-22.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.4170875626334778,
+      "residual": 0.4965070919063823
+    },
+    "pca": [
+      -0.21962767912921696,
+      -0.1135508081945471
+    ],
+    "sha": "488e050",
+    "size": 9437,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_recommendation",
+      "has_cross_reference",
+      "has_verification_plan"
+    ],
+    "t": 0.4170875626334778,
+    "residual": 0.4965070919063823
+  },
+  "research-refresh-2026-07-11.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.29492196894435746,
+      "residual": 1.0043967119313109
+    },
+    "pca": [
+      -1.0793328391855086,
+      1.3040677463789752
+    ],
+    "sha": "d120c91",
+    "size": 6852,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_cross_reference",
+      "has_verification_plan"
+    ],
+    "t": 0.29492196894435746,
+    "residual": 1.0043967119313109
+  },
+  "rk3588-ddr-tpl-source-2026-07-29.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562
+    },
+    "pca": [
+      -1.0115938330336758,
+      -1.0694083676057493
+    ],
+    "sha": "d7409b6",
+    "size": 6348,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan"
+    ],
+    "t": 0.29491966008452225,
+    "residual": 0.167458507136562
+  },
+  "roadmap-promotion-gates-2026-07-17.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 1.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.49178582506928387,
+      "residual": 1.0261786632170353
+    },
+    "pca": [
+      -0.2535947224900232,
+      2.88964189628024
+    ],
+    "sha": "32a7a90",
+    "size": 4509,
+    "size_bucket": "size_3to6k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_cross_reference",
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.49178582506928387,
+    "residual": 1.0261786632170353
+  },
+  "rsi-five-skill-pass-2026-07-29.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 1.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 0.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.28272857037233806,
+      "residual": 0.7051969946838826
+    },
+    "pca": [
+      -1.0713459474600184,
+      0.45439005902262664
+    ],
+    "sha": "9c3700a",
+    "size": 9224,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_cross_reference",
+      "has_priority_signal"
+    ],
+    "t": 0.28272857037233806,
+    "residual": 0.7051969946838826
+  },
+  "sbsign-pkcs11-validate-2026-07-23.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 0.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 1.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.3633167128904793,
+      "residual": 0.8559998319033212
+    },
+    "pca": [
+      -1.2759206243785066,
+      1.0671913810649123
+    ],
+    "sha": "bb1fac4",
+    "size": 3193,
+    "size_bucket": "size_3to6k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_evidence",
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.3633167128904793,
+    "residual": 0.8559998319033212
+  },
+  "sealed-uki-vm-test-2026-07-30.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 1.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.7682085680921027,
+      "residual": 0.0682744054727612
+    },
+    "pca": [
+      1.927323710585992,
+      -2.431614144489149
+    ],
+    "sha": "a4bbd30",
+    "size": 10437,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_recommendation",
+      "has_source_citation"
+    ],
+    "t": 0.7682085680921027,
+    "residual": 0.0682744054727612
+  },
+  "sectime-rk-secure-time-2026-07-17.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 0.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 1.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.12846911217880452,
+      "residual": 0.4880211498169394
+    },
+    "pca": [
+      -2.344532478716411,
+      2.236343370294732
+    ],
+    "sha": "6754ebe",
+    "size": 5404,
+    "size_bucket": "size_3to6k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_cross_reference",
+      "has_verification_plan",
+      "has_priority_signal"
+    ],
+    "t": 0.12846911217880452,
+    "residual": 0.4880211498169394
+  },
+  "slsa-l3-sbom-cosign-integration-spec-2026-08-04.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 1.0,
+      "t": 0.41708525377364264,
+      "residual": 0.8292987126933199
+    },
+    "pca": [
+      0.33897579443961723,
+      0.4691971153004144
+    ],
+    "sha": "32037a0",
+    "size": 82308,
+    "size_bucket": "size_ge25k",
+    "missing_primitives": [
+      "has_recommendation",
+      "has_verification_plan"
+    ],
+    "t": 0.41708525377364264,
+    "residual": 0.8292987126933199
+  },
+  "systemd-hardening-audit-2026-07-17.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 1.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.6139514187584042,
+      "residual": 0.9705207008651694
+    },
+    "pca": [
+      0.5535942100439083,
+      2.142832260429158
+    ],
+    "sha": "ffd016f",
+    "size": 4299,
+    "size_bucket": "size_3to6k",
+    "missing_primitives": [
+      "has_recommendation",
+      "has_cross_reference",
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.6139514187584042,
+    "residual": 0.9705207008651694
+  },
+  "systemd-homed-reference-2026-07-23.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 0.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.16645516562538804,
+      "residual": 0.7578378384213962
+    },
+    "pca": [
+      -2.063336997064953,
+      0.5003407193240361
+    ],
+    "sha": "242e12c",
+    "size": 11118,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_evidence",
+      "has_cross_reference",
+      "has_verification_plan"
+    ],
+    "t": 0.16645516562538804,
+    "residual": 0.7578378384213962
+  },
+  "systemd-unit-directive-reference-2026-07-23.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 0.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.12846911217880452,
+      "residual": 0.4880211498169394
+    },
+    "pca": [
+      -1.2257856373834632,
+      2.1678746994382307
+    ],
+    "sha": "6264c6b",
+    "size": 14301,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_cross_reference",
+      "has_verification_plan",
+      "has_priority_signal"
+    ],
+    "t": 0.12846911217880452,
+    "residual": 0.4880211498169394
+  },
+  "systemd-upstream-progress-2026-07-21.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.29492196894435746,
+      "residual": 1.0043967119313109
+    },
+    "pca": [
+      -1.0793328391855086,
+      1.3040677463789752
+    ],
+    "sha": "89d81ef",
+    "size": 10921,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_cross_reference",
+      "has_verification_plan"
+    ],
+    "t": 0.29492196894435746,
+    "residual": 1.0043967119313109
+  },
+  "systemd-v262-audit-2026-07-14.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 0.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 0.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 1.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.0,
+      "residual": 0.002960989183596351
+    },
+    "pca": [
+      -3.3302922109161557,
+      -0.05318016040481554
+    ],
+    "sha": "2242d3f",
+    "size": 4544,
+    "size_bucket": "size_3to6k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_evidence",
+      "has_verification_plan",
+      "has_priority_signal"
+    ],
+    "t": 0.0,
+    "residual": 0.002960989183596351
+  },
+  "team-budget-use-of-funds-2026-07-25.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 0.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.16645285676555288,
+      "residual": 0.21614892034128824
+    },
+    "pca": [
+      -2.029884353784536,
+      -1.435183182748529
+    ],
+    "sha": "1e33316",
+    "size": 8022,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_evidence",
+      "has_verification_plan"
+    ],
+    "t": 0.16645285676555288,
+    "residual": 0.21614892034128824
+  },
+  "testing-production-gaps-2026-08-01.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.7235726392575109,
+      "residual": 0.15640836001167388
+    },
+    "pca": [
+      2.2490124040540316,
+      0.29091090368883166
+    ],
+    "sha": "8277241",
+    "size": 14675,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.7235726392575109,
+    "residual": 0.15640836001167388
+  },
+  "three-year-revenue-cost-model-2026-07-25.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 0.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.12846680331896937,
+      "residual": 0.3929476242660224
+    },
+    "pca": [
+      -2.2270951603034574,
+      -0.6620203161217396
+    ],
+    "sha": "a5a5e19",
+    "size": 9091,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan",
+      "has_priority_signal"
+    ],
+    "t": 0.12846680331896937,
+    "residual": 0.3929476242660224
+  },
+  "v261-base-image-bump-2026-07-23.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 1.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.4917835162094487,
+      "residual": 0.10055311450806079
+    },
+    "pca": [
+      -0.17555673648499212,
+      0.3846131581789694
+    ],
+    "sha": "9aa26c1",
+    "size": 3720,
+    "size_bucket": "size_3to6k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.4917835162094487,
+    "residual": 0.10055311450806079
+  },
+  "validate-input-shape-doctrine-2026-08-04.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 1.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 1.0,
+      "t": 0.5713447119671762,
+      "residual": 0.7657862193203163
+    },
+    "pca": [
+      1.5089090682178543,
+      -0.10379178504307306
+    ],
+    "sha": "90b9671",
+    "size": 73241,
+    "size_bucket": "size_ge25k",
+    "missing_primitives": [
+      "has_recommendation"
+    ],
+    "t": 0.5713447119671762,
+    "residual": 0.7657862193203163
+  },
+  "vgpu-vfio-user-trust-boundary-2026-07-25.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.4917835162094487,
+      "residual": 0.10055311450806079
+    },
+    "pca": [
+      -0.03970803288143802,
+      -1.2407047686480404
+    ],
+    "sha": "80aaeea",
+    "size": 11595,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.4917835162094487,
+    "residual": 0.10055311450806079
+  },
+  "vm-e2e-run-29525332901.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 1.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.29491966008452225,
+      "residual": 0.167458507136562
+    },
+    "pca": [
+      -1.1474425366372298,
+      0.5559095592212606
+    ],
+    "sha": "b5764d1",
+    "size": 5349,
+    "size_bucket": "size_3to6k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan"
+    ],
+    "t": 0.29491966008452225,
+    "residual": 0.167458507136562
+  },
+  "who-pays-and-why-2026-07-25.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 0.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 0.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.0,
+      "residual": 0.002960989183596351
+    },
+    "pca": [
+      -3.194443507312602,
+      -1.6784980872318254
+    ],
+    "sha": "798a994",
+    "size": 8498,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_evidence",
+      "has_verification_plan",
+      "has_priority_signal"
+    ],
+    "t": 0.0,
+    "residual": 0.002960989183596351
+  },
+  "workflow-dispatch-reachability-spec-2026-08-04.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 0.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.12846680331896937,
+      "residual": 0.3929476242660224
+    },
+    "pca": [
+      -1.244197022574064,
+      0.8948289398487681
+    ],
+    "sha": "83d6c85",
+    "size": 12249,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan",
+      "has_priority_signal"
+    ],
+    "t": 0.12846680331896937,
+    "residual": 0.3929476242660224
+  },
+  "workflow-patterns-deep-dive-2026-07-30.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.7235726392575109,
+      "residual": 0.15640836001167388
+    },
+    "pca": [
+      2.2490124040540316,
+      0.29091090368883166
+    ],
+    "sha": "8f60e3d",
+    "size": 15144,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.7235726392575109,
+    "residual": 0.15640836001167388
+  },
+  "workflow-token-scope-audit-script-2026-08-04.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 0.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.12846680331896937,
+      "residual": 0.3929476242660224
+    },
+    "pca": [
+      -1.244197022574064,
+      0.8948289398487681
+    ],
+    "sha": "bec3d18",
+    "size": 13293,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan",
+      "has_priority_signal"
+    ],
+    "t": 0.12846680331896937,
+    "residual": 0.3929476242660224
+  },
+  "y33-fibonacci-sphere-paper-method-equation-block-2026-08-07.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 0.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.5267110919924197,
+      "residual": 0.7835045115809698
+    },
+    "pca": [
+      1.2415254005466096,
+      2.425175547887621
+    ],
+    "sha": "2672cb0",
+    "size": 20095,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_cross_reference",
+      "has_verification_plan"
+    ],
+    "t": 0.5267110919924197,
+    "residual": 0.7835045115809698
+  },
+  "y33-fibonacci-sphere-paper-revised-passage-2026-08-07.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.5267087831325845,
+      "residual": 0.5208139924763556
+    },
+    "pca": [
+      1.2425788449864097,
+      0.903498423603764
+    ],
+    "sha": "582b873",
+    "size": 17113,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_verification_plan"
+    ],
+    "t": 0.5267087831325845,
+    "residual": 0.5208139924763556
+  },
+  "yubikey-hw-validation-scenarios-2026-07-25.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 0.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.28861845045467327,
+      "residual": 1.0563569946345006
+    },
+    "pca": [
+      -1.3267295015980278,
+      -0.8531275851167764
+    ],
+    "sha": "5d30521",
+    "size": 8437,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_recommendation",
+      "has_evidence",
+      "has_verification_plan"
+    ],
+    "t": 0.28861845045467327,
+    "residual": 1.0563569946345006
+  },
+  "yubios-ci-strategy-history-2026-07-23.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 0.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 1.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.3633167128904793,
+      "residual": 0.8559998319033212
+    },
+    "pca": [
+      -1.2759206243785066,
+      1.0671913810649123
+    ],
+    "sha": "dc05186",
+    "size": 5279,
+    "size_bucket": "size_3to6k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_evidence",
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.3633167128904793,
+    "residual": 0.8559998319033212
+  },
+  "yubios-reproducibility-equivalents-2026-07-30.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.5267087831325845,
+      "residual": 0.5208139924763556
+    },
+    "pca": [
+      0.2596807072570161,
+      -0.6533508323667437
+    ],
+    "sha": "0ac3854",
+    "size": 10750,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_verification_plan"
+    ],
+    "t": 0.5267087831325845,
+    "residual": 0.5208139924763556
+  },
+  "yubios-scamper-product-brief-investor-memo-2026-08-07.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 1.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.8778320974510445,
+      "residual": 0.37501734765529016
+    },
+    "pca": [
+      3.3861838053834252,
+      0.1364013433431398
+    ],
+    "sha": "681b97d",
+    "size": 24674,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_source_citation"
+    ],
+    "t": 0.8778320974510445,
+    "residual": 0.37501734765529016
+  },
+  "yubios-stress-test-assertions-2026-08-07.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 1.0,
+      "size_ge25k": 0.0,
+      "t": 0.5267087831325845,
+      "residual": 0.5208139924763556
+    },
+    "pca": [
+      1.2425788449864097,
+      0.903498423603764
+    ],
+    "sha": "ccbd0a0",
+    "size": 18107,
+    "size_bucket": "size_12to25k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_verification_plan"
+    ],
+    "t": 0.5267087831325845,
+    "residual": 0.5208139924763556
+  },
+  "yubios-trust-proof-playbook-checklist-2026-08-07.md": {
+    "axes": {
+      "has_problem_statement": 1.0,
+      "has_recommendation": 1.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 1.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 0.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 1.0,
+      "t": 0.8031338350152385,
+      "residual": 0.13181929665315248
+    },
+    "pca": [
+      2.894838227080833,
+      -1.1522594897075324
+    ],
+    "sha": "907f212",
+    "size": 27190,
+    "size_bucket": "size_ge25k",
+    "missing_primitives": [],
+    "t": 0.8031338350152385,
+    "residual": 0.13181929665315248
+  },
+  "yubios-versioning-scheme-2026-08-04.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 1.0,
+      "has_priority_signal": 0.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.12846680331896937,
+      "residual": 0.3929476242660224
+    },
+    "pca": [
+      -2.2270951603034574,
+      -0.6620203161217396
+    ],
+    "sha": "7ddcb68",
+    "size": 9331,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan",
+      "has_priority_signal"
+    ],
+    "t": 0.12846680331896937,
+    "residual": 0.3929476242660224
+  },
+  "zboot-workaround-runner-qemu-audit-2026-07-25.md": {
+    "axes": {
+      "has_problem_statement": 0.0,
+      "has_recommendation": 0.0,
+      "has_evidence": 1.0,
+      "has_cross_reference": 1.0,
+      "has_verification_plan": 0.0,
+      "has_source_citation": 0.0,
+      "has_priority_signal": 1.0,
+      "size_lt3k": 0.0,
+      "size_3to6k": 0.0,
+      "size_6to12k": 1.0,
+      "size_12to25k": 0.0,
+      "size_ge25k": 0.0,
+      "t": 0.4917835162094487,
+      "residual": 0.10055311450806075
+    },
+    "pca": [
+      -0.03970803288143801,
+      -1.2407047686480404
+    ],
+    "sha": "e1b8060",
+    "size": 6142,
+    "size_bucket": "size_6to12k",
+    "missing_primitives": [
+      "has_problem_statement",
+      "has_recommendation",
+      "has_verification_plan",
+      "has_source_citation"
+    ],
+    "t": 0.4917835162094487,
+    "residual": 0.10055311450806075
+  }
+}
