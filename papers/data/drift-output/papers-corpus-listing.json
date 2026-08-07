@@ -1,117 +1,16 @@
 {
-  "label": "papers-corpus",
-  "n_items": 494,
-  "n_primitives": 9,
-  "primitives": [
-    "attestation",
-    "trust_chain",
-    "least_privilege",
-    "declarative_policy",
-    "continuous_adaptive",
-    "immutability",
-    "audit_evidence",
-    "cryptographic_identity",
-    "segmentation"
+  "_deprecated": true,
+  "_deprecated_at": "2026-08-07",
+  "_deprecated_in": "curve-drift-detector.py 4-corpus refactor",
+  "_replaced_by": [
+    "self-corpus-listing.json",
+    "docs-corpus-listing.json",
+    "refs-corpus-listing.json",
+    "cycle4-corpus-listing.json"
   ],
-  "items_sample": [
-    {
-      "id": "0pointer-mastery@c1",
-      "primitive_coverage": [
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1
-      ],
-      "text": "0pointer-mastery cycle 1",
-      "source": "papers-corpus",
-      "delta_d": 0.0,
-      "d_pre": 0.0,
-      "d_post": 0.0
-    },
-    {
-      "id": "api-and-interface-design@c1",
-      "primitive_coverage": [
-        1,
-        1,
-        1,
-        1,
-        0,
-        1,
-        1,
-        1,
-        1
-      ],
-      "text": "api-and-interface-design cycle 1",
-      "source": "papers-corpus",
-      "delta_d": 0.0904,
-      "d_pre": 1.2451,
-      "d_post": 1.1547
-    },
-    {
-      "id": "arm-trusted-firmware-optee@c1",
-      "primitive_coverage": [
-        1,
-        1,
-        1,
-        1,
-        0,
-        1,
-        1,
-        1,
-        1
-      ],
-      "text": "arm-trusted-firmware-optee cycle 1",
-      "source": "papers-corpus",
-      "delta_d": 0.0904,
-      "d_pre": 1.2451,
-      "d_post": 1.1547
-    },
-    {
-      "id": "ascii-uart-animator@c1",
-      "primitive_coverage": [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        1
-      ],
-      "text": "ascii-uart-animator cycle 1",
-      "source": "papers-corpus",
-      "delta_d": 0.0678,
-      "d_pre": 1.9758,
-      "d_post": 1.908
-    },
-    {
-      "id": "audit-evidence-packaging@c1",
-      "primitive_coverage": [
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1
-      ],
-      "text": "audit-evidence-packaging cycle 1",
-      "source": "papers-corpus",
-      "delta_d": 0.0,
-      "d_pre": 0.0,
-      "d_post": 0.0
-    }
-  ],
-  "items_count_by_source": {
-    "papers-corpus": 474,
-    "papers-corpus-aggregate": 20
-  }
+  "_reason": "The 2-corpus version of curve-drift-detector.py loaded the 79-skill multi-cycle JSON as 'papers-corpus'. The 4-corpus refactor replaces that with four on-disk corpora: self (memory/personal-WbtUgeUv/, 111 ##-section items), docs (documents/personal-WbtUgeUv/, 37 ##-section items), refs (documents/github-yubios-KS9n5GAT/refs/, 55 ##-section items), and cycle4 (papers/data/repo-history-skill-cycle-4-archive-2026-08-07.json, 324 repo-history events). The old papers-corpus concept is gone; this file is preserved as a deprecation stub so old links don't 404.",
+  "n_items": 0,
+  "primitives": [],
+  "items_sample": [],
+  "items_count_by_source": {}
 }
