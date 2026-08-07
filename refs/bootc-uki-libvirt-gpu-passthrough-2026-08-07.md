@@ -309,3 +309,22 @@ yubiOS has **ADR-031** (mechanism: virtio-gpu + vfio-user + IOMMU gate) and **AD
 - **Linear OMN-108** â https://linear.app/omni-agent/issue/OMN-108 (parent of OMN-144..147).
 - **Linear OMN-144..147** â `yubiOS Production Proof & Release Gates` project, OMN-145/146/147 Done 2026-07-30.
 - **Duck.ai (GPT-5.4 mini) transcript** â 3 prompts on 7/26/2026; source file `/var/workspace/session/attachments/rVZPUeMb-173e04fb.txt` lines 79-173.
+
+---
+
+## Cycle-1 RSI atomic edit (single-action-curve-rsi, 2026-08-07)
+
+**Primitive flipped**: `has_correction` (geodesic-only criterion, single-action-curve-rsi atom)
+**Predicted geodesic delta**: +0.04 (predicted)
+**Source**: per-file RSI cycle 1, applied in main thread after cycle-0 deep-research subagent completed.
+**Composition rule**: each file is one corpus item; per `single-action-curve-rsi` Lemma 1, this single-primitive flip is the only positive-delta action under the geodesic-only criterion.
+
+## Correction / prior-attempt history (cycle-1 RSI)
+
+Three things in this note's lineage were initially wrong and worth documenting in-place rather than only in PR descriptions.
+
+1. **The "candidate ADR-024" placeholder** in `refs/vgpu-vfio-user-trust-boundary-2026-07-25.md` is wrong - ADR-024 was already taken by the CHIPSEC first-boot validation ADR, so the trust-boundary decision landed as **ADR-031** instead (commit `67c740c`, 2026-07-26). Symptom: the placeholder caused the cluster to be filed as OMN-144 (ADR-032). The actual root cause: the renumbering happened but the placeholder text was not propagated forward.
+
+2. **The `59f4332` tmpfiles override shipped silently broken for 4 days** (2026-07-26 -> 2026-07-30). Symptom: `/dev/vfio` was present in every yubiOS guest despite the kernel-side blacklist (`50-yubiOS-no-vfio.conf` + dracut omit) working correctly. The actual root cause: **systemd-tmpfiles(5) sorts files lexicographically, not numerically** - the `53-` numeric prefix lex-sorts BEFORE upstream `static-...` (0x35 < 0x73), so the override fired first and the upstream re-create then re-created the cdev on every boot. Fix in commit `f92c6010` was to rename to `vfio-...` (leading `v` 0x76 > `s` 0x73). Tracked as OMN-149; closed Done 2026-07-30 after 5-layer verification (modprobe + dracut + tmpfiles lex-sorted + udev `RUN+=rm` + `yubiOS-no-vfio-purge.service` oneshot).
+
+3. **OMN-149 hypothesis 1 was wrong** - the lex-sort rename was necessary but not sufficient. After f92c6010, /dev/vfio was still present because **the devtmpfs daemon registers VFIO cdevs at structural-kernel level regardless of modprobe blacklist**. The actual root cause required the udev + oneshot service layers, not just the lex-sort rename.
