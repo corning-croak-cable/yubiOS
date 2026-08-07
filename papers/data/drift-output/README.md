@@ -1,107 +1,94 @@
-# Curve drift detector (PR4 of the hypersphere RSI series)
+# Curve drift detector (PR4, 4-corpus version)
 
 ## What this is
-Cross-corpus drift detector: aligns the harmonic curve fit on
-`papers/data/` (papers-corpus: 9-primitive primitive coverage of the 79-skill
-yubiOS corpus × 6 RSI cycles + 20 corpus-level single-action cycles) against
-the harmonic curve fit on the SELF-doc corpus (10 memory files in
-`memory/personal-WbtUgeUv/`, with each `## Section` as one item per the
-`curve-guided-rsi-self` granularity rule), computes the Möbius
-φ_θ ∈ PSL(2,ℂ) warp between them, and flags regions of large warp as drift
-signals. Drift signals feed self-archaeology cadence dispatch.
+
+Cross-corpus drift detector for FOUR corpora, all anchored on `self` (the
+canonical self-archaeology dispatch target):
+
+| Corpus | Path | Item unit | Items |
+|---|---|---|---|
+| `self` (anchor) | `memory/personal-WbtUgeUv/` | `## Section` header | 111 |
+| `docs` | `documents/personal-WbtUgeUv/` | `## Section` header | 37 |
+| `refs` | `documents/github-yubios-KS9n5GAT/refs/` | `## Section` header | 55 |
+| `cycle4` | `papers/data/repo-history-skill-cycle-4-archive-2026-08-07.json` | per-event row | 324 |
+
+Each corpus's `## Section` rows are scored against the SHARED 9-D
+`internal-big-picture` primitive basis (text-keyword for self/docs/refs/cycle4;
+the cycle4 items additionally keep their native repo-history 9-D coverage in
+the archive). Three Möbius φ_θ ∈ PSL(2,ℂ) warps fit self → docs, self → refs,
+self → cycle4 (all anchored on self). Drift signals (warp magnitude × NSS-axis
+score) are aggregated across all 3 alignments and ranked in
+`drift-priority-list.md`.
+
+## Outputs
+
+| File | Description |
+|---|---|
+| `self-corpus-listing.json` | Listing of self-corpus items (sections) |
+| `docs-corpus-listing.json` | Listing of docs-corpus items (sections) |
+| `refs-corpus-listing.json` | Listing of refs-corpus items (sections) |
+| `cycle4-corpus-listing.json` | Listing of cycle4-corpus items (events) |
+| `mobius-transform.json` | Fitted φ_θ params for all 3 alignments |
+| `warp-by-region.csv` | Per-region warp + NSS scores for all 3 alignments |
+| `drift-priority-list.md` | Top-10 flagged drift regions (aggregated) |
+| `aligned-curves.png` | 4 corpus point clouds + 3 warped-A point clouds on S^2 |
+| `README.md` | This file |
+
+## Math conventions (frozen)
+
+- **9-D `internal-big-picture` primitive basis** (9 of 10 primitives;
+  `self_describing` dropped at 94% coverage). SHARED across all 4 corpora
+  (cross-corpus deviation from per-corpus basis rule).
+- **Extended keyword vocab** (vs the 2-corpus version) — adds git/Linear/
+  PR/commit vocabulary so cycle4 items register meaningfully on the same
+  basis as self/docs/refs. New terms per primitive include `cosign`,
+  `provenance`, `gpg`, `signed commit`, `branch protection`, `ci`,
+  `workflow`, `changelog`, `commit history`, `sha`, etc.
+- **LOOSE-UNION kept-cols rule** — a primitive is kept if ANY of the 4
+  corpora has informative coverage on it (coverage ∈ [0.10, 0.90]).
+  Strict-and-union collapsed too aggressively when self/docs/refs are
+  saturated on `attestation` but cycle4 has meaningful variation.
+- **Identity-init Möbius**: φ_θ = (a=1, b=0, c=0, d=1), refined via
+  L-BFGS-B with 6 random perturbations; objective = mean squared chordal
+  distance in the stereographed C plane.
+- **Frozen degree weights**: frequencies are the cold-start harmonic
+  series 1, 2, ..., k (k=8); NOT refined.
+- **Chordal S² distance**: used as proxy for geodesic distance.
+- **Sub-20 decomposition rule**: NOT applied; all 4 corpora are above 20
+  items.
 
 ## How to regenerate
-1. Make sure the GitHub connection `conn_1KXnkOHGgyE4` (MASTER GIT SU) is
-   active. Download the papers-corpus files into
-   `session/papers-data-cache/`:
-   ```
-   curl -sL -H "X-Sauna-Connection-Id: conn_1KXnkOHGgyE4" \
-        -H "Accept: application/vnd.github.v3.raw" \
-        "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/single-action-curve-rsi-cycles-2026-08-05.json" \
-        -o session/papers-data-cache/single.json
-   curl -sL -H "X-Sauna-Connection-Id: conn_1KXnkOHGgyE4" \
-        -H "Accept: application/vnd.github.v3.raw" \
-        "https://api.github.com/repos/yubi-OS/yubiOS/contents/papers/data/rsi-79-corpus-multi-cycle-2026-08-06.json" \
-        -o session/papers-data-cache/multi.json
-   ```
-2. Run from the workspace root:
-   ```
-   python3 documents/github-yubios-KS9n5GAT/papers/scripts/curve-drift-detector.py
-   ```
-3. Outputs land in
-   `documents/github-yubios-KS9n5GAT/papers/data/drift-output/`.
 
-## Math conventions (frozen per parent's contract)
-- **9-D `internal-big-picture` primitive basis** (9 of 10 primitives; the
-  10th, `self_describing`, dropped at 94% coverage per
-  `internal-big-picture`'s near-constant rule). Same basis for BOTH corpora
-  (cross-corpus deviation from `curve-guided-rsi-self`'s per-corpus basis
-  rule — documented as an explicit simplification for this artifact).
-- **Identity-init Möbius**: φ_θ start = (a=1, b=0, c=0, d=1), refined via
-  L-BFGS-B with 6 random perturbations around identity; objective = mean
-  squared chordal distance in the stereographed C plane.
-- **Frozen degree weights**: frequencies are the cold-start harmonic series
-  1, 2, ..., k (k=8); NOT refined in this artifact per the parent's
-  "frozen degree weights" rule.
-- **Chordal S² distance**: used as proxy for geodesic distance in the
-  cross-ratio check + sparse-cell detection (r ≈ 0.095 per parent's
-  `hyperspherical-harmonic-curve` `## Empirical Validation — v2`).
-- **Sub-20 decomposition rule**: NOT applied; both corpora are well above
-  the ≥20 gate (`papers-corpus` = 494 items,
-  `self-corpus` = 111 items).
-- **Pipeline**:
-  1. 9-D binary coverage → drop near-constant cols (coverage ∈ [0.10, 0.90])
-  2. INTERSECTION of kept cols across corpora for cross-corpus comparison
-  3. Seeded QR lift to D=384 (seed 12345; deterministic)
-  4. PCA top-2 (with rank-uniformization per parent's robustness rule)
-  5. Lat/lon lift to S² (theta = π·u, phi = 2π·v)
-  6. Harmonic curve fit per corpus (closed-form ridge, k=8 frozen freqs)
-  7. Möbius alignment (identity init → L-BFGS-B; cross-ratio check)
-  8. Per-region warp (n_samples = 24; chordal S² distance to
-     closest point on dense-sampled curve-B)
-  9. NSS-axis scoring per region (12-axis keyword sweep from
-     `self-archaeology`)
-  10. Drift flag = (warp ≥ pctl 80%) AND
-      (nss_total ≥ pctl 80%)
+```bash
+python3 documents/github-yubios-KS9n5GAT/papers/scripts/curve-drift-detector.py
+```
+
+No external API calls — all 4 corpora are loaded from local disk.
+Outputs land in `documents/github-yubios-KS9n5GAT/papers/data/drift-output/`.
 
 ## How to read drift signals
-- `warp-by-region.csv`: one row per sampled region. `flagged=true` rows are
-  candidates for self-archaeology dispatch.
-- `drift-priority-list.md`: top 10 flagged regions ranked by warp magnitude,
-  with NSS axis breakdown and a self-archaeology hook per region.
-- `mobius-transform.json`: the fitted φ_θ (a, b, c, d ∈ ℂ with ad - bc = 1).
-  Apply this Möbius to future curve fits to project onto the same warped
-  coordinate system — enables cross-cycle comparison.
-- `aligned-curves.png`: visual overlay of both curves on S² (Mollweide-style
-  projection). Warp regions highlighted in orange; flagged regions in solid
-  orange.
+
+- `warp-by-region.csv`: one row per sampled region, prefixed by the
+  alignment name (`self-to-docs`, `self-to-refs`, `self-to-cycle4`).
+  `flagged=true` rows are candidates for self-archaeology dispatch.
+- `drift-priority-list.md`: top 10 flagged regions ranked by drift_score,
+  aggregated across all 3 alignments with nearest self + target items
+  per region.
+- `mobius-transform.json`: the fitted φ_θ per alignment (a, b, c, d ∈ ℂ
+  with ad - bc = 1). Apply this Möbius to future curve fits to project
+  onto the same warped coordinate system — enables cross-cycle comparison.
+- `aligned-curves.png`: visual overlay of all 4 corpus point clouds on
+  S² (Mollweide-style projection). 3 warped-self point clouds highlight
+  the warp magnitude per alignment.
 
 ## Deviations from prior skills
-- **Per-corpus basis rule violated**: `curve-guided-rsi-self` says use a
-  per-corpus 9-D basis (row primitives for SELF.md rows, changelog primitives
-  for SELF-CHANGELOG.md entries, unified memory-file primitives for the
-  expanded corpus). This artifact uses the SAME 9-D `internal-big-picture`
-  primitive basis for BOTH corpora — the cross-corpus comparison requires a
-  shared primitive vocabulary. The text-based scoring for self-corpus items
-  uses the same 9 primitives' keyword vocab (frozen), so coverage vectors
-  are comparable across corpora. Documented as a deviation.
-- **Frozen degree weights**: per the parent's `frozen_degree_weights: true`
-  flag, frequencies are NOT refined in this artifact. Future iterations can
-  lift this constraint by setting `frozen=False` in
-  `fit_harmonic_curve_s2`.
-- **PIL rendering vs matplotlib**: this env has matplotlib 3.11.1 with
-  Python 3.9 (incompatible — `match` syntax requires Py3.10+). The existing
-  scripts in this repo work around this with PIL.ImageDraw; this artifact
-  follows the same convention.
 
-## Verification (closed-loop per artifact)
-- [x] Both corpora listed: `papers-corpus-listing.json`,
-      `self-corpus-listing.json` parse as JSON.
-- [x] CSV parses: `warp-by-region.csv` has 1 header row + N_WARP_SAMPLES
-      data rows.
-- [x] PNG renders: `aligned-curves.png` saved (1100×720).
-- [x] Drift-priority list populated: `drift-priority-list.md` has top-10
-      flagged regions (or note when none clear).
-- [x] Möbius transform saved: `mobius-transform.json` with cross-ratio
-      check recorded.
-- [x] End-to-end run succeeded (exit code 0).
+- **Per-corpus basis rule violated** (same as the 2-corpus version):
+  `curve-guided-rsi-self` says use a per-corpus basis; this artifact uses
+  the SHARED internal-big-picture 9-D for all 4 corpora. Documented.
+- **cycle4 scoring uses text-keyword OR'd with native binary coverage**:
+  the cycle4 archive has its own 9-D repo-history basis (has_purpose,
+  has_sha, ...). For cross-corpus comparison, we re-score cycle4 items
+  against the internal-big-picture 9-D keyword vocab (extended to cover
+  git/Linear terms). The native coverage is preserved in the cycle4
+  archive as ground truth; the cross-corpus score is the proxy.
