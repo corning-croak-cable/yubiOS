@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-07T21:00:00Z",
+  "timestamp": "2026-08-07T21:30:00Z",
   "schema_version": "1.0",
   "dimensions": [
     "7-D",
@@ -128,11 +128,20 @@
       }
     },
     "384-D": {
-      "all": {
-        "pc1_plus_pc2": 0.10853993211608491,
-        "median_residual": 0.07326458112672503,
-        "n_items": 2286
-      }
+      "canonical_sin3_cos_m": {
+        "pc1_plus_pc2": 0.015630877247205868,
+        "median_residual": 0.04732268012868519,
+        "n_items": 2610
+      },
+      "variant_ell_128_m_3_to_384": {
+        "pc1_plus_pc2": 0.6666666666668841,
+        "n_items": 2610
+      },
+      "variant_ell_384_m_3": {
+        "pc1_plus_pc2": 1.0,
+        "n_items": 2610
+      },
+      "skill_credit": "rsi-phi-skill (Fibonacci sphere, i=t, 384 lobes, native Y_3^3)"
     }
   }
 }
