@@ -8,16 +8,16 @@ largest expected single-primitive-flip Δ on S²).
 
 | Rank | File | Residual | Missing primitives | Covered | t | (X, Y, Z) on S² |
 |---|---|---|---|---|---|---|
-| 1 | `recursive-self-improvement` | 1.4444 | `trust_chain`, `cryptographic_identity` | 7/9 | 0.2801 | (+0.183, +0.983, -0.033) |
-| 2 | `bootc-images` | 0.8039 | `trust_chain`, `continuous_adaptive` | 7/9 | 0.2272 | (+0.070, -0.143, -0.987) |
-| 3 | `slsa-provenance` | 0.8039 | `trust_chain`, `continuous_adaptive` | 7/9 | 0.2272 | (+0.070, -0.143, -0.987) |
-| 4 | `learned-latent-curve` | 0.6854 | `trust_chain` | 8/9 | 0.1513 | (-0.206, +0.953, -0.223) |
-| 5 | `github-stacked-pull-requests` | 0.6854 | `trust_chain` | 8/9 | 0.1513 | (-0.206, +0.953, -0.223) |
-| 6 | `curve-guided-rsi` | 0.6854 | `trust_chain` | 8/9 | 0.1513 | (-0.206, +0.953, -0.223) |
-| 7 | `observability-and-instrumentation` | 0.6591 | `least_privilege` | 8/9 | 0.1673 | (-0.185, +0.860, -0.475) |
-| 8 | `doubt-driven-development` | 0.4391 | `least_privilege`, `continuous_adaptive` | 7/9 | 0.2433 | (+0.145, -0.498, -0.855) |
-| 9 | `yubikey-operations` | 0.4391 | `least_privilege`, `continuous_adaptive` | 7/9 | 0.2433 | (+0.145, -0.498, -0.855) |
-| 10 | `shipping-and-launch` | 0.3510 | `least_privilege`, `declarative_policy` | 7/9 | 0.3211 | (+0.499, +0.452, -0.739) |
+| 1 | `runtime-attestation-keylime` | 1.8152 | `trust_chain`, `segmentation` | 7/9 | 0.2437 | (+0.052, +0.999, -0.013) |
+| 2 | `learned-latent-curve` | 1.2360 | `trust_chain` | 8/9 | 0.1644 | (-0.198, +0.953, -0.231) |
+| 3 | `curve-guided-rsi` | 1.2360 | `trust_chain` | 8/9 | 0.1644 | (-0.198, +0.953, -0.231) |
+| 4 | `github-stacked-pull-requests` | 1.2360 | `trust_chain` | 8/9 | 0.1644 | (-0.198, +0.953, -0.231) |
+| 5 | `observability-and-instrumentation` | 1.0944 | `least_privilege` | 8/9 | 0.1694 | (-0.224, +0.823, -0.522) |
+| 6 | `slsa-provenance` | 0.8061 | `trust_chain`, `continuous_adaptive` | 7/9 | 0.2280 | (+0.018, -0.101, -0.995) |
+| 7 | `bootc-images` | 0.8061 | `trust_chain`, `continuous_adaptive` | 7/9 | 0.2280 | (+0.018, -0.101, -0.995) |
+| 8 | `recursive-self-improvement` | 0.7307 | `trust_chain`, `cryptographic_identity` | 7/9 | 0.3031 | (+0.227, +0.970, -0.081) |
+| 9 | `code-review-and-quality` | 0.3919 | `least_privilege`, `declarative_policy`, `continuous_adaptive` | 6/9 | 0.3731 | (+0.499, -0.828, -0.256) |
+| 10 | `shipping-and-launch` | 0.3826 | `least_privilege`, `declarative_policy` | 7/9 | 0.3095 | (+0.421, +0.307, -0.853) |
 
 ## Why this list
 
