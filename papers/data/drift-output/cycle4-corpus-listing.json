@@ -16,17 +16,6 @@
   "items_sample": [
     {
       "id": "c4-PR-195",
-      "primitive_coverage": [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
       "text": "cycle4 / PR / 195",
       "source": "cycle4-corpus",
       "kind": "PR",
@@ -49,21 +38,11 @@
         "has_linear_ref",
         "has_state_progression",
         "has_cross_corpus_link"
-      ]
+      ],
+      "repo_path": "yubi-OS/yubiOS/papers/data/repo-history-skill-cycle-4-archive-2026-08-07.json"
     },
     {
       "id": "c4-PR-194",
-      "primitive_coverage": [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
       "text": "cycle4 / PR / 194",
       "source": "cycle4-corpus",
       "kind": "PR",
@@ -87,21 +66,11 @@
         "has_linear_ref",
         "has_state_progression",
         "has_cross_corpus_link"
-      ]
+      ],
+      "repo_path": "yubi-OS/yubiOS/papers/data/repo-history-skill-cycle-4-archive-2026-08-07.json"
     },
     {
       "id": "c4-PR-193",
-      "primitive_coverage": [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
       "text": "cycle4 / PR / 193",
       "source": "cycle4-corpus",
       "kind": "PR",
@@ -124,21 +93,11 @@
         "has_linear_ref",
         "has_state_progression",
         "has_cross_corpus_link"
-      ]
+      ],
+      "repo_path": "yubi-OS/yubiOS/papers/data/repo-history-skill-cycle-4-archive-2026-08-07.json"
     },
     {
       "id": "c4-PR-192",
-      "primitive_coverage": [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
       "text": "cycle4 / PR / 192",
       "source": "cycle4-corpus",
       "kind": "PR",
@@ -161,21 +120,11 @@
         "has_linear_ref",
         "has_state_progression",
         "has_cross_corpus_link"
-      ]
+      ],
+      "repo_path": "yubi-OS/yubiOS/papers/data/repo-history-skill-cycle-4-archive-2026-08-07.json"
     },
     {
       "id": "c4-PR-191",
-      "primitive_coverage": [
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0
-      ],
       "text": "cycle4 / PR / 191",
       "source": "cycle4-corpus",
       "kind": "PR",
@@ -199,10 +148,17 @@
         "has_linear_ref",
         "has_state_progression",
         "has_cross_corpus_link"
-      ]
+      ],
+      "repo_path": "yubi-OS/yubiOS/papers/data/repo-history-skill-cycle-4-archive-2026-08-07.json"
     }
   ],
   "items_count_by_source": {
     "cycle4-corpus": 324
+  },
+  "source_file_meta": {
+    "name": "repo-history-skill-cycle-4-archive-2026-08-07.json",
+    "sha": "beec015d52c91f33af42387c930b38051ac7f8f3",
+    "size": 167897,
+    "path": "papers/data/repo-history-skill-cycle-4-archive-2026-08-07.json"
   }
 }
