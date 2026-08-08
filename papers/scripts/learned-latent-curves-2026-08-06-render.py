@@ -1623,7 +1623,7 @@ story.append(Paragraph(
     "order of magnitude.",
     style_body,
 ))
-_ecm1 = "papers/data/curve-map-output/curve-map.png"
+_ecm1 = str(_PAPERS_DIR / "data/curve-map-output/curve-map.png")
 if Path(_ecm1).exists():
     story.append(Image(_ecm1, width=6.0*inch, height=4.5*inch))
     story.append(Paragraph(
@@ -1631,7 +1631,7 @@ if Path(_ecm1).exists():
         "<i>S</i><sup>2</sup>), one point per corpus file, fitted latent curve overlaid.",
         style_caption,
     ))
-_ecm1b = "papers/data/curve-map-output/cycle-3-refs-curve-map-2026-08-07.png"
+_ecm1b = str(_PAPERS_DIR / "data/curve-map-output/cycle-3-refs-curve-map-2026-08-07.png")
 if Path(_ecm1b).exists():
     story.append(Image(_ecm1b, width=6.0*inch, height=4.5*inch))
     story.append(Paragraph(
@@ -1653,7 +1653,7 @@ story.append(Paragraph(
     "inductive bias rather than by the particular 9 primitives chosen.",
     style_body,
 ))
-_ecm2 = "papers/data/curve-map-output-384d/cycle-3-refs-curve-map-2026-08-07.png"
+_ecm2 = str(_PAPERS_DIR / "data/curve-map-output-384d/cycle-3-refs-curve-map-2026-08-07.png")
 if Path(_ecm2).exists():
     story.append(Image(_ecm2, width=6.0*inch, height=4.5*inch))
     story.append(Paragraph(
@@ -1675,7 +1675,7 @@ story.append(Paragraph(
     "corpora are separable on the manifold in the first place.",
     style_body,
 ))
-_ecm3 = "papers/data/curve-map-output-multi-corpus/cycle-3-refs-curve-map-2026-08-07.png"
+_ecm3 = str(_PAPERS_DIR / "data/curve-map-output-multi-corpus/cycle-3-refs-curve-map-2026-08-07.png")
 if Path(_ecm3).exists():
     story.append(Image(_ecm3, width=6.0*inch, height=4.5*inch))
     story.append(Paragraph(
@@ -1696,7 +1696,7 @@ story.append(Paragraph(
     "prioritization signal claimed in Section&nbsp;6.",
     style_body,
 ))
-_drift = "papers/data/drift-output/aligned-curves.png"
+_drift = str(_PAPERS_DIR / "data/drift-output/aligned-curves.png")
 if Path(_drift).exists():
     story.append(Image(_drift, width=6.0*inch, height=3.0*inch))
     story.append(Paragraph(
@@ -1716,7 +1716,7 @@ story.append(Paragraph(
     "flagged warp is carried by a coherent group of files, not by a single outlier section.",
     style_body,
 ))
-_points = "papers/data/drift-output/aligned-points.png"
+_points = str(_PAPERS_DIR / "data/drift-output/aligned-points.png")
 if Path(_points).exists():
     story.append(Image(_points, width=6.0*inch, height=3.0*inch))
     story.append(Paragraph(
@@ -1736,7 +1736,7 @@ story.append(Paragraph(
     "numerically at PC1+PC2 = 0.2993.",
     style_body,
 ))
-_series = "papers/data/drift-output/aligned-curves-from-series.png"
+_series = str(_PAPERS_DIR / "data/drift-output/aligned-curves-from-series.png")
 if Path(_series).exists():
     story.append(Image(_series, width=6.0*inch, height=3.0*inch))
     story.append(Paragraph(
@@ -1758,7 +1758,7 @@ story.append(Paragraph(
     "Table&nbsp;E.1 and the per-dimension fits in E.8.",
     style_body,
 ))
-_keystone = "papers/data/drift-output/aligned-curves-from-series-keystone.png"
+_keystone = str(_PAPERS_DIR / "data/drift-output/aligned-curves-from-series-keystone.png")
 if Path(_keystone).exists():
     story.append(Image(_keystone, width=6.0*inch, height=3.5*inch))
     story.append(Paragraph(
@@ -1844,15 +1844,15 @@ story.append(Paragraph(
 story.append(Spacer(1, 8))
 
 _fit_specs = [
-    ("E.9", "7-D", "papers/data/series/7-D/7-D/graphs/fit.png", "1.0000", "PASS",
+    ("E.9", "7-D", str(_PAPERS_DIR / "data/series/7-D/7-D/graphs/fit.png"), "1.0000", "PASS",
      "The original 7-D binary primitive basis on the refs corpus alone (1862 items). Passes trivially."),
-    ("E.10", "9-D", "papers/data/series/9-D/9-D/graphs/fit.png", "0.4565", "PASS",
+    ("E.10", "9-D", str(_PAPERS_DIR / "data/series/9-D/9-D/graphs/fit.png"), "0.4565", "PASS",
      "The full 9-D binary primitive basis across all four corpora (2286 sections) &mdash; the paper's headline dimension."),
-    ("E.11", "16-D", "papers/data/series/16-D/16-D/graphs/fit.png", "0.4627", "PASS",
+    ("E.11", "16-D", str(_PAPERS_DIR / "data/series/16-D/16-D/graphs/fit.png"), "0.4627", "PASS",
      "16 real spherical harmonics on <i>S</i><sup>2</sup> (SH L=3). Statistically indistinguishable from 9-D."),
-    ("E.12", "24-D", "papers/data/series/24-D/24-D/graphs/fit.png", "0.2993", "FAIL",
+    ("E.12", "24-D", str(_PAPERS_DIR / "data/series/24-D/24-D/graphs/fit.png"), "0.2993", "FAIL",
      "Extended feature space (9-D + 12 NSS + 3 meta). The informative negative: the fit is visibly diffuse."),
-    ("E.13", "384-D", "papers/data/series/384-D/384-D/graphs/fit.png", "1.0000", "PASS",
+    ("E.13", "384-D", str(_PAPERS_DIR / "data/series/384-D/384-D/graphs/fit.png"), "1.0000", "PASS",
      "Fibonacci-sphere <i>Y</i><sub>3</sub><sup>3</sup> variant (&#8467; = 384, <i>m</i> = 3). Strongest concentration in the sweep."),
 ]
 for _fig, _dim, _fp, _pc, _gate, _blurb in _fit_specs:
@@ -1873,7 +1873,7 @@ story.append(Paragraph(
     "than two components, visible here as the loss of a dominant plane.",
     style_body,
 ))
-_nd = "papers/data/nd-viewer-output/nd-pca-static-cycle-3-refs-2026-08-07.png"
+_nd = str(_PAPERS_DIR / "data/nd-viewer-output/nd-pca-static-cycle-3-refs-2026-08-07.png")
 if Path(_nd).exists():
     story.append(Image(_nd, width=6.0*inch, height=3.5*inch))
     story.append(Paragraph(
