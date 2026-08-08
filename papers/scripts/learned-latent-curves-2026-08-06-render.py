@@ -305,7 +305,7 @@ story.append(Paragraph(
 story.append(Paragraph(
     "&#947;(<b>x</b>) = <b>b</b> + &#8721;<sub><i>&#8467;</i>=0</sub><sup><i>L</i></sup> "
     "&#8721;<sub><i>m</i></sub> <b>a</b><sub><i>&#8467;,m</i></sub> "
-    "<i>Y<sup>S<sup>2</sup></sup><sub>&#8467;,m</sub></i>"
+    "<i>Y</i><sup><i>S</i><sup>2</sup></sup><sub><i>&#8467;,m</i></sub>"
     "&nbsp;( &#966;<sub><i>&#952;</i></sub>(<b>x</b>) &nbsp;).",
     style_equation,
 ))
@@ -327,7 +327,7 @@ story.append(Paragraph(
     style_body,
 ))
 story.append(Paragraph(
-    "The real spherical harmonics <i>Y<sup>S<sup>2</sup></sup><sub>&#8467;,m</sub></i> "
+    "The real spherical harmonics <i>Y</i><sup><i>S</i><sup>2</sup></sup><sub><i>&#8467;,m</i></sub> "
     "on <i>S<sup>2</sup></i> are constructed via explicit Legendre polynomials "
     "and the cos/sin split:",
     style_body,
@@ -509,10 +509,10 @@ atom_steps = [
 ]
 for idx, step in enumerate(atom_steps, start=1):
     story.append(Paragraph(
-        f"<b>{idx}.</b>&nbsp;&nbsp;{step}", style_body, bulletText=f"{idx}."
+        f"{step}", style_body, bulletText=f"{idx}."
     ))
 story.append(Paragraph(
-    "4. A <b>stereographic lift</b> &sigma; : &#8477;<sup>2</sup> "
+    "A <b>stereographic lift</b> &sigma; : &#8477;<sup>2</sup> "
     "&rarr; <i>S<sup>2</sup></i> with",
     style_body,
 ))
@@ -528,14 +528,14 @@ story.append(Paragraph(
     style_body,
 ))
 story.append(Paragraph(
-    "5. An <b>ideal pole</b> <i>p</i><sup>*</sup> = "
+    "An <b>ideal pole</b> <i>p</i><sup>*</sup> = "
     "&sigma;(<i>&#363;</i><sup>*</sup>, <i>v&#772;</i><sup>*</sup>), where "
     "(<i>&#363;</i><sup>*</sup>, <i>v&#772;</i><sup>*</sup>) is the lift of the "
     "all-ones coverage vector (1, &hellip;, 1).",
     style_body,
 ))
 story.append(Paragraph(
-    "6. A <b>geodesic gap</b> <i>d</i>(<i>f</i>) = &Vert;<i>p</i> &minus; "
+    "A <b>geodesic gap</b> <i>d</i>(<i>f</i>) = &Vert;<i>p</i> &minus; "
     "<i>p</i><sup>*</sup>&Vert;<sub>2</sub> (chordal proxy on "
     "<i>S<sup>2</sup></i>).",
     style_body,
