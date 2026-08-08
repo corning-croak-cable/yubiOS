@@ -26,9 +26,11 @@ flowchart LR
   K --> L
 ```
 
-  <img src="https://raw.githubusercontent.com/yubi-OS/assets/refs/heads/main/Latent_Space_Learning.jpeg">
+<img src="https://raw.githubusercontent.com/yubi-OS/assets/refs/heads/main/Latent_Space_Learning.jpeg">
 
+## Conceptual Rendering of a Y_3^3 hyper-sphere at 384-D
 
+<img src="https://raw.githubusercontent.com/yubi-OS/assets/refs/heads/main/Y_3%5E3/Duck-Y33-5-ai-image-2026-08-07-03-10.jpeg">
 
 ## Attestation coverage
 
