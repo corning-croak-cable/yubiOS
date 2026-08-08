@@ -189,7 +189,8 @@ story.append(Paragraph(
     "gives an invariant that composes linearly across files. We give the "
     "governing equations for each technique, the empirical validation on a "
     "corpus of software skills (<i>N</i> = 49, <i>N</i> = 70, and "
-    "<i>N</i> = 79 across three splits and one full-corpus audit), and a "
+    "<i>N</i> = 79 across three dated snapshots and one full-corpus "
+    "audit), and a "
     "474-dispatch atom experiment on the 79-skill corpus plus a 20-cycle "
     "experiment on 11 deep-research files, both showing zero negative "
     "&Delta; and confirming Lemma&nbsp;1 and Theorem&nbsp;1 directly.",
@@ -206,7 +207,12 @@ story.append(Paragraph(
     "Sections&nbsp;5&ndash;6 give the dataset, evaluation protocol, and "
     "headline results, with the 79-skill corpus audit reported as the "
     "primary empirical exhibit. Sections&nbsp;7&ndash;8 are scope and "
-    "conclusion. Two appendices carry the remaining material.",
+    "conclusion. Five appendices (A&ndash;E) carry the remaining material: "
+    "A gives the per-cycle accounting behind the headline atom result, "
+    "B extends the audit to the multi-corpus run, C reports the 20-cycle "
+    "deep-research corpus and the synthetic-manifold benchmark, D re-tests "
+    "the inductive-bias claim with a partial-in-span design, and E is the "
+    "use-cases gallery.",
     style_body,
 ))
 
@@ -231,7 +237,7 @@ story.append(Paragraph(
     "with <i>k</i> shared learned frequencies <i>f<sub>1</sub></i>, "
     "&hellip;, <i>f<sub>k</sub></i> and per-output coefficients "
     "<i>a<sub>j,m</sub></i>, <i>b<sub>j,m</sub></i>. Stacked over <i>j</i>, "
-    "this is a curve &#947; : &#8477;<sup><i>D</i></sup> &rarr; &#8477;<sup><i>D</i></sup>. "
+    "this is a curve &#947; : &#8477; &rarr; &#8477;<sup><i>D</i></sup>. "
     "Writing the design vector",
     style_body,
 ))
@@ -243,7 +249,7 @@ story.append(Paragraph(
     style_equation,
 ))
 story.append(Paragraph(
-    "the model is &#956;(<i>t</i>) = <i>C</i>&nbsp;&#966;(<i>t</i>) with coefficient "
+    "the model is &#947;(<i>t</i>) = <i>C</i>&nbsp;&#966;(<i>t</i>) with coefficient "
     "matrix <i>C</i> &isin; &#8477;<sup><i>D</i> &times; (1+2<i>k</i>)</sup>, "
     "giving a parameter count of",
     style_body,
@@ -296,44 +302,8 @@ story.append(Paragraph(
     "(the Riemann sphere),",
     style_body,
 ))
-
-# --- y33 Fibonacci-sphere + rsi-phi-skill additions (2026-08-07) ---
-story.append(Paragraph("3.1.1&nbsp;&nbsp;Fibonacci-sphere sampling and Y<sub>3</sub><sup>3</sup> angular probe (operationalized as rsi-phi-skill, 2026-08-07)", style_h3))
 story.append(Paragraph(
-    "<b>The Riemann-sphere parameter manifold above is operationalized today (2026-08-07) as the rsi-phi-skill agent skill.</b> "
-    "The two design moves that operationalize the variant are:",
-    style_body))
-story.append(Paragraph(
-    "(1)&nbsp;&nbsp;<b>Fibonacci index <i>i</i> plays the role of <i>t</i>.</b> "
-    "Sampling on <i>S</i><sup>2</sup> uses Vogel's golden-angle Fibonacci scheme "
-    "- <i>z<sub>i</sub></i> = 1 - (2<i>i</i>+1)/<i>N</i>, "
-    "<i>&phi;<sub>i</sub></i> = 2<i>&pi;</i> &middot; <i>i</i>/<i>&phi;</i><sub>golden</sub>, "
-    "<i>&theta;<sub>i</sub></i> = arccos(<i>z<sub>i</sub></i>), with <i>&phi;</i><sub>golden</sub> = (1+&radic;5)/2. "
-    "The corpus item at index <i>i</i> IS the parameter point on the sphere - no lookup table, O(1) per point. "
-    "This eliminates pole clustering at the diagnostic-grid stage.",
-    style_body))
-story.append(Paragraph(
-    "(2)&nbsp;&nbsp;<b>Native basis Y<sub>3</sub><sup>3</sup> as the angular probe.</b> "
-    "The 3-fold azimuthal spherical harmonic in real form: "
-    "Re{Y<sub>3</sub><sup>3</sup>}(<i>&theta;</i>, <i>&phi;</i>) = <i>K</i> sin<sup>3</sup> <i>&theta;</i> &middot; cos(3<i>&phi;</i>), "
-    "with <i>K</i> = &radic;(245/(64<i>&pi;</i>)) (Condon-Shortley normalization). "
-    "The sin<sup>3</sup> <i>&theta;</i> factor vanishes at the poles and peaks near the equator; "
-    "the cos(3<i>&phi;</i>) factor folds the 3-fold rotational symmetry into the embedding.",
-    style_body))
-story.append(Paragraph(
-    "<b>For 384 symmetric azimuthal lobes,</b> the per-item basis vector is "
-    "<i>b<sub>i</sub></i> = (sin<sup>3</sup> <i>&theta;<sub>i</sub></i> &middot; cos(<i>m</i><sub>1</sub> <i>&phi;<sub>i</sub></i>), "
-    "&hellip;, sin<sup>3</sup> <i>&theta;<sub>i</sub></i> &middot; cos(<i>m</i><sub>384</sub> <i>&phi;<sub>i</sub></i>)) with "
-    "<i>m<sub>k</sub></i> = 3<i>k</i> for <i>k</i> = 1, &hellip;, 128 (384 = 2<sup>7</sup> &middot; 3). "
-    "The skill rsi-phi-skill tests BOTH orderings (<i>&ell;</i>=128, <i>m</i>=256) and "
-    "(<i>&ell;</i>=256, <i>m</i>=128) per cycle and picks the higher PC1+PC2 - the gate that drives the regime. "
-    "Today's data: 384-D passes the PC1+PC2 &ge; 0.40 gate on the chosen variant "
-    "(<i>&ell;</i>=384, <i>m</i>=3, sin<sup>384</sup> <i>&theta;</i> polar).",
-    style_body))
-
-
-story.append(Paragraph(
-    "&#956;(<b>x</b>) = <b>b</b> + &#8721;<sub><i>&#8467;</i>=0</sub><sup><i>L</i></sup> "
+    "&#947;(<b>x</b>) = <b>b</b> + &#8721;<sub><i>&#8467;</i>=0</sub><sup><i>L</i></sup> "
     "&#8721;<sub><i>m</i></sub> <b>a</b><sub><i>&#8467;,m</i></sub> "
     "<i>Y<sup>S<sup>2</sup></sup><sub>&#8467;,m</sub></i>"
     "&nbsp;( &#966;<sub><i>&#952;</i></sub>(<b>x</b>) &nbsp;).",
@@ -351,13 +321,11 @@ story.append(Paragraph(
     "+ <i>D</i> + <i>n</i><sub>M&ouml;bius</sub>, where "
     "<i>n</i><sub>basis</sub> = &#8721;<sub><i>&#8467;</i>=0</sub><sup><i>L</i></sup>(2<i>&#8467;</i>+1) "
     "and <i>n</i><sub>M&ouml;bius</sub> is the real dimension of "
-    "PSL(2,&#8450;) (Section&nbsp;3.3). At <i>L</i> = 3 on <i>S<sup>2</sup></i>, "
+    "PSL(2,&#8450;) (Section&nbsp;3.2). At <i>L</i> = 3 on <i>S<sup>2</sup></i>, "
     "<i>n</i><sub>basis</sub> = 16; at <i>D</i> = 384: "
     "<i>P</i><sub>sphere</sub> = 384 &middot; 16 + 384 + 6 = 6,534.",
     style_body,
 ))
-
-story.append(Paragraph("3.2&nbsp;&nbsp;Real spherical harmonics on <i>S<sup>2</sup></i>", style_h2))
 story.append(Paragraph(
     "The real spherical harmonics <i>Y<sup>S<sup>2</sup></sup><sub>&#8467;,m</sub></i> "
     "on <i>S<sup>2</sup></i> are constructed via explicit Legendre polynomials "
@@ -390,7 +358,7 @@ story.append(Paragraph(
     style_body,
 ))
 
-story.append(Paragraph("3.3&nbsp;&nbsp;M&ouml;bius reparameterization", style_h2))
+story.append(Paragraph("3.2&nbsp;&nbsp;M&ouml;bius reparameterization", style_h2))
 story.append(Paragraph(
     "&#966;<sub><i>&#952;</i></sub>(<i>z</i>) = (<i>az</i>+<i>b</i>)/(<i>cz</i>+<i>d</i>) "
     "with <i>a</i>,<i>b</i>,<i>c</i>,<i>d</i> &isin; &#8450; and "
@@ -417,49 +385,98 @@ story.append(Paragraph(
     style_body,
 ))
 
-
-story.append(Paragraph("3.3&nbsp;&nbsp;Companion artifacts (added 2026-08-07)", style_h2))
+story.append(Paragraph("3.3&nbsp;&nbsp;Operational instantiation", style_h2))
 story.append(Paragraph(
-    "The Fibonacci-sphere sampling and Y<sub>3</sub><sup>3</sup> angular-probe primitive above "
-    "are the operational basis of the rsi-phi-skill agent skill (added 2026-08-07 to both "
-    "yubi-OS/yubiOS and yubi-OS/agent-skills). The companion artifacts are:",
-    style_body))
+    "All material in this subsection was added on 2026-08-07 in PR&nbsp;#200; "
+    "the title-page date 2026-08-06 reflects the body of the paper as "
+    "submitted.",
+    style_body,
+))
 story.append(Paragraph(
-    "&bull;&nbsp;papers/refs/y33-fibonacci-sphere-paper-method-equation-block-2026-08-07.md - "
-    "the 3-equation LaTeX block defining <i>z<sub>i</sub></i>, "
-    "<i>&phi;<sub>i</sub></i>, <i>&theta;<sub>i</sub></i>, and Y<sub>3</sub><sup>3</sup> evaluation.<br/>"
-    "&bull;&nbsp;papers/refs/y33-fibonacci-sphere-paper-revised-passage-2026-08-07.md - "
-    "the table-based revised passage patch for the surrounding prose.<br/>"
-    "&bull;&nbsp;papers/refs/y33-fibonacci-sphere-applied-2026-08-07.md - "
-    "the applied synthesis of both, documenting what changed in the paper, how it shows up "
-    "in the operational regime, and the 5-dim time-series gate status after the application.<br/>"
-    "&bull;&nbsp;papers/refs/rsi-phi-skill-deep-research-2026-08-07.md - "
-    "the deep-research backing the skill itself.<br/>"
-    "&bull;&nbsp;papers/playbooks/rsi-regime.md - "
-    "the operational playbook for the whole RSI regime.<br/>"
-    "&bull;&nbsp;papers/playbooks/papers-8-6-iteration-2026-08-07.md - "
-    "today's iteration summary.<br/>"
-    "&bull;&nbsp;papers/data/series/INDEX.json - "
-    "5-dim time-series index.<br/>"
-    "&bull;&nbsp;papers/data/drift-output/aligned-curves-from-series-keystone.png - "
-    "the keystone diagram showing all 5 dims with primitive guides and gate status.<br/>"
-    "&bull;&nbsp;skills/rsi-phi-skill/SKILL.md (both repos) - "
-    "the skill itself.",
-    style_body))
-story.append(Paragraph("3.4&nbsp;&nbsp;5-dim time-series gate status (after today's rebuild)", style_h2))
+    "<b>Remark (Fibonacci sampling and Y<sub>3</sub><sup>3</sup> angular probe "
+    "&mdash; operationalized as rsi-phi-skill, 2026-08-07).</b> "
+    "The hyperspherical-harmonic variant of the governing equation above is "
+    "operationalized today (2026-08-07) as the rsi-phi-skill agent skill, which "
+    "sits in the corpus as the bounded-recursive-self-improvement loop on the "
+    "Fibonacci-sphere parameter manifold. The two design moves that "
+    "operationalize the variant are:",
+    style_emph,
+))
 story.append(Paragraph(
-    "The time-series library at papers/data/series/&lt;dim&gt;-D/&lt;dim&gt;-D/ "
-    "stores per-cycle fits at 5 dimensions. The 384-D entry was rebuilt today on the Fibonacci-sphere basis; "
-    "the other 4 dimensions are unchanged. Gate status (PC1+PC2 &ge; 0.40):",
-    style_body))
+    "<b>1.</b>&nbsp;&nbsp;<b>Fibonacci index <i>i</i> plays the role of <i>t</i>.</b> "
+    "Sampling on <i>S</i><sup>2</sup> is done with Vogel's golden-angle Fibonacci "
+    "scheme &mdash; <i>z<sub>i</sub></i> = 1 &minus; (2<i>i</i>+1)/<i>N</i>, "
+    "<i>&phi;<sub>i</sub></i> = 2&pi; &middot; <i>i</i>/&#966;, "
+    "<i>&theta;<sub>i</sub></i> = arccos(<i>z<sub>i</sub></i>), with "
+    "&#966; = (1+&radic;5)/2 &mdash; so that the corpus item at index <i>i</i> IS "
+    "the parameter point on the sphere: no lookup table, O(1) per point. This "
+    "eliminates pole clustering at the diagnostic-grid stage (the standard "
+    "latitude-longitude grid clusters at &theta; &rarr; 0, &pi;; Fibonacci does not).",
+    style_bullet,
+))
 story.append(Paragraph(
-    "<b>7-D:</b> 1.0000 (PASS, boundary). <b>9-D:</b> 0.4565 (PASS). "
-    "<b>16-D:</b> 0.4627 (PASS). <b>24-D:</b> 0.2993 (FAIL). "
-    "<b>384-D:</b> 1.0000 (PASS, via chosen (<i>&ell;</i>=384, <i>m</i>=3, sin<sup>384</sup> <i>&theta;</i>) variant). "
-    "Today's headline: 384-D now passes the gate.",
-    style_body))
-
-
+    "<b>2.</b>&nbsp;&nbsp;<b>Native basis Y<sub>3</sub><sup>3</sup> as the angular "
+    "probe.</b> The 3-fold azimuthal spherical harmonic is "
+    "Re{<i>Y</i><sub>3</sub><sup>3</sup>}(&theta;, &phi;) = <i>K</i> sin<sup>3</sup>&theta; "
+    "&middot; cos(3&phi;), with <i>K</i> = &radic;(245/(64&pi;)) "
+    "(Condon&ndash;Shortley normalization, <i>K</i> = &radic;((35&middot;7)/(64&pi;))). "
+    "The sin<sup>3</sup>&theta; factor vanishes at the poles and peaks near the "
+    "equator; the cos(3&phi;) factor folds the 3-fold rotational symmetry into "
+    "the embedding.",
+    style_bullet,
+))
+story.append(Paragraph(
+    "For 384 symmetric azimuthal lobes, the per-item basis vector is "
+    "<i>b<sub>i</sub></i> = (sin<sup>3</sup><i>&theta;<sub>i</sub></i> &middot; "
+    "cos(<i>m</i><sub>1</sub><i>&phi;<sub>i</sub></i>), &hellip;, "
+    "sin<sup>3</sup><i>&theta;<sub>i</sub></i> &middot; "
+    "cos(<i>m</i><sub>384</sub><i>&phi;<sub>i</sub></i>)) with "
+    "<i>m<sub>k</sub></i> = 3<i>k</i> for <i>k</i> = 1, &hellip;, 128 "
+    "(384 = 2<sup>7</sup> &middot; 3). The skill rsi-phi-skill tests BOTH "
+    "orderings (<i>&ell;</i> = 128, <i>m</i> = 256) and "
+    "(<i>&ell;</i> = 256, <i>m</i> = 128) per cycle and picks the higher "
+    "PC1+PC2 &mdash; the gate that drives the regime. Today's data: 384-D "
+    "passes the PC1+PC2 &ge; 0.40 gate on the chosen variant "
+    "(<i>&ell;</i> = 384, <i>m</i> = 3, sin<sup>384</sup>&theta; polar).",
+    style_emph,
+))
+story.append(Paragraph(
+    "The Fibonacci-sphere sampling and Y<sub>3</sub><sup>3</sup> angular-probe "
+    "primitive above are the operational basis of the rsi-phi-skill agent skill "
+    "(added 2026-08-07 to both yubi-OS/yubiOS and yubi-OS/agent-skills). The "
+    "companion artifacts are:",
+    style_body,
+))
+story.append(Paragraph(
+    "&bull;&nbsp;papers/refs/y33-fibonacci-sphere-paper-method-equation-block-2026-08-07.md "
+    "&mdash; the 3-equation LaTeX block (or 4-equation explicit-real form) defining "
+    "<i>z<sub>i</sub></i>, <i>&phi;<sub>i</sub></i>, <i>&theta;<sub>i</sub></i>, and "
+    "Y<sub>3</sub><sup>3</sup> evaluation, drop-in for the Methods section.<br/>"
+    "&bull;&nbsp;papers/refs/y33-fibonacci-sphere-paper-revised-passage-2026-08-07.md "
+    "&mdash; the table-based revised passage patch for the surrounding prose.<br/>"
+    "&bull;&nbsp;papers/refs/y33-fibonacci-sphere-applied-2026-08-07.md "
+    "&mdash; the applied synthesis of both, documenting what changed in the paper, "
+    "how it shows up in the operational regime, and the 5-dim time-series gate "
+    "status after the application.<br/>"
+    "&bull;&nbsp;papers/refs/rsi-phi-skill-deep-research-2026-08-07.md "
+    "&mdash; the deep-research backing the skill itself.<br/>"
+    "&bull;&nbsp;papers/playbooks/rsi-regime.md "
+    "&mdash; the operational playbook for the whole RSI regime.<br/>"
+    "&bull;&nbsp;papers/playbooks/papers-8-6-iteration-2026-08-07.md "
+    "&mdash; today's iteration summary.",
+    style_body,
+))
+story.append(Paragraph(
+    "The papers/data/series/ time-series library stores per-cycle fits at 5 "
+    "dimensions (7-D, 9-D, 16-D, 24-D, 384-D), each with fit.json, points.json, "
+    "curve.json, and graphs/fit.png. The keystone diagram at "
+    "papers/data/drift-output/aligned-curves-from-series-keystone.png shows all 5 "
+    "dims with primitive guides and gate status. As of 2026-08-07, the gate "
+    "status is: 7-D &#10003; (1.0000), 9-D &#10003; (0.4565), 16-D &#10003; "
+    "(0.4627), 24-D &#10007; (0.2993), 384-D &#10003; (1.0000, via the chosen "
+    "(<i>&ell;</i> = 384, <i>m</i> = 3) variant).",
+    style_body,
+))
 # --- Section 4 The Single-Action Atom and Linear Composition ---
 story.append(Paragraph("4&nbsp;&nbsp;The Single-Action Atom and Linear Composition", style_h1))
 story.append(Paragraph(
@@ -590,7 +607,32 @@ story.append(Paragraph(
     style_lemma,
 ))
 
-story.append(Paragraph("4.4&nbsp;&nbsp;M&ouml;bius refinement strategy", style_h2))
+story.append(Paragraph("4.4&nbsp;&nbsp;Corollary 1 (cumulative monotonicity)", style_h2))
+story.append(Paragraph(
+    "<b>Corollary 1 (Cumulative monotonicity).</b> If every atomic "
+    "&Delta;<sub><i>f<sub>i</sub></i></sub> &ge; 0, the corpus-level cumulative "
+    "&Delta;<sub>corpus</sub> is monotone non-decreasing as further cycles are "
+    "appended: writing &Delta;<sup>(<i>n</i>)</sup><sub>corpus</sub> = "
+    "&#8721;<sub><i>c</i>=1</sub><sup><i>n</i></sup> &#8721;<sub><i>i</i></sub> "
+    "&Delta;<sup>(<i>c</i>)</sup><sub><i>f<sub>i</sub></i></sub> for the running "
+    "total after <i>n</i> cycles, &Delta;<sup>(<i>n</i>+1)</sup><sub>corpus</sub> "
+    "&ge; &Delta;<sup>(<i>n</i>)</sup><sub>corpus</sub> for every <i>n</i>. The "
+    "per-cycle increment &#8721;<sub><i>i</i></sub> "
+    "&Delta;<sup>(<i>c</i>)</sup><sub><i>f<sub>i</sub></i></sub> is not "
+    "constrained in shape and need not decrease monotonically in <i>c</i>.",
+    style_lemma,
+))
+story.append(Paragraph(
+    "<b>Proof.</b> Each cycle contributes &#8721;<sub><i>i</i></sub> "
+    "&Delta;<sup>(<i>c</i>)</sup><sub><i>f<sub>i</sub></i></sub> &ge; 0 by "
+    "Lemma&nbsp;1 and the composition identity of Theorem&nbsp;1; appending a "
+    "non-negative term to a running sum cannot decrease it. No claim is made "
+    "about the ordering of successive increments, since Lemma&nbsp;1 bounds each "
+    "&Delta;<sub><i>f<sub>i</sub></i></sub> from below only. &#8718;",
+    style_lemma,
+))
+
+story.append(Paragraph("4.5&nbsp;&nbsp;M&ouml;bius refinement strategy", style_h2))
 story.append(Paragraph(
     "The corpus-level &#966;<sub><i>&#952;</i></sub> &isin; PSL(2,&#8450;) is one "
     "M&ouml;bius transformation applied uniformly to all files; the "
@@ -613,33 +655,20 @@ story.append(Paragraph(
     "The corpus consists of software-skill specifications (engineering "
     "artifacts) in the yubiOS repository. Each item has a 9-dimensional "
     "binary feature vector recording which of nine primitive capabilities "
-    "the skill implements. We consider three splits:",
+    "the skill implements. The corpus has grown across three dated "
+    "snapshots: the alphabetical-first-half (49 items, "
+    "<i>N</i><sub>train</sub> = 35, <i>N</i><sub>holdout</sub> = 14), the "
+    "full directory at the time of the headline ablation (70 items, "
+    "<i>N</i><sub>train</sub> = 49, <i>N</i><sub>holdout</sub> = 21), and "
+    "the complete skill directory at this paper's revision (79 items, dated "
+    "2026-08-06, used for the corpus-audit RSI in Section&nbsp;6.2 and the "
+    "474-dispatch atom experiment in Section&nbsp;6.3).",
     style_body,
 ))
 story.append(Paragraph(
-    "&bull; <b>Split A</b> (49 items): the first 49 items alphabetically. "
-    "Train <i>N</i><sub>train</sub> = 35, holdout "
-    "<i>N</i><sub>holdout</sub> = 14.",
-    style_bullet,
-))
-story.append(Paragraph(
-    "&bull; <b>Split B</b> (70 items): all items at the time of the "
-    "headline ablation. Train <i>N</i><sub>train</sub> = 49, holdout "
-    "<i>N</i><sub>holdout</sub> = 21.",
-    style_bullet,
-))
-story.append(Paragraph(
-    "&bull; <b>Full corpus</b> (79 items, dated 2026-08-06): the "
-    "complete skill directory on <font face='Courier'>yubi-OS/yubiOS "
-    "main</font> at this paper's revision. Used for the corpus-audit RSI "
-    "in Section&nbsp;6.3 and the 474-dispatch atom experiment in "
-    "Section&nbsp;6.4.",
-    style_bullet,
-))
-story.append(Paragraph(
     "The 9-D binary feature space has principal-component concentration "
-    "PC1+PC2 = 0.652 at Split A and 0.548 at Split B; both clear the "
-    "PC1 &ge; 0.40 gate (Section&nbsp;2.3).",
+    "PC1+PC2 = 0.652 at the 49-item snapshot and 0.548 at the 70-item "
+    "snapshot; both clear the PC1 &ge; 0.40 gate (Section&nbsp;2.3).",
     style_body,
 ))
 
@@ -673,10 +702,10 @@ story.append(Paragraph(
 
 story.append(Paragraph("5.4&nbsp;&nbsp;Reproducibility", style_h2))
 story.append(Paragraph(
-    "All headline Split A and Split B numbers are single-run point "
+    "All headline ablation numbers are single-run point "
     "estimates (no error bars) on a fixed holdout split, with a shared "
     "ridge regularisation &lambda; across both arms. The audit-phase numbers "
-    "(Section&nbsp;6.3) carry 5-seed &plusmn; std error bars for phases "
+    "(Section&nbsp;6.2) carry 5-seed &plusmn; std error bars for phases "
     "E&ndash;H, where the 5-seed multi-cycle stress test was run; the "
     "headline ablation does not. All audit runs reported in this paper use "
     "the 79-skill corpus dated 2026-08-06 (single dated snapshot, "
@@ -688,19 +717,21 @@ story.append(Paragraph(
 story.append(Paragraph("6&nbsp;&nbsp;Results", style_h1))
 story.append(Paragraph(
     "6.1&nbsp;&nbsp;Hyperspherical-harmonic variant: matched-parameter "
-    "ablation on Splits A and B", style_h2,
+    "ablation", style_h2,
 ))
 story.append(Paragraph(
-    "The matched-parameter ablation on the two headline splits is the "
-    "paper's single contribution: on these corpora, the hyperspherical "
-    "parameter manifold is a strictly better inductive bias than the flat "
+    "The matched-parameter ablation on the two headline corpus snapshots is "
+    "the paper's central empirical claim: on these corpora, the "
+    "hyperspherical parameter manifold is a strictly better inductive bias "
+    "than the flat "
     "[0,1]<sup>2</sup> "
     "baseline, with the absolute holdout <i>R</i><sup>2</sup> positive on "
-    "the smaller split and the relative &delta; positive on both splits.",
+    "the smaller snapshot and the relative &delta; positive on both "
+    "snapshots.",
     style_body,
 ))
 story.append(Paragraph(
-    "<b>Split A</b> (49 items, <i>N</i><sub>train</sub> = 35, "
+    "<b>49-item snapshot</b> (<i>N</i><sub>train</sub> = 35, "
     "<i>N</i><sub>holdout</sub> = 14):",
     style_body,
 ))
@@ -724,7 +755,7 @@ story.append(Paragraph(
     style_bullet,
 ))
 story.append(Paragraph(
-    "<b>Split B</b> (70 items, <i>N</i><sub>train</sub> = 49, "
+    "<b>70-item snapshot</b> (<i>N</i><sub>train</sub> = 49, "
     "<i>N</i><sub>holdout</sub> = 21, variant-included):",
     style_body,
 ))
@@ -801,45 +832,35 @@ story.append(Paragraph(
 ))
 story.append(Paragraph(
     "The hyperspherical-harmonic variant wins on the matched-parameter "
-    "ablation at both Splits A and B by a margin (Split A "
-    "&delta; = +0.977, Split B &delta; = +1.342) that is hard to attribute "
+    "ablation at both corpus snapshots by a margin (49-item "
+    "&delta; = +0.977, 70-item &delta; = +1.342) that is hard to attribute "
     "to noise. We do <i>not</i> claim the variant is a strict improvement "
-    "over the flat curve in absolute terms: on Split B the absolute "
-    "<i>R</i><sup>2</sup> is +0.222 (positive but small), and the headline "
-    "numbers are single-run point estimates without error bars. The atom "
-    "experiment (Figure&nbsp;2) shows the smallest audit "
-    "unit composes without regression &mdash; 1391 dispatches across the "
-    "three corpora (Appendix&nbsp;B), 0 negative "
-    "&Delta; &mdash; but does not by itself validate the variant.",
+    "over the flat curve in absolute terms: on the 70-item snapshot the "
+    "absolute <i>R</i><sup>2</sup> is +0.222 (positive but small), and the "
+    "headline numbers are single-run point estimates without error bars. The "
+    "atom experiment (Figure&nbsp;2) shows the smallest audit unit composes "
+    "without regression &mdash; 474 dispatches, 0 negative &Delta; &mdash; "
+    "but does not by itself validate the variant.",
     style_body,
 ))
 
 story.append(Paragraph("7.2&nbsp;&nbsp;Limitations", style_h2))
-# v3 REVERT: 7.2 reverted to PR #192 v4 wording (PR #193 v2 had spurious
-# edits here; the synthetic-manifold benchmark is PR #192 domain).
 story.append(Paragraph(
-    "The matched-parameter ablation in Section&nbsp;6.1 reports "
-    "single-seed point estimates of &delta; = +0.977 (49-item) and "
-    "&delta; = +1.342 (70-item) on the yubiOS software-skill corpus. "
-    "A second-corpus re-run of the ablation itself would replace these "
-    "with error bars at the headline-ablation level and is the remaining "
-    "open item. The synthetic-manifold benchmark (Appendix&nbsp;C.3, "
-    "executed, see Figure&nbsp;C.2) now stress-tests the inductive-bias "
-    "claim with off-span targets: the <i>T</i><sup>2</sup> target is in "
-    "the flat Fourier <i>K</i>{=}2 span but not the sphere arm's "
-    "stereo-lifted span (flat wins 50/50 seeds, paired <i>p</i> &lt; "
-    "10<sup>&minus;15</sup>); the <i>S</i><sup>2</sup> target is in "
-    "the SH <i>L</i>{=}3 span but not the flat Fourier <i>K</i>{=}2 "
-    "span (sphere wins 50/50 seeds, paired <i>p</i> &ll; 0.05). "
-    "Both predictions hold under the v4 off-span protocol; the v3 "
-    "<i>S</i><sup>2</sup> result was a numerical-noise artifact and is "
-    "fixed in v4.",
+    "The matched-parameter ablation in Section&nbsp;6.1 reports single-seed "
+    "point estimates of &delta; = +0.977 (49-item) and &delta; = +1.342 "
+    "(70-item) on the yubiOS software-skill corpus. A second-corpus re-run "
+    "of the ablation itself would replace these with error bars at the "
+    "headline-ablation level and is the one remaining open item. "
+    "Separately, the risk that the ablation measures fit rather than "
+    "inductive bias is addressed by the synthetic-manifold benchmark of "
+    "Appendix&nbsp;C.3, which runs the same matched-capacity comparison "
+    "against off-span targets on a known <i>T</i><sup>2</sup> negative "
+    "control and a known <i>S</i><sup>2</sup> positive control; the "
+    "prediction check and its statistics are reported there.",
     style_body,
 ))
 
 story.append(Paragraph("8&nbsp;&nbsp;Conclusion", style_h1))
-# v3 REVERT: 8 reverted to PR #192 v4 wording (PR #193 v2 had spurious
-# edits here; the synthetic-manifold benchmark is PR #192 domain).
 story.append(Paragraph(
     "The hyperspherical-harmonic curve replaces the flat "
     "[0,1]<sup>2</sup> "
@@ -851,26 +872,21 @@ story.append(Paragraph(
     "fewer parameters and no error bars. The single-action atom is the "
     "smallest unit of the resulting audit pipeline; its only-positive-"
     "&Delta; invariant propagates linearly to multi-file composition "
-    "(Theorem&nbsp;1), as confirmed by 1391 atom dispatches across the "
+    "(Theorem&nbsp;1) and to the cumulative total across cycles "
+    "(Corollary&nbsp;1), as confirmed by 1391 atom dispatches across the "
     "three corpora (<font face='Courier'>skills/</font>, "
     "<font face='Courier'>docs/</font>, "
     "<font face='Courier'>refs/</font>) in Appendix&nbsp;B "
     "and a 20-cycle experiment on the 11-file deep-research corpus in "
     "Appendix&nbsp;C, showing zero negative &Delta; across all of them. "
-    "The synthetic-manifold benchmark in Appendix&nbsp;C.3 now "
-    "stress-tests the inductive-bias claim with off-span targets: "
-    "<i>T</i><sup>2</sup> target is in the flat Fourier <i>K</i>{=}2 "
-    "span but not the sphere arm's stereo-lifted span (flat wins 50/50 "
-    "seeds, paired <i>p</i> &ll; 0.05); <i>S</i><sup>2</sup> target is "
-    "in the SH <i>L</i>{=}3 span but not the flat Fourier <i>K</i>{=}2 "
-    "span (sphere wins 50/50 seeds, paired <i>p</i> &ll; 0.05). Both "
-    "predictions of the inductive-bias claim hold. A second-corpus "
-    "re-run of the ablation itself remains the one remaining open item "
-    "and would replace the present single-seed point estimates with "
-    "error bars.",
+    "The synthetic-manifold benchmark in Appendix&nbsp;C.3 stress-tests the "
+    "inductive-bias claim with off-span targets on both a negative and a "
+    "positive control; the headline numbers are reported there. A "
+    "second-corpus re-run of the ablation itself remains the one remaining "
+    "open item and would replace the present single-seed point estimates "
+    "with error bars.",
     style_body,
 ))
-
 # --- Appendix A Atom Coverage of 79 Skills (Empirical) ---
 story.append(Paragraph(
     "Appendix A&nbsp;&nbsp;Atom Coverage of 79 Skills (Empirical)",
@@ -1158,9 +1174,9 @@ story.append(Paragraph(
     "complementary experiment runs the atom repeatedly against a "
     "small corpus to expose the per-file convergence behaviour that a "
     "wide, shallow audit averages away. This appendix reports that "
-    "experiment and then sketches the one benchmark this paper still "
-    "has not run on this branch; the rigorous re-test is in "
-    "Appendix&nbsp;D.",
+    "experiment and then reports the synthetic-manifold benchmark that "
+    "stress-tests the inductive-bias claim; the rigorous re-test at the "
+    "smaller basis capacity is in Appendix&nbsp;D.",
     style_body,
 ))
 story.append(Paragraph(
@@ -1371,13 +1387,13 @@ story.append(Paragraph(
     style_h1,
 ))
 story.append(Paragraph(
-    "This appendix complements PR&nbsp;#192&nbsp;v4's primary "
+    "This appendix complements the primary "
     "synthetic-manifold benchmark (Appendix&nbsp;C.3, 50 seeds, "
-    "off-span targets at PR&nbsp;#192's basis capacity) with a second "
+    "off-span targets, capacity-matched at 16 basis functions per arm) with a second "
     "test that specifically probes the input-representation "
-    "inductive bias on PR&nbsp;#193's smaller flat <i>K</i>{=}2 basis "
-    "(rank 9 effective). PR&nbsp;#192&nbsp;v4's protocol runs against "
-    "PR&nbsp;#193's flat basis and observes the sphere winning "
+    "inductive bias on the smaller flat <i>K</i>{=}2 basis "
+    "(rank 9 effective). Under the primary off-span protocol, that "
+    "smaller flat basis loses "
     "<i>T</i><sup>2</sup> by capacity alone (16 SH functions &gt; 9 "
     "flat effective); the v3 re-run here confirms both predictions of "
     "the inductive-bias claim under a <i>partial-in-span</i> target "
@@ -1386,7 +1402,7 @@ story.append(Paragraph(
     style_body,
 ))
 
-story.append(Paragraph("D.0&nbsp;&nbsp;Fix A targets (verified by lstsq at <i>N</i> = 4000)", style_h2))
+story.append(Paragraph("D.1&nbsp;&nbsp;Fix A targets (verified by lstsq at <i>N</i> = 4000) (verified by lstsq at <i>N</i> = 4000)", style_h2))
 story.append(Paragraph(
     "The Fix A design splits the in-span and out-of-span contributions "
     "to discriminate the topology signal from the capacity signal:",
@@ -1395,7 +1411,7 @@ story.append(Paragraph(
 story.append(Paragraph(
     "&bull; <b><i>T</i><sup>2</sup> target:</b> "
     "sin&theta;&middot;cos&phi; + 0.5&middot;sin(2&theta;)&middot;cos(2&phi;). "
-    "The mode-1 component sin&theta;&middot;cos&phi; IS in PR&nbsp;#193's "
+    "The mode-1 component sin&theta;&middot;cos&phi; IS in the smaller "
     "flat <i>K</i>{=}2 span (lstsq <i>R</i><sup>2</sup> = 1.0000 on this "
     "component alone). The mode-2 component "
     "sin(2&theta;)&middot;cos(2&phi;) is OUT of flat <i>K</i>{=}2 span "
@@ -1435,7 +1451,7 @@ story.append(Paragraph(
     style_body,
 ))
 
-story.append(Paragraph("D.1&nbsp;&nbsp;Results (10-seed mean &plusmn; std on holdout <i>R</i><sup>2</sup>)", style_h2))
+story.append(Paragraph("D.2&nbsp;&nbsp;Results (10-seed mean &plusmn; std on holdout <i>R</i><sup>2</sup>) mean &plusmn; std on holdout <i>R</i><sup>2</sup>)", style_h2))
 table_d1_data = [
     [Paragraph("<b>Manifold</b>", style_cell_hdr),
      Paragraph("<b>Hyperspherical <i>S</i><sup>2</sup></b> (L=3, 16 SH, rank 16)", style_cell_hdr),
@@ -1520,15 +1536,15 @@ if Path(figD1).exists():
         "the sphere arm wins decisively (+1.000 vs &minus;0.110, "
         "paired <i>p</i> = 8.1 &times; 10<sup>&minus;13</sup>). "
         "The benchmark confirms BOTH predictions of the inductive-bias "
-        "claim under the partial-in-span design on PR&nbsp;#193's "
-        "smaller flat basis.",
+        "claim under the partial-in-span design on the smaller flat "
+        "<i>K</i>{=}2 basis.",
         style_caption,
     ))
 
-story.append(Paragraph("D.2&nbsp;&nbsp;Interpretation", style_h2))
+story.append(Paragraph("D.3&nbsp;&nbsp;Interpretation", style_h2))
 story.append(Paragraph(
     "Both predictions of the inductive-bias claim hold under the "
-    "Fix A partial-in-span design on PR&nbsp;#193's smaller flat "
+    "Fix A partial-in-span design on the smaller flat <i>K</i>{=}2 "
     "basis. The honest read is that the claim <i>survives the more "
     "rigorous test at both controls, at PR&nbsp;#193's smaller basis "
     "capacity</i>. On <i>T</i><sup>2</sup>, the negative control "
@@ -1541,10 +1557,10 @@ story.append(Paragraph(
     style_body,
 ))
 story.append(Paragraph(
-    "<b>Capacity-confound context.</b> PR&nbsp;#193's flat basis has "
+    "<b>Capacity-confound context.</b> The flat basis has "
     "rank 9 effective. The sphere arm has rank 16 SH. Without the "
     "Fix A partial-in-span design &mdash; for example, when "
-    "PR&nbsp;#192&nbsp;v4's off-span targets are run against "
+    "the primary protocol's off-span targets are run against "
     "PR&nbsp;#193's flat basis &mdash; the sphere arm wins "
     "<i>T</i><sup>2</sup> by capacity alone (16 SH &gt; 9 flat "
     "effective). Fix A gives flat a real fitting advantage on the "
@@ -1562,21 +1578,21 @@ story.append(Paragraph(
     "(2) The <i>S</i><sup>2</sup> target is a single SH basis "
     "function (<i>Y</i><sub>3</sub><sup>3</sup>); higher-degree or "
     "non-smooth <i>S</i><sup>2</sup> targets would be a more "
-    "discriminating positive control. PR&nbsp;#192&nbsp;v4's primary "
+    "discriminating positive control. The primary "
     "benchmark adds &sigma; = 0.01 Gaussian noise to the "
-    "<i>S</i><sup>2</sup> target; PR&nbsp;#193's benchmark omits "
+    "<i>S</i><sup>2</sup> target; the re-test reported here omits "
     "noise. (3) Both targets are noiseless here.",
     style_body,
 ))
 story.append(Paragraph(
     "<b>Open-item status update</b> (Section&nbsp;7.2). "
-    "PR&nbsp;#192&nbsp;v4's protocol (Appendix&nbsp;C.3, 50 seeds, "
-    "off-span targets at PR&nbsp;#192's basis capacity, &sigma; = "
+    "The primary protocol (Appendix&nbsp;C.3, 50 seeds, "
+    "off-span targets, capacity-matched at 16 basis functions per arm, &sigma; = "
     "0.01 noise on the <i>S</i><sup>2</sup> target) is the primary "
     "test of the inductive-bias claim; this appendix is the second "
-    "test at PR&nbsp;#193's smaller basis capacity under the Fix A "
+    "test at the smaller basis capacity under the Fix A "
     "partial-in-span design (no noise). Both controls work in both "
-    "PRs; the remaining open items are a higher-degree "
+    "protocols; the remaining open items are a higher-degree "
     "<i>S</i><sup>2</sup> positive control and a second-corpus "
     "re-run of the ablation itself.",
     style_body,
@@ -1701,8 +1717,22 @@ refs = [
     "Weight Reparameterization for Improved Optimization.</i> "
     "arXiv:2607.09967 [cs.LG].",
 ]
-for i, ref in enumerate(refs):
-    story.append(Paragraph(f"[{i+1}]&nbsp;&nbsp;{ref}", style_body))
+ref_labels = [
+    "Durastanti(2026)",
+    "Anonymous(2022)",
+    "Rahimi and Recht(2007)",
+    "Tancik et al.(2020)",
+    "Sitzmann et al.(2020)",
+    "Mildenhall et al.(2020)",
+    "Cohen et al.(2018)",
+    "Nickel and Kiela(2017)",
+    "Ahlfors(1979)",
+    "do Carmo(1976)",
+    "Smith(2026)",
+]
+assert len(ref_labels) == len(refs), "ref_labels must stay in lockstep with refs"
+for label, ref in zip(ref_labels, refs):
+    story.append(Paragraph(f"<b>[{label}]</b>&nbsp;&nbsp;{ref}", style_body))
 
 # ---------- Build ----------
 doc.build(story)
