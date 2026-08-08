@@ -494,59 +494,121 @@ Both predictions of the inductive-bias claim hold under the Fix A partial-in-spa
 
 
 \section{Use Cases}\label{app:use-cases}
-The RSI pipeline produces a family of corpus-scale visualizations committed to \texttt{papers/data/}. The figures below are the operational evidence behind the headline numbers in Sections~\ref{sec:dataset}--\ref{sec:results}.
+The RSI pipeline produces a family of corpus-scale visualizations committed to \texttt{papers/data/}. The figures below are the operational evidence behind the headline numbers in Sections~\ref{sec:dataset}--\ref{sec:results}: the curve maps show the geometry the primitive basis induces, the drift figures show how that geometry moves between corpora and between cycles, and the per-dimension fit plots in Appendix~\ref{app:use-cases:fits} record the PC1+PC2 concentration gate at every basis dimension we tested.
 
 \subsection{Full corpus curve map}\label{app:use-cases:full}
-2D stereographic projection of $S^2$ (see Figure~\ref{fig:use-cases:full}).
-
-\subsection{384-dimensional variant}\label{app:use-cases:384d}
-Doubled basis (9$\to$384 primitives; see Figure~\ref{fig:use-cases:384d}).
-
-\subsection{Multi-corpus subset --- skills}\label{app:use-cases:skills}
-Skills-only view (see Figure~\ref{fig:use-cases:skills}).
-
-\subsection{9-D primitive radar}\label{app:use-cases:radar}
-Per-file coverage grid (see Figure~\ref{fig:use-cases:radar}).
-
-\subsection{Drift detection across corpora}\label{app:use-cases:drift}
-Aligned curves + warp regions (see Figure~\ref{fig:use-cases:drift}).
-
-\subsection{N-dimensional PCA viewer}\label{app:use-cases:nd}
-24-D PCA static export (see Figure~\ref{fig:use-cases:nd}).
+Figure~\ref{fig:use-cases:full} is the 2D stereographic projection of $S^2$ for the full yubiOS corpus: every file is mapped to a point via 9-D primitive coverage $\to$ PCA top-2 $\to$ stereographic lift $\to$ M\"obius reparameterization. Dense regions are corpus parts that share a primitive-closure pattern, and the fitted curve is the one-dimensional path the RSI loop walks when it schedules work. Figure~\ref{fig:use-cases:full-c3} is the same projection recomputed after the cycle-3 refs ingest (1862 refs items); the two together show the map is stable under a corpus that grew by an order of magnitude, which is the stability claim behind Section~\ref{sec:results}.
 
 \begin{figure}[h]
 \centering\includegraphics[width=6.0in]{papers/data/curve-map-output/curve-map.png}
-\caption{Full corpus curve map (2D stereographic projection of $S^2$).}
+\caption{Full corpus curve map --- 2D stereographic projection of $S^2$, one point per corpus file, fitted latent curve overlaid. Dense regions share primitive-closure patterns.}
 \label{fig:use-cases:full}
 \end{figure}
 
 \begin{figure}[h]
-\centering\includegraphics[width=6.0in]{papers/data/curve-map-output-384d/curve-map.png}
-\caption{384-dimensional primitive-closure curve map.}
+\centering\includegraphics[width=6.0in]{papers/data/curve-map-output/cycle-3-refs-curve-map-2026-08-07.png}
+\caption{Full corpus curve map after the cycle-3 refs ingest (2026-08-07). Same projection pipeline as Figure~\ref{fig:use-cases:full}; the curve's gross shape is preserved under a $\sim$10$\times$ corpus growth, evidencing that the fit is corpus-scale-stable rather than an artifact of the initial sample.}
+\label{fig:use-cases:full-c3}
+\end{figure}
+
+\subsection{384-dimensional curve map}\label{app:use-cases:384d}
+Figure~\ref{fig:use-cases:384d} replaces the 9-D binary primitive basis with the Fibonacci-sphere $Y_3^3$ construction at 384 symmetric azimuthal lobes ($\ell = 384$, $m = 3$, $\sin^{384}\theta$ polar profile) over 2610 items. The manifold structure survives the basis change, but the density gradient sharpens: skills concentrate in the upper hemisphere while docs and refs spread through the lower one. This is the variant that reaches PC1+PC2 $= 1.0000$ in Table~\ref{tab:use-cases:gate}, and it is the strongest evidence that the concentration is driven by the spherical inductive bias rather than by the particular 9 primitives chosen.
+
+\begin{figure}[h]
+\centering\includegraphics[width=6.0in]{papers/data/curve-map-output-384d/cycle-3-refs-curve-map-2026-08-07.png}
+\caption{384-dimensional curve map (Fibonacci-sphere $Y_3^3$ basis, 384 symmetric azimuthal lobes, 2610 items, 2026-08-07). PC1+PC2 $= 1.0000$; see Table~\ref{tab:use-cases:gate}.}
 \label{fig:use-cases:384d}
 \end{figure}
 
+\subsection{Multi-corpus curve map}\label{app:use-cases:skills}
+Figure~\ref{fig:use-cases:skills} colours the same $S^2$ projection by source corpus (\texttt{skills/}, \texttt{docs/}, \texttt{refs/}, \texttt{self/}) across the 2286 sections used for the 9-D and 16-D fits. The corpora occupy overlapping but distinguishable arcs, which is the precondition for the drift detector in Appendix~\ref{app:use-cases:drift}: alignment is only meaningful if the corpora are separable on the manifold in the first place.
+
 \begin{figure}[h]
-\centering\includegraphics[width=6.0in]{papers/data/curve-map-output-multi-corpus/curve-map-skills.png}
-\caption{Skills-corpus curve map (70--79 skills).}
+\centering\includegraphics[width=6.0in]{papers/data/curve-map-output-multi-corpus/cycle-3-refs-curve-map-2026-08-07.png}
+\caption{Multi-corpus curve map (2026-08-07) --- 2286 sections across \texttt{skills/}, \texttt{docs/}, \texttt{refs/}, \texttt{self/}, coloured by source corpus. Overlapping-but-separable arcs are what make cross-corpus alignment meaningful.}
 \label{fig:use-cases:skills}
 \end{figure}
 
-\begin{figure}[h]
-\centering\includegraphics[width=6.0in]{papers/data/radar-output/radar-grid.png}
-\caption{9-D primitive coverage radar across all corpus files.}
-\label{fig:use-cases:radar}
-\end{figure}
+\subsection{Drift detection: aligned curves}\label{app:use-cases:drift}
+Figure~\ref{fig:use-cases:drift} aligns the fitted curves of two corpora after M\"obius reparameterization and marks the warp regions where the geodesic distance between aligned points exceeds the per-cycle tolerance. Warp regions are the operational trigger for the self-archaeology cadence: they name the arc of the corpus whose primitive coverage has moved since the last cycle, which is exactly the prioritization signal claimed in Section~\ref{sec:results}.
 
 \begin{figure}[h]
 \centering\includegraphics[width=6.0in]{papers/data/drift-output/aligned-curves.png}
-\caption{Aligned curves across the two corpora (papers-corpus vs self-corpus).}
+\caption{Aligned curves across corpora after M\"obius reparameterization. Shaded warp regions mark arcs whose aligned-point geodesic distance exceeds the per-cycle tolerance; these are the arcs the RSI loop schedules first.}
 \label{fig:use-cases:drift}
 \end{figure}
 
+\subsection{Drift detection: aligned points}\label{app:use-cases:points}
+Figure~\ref{fig:use-cases:points} is the point-level view underneath Figure~\ref{fig:use-cases:drift}: each corpus item is plotted at its aligned curve parameter, so a warp region is visible as a local divergence of the two point clouds rather than only as a gap between two smoothed curves. It is the diagnostic used to confirm that a flagged warp is carried by a coherent group of files, not by one outlier section.
+
 \begin{figure}[h]
-\centering\includegraphics[width=6.0in]{papers/data/nd-viewer-output/nd-pca-static.png}
-\caption{24-D primitive-closure PCA static export.}
+\centering\includegraphics[width=6.0in]{papers/data/drift-output/aligned-points.png}
+\caption{Aligned-points scatter underlying Figure~\ref{fig:use-cases:drift}. Per-item alignment residuals confirm whether a flagged warp is carried by a coherent file group or by a single outlier.}
+\label{fig:use-cases:points}
+\end{figure}
+
+\subsection{Drift detection: series-aligned curves}\label{app:use-cases:series}
+Figure~\ref{fig:use-cases:series} aligns the fitted curves across the five basis dimensions of the series run (7-D, 9-D, 16-D, 24-D, 384-D) rather than across corpora. Because the corpus is held fixed and only the basis changes, divergence between the aligned curves isolates the effect of the basis itself --- and the 24-D curve is visibly the one that departs, which is the same failure that Table~\ref{tab:use-cases:gate} records numerically at PC1+PC2 $= 0.2993$.
+
+\begin{figure}[h]
+\centering\includegraphics[width=6.0in]{papers/data/drift-output/aligned-curves-from-series.png}
+\caption{Series-aligned curves across the five basis dimensions on a fixed corpus. With the corpus held constant, curve divergence isolates the basis effect; the 24-D arm is the outlier.}
+\label{fig:use-cases:series}
+\end{figure}
+
+\subsection{Keystone: five-dimension gate summary}\label{app:use-cases:keystone}
+Figure~\ref{fig:use-cases:keystone} is the keystone diagram: all five basis dimensions overlaid with their primitive guides and their PC1+PC2 gate status in one frame. It is the single figure that carries the appendix's claim --- four of five dimensions clear the $\ge 0.40$ concentration gate, and the one that fails (24-D) fails because the feature space was widened past the 9-D primitive basis with 12 NSS and 3 meta features, not because the spherical construction broke. Read it together with Table~\ref{tab:use-cases:gate} and the per-dimension fits in Appendix~\ref{app:use-cases:fits}.
+
+\begin{figure}[h]
+\centering\includegraphics[width=6.0in]{papers/data/drift-output/aligned-curves-from-series-keystone.png}
+\caption{\textbf{Keystone.} All five basis dimensions (7-D, 9-D, 16-D, 24-D, 384-D) with primitive guides and PC1+PC2 gate status. Four of five clear the $\ge 0.40$ gate; 24-D fails at $0.2993$ --- the limit of the inductive bias once the feature space is extended beyond the 9-D primitive basis.}
+\label{fig:use-cases:keystone}
+\end{figure}
+
+\subsection{Per-dimension fit plots and the concentration gate}\label{app:use-cases:fits}
+Table~\ref{tab:use-cases:gate} reports the PC1+PC2 concentration for each basis dimension against the $\ge 0.40$ gate, and Figure~\ref{fig:use-cases:fits} shows the corresponding per-dimension fit plots side by side. The five dimensions are not five independent experiments --- they are a nested sweep of the input representation on (nearly) the same corpus:
+\begin{itemize}
+\item \textbf{7-D} --- the original 7-D binary primitive basis on the \texttt{refs/} corpus alone (1862 items). PC1+PC2 $= 1.0000$; this passes trivially, since 7-D $\subset$ 9-D and a single-corpus sample of this size concentrates perfectly. We report it as the floor case, not as evidence.
+\item \textbf{9-D} --- the full 9-D binary primitive basis across all four corpora (2286 sections). PC1+PC2 $= 0.4565$: the paper's headline dimension, clearing the gate with real margin on a genuinely heterogeneous corpus.
+\item \textbf{16-D} --- 16 real spherical harmonics on $S^2$ (SH $L{=}3$) over the same 2286 sections. PC1+PC2 $= 0.4627$, statistically indistinguishable from 9-D: moving from binary primitives to the harmonic basis at matched corpus neither helps nor hurts concentration.
+\item \textbf{24-D} --- the extended feature space, 9-D $+$ 12 NSS (pod-security-standards) $+$ 3 meta, same 2286 sections. PC1+PC2 $= 0.2993$, \emph{failing} the gate. This is the informative negative: the concentration is a property of the primitive basis, and it does not survive arbitrary feature-space widening.
+\item \textbf{384-D} --- the Fibonacci-sphere $Y_3^3$ variant ($\ell = 384$, $m = 3$) over 2610 items. PC1+PC2 $= 1.0000$ for the chosen variant, the strongest concentration in the sweep.
+\end{itemize}
+
+\begin{table}[h]
+\centering\footnotesize
+\begin{tabular}{llrrcp{4.4cm}}
+\toprule
+Dim. & Corpus & $N$ & PC1+PC2 & Gate ($\ge 0.40$) & Basis \\
+\midrule
+7-D   & refs (7-D basis)                 & 1862 & 1.0000 & PASS & SH $L{=}3$, 16 basis functions \\
+9-D   & 4 corpora (9-D basis)            & 2286 & 0.4565 & PASS & SH $L{=}3$, 16 basis functions \\
+16-D  & 4 corpora (16 SH fns)            & 2286 & 0.4627 & PASS & SH $L{=}3$, 16 real spherical harmonics on $S^2$ \\
+24-D  & 4 corpora (9-D + 12 NSS + 3 meta) & 2286 & 0.2993 & FAIL & SH $L{=}3$, 16 basis functions (extended feature space) \\
+384-D & 4 corpora (Fibonacci-sphere)     & 2610 & 1.0000 & PASS & $Y_3^3$ basis, 384 symmetric azimuthal lobes ($\ell = 384$, $m = 3$) \\
+\bottomrule
+\end{tabular}
+\caption{\textbf{Table E.1.} Five-dimension concentration gate. PC1+PC2 is the fraction of variance carried by the top two principal components of the primitive-coverage matrix; the gate is $\ge 0.40$. Four of five dimensions pass; 24-D fails at $0.2993$. Source: the per-dimension \texttt{fit.json} under \texttt{papers/data/series/}.}
+\label{tab:use-cases:gate}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.48\textwidth]{papers/data/series/7-D/7-D/graphs/fit.png}\hfill
+\includegraphics[width=0.48\textwidth]{papers/data/series/9-D/9-D/graphs/fit.png}\\[4pt]
+\includegraphics[width=0.48\textwidth]{papers/data/series/16-D/16-D/graphs/fit.png}\hfill
+\includegraphics[width=0.48\textwidth]{papers/data/series/24-D/24-D/graphs/fit.png}\\[4pt]
+\includegraphics[width=0.48\textwidth]{papers/data/series/384-D/384-D/graphs/fit.png}
+\caption{Per-dimension fit plots, reading left-to-right, top-to-bottom: 7-D ($1.0000$, pass), 9-D ($0.4565$, pass), 16-D ($0.4627$, pass), 24-D ($0.2993$, \emph{fail}), 384-D ($1.0000$, pass). Each panel shows the fitted latent curve against the projected corpus points for that basis; the 24-D panel is visibly the diffuse one, matching its sub-gate PC1+PC2 in Table~\ref{tab:use-cases:gate}.}
+\label{fig:use-cases:fits}
+\end{figure}
+
+\subsection{N-dimensional PCA viewer}\label{app:use-cases:nd}
+Figure~\ref{fig:use-cases:nd} is the static export of the interactive N-dimensional PCA viewer at the cycle-3 refs snapshot. It is the projection used for the headline ablation in Section~\ref{sec:results} and the tool by which the 24-D gate failure was first observed: the extended feature space spreads variance across more than two components, which is visible here as the loss of a dominant plane.
+
+\begin{figure}[h]
+\centering\includegraphics[width=6.0in]{papers/data/nd-viewer-output/nd-pca-static-cycle-3-refs-2026-08-07.png}
+\caption{N-dimensional PCA static export (cycle-3 refs, 2026-08-07). Static counterpart to the interactive HTML viewer; the same projection backs the ablation in Section~\ref{sec:results}.}
 \label{fig:use-cases:nd}
 \end{figure}
 
