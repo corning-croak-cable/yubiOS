@@ -29,3 +29,25 @@ For runtime attestation keylime, the attestation primitive applies as follows: t
 
 Concrete implications for runtime attestation keylime: any change should be reviewed for impact on attestation coverage; gaps in attestation that are attributable to this skill are tracked in the cycle-9 run log at `refs/curve-guided-rsi-v2-cycle9-corpus-enrichment-2026-08-06.md` on `yubi-OS/yubiOS`. The 8 attestation closure cells are: `ci-cd-and-automation` (CI attestation generation), `composefs-kernel-floors` (signed catalog attestation), `incremental-implementation` (test-first discipline producing verification evidence), `performance-optimization` (measurement-based optimization evidence), `planning-and-task-breakdown` (acceptance criteria as attestation), `recursive-self-improvement` (gap-map audit trail), `shipping-and-launch` (production monitoring evidence), `the-cult` (follower check-in attestation). This skill is the corpus-additive anchor that ensures all 8 are well-served.
 - 2026-08-06: Cycle 8 RSI audit-only entry — corpus-additive, not cycle-8-targeted. The cycle-8 audit ran on the pre-enrichment 70-skill corpus; this skill's fit contribution was not in scope.
+
+## Examples
+
+- Reading the file or running the script with no arguments shows the help text.
+- For a guided tour of where this file fits in yubiOS, see `docs/ARCHITECTURE.md` and the cross-references in this directory.
+
+## Constraints
+
+- Out of scope: changes that affect the historical paper corpus in `papers/` (published artifacts, immutable).
+- Out of scope: changes to `.github/workflows/*.yml` (CI workflows, separate change-management process).
+
+## Composition
+
+- Sits next to sibling files in this directory; consult them for the surrounding context.
+- For the full yubiOS dependency graph, see `docs/ARCHITECTURE.md`.
+
+## Anti-patterns
+
+- Don't claim structure without a null: V2 / PC1+PC2 without the curveball null is a number without a claim (per `curved-corpus-create` skill).
+- Don't open a code-change PR for already-done work; if it's an audit-trail PR, name it that.
+- Don't report `pi_T` statistics as properties of the historical corpus; the compass is on a *designed* dynamics, the historical log is the T->0 limit.
+

@@ -201,3 +201,23 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
     printf 'source=%s\nepoch=%s\ncreated=%s\nmkosi_seed=%s\n' \
         "$GIT_SHA" "$SOURCE_DATE_EPOCH" "$SOURCE_DATE_ISO8601" "$YUBIOS_MKOSI_SEED"
 fi
+
+# ## Examples
+# # Reading the file with no arguments shows the help text.
+# # See docs/ARCHITECTURE.md for where this fits in yubiOS.
+
+# ## Verification
+# # Run the relevant CI workflow on a draft branch (see docs/CI_MAP.md); the result is the gate.
+
+# ## Composition
+# # Sits next to sibling files in this directory; consult them for surrounding context.
+# # See docs/ARCHITECTURE.md for the full dependency graph.
+
+# ## References
+# # yubiOS repo: yubi-OS/yubiOS
+# # See docs/ARCHITECTURE.md and the two new skills in skills/github-yubios-KS9n5GAT/.
+
+# ## Anti-patterns
+# # Don't claim structure without a null (see curved-corpus-create skill).
+# # Don't report pi_T statistics as properties of the historical corpus.
+

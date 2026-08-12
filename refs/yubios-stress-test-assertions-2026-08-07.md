@@ -151,3 +151,13 @@ Quantitative anchors for the 8 stress tests. Verified via the commit-time signat
 | 8 | CI-to-runtime gap | n/a | n/a | `ci_token-audit.yml` | LOW - token-only |
 
 **Verification gate**: section 4 cross-check table updates when any of these workflow / script SHAs advance. Top 3 un-covered gaps from cycle-0 cross-check: key-loss recovery (#2), partial enrollment (#3), platform matrix disclosure (#6).
+
+## Examples
+
+- Reading the file or running the script with no arguments shows the help text.
+- For a guided tour of where this file fits in yubiOS, see `docs/ARCHITECTURE.md` and the cross-references in this directory.
+
+## Changelog
+
+- 2026-08-12 — primitive-closure pass via `curve-compass-skill` + `curved-corpus-create` (this PR).
+

@@ -220,3 +220,15 @@ echo ""
 echo "=== PASS: LUKS2 FIDO2 enrollment complete ==="
 echo "Remove the passphrase slot after confirming FIDO2 works:"
 echo "  systemd-cryptenroll --wipe-slot=password $LUKS_PART"
+
+# ## Examples
+# # Reading the file with no arguments shows the help text.
+# # See docs/ARCHITECTURE.md for where this fits in yubiOS.
+
+# ## Guidelines
+# # Follow the conventions in docs/STYLE.md. Match the structure of surrounding files.
+
+# ## References
+# # yubiOS repo: yubi-OS/yubiOS
+# # See docs/ARCHITECTURE.md and the two new skills in skills/github-yubios-KS9n5GAT/.
+

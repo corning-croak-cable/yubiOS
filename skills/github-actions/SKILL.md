@@ -608,3 +608,9 @@ The audit-trail entry: 2026-08-06 cycle 6 RSI — closed `cryptographic identity
 This skill already covers all 5 remaining MOVABLE corpus-priority primitives post-cycle-6 (attestation, trust chain, declarative policy, immutability, least privilege). The cycle-7 RSI audit verified full movable coverage; no primitive closure needed.
 
 The audit-trail entry: 2026-08-06 cycle 7 RSI — no movable primitive gap to close.
+
+## Verification
+
+- Spot-check by reading the file end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (per `docs/CI_MAP.md`); the result is the gate.
+

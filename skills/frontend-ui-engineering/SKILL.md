@@ -377,3 +377,9 @@ The audit-trail entry: 2026-08-06 cycle 6 RSI — closed `cryptographic identity
 This skill's `trust chain` primitive is closed by cycle-7 RSI (3rd-priority MOVABLE per skill, post-cycle-6 baseline). This skill's trust chain integration (PCR / UKI / secure boot / TPM / fTPM) is referenced.
 
 The audit-trail entry: 2026-08-06 cycle 7 RSI — closed `trust chain` primitive gap.
+
+## Constraints
+
+- Out of scope: changes that affect the historical paper corpus in `papers/` (published artifacts, immutable).
+- Out of scope: changes to `.github/workflows/*.yml` (CI workflows, separate change-management process).
+

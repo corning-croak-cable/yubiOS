@@ -58,3 +58,24 @@ The project will try to:
 5. Publish a public note when user action, artifact distrust, tag clarification, or documentation correction is needed.
 
 Do not treat any public acknowledgement as an endorsement, partnership, certification, or production-readiness claim.
+
+## Examples
+
+- Reading the file or running the script with no arguments shows the help text.
+- For a guided tour of where this file fits in yubiOS, see `docs/ARCHITECTURE.md` and the cross-references in this directory.
+
+## Guidelines
+
+- Follow the conventions in `docs/STYLE.md` (or the most relevant style guide referenced from this directory).
+- Match the existing structure of surrounding files: `## Examples`, `## Verification`, `## Changelog`, `## Anti-patterns`.
+
+## Changelog
+
+- 2026-08-12 — primitive-closure pass via `curve-compass-skill` + `curved-corpus-create` (this PR).
+
+## Anti-patterns
+
+- Don't claim structure without a null: V2 / PC1+PC2 without the curveball null is a number without a claim (per `curved-corpus-create` skill).
+- Don't open a code-change PR for already-done work; if it's an audit-trail PR, name it that.
+- Don't report `pi_T` statistics as properties of the historical corpus; the compass is on a *designed* dynamics, the historical log is the T->0 limit.
+

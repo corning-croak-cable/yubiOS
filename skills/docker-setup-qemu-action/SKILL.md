@@ -110,3 +110,20 @@ The audit-trail entry: 2026-08-06 cycle 7 RSI — closed `trust chain` primitive
 ## Continuous / adaptive coverage
 
 This skill supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The skill is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.
+
+## Constraints
+
+- Out of scope: changes that affect the historical paper corpus in `papers/` (published artifacts, immutable).
+- Out of scope: changes to `.github/workflows/*.yml` (CI workflows, separate change-management process).
+
+## Verification
+
+- Spot-check by reading the file end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (per `docs/CI_MAP.md`); the result is the gate.
+
+## Anti-patterns
+
+- Don't claim structure without a null: V2 / PC1+PC2 without the curveball null is a number without a claim (per `curved-corpus-create` skill).
+- Don't open a code-change PR for already-done work; if it's an audit-trail PR, name it that.
+- Don't report `pi_T` statistics as properties of the historical corpus; the compass is on a *designed* dynamics, the historical log is the T->0 limit.
+

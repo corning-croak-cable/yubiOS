@@ -111,3 +111,13 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 **Owner**: TBD
 
 Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.8670). TODO: refine per file context.
+
+## Verification
+
+- Spot-check by reading the file end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (per `docs/CI_MAP.md`); the result is the gate.
+
+## Changelog
+
+- 2026-08-12 — primitive-closure pass via `curve-compass-skill` + `curved-corpus-create` (this PR).
+

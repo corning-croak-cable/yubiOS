@@ -233,3 +233,25 @@ This document manages cryptographic identity — FIDO2/CTAP2 YubiKey, softhsm/PK
 **Owner**: TBD
 
 Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.8682). TODO: refine per file context.
+
+## Examples
+
+- Reading the file or running the script with no arguments shows the help text.
+- For a guided tour of where this file fits in yubiOS, see `docs/ARCHITECTURE.md` and the cross-references in this directory.
+
+## Constraints
+
+- Out of scope: changes that affect the historical paper corpus in `papers/` (published artifacts, immutable).
+- Out of scope: changes to `.github/workflows/*.yml` (CI workflows, separate change-management process).
+
+## Verification
+
+- Spot-check by reading the file end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (per `docs/CI_MAP.md`); the result is the gate.
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- The two new skills used to drive this primitive-closure pass: `skills/github-yubios-KS9n5GAT/curve-compass-skill/SKILL.md` and `skills/github-yubios-KS9n5GAT/curved-corpus-create/SKILL.md`.
+

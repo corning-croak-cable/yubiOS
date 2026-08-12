@@ -127,3 +127,17 @@ RUN install -d /usr/lib/systemd/system/multi-user.target.wants && \
 
 LABEL yubiOS.image.kind="dev-test"
 LABEL yubiOS.image.warning="TEST-ONLY: ships the passless swu2f software FIDO2 authenticator AND serial/tty root autologin (local-access bypass of pam_u2f). Never use in production. See ADR-003, ADR-026."
+## Examples
+
+- Reading the file or running the script with no arguments shows the help text.
+- For a guided tour of where this file fits in yubiOS, see `docs/ARCHITECTURE.md` and the cross-references in this directory.
+
+## Guidelines
+
+- Follow the conventions in `docs/STYLE.md` (or the most relevant style guide referenced from this directory).
+- Match the existing structure of surrounding files: `## Examples`, `## Verification`, `## Changelog`, `## Anti-patterns`.
+
+## Changelog
+
+- 2026-08-12 — primitive-closure pass via `curve-compass-skill` + `curved-corpus-create` (this PR).
+

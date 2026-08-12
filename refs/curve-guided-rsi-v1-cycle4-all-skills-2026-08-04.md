@@ -124,3 +124,24 @@ The `curve-guided-rsi` v1 meta-skill is ready for ongoing use. The 5 remaining "
 **Owner**: TBD
 
 Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.8668). TODO: refine per file context.
+
+## Examples
+
+- Reading the file or running the script with no arguments shows the help text.
+- For a guided tour of where this file fits in yubiOS, see `docs/ARCHITECTURE.md` and the cross-references in this directory.
+
+## Constraints
+
+- Out of scope: changes that affect the historical paper corpus in `papers/` (published artifacts, immutable).
+- Out of scope: changes to `.github/workflows/*.yml` (CI workflows, separate change-management process).
+
+## Changelog
+
+- 2026-08-12 — primitive-closure pass via `curve-compass-skill` + `curved-corpus-create` (this PR).
+
+## Anti-patterns
+
+- Don't claim structure without a null: V2 / PC1+PC2 without the curveball null is a number without a claim (per `curved-corpus-create` skill).
+- Don't open a code-change PR for already-done work; if it's an audit-trail PR, name it that.
+- Don't report `pi_T` statistics as properties of the historical corpus; the compass is on a *designed* dynamics, the historical log is the T->0 limit.
+

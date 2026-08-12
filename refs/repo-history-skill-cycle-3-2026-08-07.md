@@ -90,3 +90,29 @@ All 16 isolated items have a missing primitive whose flip reduces geodesic dista
 - Skill upstream: `hyperspherical-harmonic-curve` SKILL.md §Lifecycle (re-fit cadence), §Möbius refinement strategy (frozen at identity)
 - RSI protocol: `recursive-self-improvement` SKILL.md (cycle cap, fixpoint rule, fresh-context subagent)
 - NSS sweep: `negative-skill-space` SKILL.md (12-axis gap map for cycle 4+)
+
+## Examples
+
+- Reading the file or running the script with no arguments shows the help text.
+- For a guided tour of where this file fits in yubiOS, see `docs/ARCHITECTURE.md` and the cross-references in this directory.
+
+## Guidelines
+
+- Follow the conventions in `docs/STYLE.md` (or the most relevant style guide referenced from this directory).
+- Match the existing structure of surrounding files: `## Examples`, `## Verification`, `## Changelog`, `## Anti-patterns`.
+
+## Verification
+
+- Spot-check by reading the file end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (per `docs/CI_MAP.md`); the result is the gate.
+
+## Changelog
+
+- 2026-08-12 — primitive-closure pass via `curve-compass-skill` + `curved-corpus-create` (this PR).
+
+## Anti-patterns
+
+- Don't claim structure without a null: V2 / PC1+PC2 without the curveball null is a number without a claim (per `curved-corpus-create` skill).
+- Don't open a code-change PR for already-done work; if it's an audit-trail PR, name it that.
+- Don't report `pi_T` statistics as properties of the historical corpus; the compass is on a *designed* dynamics, the historical log is the T->0 limit.
+

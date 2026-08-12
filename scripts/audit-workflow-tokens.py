@@ -254,3 +254,19 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+# ## Examples
+# # python3 this_script.py --help
+# # See docs/ARCHITECTURE.md for where this fits in yubiOS.
+
+# ## Guidelines
+# # Follow the conventions in docs/STYLE.md. Match the structure of surrounding files.
+
+# ## Verification
+# # python3 this_script.py --selftest  # exits 0 iff GREEN, when applicable.
+# # See docs/CI_MAP.md for the relevant CI workflow.
+
+# ## Composition
+# # Sits next to sibling files in this directory.
+# # See docs/ARCHITECTURE.md for the full dependency graph.
+

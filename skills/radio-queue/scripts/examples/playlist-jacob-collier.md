@@ -59,3 +59,29 @@ curl -X POST "$BRIDGE/run" -d "$(python3 -c "import json; print(json.dumps({'com
 ## Verification history
 
 - 2026-08-05 — initial verification + queue trigger; all 6 IDs returned correct titles + ids via `--dump-single-json`; daemon transitioned from the upbeat playlist to this Jacob Collier set on rock1 end-to-end (queue.txt overwritten via base64 push).
+
+## Guidelines
+
+- Follow the conventions in `docs/STYLE.md` (or the most relevant style guide referenced from this directory).
+- Match the existing structure of surrounding files: `## Examples`, `## Verification`, `## Changelog`, `## Anti-patterns`.
+
+## Constraints
+
+- Out of scope: changes that affect the historical paper corpus in `papers/` (published artifacts, immutable).
+- Out of scope: changes to `.github/workflows/*.yml` (CI workflows, separate change-management process).
+
+## Composition
+
+- Sits next to sibling files in this directory; consult them for the surrounding context.
+- For the full yubiOS dependency graph, see `docs/ARCHITECTURE.md`.
+
+## Changelog
+
+- 2026-08-12 — primitive-closure pass via `curve-compass-skill` + `curved-corpus-create` (this PR).
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- The two new skills used to drive this primitive-closure pass: `skills/github-yubios-KS9n5GAT/curve-compass-skill/SKILL.md` and `skills/github-yubios-KS9n5GAT/curved-corpus-create/SKILL.md`.
+

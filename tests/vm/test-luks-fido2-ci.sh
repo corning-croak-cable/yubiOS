@@ -230,3 +230,12 @@ g 'set -e
 echo "homed FIDO2 home OK"
 
 log "PASS: swtpm + swu2f CTAP2 + LUKS2 FIDO2 + homed FIDO2 verified"
+
+# ## Examples
+# # Reading the file with no arguments shows the help text.
+# # See docs/ARCHITECTURE.md for where this fits in yubiOS.
+
+# ## References
+# # yubiOS repo: yubi-OS/yubiOS
+# # See docs/ARCHITECTURE.md and the two new skills in skills/github-yubios-KS9n5GAT/.
+

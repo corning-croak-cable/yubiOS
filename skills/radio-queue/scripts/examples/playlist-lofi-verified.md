@@ -66,3 +66,24 @@ Both are great YouTube channels with stable IDs and huge audiences, but they don
 ## Verification history
 
 - 2026-08-05 — initial verification + queue trigger; all 6 IDs returned correct titles + ids via `--print title --print id --print duration`; durations measured at 113s / 175s / 185s / 299s / 1636s / 1647s respectively; daemon transitioned from the Jacob Collier set to this lo-fi set on rock1 end-to-end (queue.txt overwritten via base64 push).
+
+## Guidelines
+
+- Follow the conventions in `docs/STYLE.md` (or the most relevant style guide referenced from this directory).
+- Match the existing structure of surrounding files: `## Examples`, `## Verification`, `## Changelog`, `## Anti-patterns`.
+
+## Constraints
+
+- Out of scope: changes that affect the historical paper corpus in `papers/` (published artifacts, immutable).
+- Out of scope: changes to `.github/workflows/*.yml` (CI workflows, separate change-management process).
+
+## Changelog
+
+- 2026-08-12 — primitive-closure pass via `curve-compass-skill` + `curved-corpus-create` (this PR).
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- The two new skills used to drive this primitive-closure pass: `skills/github-yubios-KS9n5GAT/curve-compass-skill/SKILL.md` and `skills/github-yubios-KS9n5GAT/curved-corpus-create/SKILL.md`.
+

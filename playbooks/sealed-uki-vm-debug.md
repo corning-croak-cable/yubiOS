@@ -85,3 +85,18 @@ The lane that **did** go green: PR #154 (`1c284b48826f` — "feat(ci): sealed UK
 - Canonical signing: `ci_mkosi-installer.yml`. OVMF artifacts: `ci_fork_edk2.yml`.
 - Playbooks: [dispatch-chain-verification](dispatch-chain-verification.md) (row 0 applies it), [fido2-vm-e2e-recipe](fido2-vm-e2e-recipe.md).
 - Gaps 1 and 12: no `tests/vm/test-secure-boot-tamper.sh`; negatives 2 and 3 are TODO-only. A `yaml.safe_load` pre-dispatch gate would have caught V37/V38 free.
+
+## Guidelines
+
+- Follow the conventions in `docs/STYLE.md` (or the most relevant style guide referenced from this directory).
+- Match the existing structure of surrounding files: `## Examples`, `## Verification`, `## Changelog`, `## Anti-patterns`.
+
+## Composition
+
+- Sits next to sibling files in this directory; consult them for the surrounding context.
+- For the full yubiOS dependency graph, see `docs/ARCHITECTURE.md`.
+
+## Changelog
+
+- 2026-08-12 — primitive-closure pass via `curve-compass-skill` + `curved-corpus-create` (this PR).
+

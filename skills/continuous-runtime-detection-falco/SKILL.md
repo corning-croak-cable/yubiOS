@@ -29,3 +29,20 @@ For continuous runtime detection falco, the C/A primitive applies as follows: th
 
 Concrete implications for continuous runtime detection falco: any change should be reviewed for impact on C/A coverage; gaps in C/A that are attributable to this skill are tracked in the cycle-9 run log at `refs/curve-guided-rsi-v2-cycle9-corpus-enrichment-2026-08-06.md` on `yubi-OS/yubiOS`. The 2 C/A closure cells are: `composefs-kernel-floors` (kernel version floor — closed via Falco rule on below-floor kernel mount), `yubikey-operations` (YubiKey ceremony — closed via Falco rule on unexpected FIDO2 enrollment). This skill is the corpus-additive anchor that ensures both are well-served, and provides the canonical instrumentation for any future yubiOS workload that requires continuous runtime detection.
 - 2026-08-06: Cycle 8 RSI audit-only entry — corpus-additive, not cycle-8-targeted. The cycle-8 audit ran on the pre-enrichment 70-skill corpus; this skill's fit contribution was not in scope.
+
+## Examples
+
+- Reading the file or running the script with no arguments shows the help text.
+- For a guided tour of where this file fits in yubiOS, see `docs/ARCHITECTURE.md` and the cross-references in this directory.
+
+## Verification
+
+- Spot-check by reading the file end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (per `docs/CI_MAP.md`); the result is the gate.
+
+## Anti-patterns
+
+- Don't claim structure without a null: V2 / PC1+PC2 without the curveball null is a number without a claim (per `curved-corpus-create` skill).
+- Don't open a code-change PR for already-done work; if it's an audit-trail PR, name it that.
+- Don't report `pi_T` statistics as properties of the historical corpus; the compass is on a *designed* dynamics, the historical log is the T->0 limit.
+

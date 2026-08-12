@@ -108,3 +108,8 @@ Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.9792).
 **Pass criterion**: TBD.
 
 Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.4144). TODO: refine per file context.
+
+## Changelog
+
+- 2026-08-12 — primitive-closure pass via `curve-compass-skill` + `curved-corpus-create` (this PR).
+

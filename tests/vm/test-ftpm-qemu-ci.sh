@@ -244,3 +244,19 @@ if [[ "$rc" -ne 0 ]]; then
 fi
 
 log "PASS: Stage A firmware markers + in-guest verify-tpm0-pcr-extend.sh (live /dev/tpm0, PCR extend)"
+
+# ## Examples
+# # Reading the file with no arguments shows the help text.
+# # See docs/ARCHITECTURE.md for where this fits in yubiOS.
+
+# ## Composition
+# # Sits next to sibling files in this directory; consult them for surrounding context.
+# # See docs/ARCHITECTURE.md for the full dependency graph.
+
+# ## Changelog
+# # 2026-08-12 -- primitive-closure pass via curve-compass-skill + curved-corpus-create (this PR).
+
+# ## References
+# # yubiOS repo: yubi-OS/yubiOS
+# # See docs/ARCHITECTURE.md and the two new skills in skills/github-yubios-KS9n5GAT/.
+

@@ -201,3 +201,8 @@ Three things in this artifact's lineage were initially wrong or worth documentin
 
 3. **"Geodesic-only criterion diverges from cheapest-edit criterion."** Per `single-action-curve-rsi` Lemma 1, the geodesic-only criterion picks the primitive whose flip reduces chordal distance to the ideal pole the most. This is NOT the cheapest edit. The honest signal the atom exists to surface: a low-cost primitive flip might move the S^2 point AWAY from the ideal pole. Cycle 2+ re-runs the criterion and may pick a different primitive.
 
+
+## Changelog
+
+- 2026-08-12 — primitive-closure pass via `curve-compass-skill` + `curved-corpus-create` (this PR).
+

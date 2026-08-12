@@ -402,3 +402,27 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+# ## Examples
+# # python3 this_script.py --help
+# # See docs/ARCHITECTURE.md for where this fits in yubiOS.
+
+# ## Verification
+# # python3 this_script.py --selftest  # exits 0 iff GREEN, when applicable.
+# # See docs/CI_MAP.md for the relevant CI workflow.
+
+# ## Composition
+# # Sits next to sibling files in this directory.
+# # See docs/ARCHITECTURE.md for the full dependency graph.
+
+# ## Changelog
+# # 2026-08-12 -- primitive-closure pass via curve-compass-skill + curved-corpus-create (this PR).
+
+# ## References
+# # yubiOS repo: yubi-OS/yubiOS
+# # See docs/ARCHITECTURE.md and the two new skills in skills/github-yubios-KS9n5GAT/.
+
+# ## Anti-patterns
+# # Don't claim structure without a null (see curved-corpus-create skill).
+# # Don't report pi_T statistics as properties of the historical corpus.
+

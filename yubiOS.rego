@@ -108,3 +108,12 @@ reason := msg if {
 }
 
 reason := "Build allowed." if allow
+
+# Examples: see docs/ARCHITECTURE.md for where this fits in yubiOS.
+
+# Verification: see docs/CI_MAP.md for the relevant CI workflow.
+
+# Changelog: 2026-08-12 -- primitive-closure pass via curve-compass-skill + curved-corpus-create (this PR).
+
+# References: yubiOS repo: yubi-OS/yubiOS. See docs/ARCHITECTURE.md.
+

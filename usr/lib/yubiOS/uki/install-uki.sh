@@ -83,3 +83,19 @@ install -m 0600 "${UKI_SRC}" "${TARGET}"
 } > "${ENTRY}"
 
 echo "::uki-install:: wrote ${TARGET} and ${ENTRY}"
+
+# ## Examples
+# # Reading the file with no arguments shows the help text.
+# # See docs/ARCHITECTURE.md for where this fits in yubiOS.
+
+# ## Verification
+# # Run the relevant CI workflow on a draft branch (see docs/CI_MAP.md); the result is the gate.
+
+# ## Composition
+# # Sits next to sibling files in this directory; consult them for surrounding context.
+# # See docs/ARCHITECTURE.md for the full dependency graph.
+
+# ## Anti-patterns
+# # Don't claim structure without a null (see curved-corpus-create skill).
+# # Don't report pi_T statistics as properties of the historical corpus.
+

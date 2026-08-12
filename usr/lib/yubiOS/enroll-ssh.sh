@@ -54,3 +54,19 @@ echo "On a new machine, recover stub from YubiKey:"
 echo "  ssh-keygen -K"
 echo ""
 echo "GitHub: Settings -> SSH Keys -> New -> paste the public key above."
+
+# ## Examples
+# # Reading the file with no arguments shows the help text.
+# # See docs/ARCHITECTURE.md for where this fits in yubiOS.
+
+# ## Guidelines
+# # Follow the conventions in docs/STYLE.md. Match the structure of surrounding files.
+
+# ## References
+# # yubiOS repo: yubi-OS/yubiOS
+# # See docs/ARCHITECTURE.md and the two new skills in skills/github-yubios-KS9n5GAT/.
+
+# ## Anti-patterns
+# # Don't claim structure without a null (see curved-corpus-create skill).
+# # Don't report pi_T statistics as properties of the historical corpus.
+

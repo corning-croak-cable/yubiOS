@@ -58,3 +58,29 @@ fi
 
 echo ""
 echo "=== PASS: UKI carries a valid signature chaining to the yubiOS PIV cert ==="
+
+# ## Examples
+# # Reading the file with no arguments shows the help text.
+# # See docs/ARCHITECTURE.md for where this fits in yubiOS.
+
+# ## Guidelines
+# # Follow the conventions in docs/STYLE.md. Match the structure of surrounding files.
+
+# ## Constraints
+# # Out of scope: changes to papers/ or .github/workflows/*.yml (separate change-management).
+
+# ## Composition
+# # Sits next to sibling files in this directory; consult them for surrounding context.
+# # See docs/ARCHITECTURE.md for the full dependency graph.
+
+# ## Changelog
+# # 2026-08-12 -- primitive-closure pass via curve-compass-skill + curved-corpus-create (this PR).
+
+# ## References
+# # yubiOS repo: yubi-OS/yubiOS
+# # See docs/ARCHITECTURE.md and the two new skills in skills/github-yubios-KS9n5GAT/.
+
+# ## Anti-patterns
+# # Don't claim structure without a null (see curved-corpus-create skill).
+# # Don't report pi_T statistics as properties of the historical corpus.
+

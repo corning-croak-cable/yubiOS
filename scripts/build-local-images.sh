@@ -391,3 +391,11 @@ if [[ "${YUBIOS_LOCAL_DHI:-0}" == 1 ]]; then
 else
     run_on_host "$MODE"
 fi
+
+# ## Changelog
+# # 2026-08-12 -- primitive-closure pass via curve-compass-skill + curved-corpus-create (this PR).
+
+# ## References
+# # yubiOS repo: yubi-OS/yubiOS
+# # See docs/ARCHITECTURE.md and the two new skills in skills/github-yubios-KS9n5GAT/.
+

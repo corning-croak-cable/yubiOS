@@ -273,3 +273,13 @@ Concrete pass/fail rules that an operator (or CI gate) can execute to verify the
 
 **Operator rule**: the artifact is PASS only when all 5 rule rows above report PASS. Each rule is a single command the operator (or CI gate) executes.
 
+
+## Examples
+
+- Reading the file or running the script with no arguments shows the help text.
+- For a guided tour of where this file fits in yubiOS, see `docs/ARCHITECTURE.md` and the cross-references in this directory.
+
+## Changelog
+
+- 2026-08-12 — primitive-closure pass via `curve-compass-skill` + `curved-corpus-create` (this PR).
+

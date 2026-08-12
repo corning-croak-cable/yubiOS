@@ -461,3 +461,13 @@ target "pq-tls-verify" {
   no-cache = true
   output   = [{ type = "cacheonly" }]
 }
+
+## Examples
+# See docs/ARCHITECTURE.md for where this fits in yubiOS.
+
+## Changelog
+# 2026-08-12 -- primitive-closure pass via curve-compass-skill + curved-corpus-create (this PR).
+
+## References
+# yubiOS repo: yubi-OS/yubiOS. See docs/ARCHITECTURE.md.
+

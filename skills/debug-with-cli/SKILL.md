@@ -220,3 +220,14 @@ These were tried or evaluated before settling on the bridge pattern. Document wh
 - **One bridge per target machine.** If the target has multiple "shells" (e.g. different allowlists), run them on different ports. Don't multiplex allowlists via env vars — that's a footgun.
 - **Token rotation cadence:** rotate the Bearer when (a) the Sauna connection is dropped, (b) the target box's Tailscale node is removed/re-added, (c) any team-member with access to the box changes. Rotation = new `openssl rand -hex 32`, update `/etc/rock1-shell.env`, restart the bridge, update the Sauna connection form.
 - **Read the alternatives section before re-evaluating this approach.** If a future session proposes mcp-proxy or Cloudflare Tunnel without checking the auth model, surface this skill as the precedent.
+
+## Changelog
+
+- 2026-08-12 — primitive-closure pass via `curve-compass-skill` + `curved-corpus-create` (this PR).
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- The two new skills used to drive this primitive-closure pass: `skills/github-yubios-KS9n5GAT/curve-compass-skill/SKILL.md` and `skills/github-yubios-KS9n5GAT/curved-corpus-create/SKILL.md`.
+

@@ -185,3 +185,9 @@ Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.6359).
 **Test outcomes**: TBD.
 
 Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.5250). TODO: refine per file context.
+
+## Constraints
+
+- Out of scope: changes that affect the historical paper corpus in `papers/` (published artifacts, immutable).
+- Out of scope: changes to `.github/workflows/*.yml` (CI workflows, separate change-management process).
+

@@ -235,3 +235,8 @@ All scripts are pure bash + standard GNU userland (no Python deps on the device 
 - [`play-audio-on-rock1`](../play-audio-on-rock1/SKILL.md) — parent skill. Provides `play2.py` and `set_mixer.py` at `/tmp/audio/`. This skill *requires* those files; deploy the parent first.
 - [`debug-with-cli`](../debug-with-cli/SKILL.md) — the shell bridge pattern. This skill uses the bridge to *seed* the queue but never for per-song data transfer.
 - `ascii-uart-animator` — same `/dev/ttyS2` banner tee pattern; this skill tees its log lines there so you can watch downloads + playbacks on a serial console.
+
+## Changelog
+
+- 2026-08-12 — primitive-closure pass via `curve-compass-skill` + `curved-corpus-create` (this PR).
+

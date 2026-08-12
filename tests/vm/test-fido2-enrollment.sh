@@ -180,3 +180,14 @@ g 'head -c 32 /tmp/ci_sk_key.pub'
 echo "ed25519-sk keygen OK"
 
 log "PASS: enrollment surface + CTAP2 registration + OpenSSH ed25519-sk verified"
+
+# ## Examples
+# # Reading the file with no arguments shows the help text.
+# # See docs/ARCHITECTURE.md for where this fits in yubiOS.
+
+# ## Guidelines
+# # Follow the conventions in docs/STYLE.md. Match the structure of surrounding files.
+
+# ## Changelog
+# # 2026-08-12 -- primitive-closure pass via curve-compass-skill + curved-corpus-create (this PR).
+

@@ -43,3 +43,22 @@ echo "  1. Boot with rd.break karg (edit in UEFI boot menu)"
 echo "  2. mount -o remount,rw /sysroot"
 echo "  3. Edit /sysroot/etc/pam.d/sudo — comment out pam_u2f line"
 echo "  4. Reboot and re-enroll with a working YubiKey"
+
+# ## Examples
+# # Reading the file with no arguments shows the help text.
+# # See docs/ARCHITECTURE.md for where this fits in yubiOS.
+
+# ## Guidelines
+# # Follow the conventions in docs/STYLE.md. Match the structure of surrounding files.
+
+# ## Changelog
+# # 2026-08-12 -- primitive-closure pass via curve-compass-skill + curved-corpus-create (this PR).
+
+# ## References
+# # yubiOS repo: yubi-OS/yubiOS
+# # See docs/ARCHITECTURE.md and the two new skills in skills/github-yubios-KS9n5GAT/.
+
+# ## Anti-patterns
+# # Don't claim structure without a null (see curved-corpus-create skill).
+# # Don't report pi_T statistics as properties of the historical corpus.
+

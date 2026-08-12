@@ -136,3 +136,12 @@ clean_package_manager_state
 
 /usr/bin/passless --version || true
 echo "install-swu2f-authenticator: passless ${PASSLESS_TAG} (${PASSLESS_COMMIT}) installed with hmac-secret (TEST-ONLY swu2f Layer 2)"
+
+# ## Examples
+# # Reading the file with no arguments shows the help text.
+# # See docs/ARCHITECTURE.md for where this fits in yubiOS.
+
+# ## References
+# # yubiOS repo: yubi-OS/yubiOS
+# # See docs/ARCHITECTURE.md and the two new skills in skills/github-yubios-KS9n5GAT/.
+
