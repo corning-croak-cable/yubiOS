@@ -18938,6 +18938,1046 @@
       "verdict": "YES",
       "score": 50,
       "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3041",
+      "file": ".github/ISSUE_TEMPLATE/bug_report.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on .github/ISSUE_TEMPLATE/bug_report.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3042",
+      "file": ".gitignore",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "other",
+      "hypothesis": "Closing the composition NSS gap on .gitignore (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in other syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "other",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3043",
+      "file": "Makefile",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "other",
+      "hypothesis": "Closing the composition NSS gap on Makefile (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in other syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "other",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3044",
+      "file": "docs/ARCHITECTURE.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on docs/ARCHITECTURE.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3045",
+      "file": "docs/OPTS.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on docs/OPTS.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3046",
+      "file": "docs/PR.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on docs/PR.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3047",
+      "file": "docs/SELF.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on docs/SELF.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3048",
+      "file": "docs/TODO.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on docs/TODO.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3049",
+      "file": "new-ideas-2026-08-12.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on new-ideas-2026-08-12.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3050",
+      "file": "refs/arm64-path-a-b-board-status-2026-07-23.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on refs/arm64-path-a-b-board-status-2026-07-23.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3051",
+      "file": "refs/arm64-zstd-efi-zboot-bcvk-2026-07-23.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on refs/arm64-zstd-efi-zboot-bcvk-2026-07-23.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3052",
+      "file": "refs/differential-curve-use-case-skill-land-grab-detection-2026-08-04.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on refs/differential-curve-use-case-skill-land-grab-detection-2026-08-04.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3053",
+      "file": "refs/external-benchmarks-sources-2026-07-25.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on refs/external-benchmarks-sources-2026-07-25.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3054",
+      "file": "refs/frost-panfrost-lockout-2026-07-17.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on refs/frost-panfrost-lockout-2026-07-17.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3055",
+      "file": "refs/offer-pricing-architecture-2026-07-25.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on refs/offer-pricing-architecture-2026-07-25.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3056",
+      "file": "refs/post-quantum-tls-adoption-2026-07-23.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on refs/post-quantum-tls-adoption-2026-07-23.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3057",
+      "file": "refs/prior-art-state-of-art-2026-07-30.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on refs/prior-art-state-of-art-2026-07-30.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3058",
+      "file": "refs/reproducible-builds-2026-07-22.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on refs/reproducible-builds-2026-07-22.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3059",
+      "file": "refs/sbsign-pkcs11-validate-2026-07-23.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on refs/sbsign-pkcs11-validate-2026-07-23.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3060",
+      "file": "refs/sectime-rk-secure-time-2026-07-17.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on refs/sectime-rk-secure-time-2026-07-17.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3061",
+      "file": "refs/systemd-unit-directive-reference-2026-07-23.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on refs/systemd-unit-directive-reference-2026-07-23.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3062",
+      "file": "refs/zboot-workaround-runner-qemu-audit-2026-07-25.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on refs/zboot-workaround-runner-qemu-audit-2026-07-25.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3063",
+      "file": "scripts/audit-workflow-tokens.allowlist.yaml",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "yml",
+      "hypothesis": "Closing the composition NSS gap on scripts/audit-workflow-tokens.allowlist.yaml (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in yml syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "yml",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3064",
+      "file": "scripts/file-drift-issues.py",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "py",
+      "hypothesis": "Closing the composition NSS gap on scripts/file-drift-issues.py (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in py syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "py",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3065",
+      "file": "skills/curve-compass-skill/scripts/curve_compass.py",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "py",
+      "hypothesis": "Closing the composition NSS gap on skills/curve-compass-skill/scripts/curve_compass.py (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in py syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "py",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3066",
+      "file": "skills/curve-guided-rsi/SKILL.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on skills/curve-guided-rsi/SKILL.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3067",
+      "file": "skills/curved-corpus-create/SKILL.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on skills/curved-corpus-create/SKILL.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3068",
+      "file": "skills/debugging-and-error-recovery/SKILL.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on skills/debugging-and-error-recovery/SKILL.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3069",
+      "file": "skills/drm-gpu-quota-secure-time/SKILL.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on skills/drm-gpu-quota-secure-time/SKILL.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3070",
+      "file": "skills/internal-nonlex-tokens/SKILL.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on skills/internal-nonlex-tokens/SKILL.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3071",
+      "file": "skills/play-audio-on-rock1/scripts/inspect.py",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "py",
+      "hypothesis": "Closing the composition NSS gap on skills/play-audio-on-rock1/scripts/inspect.py (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in py syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "py",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3072",
+      "file": "skills/self-archaeology/SKILL.md",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the composition NSS gap on skills/self-archaeology/SKILL.md (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3073",
+      "file": "tests/fixtures/lsblk-no-luks.json",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "json",
+      "hypothesis": "Closing the composition NSS gap on tests/fixtures/lsblk-no-luks.json (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in json syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "json",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3074",
+      "file": "tests/vm/lib/real-u2f-guard.sh",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "sh",
+      "hypothesis": "Closing the composition NSS gap on tests/vm/lib/real-u2f-guard.sh (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in sh syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "sh",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3075",
+      "file": "tests/vm/test-luks-fido2-ci.sh",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "sh",
+      "hypothesis": "Closing the composition NSS gap on tests/vm/test-luks-fido2-ci.sh (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in sh syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "sh",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3076",
+      "file": "usr/lib/dracut.conf.d/52-yubiOS-no-vfio.conf",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "conf",
+      "hypothesis": "Closing the composition NSS gap on usr/lib/dracut.conf.d/52-yubiOS-no-vfio.conf (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in conf syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "conf",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3077",
+      "file": "usr/lib/yubiOS/enroll-backup-wrapper.sh",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "sh",
+      "hypothesis": "Closing the composition NSS gap on usr/lib/yubiOS/enroll-backup-wrapper.sh (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in sh syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "sh",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3078",
+      "file": "usr/lib/yubiOS/enroll-luks.sh",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "sh",
+      "hypothesis": "Closing the composition NSS gap on usr/lib/yubiOS/enroll-luks.sh (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in sh syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "sh",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3079",
+      "file": "usr/lib/yubiOS/enroll.sh",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "sh",
+      "hypothesis": "Closing the composition NSS gap on usr/lib/yubiOS/enroll.sh (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in sh syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "sh",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3080",
+      "file": "usr/lib/yubiOS/uki/install-uki.sh",
+      "nss_axis": "composition",
+      "primitive_added": "composition",
+      "filetype": "sh",
+      "hypothesis": "Closing the composition NSS gap on usr/lib/yubiOS/uki/install-uki.sh (highest-priority among 9 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition']) improves the file's qualitative coverage by enumerating its in-graph and out-graph surface with explicit edge typing.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (composition, priority 5) -> atom closes with 1 atomic composition-aware primitive flip (composition) in sh syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260816,
+        "axis": "composition",
+        "ftype": "sh",
+        "primitive": "composition",
+        "priority_index": 5
+      },
+      "delta": {
+        "nss_gaps_before": 9,
+        "nss_gaps_after": 8,
+        "axis_closed": "composition",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "composition-axis sweep is heuristic regex-based; LLM-as-judge would refine edge coverage; static-vs-runtime-vs-config edge distinction not empirically tested in this cycle"
     }
   ],
   "top_3_picks": [
@@ -19020,7 +20060,7 @@
       "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine"
     }
   ],
-  "nss_axis_focus": "assumption_set",
+  "nss_axis_focus": "composition",
   "files_patched_cycle11": 40,
   "cycle8_summary": {
     "cycle": "cycle-8 (RSI NSS-audience deep research)",
@@ -19095,5 +20135,18 @@
     "deep_research_source": "Design by Contract (Bertrand Meyer / Eiffel require/ensure/invariant); SPARK Ada contracts (AdaCore GNATprove call-side vs body-side model); rely/guarantee reasoning (Cliff Jones SETSS-17 lecture, Koskinen et al. CONCUR 2015); NASA SWE-050/SWE-184; ISO/IEC/IEEE 29148 + 15289; Parnas and Clements \"A Rational Design Process\" Four Variable Model; Jackson problem frames; ADR-driven assumption logs; Cargo SemVer platform-requirements guidance; CommonJS package.json os/cpu/engine spec; pip requirements.txt vs pylock.toml; Containerfile ARG/ENV/LABEL semantics; mkosi.conf.d lex-sort + drop-in rule; systemd EnvironmentFile= + unit Type=; GitHub Actions workflow_call inputs + permissions + concurrency; eight-channel NSS assumption taxonomy (caller / invariant / environment / dependency / system-trust / configuration / domain / toolchain).",
     "skill_content_sha": "d6577552259633425bd76cb89cbdb2378543295b",
     "seed": 20260812
+  },
+  "files_patched_cycle16": 40,
+  "cycle16_summary": {
+    "cycle": "cycle-16 (RSI NSS-composition deep research)",
+    "date": "2026-08-12",
+    "skill": "skills/github-yubios-KS9n5GAT/nss-composition/SKILL.md",
+    "files_patched": 40,
+    "lenses_added": 40,
+    "nss_axis": "composition",
+    "deep_research_source": "Parnas/SEI Software Architecture Documentation in Practice; arc42 Building Block View and Runtime View; C4 model abstractions and diagrams (system context -> containers -> components -> code); SootUp call graphs; Kythe callgraph schema; dependency-cruiser and its real-world samples + FAQ on aggregation levels; package design principles (REP/CCP/CRP/ADP/SDP/SAP); Clean Architecture component cohesion and coupling; Microsoft modular monolith reference architecture; Spryker Architecture as Code.",
+    "skill_content_sha": "716eba508a0fbee53ab3a7576ae2a38e864e5c5f",
+    "commit_sha": "c43b5dbb1c7ed84164268b41cb409858cf8fe578",
+    "seed": 20260816
   }
 }
