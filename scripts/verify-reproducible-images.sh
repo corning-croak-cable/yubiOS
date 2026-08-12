@@ -145,3 +145,8 @@ jq -n \
 
 printf 'PASS: two isolated %s builds produced OCI manifest %s\nEvidence: %s\n' \
     "$bake_target" "$manifest_digest" "$report"
+
+
+# ## Verification
+# # Run the relevant CI workflow on a draft branch (see docs/CI_MAP.md).
+# # RSI cycle-6 atomic flip (`verification`).

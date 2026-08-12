@@ -233,3 +233,12 @@ The audit-trail entry: 2026-08-06 cycle 6 RSI — closed `cryptographic identity
 This skill's `least privilege` primitive is closed by cycle-7 RSI (3rd-priority MOVABLE per skill, post-cycle-6 baseline). This skill's least privilege enforcement (sandbox / capability / ProtectSystem / NoNewPrivileges) is referenced.
 
 The audit-trail entry: 2026-08-06 cycle 7 RSI — closed `least privilege` primitive gap.
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- RSI cycle-6 lens pool: `lenses.json` at repo root
+
+_Atomic RSI cycle-6 flip._

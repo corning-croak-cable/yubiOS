@@ -75,3 +75,11 @@ All three declare `permissions: { contents: write, actions: write }` at workflow
 - `refs/actions-checkout-v6-includeif-investigation-2026-07-29.md`.
 - Open gap: no central `permissions:` audit — Gap 11 / Linear candidate 11.
 - Playbooks: [dispatch-chain-verification](dispatch-chain-verification.md) — this is an instance of "read the patch, not the title".
+
+
+## Verification
+
+- Read `github-token-vs-secrets.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

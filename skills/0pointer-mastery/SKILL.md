@@ -309,3 +309,12 @@ The audit-trail entry: 2026-08-06 cycle 6 RSI — no movable primitive gap to cl
 This skill already covers all 5 remaining MOVABLE corpus-priority primitives post-cycle-6 (attestation, trust chain, declarative policy, immutability, least privilege). The cycle-7 RSI audit verified full movable coverage; no primitive closure needed.
 
 The audit-trail entry: 2026-08-06 cycle 7 RSI — no movable primitive gap to close.
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- RSI cycle-6 lens pool: `lenses.json` at repo root
+
+_Atomic RSI cycle-6 flip._

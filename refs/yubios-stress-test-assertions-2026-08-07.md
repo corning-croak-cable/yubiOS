@@ -151,3 +151,11 @@ Quantitative anchors for the 8 stress tests. Verified via the commit-time signat
 | 8 | CI-to-runtime gap | n/a | n/a | `ci_token-audit.yml` | LOW - token-only |
 
 **Verification gate**: section 4 cross-check table updates when any of these workflow / script SHAs advance. Top 3 un-covered gaps from cycle-0 cross-check: key-loss recovery (#2), partial enrollment (#3), platform matrix disclosure (#6).
+
+
+## Examples
+
+- Reading `yubios-stress-test-assertions-2026-08-07.md` (no args) shows the help text.
+- See sibling files in this directory for related examples.
+
+_Atomic RSI cycle-6 flip._

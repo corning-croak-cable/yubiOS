@@ -99,3 +99,8 @@ make -C build run-only \
 
 echo ""
 echo "== Build complete. In the booted guest run: tests/vm/verify-tpm0-pcr-extend.sh =="
+
+
+# ## Examples
+# # ./build-arm64-ftpm-qemu.sh [args]
+# # RSI cycle-6 atomic flip (`examples`).

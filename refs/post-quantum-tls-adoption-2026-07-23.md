@@ -88,3 +88,11 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 ## Immutability coverage
 
 This document upholds the yubiOS immutability layer — composefs repository, dm-verity root hash, ostree deployment, read-only / append-only semantics, sealed UKI / measured boot. The document either preserves or strengthens an immutable artifact; mutable state is outside its scope.
+
+
+## Verification
+
+- Read `post-quantum-tls-adoption-2026-07-23.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

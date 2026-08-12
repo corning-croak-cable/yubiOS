@@ -43,3 +43,8 @@ yubiOS_log "Large Blob written successfully."
 echo ""
 echo "To read back from any machine with this YubiKey:"
 echo "  fido2-token -B get \$(fido2-token -L | awk 'NR==1{print \$1}')"
+
+
+# ## Examples
+# # ./enroll-largblob.sh [args]
+# # RSI cycle-6 atomic flip (`examples`).

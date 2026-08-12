@@ -97,3 +97,11 @@ The corpus-saturation story is consistent: 7-9 of 9 primitives always survive th
 ## Empirical Validation
 
 Cycle 4 ships. Next cycle (cycle 5) requires another user override; top carryover hypotheses are semantic-similarity join (cycle-5 candidate #1) and a Mode D batch on the top-10 cycle-4 actionable sparse cells.
+
+
+## Verification
+
+- Read `repo-history-skill-cycle-4-2026-08-07.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

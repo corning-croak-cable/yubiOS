@@ -123,3 +123,11 @@ Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.8826).
 **Out of scope**: TBD.
 
 Context: section appended per repo-refs-skill cycle-3 7-D Mode D batch (Δ=+0.6727). TODO: refine per file context.
+
+
+## Examples
+
+- Reading `cycle5-results-2026-08-06.md` (no args) shows the help text.
+- See sibling files in this directory for related examples.
+
+_Atomic RSI cycle-6 flip._

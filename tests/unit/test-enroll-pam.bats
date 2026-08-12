@@ -45,3 +45,11 @@ teardown() { rm -rf "$TMPDIR"; }
   run bash -c 'echo "${SUDO_USER:-$(logname)}"'
   [ "$output" = "testuser" ]
 }
+
+
+## Verification
+
+- Read `test-enroll-pam.bats` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

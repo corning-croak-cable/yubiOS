@@ -83,3 +83,8 @@ install -m 0600 "${UKI_SRC}" "${TARGET}"
 } > "${ENTRY}"
 
 echo "::uki-install:: wrote ${TARGET} and ${ENTRY}"
+
+
+# ## Verification
+# # Run the relevant CI workflow on a draft branch (see docs/CI_MAP.md).
+# # RSI cycle-6 atomic flip (`verification`).

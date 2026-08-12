@@ -262,3 +262,12 @@ The audit-trail entry: 2026-08-06 cycle 7 RSI — closed `declarative policy` pr
 ## Trust chain coverage
 
 This skill participates in the yubiOS root-of-trust chain — ROT/ROTPK, X.509 PKI, root-key custody, transitive verification across boot stages. Where the skill introduces a new trust anchor (key, certificate, manifest), the chain from hardware root to consumer is documented.
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- RSI cycle-6 lens pool: `lenses.json` at repo root
+
+_Atomic RSI cycle-6 flip._

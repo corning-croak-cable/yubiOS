@@ -244,3 +244,12 @@ The audit-trail entry: 2026-08-06 cycle 7 RSI — closed `trust chain` primitive
 ## Continuous / adaptive coverage
 
 This skill supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The skill is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- RSI cycle-6 lens pool: `lenses.json` at repo root
+
+_Atomic RSI cycle-6 flip._

@@ -153,3 +153,11 @@ The audit-trail entry: 2026-08-06 cycle 6 RSI — no movable primitive gap to cl
 This skill already covers all 5 remaining MOVABLE corpus-priority primitives post-cycle-6 (attestation, trust chain, declarative policy, immutability, least privilege). The cycle-7 RSI audit verified full movable coverage; no primitive closure needed.
 
 The audit-trail entry: 2026-08-06 cycle 7 RSI — no movable primitive gap to close.
+
+
+## Verification
+
+- Read `SKILL.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

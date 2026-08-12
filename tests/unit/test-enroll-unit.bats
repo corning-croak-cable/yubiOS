@@ -69,3 +69,11 @@ setup() {
   ver="$(systemd-analyze --version | awk 'NR==1{print $2}')"
   [ "$ver" -ge 250 ]
 }
+
+
+## Examples
+
+- Reading `test-enroll-unit.bats` (no args) shows the help text.
+- See sibling files in this directory for related examples.
+
+_Atomic RSI cycle-6 flip._

@@ -402,3 +402,8 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
+# # ## Verification
+# # python3 verify-reproducible-installer.py --selftest  # exits 0 iff GREEN, when applicable.
+# # RSI cycle-6 atomic flip (`verification`).

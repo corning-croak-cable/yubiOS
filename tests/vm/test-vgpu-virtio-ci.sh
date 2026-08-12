@@ -179,3 +179,8 @@ g 'systemd-cryptenroll --help 2>&1 | grep -q -- --fido2-device' \
 echo "PASS: FIDO2 unlock surface intact with a vGPU attached"
 
 log "PASS: virtio-gpu device model + guest DRM nodes + negative VFIO surface"
+
+
+# ## Examples
+# # ./test-vgpu-virtio-ci.sh [args]
+# # RSI cycle-6 atomic flip (`examples`).

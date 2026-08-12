@@ -92,3 +92,11 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 ## Cryptographic identity coverage
 
 This document manages cryptographic identity — FIDO2/CTAP2 YubiKey, softhsm/PKCS#11/TPM, HSM-backed keys, key attestation. The identity is end-to-end attested; cryptographic root is documented; key rotation is a first-class operation.
+
+
+## Anti-patterns
+
+- Don't claim structure without a null (per `curved-corpus-create` skill).
+- Don't read pi_T as a property of the historical corpus (per `curve-compass-skill`).
+
+_Atomic RSI cycle-6 flip._

@@ -25,3 +25,8 @@ ykman oath accounts uri "$URI"
 yubiOS_log "Done. List accounts: ykman oath accounts list"
 # SC2027/SC2086: escape inner quotes so $ACCOUNT is properly quoted
 yubiOS_log "Get code:            ykman oath accounts code \"$ACCOUNT\""
+
+
+# ## Verification
+# # Run the relevant CI workflow on a draft branch (see docs/CI_MAP.md).
+# # RSI cycle-6 atomic flip (`verification`).

@@ -46,3 +46,11 @@ Be respectful, constructive, and collaborative. We want this to stay a friendly 
 ## Questions
 
 If you're not sure where to start, open an issue or submit a draft PR and we can discuss it there.
+
+
+## Verification
+
+- Read `CONTRIBUTING.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

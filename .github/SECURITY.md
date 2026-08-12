@@ -58,3 +58,11 @@ The project will try to:
 5. Publish a public note when user action, artifact distrust, tag clarification, or documentation correction is needed.
 
 Do not treat any public acknowledgement as an endorsement, partnership, certification, or production-readiness claim.
+
+
+## Examples
+
+- Reading `SECURITY.md` (no args) shows the help text.
+- See sibling files in this directory for related examples.
+
+_Atomic RSI cycle-6 flip._

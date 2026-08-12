@@ -201,3 +201,8 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
     printf 'source=%s\nepoch=%s\ncreated=%s\nmkosi_seed=%s\n' \
         "$GIT_SHA" "$SOURCE_DATE_EPOCH" "$SOURCE_DATE_ISO8601" "$YUBIOS_MKOSI_SEED"
 fi
+
+
+# ## Verification
+# # Run the relevant CI workflow on a draft branch (see docs/CI_MAP.md).
+# # RSI cycle-6 atomic flip (`verification`).

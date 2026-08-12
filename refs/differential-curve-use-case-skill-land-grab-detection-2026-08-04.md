@@ -119,3 +119,11 @@ This document applies the yubiOS segmentation primitive — Linux namespaces, cg
 **Out of scope**: TBD.
 
 Context: section appended per repo-refs-skill cycle-3 7-D Mode D batch (Δ=+0.4966). TODO: refine per file context.
+
+
+## Examples
+
+- Reading `differential-curve-use-case-skill-land-grab-detection-2026-08-04.md` (no args) shows the help text.
+- See sibling files in this directory for related examples.
+
+_Atomic RSI cycle-6 flip._

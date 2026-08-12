@@ -163,3 +163,11 @@ This document participates in the yubiOS root-of-trust chain — ROT/ROTPK, X.50
 **Test outcomes**: TBD.
 
 Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.4816). TODO: refine per file context.
+
+
+## Examples
+
+- Reading `curve-guided-rsi-v1-cycles-2-3-run-2026-08-04.md` (no args) shows the help text.
+- See sibling files in this directory for related examples.
+
+_Atomic RSI cycle-6 flip._

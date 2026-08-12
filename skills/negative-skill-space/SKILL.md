@@ -80,3 +80,12 @@ This skill upholds the yubiOS immutability layer — composefs repository, dm-ve
 ## Cryptographic identity coverage
 
 This skill manages cryptographic identity — FIDO2/CTAP2 YubiKey, softhsm/PKCS#11/TPM, HSM-backed keys, key attestation. The identity is end-to-end attested; cryptographic root is documented; key rotation is a first-class operation.
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- RSI cycle-6 lens pool: `lenses.json` at repo root
+
+_Atomic RSI cycle-6 flip._

@@ -79,3 +79,11 @@ Dispatch-only recovery costs one extra ~2-min round-trip versus a hand edit and 
 - Linear **OMN-139**. Commits `8ccffa71`, `d2646452`, `95565a0e`.
 - Workflows: `fetch-fedora-bootc-manifest.yml` (the recovery tool), `fetch-dhi-manifest.yml`, `fetch-released-tag-ref.yml`, `ci_dev_image.yml`, `ci_test-fedora-bootc-arm64-pull.yml`.
 - Playbooks: [dispatch-chain-verification](dispatch-chain-verification.md) — step 3 is not optional.
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows).
+- See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
+
+_Atomic RSI cycle-6 flip._

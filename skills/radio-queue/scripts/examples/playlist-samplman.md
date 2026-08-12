@@ -271,3 +271,11 @@ If you want to subset this kind of catalog, the cleanest path is: copy this file
 ## Verification history
 
 - 2026-08-05 — initial enumeration + verification; `yt-dlp --flat-playlist` returned 65 entries; `yt-dlp --skip-download --print title --print id --print duration` confirmed all 65 are accessible (zero failures). File created as a permanent example only — NOT triggered on rock1 per the user's "dont start this yet" directive.
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows).
+- See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
+
+_Atomic RSI cycle-6 flip._

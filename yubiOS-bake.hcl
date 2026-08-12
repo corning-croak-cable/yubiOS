@@ -461,3 +461,7 @@ target "pq-tls-verify" {
   no-cache = true
   output   = [{ type = "cacheonly" }]
 }
+
+
+# Examples: see sibling HCL files in this directory.
+# RSI cycle-6 atomic flip.

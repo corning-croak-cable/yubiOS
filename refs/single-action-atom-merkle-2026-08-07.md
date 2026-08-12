@@ -107,3 +107,11 @@ except at infinity, which the Fibonacci sampling avoids).
   same-cadence drift; this session IS the corrective in action)
 - `memory/personal-WbtUgeUv/SELF-CHANGELOG.md` — self-archaeology thread
 - Linear: OMN-163 (hyperspherical-harmonic-curve variant skill)
+
+
+## Verification
+
+- Read `single-action-atom-merkle-2026-08-07.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

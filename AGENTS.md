@@ -94,3 +94,11 @@ ARM64 runner policy is workflow-specific. Current docs distinguish non-KVM ARM64
 ## Planning-cycle notes
 
 The latest documentation/research planning pass is in [refs/planning-cycle-2026-07-11.md](refs/planning-cycle-2026-07-11.md). Use it before repeating the same drift audit.
+
+
+## Verification
+
+- Read `AGENTS.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

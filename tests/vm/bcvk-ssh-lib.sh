@@ -113,3 +113,8 @@ wait_for_bcvk_ssh() {
   dump_bcvk_ssh_diagnostics "$vmid"
   return 1
 }
+
+
+# ## Verification
+# # Run the relevant CI workflow on a draft branch (see docs/CI_MAP.md).
+# # RSI cycle-6 atomic flip (`verification`).

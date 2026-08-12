@@ -33,3 +33,8 @@ echo "    after:  $AFTER"
 
 echo ""
 echo "=== PASS: live /dev/tpm0 backed by ms-tpm-20-ref fTPM ($FTPM_UUID), PCR extend works ==="
+
+
+# ## Verification
+# # Run the relevant CI workflow on a draft branch (see docs/CI_MAP.md).
+# # RSI cycle-6 atomic flip (`verification`).

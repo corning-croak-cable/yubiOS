@@ -277,3 +277,11 @@ Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.60
 **Related refs/ docs**: TBD.
 
 Context: section appended per repo-refs-skill cycle-3 7-D Mode D batch (Δ=+0.4663). TODO: refine per file context.
+
+
+## Examples
+
+- Reading `learned-latent-curve-skill-quality-map-2026-08-03.md` (no args) shows the help text.
+- See sibling files in this directory for related examples.
+
+_Atomic RSI cycle-6 flip._

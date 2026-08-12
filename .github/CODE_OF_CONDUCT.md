@@ -126,3 +126,11 @@ enforcement ladder](https://github.com/mozilla/diversity).
 For answers to common questions about this code of conduct, see the FAQ at
 https://www.contributor-covenant.org/faq. Translations are available at
 https://www.contributor-covenant.org/translations.
+
+
+## Verification
+
+- Read `CODE_OF_CONDUCT.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

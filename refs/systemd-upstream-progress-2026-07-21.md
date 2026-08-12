@@ -102,3 +102,11 @@ Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.8429).
 **One-line**: TBD per file context.
 
 Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.4201). TODO: refine per file context.
+
+
+## Verification
+
+- Read `systemd-upstream-progress-2026-07-21.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

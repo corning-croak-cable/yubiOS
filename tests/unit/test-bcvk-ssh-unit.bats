@@ -110,3 +110,11 @@ setup() {
   run grep -F 'systemd.set_credential_binary=tmpfiles.extra:' "$BCVK_ARM64_PATCH"
   [ "$status" -eq 0 ]
 }
+
+
+## Verification
+
+- Read `test-bcvk-ssh-unit.bats` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

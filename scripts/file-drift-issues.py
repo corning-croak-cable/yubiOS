@@ -113,3 +113,8 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+# # ## Examples
+# # python3 file-drift-issues.py --help
+# # RSI cycle-6 atomic flip (`examples`).

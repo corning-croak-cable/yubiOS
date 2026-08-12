@@ -9,3 +9,11 @@
 !mkosi.conf.d/
 !mkosi.conf.d/test/
 !mkosi.conf.d/test/install-swu2f-authenticator.sh
+
+
+## Verification
+
+- Read `.dockerignore` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

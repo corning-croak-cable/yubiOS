@@ -57,3 +57,8 @@ if __name__ == "__main__":
     status, elapsed, resp = post_to_bridge(body)
     print(f"HTTP {status}  elapsed={elapsed:.2f}s  frames={TOTAL_FRAMES}  movie~{TOTAL_FRAMES * FPS_DELAY:.1f}s")
     print("RESPONSE:", resp)
+
+
+# # ## Purpose
+# # r"""Walking stick figure — 4 cycling leg poses, walker moves right 2 px/frame. 120 frames @ 20fps.
+# # RSI cycle-6 atomic flip (`purpose`).

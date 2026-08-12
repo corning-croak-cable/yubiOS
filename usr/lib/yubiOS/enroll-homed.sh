@@ -66,3 +66,8 @@ yubiOS_log "Home created for $USERNAME."
 yubiOS_log "Inspect : homectl inspect $USERNAME --json=pretty"
 yubiOS_log "Lock    : homectl lock $USERNAME"
 yubiOS_log "Migrate : homectl inspect $USERNAME -EE | ssh root@target homectl create -i-"
+
+
+# ## Verification
+# # Run the relevant CI workflow on a draft branch (see docs/CI_MAP.md).
+# # RSI cycle-6 atomic flip (`verification`).

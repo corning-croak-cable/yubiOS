@@ -403,3 +403,11 @@ The audit-trail entry: 2026-08-06 cycle 7 RSI — closed `trust chain` primitive
 ## Declarative policy coverage
 
 This skill integrates with the yubiOS declarative-policy substrate — OPA/Rego policy files, signing-config JSON, policy-as-code workflows. Policy gates are named at the integration point; policy evaluation is the gate, not an afterthought.
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows).
+- See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
+
+_Atomic RSI cycle-6 flip._

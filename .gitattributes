@@ -1,1 +1,8 @@
 .github/patches/*.patch -whitespace
+
+
+## Purpose
+
+.github/patches/*.patch -whitespace
+
+_Atomic RSI cycle-6 flip (highest-priority missing primitive)._

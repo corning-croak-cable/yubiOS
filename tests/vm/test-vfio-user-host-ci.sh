@@ -188,3 +188,8 @@ SERVER_PID=""
 assert_no_kernel_vfio "after"
 
 log "PASS: vfio-user client/server handshake over an owner-only unix socket, no kernel VFIO"
+
+
+# ## Examples
+# # ./test-vfio-user-host-ci.sh [args]
+# # RSI cycle-6 atomic flip (`examples`).

@@ -126,3 +126,8 @@ main() {
 }
 
 main "$@"
+
+
+# ## Examples
+# # ./verify-oci-attestations.sh [args]
+# # RSI cycle-6 atomic flip (`examples`).

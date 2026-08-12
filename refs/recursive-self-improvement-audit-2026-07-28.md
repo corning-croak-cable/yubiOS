@@ -195,3 +195,11 @@ Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.5627).
 **Related refs/ docs**: TBD.
 
 Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.7446). TODO: refine per file context.
+
+
+## Verification
+
+- Read `recursive-self-improvement-audit-2026-07-28.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

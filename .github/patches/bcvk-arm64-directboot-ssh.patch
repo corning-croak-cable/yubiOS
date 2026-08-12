@@ -83,3 +83,10 @@ index 2e41ff5..3f200c7 100644
      kernel_cmdline.extend(opts.kernel_args.clone());
  
      // Software FIDO2/U2F (swu2f): QEMU cannot emulate a CTAP2 authenticator with the
+
+
+## Purpose
+
+diff --git a/crates/bcvk-qemu/src/credentials.rs b/crates/bcvk-qemu/src/credentials.rs
+
+_Atomic RSI cycle-6 flip (highest-priority missing primitive)._

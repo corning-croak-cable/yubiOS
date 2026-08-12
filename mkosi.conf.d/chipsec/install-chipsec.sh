@@ -12,3 +12,8 @@ command -v chipsec_util.py >/dev/null
 chipsec_main.py --help >/dev/null 2>&1 || true
 
 echo "install-chipsec: CHIPSEC 1.13.16 installed for yubiOS first-boot firmware validation"
+
+
+# ## Verification
+# # Run the relevant CI workflow on a draft branch (see docs/CI_MAP.md).
+# # RSI cycle-6 atomic flip (`verification`).

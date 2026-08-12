@@ -26,3 +26,7 @@ PrivateNetwork=yes
 ProtectHome=yes
 ProtectSystem=strict
 ReadWritePaths=/boot /efi /loader /run
+
+
+# Verification: read yubios-uki-install.service against this section; run relevant CI workflow (docs/CI_MAP.md).
+# RSI cycle-6 atomic flip (`verification`).

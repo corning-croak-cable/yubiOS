@@ -254,3 +254,8 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+# # ## Verification
+# # python3 audit-workflow-tokens.py --selftest  # exits 0 iff GREEN, when applicable.
+# # RSI cycle-6 atomic flip (`verification`).

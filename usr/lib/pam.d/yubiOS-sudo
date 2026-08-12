@@ -16,3 +16,7 @@ auth       required   pam_u2f.so authfile=/etc/yubico/u2f_keys cue
 auth       include    system-auth
 account    include    system-auth
 session    include    system-auth
+
+
+# Verification: read yubiOS-sudo against this section; run relevant CI workflow (docs/CI_MAP.md).
+# RSI cycle-6 atomic flip (`verification`).

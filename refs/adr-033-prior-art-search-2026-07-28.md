@@ -176,3 +176,11 @@ This document manages cryptographic identity — FIDO2/CTAP2 YubiKey, softhsm/PK
 **Pass criterion**: TBD.
 
 Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.4560). TODO: refine per file context.
+
+
+## Examples
+
+- Reading `adr-033-prior-art-search-2026-07-28.md` (no args) shows the help text.
+- See sibling files in this directory for related examples.
+
+_Atomic RSI cycle-6 flip._

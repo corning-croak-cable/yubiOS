@@ -84,3 +84,11 @@ This document applies least-privilege hardening: Linux capabilities (drop + ambi
 ## Continuous / adaptive coverage
 
 This document supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The document is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.
+
+
+## Composition
+
+- Sits next to sibling files in this directory.
+- See `docs/ARCHITECTURE.md` for the full yubiOS dependency graph.
+
+_Atomic RSI cycle-6 flip._

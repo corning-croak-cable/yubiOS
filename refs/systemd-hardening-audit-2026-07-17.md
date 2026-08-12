@@ -86,3 +86,11 @@ Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.5896).
 **Related refs/ docs**: TBD.
 
 Context: section appended per repo-refs-skill cycle-3 7-D Mode D batch (Δ=+0.5959). TODO: refine per file context.
+
+
+## Examples
+
+- Reading `systemd-hardening-audit-2026-07-17.md` (no args) shows the help text.
+- See sibling files in this directory for related examples.
+
+_Atomic RSI cycle-6 flip._

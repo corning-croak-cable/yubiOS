@@ -19,3 +19,7 @@ ProtectSystem=strict
 ReadWritePaths=/run/yubiOS /tmp
 CapabilityBoundingSet=CAP_SYS_RAWIO CAP_SYS_ADMIN CAP_DAC_OVERRIDE
 NoNewPrivileges=no
+
+
+# Verification: read yubiOS-chipsec-firstboot.service against this section; run relevant CI workflow (docs/CI_MAP.md).
+# RSI cycle-6 atomic flip (`verification`).

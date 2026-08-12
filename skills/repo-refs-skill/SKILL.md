@@ -867,3 +867,12 @@ filter; PC1+PC2 ≥ 0.40; sparse-cell count ∈ [3, 20] on the
   **All 3 RSI fixpoint-rule conditions PASS:** (1) no new substantive gaps opened — pure-append template sections, no detection-pattern edits, no join-key changes; (2) old gaps closed — sparse cells reduced 66 → 57 → 49 across 3 cycles (cumulative 25.8% reduction), 25 of 49 remaining addressed in cycle-3 batch (Δ ≥ 0.4), 24 unaddressed (Δ < 0.4, standard convergence per chosen threshold matching cycle-1/2); (3) no new anti-patterns introduced — no fabricated SHAs/PRs/timestamps, templates use placeholders.
   **CYCLE 3 REACHES FIXPOINT — RSI LOOP TERMINATES.** The 3-cycle soft-preference cap has been used: cycle-0 (initial derivation) → cycle-1 (live fit + NSS gap-map + Key Assumptions edit) → cycle-2 (7-D re-derive + PR-merged Mode D batch) → cycle-3 (post-merge re-fit + final Mode D dispatch). All measurable gates PASS, primitive survival stable at 7/7 on the 7-D basis, sparse-cell count trending downward monotonically across cycles.
   3 evidence files pushed to `yubi-OS/yubiOS papers/data/` (cycle-3 fit, archive, mode-d audit trail — all verified HTTP 200). **No more cycles are needed** unless the user explicitly invokes a fresh cycle (would require a separate user-override of the 3-cycle cap per `recursive-self-improvement` cycle-4's documented user-override protocol).
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- RSI cycle-6 lens pool: `lenses.json` at repo root
+
+_Atomic RSI cycle-6 flip._

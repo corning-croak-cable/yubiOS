@@ -35,3 +35,11 @@ teardown() { rm -rf "$TMPDIR"; }
   run bash -c "[[ -f '$TMPDIR/.ssh/id_ed25519_sk' ]] && echo skipped || echo generated"
   [ "$output" = "generated" ]
 }
+
+
+## Verification
+
+- Read `test-enroll-ssh.bats` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

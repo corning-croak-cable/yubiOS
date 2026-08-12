@@ -244,3 +244,8 @@ if [[ "$rc" -ne 0 ]]; then
 fi
 
 log "PASS: Stage A firmware markers + in-guest verify-tpm0-pcr-extend.sh (live /dev/tpm0, PCR extend)"
+
+
+# ## Examples
+# # ./test-ftpm-qemu-ci.sh [args]
+# # RSI cycle-6 atomic flip (`examples`).

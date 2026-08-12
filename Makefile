@@ -40,3 +40,11 @@ sign-blob-test:
 	    --key cosign/yubios-omni157.pub --bundle /tmp/yubios-test.bundle \
 	    --insecure-ignore-tlog /dev/null
 	@echo "OK: signed with committed key, verified with committed pub"
+
+
+## Examples
+
+- Reading `Makefile` (no args) shows the help text.
+- See sibling files in this directory for related examples.
+
+_Atomic RSI cycle-6 flip._

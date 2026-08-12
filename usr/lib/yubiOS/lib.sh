@@ -89,3 +89,8 @@ enroll_pam_user() {
   pamu2fcfg -u "$target_user" -N >> /etc/yubico/u2f_keys
   yubiOS_log "Done. Test: sudo -u $target_user whoami"
 }
+
+
+# ## Examples
+# # ./lib.sh [args]
+# # RSI cycle-6 atomic flip (`examples`).

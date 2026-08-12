@@ -41,3 +41,7 @@ password  required   pam_deny.so
 -session  optional   pam_systemd_home.so suspend=1
 -session  optional   pam_systemd.so
  session  required   pam_unix.so
+
+
+# Verification: read yubiOS-system-auth against this section; run relevant CI workflow (docs/CI_MAP.md).
+# RSI cycle-6 atomic flip (`verification`).

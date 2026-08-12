@@ -541,3 +541,11 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 ## Segmentation coverage
 
 This document applies the yubiOS segmentation primitive — Linux namespaces, cgroups, sandbox, isolation boundary, trust boundary, jail idioms (nsjail, bwrap, firejail), landlock, seccomp. The boundary is named; the trust-domain transition is documented.
+
+
+## Guidelines
+
+- Match the conventions in sibling files in this directory.
+- See `docs/STYLE.md` (if present) for the yubiOS style guide.
+
+_Atomic RSI cycle-6 flip._

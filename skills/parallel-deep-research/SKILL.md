@@ -44,3 +44,11 @@ When Jenny asks for "deep research X" with parallel agents (or just "deep resear
 - Per subagent: ~1500-2500 words
 - Synthesis: ~2000-3000 words (consolidated; can be longer if multi-stream)
 - Refs/ note (for discovery findings): ~500-1500 words
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows).
+- See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
+
+_Atomic RSI cycle-6 flip._

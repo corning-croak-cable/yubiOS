@@ -374,3 +374,8 @@ This artifact is intentionally framed as a research note, not a canonical spec. 
 
 Each step is **ordered** by impact x cost, descending. Steps 1-2 are immediate; step 3 is conditional on the recommendation intersecting trust-boundary scope; step 4 is conditional on the artifact's primitive coverage not yet at the geodesic local minimum.
 
+
+
+## Changelog
+
+- 2026-08-12 -- RSI cycle-6 atomic primitive flip (`changelog`). See root `new-ideas-2026-08-12.md`.

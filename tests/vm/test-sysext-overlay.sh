@@ -105,3 +105,8 @@ fi
 echo
 echo "Summary: 8/8 PASS"
 exit 0
+
+
+# ## Examples
+# # ./test-sysext-overlay.sh [args]
+# # RSI cycle-6 atomic flip (`examples`).

@@ -85,3 +85,11 @@ This document manages cryptographic identity — FIDO2/CTAP2 YubiKey, softhsm/PK
 **Owner**: TBD
 
 Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.8670). TODO: refine per file context.
+
+
+## Verification
+
+- Read `zboot-workaround-runner-qemu-audit-2026-07-25.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

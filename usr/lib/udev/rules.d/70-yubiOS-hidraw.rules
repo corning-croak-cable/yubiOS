@@ -20,3 +20,7 @@ SUBSYSTEM=="input", ATTRS{idVendor}=="1050", TAG+="uaccess"
 # Wake on YubiKey insert/remove for enrollment service trigger
 ACTION=="add", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1050", \
   TAG+="systemd", ENV{SYSTEMD_WANTS}+="yubiOS-enroll.service"
+
+
+# Verification: read 70-yubiOS-hidraw.rules against this section; run relevant CI workflow (docs/CI_MAP.md).
+# RSI cycle-6 atomic flip (`verification`).

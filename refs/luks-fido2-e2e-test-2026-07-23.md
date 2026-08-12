@@ -70,3 +70,11 @@ This document applies least-privilege hardening: Linux capabilities (drop + ambi
 ## Continuous / adaptive coverage
 
 This document supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The document is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.
+
+
+## Examples
+
+- Reading `luks-fido2-e2e-test-2026-07-23.md` (no args) shows the help text.
+- See sibling files in this directory for related examples.
+
+_Atomic RSI cycle-6 flip._

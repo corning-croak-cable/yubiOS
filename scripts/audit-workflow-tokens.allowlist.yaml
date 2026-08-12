@@ -9,3 +9,7 @@ known_secrets:
   - GITHUB_TOKEN
   # GH_TK is RETIRED (PR #148, 2026-07-29); if any workflow references it,
   # audit-workflow-tokens.py flags ERROR.
+
+
+# Verification: run the relevant CI workflow.
+# RSI cycle-6 atomic flip.

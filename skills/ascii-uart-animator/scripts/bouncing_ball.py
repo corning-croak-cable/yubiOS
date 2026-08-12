@@ -44,3 +44,8 @@ if __name__ == "__main__":
     status, elapsed, resp = post_to_bridge(body)
     print(f"HTTP {status}  elapsed={elapsed:.2f}s  frames={TOTAL_FRAMES}  movie~{TOTAL_FRAMES * FPS_DELAY:.1f}s")
     print("RESPONSE:", resp)
+
+
+# # ## Purpose
+# # """Bouncing ball — 9 frames, 10fps, no ANSI clear. Single ball 'o' arcing across '=' ground.
+# # RSI cycle-6 atomic flip (`purpose`).
