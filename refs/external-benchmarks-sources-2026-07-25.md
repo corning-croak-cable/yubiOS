@@ -116,3 +116,20 @@ Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.66
 **One-line**: TBD per file context.
 
 Context: section appended per repo-refs-skill cycle-3 7-D Mode D batch (Δ=+0.5594). TODO: refine per file context.
+
+
+## Examples
+
+- Reading `external-benchmarks-sources-2026-07-25.md` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+## Verification
+
+- Spot-check by reading `external-benchmarks-sources-2026-07-25.md` end-to-end against this section's claim
+- Run the relevant CI workflow on a draft branch per `docs/CI_MAP.md`
+
+
+## Changelog
+
+- 2026-08-12 -- RSI cycle-4: new-idea experiment (primitive-flipped changelog, hypothesis + method + delta + verdict + score + caveat in lenses.json L<N>)

@@ -122,3 +122,14 @@ Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.83
 **One-line**: TBD per file context.
 
 Context: section appended per repo-refs-skill cycle-3 7-D Mode D batch (Δ=+0.6561). TODO: refine per file context.
+
+
+## Examples
+
+- Reading `days-31-60-narrow-product-2026-07-25.md` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+## Changelog
+
+- 2026-08-12 -- RSI cycle-4: new-idea experiment (primitive-flipped changelog, hypothesis + method + delta + verdict + score + caveat in lenses.json L<N>)

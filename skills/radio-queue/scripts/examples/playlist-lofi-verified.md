@@ -66,3 +66,26 @@ Both are great YouTube channels with stable IDs and huge audiences, but they don
 ## Verification history
 
 - 2026-08-05 — initial verification + queue trigger; all 6 IDs returned correct titles + ids via `--print title --print id --print duration`; durations measured at 113s / 175s / 185s / 299s / 1636s / 1647s respectively; daemon transitioned from the Jacob Collier set to this lo-fi set on rock1 end-to-end (queue.txt overwritten via base64 push).
+
+
+## Guidelines
+
+- Match the conventions in `docs/STYLE.md`
+- See sibling files in this directory for the surrounding context
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows)
+
+
+## Changelog
+
+- 2026-08-12 -- RSI cycle-4: new-idea experiment (primitive-flipped changelog, hypothesis + method + delta + verdict + score + caveat in lenses.json L<N>)
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`

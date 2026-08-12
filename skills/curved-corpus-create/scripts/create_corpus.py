@@ -817,3 +817,20 @@ def main(argv=None):
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+## Examples
+
+- Reading `create_corpus.py` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+# ## Changelog
+# # 2026-08-12 -- RSI cycle-4 new-idea experiment (primitive changelog).
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`

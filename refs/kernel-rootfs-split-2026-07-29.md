@@ -139,3 +139,21 @@ Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.83
 **One-line**: TBD per file context.
 
 Context: section appended per repo-refs-skill cycle-3 7-D Mode D batch (Δ=+0.6471). TODO: refine per file context.
+
+
+## Examples
+
+- Reading `kernel-rootfs-split-2026-07-29.md` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+## Guidelines
+
+- Match the conventions in `docs/STYLE.md`
+- See sibling files in this directory for the surrounding context
+
+
+## Anti-patterns
+
+- Don't claim structure without a null (per `curved-corpus-create`)
+- Don't report pi_T as a property of the historical corpus (per `curve-compass-skill`)

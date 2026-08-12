@@ -285,3 +285,21 @@ This document participates in the yubiOS root-of-trust chain — ROT/ROTPK, X.50
 ## Continuous / adaptive coverage
 
 This document supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The document is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.
+
+
+## Changelog
+
+- 2026-08-12 -- RSI cycle-4: new-idea experiment (primitive-flipped changelog, hypothesis + method + delta + verdict + score + caveat in lenses.json L<N>)
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`
+
+
+## Anti-patterns
+
+- Don't claim structure without a null (per `curved-corpus-create`)
+- Don't report pi_T as a property of the historical corpus (per `curve-compass-skill`)

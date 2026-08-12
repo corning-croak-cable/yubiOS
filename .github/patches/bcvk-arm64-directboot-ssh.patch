@@ -83,3 +83,40 @@ index 2e41ff5..3f200c7 100644
      kernel_cmdline.extend(opts.kernel_args.clone());
  
      // Software FIDO2/U2F (swu2f): QEMU cannot emulate a CTAP2 authenticator with the
+
+
+## Purpose
+
+diff --git a/crates/bcvk-qemu/src/credentials.rs b/crates/bcvk-qemu/src/credentials.rs
+
+This section was added by the RSI cycle-4 new-idea generator (curve-compass-skill v1.1.0 + curved-corpus-create v1.1.0) as a concrete experiment with measurable delta -- hypothesis: adding a purpose statement closes primitive p0.
+
+
+## Examples
+
+- Reading `bcvk-arm64-directboot-ssh.patch` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+## Guidelines
+
+- Match the conventions in `docs/STYLE.md`
+- See sibling files in this directory for the surrounding context
+
+
+## Changelog
+
+- 2026-08-12 -- RSI cycle-4: new-idea experiment (primitive-flipped changelog, hypothesis + method + delta + verdict + score + caveat in lenses.json L<N>)
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`
+
+
+## Anti-patterns
+
+- Don't claim structure without a null (per `curved-corpus-create`)
+- Don't report pi_T as a property of the historical corpus (per `curve-compass-skill`)

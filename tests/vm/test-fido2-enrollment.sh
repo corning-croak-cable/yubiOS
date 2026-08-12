@@ -180,3 +180,25 @@ g 'head -c 32 /tmp/ci_sk_key.pub'
 echo "ed25519-sk keygen OK"
 
 log "PASS: enrollment surface + CTAP2 registration + OpenSSH ed25519-sk verified"
+
+
+# ## Examples
+# # ./this-script.sh [args]
+# # See docs/ARCHITECTURE.md for context.
+
+
+## Guidelines
+
+- Match the conventions in `docs/STYLE.md`
+- See sibling files in this directory for the surrounding context
+
+
+# ## Changelog
+# # 2026-08-12 -- RSI cycle-4 new-idea experiment (primitive changelog).
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`

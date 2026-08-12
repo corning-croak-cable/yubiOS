@@ -188,3 +188,19 @@ SERVER_PID=""
 assert_no_kernel_vfio "after"
 
 log "PASS: vfio-user client/server handshake over an owner-only unix socket, no kernel VFIO"
+
+
+# ## Examples
+# # ./this-script.sh [args]
+# # See docs/ARCHITECTURE.md for context.
+
+
+# ## Changelog
+# # 2026-08-12 -- RSI cycle-4 new-idea experiment (primitive changelog).
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`

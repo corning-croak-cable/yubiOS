@@ -105,3 +105,22 @@ This skill integrates with the yubiOS declarative-policy substrate — OPA/Rego 
 ## Audit / evidence coverage
 
 This skill contributes to the yubiOS audit-evidence rollup — SBOM, SLSA provenance, attestation, verification records, secure logging, TPM attestation, evidence-pack export. The skill's output is auditable end-to-end (commit, run, artifact, policy).
+
+
+## Guidelines
+
+- Match the conventions in `docs/STYLE.md`
+- See sibling files in this directory for the surrounding context
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`
+
+
+## Anti-patterns
+
+- Don't claim structure without a null (per `curved-corpus-create`)
+- Don't report pi_T as a property of the historical corpus (per `curve-compass-skill`)

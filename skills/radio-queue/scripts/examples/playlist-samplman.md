@@ -271,3 +271,26 @@ If you want to subset this kind of catalog, the cleanest path is: copy this file
 ## Verification history
 
 - 2026-08-05 — initial enumeration + verification; `yt-dlp --flat-playlist` returned 65 entries; `yt-dlp --skip-download --print title --print id --print duration` confirmed all 65 are accessible (zero failures). File created as a permanent example only — NOT triggered on rock1 per the user's "dont start this yet" directive.
+
+
+## Guidelines
+
+- Match the conventions in `docs/STYLE.md`
+- See sibling files in this directory for the surrounding context
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows)
+
+
+## Changelog
+
+- 2026-08-12 -- RSI cycle-4: new-idea experiment (primitive-flipped changelog, hypothesis + method + delta + verdict + score + caveat in lenses.json L<N>)
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`

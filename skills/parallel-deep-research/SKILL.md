@@ -44,3 +44,20 @@ When Jenny asks for "deep research X" with parallel agents (or just "deep resear
 - Per subagent: ~1500-2500 words
 - Synthesis: ~2000-3000 words (consolidated; can be longer if multi-stream)
 - Refs/ note (for discovery findings): ~500-1500 words
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows)
+
+
+## Changelog
+
+- 2026-08-12 -- RSI cycle-4: new-idea experiment (primitive-flipped changelog, hypothesis + method + delta + verdict + score + caveat in lenses.json L<N>)
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`

@@ -220,3 +220,15 @@ These were tried or evaluated before settling on the bridge pattern. Document wh
 - **One bridge per target machine.** If the target has multiple "shells" (e.g. different allowlists), run them on different ports. Don't multiplex allowlists via env vars — that's a footgun.
 - **Token rotation cadence:** rotate the Bearer when (a) the Sauna connection is dropped, (b) the target box's Tailscale node is removed/re-added, (c) any team-member with access to the box changes. Rotation = new `openssl rand -hex 32`, update `/etc/rock1-shell.env`, restart the bridge, update the Sauna connection form.
 - **Read the alternatives section before re-evaluating this approach.** If a future session proposes mcp-proxy or Cloudflare Tunnel without checking the auth model, surface this skill as the precedent.
+
+
+## Changelog
+
+- 2026-08-12 -- RSI cycle-4: new-idea experiment (primitive-flipped changelog, hypothesis + method + delta + verdict + score + caveat in lenses.json L<N>)
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`

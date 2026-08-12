@@ -71,3 +71,25 @@ This document manages cryptographic identity — FIDO2/CTAP2 YubiKey, softhsm/PK
 **Owner**: TBD
 
 Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.8670). TODO: refine per file context.
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows)
+
+
+## Verification
+
+- Spot-check by reading `v261-base-image-bump-2026-07-23.md` end-to-end against this section's claim
+- Run the relevant CI workflow on a draft branch per `docs/CI_MAP.md`
+
+
+## Changelog
+
+- 2026-08-12 -- RSI cycle-4: new-idea experiment (primitive-flipped changelog, hypothesis + method + delta + verdict + score + caveat in lenses.json L<N>)
+
+
+## Anti-patterns
+
+- Don't claim structure without a null (per `curved-corpus-create`)
+- Don't report pi_T as a property of the historical corpus (per `curve-compass-skill`)

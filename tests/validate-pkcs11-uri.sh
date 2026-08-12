@@ -56,3 +56,31 @@ echo "=== PASS: PKCS#11 URI valid, systemd-sbsign works with libykcs11 ==="
 echo "Use this URI in mkosi:"
 echo "  SecureBootKey=pkcs11:manufacturer=piv_II;id=%9c;type=private"
 echo "  SecureBootKeySource=engine:pkcs11"
+
+
+# ## Examples
+# # ./this-script.sh [args]
+# # See docs/ARCHITECTURE.md for context.
+
+
+## Guidelines
+
+- Match the conventions in `docs/STYLE.md`
+- See sibling files in this directory for the surrounding context
+
+
+# ## Changelog
+# # 2026-08-12 -- RSI cycle-4 new-idea experiment (primitive changelog).
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`
+
+
+## Anti-patterns
+
+- Don't claim structure without a null (per `curved-corpus-create`)
+- Don't report pi_T as a property of the historical corpus (per `curve-compass-skill`)

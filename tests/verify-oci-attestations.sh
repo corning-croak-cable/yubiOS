@@ -126,3 +126,21 @@ main() {
 }
 
 main "$@"
+
+
+# ## Examples
+# # ./this-script.sh [args]
+# # See docs/ARCHITECTURE.md for context.
+
+
+## Guidelines
+
+- Match the conventions in `docs/STYLE.md`
+- See sibling files in this directory for the surrounding context
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`

@@ -99,3 +99,24 @@ make -C build run-only \
 
 echo ""
 echo "== Build complete. In the booted guest run: tests/vm/verify-tpm0-pcr-extend.sh =="
+
+
+# ## Examples
+# # ./this-script.sh [args]
+# # See docs/ARCHITECTURE.md for context.
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows)
+
+
+# ## Changelog
+# # 2026-08-12 -- RSI cycle-4 new-idea experiment (primitive changelog).
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`

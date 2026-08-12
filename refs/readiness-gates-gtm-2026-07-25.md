@@ -113,3 +113,22 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 **Pass criterion**: TBD.
 
 Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.4144). TODO: refine per file context.
+
+
+## Examples
+
+- Reading `readiness-gates-gtm-2026-07-25.md` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`
+
+
+## Anti-patterns
+
+- Don't claim structure without a null (per `curved-corpus-create`)
+- Don't report pi_T as a property of the historical corpus (per `curve-compass-skill`)

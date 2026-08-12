@@ -214,3 +214,29 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+## Examples
+
+- Reading `validate-input-shape.py` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows)
+
+
+# ## Verification
+# # python3 this_script.py --selftest  # exits 0 iff GREEN
+
+
+# ## Changelog
+# # 2026-08-12 -- RSI cycle-4 new-idea experiment (primitive changelog).
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`

@@ -164,3 +164,9 @@ This skill integrates with the yubiOS declarative-policy substrate — OPA/Rego 
 ## Continuous / adaptive coverage
 
 This skill supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The skill is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.
+
+
+## Examples
+
+- Reading `SKILL.md` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS

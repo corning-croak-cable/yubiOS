@@ -233,3 +233,20 @@ Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.8429).
 **One-line**: TBD per file context.
 
 Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.4201). TODO: refine per file context.
+
+
+## Examples
+
+- Reading `prior-art-autonomous-ideation-skill-2026-07-28.md` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+## Verification
+
+- Spot-check by reading `prior-art-autonomous-ideation-skill-2026-07-28.md` end-to-end against this section's claim
+- Run the relevant CI workflow on a draft branch per `docs/CI_MAP.md`
+
+
+## Changelog
+
+- 2026-08-12 -- RSI cycle-4: new-idea experiment (primitive-flipped changelog, hypothesis + method + delta + verdict + score + caveat in lenses.json L<N>)

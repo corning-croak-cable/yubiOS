@@ -127,3 +127,26 @@ RUN install -d /usr/lib/systemd/system/multi-user.target.wants && \
 
 LABEL yubiOS.image.kind="dev-test"
 LABEL yubiOS.image.warning="TEST-ONLY: ships the passless swu2f software FIDO2 authenticator AND serial/tty root autologin (local-access bypass of pam_u2f). Never use in production. See ADR-003, ADR-026."
+
+## Examples
+
+- Reading `Containerfile.dev` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+## Guidelines
+
+- Match the conventions in `docs/STYLE.md`
+- See sibling files in this directory for the surrounding context
+
+
+## Changelog
+
+- 2026-08-12 -- RSI cycle-4: new-idea experiment (primitive-flipped changelog, hypothesis + method + delta + verdict + score + caveat in lenses.json L<N>)
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`

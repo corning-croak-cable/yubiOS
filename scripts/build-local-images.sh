@@ -391,3 +391,14 @@ if [[ "${YUBIOS_LOCAL_DHI:-0}" == 1 ]]; then
 else
     run_on_host "$MODE"
 fi
+
+
+# ## Changelog
+# # 2026-08-12 -- RSI cycle-4 new-idea experiment (primitive changelog).
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`

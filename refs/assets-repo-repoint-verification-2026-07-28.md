@@ -163,3 +163,25 @@ Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+1.0531).
 **Out of scope**: TBD.
 
 Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.4341). TODO: refine per file context.
+
+
+## Examples
+
+- Reading `assets-repo-repoint-verification-2026-07-28.md` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows)
+
+
+## Composition
+
+- Sits next to sibling files in this directory; consult them for surrounding context
+- For the full yubiOS dependency graph, see `docs/ARCHITECTURE.md`
+
+
+## Changelog
+
+- 2026-08-12 -- RSI cycle-4: new-idea experiment (primitive-flipped changelog, hypothesis + method + delta + verdict + score + caveat in lenses.json L<N>)

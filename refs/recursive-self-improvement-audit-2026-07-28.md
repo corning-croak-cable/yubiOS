@@ -195,3 +195,20 @@ Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.5627).
 **Related refs/ docs**: TBD.
 
 Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.7446). TODO: refine per file context.
+
+
+## Examples
+
+- Reading `recursive-self-improvement-audit-2026-07-28.md` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+## Verification
+
+- Spot-check by reading `recursive-self-improvement-audit-2026-07-28.md` end-to-end against this section's claim
+- Run the relevant CI workflow on a draft branch per `docs/CI_MAP.md`
+
+
+## Changelog
+
+- 2026-08-12 -- RSI cycle-4: new-idea experiment (primitive-flipped changelog, hypothesis + method + delta + verdict + score + caveat in lenses.json L<N>)

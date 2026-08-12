@@ -29,3 +29,28 @@ For continuous runtime detection falco, the C/A primitive applies as follows: th
 
 Concrete implications for continuous runtime detection falco: any change should be reviewed for impact on C/A coverage; gaps in C/A that are attributable to this skill are tracked in the cycle-9 run log at `refs/curve-guided-rsi-v2-cycle9-corpus-enrichment-2026-08-06.md` on `yubi-OS/yubiOS`. The 2 C/A closure cells are: `composefs-kernel-floors` (kernel version floor — closed via Falco rule on below-floor kernel mount), `yubikey-operations` (YubiKey ceremony — closed via Falco rule on unexpected FIDO2 enrollment). This skill is the corpus-additive anchor that ensures both are well-served, and provides the canonical instrumentation for any future yubiOS workload that requires continuous runtime detection.
 - 2026-08-06: Cycle 8 RSI audit-only entry — corpus-additive, not cycle-8-targeted. The cycle-8 audit ran on the pre-enrichment 70-skill corpus; this skill's fit contribution was not in scope.
+
+
+## Examples
+
+- Reading `SKILL.md` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+## Verification
+
+- Spot-check by reading `SKILL.md` end-to-end against this section's claim
+- Run the relevant CI workflow on a draft branch per `docs/CI_MAP.md`
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`
+
+
+## Anti-patterns
+
+- Don't claim structure without a null (per `curved-corpus-create`)
+- Don't report pi_T as a property of the historical corpus (per `curve-compass-skill`)

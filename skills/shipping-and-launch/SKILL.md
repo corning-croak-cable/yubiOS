@@ -365,3 +365,8 @@ This skill applies least-privilege hardening: Linux capabilities (drop + ambient
 ## Declarative policy coverage
 
 This skill integrates with the yubiOS declarative-policy substrate — OPA/Rego policy files, signing-config JSON, policy-as-code workflows. Policy gates are named at the integration point; policy evaluation is the gate, not an afterthought.
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows)

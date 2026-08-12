@@ -53,3 +53,26 @@ curl -X POST "$BRIDGE/run" -d "$(python3 -c "import json; print(json.dumps({'com
 ## Verification history
 
 - 2026-08-05 — initial verification + deployment; all 6 IDs returned correct titles + ids via `--dump-single-json`; daemon successfully downloaded + transcoded + played them on rock1 end-to-end.
+
+
+## Guidelines
+
+- Match the conventions in `docs/STYLE.md`
+- See sibling files in this directory for the surrounding context
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows)
+
+
+## Changelog
+
+- 2026-08-12 -- RSI cycle-4: new-idea experiment (primitive-flipped changelog, hypothesis + method + delta + verdict + score + caveat in lenses.json L<N>)
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`

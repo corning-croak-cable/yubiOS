@@ -90,3 +90,38 @@ All 16 isolated items have a missing primitive whose flip reduces geodesic dista
 - Skill upstream: `hyperspherical-harmonic-curve` SKILL.md §Lifecycle (re-fit cadence), §Möbius refinement strategy (frozen at identity)
 - RSI protocol: `recursive-self-improvement` SKILL.md (cycle cap, fixpoint rule, fresh-context subagent)
 - NSS sweep: `negative-skill-space` SKILL.md (12-axis gap map for cycle 4+)
+
+
+## Examples
+
+- Reading `repo-history-skill-cycle-3-2026-08-07.md` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+## Guidelines
+
+- Match the conventions in `docs/STYLE.md`
+- See sibling files in this directory for the surrounding context
+
+
+## Verification
+
+- Spot-check by reading `repo-history-skill-cycle-3-2026-08-07.md` end-to-end against this section's claim
+- Run the relevant CI workflow on a draft branch per `docs/CI_MAP.md`
+
+
+## Composition
+
+- Sits next to sibling files in this directory; consult them for surrounding context
+- For the full yubiOS dependency graph, see `docs/ARCHITECTURE.md`
+
+
+## Changelog
+
+- 2026-08-12 -- RSI cycle-4: new-idea experiment (primitive-flipped changelog, hypothesis + method + delta + verdict + score + caveat in lenses.json L<N>)
+
+
+## Anti-patterns
+
+- Don't claim structure without a null (per `curved-corpus-create`)
+- Don't report pi_T as a property of the historical corpus (per `curve-compass-skill`)

@@ -94,3 +94,27 @@ Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.79
 **Out of scope**: TBD.
 
 Context: section appended per repo-refs-skill cycle-3 7-D Mode D batch (Δ=+0.6732). TODO: refine per file context.
+
+
+## Guidelines
+
+- Match the conventions in `docs/STYLE.md`
+- See sibling files in this directory for the surrounding context
+
+
+## Verification
+
+- Spot-check by reading `yubios-ci-strategy-history-2026-07-23.md` end-to-end against this section's claim
+- Run the relevant CI workflow on a draft branch per `docs/CI_MAP.md`
+
+
+## Composition
+
+- Sits next to sibling files in this directory; consult them for surrounding context
+- For the full yubiOS dependency graph, see `docs/ARCHITECTURE.md`
+
+
+## Anti-patterns
+
+- Don't claim structure without a null (per `curved-corpus-create`)
+- Don't report pi_T as a property of the historical corpus (per `curve-compass-skill`)

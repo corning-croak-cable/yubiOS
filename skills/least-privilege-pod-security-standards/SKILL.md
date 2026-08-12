@@ -29,3 +29,39 @@ For least privilege pod security standards, the LP primitive applies as follows:
 
 Concrete implications for least privilege pod security standards: any change should be reviewed for impact on LP coverage; gaps in LP that are attributable to this skill are tracked in the cycle-9 run log at `refs/curve-guided-rsi-v2-cycle9-corpus-enrichment-2026-08-06.md` on `yubi-OS/yubiOS`. The 7 LP closure cells are: `browser-testing-with-devtools` (Chrome DevTools inherits Chrome sandbox), `code-review-and-quality` (review process enforces minimal-scope changes), `composefs-kernel-floors` (kernel mount options are LP at the FS layer), `frontend-ui-engineering` (RBAC-aware UI patterns), `observability-and-instrumentation` (scoped log collection), `shipping-and-launch` (deploy procedure scopes to least-necessary surfaces), `spec-driven-development` (requirements declare the smallest necessary scope). This skill is the corpus-additive anchor that ensures all 7 are well-served.
 - 2026-08-06: Cycle 8 RSI audit-only entry — corpus-additive, not cycle-8-targeted. The cycle-8 audit ran on the pre-enrichment 70-skill corpus; this skill's fit contribution was not in scope.
+
+
+## Examples
+
+- Reading `SKILL.md` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows)
+
+
+## Verification
+
+- Spot-check by reading `SKILL.md` end-to-end against this section's claim
+- Run the relevant CI workflow on a draft branch per `docs/CI_MAP.md`
+
+
+## Composition
+
+- Sits next to sibling files in this directory; consult them for surrounding context
+- For the full yubiOS dependency graph, see `docs/ARCHITECTURE.md`
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`
+
+
+## Anti-patterns
+
+- Don't claim structure without a null (per `curved-corpus-create`)
+- Don't report pi_T as a property of the historical corpus (per `curve-compass-skill`)

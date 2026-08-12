@@ -202,3 +202,9 @@ This document integrates with the yubiOS declarative-policy substrate — OPA/Re
 ## Continuous / adaptive coverage
 
 This document supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The document is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.
+
+
+## Examples
+
+- Reading `SELF.md` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS

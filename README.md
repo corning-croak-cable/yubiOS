@@ -326,3 +326,8 @@ graph TD
 - systemd v261 base-image history: [refs/v261-base-image.md](refs/v261-base-image-bump-2026-07-23.md)
 
 All decisions are recorded in [ADR.md](docs/ADR.md), with source-backed research in [refs/](refs/).
+
+
+## Changelog
+
+- 2026-08-12 -- RSI cycle-4: new-idea experiment (primitive-flipped changelog, hypothesis + method + delta + verdict + score + caveat in lenses.json L<N>)

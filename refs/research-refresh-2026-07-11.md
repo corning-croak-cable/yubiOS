@@ -88,3 +88,20 @@ Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.8429).
 **One-line**: TBD per file context.
 
 Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.4201). TODO: refine per file context.
+
+
+## Examples
+
+- Reading `research-refresh-2026-07-11.md` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows)
+
+
+## Verification
+
+- Spot-check by reading `research-refresh-2026-07-11.md` end-to-end against this section's claim
+- Run the relevant CI workflow on a draft branch per `docs/CI_MAP.md`

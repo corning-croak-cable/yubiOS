@@ -29,3 +29,33 @@ For runtime attestation keylime, the attestation primitive applies as follows: t
 
 Concrete implications for runtime attestation keylime: any change should be reviewed for impact on attestation coverage; gaps in attestation that are attributable to this skill are tracked in the cycle-9 run log at `refs/curve-guided-rsi-v2-cycle9-corpus-enrichment-2026-08-06.md` on `yubi-OS/yubiOS`. The 8 attestation closure cells are: `ci-cd-and-automation` (CI attestation generation), `composefs-kernel-floors` (signed catalog attestation), `incremental-implementation` (test-first discipline producing verification evidence), `performance-optimization` (measurement-based optimization evidence), `planning-and-task-breakdown` (acceptance criteria as attestation), `recursive-self-improvement` (gap-map audit trail), `shipping-and-launch` (production monitoring evidence), `the-cult` (follower check-in attestation). This skill is the corpus-additive anchor that ensures all 8 are well-served.
 - 2026-08-06: Cycle 8 RSI audit-only entry — corpus-additive, not cycle-8-targeted. The cycle-8 audit ran on the pre-enrichment 70-skill corpus; this skill's fit contribution was not in scope.
+
+
+## Examples
+
+- Reading `SKILL.md` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows)
+
+
+## Composition
+
+- Sits next to sibling files in this directory; consult them for surrounding context
+- For the full yubiOS dependency graph, see `docs/ARCHITECTURE.md`
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`
+
+
+## Anti-patterns
+
+- Don't claim structure without a null (per `curved-corpus-create`)
+- Don't report pi_T as a property of the historical corpus (per `curve-compass-skill`)

@@ -112,3 +112,25 @@ Cycle 3 is the final cycle under the 3-cycle RSI cap. User may override for furt
 - Skill upstream: `hyperspherical-harmonic-curve` SKILL.md §Lifecycle (re-fit cadence), §Möbius refinement strategy (frozen at identity)
 - RSI protocol: `recursive-self-improvement` SKILL.md (cycle cap, fixpoint rule, fresh-context subagent)
 - NSS sweep: `negative-skill-space` SKILL.md (12-axis gap map for cycle 3)
+
+
+## Examples
+
+- Reading `repo-history-skill-cycle-2-2026-08-07.md` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows)
+
+
+## Verification
+
+- Spot-check by reading `repo-history-skill-cycle-2-2026-08-07.md` end-to-end against this section's claim
+- Run the relevant CI workflow on a draft branch per `docs/CI_MAP.md`
+
+
+## Changelog
+
+- 2026-08-12 -- RSI cycle-4: new-idea experiment (primitive-flipped changelog, hypothesis + method + delta + verdict + score + caveat in lenses.json L<N>)

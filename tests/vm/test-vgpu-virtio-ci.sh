@@ -179,3 +179,19 @@ g 'systemd-cryptenroll --help 2>&1 | grep -q -- --fido2-device' \
 echo "PASS: FIDO2 unlock surface intact with a vGPU attached"
 
 log "PASS: virtio-gpu device model + guest DRM nodes + negative VFIO surface"
+
+
+# ## Examples
+# # ./this-script.sh [args]
+# # See docs/ARCHITECTURE.md for context.
+
+
+# ## Changelog
+# # 2026-08-12 -- RSI cycle-4 new-idea experiment (primitive changelog).
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`

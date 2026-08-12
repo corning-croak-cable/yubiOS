@@ -75,3 +75,35 @@ echo "  Run: yubiOS-enroll-luks   (for second YubiKey disk unlock)"
 echo "  Run: yubiOS-enroll-pam    (for second YubiKey sudo auth)"
 echo ""
 echo "See ONBOARDING.md for recovery procedures if your YubiKey is lost."
+
+
+# ## Examples
+# # ./this-script.sh [args]
+# # See docs/ARCHITECTURE.md for context.
+
+
+## Guidelines
+
+- Match the conventions in `docs/STYLE.md`
+- See sibling files in this directory for the surrounding context
+
+
+# ## Verification
+# # Run the relevant CI workflow (see docs/CI_MAP.md).
+
+
+# ## Changelog
+# # 2026-08-12 -- RSI cycle-4 new-idea experiment (primitive changelog).
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`
+
+
+## Anti-patterns
+
+- Don't claim structure without a null (per `curved-corpus-create`)
+- Don't report pi_T as a property of the historical corpus (per `curve-compass-skill`)

@@ -97,3 +97,40 @@ The corpus-saturation story is consistent: 7-9 of 9 primitives always survive th
 ## Empirical Validation
 
 Cycle 4 ships. Next cycle (cycle 5) requires another user override; top carryover hypotheses are semantic-similarity join (cycle-5 candidate #1) and a Mode D batch on the top-10 cycle-4 actionable sparse cells.
+
+
+## Examples
+
+- Reading `repo-history-skill-cycle-4-2026-08-07.md` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+## Guidelines
+
+- Match the conventions in `docs/STYLE.md`
+- See sibling files in this directory for the surrounding context
+
+
+## Verification
+
+- Spot-check by reading `repo-history-skill-cycle-4-2026-08-07.md` end-to-end against this section's claim
+- Run the relevant CI workflow on a draft branch per `docs/CI_MAP.md`
+
+
+## Composition
+
+- Sits next to sibling files in this directory; consult them for surrounding context
+- For the full yubiOS dependency graph, see `docs/ARCHITECTURE.md`
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`
+
+
+## Anti-patterns
+
+- Don't claim structure without a null (per `curved-corpus-create`)
+- Don't report pi_T as a property of the historical corpus (per `curve-compass-skill`)

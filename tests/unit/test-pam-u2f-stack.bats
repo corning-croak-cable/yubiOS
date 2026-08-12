@@ -66,3 +66,27 @@ pam_u2f_auth_line() { grep -E '^[[:space:]]*auth[[:space:]].*pam_u2f\.so' "$1" |
   run bash -c "printf '%s\n%s\n' '1.3.1' '$v' | sort -V | head -n1"
   [ "$output" = "1.3.1" ]
 }
+
+
+## Examples
+
+- Reading `test-pam-u2f-stack.bats` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+## Guidelines
+
+- Match the conventions in `docs/STYLE.md`
+- See sibling files in this directory for the surrounding context
+
+
+## Changelog
+
+- 2026-08-12 -- RSI cycle-4: new-idea experiment (primitive-flipped changelog, hypothesis + method + delta + verdict + score + caveat in lenses.json L<N>)
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`

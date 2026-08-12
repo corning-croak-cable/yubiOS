@@ -88,3 +88,20 @@ Process playbook — backed by the recorded failure, not a green run.
 - Linear **OMN-150**. PRs **#150**, **#147** (`8b5b20b`), **#148** (`a49e95db`), **#145**. Run 30484718456.
 - `docs/CI_MAP.md` — group membership. `ci_test-ftpm-tpm0.yml`, `ci_test-fedora-bootc-arm64-pull.yml`, `ci_test-vgpu-vm.yml` are in **no** group; `group=all` silently misses them (Gap 9).
 - Playbooks: [digest-bump-recovery](digest-bump-recovery.md), [hw-device-and-allow-real-u2f](hw-device-and-allow-real-u2f.md), [sealed-uki-vm-debug](sealed-uki-vm-debug.md).
+
+
+## Guidelines
+
+- Match the conventions in `docs/STYLE.md`
+- See sibling files in this directory for the surrounding context
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows)
+
+
+## Composition
+
+- Sits next to sibling files in this directory; consult them for surrounding context
+- For the full yubiOS dependency graph, see `docs/ARCHITECTURE.md`

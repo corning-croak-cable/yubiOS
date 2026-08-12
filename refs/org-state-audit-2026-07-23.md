@@ -85,3 +85,26 @@ Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.6921).
 **One-line**: TBD per file context.
 
 Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.4199). TODO: refine per file context.
+
+
+## Examples
+
+- Reading `org-state-audit-2026-07-23.md` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+## Guidelines
+
+- Match the conventions in `docs/STYLE.md`
+- See sibling files in this directory for the surrounding context
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows)
+
+
+## Composition
+
+- Sits next to sibling files in this directory; consult them for surrounding context
+- For the full yubiOS dependency graph, see `docs/ARCHITECTURE.md`

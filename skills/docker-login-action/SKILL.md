@@ -111,3 +111,20 @@ The audit-trail entry: 2026-08-06 cycle 6 RSI — closed `declarative policy` pr
 This skill's `least privilege` primitive is closed by cycle-7 RSI (3rd-priority MOVABLE per skill, post-cycle-6 baseline). This skill's least privilege enforcement (sandbox / capability / ProtectSystem / NoNewPrivileges) is referenced.
 
 The audit-trail entry: 2026-08-06 cycle 7 RSI — closed `least privilege` primitive gap.
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows)
+
+
+## Verification
+
+- Spot-check by reading `SKILL.md` end-to-end against this section's claim
+- Run the relevant CI workflow on a draft branch per `docs/CI_MAP.md`
+
+
+## Anti-patterns
+
+- Don't claim structure without a null (per `curved-corpus-create`)
+- Don't report pi_T as a property of the historical corpus (per `curve-compass-skill`)

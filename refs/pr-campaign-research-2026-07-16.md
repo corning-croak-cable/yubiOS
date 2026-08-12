@@ -135,3 +135,15 @@ Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.54
 **Related refs/ docs**: TBD.
 
 Context: section appended per repo-refs-skill cycle-3 7-D Mode D batch (Δ=+0.6587). TODO: refine per file context.
+
+
+## Examples
+
+- Reading `pr-campaign-research-2026-07-16.md` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+## Verification
+
+- Spot-check by reading `pr-campaign-research-2026-07-16.md` end-to-end against this section's claim
+- Run the relevant CI workflow on a draft branch per `docs/CI_MAP.md`

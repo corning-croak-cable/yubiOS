@@ -75,3 +75,8 @@ Default `false` is fail-safe (a hosted amd64 dispatch still detects a key someon
 - Linear OMN-42 (physical-key parent), OMN-63 (12 scenarios), OMN-149.
 - Tests: `tests/vm/lib/real-u2f-guard.sh`, `test-luks-fido2-ci.sh`, `test-luks-fido2.sh` (HIL), `test-fido2-enrollment.sh`.
 - Playbooks: [fido2-vm-e2e-recipe](fido2-vm-e2e-recipe.md), [dispatch-chain-verification](dispatch-chain-verification.md).
+
+
+## Changelog
+
+- 2026-08-12 -- RSI cycle-4: new-idea experiment (primitive-flipped changelog, hypothesis + method + delta + verdict + score + caveat in lenses.json L<N>)

@@ -163,3 +163,19 @@ This document participates in the yubiOS root-of-trust chain — ROT/ROTPK, X.50
 **Test outcomes**: TBD.
 
 Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.4816). TODO: refine per file context.
+
+
+## Examples
+
+- Reading `curve-guided-rsi-v1-cycles-2-3-run-2026-08-04.md` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows)
+
+
+## Changelog
+
+- 2026-08-12 -- RSI cycle-4: new-idea experiment (primitive-flipped changelog, hypothesis + method + delta + verdict + score + caveat in lenses.json L<N>)

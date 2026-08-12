@@ -271,3 +271,22 @@ Per PROJECT_RULES.md "Skill exports to yubi-OS/agent-skills (2026-07-23)" + USER
 ---
 
 **End of deep research.** This file is the v0.1 evidence substrate. The skill draft at `skills/github-yubios-KS9n5GAT/repo-history-skill/SKILL.md` references this document by filename and cites the live API numbers. RSI Cycle 1 evidence goes in `session/repo-history-skill-cycle-1-2026-08-07.json`; the gap-map at `session/repo-history-skill-gap-map-v1-2026-08-07.md`.
+
+
+## Examples
+
+- Reading `repo-history-skill-2026-08-07.md` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+## Verification
+
+- Spot-check by reading `repo-history-skill-2026-08-07.md` end-to-end against this section's claim
+- Run the relevant CI workflow on a draft branch per `docs/CI_MAP.md`
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`

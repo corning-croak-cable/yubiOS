@@ -273,3 +273,14 @@ Concrete pass/fail rules that an operator (or CI gate) can execute to verify the
 
 **Operator rule**: the artifact is PASS only when all 5 rule rows above report PASS. Each rule is a single command the operator (or CI gate) executes.
 
+
+
+## Examples
+
+- Reading `yubios-scamper-product-brief-investor-memo-2026-08-07.md` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+## Changelog
+
+- 2026-08-12 -- RSI cycle-4: new-idea experiment (primitive-flipped changelog, hypothesis + method + delta + verdict + score + caveat in lenses.json L<N>)

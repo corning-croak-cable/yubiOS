@@ -128,3 +128,9 @@ The audit-trail entry: 2026-08-06 cycle 6 RSI — closed `cryptographic identity
 This skill's `declarative policy` primitive is closed by cycle-7 RSI (3rd-priority MOVABLE per skill, post-cycle-6 baseline). This skill's declarative policy (.rego / OPA / Build Policy) integration is referenced.
 
 The audit-trail entry: 2026-08-06 cycle 7 RSI — closed `declarative policy` primitive gap.
+
+
+## Examples
+
+- Reading `SKILL.md` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS

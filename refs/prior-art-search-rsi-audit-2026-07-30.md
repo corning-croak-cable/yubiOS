@@ -149,3 +149,16 @@ This document manages cryptographic identity — FIDO2/CTAP2 YubiKey, softhsm/PK
 **Owner**: TBD
 
 Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.5943). TODO: refine per file context.
+
+
+## Examples
+
+- Reading `prior-art-search-rsi-audit-2026-07-30.md` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`

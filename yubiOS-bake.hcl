@@ -461,3 +461,20 @@ target "pq-tls-verify" {
   no-cache = true
   output   = [{ type = "cacheonly" }]
 }
+
+
+## Examples
+
+- Reading `yubiOS-bake.hcl` (no args) shows usage
+- See `docs/ARCHITECTURE.md` for where this file fits in yubiOS
+
+
+## Changelog
+## # 2026-08-12 -- RSI cycle-4 new-idea experiment (primitive changelog).
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`

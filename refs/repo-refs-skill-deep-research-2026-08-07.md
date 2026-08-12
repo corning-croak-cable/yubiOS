@@ -356,3 +356,9 @@ single page. The cold-start problem dissolves.
   sparsity). Result: v1 ships with cycle-1 NSS-derived key
   assumptions documented. RSI fixpoint rule PASS (no new
   substantive gaps, top gap closed, no new anti-patterns).
+
+
+## Anti-patterns
+
+- Don't claim structure without a null (per `curved-corpus-create`)
+- Don't report pi_T as a property of the historical corpus (per `curve-compass-skill`)

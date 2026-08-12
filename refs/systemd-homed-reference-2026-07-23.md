@@ -334,3 +334,15 @@ Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.6921).
 **One-line**: TBD per file context.
 
 Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.4199). TODO: refine per file context.
+
+
+## Guidelines
+
+- Match the conventions in `docs/STYLE.md`
+- See sibling files in this directory for the surrounding context
+
+
+## Anti-patterns
+
+- Don't claim structure without a null (per `curved-corpus-create`)
+- Don't report pi_T as a property of the historical corpus (per `curve-compass-skill`)

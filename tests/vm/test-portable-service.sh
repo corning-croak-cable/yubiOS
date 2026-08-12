@@ -105,3 +105,29 @@ sudo env "PATH=$PATH:/usr/sbin:/sbin" bcvk ephemeral exec "$VMID" -- \
 echo
 echo "Summary: 8/8 PASS (smoke test; portablectl attach requires image-side metadata)"
 exit 0
+
+
+# ## Examples
+# # ./this-script.sh [args]
+# # See docs/ARCHITECTURE.md for context.
+
+
+# ## Verification
+# # Run the relevant CI workflow (see docs/CI_MAP.md).
+
+
+# ## Changelog
+# # 2026-08-12 -- RSI cycle-4 new-idea experiment (primitive changelog).
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- See root `lenses.json` and `new-ideas-2026-08-12.md`
+
+
+## Anti-patterns
+
+- Don't claim structure without a null (per `curved-corpus-create`)
+- Don't report pi_T as a property of the historical corpus (per `curve-compass-skill`)
