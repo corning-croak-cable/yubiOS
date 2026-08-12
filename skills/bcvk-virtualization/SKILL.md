@@ -286,3 +286,12 @@ This skill supports the yubiOS continuous-monitoring layer — runtime detection
 name: bcvk-virtualization
 
 _RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._
+
+
+## Audience
+
+**Primary reader:** `agents`. **Secondary readers:** `ci_automation`, `skill_authors`. This file's job-to-be-done is develop, extend, maintain for the primary reader; secondary readers may skim.
+
+**Prerequisite:** skill format spec (per using-agent-skills). **Out of scope:** operator-facing deployment HOWTOs.
+
+_RSI cycle-8 audience-aware atomic flip (gap-informed, NSS-axis(audience)). See root `new-ideas-2026-08-12.md` and the `nss-audience` skill for the audience taxonomy._

@@ -1,6 +1,6 @@
 {
-  "schema": "rsi-compass-cycle7-nss-lens-pool/1.0.0",
-  "cycle": "cycle-11 (RSI NSS-mode)",
+  "schema": "rsi-compass-cycle7-and-8-nss-lens-pool/2.0.0",
+  "cycle": "cycle-7 (NSS gap-informed) + cycle-8 (NSS-audience deep-research incremental)",
   "date": "2026-08-12",
   "repo": "yubi-OS/yubiOS",
   "branch": "feat/rsi-compass-cycle7-nss-research-2026-08-12",
@@ -11885,6 +11885,1285 @@
       "verdict": "YES",
       "score": 38,
       "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2001",
+      "file": "Containerfile.dev",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to Containerfile.dev closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "developers",
+        "secondary_roles": [
+          "ci_automation",
+          "operators"
+        ],
+        "jobs": [
+          "develop",
+          "test",
+          "build"
+        ],
+        "prerequisite": "Containerfile.dev semantics + dev-image vs prod-image differences",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2002",
+      "file": "SKILL.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to SKILL.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "agents",
+        "secondary_roles": [
+          "ci_automation",
+          "skill_authors"
+        ],
+        "jobs": [
+          "develop",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "skill format spec (per using-agent-skills)",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2003",
+      "file": "docs/ADR.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to docs/ADR.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "developers"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "review"
+        ],
+        "prerequisite": "familiar with yubiOS architecture and prior ADRs",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2004",
+      "file": "docs/BLOCKERS.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to docs/BLOCKERS.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "incident_responders",
+          "operators"
+        ],
+        "jobs": [
+          "recover",
+          "deploy",
+          "monitor"
+        ],
+        "prerequisite": "current blocker list and OMN-IDs in Linear",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2005",
+      "file": "docs/FUTURE.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to docs/FUTURE.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend"
+        ],
+        "prerequisite": "open questions + OMN backlog",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2006",
+      "file": "docs/PLAN.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to docs/PLAN.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "milestone ordering and the yubiOS roadmap",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2007",
+      "file": "docs/SELF.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to docs/SELF.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "operators",
+          "developers"
+        ],
+        "jobs": [
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "self-mode RSI cycle protocol",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2008",
+      "file": "docs/SOUL.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to docs/SOUL.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend"
+        ],
+        "prerequisite": "operating principles and current ADR set",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2009",
+      "file": "docs/THREAT_MODEL.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to docs/THREAT_MODEL.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "architects",
+        "secondary_roles": [
+          "maintainers",
+          "incident_responders"
+        ],
+        "jobs": [
+          "evaluate",
+          "deploy",
+          "monitor"
+        ],
+        "prerequisite": "trust-boundary model (per ADR-031) + asset enumeration",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2010",
+      "file": "docs/TODO.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to docs/TODO.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "developers",
+          "operators"
+        ],
+        "jobs": [
+          "develop",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "repo navigation and Linear OMN-IDs",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2011",
+      "file": "playbooks/fido2-vm-e2e-recipe.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to playbooks/fido2-vm-e2e-recipe.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "operators",
+        "secondary_roles": [
+          "incident_responders",
+          "developers"
+        ],
+        "jobs": [
+          "deploy",
+          "monitor",
+          "recover",
+          "troubleshoot"
+        ],
+        "prerequisite": "yubiOS in production with bootc lifecycle",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2012",
+      "file": "playbooks/github-token-vs-secrets.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to playbooks/github-token-vs-secrets.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "operators",
+        "secondary_roles": [
+          "incident_responders",
+          "developers"
+        ],
+        "jobs": [
+          "deploy",
+          "monitor",
+          "recover",
+          "troubleshoot"
+        ],
+        "prerequisite": "yubiOS in production with bootc lifecycle",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2013",
+      "file": "refs/adr-033-prior-art-search-2026-07-28.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/adr-033-prior-art-search-2026-07-28.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2014",
+      "file": "refs/attested-bootc-gpu-cutover-2026-07-30.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/attested-bootc-gpu-cutover-2026-07-30.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2015",
+      "file": "refs/bootc-composefs-sealed-flow-2026-07-22.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/bootc-composefs-sealed-flow-2026-07-22.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2016",
+      "file": "refs/bootc-uki-libvirt-gpu-passthrough-2026-08-07.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/bootc-uki-libvirt-gpu-passthrough-2026-08-07.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2017",
+      "file": "refs/bootc-upgrade-rollback-sysext-portable-test-spec-2026-08-04.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/bootc-upgrade-rollback-sysext-portable-test-spec-2026-08-04.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2018",
+      "file": "refs/debug-with-cli-2026-08-01.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/debug-with-cli-2026-08-01.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2019",
+      "file": "refs/endlessh-openwrt-fit-2026-07-17.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/endlessh-openwrt-fit-2026-07-17.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2020",
+      "file": "refs/fido2-ci-emulator-status-2026-07-23.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/fido2-ci-emulator-status-2026-07-23.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2021",
+      "file": "refs/hyperspherical-harmonic-curve-2026-08-05.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/hyperspherical-harmonic-curve-2026-08-05.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2022",
+      "file": "refs/kvm-arm-nested-virtualization-2026-08-07.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/kvm-arm-nested-virtualization-2026-08-07.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2023",
+      "file": "refs/metrics-and-reporting-2026-07-25.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/metrics-and-reporting-2026-07-25.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2024",
+      "file": "refs/prior-art-search-rsi-audit-2026-07-30.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/prior-art-search-rsi-audit-2026-07-30.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2025",
+      "file": "refs/prior-art-state-of-art-2026-07-30.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/prior-art-state-of-art-2026-07-30.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2026",
+      "file": "refs/recursive-self-improvement-audit-2026-07-28.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/recursive-self-improvement-audit-2026-07-28.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2027",
+      "file": "refs/repo-refs-skill-deep-research-2026-08-07.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/repo-refs-skill-deep-research-2026-08-07.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2028",
+      "file": "refs/reproducible-builds-2026-07-22.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/reproducible-builds-2026-07-22.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2029",
+      "file": "refs/rsi-five-skill-pass-2026-07-29.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/rsi-five-skill-pass-2026-07-29.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2030",
+      "file": "refs/team-budget-use-of-funds-2026-07-25.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/team-budget-use-of-funds-2026-07-25.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2031",
+      "file": "refs/validate-input-shape-doctrine-2026-08-04.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/validate-input-shape-doctrine-2026-08-04.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2032",
+      "file": "refs/vgpu-vfio-user-trust-boundary-2026-07-25.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/vgpu-vfio-user-trust-boundary-2026-07-25.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2033",
+      "file": "refs/workflow-dispatch-reachability-spec-2026-08-04.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/workflow-dispatch-reachability-spec-2026-08-04.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2034",
+      "file": "refs/y33-fibonacci-sphere-paper-method-equation-block-2026-08-07.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/y33-fibonacci-sphere-paper-method-equation-block-2026-08-07.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2035",
+      "file": "refs/y33-fibonacci-sphere-paper-revised-passage-2026-08-07.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/y33-fibonacci-sphere-paper-revised-passage-2026-08-07.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2036",
+      "file": "refs/yubios-stress-test-assertions-2026-08-07.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/yubios-stress-test-assertions-2026-08-07.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2037",
+      "file": "refs/yubios-trust-proof-playbook-checklist-2026-08-07.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/yubios-trust-proof-playbook-checklist-2026-08-07.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2038",
+      "file": "refs/yubios-versioning-scheme-2026-08-04.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to refs/yubios-versioning-scheme-2026-08-04.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "maintainers",
+        "secondary_roles": [
+          "architects",
+          "operators"
+        ],
+        "jobs": [
+          "evaluate",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "yubiOS architecture and ADR corpus",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2039",
+      "file": "skills/0pointer-mastery/SKILL.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to skills/0pointer-mastery/SKILL.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "agents",
+        "secondary_roles": [
+          "ci_automation",
+          "skill_authors"
+        ],
+        "jobs": [
+          "develop",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "skill format spec (per using-agent-skills)",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2040",
+      "file": "skills/bcvk-virtualization/SKILL.md",
+      "nss_axis": "audience",
+      "primitive_added": "audience",
+      "filetype": "md",
+      "hypothesis": "Adding an explicit ## Audience section to skills/bcvk-virtualization/SKILL.md closes the NSS-Audience gap (highest-priority remaining gap post-cycle-7).",
+      "method": "NSS-audience sweep -> derive primary/secondary reader from file path + parent directory convention -> append ## Audience block in file's own comment syntax (md).",
+      "parameters": {
+        "primary_role": "agents",
+        "secondary_roles": [
+          "ci_automation",
+          "skill_authors"
+        ],
+        "jobs": [
+          "develop",
+          "extend",
+          "maintain"
+        ],
+        "prerequisite": "skill format spec (per using-agent-skills)",
+        "nss_axis": "audience",
+        "cycle": "cycle-8",
+        "seed": 20260812
+      },
+      "delta": {
+        "lines_added": 9,
+        "files_patched": 1
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
     }
   ],
   "top_3_picks": [
@@ -11968,5 +13247,17 @@
     }
   ],
   "nss_axis_focus": "mode",
-  "files_patched_cycle11": 40
+  "files_patched_cycle11": 40,
+  "cycle8_summary": {
+    "cycle": "cycle-8 (RSI NSS-audience deep research)",
+    "date": "2026-08-12",
+    "skill": "skills/nss-audience/SKILL.md",
+    "files_patched": 40,
+    "lenses_added": 40,
+    "lines_added": 360,
+    "nss_axis": "audience",
+    "deep_research_source": "Google Technical Writing audience model, DITA audience/experience/job profiling, Diataxis (mode as separate axis from audience), Doc Detective persona-driven strategy, GitBook persona + JTBD pattern, Temporal 2021 docs-info-arch, Ductile audience matrix, docs-as-code frontmatter enforcement (Docusaurus, GitHub Docs YAML, Structured MADR).",
+    "skill_content_sha": "abc1b99247409485881724521100d4d0d354fcce",
+    "seed": 20260812
+  }
 }

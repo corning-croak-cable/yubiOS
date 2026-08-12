@@ -124,3 +124,12 @@ _Atomic RSI cycle-6 flip._
 # yubiOS Blockers
 
 _RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._
+
+
+## Audience
+
+**Primary reader:** `maintainers`. **Secondary readers:** `incident_responders`, `operators`. This file's job-to-be-done is recover, deploy, monitor for the primary reader; secondary readers may skim.
+
+**Prerequisite:** current blocker list and OMN-IDs in Linear. **Out of scope:** individual skill tutorials.
+
+_RSI cycle-8 audience-aware atomic flip (gap-informed, NSS-axis(audience)). See root `new-ideas-2026-08-12.md` and the `nss-audience` skill for the audience taxonomy._

@@ -141,3 +141,12 @@ _Atomic RSI cycle-6 flip._
 # yubiOS DEV/TEST image — adds swu2f Layer 2 (passless, in-guest software CTAP2
 
 _RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._
+
+
+## Audience
+
+**Primary reader:** `developers`. **Secondary readers:** `ci_automation`, `operators`. This file's job-to-be-done is develop, test, build for the primary reader; secondary readers may skim.
+
+**Prerequisite:** Containerfile.dev semantics + dev-image vs prod-image differences. **Out of scope:** operator deployment procedures.
+
+_RSI cycle-8 audience-aware atomic flip (gap-informed, NSS-axis(audience)). See root `new-ideas-2026-08-12.md` and the `nss-audience` skill for the audience taxonomy._

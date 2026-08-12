@@ -379,3 +379,12 @@ _RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._
 **Mode-axis invariants added (cycle 11):** `isatty(stdin)` before any interactive prompt; `NO_COLOR=1` and `TERM=dumb` honored; `--dry-run` is side-effect-free; `--force` overrides confirmation, not idempotency; `set -e` paired with `set -o pipefail`; long-running units use `Type=notify` + `READY=1`; one-shot scripts use `Type=oneshot` + `RemainAfterExit=no`; CI workflows declare `concurrency:` group for cancellation; idempotency: re-running converges to the requested state.
 
 Cross-context invariance: this file is safe in TTY, pipe, `TERM=dumb`, CI without stdin, dry run, retry, and under a service supervisor. See `nss-mode` SKILL.md for the full rubric.
+
+
+## Audience
+
+**Primary reader:** `agents`. **Secondary readers:** `ci_automation`, `skill_authors`. This file's job-to-be-done is develop, extend, maintain for the primary reader; secondary readers may skim.
+
+**Prerequisite:** skill format spec (per using-agent-skills). **Out of scope:** operator-facing deployment HOWTOs.
+
+_RSI cycle-8 audience-aware atomic flip (gap-informed, NSS-axis(audience)). See root `new-ideas-2026-08-12.md` and the `nss-audience` skill for the audience taxonomy._
