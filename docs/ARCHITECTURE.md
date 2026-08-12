@@ -457,3 +457,17 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 - See `docs/ARCHITECTURE.md` for the full yubiOS dependency graph.
 
 _RSI cycle-7 atomic flip (gap-informed, NSS-axis(adjacent_problems))._
+
+
+## Inputs
+
+CLI:         n/a
+env:         none
+files:       docs/SPEC.md (the spec this architecture implements)
+secrets:     none
+prereqs:     docs/SPEC.md (read first); refs/systemd-unit-directive-reference-2026-07-23.md
+precedence:  docs/SPEC.md > this file > general architecture background
+validation:  every module listed here must have a corresponding entry in docs/SPEC.md
+failure:     a module without a SPEC entry fails the spec-first development gate
+
+_RSI cycle-9 atomic flip (NSS-axis(inputs))._

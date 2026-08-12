@@ -123,3 +123,15 @@ if __name__ == "__main__":
 # # ## Anti-patterns
 # # Don't bypass PROJECT_RULES.md.
 # # RSI cycle-7 atomic flip (NSS-axis(failure_modes)).
+
+
+# Inputs
+#   CLI:         --repo OWNER/NAME (env: GITHUB_REPOSITORY), --label NAME (default: drift)
+#   env:         GITHUB_REPOSITORY (default: yubi-OS/yubiOS), GITHUB_TOKEN (via conn_3h7rj41VF6hs)
+#   files:       the repo's refs/ directory (read for drift reports)
+#   secrets:     GITHUB_TOKEN via conn_3h7rj41VF6hs
+#   prereqs:     Python >= 3.12, the conn_3h7rj41VF6hs connection active
+#   precedence:  CLI > env > built-in default
+#   validation:  --repo must match OWNER/NAME; --label must exist or be creatable
+#   failure:     exit 1 with the offending file and the drift report filename
+# _RSI cycle-9 atomic flip (NSS-axis(inputs))._

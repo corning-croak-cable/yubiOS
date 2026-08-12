@@ -56,3 +56,15 @@ _Atomic RSI cycle-6 flip._
 - Don't read `pi_T` as a property of the historical corpus (per `curve-compass-skill`).
 
 _RSI cycle-7 atomic flip (gap-informed, NSS-axis(failure_modes))._
+
+
+# Inputs
+#   CLI:         make <target> [VAR=VAL ...]
+#   env:         YUBIOS_BUILD_DIR (default: ./build), YUBIOS_REGISTRY (default: docker.io/0mniteck)
+#   files:       Containerfile (must exist), refs/PINNED.md (read for digest pinning)
+#   secrets:     none directly (Containerfile builds handle secrets)
+#   prereqs:     podman or docker, make >= 4.0, git for version stamping
+#   precedence:  command-line VAR > env > make default
+#   validation:  make rejects unknown targets; each target validates its prereqs before running
+#   failure:     make exits non-zero with the failing recipe and the first error line
+# _RSI cycle-9 atomic flip (NSS-axis(inputs))._

@@ -88,3 +88,17 @@ Default `false` is fail-safe (a hosted amd64 dispatch still detects a key someon
 - See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
 
 _RSI cycle-7 atomic flip (gap-informed, NSS-axis(assumption_set))._
+
+
+## Inputs
+
+CLI:         n/a
+env:         none
+files:       tests/vm/lib/real-u2f-guard.sh (the guard this playbook operationalizes)
+secrets:     none directly; the YubiKey serial is hardware-attested, not software-supplied
+prereqs:     a physical YubiKey on the runner; ALLOW_REAL_U2F=1 set by ci_test-vm.yml
+precedence:  ALLOW_REAL_U2F input > the guard's default (refuse) > the in-guest software authenticator
+validation:  ci_test-vm.yml must be dispatched with allow_real_u2f: true; sudo env ALLOW_REAL_U2F=1 is explicit (sudo does not inherit env)
+failure:     the guard correctly refuses to run passless tests when a real key is detected -- this is safety, not a bug
+
+_RSI cycle-9 atomic flip (NSS-axis(inputs))._

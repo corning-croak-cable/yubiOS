@@ -932,3 +932,17 @@ _RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._
 **Prerequisite:** yubiOS architecture and ADR corpus. **Out of scope:** skill author workflow.
 
 _RSI cycle-8 audience-aware atomic flip (gap-informed, NSS-axis(audience)). See root `new-ideas-2026-08-12.md` and the `nss-audience` skill for the audience taxonomy._
+
+
+## Inputs
+
+CLI:         n/a (this is a research note, not a runtime)
+env:         none
+files:       docs/SPEC.md (read first), refs/release-gate-checklist-v2-2026-08-04.md (the gate)
+secrets:     none
+prereqs:     the commit hash in the frontmatter; the doc it references must still exist on main
+precedence:  this note is the input-shape doctrine; downstream skills (nss-inputs) cite it
+validation:  every input shape in the corpus must trace back to this doctrine or to a deviation ADR
+failure:     an undocumented input shape is a candidate for the next NSS-inputs Extend gap
+
+_RSI cycle-9 atomic flip (NSS-axis(inputs))._

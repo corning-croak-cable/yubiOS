@@ -1,6 +1,6 @@
 {
-  "schema": "rsi-compass-cycle7-and-8-nss-lens-pool/2.0.0",
-  "cycle": "cycle-7 (NSS gap-informed) + cycle-8 (NSS-audience deep-research incremental)",
+  "schema": "rsi-compass-cycle9-nss-inputs-lens-pool/1.0.0",
+  "cycle": "cycle-9 (RSI NSS-Inputs gap-informed atomic per-file)",
   "date": "2026-08-12",
   "repo": "yubi-OS/yubiOS",
   "branch": "feat/rsi-compass-cycle7-nss-research-2026-08-12",
@@ -37,8 +37,8 @@
     "recursion"
   ],
   "files_total": 406,
-  "lenses_total": 391,
-  "files_patched": 391,
+  "lenses_total": 431,
+  "files_patched": 431,
   "lens_pool": [
     {
       "lens": "L1001",
@@ -13164,6 +13164,1206 @@
       "verdict": "YES",
       "score": 42,
       "caveat": "primary_role is inferred from path conventions + parent directory, not from a stated front-matter audience tag."
+    },
+    {
+      "lens": "L2001",
+      "file": "Containerfile",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "containerfile",
+      "hypothesis": "Closing the inputs NSS gap on Containerfile (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 802
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2002",
+      "file": "Containerfile.dev",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "containerfile",
+      "hypothesis": "Closing the inputs NSS gap on Containerfile.dev (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 601
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2003",
+      "file": "Containerfile.uki",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "containerfile",
+      "hypothesis": "Closing the inputs NSS gap on Containerfile.uki (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 624
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2004",
+      "file": "Makefile",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "makefile",
+      "hypothesis": "Closing the inputs NSS gap on Makefile (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 669
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2005",
+      "file": "mkosi.conf",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "ini",
+      "hypothesis": "Closing the inputs NSS gap on mkosi.conf (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 9,
+        "channels_covered": 1,
+        "bytes_added": 855
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2006",
+      "file": "mkosi.conf.d/chipsec/mkosi.conf",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "ini",
+      "hypothesis": "Closing the inputs NSS gap on mkosi.conf.d/chipsec/mkosi.conf (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 7,
+        "channels_covered": 1,
+        "bytes_added": 605
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2007",
+      "file": "mkosi.conf.d/desktop/mkosi.conf",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "ini",
+      "hypothesis": "Closing the inputs NSS gap on mkosi.conf.d/desktop/mkosi.conf (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 7,
+        "channels_covered": 1,
+        "bytes_added": 559
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2008",
+      "file": "mkosi.conf.d/minimal/mkosi.conf",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "ini",
+      "hypothesis": "Closing the inputs NSS gap on mkosi.conf.d/minimal/mkosi.conf (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 7,
+        "channels_covered": 1,
+        "bytes_added": 537
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2009",
+      "file": "mkosi.conf.d/test/mkosi.conf",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "ini",
+      "hypothesis": "Closing the inputs NSS gap on mkosi.conf.d/test/mkosi.conf (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 7,
+        "channels_covered": 1,
+        "bytes_added": 565
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2010",
+      "file": "scripts/assert-dispatch-reachable.py",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "py",
+      "hypothesis": "Closing the inputs NSS gap on scripts/assert-dispatch-reachable.py (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 744
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2011",
+      "file": "scripts/audit-workflow-tokens.py",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "py",
+      "hypothesis": "Closing the inputs NSS gap on scripts/audit-workflow-tokens.py (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 605
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2012",
+      "file": "scripts/build-local-images.sh",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "sh",
+      "hypothesis": "Closing the inputs NSS gap on scripts/build-local-images.sh (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 601
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2013",
+      "file": "scripts/detect-fork-drift.py",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "py",
+      "hypothesis": "Closing the inputs NSS gap on scripts/detect-fork-drift.py (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 668
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2014",
+      "file": "scripts/extract_uki_cmdline.py",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "py",
+      "hypothesis": "Closing the inputs NSS gap on scripts/extract_uki_cmdline.py (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 516
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2015",
+      "file": "scripts/file-drift-issues.py",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "py",
+      "hypothesis": "Closing the inputs NSS gap on scripts/file-drift-issues.py (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 649
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2016",
+      "file": "scripts/lib/diagnose-oci-layout.py",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "py",
+      "hypothesis": "Closing the inputs NSS gap on scripts/lib/diagnose-oci-layout.py (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 582
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2017",
+      "file": "mkosi.finalize",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "sh",
+      "hypothesis": "Closing the inputs NSS gap on mkosi.finalize (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 539
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2018",
+      "file": "mkosi.conf.d/chipsec/install-chipsec.sh",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "sh",
+      "hypothesis": "Closing the inputs NSS gap on mkosi.conf.d/chipsec/install-chipsec.sh (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 579
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2019",
+      "file": "mkosi.conf.d/test/install-swu2f-authenticator.sh",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "sh",
+      "hypothesis": "Closing the inputs NSS gap on mkosi.conf.d/test/install-swu2f-authenticator.sh (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 550
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2020",
+      "file": "mkosi.extra/etc/dracut.conf.d/99-yubios-reproducible.conf",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "dracut",
+      "hypothesis": "Closing the inputs NSS gap on mkosi.extra/etc/dracut.conf.d/99-yubios-reproducible.conf (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 7,
+        "channels_covered": 1,
+        "bytes_added": 543
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2021",
+      "file": "AGENTS.md",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "md",
+      "hypothesis": "Closing the inputs NSS gap on AGENTS.md (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 570
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2022",
+      "file": "PINNED.md",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "md",
+      "hypothesis": "Closing the inputs NSS gap on PINNED.md (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 594
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2023",
+      "file": "README.md",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "md",
+      "hypothesis": "Closing the inputs NSS gap on README.md (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 508
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2024",
+      "file": "SKILL.md",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "md",
+      "hypothesis": "Closing the inputs NSS gap on SKILL.md (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 478
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2025",
+      "file": ".github/CODE_OF_CONDUCT.md",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "md",
+      "hypothesis": "Closing the inputs NSS gap on .github/CODE_OF_CONDUCT.md (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 490
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2026",
+      "file": ".github/CONTRIBUTING.md",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "md",
+      "hypothesis": "Closing the inputs NSS gap on .github/CONTRIBUTING.md (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 517
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2027",
+      "file": ".github/SECURITY.md",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "md",
+      "hypothesis": "Closing the inputs NSS gap on .github/SECURITY.md (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 530
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2028",
+      "file": "docs/ARCHITECTURE.md",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "md",
+      "hypothesis": "Closing the inputs NSS gap on docs/ARCHITECTURE.md (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 510
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2029",
+      "file": "docs/CI_MAP.md",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "md",
+      "hypothesis": "Closing the inputs NSS gap on docs/CI_MAP.md (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 463
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2030",
+      "file": "docs/ONBOARDING.md",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "md",
+      "hypothesis": "Closing the inputs NSS gap on docs/ONBOARDING.md (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 527
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2031",
+      "file": "docs/THREAT_MODEL.md",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "md",
+      "hypothesis": "Closing the inputs NSS gap on docs/THREAT_MODEL.md (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 468
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2032",
+      "file": "playbooks/README.md",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "md",
+      "hypothesis": "Closing the inputs NSS gap on playbooks/README.md (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 517
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2033",
+      "file": "playbooks/dispatch-chain-verification.md",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "md",
+      "hypothesis": "Closing the inputs NSS gap on playbooks/dispatch-chain-verification.md (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 503
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2034",
+      "file": "playbooks/drop-in-override-naming.md",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "md",
+      "hypothesis": "Closing the inputs NSS gap on playbooks/drop-in-override-naming.md (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 583
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2035",
+      "file": "playbooks/hw-device-and-allow-real-u2f.md",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "md",
+      "hypothesis": "Closing the inputs NSS gap on playbooks/hw-device-and-allow-real-u2f.md (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 721
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2036",
+      "file": "refs/validate-input-shape-doctrine-2026-08-04.md",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "md",
+      "hypothesis": "Closing the inputs NSS gap on refs/validate-input-shape-doctrine-2026-08-04.md (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 628
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2037",
+      "file": "refs/yubios-versioning-scheme-2026-08-04.md",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "md",
+      "hypothesis": "Closing the inputs NSS gap on refs/yubios-versioning-scheme-2026-08-04.md (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 484
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2038",
+      "file": "refs/yubios-trust-proof-playbook-checklist-2026-08-07.md",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "md",
+      "hypothesis": "Closing the inputs NSS gap on refs/yubios-trust-proof-playbook-checklist-2026-08-07.md (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 560
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2039",
+      "file": ".dockerignore",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "plain",
+      "hypothesis": "Closing the inputs NSS gap on .dockerignore (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 811
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2040",
+      "file": ".gitignore",
+      "nss_axis": "inputs",
+      "primitive_added": "inputs-section",
+      "filetype": "plain",
+      "hypothesis": "Closing the inputs NSS gap on .gitignore (the 2nd of 12 axes in negative-skill-space) improves the file's qualitative coverage by adding an explicit Inputs section.",
+      "method": "NSS 12-axis gap-finding sweep -> inputs flagged as highest-priority Extend gap -> nss-inputs closure skill applies ONE file-type-aware ## Inputs section with the seven-channel taxonomy (CLI / env / config / file / stdin / request / platform).",
+      "parameters": {
+        "axis": "inputs",
+        "channels": [
+          "CLI",
+          "env",
+          "config",
+          "file",
+          "stdin",
+          "request",
+          "platform"
+        ],
+        "seed": 20260812
+      },
+      "delta": {
+        "inputs_named": 8,
+        "channels_covered": 1,
+        "bytes_added": 800
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
     }
   ],
   "top_3_picks": [
@@ -13259,5 +14459,6 @@
     "deep_research_source": "Google Technical Writing audience model, DITA audience/experience/job profiling, Diataxis (mode as separate axis from audience), Doc Detective persona-driven strategy, GitBook persona + JTBD pattern, Temporal 2021 docs-info-arch, Ductile audience matrix, docs-as-code frontmatter enforcement (Docusaurus, GitHub Docs YAML, Structured MADR).",
     "skill_content_sha": "abc1b99247409485881724521100d4d0d354fcce",
     "seed": 20260812
-  }
+  },
+  "files_patched_cycle9": 40
 }

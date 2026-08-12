@@ -150,3 +150,15 @@ _RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._
 **Prerequisite:** Containerfile.dev semantics + dev-image vs prod-image differences. **Out of scope:** operator deployment procedures.
 
 _RSI cycle-8 audience-aware atomic flip (gap-informed, NSS-axis(audience)). See root `new-ideas-2026-08-12.md` and the `nss-audience` skill for the audience taxonomy._
+
+
+# Inputs
+#   build args:  BASE_IMAGE (default: localhost/yubios:dev), YUBIOS_DEV_TOOLS (default: 1)
+#   runtime env: YUBIOS_DEV=1 (image ENV; signals dev image to runtime)
+#   files:       dev-hooks/*.sh (bind-mounted at /tmp/dev-hooks during build)
+#   secrets:     none (dev image is not signed)
+#   prereqs:     podman, the host dev image at $BASE_IMAGE
+#   precedence:  --build-arg > ENV > built-in default
+#   validation:  BASE_IMAGE must be reachable via skopeo or podman pull
+#   failure:     build aborts at FROM line if BASE_IMAGE is missing
+# _RSI cycle-9 atomic flip (NSS-axis(inputs))._

@@ -214,3 +214,17 @@ Cross-context invariance: this file is safe in TTY, pipe, `TERM=dumb`, CI withou
 **Prerequisite:** yubiOS architecture and ADR corpus. **Out of scope:** skill author workflow.
 
 _RSI cycle-8 audience-aware atomic flip (gap-informed, NSS-axis(audience)). See root `new-ideas-2026-08-12.md` and the `nss-audience` skill for the audience taxonomy._
+
+
+## Inputs
+
+CLI:         n/a
+env:         none
+files:       PINNED.md (the pin table this scheme populates)
+secrets:     none
+prereqs:     a release-gate pass (see refs/release-gate-checklist-v2-2026-08-04.md)
+precedence:  this scheme > ad-hoc version strings
+validation:  every version in PINNED.md must follow the scheme in this note
+failure:     a version that violates the scheme breaks the docker.io/0mniteck/yubios:<tag> contract
+
+_RSI cycle-9 atomic flip (NSS-axis(inputs))._

@@ -256,3 +256,17 @@ _RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._
 **Prerequisite:** skill format spec (per using-agent-skills). **Out of scope:** operator-facing deployment HOWTOs.
 
 _RSI cycle-8 audience-aware atomic flip (gap-informed, NSS-axis(audience)). See root `new-ideas-2026-08-12.md` and the `nss-audience` skill for the audience taxonomy._
+
+
+## Inputs
+
+CLI:         n/a
+env:         none
+files:       PROJECT_RULES.md (operating rules), the nss-* skills (gap-finding)
+secrets:     none
+prereqs:     the conn_3h7rj41VF6hs GitHub connection active
+precedence:  PROJECT_RULES.md > this SKILL.md > general agent behavior
+validation:  every workflow edit in this space must go through conn_3h7rj41VF6hs
+failure:     using any other GitHub credential violates PROJECT_RULES.md
+
+_RSI cycle-9 atomic flip (NSS-axis(inputs))._

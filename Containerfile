@@ -167,3 +167,15 @@ _Atomic RSI cycle-6 flip._
 - See `docs/ARCHITECTURE.md` for the full yubiOS dependency graph.
 
 _RSI cycle-7 atomic flip (gap-informed, NSS-axis(adjacent_problems))._
+
+
+# Inputs
+#   build args:  BASE_IMAGE_TAG (default: 45), ENABLE_SYSEXT (default: 0), FEDORA_RELEASE (default: 45)
+#   runtime env: YUBIOS_RELEASE (image LABEL), YUBIOS_IMAGE_TAG (image LABEL), YUBIOS_VERSION (image LABEL)
+#   files:       mkosi.conf (read by mkosi at build), mkosi.conf.d/*.conf (lex-sorted, last-wins)
+#   secrets:     none at build time (yubiOS CI uses BuildKit --mount=type=secret if needed)
+#   prereqs:     podman >= 5.0, buildah, the yubiOS signing key in /etc/pki/yubios
+#   precedence:  --build-arg > ENV in this file > built-in default
+#   validation:  mkosi rejects unknown settings; BASE_IMAGE_TAG must resolve to a quay.io digest
+#   failure:     build aborts with the offending argument name and the constraint that failed
+# _RSI cycle-9 atomic flip (NSS-axis(inputs))._

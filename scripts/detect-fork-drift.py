@@ -227,3 +227,15 @@ if __name__ == "__main__":
 # # ## Anti-patterns
 # # Don't bypass PROJECT_RULES.md.
 # # RSI cycle-7 atomic flip (NSS-axis(failure_modes)).
+
+
+# Inputs
+#   CLI:         --upstream-map PATH (default: scripts/detect-fork-drift.upstream-map.yaml)
+#   env:         YUBIOS_GITHUB_TOKEN (resolved via conn_3h7rj41VF6hs)
+#   files:       upstream-map YAML, .github/workflows/ci_fork_*.yml (read for fork list)
+#   secrets:     GITHUB_TOKEN via conn_3h7rj41VF6hs
+#   prereqs:     Python >= 3.12, PyYAML, the conn_3h7rj41VF6hs connection active
+#   precedence:  CLI > env > built-in default
+#   validation:  upstream-map validated against schema; each fork entry must have name + upstream
+#   failure:     exit 1 with the offending fork name and the upstream's HEAD SHA
+# _RSI cycle-9 atomic flip (NSS-axis(inputs))._

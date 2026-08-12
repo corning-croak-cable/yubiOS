@@ -339,3 +339,17 @@ All decisions are recorded in [ADR.md](docs/ADR.md), with source-backed research
 - See `docs/ARCHITECTURE.md` for the full yubiOS dependency graph.
 
 _RSI cycle-7 atomic flip (gap-informed, NSS-axis(adjacent_problems))._
+
+
+## Inputs
+
+CLI:         n/a
+env:         none
+files:       AGENTS.md (cross-reference), docs/ONBOARDING.md (first-time readers)
+secrets:     none
+prereqs:     a working yubiOS build environment (see docs/ONBOARDING.md)
+precedence:  this README is the entry point; deeper context lives in docs/
+validation:  every link in this file should resolve to a real path on `main`
+failure:     a broken link blocks the first-time reader from following the install path
+
+_RSI cycle-9 atomic flip (NSS-axis(inputs))._

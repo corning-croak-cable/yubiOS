@@ -73,3 +73,17 @@ _Atomic RSI cycle-6 flip._
 - See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
 
 _RSI cycle-7 atomic flip (gap-informed, NSS-axis(assumption_set))._
+
+
+## Inputs
+
+CLI:         n/a
+env:         none
+files:       usr/lib/<dir>/* (the drop-in directories this playbook covers)
+secrets:     none
+prereqs:     systemd >= 254; the drop-in directory must exist
+precedence:  yubiOS-naming (vfio-yubiOS-, yubiOS-, no bare numeric prefix for 'fire-after') > upstream package files
+validation:  ls -1 usr/lib/<dir>/ | sort -u confirms the yubiOS file sorts after every upstream file it overrides
+failure:     a numeric-prefixed drop-in that lex-sorts before upstream silently negates the override
+
+_RSI cycle-9 atomic flip (NSS-axis(inputs))._

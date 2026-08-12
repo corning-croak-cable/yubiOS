@@ -401,3 +401,15 @@ fi
 # ## Composition
 # # Sits next to sibling files in this directory; see docs/ARCHITECTURE.md.
 # # RSI cycle-7 atomic flip (NSS-axis(adjacent_problems)).
+
+
+# Inputs
+#   CLI:         ./build-local-images.sh <target> [tag]
+#   env:         YUBIOS_REGISTRY (default: docker.io/0mniteck), YUBIOS_TAG (default: dev)
+#   files:       Containerfile (must exist), PINNED.md (read for digest)
+#   secrets:     none (local builds are unsigned)
+#   prereqs:     podman, the yubiOS build root at $PWD
+#   precedence:  CLI positional > env > built-in default
+#   validation:  podman pull resolves $YUBIOS_REGISTRY/$YUBIOS_TAG before build
+#   failure:     set -e; the failing podman command and its exit code are echoed
+# _RSI cycle-9 atomic flip (NSS-axis(inputs))._

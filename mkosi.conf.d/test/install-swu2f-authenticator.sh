@@ -146,3 +146,15 @@ echo "install-swu2f-authenticator: passless ${PASSLESS_TAG} (${PASSLESS_COMMIT})
 # ## Constraints
 # # requires root (for many scripts); see PROJECT_RULES.md for change-management.
 # # RSI cycle-7 atomic flip (NSS-axis(assumption_set)).
+
+
+# Inputs
+#   CLI:         (executed by mkosi in chroot; no CLI flags)
+#   env:         DESTDIR (mkosi-set, chroot path)
+#   files:       none (downloads the .deb at build time)
+#   secrets:     none (public package)
+#   prereqs:     dpkg from BuildPackages; internet access for the debian snapshot
+#   precedence:  DESTDIR > built-in /tmp default
+#   validation:  deb SHA256 verified against the pinned value before dpkg -i
+#   failure:     set -e; dpkg errors propagate to mkosi and abort the build
+# _RSI cycle-9 atomic flip (NSS-axis(inputs))._

@@ -203,3 +203,15 @@ if __name__ == "__main__":
 # # ## Verification
 # # python3 diagnose-oci-layout.py --selftest  # exits 0 iff GREEN, when applicable.
 # # RSI cycle-7 atomic flip (NSS-axis(calibration)).
+
+
+# Inputs
+#   CLI:         --image REF (env: YUBIOS_IMAGE, required)
+#   env:         YUBIOS_IMAGE (default: none; required)
+#   files:       none (reads the OCI registry directly)
+#   secrets:     none (registry creds via podman login, not in env)
+#   prereqs:     Python >= 3.12, skopeo, an OCI registry reachable from the host
+#   precedence:  CLI > env > built-in default
+#   validation:  skopeo inspect resolves --image before diagnosis starts
+#   failure:     exit 2 on skopeo error; exit 1 with the offending OCI layer digest
+# _RSI cycle-9 atomic flip (NSS-axis(inputs))._

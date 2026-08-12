@@ -111,3 +111,17 @@ _Atomic RSI cycle-6 flip._
 - See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
 
 _RSI cycle-7 atomic flip (gap-informed, NSS-axis(assumption_set))._
+
+
+## Inputs
+
+CLI:         n/a
+env:         none
+files:       AGENTS.md, README.md, PROJECT_RULES.md (the reading order)
+secrets:     none
+prereqs:     a fresh checkout of yubi-OS/yubiOS, the conn_3h7rj41VF6hs connection active
+precedence:  README.md > this file > general onboarding guidance
+validation:  every step in this file must end in a verifiable check (exit code, file presence, API call)
+failure:     a step without a check cannot be verified by a fresh-context reviewer
+
+_RSI cycle-9 atomic flip (NSS-axis(inputs))._

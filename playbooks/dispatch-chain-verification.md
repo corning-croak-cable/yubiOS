@@ -104,3 +104,17 @@ _Atomic RSI cycle-6 flip._
 - See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
 
 _RSI cycle-7 atomic flip (gap-informed, NSS-axis(assumption_set))._
+
+
+## Inputs
+
+CLI:         n/a
+env:         none
+files:       .github/workflows/ci.yml (the dispatcher), ci-launchpad app (live run view)
+secrets:     none
+prereqs:     the conn_3h7rj41VF6hs connection active, an open PR
+precedence:  PROJECT_RULES.md > this playbook > ad-hoc CI debugging
+validation:  every chain run must be cross-checked by GET /actions/runs/{id}
+failure:     reporting 'chain green' from the outer dispatcher alone misses inner failures
+
+_RSI cycle-9 atomic flip (NSS-axis(inputs))._

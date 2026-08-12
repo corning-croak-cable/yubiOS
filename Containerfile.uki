@@ -61,3 +61,15 @@ _Atomic RSI cycle-6 flip._
 - Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
 
 _RSI cycle-7 atomic flip (gap-informed, NSS-axis(calibration))._
+
+
+# Inputs
+#   build args:  KERNEL_VERSION (default: 6.12.0), UKI_SIGN_KEY (default: /etc/pki/yubios/uki.key)
+#   runtime env: none (UKI runs once at boot)
+#   files:       usr/lib/uki/*.efi (built into the image), vmlinuz-* (from build kernel)
+#   secrets:     UKI_SIGN_KEY (BuildKit --mount=type=secret,id=uki-sign)
+#   prereqs:     systemd-boot, sbctl or pesign for signing
+#   precedence:  --build-arg > ENV > built-in default
+#   validation:  KERNEL_VERSION must match a vmlinuz-* in the build root
+#   failure:     uki-build step exits 1 with the missing kernel version
+# _RSI cycle-9 atomic flip (NSS-axis(inputs))._

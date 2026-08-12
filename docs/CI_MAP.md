@@ -611,3 +611,17 @@ _RSI cycle-7 atomic flip (gap-informed, NSS-axis(failure_modes))._
 **Mode-axis invariants added (cycle 11):** `isatty(stdin)` before any interactive prompt; `NO_COLOR=1` and `TERM=dumb` honored; `--dry-run` is side-effect-free; `--force` overrides confirmation, not idempotency; `set -e` paired with `set -o pipefail`; long-running units use `Type=notify` + `READY=1`; one-shot scripts use `Type=oneshot` + `RemainAfterExit=no`; CI workflows declare `concurrency:` group for cancellation; idempotency: re-running converges to the requested state.
 
 Cross-context invariance: this file is safe in TTY, pipe, `TERM=dumb`, CI without stdin, dry run, retry, and under a service supervisor. See `nss-mode` SKILL.md for the full rubric.
+
+
+## Inputs
+
+CLI:         n/a
+env:         none
+files:       .github/workflows/*.yml (the workflows this map describes)
+secrets:     none
+prereqs:     a working conn_3h7rj41VF6hs GitHub connection
+precedence:  this file > individual workflow files > general CI knowledge
+validation:  every workflow file must have a row in this map
+failure:     a workflow without a CI_MAP row breaks the dispatch-reachability check
+
+_RSI cycle-9 atomic flip (NSS-axis(inputs))._

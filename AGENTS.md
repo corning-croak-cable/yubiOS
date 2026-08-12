@@ -110,3 +110,17 @@ _Atomic RSI cycle-6 flip._
 - See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
 
 _RSI cycle-7 atomic flip (gap-informed, NSS-axis(assumption_set))._
+
+
+## Inputs
+
+CLI:         n/a (this is a contract for AI agents, not a runtime)
+env:         none
+files:       PROJECT_RULES.md (required reading), RULES.md (cross-cutting rules)
+secrets:     none
+prereqs:     read PROJECT_RULES.md and RULES.md before operating in this space
+precedence:  PROJECT_RULES.md > this file > general agent behavior
+validation:  an agent reading this file should be able to enumerate the yubiOS operating posture
+failure:     an agent skipping PROJECT_RULES.md violates the 'no assumptions' rule
+
+_RSI cycle-9 atomic flip (NSS-axis(inputs))._

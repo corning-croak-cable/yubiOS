@@ -68,3 +68,15 @@ if __name__ == "__main__":
 # # ## Anti-patterns
 # # Don't bypass PROJECT_RULES.md.
 # # RSI cycle-7 atomic flip (NSS-axis(failure_modes)).
+
+
+# Inputs
+#   CLI:         --uki PATH (env: YUBIOS_UKI_PATH, required)
+#   env:         YUBIOS_UKI_PATH (default: none; required)
+#   files:       *.efi (read for the .cmdline section)
+#   secrets:     none
+#   prereqs:     Python >= 3.12, systemd-boot-compatible UKI
+#   precedence:  CLI > env > built-in default
+#   validation:  --uki must be a readable .efi with a .cmdline section
+#   failure:     exit 2 if --uki missing; exit 1 if the .cmdline section is empty
+# _RSI cycle-9 atomic flip (NSS-axis(inputs))._

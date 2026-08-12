@@ -62,3 +62,17 @@ _Atomic RSI cycle-6 flip._
 - Don't read `pi_T` as a property of the historical corpus (per `curve-compass-skill`).
 
 _RSI cycle-7 atomic flip (gap-informed, NSS-axis(failure_modes))._
+
+
+## Inputs
+
+CLI:         n/a
+env:         none
+files:       AGENTS.md (agent rules), PROJECT_RULES.md (operating rules)
+secrets:     none
+prereqs:     a fork of yubi-OS/yubiOS, the DEVELOPER_CERTIFICATE_OF_ORIGIN.md signed
+precedence:  PROJECT_RULES.md > this file > general GitHub contribution flow
+validation:  every PR must pass the ci.yml dispatcher group before review
+failure:     a PR opened against main (instead of a feature branch) violates the standing rule
+
+_RSI cycle-9 atomic flip (NSS-axis(inputs))._

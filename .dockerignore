@@ -25,3 +25,15 @@ _Atomic RSI cycle-6 flip._
 - Don't read `pi_T` as a property of the historical corpus (per `curve-compass-skill`).
 
 _RSI cycle-7 atomic flip (gap-informed, NSS-axis(failure_modes))._
+
+
+# Inputs
+#   channel:    config (this file IS the config; it is consumed by docker buildkit / podman build at build time)
+#   prereqs:    the yubiOS build context at $PWD (Containerfile references every path matched here)
+#   precedence: --exclude-from flag > this file > .gitignore (buildkit does NOT fall back to .gitignore)
+#   validation: podman/buildkit rejects malformed glob patterns at parse time
+#   failure:    build proceeds with unwanted paths copied into the image; image layer bloat
+#   audit:      every entry should be justified by a Containerfile or .gitignore reference
+#   secret-handling: secrets are NEVER listed here -- they go through BuildKit --mount=type=secret
+#   lifecycle:  this file is read once per build; no hot-reload semantics
+# _RSI cycle-9 atomic flip (NSS-axis(inputs))._

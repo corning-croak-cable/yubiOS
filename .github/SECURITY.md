@@ -128,3 +128,17 @@ _RSI cycle-7 atomic flip (gap-informed, NSS-axis(failure_modes))._
 **Mode-axis invariants added (cycle 11):** `isatty(stdin)` before any interactive prompt; `NO_COLOR=1` and `TERM=dumb` honored; `--dry-run` is side-effect-free; `--force` overrides confirmation, not idempotency; `set -e` paired with `set -o pipefail`; long-running units use `Type=notify` + `READY=1`; one-shot scripts use `Type=oneshot` + `RemainAfterExit=no`; CI workflows declare `concurrency:` group for cancellation; idempotency: re-running converges to the requested state.
 
 Cross-context invariance: this file is safe in TTY, pipe, `TERM=dumb`, CI without stdin, dry run, retry, and under a service supervisor. See `nss-mode` SKILL.md for the full rubric.
+
+
+## Inputs
+
+CLI:         n/a
+env:         none
+files:       docs/THREAT_MODEL.md (the model behind the policy)
+secrets:     disclosure coordination requires a PGP key (see SECURITY.md)
+prereqs:     a way to receive encrypted disclosure (PGP / Signal)
+precedence:  this file > general GitHub security advisories
+validation:  every disclosure should be encrypted to the listed PGP key
+failure:     an unencrypted disclosure leaks the reporter's identity and the vulnerability details
+
+_RSI cycle-9 atomic flip (NSS-axis(inputs))._

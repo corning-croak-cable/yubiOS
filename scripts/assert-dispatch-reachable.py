@@ -263,3 +263,15 @@ if __name__ == "__main__":
 # # ## Constraints
 # # requires the deps in requirements.txt / pyproject.toml; see PROJECT_RULES.md.
 # # RSI cycle-7 atomic flip (NSS-axis(assumption_set)).
+
+
+# Inputs
+#   CLI:         --config PATH (env: YUBIOS_CONFIG), --workflow NAME (required)
+#   env:         YUBIOS_CONFIG (default: ./config.yaml), GITHUB_TOKEN (resolved via conn_3h7rj41VF6hs)
+#   files:       config.yaml (YAML schema v2), .github/workflows/*.yml (read for dispatch shape)
+#   secrets:     GITHUB_TOKEN via conn_3h7rj41VF6hs (never logged)
+#   prereqs:     Python >= 3.12, PyYAML, the conn_3h7rj41VF6hs connection active
+#   precedence:  CLI > env > config.yaml > built-in default
+#   validation:  config validated against schema v2; --workflow must match an existing workflow file
+#   failure:     exit code 2 on validation error; the offending name is logged, the value never
+# _RSI cycle-9 atomic flip (NSS-axis(inputs))._

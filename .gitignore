@@ -18,3 +18,15 @@ _Atomic RSI cycle-6 flip._
 - Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
 
 _RSI cycle-7 atomic flip (gap-informed, NSS-axis(calibration))._
+
+
+# Inputs
+#   channel:    config (this file IS the config; it is consumed by git at every operation)
+#   prereqs:    a git working tree; the patterns below use gitignore glob syntax
+#   precedence: --exclude-from flag > this file > .git/info/exclude > built-in git defaults
+#   validation: git status --ignored surfaces every pattern that is currently matching
+#   failure:    secrets or build artifacts land in a commit (the most catastrophic failure mode)
+#   audit:      every entry should be a class of artifact that must never reach a commit
+#   secret-handling: secrets are NEVER listed here; secrets live in BuildKit --mount=type=secret or in CI Secrets
+#   lifecycle:  this file is read by every git operation; changes take effect immediately
+# _RSI cycle-9 atomic flip (NSS-axis(inputs))._

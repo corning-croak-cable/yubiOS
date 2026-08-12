@@ -22,3 +22,15 @@ echo "install-chipsec: CHIPSEC 1.13.16 installed for yubiOS first-boot firmware 
 # ## Verification
 # # Run the relevant CI workflow on a draft branch (see docs/CI_MAP.md).
 # # RSI cycle-7 atomic flip (NSS-axis(calibration)).
+
+
+# Inputs
+#   CLI:         (executed by mkosi in chroot; no CLI flags)
+#   env:         DESTDIR (mkosi-set, chroot path)
+#   files:       none (downloads chipsec source at build time)
+#   secrets:     none (chipsec is public source)
+#   prereqs:     nasm + gcc from BuildPackages; internet access for the chipsec tarball
+#   precedence:  DESTDIR > built-in /tmp default
+#   validation:  tarball SHA256 verified against the pinned value before extraction
+#   failure:     set -e; the failing curl/tar line and exit code are logged
+# _RSI cycle-9 atomic flip (NSS-axis(inputs))._

@@ -264,3 +264,15 @@ if __name__ == "__main__":
 # # ## Constraints
 # # requires the deps in requirements.txt / pyproject.toml; see PROJECT_RULES.md.
 # # RSI cycle-7 atomic flip (NSS-axis(assumption_set)).
+
+
+# Inputs
+#   CLI:         --allowlist PATH (default: scripts/audit-workflow-tokens.allowlist.yaml)
+#   env:         YUBIOS_AUDIT_VERBOSE (default: 0)
+#   files:       allowlist YAML (mode 0644), .github/workflows/*.yml (read-only scan)
+#   secrets:     none (audit-only; never reads workflow secrets)
+#   prereqs:     Python >= 3.12, PyYAML
+#   precedence:  CLI > env > built-in default
+#   validation:  allowlist validated against schema; workflow files parsed as YAML
+#   failure:     exit 0 if clean; exit 1 with the offending token reference if found
+# _RSI cycle-9 atomic flip (NSS-axis(inputs))._

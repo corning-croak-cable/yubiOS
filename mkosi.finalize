@@ -24,3 +24,15 @@ _Atomic RSI cycle-6 flip._
 - Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
 
 _RSI cycle-7 atomic flip (gap-informed, NSS-axis(calibration))._
+
+
+# Inputs
+#   CLI:         mkosi.finalize (executed by mkosi in chroot, no CLI)
+#   env:         DESTDIR (set by mkosi), MKOSI_IMAGE_VERSION (set by mkosi)
+#   files:       the build root at $DESTDIR (read-write during finalize)
+#   secrets:     none
+#   prereqs:     executed by mkosi only; requires the base packages installed
+#   precedence:  mkosi-set env > built-in default
+#   validation:  $DESTDIR must be a writable chroot path
+#   failure:     non-zero exit aborts the mkosi build
+# _RSI cycle-9 atomic flip (NSS-axis(inputs))._
