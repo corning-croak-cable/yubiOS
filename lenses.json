@@ -1,6 +1,6 @@
 {
-  "schema": "rsi-compass-cycle13-nss-adjacent-problems-lens-pool/1.0.0",
-  "cycle": "cycle-13 (RSI NSS-Adjacent-problems gap-informed atomic per-file) + cycle-15 (NSS-Lifecycle)",
+  "schema": "rsi-compass-cycle12-nss-assumption-set-lens-pool/1.0.0",
+  "cycle": "cycle-12 (RSI NSS-Assumption-Set gap-informed atomic per-file)",
   "date": "2026-08-12",
   "repo": "yubi-OS/yubiOS",
   "branch": "feat/rsi-compass-cycle7-nss-research-2026-08-12",
@@ -37,8 +37,8 @@
     "recursion"
   ],
   "files_total": 406,
-  "lenses_total": 551,
-  "files_patched": 471,
+  "lenses_total": 670,
+  "files_patched": 670,
   "lens_pool": [
     {
       "lens": "L1001",
@@ -17898,6 +17898,1046 @@
       "verdict": "YES",
       "score": 50,
       "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L3001",
+      "file": "AGENTS.md",
+      "nss_axis": "assumption_set",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "Closing the assumption_set NSS gap on AGENTS.md (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (examples) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "md",
+        "primitive": "examples",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3002",
+      "file": "Containerfile",
+      "nss_axis": "assumption_set",
+      "primitive_added": "verification",
+      "filetype": "conf",
+      "hypothesis": "Closing the assumption_set NSS gap on Containerfile (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (verification) in conf syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "conf",
+        "primitive": "verification",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3003",
+      "file": "Containerfile.dev",
+      "nss_axis": "assumption_set",
+      "primitive_added": "verification",
+      "filetype": "conf",
+      "hypothesis": "Closing the assumption_set NSS gap on Containerfile.dev (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (verification) in conf syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "conf",
+        "primitive": "verification",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3004",
+      "file": "Containerfile.uki",
+      "nss_axis": "assumption_set",
+      "primitive_added": "verification",
+      "filetype": "conf",
+      "hypothesis": "Closing the assumption_set NSS gap on Containerfile.uki (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (verification) in conf syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "conf",
+        "primitive": "verification",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3005",
+      "file": "Makefile",
+      "nss_axis": "assumption_set",
+      "primitive_added": "verification",
+      "filetype": "conf",
+      "hypothesis": "Closing the assumption_set NSS gap on Makefile (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (verification) in conf syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "conf",
+        "primitive": "verification",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3006",
+      "file": "README.md",
+      "nss_axis": "assumption_set",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "Closing the assumption_set NSS gap on README.md (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (examples) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "md",
+        "primitive": "examples",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3007",
+      "file": "mkosi.finalize",
+      "nss_axis": "assumption_set",
+      "primitive_added": "verification",
+      "filetype": "conf",
+      "hypothesis": "Closing the assumption_set NSS gap on mkosi.finalize (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (verification) in conf syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "conf",
+        "primitive": "verification",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3008",
+      "file": "yubiOS-bake.hcl",
+      "nss_axis": "assumption_set",
+      "primitive_added": "verification",
+      "filetype": "conf",
+      "hypothesis": "Closing the assumption_set NSS gap on yubiOS-bake.hcl (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (verification) in conf syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "conf",
+        "primitive": "verification",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3009",
+      "file": "yubiOS.rego",
+      "nss_axis": "assumption_set",
+      "primitive_added": "verification",
+      "filetype": "conf",
+      "hypothesis": "Closing the assumption_set NSS gap on yubiOS.rego (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (verification) in conf syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "conf",
+        "primitive": "verification",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3010",
+      "file": "docs/ADR.md",
+      "nss_axis": "assumption_set",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "Closing the assumption_set NSS gap on docs/ADR.md (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (examples) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "md",
+        "primitive": "examples",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3011",
+      "file": "docs/ARCHITECTURE.md",
+      "nss_axis": "assumption_set",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "Closing the assumption_set NSS gap on docs/ARCHITECTURE.md (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (examples) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "md",
+        "primitive": "examples",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3012",
+      "file": "docs/THREAT_MODEL.md",
+      "nss_axis": "assumption_set",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "Closing the assumption_set NSS gap on docs/THREAT_MODEL.md (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (examples) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "md",
+        "primitive": "examples",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3013",
+      "file": "docs/MISSION.md",
+      "nss_axis": "assumption_set",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "Closing the assumption_set NSS gap on docs/MISSION.md (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (examples) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "md",
+        "primitive": "examples",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3014",
+      "file": "docs/SPEC.md",
+      "nss_axis": "assumption_set",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "Closing the assumption_set NSS gap on docs/SPEC.md (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (examples) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "md",
+        "primitive": "examples",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3015",
+      "file": "scripts/assert-dispatch-reachable.py",
+      "nss_axis": "assumption_set",
+      "primitive_added": "inputs",
+      "filetype": "py",
+      "hypothesis": "Closing the assumption_set NSS gap on scripts/assert-dispatch-reachable.py (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (inputs) in py syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "py",
+        "primitive": "inputs",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3016",
+      "file": "scripts/audit-workflow-tokens.py",
+      "nss_axis": "assumption_set",
+      "primitive_added": "inputs",
+      "filetype": "py",
+      "hypothesis": "Closing the assumption_set NSS gap on scripts/audit-workflow-tokens.py (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (inputs) in py syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "py",
+        "primitive": "inputs",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3017",
+      "file": "scripts/build-local-images.sh",
+      "nss_axis": "assumption_set",
+      "primitive_added": "inputs",
+      "filetype": "sh",
+      "hypothesis": "Closing the assumption_set NSS gap on scripts/build-local-images.sh (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (inputs) in sh syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "sh",
+        "primitive": "inputs",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3018",
+      "file": "scripts/detect-fork-drift.py",
+      "nss_axis": "assumption_set",
+      "primitive_added": "inputs",
+      "filetype": "py",
+      "hypothesis": "Closing the assumption_set NSS gap on scripts/detect-fork-drift.py (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (inputs) in py syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "py",
+        "primitive": "inputs",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3019",
+      "file": "scripts/extract_uki_cmdline.py",
+      "nss_axis": "assumption_set",
+      "primitive_added": "inputs",
+      "filetype": "py",
+      "hypothesis": "Closing the assumption_set NSS gap on scripts/extract_uki_cmdline.py (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (inputs) in py syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "py",
+        "primitive": "inputs",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3020",
+      "file": "scripts/file-drift-issues.py",
+      "nss_axis": "assumption_set",
+      "primitive_added": "inputs",
+      "filetype": "py",
+      "hypothesis": "Closing the assumption_set NSS gap on scripts/file-drift-issues.py (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (inputs) in py syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "py",
+        "primitive": "inputs",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3021",
+      "file": "scripts/verify-package-floor.sh",
+      "nss_axis": "assumption_set",
+      "primitive_added": "inputs",
+      "filetype": "sh",
+      "hypothesis": "Closing the assumption_set NSS gap on scripts/verify-package-floor.sh (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (inputs) in sh syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "sh",
+        "primitive": "inputs",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3022",
+      "file": "scripts/verify-reproducible-firmware.py",
+      "nss_axis": "assumption_set",
+      "primitive_added": "inputs",
+      "filetype": "py",
+      "hypothesis": "Closing the assumption_set NSS gap on scripts/verify-reproducible-firmware.py (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (inputs) in py syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "py",
+        "primitive": "inputs",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3023",
+      "file": "scripts/verify-reproducible-images.sh",
+      "nss_axis": "assumption_set",
+      "primitive_added": "inputs",
+      "filetype": "sh",
+      "hypothesis": "Closing the assumption_set NSS gap on scripts/verify-reproducible-images.sh (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (inputs) in sh syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "sh",
+        "primitive": "inputs",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3024",
+      "file": "skills/api-and-interface-design/SKILL.md",
+      "nss_axis": "assumption_set",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "Closing the assumption_set NSS gap on skills/api-and-interface-design/SKILL.md (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (examples) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "md",
+        "primitive": "examples",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3025",
+      "file": "skills/audit-evidence-packaging/SKILL.md",
+      "nss_axis": "assumption_set",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "Closing the assumption_set NSS gap on skills/audit-evidence-packaging/SKILL.md (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (examples) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "md",
+        "primitive": "examples",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3026",
+      "file": "skills/bcvk-virtualization/SKILL.md",
+      "nss_axis": "assumption_set",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "Closing the assumption_set NSS gap on skills/bcvk-virtualization/SKILL.md (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (examples) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "md",
+        "primitive": "examples",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3027",
+      "file": "skills/bootc-images/SKILL.md",
+      "nss_axis": "assumption_set",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "Closing the assumption_set NSS gap on skills/bootc-images/SKILL.md (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (examples) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "md",
+        "primitive": "examples",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3028",
+      "file": "skills/ci-cd-and-automation/SKILL.md",
+      "nss_axis": "assumption_set",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "Closing the assumption_set NSS gap on skills/ci-cd-and-automation/SKILL.md (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (examples) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "md",
+        "primitive": "examples",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3029",
+      "file": "skills/code-review-and-quality/SKILL.md",
+      "nss_axis": "assumption_set",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "Closing the assumption_set NSS gap on skills/code-review-and-quality/SKILL.md (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (examples) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "md",
+        "primitive": "examples",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3030",
+      "file": "skills/composefs-kernel-floors/SKILL.md",
+      "nss_axis": "assumption_set",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "Closing the assumption_set NSS gap on skills/composefs-kernel-floors/SKILL.md (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (examples) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "md",
+        "primitive": "examples",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3031",
+      "file": "skills/context-engineering/SKILL.md",
+      "nss_axis": "assumption_set",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "Closing the assumption_set NSS gap on skills/context-engineering/SKILL.md (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (examples) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "md",
+        "primitive": "examples",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3032",
+      "file": "skills/curve-guided-rsi/SKILL.md",
+      "nss_axis": "assumption_set",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "Closing the assumption_set NSS gap on skills/curve-guided-rsi/SKILL.md (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (examples) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "md",
+        "primitive": "examples",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3033",
+      "file": "skills/debugging-and-error-recovery/SKILL.md",
+      "nss_axis": "assumption_set",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "Closing the assumption_set NSS gap on skills/debugging-and-error-recovery/SKILL.md (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (examples) in md syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "md",
+        "primitive": "examples",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3034",
+      "file": "tests/vm/test-fido2-enrollment.sh",
+      "nss_axis": "assumption_set",
+      "primitive_added": "inputs",
+      "filetype": "sh",
+      "hypothesis": "Closing the assumption_set NSS gap on tests/vm/test-fido2-enrollment.sh (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (inputs) in sh syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "sh",
+        "primitive": "inputs",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3035",
+      "file": "tests/vm/test-homed-migrate.sh",
+      "nss_axis": "assumption_set",
+      "primitive_added": "inputs",
+      "filetype": "sh",
+      "hypothesis": "Closing the assumption_set NSS gap on tests/vm/test-homed-migrate.sh (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (inputs) in sh syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "sh",
+        "primitive": "inputs",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3036",
+      "file": "tests/vm/test-luks-fido2-ci.sh",
+      "nss_axis": "assumption_set",
+      "primitive_added": "inputs",
+      "filetype": "sh",
+      "hypothesis": "Closing the assumption_set NSS gap on tests/vm/test-luks-fido2-ci.sh (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (inputs) in sh syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "sh",
+        "primitive": "inputs",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3037",
+      "file": "usr/lib/yubiOS/enroll.sh",
+      "nss_axis": "assumption_set",
+      "primitive_added": "inputs",
+      "filetype": "sh",
+      "hypothesis": "Closing the assumption_set NSS gap on usr/lib/yubiOS/enroll.sh (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (inputs) in sh syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "sh",
+        "primitive": "inputs",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3038",
+      "file": "usr/lib/yubiOS/enroll-luks.sh",
+      "nss_axis": "assumption_set",
+      "primitive_added": "inputs",
+      "filetype": "sh",
+      "hypothesis": "Closing the assumption_set NSS gap on usr/lib/yubiOS/enroll-luks.sh (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (inputs) in sh syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "sh",
+        "primitive": "inputs",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3039",
+      "file": "usr/lib/yubiOS/enroll-pam.sh",
+      "nss_axis": "assumption_set",
+      "primitive_added": "inputs",
+      "filetype": "sh",
+      "hypothesis": "Closing the assumption_set NSS gap on usr/lib/yubiOS/enroll-pam.sh (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (inputs) in sh syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "sh",
+        "primitive": "inputs",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
+    },
+    {
+      "lens": "L3040",
+      "file": "usr/lib/yubiOS/enroll-ssh.sh",
+      "nss_axis": "assumption_set",
+      "primitive_added": "inputs",
+      "filetype": "sh",
+      "hypothesis": "Closing the assumption_set NSS gap on usr/lib/yubiOS/enroll-ssh.sh (highest-priority among 11 gaps: ['audience', 'inputs', 'outputs', 'mode', 'assumption_set', 'adjacent_problems', 'failure_modes', 'lifecycle', 'composition', 'knowledge_sources', 'recursion']) improves the file's qualitative coverage by enumerating its precondition surface explicitly.",
+      "method": "NSS 12-axis gap-finding sweep -> Extend gap candidates -> highest-priority gap (assumption_set, priority 3) -> atom closes with 1 atomic assumption_set-aware primitive flip (inputs) in sh syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "assumption_set",
+        "ftype": "sh",
+        "primitive": "inputs",
+        "priority_index": 3
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "assumption_set",
+        "lines_added": 56
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine channel coverage; stale-indicator discipline not empirically tested in this cycle"
     }
   ],
   "top_3_picks": [
@@ -17980,7 +19020,7 @@
       "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine"
     }
   ],
-  "nss_axis_focus": "mode",
+  "nss_axis_focus": "assumption_set",
   "files_patched_cycle11": 40,
   "cycle8_summary": {
     "cycle": "cycle-8 (RSI NSS-audience deep research)",
@@ -18042,5 +19082,18 @@
     "skill_content_sha": "07201ee5506f203e541dd68a47dfcf63845b1",
     "seed": 20260812
   },
-  "files_patched_cycle14": 39
+  "files_patched_cycle14": 39,
+  "files_patched_cycle12": 40,
+  "cycle12_summary": {
+    "cycle": "cycle-12 (RSI NSS-assumption_set deep research)",
+    "date": "2026-08-12",
+    "skill": "skills/nss-assumption-set/SKILL.md",
+    "files_patched": 40,
+    "lenses_added": 40,
+    "lines_added": 2240,
+    "nss_axis": "assumption_set",
+    "deep_research_source": "Design by Contract (Bertrand Meyer / Eiffel require/ensure/invariant); SPARK Ada contracts (AdaCore GNATprove call-side vs body-side model); rely/guarantee reasoning (Cliff Jones SETSS-17 lecture, Koskinen et al. CONCUR 2015); NASA SWE-050/SWE-184; ISO/IEC/IEEE 29148 + 15289; Parnas and Clements \"A Rational Design Process\" Four Variable Model; Jackson problem frames; ADR-driven assumption logs; Cargo SemVer platform-requirements guidance; CommonJS package.json os/cpu/engine spec; pip requirements.txt vs pylock.toml; Containerfile ARG/ENV/LABEL semantics; mkosi.conf.d lex-sort + drop-in rule; systemd EnvironmentFile= + unit Type=; GitHub Actions workflow_call inputs + permissions + concurrency; eight-channel NSS assumption taxonomy (caller / invariant / environment / dependency / system-trust / configuration / domain / toolchain).",
+    "skill_content_sha": "d6577552259633425bd76cb89cbdb2378543295b",
+    "seed": 20260812
+  }
 }
