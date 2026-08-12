@@ -207,3 +207,8 @@ ReadWritePaths=/etc/crypttab
 ## Declarative policy coverage
 
 This document integrates with the yubiOS declarative-policy substrate — OPA/Rego policy files, signing-config JSON, policy-as-code workflows. Policy gates are named at the integration point; policy evaluation is the gate, not an afterthought.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L391** in `lenses.json` (score 22/50, verdict **PARTIAL**, k=4/9). Full experiment: hypothesis `refs/0pointer-poettering-systemd-vision-2026-07-23.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

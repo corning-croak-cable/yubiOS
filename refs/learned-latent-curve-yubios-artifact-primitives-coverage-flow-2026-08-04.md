@@ -138,3 +138,8 @@ This produces a yubiOS-specific primitive-coverage map. The most useful operatio
 **Out of scope**: TBD.
 
 Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.4341). TODO: refine per file context.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L366** in `lenses.json` (score 28/50, verdict **PARTIAL**, k=5/9). Full experiment: hypothesis `refs/learned-latent-curve-yubios-artifact-primitives-coverage-flow-2026-08-04.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

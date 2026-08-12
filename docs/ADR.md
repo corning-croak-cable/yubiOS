@@ -901,3 +901,8 @@ The closest cousin in the yubiOS repo is `drm-gpu-quota-secure-time` (per-cgroup
   - OQ4. What's the recovery story after SEVER? Fresh vfio-user socket + cold VM resume. A "clean room" vfio-user server with verified inputs is a downstream improvement.
 
 **Where the depth lives.** The ideation one-pager ([SOLO] V3 finalist, refs/adr-033-misbehavior-cutoff-policy-2026-07-28.md) and the prior-art search (refs/adr-033-prior-art-search-2026-07-28.md, 14 cited sources across the vfio-user / mdev / NVIDIA vGPU families) carry the long-form reasoning. This ADR is the decision anchor.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L147** in `lenses.json` (score 50/50, verdict **YES**, k=9/9). Full experiment: hypothesis `docs/ADR.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

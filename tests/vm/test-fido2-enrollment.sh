@@ -180,3 +180,8 @@ g 'head -c 32 /tmp/ci_sk_key.pub'
 echo "ed25519-sk keygen OK"
 
 log "PASS: enrollment surface + CTAP2 registration + OpenSSH ed25519-sk verified"
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L382** in `lenses.json` (score 28/50, verdict **PARTIAL**, k=5/9). Full experiment: hypothesis `tests/vm/test-fido2-enrollment.sh covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

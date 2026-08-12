@@ -163,3 +163,8 @@ This document participates in the yubiOS root-of-trust chain — ROT/ROTPK, X.50
 **Test outcomes**: TBD.
 
 Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.4816). TODO: refine per file context.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L304** in `lenses.json` (score 33/50, verdict **PARTIAL**, k=6/9). Full experiment: hypothesis `refs/curve-guided-rsi-v1-cycles-2-3-run-2026-08-04.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

@@ -142,3 +142,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L529** in `lenses.json` (score 0/50, verdict **NO**, k=0/9). Full experiment: hypothesis `skills/play-audio-on-rock1/scripts/play.py covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

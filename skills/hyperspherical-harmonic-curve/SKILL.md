@@ -105,3 +105,8 @@ This skill integrates with the yubiOS declarative-policy substrate — OPA/Rego 
 ## Audit / evidence coverage
 
 This skill contributes to the yubiOS audit-evidence rollup — SBOM, SLSA provenance, attestation, verification records, secure logging, TPM attestation, evidence-pack export. The skill's output is auditable end-to-end (commit, run, artifact, policy).
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L342** in `lenses.json` (score 33/50, verdict **PARTIAL**, k=6/9). Full experiment: hypothesis `skills/hyperspherical-harmonic-curve/SKILL.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

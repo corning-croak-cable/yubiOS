@@ -121,3 +121,8 @@ This document manages cryptographic identity — FIDO2/CTAP2 YubiKey, softhsm/PK
 **Related refs/ docs**: TBD.
 
 Context: section appended per repo-refs-skill cycle-3 7-D Mode D batch (Δ=+0.4680). TODO: refine per file context.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L315** in `lenses.json` (score 33/50, verdict **PARTIAL**, k=6/9). Full experiment: hypothesis `refs/hyperspherical-harmonic-curve-2026-08-05.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

@@ -75,3 +75,8 @@ echo "  4. Enroll Platform Key from file -> yubiOS-sb.cer"
 echo ""
 echo "Or with sbctl (if UEFI is in Setup Mode):"
 echo "  sbctl enroll-keys --microsoft"
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L447** in `lenses.json` (score 17/50, verdict **NO**, k=3/9). Full experiment: hypothesis `usr/lib/yubiOS/enroll-sb.sh covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

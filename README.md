@@ -326,3 +326,8 @@ graph TD
 - systemd v261 base-image history: [refs/v261-base-image.md](refs/v261-base-image-bump-2026-07-23.md)
 
 All decisions are recorded in [ADR.md](docs/ADR.md), with source-backed research in [refs/](refs/).
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L176** in `lenses.json` (score 44/50, verdict **PARTIAL**, k=8/9). Full experiment: hypothesis `README.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

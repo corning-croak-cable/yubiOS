@@ -66,3 +66,8 @@ Both are great YouTube channels with stable IDs and huge audiences, but they don
 ## Verification history
 
 - 2026-08-05 — initial verification + queue trigger; all 6 IDs returned correct titles + ids via `--print title --print id --print duration`; durations measured at 113s / 175s / 185s / 299s / 1636s / 1647s respectively; daemon transitioned from the Jacob Collier set to this lo-fi set on rock1 end-to-end (queue.txt overwritten via base64 push).
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L377** in `lenses.json` (score 28/50, verdict **PARTIAL**, k=5/9). Full experiment: hypothesis `skills/radio-queue/scripts/examples/playlist-lofi-verified.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

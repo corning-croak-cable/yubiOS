@@ -72,3 +72,8 @@ Cycle 4 ships under the explicit user override of the 3-cycle RSI cap.
 3. **(medium)** Regularized Möbius loss with cross-ratio-penalty term — would un-freeze φ_θ
 4. **(low)** Mode D batch on remaining cycle-4 actionable sparse cells (top-10 by Δ, excluding 3 structurally-hard Backlog/terminal-state items)
 5. **(low — confirmed corpus fact)** agent-skills has 0 real issues — note in PROJECT_RULES.md, not a corpus gap
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L457** in `lenses.json` (score 11/50, verdict **NO**, k=2/9). Full experiment: hypothesis `refs/repo-history-skill-cycle-4-2026-08-07-changelog.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

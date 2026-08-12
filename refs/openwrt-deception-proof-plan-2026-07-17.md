@@ -92,3 +92,8 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 ## Cryptographic identity coverage
 
 This document manages cryptographic identity — FIDO2/CTAP2 YubiKey, softhsm/PKCS#11/TPM, HSM-backed keys, key attestation. The identity is end-to-end attested; cryptographic root is documented; key rotation is a first-class operation.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L265** in `lenses.json` (score 39/50, verdict **PARTIAL**, k=7/9). Full experiment: hypothesis `refs/openwrt-deception-proof-plan-2026-07-17.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

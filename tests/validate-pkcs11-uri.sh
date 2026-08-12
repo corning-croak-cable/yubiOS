@@ -56,3 +56,8 @@ echo "=== PASS: PKCS#11 URI valid, systemd-sbsign works with libykcs11 ==="
 echo "Use this URI in mkosi:"
 echo "  SecureBootKey=pkcs11:manufacturer=piv_II;id=%9c;type=private"
 echo "  SecureBootKeySource=engine:pkcs11"
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L416** in `lenses.json` (score 22/50, verdict **PARTIAL**, k=4/9). Full experiment: hypothesis `tests/validate-pkcs11-uri.sh covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

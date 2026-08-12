@@ -25,3 +25,8 @@ ykman oath accounts uri "$URI"
 yubiOS_log "Done. List accounts: ykman oath accounts list"
 # SC2027/SC2086: escape inner quotes so $ACCOUNT is properly quoted
 yubiOS_log "Get code:            ykman oath accounts code \"$ACCOUNT\""
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L518** in `lenses.json` (score 6/50, verdict **NO**, k=1/9). Full experiment: hypothesis `usr/lib/yubiOS/enroll-totp.sh covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

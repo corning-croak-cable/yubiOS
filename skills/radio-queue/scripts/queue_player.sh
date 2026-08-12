@@ -221,3 +221,8 @@ while true; do
   # immediately. If it's still running (very rare — download > playback),
   # Phase 1 will sleep briefly then swap when ready.
 done
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L464** in `lenses.json` (score 11/50, verdict **NO**, k=2/9). Full experiment: hypothesis `skills/radio-queue/scripts/queue_player.sh covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

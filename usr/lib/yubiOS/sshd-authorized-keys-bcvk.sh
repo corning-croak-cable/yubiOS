@@ -55,3 +55,8 @@ for credential in "${tmpfiles_candidates[@]}"; do
   key="$(printf '%s' "$encoded_key" | base64 --decode 2>/dev/null || true)"
   emit_key "$key" && exit 0
 done
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L519** in `lenses.json` (score 6/50, verdict **NO**, k=1/9). Full experiment: hypothesis `usr/lib/yubiOS/sshd-authorized-keys-bcvk.sh covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

@@ -136,3 +136,8 @@ clean_package_manager_state
 
 /usr/bin/passless --version || true
 echo "install-swu2f-authenticator: passless ${PASSLESS_TAG} (${PASSLESS_COMMIT}) installed with hmac-secret (TEST-ONLY swu2f Layer 2)"
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L254** in `lenses.json` (score 39/50, verdict **PARTIAL**, k=7/9). Full experiment: hypothesis `mkosi.conf.d/test/install-swu2f-authenticator.sh covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

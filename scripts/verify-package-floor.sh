@@ -170,3 +170,8 @@ if [[ $FAIL_COUNT -gt 0 ]]; then
   exit 1
 fi
 exit 0
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L410** in `lenses.json` (score 22/50, verdict **PARTIAL**, k=4/9). Full experiment: hypothesis `scripts/verify-package-floor.sh covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

@@ -196,3 +196,8 @@ These constraints are research-level - Jenny's prior art is the authoritative so
 **Test outcomes**: TBD.
 
 Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.4816). TODO: refine per file context.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L196** in `lenses.json` (score 44/50, verdict **PARTIAL**, k=8/9). Full experiment: hypothesis `refs/refederated-identity-oidc-sigstore-privacy-2026-08-07.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

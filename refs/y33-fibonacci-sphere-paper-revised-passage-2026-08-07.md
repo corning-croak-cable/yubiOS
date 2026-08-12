@@ -201,3 +201,8 @@ Three things in this artifact's lineage were initially wrong or worth documentin
 
 3. **"Geodesic-only criterion diverges from cheapest-edit criterion."** Per `single-action-curve-rsi` Lemma 1, the geodesic-only criterion picks the primitive whose flip reduces chordal distance to the ideal pole the most. This is NOT the cheapest edit. The honest signal the atom exists to surface: a low-cost primitive flip might move the S^2 point AWAY from the ideal pole. Cycle 2+ re-runs the criterion and may pick a different primitive.
 
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L200** in `lenses.json` (score 44/50, verdict **PARTIAL**, k=8/9). Full experiment: hypothesis `refs/y33-fibonacci-sphere-paper-revised-passage-2026-08-07.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

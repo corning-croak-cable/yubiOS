@@ -66,3 +66,8 @@ yubiOS_log "Home created for $USERNAME."
 yubiOS_log "Inspect : homectl inspect $USERNAME --json=pretty"
 yubiOS_log "Lock    : homectl lock $USERNAME"
 yubiOS_log "Migrate : homectl inspect $USERNAME -EE | ssh root@target homectl create -i-"
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L515** in `lenses.json` (score 6/50, verdict **NO**, k=1/9). Full experiment: hypothesis `usr/lib/yubiOS/enroll-homed.sh covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

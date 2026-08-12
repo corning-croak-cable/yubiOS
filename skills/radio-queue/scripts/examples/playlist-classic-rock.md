@@ -61,3 +61,8 @@ https://www.youtube.com/watch?v=09839DpTctU|start=0|duration=60
 B64=$(base64 -w0 examples/playlist-classic-rock.md | sed 's/^#.*$//')
 curl -X POST "$BRIDGE/run" -d "$(python3 -c "import json,sys; print(json.dumps({'command':['bash','-c',f'printf \"%s\" \\\"$(cat /tmp/playlist.b64)\\\" | base64 -d >> /tmp/audio/queue/queue.txt && wc -l /tmp/audio/queue/queue.txt']}))")"
 ```
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L441** in `lenses.json` (score 17/50, verdict **NO**, k=3/9). Full experiment: hypothesis `skills/radio-queue/scripts/examples/playlist-classic-rock.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

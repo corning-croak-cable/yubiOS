@@ -40,3 +40,8 @@ if __name__ == "__main__":
     status, elapsed, resp = post_to_bridge(body)
     print(f"HTTP {status}  elapsed={elapsed:.2f}s  frames={TOTAL_FRAMES}  movie~{TOTAL_FRAMES * FPS_DELAY:.1f}s")
     print("RESPONSE:", resp)
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L524** in `lenses.json` (score 0/50, verdict **NO**, k=0/9). Full experiment: hypothesis `skills/ascii-uart-animator/scripts/bouncing_ball_ansi.py covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

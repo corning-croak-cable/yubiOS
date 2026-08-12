@@ -83,3 +83,8 @@ install -m 0600 "${UKI_SRC}" "${TARGET}"
 } > "${ENTRY}"
 
 echo "::uki-install:: wrote ${TARGET} and ${ENTRY}"
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L420** in `lenses.json` (score 22/50, verdict **PARTIAL**, k=4/9). Full experiment: hypothesis `usr/lib/yubiOS/uki/install-uki.sh covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

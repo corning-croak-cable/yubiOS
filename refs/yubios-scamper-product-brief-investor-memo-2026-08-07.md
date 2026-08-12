@@ -273,3 +273,8 @@ Concrete pass/fail rules that an operator (or CI gate) can execute to verify the
 
 **Operator rule**: the artifact is PASS only when all 5 rule rows above report PASS. Each rule is a single command the operator (or CI gate) executes.
 
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L274** in `lenses.json` (score 39/50, verdict **PARTIAL**, k=7/9). Full experiment: hypothesis `refs/yubios-scamper-product-brief-investor-memo-2026-08-07.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

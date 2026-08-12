@@ -97,3 +97,8 @@ The corpus-saturation story is consistent: 7-9 of 9 primitives always survive th
 ## Empirical Validation
 
 Cycle 4 ships. Next cycle (cycle 5) requires another user override; top carryover hypotheses are semantic-similarity join (cycle-5 candidate #1) and a Mode D batch on the top-10 cycle-4 actionable sparse cells.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L432** in `lenses.json` (score 17/50, verdict **NO**, k=3/9). Full experiment: hypothesis `refs/repo-history-skill-cycle-4-2026-08-07.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

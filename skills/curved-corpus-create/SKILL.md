@@ -426,3 +426,8 @@ parameters, delta, verdict, score, caveat all present; verdict in
 Sauna, wave 2. Built against `papers/playbooks/rsi-regime.md`, the
 `guided-curve-ideate` (cycle-34) and `single-action-atom` SKILL.md
 exemplars, the wave-1 big-picture memo, the wave-1 Hodge pivot memo.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L211** in `lenses.json` (score 44/50, verdict **PARTIAL**, k=8/9). Full experiment: hypothesis `skills/curved-corpus-create/SKILL.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

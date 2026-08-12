@@ -20,3 +20,8 @@ SUBSYSTEM=="input", ATTRS{idVendor}=="1050", TAG+="uaccess"
 # Wake on YubiKey insert/remove for enrollment service trigger
 ACTION=="add", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1050", \
   TAG+="systemd", ENV{SYSTEMD_WANTS}+="yubiOS-enroll.service"
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L511** in `lenses.json` (score 6/50, verdict **NO**, k=1/9). Full experiment: hypothesis `usr/lib/udev/rules.d/70-yubiOS-hidraw.rules covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

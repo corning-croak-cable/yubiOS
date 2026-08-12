@@ -57,3 +57,8 @@ Two corollaries from the same incident:
 - Tests: `tests/vm/test-vgpu-virtio-ci.sh`, `tests/vm/test-vfio-user-host-ci.sh`.
 - Playbooks: [dispatch-chain-verification](dispatch-chain-verification.md) — same incident is why "the test says FAIL" outranks "the file is shipped".
 - A proactive CI gate for this rule is unbuilt: Gap 8 in `refs/testing-production-gaps-2026-08-01.md`.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L255** in `lenses.json` (score 39/50, verdict **PARTIAL**, k=7/9). Full experiment: hypothesis `playbooks/drop-in-override-naming.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

@@ -126,3 +126,8 @@ enforcement ladder](https://github.com/mozilla/diversity).
 For answers to common questions about this code of conduct, see the FAQ at
 https://www.contributor-covenant.org/faq. Translations are available at
 https://www.contributor-covenant.org/translations.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L421** in `lenses.json` (score 17/50, verdict **NO**, k=3/9). Full experiment: hypothesis `.github/CODE_OF_CONDUCT.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

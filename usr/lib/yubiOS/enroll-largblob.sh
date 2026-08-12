@@ -43,3 +43,8 @@ yubiOS_log "Large Blob written successfully."
 echo ""
 echo "To read back from any machine with this YubiKey:"
 echo "  fido2-token -B get \$(fido2-token -L | awk 'NR==1{print \$1}')"
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L384** in `lenses.json` (score 28/50, verdict **PARTIAL**, k=5/9). Full experiment: hypothesis `usr/lib/yubiOS/enroll-largblob.sh covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

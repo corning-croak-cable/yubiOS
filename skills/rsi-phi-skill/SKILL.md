@@ -147,3 +147,8 @@ For 384 lobes with `m = 3·k` for `k = 1, …, 128`: the basis is `sin³θ · co
 - **Curve-guided-rsi** (the bounded RSI loop this skill inherits the 3-cycle default cap from).
 - **Parallel-deep-research** (per-cycle subagent dispatch).
 - **Refs corpus** at `yubi-OS/yubiOS/refs/` — primary corpus this skill operates on.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L237** in `lenses.json` (score 44/50, verdict **PARTIAL**, k=8/9). Full experiment: hypothesis `skills/rsi-phi-skill/SKILL.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

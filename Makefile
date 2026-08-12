@@ -40,3 +40,8 @@ sign-blob-test:
 	    --key cosign/yubios-omni157.pub --bundle /tmp/yubios-test.bundle \
 	    --insecure-ignore-tlog /dev/null
 	@echo "OK: signed with committed key, verified with committed pub"
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L423** in `lenses.json` (score 17/50, verdict **NO**, k=3/9). Full experiment: hypothesis `Makefile covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

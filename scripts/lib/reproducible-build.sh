@@ -201,3 +201,8 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
     printf 'source=%s\nepoch=%s\ncreated=%s\nmkosi_seed=%s\n' \
         "$GIT_SHA" "$SOURCE_DATE_EPOCH" "$SOURCE_DATE_ISO8601" "$YUBIOS_MKOSI_SEED"
 fi
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L408** in `lenses.json` (score 22/50, verdict **PARTIAL**, k=4/9). Full experiment: hypothesis `scripts/lib/reproducible-build.sh covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

@@ -220,3 +220,8 @@ echo ""
 echo "=== PASS: LUKS2 FIDO2 enrollment complete ==="
 echo "Remove the passphrase slot after confirming FIDO2 works:"
 echo "  systemd-cryptenroll --wipe-slot=password $LUKS_PART"
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L346** in `lenses.json` (score 33/50, verdict **PARTIAL**, k=6/9). Full experiment: hypothesis `tests/vm/test-luks-fido2.sh covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

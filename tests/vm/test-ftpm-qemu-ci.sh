@@ -244,3 +244,8 @@ if [[ "$rc" -ne 0 ]]; then
 fi
 
 log "PASS: Stage A firmware markers + in-guest verify-tpm0-pcr-extend.sh (live /dev/tpm0, PCR extend)"
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L383** in `lenses.json` (score 28/50, verdict **PARTIAL**, k=5/9). Full experiment: hypothesis `tests/vm/test-ftpm-qemu-ci.sh covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

@@ -8,3 +8,8 @@ kargs = [
   # not as a global karg, to avoid affecting non-encrypted partitions.
   "audit=0",
 ]
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L474** in `lenses.json` (score 11/50, verdict **NO**, k=2/9). Full experiment: hypothesis `usr/lib/bootc/kargs.d/50-yubiOS.toml covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

@@ -112,3 +112,8 @@ Dynamic refs such as `github.sha`, `github.ref_name`, `target_ref`, and `ci_chai
 - Use `fetch-released-tag-ref` for yubi-OS fork release refs, `fetch-dhi-manifest` for `dhi.io/debian-base`, and `fetch-fedora-bootc-manifest` for `quay.io/fedora/fedora-bootc:45`.
 - Digests are verified at build time by the explicit `yubiOS.rego` `target.policy` inherited from `yubiOS-bake.hcl` (`reset=true`, `strict=true`).
 - cosign v3.1.2 is the canonical signing binary; downstream verification tooling MUST pin to v3.1.2 SHA-512 above. The yubiOS verifier (`tests/verify-oci-attestations.sh`) keys its identity regex to `^https://github\.com/yubi-OS/yubiOS/\.github/workflows/(yubiOS-ci|ci_dev_image|ci_mkosi-installer)\.yml@refs/(heads|tags)/.+$`; a future publisher workflow must add its filename to that set in the verifier script.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L248** in `lenses.json` (score 39/50, verdict **PARTIAL**, k=7/9). Full experiment: hypothesis `PINNED.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

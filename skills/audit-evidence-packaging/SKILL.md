@@ -181,3 +181,8 @@ The audit-trail entry: 2026-08-06 cycle 6 RSI — closed `least privilege` primi
 This skill already covers all 5 remaining MOVABLE corpus-priority primitives post-cycle-6 (attestation, trust chain, declarative policy, immutability, least privilege). The cycle-7 RSI audit verified full movable coverage; no primitive closure needed.
 
 The audit-trail entry: 2026-08-06 cycle 7 RSI — no movable primitive gap to close.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L158** in `lenses.json` (score 50/50, verdict **YES**, k=9/9). Full experiment: hypothesis `skills/audit-evidence-packaging/SKILL.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

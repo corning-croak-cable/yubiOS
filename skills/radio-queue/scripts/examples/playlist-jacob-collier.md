@@ -59,3 +59,8 @@ curl -X POST "$BRIDGE/run" -d "$(python3 -c "import json; print(json.dumps({'com
 ## Verification history
 
 - 2026-08-05 — initial verification + queue trigger; all 6 IDs returned correct titles + ids via `--dump-single-json`; daemon transitioned from the upbeat playlist to this Jacob Collier set on rock1 end-to-end (queue.txt overwritten via base64 push).
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L412** in `lenses.json` (score 22/50, verdict **PARTIAL**, k=4/9). Full experiment: hypothesis `skills/radio-queue/scripts/examples/playlist-jacob-collier.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

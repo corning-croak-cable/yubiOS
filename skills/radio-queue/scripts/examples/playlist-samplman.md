@@ -271,3 +271,8 @@ If you want to subset this kind of catalog, the cleanest path is: copy this file
 ## Verification history
 
 - 2026-08-05 — initial enumeration + verification; `yt-dlp --flat-playlist` returned 65 entries; `yt-dlp --skip-download --print title --print id --print duration` confirmed all 65 are accessible (zero failures). File created as a permanent example only — NOT triggered on rock1 per the user's "dont start this yet" directive.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L378** in `lenses.json` (score 28/50, verdict **PARTIAL**, k=5/9). Full experiment: hypothesis `skills/radio-queue/scripts/examples/playlist-samplman.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

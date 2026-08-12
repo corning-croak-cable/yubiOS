@@ -20,3 +20,8 @@
 # See refs/vgpu-vfio-user-trust-boundary-2026-07-25.md.
 KERNEL=="vfio", RUN+="/bin/rm -rf /dev/vfio /dev/vfio/*"
 KERNEL=="vfio*", RUN+="/bin/rm -f /dev/%k"
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L482** in `lenses.json` (score 11/50, verdict **NO**, k=2/9). Full experiment: hypothesis `usr/lib/udev/rules.d/yubiOS-no-vfio-udev.rules covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

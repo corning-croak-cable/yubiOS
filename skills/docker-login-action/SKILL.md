@@ -111,3 +111,8 @@ The audit-trail entry: 2026-08-06 cycle 6 RSI — closed `declarative policy` pr
 This skill's `least privilege` primitive is closed by cycle-7 RSI (3rd-priority MOVABLE per skill, post-cycle-6 baseline). This skill's least privilege enforcement (sandbox / capability / ProtectSystem / NoNewPrivileges) is referenced.
 
 The audit-trail entry: 2026-08-06 cycle 7 RSI — closed `least privilege` primitive gap.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L339** in `lenses.json` (score 33/50, verdict **PARTIAL**, k=6/9). Full experiment: hypothesis `skills/docker-login-action/SKILL.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

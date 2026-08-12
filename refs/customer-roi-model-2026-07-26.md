@@ -111,3 +111,8 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 **Owner**: TBD
 
 Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.8670). TODO: refine per file context.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L306** in `lenses.json` (score 33/50, verdict **PARTIAL**, k=6/9). Full experiment: hypothesis `refs/customer-roi-model-2026-07-26.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

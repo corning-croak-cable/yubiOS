@@ -75,3 +75,8 @@ echo "  Run: yubiOS-enroll-luks   (for second YubiKey disk unlock)"
 echo "  Run: yubiOS-enroll-pam    (for second YubiKey sudo auth)"
 echo ""
 echo "See ONBOARDING.md for recovery procedures if your YubiKey is lost."
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L448** in `lenses.json` (score 17/50, verdict **NO**, k=3/9). Full experiment: hypothesis `usr/lib/yubiOS/enroll.sh covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

@@ -391,3 +391,8 @@ if [[ "${YUBIOS_LOCAL_DHI:-0}" == 1 ]]; then
 else
     run_on_host "$MODE"
 fi
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L277** in `lenses.json` (score 39/50, verdict **PARTIAL**, k=7/9). Full experiment: hypothesis `scripts/build-local-images.sh covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

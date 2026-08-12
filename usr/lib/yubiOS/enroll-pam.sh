@@ -43,3 +43,8 @@ echo "  1. Boot with rd.break karg (edit in UEFI boot menu)"
 echo "  2. mount -o remount,rw /sysroot"
 echo "  3. Edit /sysroot/etc/pam.d/sudo — comment out pam_u2f line"
 echo "  4. Reboot and re-enroll with a working YubiKey"
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L446** in `lenses.json` (score 17/50, verdict **NO**, k=3/9). Full experiment: hypothesis `usr/lib/yubiOS/enroll-pam.sh covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

@@ -563,3 +563,8 @@ build_local_firmware() {
         build_local_firmware_board "$board"
     done
 }
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L435** in `lenses.json` (score 17/50, verdict **NO**, k=3/9). Full experiment: hypothesis `scripts/lib/local-build-firmware.sh covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

@@ -66,3 +66,8 @@ pam_u2f_auth_line() { grep -E '^[[:space:]]*auth[[:space:]].*pam_u2f\.so' "$1" |
   run bash -c "printf '%s\n%s\n' '1.3.1' '$v' | sort -V | head -n1"
   [ "$output" = "1.3.1" ]
 }
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L380** in `lenses.json` (score 28/50, verdict **PARTIAL**, k=5/9). Full experiment: hypothesis `tests/unit/test-pam-u2f-stack.bats covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

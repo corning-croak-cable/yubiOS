@@ -29,3 +29,8 @@ def frame_ansi(line_repr):
 def frame_plain(line_repr):
     """printf line that writes one frame with no prefix (scrolls)."""
     return f"printf '%b\\n' {line_repr} > /dev/ttyS2"
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L525** in `lenses.json` (score 0/50, verdict **NO**, k=0/9). Full experiment: hypothesis `skills/ascii-uart-animator/scripts/bridge.py covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

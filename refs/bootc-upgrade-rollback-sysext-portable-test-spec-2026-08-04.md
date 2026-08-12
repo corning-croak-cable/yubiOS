@@ -1439,3 +1439,8 @@ The sealed-UKI VM lane (OMN-53, PR #155 GREEN at V83 on `sealed-uki-vm-lane-v2`)
 ---
 
 **End of spec.** Total sections: 7 (Coverage gap analysis, Test design, Test scripts spec, CI workflow spec, Coverage matrix, Dependencies + risks, References). Total bash code blocks: 5 (Section 3 scripts + Section 3.5 lib reference). Every claim is anchored to a yubiOS commit, PR, run ID, Linear issue, upstream URL, or skill section.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L189** in `lenses.json` (score 44/50, verdict **PARTIAL**, k=8/9). Full experiment: hypothesis `refs/bootc-upgrade-rollback-sysext-portable-test-spec-2026-08-04.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

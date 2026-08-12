@@ -78,3 +78,8 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 ## Immutability coverage
 
 This document upholds the yubiOS immutability layer — composefs repository, dm-verity root hash, ostree deployment, read-only / append-only semantics, sealed UKI / measured boot. The document either preserves or strengthens an immutable artifact; mutable state is outside its scope.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L353** in `lenses.json` (score 28/50, verdict **PARTIAL**, k=5/9). Full experiment: hypothesis `refs/arm64-ftpm-phase-f0-2026-07-23.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

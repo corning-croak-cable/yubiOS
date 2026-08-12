@@ -44,3 +44,8 @@ When Jenny asks for "deep research X" with parallel agents (or just "deep resear
 - Per subagent: ~1500-2500 words
 - Synthesis: ~2000-3000 words (consolidated; can be longer if multi-stream)
 - Refs/ note (for discovery findings): ~500-1500 words
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L343** in `lenses.json` (score 33/50, verdict **PARTIAL**, k=6/9). Full experiment: hypothesis `skills/parallel-deep-research/SKILL.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

@@ -46,3 +46,8 @@ Be respectful, constructive, and collaborative. We want this to stay a friendly 
 ## Questions
 
 If you're not sure where to start, open an issue or submit a draft PR and we can discuss it there.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L449** in `lenses.json` (score 11/50, verdict **NO**, k=2/9). Full experiment: hypothesis `.github/CONTRIBUTING.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

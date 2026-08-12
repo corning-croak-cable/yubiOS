@@ -216,3 +216,8 @@ for cid, shortname in cards:
 
 print()
 print("=== DONE ===")
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L440** in `lenses.json` (score 17/50, verdict **NO**, k=3/9). Full experiment: hypothesis `skills/play-audio-on-rock1/scripts/inspect.py covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

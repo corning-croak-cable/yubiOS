@@ -83,3 +83,8 @@ index 2e41ff5..3f200c7 100644
      kernel_cmdline.extend(opts.kernel_args.clone());
  
      // Software FIDO2/U2F (swu2f): QEMU cannot emulate a CTAP2 authenticator with the
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L422** in `lenses.json` (score 17/50, verdict **NO**, k=3/9). Full experiment: hypothesis `.github/patches/bcvk-arm64-directboot-ssh.patch covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

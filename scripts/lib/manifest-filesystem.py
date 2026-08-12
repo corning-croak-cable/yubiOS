@@ -179,3 +179,8 @@ if __name__ == "__main__":
     except (OSError, ValueError) as error:
         print(f"filesystem-manifest: {error}", file=sys.stderr)
         raise SystemExit(1) from error
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L462** in `lenses.json` (score 11/50, verdict **NO**, k=2/9). Full experiment: hypothesis `scripts/lib/manifest-filesystem.py covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

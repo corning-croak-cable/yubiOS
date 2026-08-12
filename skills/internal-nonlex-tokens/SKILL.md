@@ -427,3 +427,8 @@ This skill supports the yubiOS continuous-monitoring layer — runtime detection
 
 This skill manages cryptographic identity — FIDO2/CTAP2 YubiKey, softhsm/PKCS#11/TPM, HSM-backed keys, key attestation. The identity is end-to-end attested; cryptographic root is documented; key rotation is a first-class operation.
 
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L166** in `lenses.json` (score 50/50, verdict **YES**, k=9/9). Full experiment: hypothesis `skills/internal-nonlex-tokens/SKILL.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

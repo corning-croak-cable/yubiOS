@@ -85,3 +85,8 @@ The lane that **did** go green: PR #154 (`1c284b48826f` — "feat(ci): sealed UK
 - Canonical signing: `ci_mkosi-installer.yml`. OVMF artifacts: `ci_fork_edk2.yml`.
 - Playbooks: [dispatch-chain-verification](dispatch-chain-verification.md) (row 0 applies it), [fido2-vm-e2e-recipe](fido2-vm-e2e-recipe.md).
 - Gaps 1 and 12: no `tests/vm/test-secure-boot-tamper.sh`; negatives 2 and 3 are TODO-only. A `yaml.safe_load` pre-dispatch gate would have caught V37/V38 free.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L300** in `lenses.json` (score 33/50, verdict **PARTIAL**, k=6/9). Full experiment: hypothesis `playbooks/sealed-uki-vm-debug.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

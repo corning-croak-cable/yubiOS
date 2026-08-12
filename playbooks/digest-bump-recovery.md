@@ -79,3 +79,8 @@ Dispatch-only recovery costs one extra ~2-min round-trip versus a hand edit and 
 - Linear **OMN-139**. Commits `8ccffa71`, `d2646452`, `95565a0e`.
 - Workflows: `fetch-fedora-bootc-manifest.yml` (the recovery tool), `fetch-dhi-manifest.yml`, `fetch-released-tag-ref.yml`, `ci_dev_image.yml`, `ci_test-fedora-bootc-arm64-pull.yml`.
 - Playbooks: [dispatch-chain-verification](dispatch-chain-verification.md) — step 3 is not optional.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L298** in `lenses.json` (score 33/50, verdict **PARTIAL**, k=6/9). Full experiment: hypothesis `playbooks/digest-bump-recovery.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

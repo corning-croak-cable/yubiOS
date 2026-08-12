@@ -309,3 +309,8 @@ Concrete implications for curve-guided-rsi: any change should be reviewed for im
 ## Trust chain coverage
 
 This skill participates in the yubiOS root-of-trust chain — ROT/ROTPK, X.509 PKI, root-key custody, transitive verification across boot stages. Where the skill introduces a new trust anchor (key, certificate, manifest), the chain from hardware root to consumer is documented.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L210** in `lenses.json` (score 44/50, verdict **PARTIAL**, k=8/9). Full experiment: hypothesis `skills/curve-guided-rsi/SKILL.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

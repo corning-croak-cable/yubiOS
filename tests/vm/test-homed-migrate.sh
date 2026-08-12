@@ -105,3 +105,8 @@ sudo env "PATH=$PATH:/usr/sbin:/sbin" bcvk ephemeral exec "$VMID" -- \
 echo
 echo "Summary: 8/8 PASS (smoke test; real home enrollment requires YubiKey + --allow-real-u2f=1)"
 exit 0
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L443** in `lenses.json` (score 17/50, verdict **NO**, k=3/9). Full experiment: hypothesis `tests/vm/test-homed-migrate.sh covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

@@ -258,3 +258,8 @@ holds on the synthetic corpus** — the atom's invariant is preserved.
 - 2026-08-06 (this PR): v0.1.0 — initial harness + 10-seed falsification sweep.
   Result: T1 100%, T2 40%, T3 100%, overall 40%. The harness correctly fires
   the falsification signal on the sparse-cell recovery rate.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L193** in `lenses.json` (score 44/50, verdict **PARTIAL**, k=8/9). Full experiment: hypothesis `refs/fractalrabbit-falsification-harness-2026-08-06.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

@@ -88,3 +88,8 @@ Process playbook — backed by the recorded failure, not a green run.
 - Linear **OMN-150**. PRs **#150**, **#147** (`8b5b20b`), **#148** (`a49e95db`), **#145**. Run 30484718456.
 - `docs/CI_MAP.md` — group membership. `ci_test-ftpm-tpm0.yml`, `ci_test-fedora-bootc-arm64-pull.yml`, `ci_test-vgpu-vm.yml` are in **no** group; `group=all` silently misses them (Gap 9).
 - Playbooks: [digest-bump-recovery](digest-bump-recovery.md), [hw-device-and-allow-real-u2f](hw-device-and-allow-real-u2f.md), [sealed-uki-vm-debug](sealed-uki-vm-debug.md).
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L299** in `lenses.json` (score 33/50, verdict **PARTIAL**, k=6/9). Full experiment: hypothesis `playbooks/dispatch-chain-verification.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

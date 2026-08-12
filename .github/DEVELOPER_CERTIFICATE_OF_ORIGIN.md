@@ -49,3 +49,8 @@ By making a contribution to this project, I certify that:
 
 
 </body></html>
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L521** in `lenses.json` (score 0/50, verdict **NO**, k=0/9). Full experiment: hypothesis `.github/DEVELOPER_CERTIFICATE_OF_ORIGIN.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

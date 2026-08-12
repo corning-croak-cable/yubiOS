@@ -230,3 +230,8 @@ g 'set -e
 echo "homed FIDO2 home OK"
 
 log "PASS: swtpm + swu2f CTAP2 + LUKS2 FIDO2 + homed FIDO2 verified"
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L295** in `lenses.json` (score 39/50, verdict **PARTIAL**, k=7/9). Full experiment: hypothesis `tests/vm/test-luks-fido2-ci.sh covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

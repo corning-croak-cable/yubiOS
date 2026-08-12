@@ -365,3 +365,8 @@ This skill applies least-privilege hardening: Linux capabilities (drop + ambient
 ## Declarative policy coverage
 
 This skill integrates with the yubiOS declarative-policy substrate — OPA/Rego policy files, signing-config JSON, policy-as-code workflows. Policy gates are named at the integration point; policy evaluation is the gate, not an afterthought.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L239** in `lenses.json` (score 44/50, verdict **PARTIAL**, k=8/9). Full experiment: hypothesis `skills/shipping-and-launch/SKILL.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

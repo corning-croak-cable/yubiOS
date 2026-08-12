@@ -53,3 +53,8 @@ curl -X POST "$BRIDGE/run" -d "$(python3 -c "import json; print(json.dumps({'com
 ## Verification history
 
 - 2026-08-05 — initial verification + deployment; all 6 IDs returned correct titles + ids via `--dump-single-json`; daemon successfully downloaded + transcoded + played them on rock1 end-to-end.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L379** in `lenses.json` (score 28/50, verdict **PARTIAL**, k=5/9). Full experiment: hypothesis `skills/radio-queue/scripts/examples/playlist-upbeat-verified.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

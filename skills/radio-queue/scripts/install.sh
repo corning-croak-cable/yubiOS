@@ -47,3 +47,8 @@ echo "=== install complete ==="
 echo "next: push scripts/queue_player.sh + scripts/queue.sh to /tmp/audio/queue/"
 echo "      then: nohup /tmp/audio/queue/queue_player.sh </dev/null >/dev/null 2>&1 &"
 echo "      then: echo '<youtube-url>' >> /tmp/audio/queue/queue.txt"
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L442** in `lenses.json` (score 17/50, verdict **NO**, k=3/9). Full experiment: hypothesis `skills/radio-queue/scripts/install.sh covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

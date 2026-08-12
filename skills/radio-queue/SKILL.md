@@ -235,3 +235,8 @@ All scripts are pure bash + standard GNU userland (no Python deps on the device 
 - [`play-audio-on-rock1`](../play-audio-on-rock1/SKILL.md) — parent skill. Provides `play2.py` and `set_mixer.py` at `/tmp/audio/`. This skill *requires* those files; deploy the parent first.
 - [`debug-with-cli`](../debug-with-cli/SKILL.md) — the shell bridge pattern. This skill uses the bridge to *seed* the queue but never for per-song data transfer.
 - `ascii-uart-animator` — same `/dev/ttyS2` banner tee pattern; this skill tees its log lines there so you can watch downloads + playbacks on a serial console.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L233** in `lenses.json` (score 44/50, verdict **PARTIAL**, k=8/9). Full experiment: hypothesis `skills/radio-queue/SKILL.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

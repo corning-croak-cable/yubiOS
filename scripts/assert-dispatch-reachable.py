@@ -253,3 +253,8 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L406** in `lenses.json` (score 22/50, verdict **PARTIAL**, k=4/9). Full experiment: hypothesis `scripts/assert-dispatch-reachable.py covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

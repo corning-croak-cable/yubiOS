@@ -231,3 +231,8 @@ This document integrates with the yubiOS declarative-policy substrate — OPA/Re
 ## Continuous / adaptive coverage
 
 This document supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The document is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L156** in `lenses.json` (score 50/50, verdict **YES**, k=9/9). Full experiment: hypothesis `refs/workflow-patterns-deep-dive-2026-07-30.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

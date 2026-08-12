@@ -79,3 +79,8 @@ The software lane is deterministic and cheap, and proves interface behavior only
 - `refs/luks-fido2-e2e-test-2026-07-23.md`, `refs/fido2-ci-emulator-status-2026-07-23.md`, `refs/bcvk-swtpm-ci-2026-07-23.md`, `refs/vm-e2e-run-29525332901.md`, `refs/yubikey-hw-validation-scenarios-2026-07-25.md` (the 12 scenarios), `refs/zboot-workaround-runner-qemu-audit-2026-07-25.md` (B-QEMU-ZBOOT workaround still required).
 - ADRs: ADR-003, ADR-026, ADR-002.
 - Playbooks: [hw-device-and-allow-real-u2f](hw-device-and-allow-real-u2f.md), [dispatch-chain-verification](dispatch-chain-verification.md).
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L184** in `lenses.json` (score 44/50, verdict **PARTIAL**, k=8/9). Full experiment: hypothesis `playbooks/fido2-vm-e2e-recipe.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

@@ -356,3 +356,8 @@ single page. The cold-start problem dissolves.
   sparsity). Result: v1 ships with cycle-1 NSS-derived key
   assumptions documented. RSI fixpoint rule PASS (no new
   substantive gaps, top gap closed, no new anti-patterns).
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L197** in `lenses.json` (score 44/50, verdict **PARTIAL**, k=8/9). Full experiment: hypothesis `refs/repo-refs-skill-deep-research-2026-08-07.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

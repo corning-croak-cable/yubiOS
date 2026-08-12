@@ -29,3 +29,8 @@ For least privilege pod security standards, the LP primitive applies as follows:
 
 Concrete implications for least privilege pod security standards: any change should be reviewed for impact on LP coverage; gaps in LP that are attributable to this skill are tracked in the cycle-9 run log at `refs/curve-guided-rsi-v2-cycle9-corpus-enrichment-2026-08-06.md` on `yubi-OS/yubiOS`. The 7 LP closure cells are: `browser-testing-with-devtools` (Chrome DevTools inherits Chrome sandbox), `code-review-and-quality` (review process enforces minimal-scope changes), `composefs-kernel-floors` (kernel mount options are LP at the FS layer), `frontend-ui-engineering` (RBAC-aware UI patterns), `observability-and-instrumentation` (scoped log collection), `shipping-and-launch` (deploy procedure scopes to least-necessary surfaces), `spec-driven-development` (requirements declare the smallest necessary scope). This skill is the corpus-additive anchor that ensures all 7 are well-served.
 - 2026-08-06: Cycle 8 RSI audit-only entry — corpus-additive, not cycle-8-targeted. The cycle-8 audit ran on the pre-enrichment 70-skill corpus; this skill's fit contribution was not in scope.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L439** in `lenses.json` (score 17/50, verdict **NO**, k=3/9). Full experiment: hypothesis `skills/least-privilege-pod-security-standards/SKILL.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

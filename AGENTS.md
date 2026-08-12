@@ -94,3 +94,8 @@ ARM64 runner policy is workflow-specific. Current docs distinguish non-KVM ARM64
 ## Planning-cycle notes
 
 The latest documentation/research planning pass is in [refs/planning-cycle-2026-07-11.md](refs/planning-cycle-2026-07-11.md). Use it before repeating the same drift audit.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L247** in `lenses.json` (score 39/50, verdict **PARTIAL**, k=7/9). Full experiment: hypothesis `AGENTS.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

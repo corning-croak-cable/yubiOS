@@ -54,3 +54,8 @@ echo "On a new machine, recover stub from YubiKey:"
 echo "  ssh-keygen -K"
 echo ""
 echo "GitHub: Settings -> SSH Keys -> New -> paste the public key above."
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L385** in `lenses.json` (score 28/50, verdict **PARTIAL**, k=5/9). Full experiment: hypothesis `usr/lib/yubiOS/enroll-ssh.sh covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

@@ -151,3 +151,8 @@ Quantitative anchors for the 8 stress tests. Verified via the commit-time signat
 | 8 | CI-to-runtime gap | n/a | n/a | `ci_token-audit.yml` | LOW - token-only |
 
 **Verification gate**: section 4 cross-check table updates when any of these workflow / script SHAs advance. Top 3 un-covered gaps from cycle-0 cross-check: key-loss recovery (#2), partial enrollment (#3), platform matrix disclosure (#6).
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L275** in `lenses.json` (score 39/50, verdict **PARTIAL**, k=7/9). Full experiment: hypothesis `refs/yubios-stress-test-assertions-2026-08-07.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

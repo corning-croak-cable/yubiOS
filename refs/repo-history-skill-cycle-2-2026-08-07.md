@@ -112,3 +112,8 @@ Cycle 3 is the final cycle under the 3-cycle RSI cap. User may override for furt
 - Skill upstream: `hyperspherical-harmonic-curve` SKILL.md §Lifecycle (re-fit cadence), §Möbius refinement strategy (frozen at identity)
 - RSI protocol: `recursive-self-improvement` SKILL.md (cycle cap, fixpoint rule, fresh-context subagent)
 - NSS sweep: `negative-skill-space` SKILL.md (12-axis gap map for cycle 3)
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L370** in `lenses.json` (score 28/50, verdict **PARTIAL**, k=5/9). Full experiment: hypothesis `refs/repo-history-skill-cycle-2-2026-08-07.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

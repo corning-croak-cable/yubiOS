@@ -99,3 +99,8 @@ make -C build run-only \
 
 echo ""
 echo "== Build complete. In the booted guest run: tests/vm/verify-tpm0-pcr-extend.sh =="
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L381** in `lenses.json` (score 28/50, verdict **PARTIAL**, k=5/9). Full experiment: hypothesis `tests/vm/build-arm64-ftpm-qemu.sh covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

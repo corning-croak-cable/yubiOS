@@ -58,3 +58,8 @@ The project will try to:
 5. Publish a public note when user action, artifact distrust, tag clarification, or documentation correction is needed.
 
 Do not treat any public acknowledgement as an endorsement, partnership, certification, or production-readiness claim.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L350** in `lenses.json` (score 28/50, verdict **PARTIAL**, k=5/9). Full experiment: hypothesis `.github/SECURITY.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

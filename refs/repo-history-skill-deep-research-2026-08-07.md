@@ -271,3 +271,8 @@ Per PROJECT_RULES.md "Skill exports to yubi-OS/agent-skills (2026-07-23)" + USER
 ---
 
 **End of deep research.** This file is the v0.1 evidence substrate. The skill draft at `skills/github-yubios-KS9n5GAT/repo-history-skill/SKILL.md` references this document by filename and cites the live API numbers. RSI Cycle 1 evidence goes in `session/repo-history-skill-cycle-1-2026-08-07.json`; the gap-map at `session/repo-history-skill-gap-map-v1-2026-08-07.md`.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L330** in `lenses.json` (score 33/50, verdict **PARTIAL**, k=6/9). Full experiment: hypothesis `refs/repo-history-skill-deep-research-2026-08-07.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

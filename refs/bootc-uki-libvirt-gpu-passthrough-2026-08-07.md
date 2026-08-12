@@ -374,3 +374,8 @@ This artifact is intentionally framed as a research note, not a canonical spec. 
 
 Each step is **ordered** by impact x cost, descending. Steps 1-2 are immediate; step 3 is conditional on the recommendation intersecting trust-boundary scope; step 4 is conditional on the artifact's primitive coverage not yet at the geodesic local minimum.
 
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L188** in `lenses.json` (score 44/50, verdict **PARTIAL**, k=8/9). Full experiment: hypothesis `refs/bootc-uki-libvirt-gpu-passthrough-2026-08-07.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

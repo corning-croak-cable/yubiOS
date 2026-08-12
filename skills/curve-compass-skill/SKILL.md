@@ -417,3 +417,8 @@ Sauna, wave 2. Built against `papers/is-this-x-2026-08-12.md`
 (sections 3-8, and section 7 in particular), the evidence bundle's
 `tests/T3-results.json`, and the `curved-corpus-create` and
 `guided-curve-ideate` SKILL.md exemplars.
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L162** in `lenses.json` (score 50/50, verdict **YES**, k=9/9). Full experiment: hypothesis `skills/curve-compass-skill/SKILL.md covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.

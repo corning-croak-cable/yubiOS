@@ -151,3 +151,8 @@ RUN set -- /usr/lib/modules/*/ && \
     lsinitrd "/usr/lib/modules/$kver/initramfs.img" > /tmp/yubiOS-initramfs-listing.txt && \
     { ! grep -q "/vfio\.ko" /tmp/yubiOS-initramfs-listing.txt; } && \
     rm -f /tmp/yubiOS-initramfs-listing.txt
+
+
+## New Ideas -- cycle 3 (lens external)
+
+This file's lens is **L388** in `lenses.json` (score 22/50, verdict **PARTIAL**, k=4/9). Full experiment: hypothesis `Containerfile covers all 9 primitives in the internal-big-picture basis`, method `9-D primitive binarization (purpose, examples, guidelines, constraints, verifica...`. See root `new-ideas-2026-08-12.md` for the cycle-3 summary.
