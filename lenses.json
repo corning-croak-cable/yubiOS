@@ -1,6 +1,6 @@
 {
   "schema": "rsi-compass-cycle7-nss-lens-pool/1.0.0",
-  "cycle": "cycle-7 (RSI NSS gap-informed atomic per-file)",
+  "cycle": "cycle-11 (RSI NSS-mode)",
   "date": "2026-08-12",
   "repo": "yubi-OS/yubiOS",
   "branch": "feat/rsi-compass-cycle7-nss-research-2026-08-12",
@@ -10205,6 +10205,1686 @@
       "verdict": "YES",
       "score": 50,
       "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine"
+    },
+    {
+      "lens": "L2001",
+      "file": ".github/CODE_OF_CONDUCT.md",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "docs/CODE_OF_CONDUCT.md: describes mode contract (interactive/batch/dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "md",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2002",
+      "file": ".github/SECURITY.md",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "docs/SECURITY.md: describes mode contract (interactive/batch/dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "md",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2003",
+      "file": "PINNED.md",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "docs/PINNED.md: describes mode contract (interactive/batch/dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "md",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2004",
+      "file": "docs/CI_MAP.md",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "docs/CI_MAP.md: describes mode contract (interactive/batch/dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "md",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2005",
+      "file": "docs/PR.md",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "docs/PR.md: describes mode contract (interactive/batch/dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "md",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2006",
+      "file": "refs/bootc-uki-libvirt-gpu-passthrough-2026-08-07.md",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "docs/bootc-uki-libvirt-gpu-passthrough-2026-08-07.md: describes mode contract (interactive/batch/dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "md",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2007",
+      "file": "refs/ci-evidence-2026-07-21.md",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "docs/ci-evidence-2026-07-21.md: describes mode contract (interactive/batch/dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "md",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2008",
+      "file": "refs/first-90-days-2026-07-25.md",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "docs/first-90-days-2026-07-25.md: describes mode contract (interactive/batch/dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "md",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2009",
+      "file": "refs/org-state-audit-2026-07-23.md",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "docs/org-state-audit-2026-07-23.md: describes mode contract (interactive/batch/dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "md",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2010",
+      "file": "refs/prior-art-autonomous-ideation-skill-2026-07-28.md",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "docs/prior-art-autonomous-ideation-skill-2026-07-28.md: describes mode contract (interactive/batch/dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "md",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2011",
+      "file": "refs/research-refresh-2026-07-11.md",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "docs/research-refresh-2026-07-11.md: describes mode contract (interactive/batch/dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "md",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2012",
+      "file": "refs/systemd-upstream-progress-2026-07-21.md",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "docs/systemd-upstream-progress-2026-07-21.md: describes mode contract (interactive/batch/dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "md",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2013",
+      "file": "refs/yubios-versioning-scheme-2026-08-04.md",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "docs/yubios-versioning-scheme-2026-08-04.md: describes mode contract (interactive/batch/dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "md",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2014",
+      "file": "skills/0pointer-mastery/SKILL.md",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "docs/SKILL.md: describes mode contract (interactive/batch/dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "md",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2015",
+      "file": "skills/deprecation-and-migration/SKILL.md",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "docs/SKILL.md: describes mode contract (interactive/batch/dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "md",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2016",
+      "file": "skills/docker-login-action/SKILL.md",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "docs/SKILL.md: describes mode contract (interactive/batch/dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "md",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2017",
+      "file": "skills/radio-queue/scripts/examples/playlist-classic-rock.md",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "docs/playlist-classic-rock.md: describes mode contract (interactive/batch/dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "md",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2018",
+      "file": "skills/token-efficiency/SKILL.md",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "md",
+      "hypothesis": "docs/SKILL.md: describes mode contract (interactive/batch/dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "md",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2019",
+      "file": "skills/radio-queue/scripts/queue.sh",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "sh",
+      "hypothesis": "scripts/queue.sh: invocation modes documented (interactive vs non-interactive, dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "sh",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2020",
+      "file": "tests/vm/bcvk-ssh-lib.sh",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "sh",
+      "hypothesis": "scripts/bcvk-ssh-lib.sh: invocation modes documented (interactive vs non-interactive, dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "sh",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2021",
+      "file": "tests/vm/test-bootc-upgrade.sh",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "sh",
+      "hypothesis": "scripts/test-bootc-upgrade.sh: invocation modes documented (interactive vs non-interactive, dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "sh",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2022",
+      "file": "tests/vm/verify-tpm0-pcr-extend.sh",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "sh",
+      "hypothesis": "scripts/verify-tpm0-pcr-extend.sh: invocation modes documented (interactive vs non-interactive, dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "sh",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2023",
+      "file": "usr/lib/yubiOS/enroll-luks-wrapper.sh",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "sh",
+      "hypothesis": "scripts/enroll-luks-wrapper.sh: invocation modes documented (interactive vs non-interactive, dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "sh",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2024",
+      "file": "usr/lib/yubiOS/enroll-sb-fido2-wrapper.sh",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "sh",
+      "hypothesis": "scripts/enroll-sb-fido2-wrapper.sh: invocation modes documented (interactive vs non-interactive, dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "sh",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2025",
+      "file": "usr/lib/yubiOS/enroll-sb-fido2.sh",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "sh",
+      "hypothesis": "scripts/enroll-sb-fido2.sh: invocation modes documented (interactive vs non-interactive, dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "sh",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2026",
+      "file": "usr/lib/yubiOS/enroll-sb.sh",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "sh",
+      "hypothesis": "scripts/enroll-sb.sh: invocation modes documented (interactive vs non-interactive, dry-run)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "sh",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2027",
+      "file": "scripts/validate-input-shape.py",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "py",
+      "hypothesis": "scripts/validate-input-shape.py: invocation modes documented (interactive vs batch, exit semantics)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "py",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2028",
+      "file": "scripts/verify-reproducible-installer.py",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "py",
+      "hypothesis": "scripts/verify-reproducible-installer.py: invocation modes documented (interactive vs batch, exit semantics)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "py",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2029",
+      "file": "skills/ascii-uart-animator/scripts/bouncing_ball.py",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "py",
+      "hypothesis": "scripts/bouncing_ball.py: invocation modes documented (interactive vs batch, exit semantics)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "py",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2030",
+      "file": "skills/play-audio-on-rock1/scripts/set_mixer.py",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "py",
+      "hypothesis": "scripts/set_mixer.py: invocation modes documented (interactive vs batch, exit semantics)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "py",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2031",
+      "file": "mkosi.conf",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "conf",
+      "hypothesis": "config mkosi.conf: service/daemon mode contract (Type=notify vs oneshot vs forking)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "conf",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2032",
+      "file": "usr/lib/dracut.conf.d/51-yubiOS-composefs.conf",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "conf",
+      "hypothesis": "config 51-yubiOS-composefs.conf: service/daemon mode contract (Type=notify vs oneshot vs forking)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "conf",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2033",
+      "file": "usr/lib/repart/50-yubiOS-root.conf",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "conf",
+      "hypothesis": "config 50-yubiOS-root.conf: service/daemon mode contract (Type=notify vs oneshot vs forking)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "conf",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2034",
+      "file": "tests/unit/test-enroll-ssh.bats",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "bats",
+      "hypothesis": "tests test-enroll-ssh.bats: covers both TTY and non-TTY invocation",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "bats",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2035",
+      "file": "tests/unit/test-reproducible-build.bats",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "bats",
+      "hypothesis": "tests test-reproducible-build.bats: covers both TTY and non-TTY invocation",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "bats",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2036",
+      "file": "usr/lib/systemd/system/yubiOS-chipsec-firstboot.service",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "service",
+      "hypothesis": "unit yubiOS-chipsec-firstboot.service: lifecycle mode documented (Type/Restart/Timeout)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "service",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2037",
+      "file": "usr/lib/systemd/system/yubiOS-enroll.service",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "service",
+      "hypothesis": "unit yubiOS-enroll.service: lifecycle mode documented (Type/Restart/Timeout)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "service",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2038",
+      "file": ".github/FUNDING.yml",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "yaml",
+      "hypothesis": "ci FUNDING.yml: CI mode contract (workflow_dispatch, concurrency)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "yaml",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2039",
+      "file": "scripts/audit-workflow-tokens.allowlist.yaml",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "yaml",
+      "hypothesis": "ci audit-workflow-tokens.allowlist.yaml: CI mode contract (workflow_dispatch, concurrency)",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "yaml",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+    },
+    {
+      "lens": "L2040",
+      "file": "usr/lib/udev/rules.d/70-yubiOS-hidraw.rules",
+      "nss_axis": "mode",
+      "primitive_added": "examples",
+      "filetype": "other",
+      "hypothesis": "70-yubiOS-hidraw.rules: mode contract",
+      "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+      "parameters": {
+        "axis": "mode",
+        "nss_axes": 12,
+        "dim_scores": {
+          "interaction": 2,
+          "tty_terminal": 2,
+          "confirmation": 1,
+          "preview_check": 0,
+          "idempotency_force": 1,
+          "failure_exit": 1,
+          "shell_errexit_pipefail": 1,
+          "duration": 1,
+          "batch_streaming": 1,
+          "lifecycle_daemon": 0
+        },
+        "total": 10,
+        "ftype": "other",
+        "seed": 20260812
+      },
+      "delta": {
+        "mode_gaps_before": 5,
+        "mode_gaps_after": 0,
+        "dim_closed": [
+          "interaction",
+          "tty_terminal",
+          "confirmation",
+          "preview_check"
+        ],
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
     }
   ],
   "top_3_picks": [
@@ -10286,5 +11966,7 @@
       "score": 50,
       "caveat": "NSS sweep is heuristic regex-based; LLM-as-judge would refine"
     }
-  ]
+  ],
+  "nss_axis_focus": "mode",
+  "files_patched_cycle11": 40
 }

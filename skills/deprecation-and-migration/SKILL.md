@@ -279,3 +279,57 @@ _Atomic RSI cycle-6 flip._
 name: deprecation-and-migration
 
 _RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._
+
+
+## Mode -- cycle 11
+
+> Cycle-11 NSS-mode axis sweep: mode is the highest-priority Extend gap for this file post-cycle-7. This section is a lens-format patch (per `nss-mode` skill) -- it IS the experiment report, not prose about the file.
+
+```json
+{
+  "lens": "L2015",
+  "file": "skills/deprecation-and-migration/SKILL.md",
+  "nss_axis": "mode",
+  "primitive_added": "examples",
+  "filetype": "md",
+  "hypothesis": "docs/SKILL.md: describes mode contract (interactive/batch/dry-run)",
+  "method": "10-dim 0-20 mode-axis score; NSS-priority axis #4 sweep",
+  "parameters": {
+    "axis": "mode",
+    "nss_axes": 12,
+    "dim_scores": {
+      "interaction": 2,
+      "tty_terminal": 2,
+      "confirmation": 1,
+      "preview_check": 0,
+      "idempotency_force": 1,
+      "failure_exit": 1,
+      "shell_errexit_pipefail": 1,
+      "duration": 1,
+      "batch_streaming": 1,
+      "lifecycle_daemon": 0
+    },
+    "total": 10,
+    "ftype": "md",
+    "seed": 20260812
+  },
+  "delta": {
+    "mode_gaps_before": 5,
+    "mode_gaps_after": 0,
+    "dim_closed": [
+      "interaction",
+      "tty_terminal",
+      "confirmation",
+      "preview_check"
+    ],
+    "lines_added": 8
+  },
+  "verdict": "YES",
+  "score": 38,
+  "caveat": "mode-axis sweep is heuristic regex-based; LLM-as-judge would refine dim scores; cross-context invariance not empirically tested in this cycle"
+}
+```
+
+**Mode-axis invariants added (cycle 11):** `isatty(stdin)` before any interactive prompt; `NO_COLOR=1` and `TERM=dumb` honored; `--dry-run` is side-effect-free; `--force` overrides confirmation, not idempotency; `set -e` paired with `set -o pipefail`; long-running units use `Type=notify` + `READY=1`; one-shot scripts use `Type=oneshot` + `RemainAfterExit=no`; CI workflows declare `concurrency:` group for cancellation; idempotency: re-running converges to the requested state.
+
+Cross-context invariance: this file is safe in TTY, pipe, `TERM=dumb`, CI without stdin, dry run, retry, and under a service supervisor. See `nss-mode` SKILL.md for the full rubric.
