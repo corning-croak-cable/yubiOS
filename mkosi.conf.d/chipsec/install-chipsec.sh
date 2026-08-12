@@ -34,3 +34,21 @@ echo "install-chipsec: CHIPSEC 1.13.16 installed for yubiOS first-boot firmware 
 #   validation:  tarball SHA256 verified against the pinned value before extraction
 #   failure:     set -e; the failing curl/tar line and exit code are logged
 # _RSI cycle-9 atomic flip (NSS-axis(inputs))._
+
+
+# Failure modes -- cycle 14
+
+# Cycle-14 NSS-failure-modes gap-closure. Each row pairs severity with probability;
+# detection signal + recovery path + fault-injection test are required.
+# See skills/github-yubios-KS9n5GAT/nss-failure-modes/SKILL.md for the taxonomy.
+#
+#   FM-001 [MEDIUM, Uncommon]  pip install fails on python version mismatch
+#     why:        system python newer than CHIPSEC requires
+#     detection:  pip install exits non-zero; stderr "no matching distribution"
+#     recovery:   pin python version; use venv; install from source
+#     prevent:    declare python version in script header; pin in mkosi.conf
+#     test:       run with mismatched python; assert clear exit code 70
+#
+# Envelope: severity 1-2 negligible, 3-4 degraded, 5-6 operational,
+# 7-8 major (outage/data loss/security), 9-10 critical.
+# Probability is evidence-based; cite the denominator.

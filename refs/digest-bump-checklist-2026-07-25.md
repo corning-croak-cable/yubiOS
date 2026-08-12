@@ -195,3 +195,19 @@ _Atomic RSI cycle-6 flip._
 - See `docs/ARCHITECTURE.md` for the full yubiOS dependency graph.
 
 _RSI cycle-7 atomic flip (gap-informed, NSS-axis(adjacent_problems))._
+
+
+## Failure modes -- cycle 14
+
+> Cycle-14 NSS-failure-modes gap-closure. Each row pairs severity with probability;
+> detection signal + recovery path + fault-injection test are required.
+> See `skills/github-yubios-KS9n5GAT/nss-failure-modes/SKILL.md` for the full taxonomy.
+
+| ID | What | Detection | Recovery | Sev | Prob. | Test |
+|---|---|---|---|---|---|---|
+| FM-001 | checklist references workflow that was renamed | grep checklist for old name; existence check fails | update checklist; remove dead refs | LOW | Common | rename workflow; assert lint fails |
+
+**Envelope.** Severity scale: 1-2 negligible, 3-4 degraded, 5-6 operational,
+7-8 major (outage/data loss/security), 9-10 critical. Probability is
+evidence-based; cite the denominator. Every row pairs sev with prob;
+every High/Critical row has a fault-injection test entry.

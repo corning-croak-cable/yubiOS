@@ -80,3 +80,19 @@ _Atomic RSI cycle-6 flip._
 - Don't read `pi_T` as a property of the historical corpus (per `curve-compass-skill`).
 
 _RSI cycle-7 atomic flip (gap-informed, NSS-axis(failure_modes))._
+
+
+## Failure modes -- cycle 14
+
+> Cycle-14 NSS-failure-modes gap-closure. Each row pairs severity with probability;
+> detection signal + recovery path + fault-injection test are required.
+> See `skills/github-yubios-KS9n5GAT/nss-failure-modes/SKILL.md` for the full taxonomy.
+
+| ID | What | Detection | Recovery | Sev | Prob. | Test |
+|---|---|---|---|---|---|---|
+| FM-001 | swtpm binary unavailable on runner; fTPM Stage B hangs | ci_test-vm.yml hangs at swtpm startup; no timeout | install swtpm in runner image; add 60s timeout | HIGH | Common | run with missing swtpm; assert fail-fast with 60s |
+
+**Envelope.** Severity scale: 1-2 negligible, 3-4 degraded, 5-6 operational,
+7-8 major (outage/data loss/security), 9-10 critical. Probability is
+evidence-based; cite the denominator. Every row pairs sev with prob;
+every High/Critical row has a fault-injection test entry.

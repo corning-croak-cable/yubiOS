@@ -179,3 +179,27 @@ _RSI cycle-7 atomic flip (gap-informed, NSS-axis(adjacent_problems))._
 #   validation:  mkosi rejects unknown settings; BASE_IMAGE_TAG must resolve to a quay.io digest
 #   failure:     build aborts with the offending argument name and the constraint that failed
 # _RSI cycle-9 atomic flip (NSS-axis(inputs))._
+
+
+# Failure modes -- cycle 14
+
+# Cycle-14 NSS-failure-modes gap-closure. Each row pairs severity with probability;
+# detection signal + recovery path + fault-injection test are required.
+# See skills/github-yubios-KS9n5GAT/nss-failure-modes/SKILL.md for the taxonomy.
+#
+#   FM-001 [HIGH, Likely]  stale base-image digest; build fails on quay.io 404
+#     why:        quay.io rotates fedora-bootc:45 digests aggressively (PROJECT_RULES 2026-07-30)
+#     detection:  podman/buildah error contains the old sha256; PINNED.md stale
+#     recovery:   dispatch fetch-fedora-bootc-manifest.yml; rebuild at new digest
+#     prevent:    treat digest as ephemeral; pre-check HEAD before build
+#     test:       pin a digest that 404s; assert workflow catches and re-resolves
+#   FM-002 [CRITICAL, Possible]  secret leaked into image history via ENV/ARG
+#     why:        ENV/ARG persists in image and docker history
+#     detection:  docker history shows the secret value; docker inspect shows the env
+#     recovery:   rotate the secret immediately; audit downstream consumers
+#     prevent:    --mount=type=secret,id=foo (BuildKit) only; never ENV/ARG a secret
+#     test:       grep image history for known-leaked marker; assert redaction
+#
+# Envelope: severity 1-2 negligible, 3-4 degraded, 5-6 operational,
+# 7-8 major (outage/data loss/security), 9-10 critical.
+# Probability is evidence-based; cite the denominator.

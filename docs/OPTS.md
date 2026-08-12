@@ -320,3 +320,19 @@ L1506 -- OPTS.md
   score:       39
   caveat:      NSS sweep is heuristic regex-based; full semantic audit would score differently
 ```
+
+
+## Failure modes -- cycle 14
+
+> Cycle-14 NSS-failure-modes gap-closure. Each row pairs severity with probability;
+> detection signal + recovery path + fault-injection test are required.
+> See `skills/github-yubios-KS9n5GAT/nss-failure-modes/SKILL.md` for the full taxonomy.
+
+| ID | What | Detection | Recovery | Sev | Prob. | Test |
+|---|---|---|---|---|---|---|
+| FM-001 | option documented but no example; users guess values | issue tracker full of "what value for X?" questions | add examples; cite working invocations | LOW | Common | remove example; assert lint fails |
+
+**Envelope.** Severity scale: 1-2 negligible, 3-4 degraded, 5-6 operational,
+7-8 major (outage/data loss/security), 9-10 critical. Probability is
+evidence-based; cite the denominator. Every row pairs sev with prob;
+every High/Critical row has a fault-injection test entry.

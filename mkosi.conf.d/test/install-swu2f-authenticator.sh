@@ -158,3 +158,21 @@ echo "install-swu2f-authenticator: passless ${PASSLESS_TAG} (${PASSLESS_COMMIT})
 #   validation:  deb SHA256 verified against the pinned value before dpkg -i
 #   failure:     set -e; dpkg errors propagate to mkosi and abort the build
 # _RSI cycle-9 atomic flip (NSS-axis(inputs))._
+
+
+# Failure modes -- cycle 14
+
+# Cycle-14 NSS-failure-modes gap-closure. Each row pairs severity with probability;
+# detection signal + recovery path + fault-injection test are required.
+# See skills/github-yubios-KS9n5GAT/nss-failure-modes/SKILL.md for the taxonomy.
+#
+#   FM-001 [HIGH, Possible]  swu2f authenticator binary not signed; kernel refuses
+#     why:        IMA or secure-boot enforcement active in test image
+#     detection:  execve returns EACCES; audit log shows signature failure
+#     recovery:   sign binary with test key; update IMA policy; rebuild
+#     prevent:    sign binary in script; pin key fingerprint
+#     test:       install unsigned binary; assert clear reject
+#
+# Envelope: severity 1-2 negligible, 3-4 degraded, 5-6 operational,
+# 7-8 major (outage/data loss/security), 9-10 critical.
+# Probability is evidence-based; cite the denominator.

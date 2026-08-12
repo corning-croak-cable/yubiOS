@@ -625,3 +625,19 @@ validation:  every workflow file must have a row in this map
 failure:     a workflow without a CI_MAP row breaks the dispatch-reachability check
 
 _RSI cycle-9 atomic flip (NSS-axis(inputs))._
+
+
+## Failure modes -- cycle 14
+
+> Cycle-14 NSS-failure-modes gap-closure. Each row pairs severity with probability;
+> detection signal + recovery path + fault-injection test are required.
+> See `skills/github-yubios-KS9n5GAT/nss-failure-modes/SKILL.md` for the full taxonomy.
+
+| ID | What | Detection | Recovery | Sev | Prob. | Test |
+|---|---|---|---|---|---|---|
+| FM-001 | CI map references workflow that no longer exists | grep map for workflow names; existence check fails | update map or remove dead references | LOW | Uncommon | delete a workflow; assert CI fails on map |
+
+**Envelope.** Severity scale: 1-2 negligible, 3-4 degraded, 5-6 operational,
+7-8 major (outage/data loss/security), 9-10 critical. Probability is
+evidence-based; cite the denominator. Every row pairs sev with prob;
+every High/Critical row has a fault-injection test entry.

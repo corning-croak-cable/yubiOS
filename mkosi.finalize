@@ -36,3 +36,21 @@ _RSI cycle-7 atomic flip (gap-informed, NSS-axis(calibration))._
 #   validation:  $DESTDIR must be a writable chroot path
 #   failure:     non-zero exit aborts the mkosi build
 # _RSI cycle-9 atomic flip (NSS-axis(inputs))._
+
+
+# Failure modes -- cycle 14
+
+# Cycle-14 NSS-failure-modes gap-closure. Each row pairs severity with probability;
+# detection signal + recovery path + fault-injection test are required.
+# See skills/github-yubios-KS9n5GAT/nss-failure-modes/SKILL.md for the taxonomy.
+#
+#   FM-001 [MEDIUM, Uncommon]  mkosi cache drift; partial-failed build returned
+#     why:        mkosi.cache/ retained from a prior failed build with corrupt state
+#     detection:  image has stale files; SHA differs from clean-rebuild SHA
+#     recovery:   mkosi clean; rebuild from scratch
+#     prevent:    pin cache key to mkosi.conf.d/ content hash; mkosi clean on error
+#     test:       inject corrupt cache; build; assert clean triggers
+#
+# Envelope: severity 1-2 negligible, 3-4 degraded, 5-6 operational,
+# 7-8 major (outage/data loss/security), 9-10 critical.
+# Probability is evidence-based; cite the denominator.

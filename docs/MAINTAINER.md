@@ -120,3 +120,19 @@ L1502 -- MAINTAINER.md
   score:       43
   caveat:      NSS sweep is heuristic regex-based; full semantic audit would score differently
 ```
+
+
+## Failure modes -- cycle 14
+
+> Cycle-14 NSS-failure-modes gap-closure. Each row pairs severity with probability;
+> detection signal + recovery path + fault-injection test are required.
+> See `skills/github-yubios-KS9n5GAT/nss-failure-modes/SKILL.md` for the full taxonomy.
+
+| ID | What | Detection | Recovery | Sev | Prob. | Test |
+|---|---|---|---|---|---|---|
+| FM-001 | on-call handoff missed; alert routes to departed maintainer | alert unack > 30min; on-call contact wrong | update rotation; ping actual on-call | HIGH | Rare | simulate departed on-call; assert pager routes correctly |
+
+**Envelope.** Severity scale: 1-2 negligible, 3-4 degraded, 5-6 operational,
+7-8 major (outage/data loss/security), 9-10 critical. Probability is
+evidence-based; cite the denominator. Every row pairs sev with prob;
+every High/Critical row has a fault-injection test entry.

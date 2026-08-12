@@ -135,3 +135,19 @@ _Atomic RSI cycle-6 flip._
 - Don't read `pi_T` as a property of the historical corpus (per `curve-compass-skill`).
 
 _RSI cycle-7 atomic flip (gap-informed, NSS-axis(failure_modes))._
+
+
+## Failure modes -- cycle 14
+
+> Cycle-14 NSS-failure-modes gap-closure. Each row pairs severity with probability;
+> detection signal + recovery path + fault-injection test are required.
+> See `skills/github-yubios-KS9n5GAT/nss-failure-modes/SKILL.md` for the full taxonomy.
+
+| ID | What | Detection | Recovery | Sev | Prob. | Test |
+|---|---|---|---|---|---|---|
+| FM-001 | detection methodology FPR > 5%; real signal missed | calibration pack shows power < 0.8 at threshold | re-calibrate; expand N; pre-register threshold | HIGH | Uncommon | apply to real corpus; assert detection rate > 0.8 |
+
+**Envelope.** Severity scale: 1-2 negligible, 3-4 degraded, 5-6 operational,
+7-8 major (outage/data loss/security), 9-10 critical. Probability is
+evidence-based; cite the denominator. Every row pairs sev with prob;
+every High/Critical row has a fault-injection test entry.

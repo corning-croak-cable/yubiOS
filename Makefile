@@ -68,3 +68,21 @@ _RSI cycle-7 atomic flip (gap-informed, NSS-axis(failure_modes))._
 #   validation:  make rejects unknown targets; each target validates its prereqs before running
 #   failure:     make exits non-zero with the failing recipe and the first error line
 # _RSI cycle-9 atomic flip (NSS-axis(inputs))._
+
+
+# Failure modes -- cycle 14
+
+# Cycle-14 NSS-failure-modes gap-closure. Each row pairs severity with probability;
+# detection signal + recovery path + fault-injection test are required.
+# See skills/github-yubios-KS9n5GAT/nss-failure-modes/SKILL.md for the taxonomy.
+#
+#   FM-001 [LOW, Common]  rule rebuilds every time despite nothing changed
+#     why:        missing phony target; missing prerequisite .PHONY
+#     detection:  make -n shows rebuild every invocation; CI slow
+#     recovery:   add .PHONY; pin prereqs; verify with make -n
+#     prevent:    .PHONY for all non-file targets; declare all prereqs
+#     test:       make -n twice; assert second invocation is no-op
+#
+# Envelope: severity 1-2 negligible, 3-4 degraded, 5-6 operational,
+# 7-8 major (outage/data loss/security), 9-10 critical.
+# Probability is evidence-based; cite the denominator.

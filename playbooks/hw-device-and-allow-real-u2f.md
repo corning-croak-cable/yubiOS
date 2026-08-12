@@ -102,3 +102,19 @@ validation:  ci_test-vm.yml must be dispatched with allow_real_u2f: true; sudo e
 failure:     the guard correctly refuses to run passless tests when a real key is detected -- this is safety, not a bug
 
 _RSI cycle-9 atomic flip (NSS-axis(inputs))._
+
+
+## Failure modes -- cycle 14
+
+> Cycle-14 NSS-failure-modes gap-closure. Each row pairs severity with probability;
+> detection signal + recovery path + fault-injection test are required.
+> See `skills/github-yubios-KS9n5GAT/nss-failure-modes/SKILL.md` for the full taxonomy.
+
+| ID | What | Detection | Recovery | Sev | Prob. | Test |
+|---|---|---|---|---|---|---|
+| FM-001 | recipe runs destructive test without allow_real_u2f; PR #144 guard refuses | real-u2f-guard logs refusal; workflow exits non-zero | opt in via allow_real_u2f: true; verify ALLOW_REAL_U2F=1 in step env | MEDIUM | Possible | run on arm64 with real key without flag; assert refusal path is documented |
+
+**Envelope.** Severity scale: 1-2 negligible, 3-4 degraded, 5-6 operational,
+7-8 major (outage/data loss/security), 9-10 critical. Probability is
+evidence-based; cite the denominator. Every row pairs sev with prob;
+every High/Critical row has a fault-injection test entry.

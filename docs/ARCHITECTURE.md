@@ -471,3 +471,19 @@ validation:  every module listed here must have a corresponding entry in docs/SP
 failure:     a module without a SPEC entry fails the spec-first development gate
 
 _RSI cycle-9 atomic flip (NSS-axis(inputs))._
+
+
+## Failure modes -- cycle 14
+
+> Cycle-14 NSS-failure-modes gap-closure. Each row pairs severity with probability;
+> detection signal + recovery path + fault-injection test are required.
+> See `skills/github-yubios-KS9n5GAT/nss-failure-modes/SKILL.md` for the full taxonomy.
+
+| ID | What | Detection | Recovery | Sev | Prob. | Test |
+|---|---|---|---|---|---|---|
+| FM-001 | architecture stale; module removed but doc not updated | grep architecture for module names; mismatch with code | update or delete stale sections; review-after stamp | MEDIUM | Possible | set review_after to past; assert CI fails |
+
+**Envelope.** Severity scale: 1-2 negligible, 3-4 degraded, 5-6 operational,
+7-8 major (outage/data loss/security), 9-10 critical. Probability is
+evidence-based; cite the denominator. Every row pairs sev with prob;
+every High/Critical row has a fault-injection test entry.

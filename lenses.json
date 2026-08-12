@@ -1,6 +1,6 @@
 {
   "schema": "rsi-compass-cycle13-nss-adjacent-problems-lens-pool/1.0.0",
-  "cycle": "cycle-13 (RSI NSS-Adjacent-problems gap-informed atomic per-file)",
+  "cycle": "cycle-13 (RSI NSS-Adjacent-problems gap-informed atomic per-file) + cycle-15 (NSS-Lifecycle)",
   "date": "2026-08-12",
   "repo": "yubi-OS/yubiOS",
   "branch": "feat/rsi-compass-cycle7-nss-research-2026-08-12",
@@ -15404,6 +15404,2500 @@
       "verdict": "YES",
       "score": 36,
       "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2081",
+      "id": "L2081-37dd68",
+      "file": "AGENTS.md",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2082",
+      "id": "L2082-ddd025",
+      "file": "PINNED.md",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2083",
+      "id": "L2083-8ec9a0",
+      "file": "README.md",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2084",
+      "id": "L2084-55b841",
+      "file": "SKILL.md",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2085",
+      "id": "L2085-8e3bc4",
+      "file": "new-ideas-2026-08-12.md",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2086",
+      "id": "L2086-715c38",
+      "file": "docs/ADR.md",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2087",
+      "id": "L2087-fd45fe",
+      "file": "docs/ARCHITECTURE.md",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2088",
+      "id": "L2088-0dd740",
+      "file": "docs/BLOCKERS.md",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2089",
+      "id": "L2089-172291",
+      "file": "docs/CITATION.md",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2090",
+      "id": "L2090-4d1e10",
+      "file": "docs/CI_MAP.md",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2091",
+      "id": "L2091-2e6b30",
+      "file": "refs/0pointer-poettering-systemd-vision-2026-07-23.md",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2092",
+      "id": "L2092-4238af",
+      "file": "refs/actions-checkout-v6-includeif-investigation-2026-07-29.md",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2093",
+      "id": "L2093-6bd8a9",
+      "file": "refs/adr-033-misbehavior-cutoff-policy-2026-07-28.md",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2094",
+      "id": "L2094-07cc22",
+      "file": "refs/adr-033-prior-art-search-2026-07-28.md",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2095",
+      "id": "L2095-543673",
+      "file": "refs/arm64-ftpm-phase-f0-2026-07-23.md",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2096",
+      "id": "L2096-0fcca9",
+      "file": "refs/arm64-path-a-b-board-status-2026-07-23.md",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2097",
+      "id": "L2097-fcc67d",
+      "file": "mkosi.conf.d/chipsec/install-chipsec.sh",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2098",
+      "id": "L2098-7281e1",
+      "file": "scripts/build-local-images.sh",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2099",
+      "id": "L2099-e54ff9",
+      "file": "scripts/lib/local-build-firmware.sh",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2100",
+      "id": "L2100-c34ad8",
+      "file": "scripts/lib/local-build-installer.sh",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2101",
+      "id": "L2101-6ee1fa",
+      "file": "scripts/lib/reproducible-build.sh",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2102",
+      "id": "L2102-d606c3",
+      "file": "scripts/assert-dispatch-reachable.py",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2103",
+      "id": "L2103-96fd21",
+      "file": "scripts/audit-workflow-tokens.py",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2104",
+      "id": "L2104-e552c6",
+      "file": "scripts/detect-fork-drift.py",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2105",
+      "id": "L2105-8cfc5a",
+      "file": "scripts/extract_uki_cmdline.py",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2106",
+      "id": "L2106-1a7bd3",
+      "file": "usr/lib/systemd/system/yubiOS-chipsec-firstboot.service",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2107",
+      "id": "L2107-ca3466",
+      "file": "usr/lib/systemd/system/yubiOS-enroll.service",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2108",
+      "id": "L2108-3a10dc",
+      "file": "usr/lib/udev/rules.d/70-yubiOS-hidraw.rules",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2109",
+      "id": "L2109-c2438a",
+      "file": "usr/lib/udev/rules.d/yubiOS-no-vfio-udev.rules",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2110",
+      "id": "L2110-412358",
+      "file": ".github/FUNDING.yml",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2111",
+      "id": "L2111-e1b143",
+      "file": "scripts/audit-workflow-tokens.allowlist.yaml",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2112",
+      "id": "L2112-b29f2f",
+      "file": "scripts/detect-fork-drift.upstream-map.yaml",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2113",
+      "id": "L2113-05a721",
+      "file": ".dockerignore",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2114",
+      "id": "L2114-24139d",
+      "file": ".gitattributes",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2115",
+      "id": "L2115-29946b",
+      "file": ".github/CODE_OF_CONDUCT.md",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2116",
+      "id": "L2116-32a778",
+      "file": "docs/FUTURE.md",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2117",
+      "id": "L2117-ec15fb",
+      "file": "docs/LEARN.md",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2118",
+      "id": "L2118-41ed75",
+      "file": "docs/MAINTAINER.md",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2119",
+      "id": "L2119-9336b0",
+      "file": "docs/MILESTONE.md",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2120",
+      "id": "L2120-160349",
+      "file": "docs/MISSION.md",
+      "hypothesis": "this file currently lacks a unified `## Lifecycle -- cycle 15` block covering stage + versioning + changelog + deprecation + migration + ADR-linkage + review cadence",
+      "method": "11-field NSS-lifecycle taxonomy sweep: identity + stage + versioning + changelog_category + deprecation + migration + removal_target + flag + sbom + adr + review",
+      "parameters": {
+        "axis": "lifecycle",
+        "primitive": "changelog",
+        "stage": "stable",
+        "versioning": "semver-2.0.0",
+        "introduced_in": "cycle-7",
+        "last_changed_in": "cycle-15",
+        "review_cadence_days": 90,
+        "next_review": "2026-11-12",
+        "seed": 20260812
+      },
+      "delta": {
+        "lifecycle_fields_added": [
+          "stage",
+          "versioning",
+          "changelog_category",
+          "deprecation",
+          "migration",
+          "removal_target",
+          "review_cadence"
+        ],
+        "stage": "stable",
+        "compat_promise": "lifecycle block is part of contract; future cycles add adjacent fields under Changed",
+        "deprecation_recorded": false,
+        "adr_link": null,
+        "lines_added": 15
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "field-level coverage heuristic; a stricter RFC 8594 / RFC 9745 / SBOM-evidence regex pass may surface sub-primitives"
+    },
+    {
+      "lens": "L2121",
+      "file": "Containerfile",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on Containerfile (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 2
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2122",
+      "file": "Containerfile.dev",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "dev",
+      "hypothesis": "Closing the failure_modes NSS gap on Containerfile.dev (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "dev",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2123",
+      "file": "Containerfile.uki",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "uki",
+      "hypothesis": "Closing the failure_modes NSS gap on Containerfile.uki (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "uki",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2124",
+      "file": "Makefile",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on Makefile (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2125",
+      "file": "mkosi.conf",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "conf",
+      "hypothesis": "Closing the failure_modes NSS gap on mkosi.conf (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "conf",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2126",
+      "file": "mkosi.finalize",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "finalize",
+      "hypothesis": "Closing the failure_modes NSS gap on mkosi.finalize (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "finalize",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2127",
+      "file": "mkosi.conf.d/chipsec/mkosi.conf",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "conf",
+      "hypothesis": "Closing the failure_modes NSS gap on mkosi.conf.d/chipsec/mkosi.conf (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "conf",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2128",
+      "file": "mkosi.conf.d/chipsec/install-chipsec.sh",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "sh",
+      "hypothesis": "Closing the failure_modes NSS gap on mkosi.conf.d/chipsec/install-chipsec.sh (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "sh",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2129",
+      "file": "mkosi.conf.d/desktop/mkosi.conf",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "conf",
+      "hypothesis": "Closing the failure_modes NSS gap on mkosi.conf.d/desktop/mkosi.conf (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "conf",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2130",
+      "file": "mkosi.conf.d/minimal/mkosi.conf",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "conf",
+      "hypothesis": "Closing the failure_modes NSS gap on mkosi.conf.d/minimal/mkosi.conf (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "conf",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2131",
+      "file": "mkosi.conf.d/surface-arm64/mkosi.conf",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "conf",
+      "hypothesis": "Closing the failure_modes NSS gap on mkosi.conf.d/surface-arm64/mkosi.conf (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "conf",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2132",
+      "file": "mkosi.conf.d/surface-x86/mkosi.conf",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "conf",
+      "hypothesis": "Closing the failure_modes NSS gap on mkosi.conf.d/surface-x86/mkosi.conf (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "conf",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2133",
+      "file": "mkosi.conf.d/test/mkosi.conf",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "conf",
+      "hypothesis": "Closing the failure_modes NSS gap on mkosi.conf.d/test/mkosi.conf (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "conf",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2134",
+      "file": "mkosi.conf.d/test/install-swu2f-authenticator.sh",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "sh",
+      "hypothesis": "Closing the failure_modes NSS gap on mkosi.conf.d/test/install-swu2f-authenticator.sh (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "sh",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2135",
+      "file": "mkosi.extra/etc/dracut.conf.d/99-yubios-reproducible.conf",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "conf",
+      "hypothesis": "Closing the failure_modes NSS gap on mkosi.extra/etc/dracut.conf.d/99-yubios-reproducible.conf (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "conf",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2136",
+      "file": "docs/ADR.md",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on docs/ADR.md (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2137",
+      "file": "docs/ARCHITECTURE.md",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on docs/ARCHITECTURE.md (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2138",
+      "file": "docs/CI_MAP.md",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on docs/CI_MAP.md (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2139",
+      "file": "docs/MAINTAINER.md",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on docs/MAINTAINER.md (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2140",
+      "file": "docs/MILESTONE.md",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on docs/MILESTONE.md (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2141",
+      "file": "docs/OPTS.md",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on docs/OPTS.md (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2142",
+      "file": "docs/THREAT_MODEL.md",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on docs/THREAT_MODEL.md (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2143",
+      "file": "AGENTS.md",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on AGENTS.md (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2144",
+      "file": "README.md",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on README.md (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2145",
+      "file": "playbooks/README.md",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on playbooks/README.md (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2146",
+      "file": "playbooks/digest-bump-recovery.md",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on playbooks/digest-bump-recovery.md (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2147",
+      "file": "playbooks/dispatch-chain-verification.md",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on playbooks/dispatch-chain-verification.md (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2148",
+      "file": "playbooks/drop-in-override-naming.md",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on playbooks/drop-in-override-naming.md (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2149",
+      "file": "playbooks/fido2-vm-e2e-recipe.md",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on playbooks/fido2-vm-e2e-recipe.md (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2150",
+      "file": "playbooks/github-token-vs-secrets.md",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on playbooks/github-token-vs-secrets.md (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2151",
+      "file": "playbooks/hw-device-and-allow-real-u2f.md",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on playbooks/hw-device-and-allow-real-u2f.md (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2152",
+      "file": "playbooks/sealed-uki-vm-debug.md",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on playbooks/sealed-uki-vm-debug.md (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2153",
+      "file": "refs/digest-bump-checklist-2026-07-25.md",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on refs/digest-bump-checklist-2026-07-25.md (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2154",
+      "file": "refs/ci-evidence-2026-07-21.md",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on refs/ci-evidence-2026-07-21.md (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2155",
+      "file": "refs/adr-033-misbehavior-cutoff-policy-2026-07-28.md",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on refs/adr-033-misbehavior-cutoff-policy-2026-07-28.md (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2156",
+      "file": "refs/bcvk-swtpm-ci-2026-07-23.md",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on refs/bcvk-swtpm-ci-2026-07-23.md (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2157",
+      "file": "refs/bootc-upgrade-rollback-sysext-portable-test-spec-2026-08-04.md",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on refs/bootc-upgrade-rollback-sysext-portable-test-spec-2026-08-04.md (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2158",
+      "file": "refs/covenant-conflict-policy-2026-07-25.md",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on refs/covenant-conflict-policy-2026-07-25.md (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
+    },
+    {
+      "lens": "L2159",
+      "file": "refs/differential-curve-use-case-skill-land-grab-detection-2026-08-04.md",
+      "nss_axis": "failure_modes",
+      "primitive_added": "anti-patterns",
+      "filetype": "md",
+      "hypothesis": "Closing the failure_modes NSS gap on refs/differential-curve-use-case-skill-land-grab-detection-2026-08-04.md (cycle-14 highest-priority Extend gap) adds at least one severity+probability pair, a detection signal, a recovery path, and a fault-injection test entry per row.",
+      "method": "cycle-14 NSS-failure-modes sweep -> Extend gap candidates -> atom closes with 1 atomic Failure modes -- cycle 14 section per file, file-type-aware comment syntax",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "failure_modes",
+        "ftype": "md",
+        "primitive": "anti-patterns",
+        "priority_index": 2
+      },
+      "delta": {
+        "nss_gaps_before": 12,
+        "nss_gaps_after": 11,
+        "axis_closed": "failure_modes",
+        "rows_added": 1
+      },
+      "verdict": "YES",
+      "score": 50,
+      "caveat": "severity/probability are local scales; fault-injection test entries are hypotheses until executed"
     }
   ],
   "top_3_picks": [
@@ -15500,5 +17994,53 @@
     "skill_content_sha": "abc1b99247409485881724521100d4d0d354fcce",
     "seed": 20260812
   },
-  "files_patched_cycle9": 40
+  "files_patched_cycle9": 40,
+  "lens_pool_cycle15_added": 40,
+  "cycle15_summary": {
+    "cycle": "cycle-15 (RSI NSS-Lifecycle gap-informed atomic per-file)",
+    "date": "2026-08-12",
+    "repo": "yubi-OS/yubiOS",
+    "branch": "feat/rsi-compass-cycle7-nss-research-2026-08-12",
+    "exclusions": [
+      "papers/",
+      ".github/workflows/"
+    ],
+    "nss_axes_focus_this_cycle": [
+      "lifecycle"
+    ],
+    "files_patched_cycle15": 40,
+    "lenses_added": 40,
+    "top_3_picks": [
+      {
+        "lens": "L2081",
+        "file": "AGENTS.md",
+        "score": 50,
+        "verdict": "YES"
+      },
+      {
+        "lens": "L2082",
+        "file": "PINNED.md",
+        "score": 47,
+        "verdict": "YES"
+      },
+      {
+        "lens": "L2083",
+        "file": "README.md",
+        "score": 45,
+        "verdict": "PARTIAL"
+      }
+    ]
+  },
+  "cycle14_summary": {
+    "cycle": "cycle-14 (RSI NSS-failure_modes deep research)",
+    "date": "2026-08-12",
+    "skill": "skills/github-yubios-KS9n5GAT/nss-failure-modes/SKILL.md",
+    "files_patched": 39,
+    "lenses_added": 39,
+    "nss_axis": "failure_modes",
+    "deep_research_source": "Google SRE Postmortem Culture, Atlassian blameless postmortem, Etsy Debriefing Facilitation Guide, Jeli How to Facilitate a Blameless Postmortem, IEC 60812 FMEA, AIAG-VDA 2019 AP, incident.io Investigations, FireHydrant Runbook Retrospectives, sysexits(3), errno(3), Win32 System Error Codes, Hillel Wayne on feature interactions, CWE-367 TOCTOU, Julia Evans on bash exit codes.",
+    "skill_content_sha": "07201ee5506f203e541dd68a47dfcf63845b1",
+    "seed": 20260812
+  },
+  "files_patched_cycle14": 39
 }
