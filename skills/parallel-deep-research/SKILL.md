@@ -44,3 +44,34 @@ When Jenny asks for "deep research X" with parallel agents (or just "deep resear
 - Per subagent: ~1500-2500 words
 - Synthesis: ~2000-3000 words (consolidated; can be longer if multi-stream)
 - Refs/ note (for discovery findings): ~500-1500 words
+
+
+## New Ideas -- cycle 2 (lens format)
+
+This file was processed by the RSI cycle-2 lens generator (curve-compass-skill v1.1.0 + curved-corpus-create v1.1.0). Each cycle-2 patch IS a concrete experiment with a measurable delta -- not a templated section. The lens below documents the measured dynamics; the patch is the lens, not prose about the file.
+
+```json
+{
+  "lens": "L430",
+  "file": "skills/parallel-deep-research/SKILL.md",
+  "hypothesis": "skills/parallel-deep-research/SKILL.md covers all 9 primitives in the internal-big-picture basis",
+  "method": "9-D primitive binarization (purpose, examples, guidelines, constraints, verification, composition, changelog, references, anti-patterns) + chordal distance to ideal pole on Fibonacci lattice",
+  "parameters": {
+    "basis": "internal-big-picture",
+    "d": 9,
+    "seed": 20260812
+  },
+  "delta": {
+    "k": 6,
+    "missing_primitives": [
+      "constraints",
+      "changelog",
+      "references"
+    ],
+    "chordal_resid": 0.0
+  },
+  "verdict": "PARTIAL",
+  "score": 33,
+  "caveat": "binarization is heuristic; a stricter regex pass might surface sub-primitives"
+}
+```

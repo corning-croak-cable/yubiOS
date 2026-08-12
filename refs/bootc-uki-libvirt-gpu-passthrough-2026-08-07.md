@@ -374,3 +374,32 @@ This artifact is intentionally framed as a research note, not a canonical spec. 
 
 Each step is **ordered** by impact x cost, descending. Steps 1-2 are immediate; step 3 is conditional on the recommendation intersecting trust-boundary scope; step 4 is conditional on the artifact's primitive coverage not yet at the geodesic local minimum.
 
+
+
+## New Ideas -- cycle 2 (lens format)
+
+This file was processed by the RSI cycle-2 lens generator (curve-compass-skill v1.1.0 + curved-corpus-create v1.1.0). Each cycle-2 patch IS a concrete experiment with a measurable delta -- not a templated section. The lens below documents the measured dynamics; the patch is the lens, not prose about the file.
+
+```json
+{
+  "lens": "L224",
+  "file": "refs/bootc-uki-libvirt-gpu-passthrough-2026-08-07.md",
+  "hypothesis": "refs/bootc-uki-libvirt-gpu-passthrough-2026-08-07.md covers all 9 primitives in the internal-big-picture basis",
+  "method": "9-D primitive binarization (purpose, examples, guidelines, constraints, verification, composition, changelog, references, anti-patterns) + chordal distance to ideal pole on Fibonacci lattice",
+  "parameters": {
+    "basis": "internal-big-picture",
+    "d": 9,
+    "seed": 20260812
+  },
+  "delta": {
+    "k": 8,
+    "missing_primitives": [
+      "changelog"
+    ],
+    "chordal_resid": 0.0
+  },
+  "verdict": "PARTIAL",
+  "score": 44,
+  "caveat": "binarization is heuristic; a stricter regex pass might surface sub-primitives"
+}
+```

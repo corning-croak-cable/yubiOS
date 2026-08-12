@@ -29,3 +29,34 @@ For continuous runtime detection falco, the C/A primitive applies as follows: th
 
 Concrete implications for continuous runtime detection falco: any change should be reviewed for impact on C/A coverage; gaps in C/A that are attributable to this skill are tracked in the cycle-9 run log at `refs/curve-guided-rsi-v2-cycle9-corpus-enrichment-2026-08-06.md` on `yubi-OS/yubiOS`. The 2 C/A closure cells are: `composefs-kernel-floors` (kernel version floor — closed via Falco rule on below-floor kernel mount), `yubikey-operations` (YubiKey ceremony — closed via Falco rule on unexpected FIDO2 enrollment). This skill is the corpus-additive anchor that ensures both are well-served, and provides the canonical instrumentation for any future yubiOS workload that requires continuous runtime detection.
 - 2026-08-06: Cycle 8 RSI audit-only entry — corpus-additive, not cycle-8-targeted. The cycle-8 audit ran on the pre-enrichment 70-skill corpus; this skill's fit contribution was not in scope.
+
+
+## New Ideas -- cycle 2 (lens format)
+
+This file was processed by the RSI cycle-2 lens generator (curve-compass-skill v1.1.0 + curved-corpus-create v1.1.0). Each cycle-2 patch IS a concrete experiment with a measurable delta -- not a templated section. The lens below documents the measured dynamics; the patch is the lens, not prose about the file.
+
+```json
+{
+  "lens": "L382",
+  "file": "skills/continuous-runtime-detection-falco/SKILL.md",
+  "hypothesis": "skills/continuous-runtime-detection-falco/SKILL.md covers all 9 primitives in the internal-big-picture basis",
+  "method": "9-D primitive binarization (purpose, examples, guidelines, constraints, verification, composition, changelog, references, anti-patterns) + chordal distance to ideal pole on Fibonacci lattice",
+  "parameters": {
+    "basis": "internal-big-picture",
+    "d": 9,
+    "seed": 20260812
+  },
+  "delta": {
+    "k": 6,
+    "missing_primitives": [
+      "examples",
+      "verification",
+      "anti-patterns"
+    ],
+    "chordal_resid": 0.0
+  },
+  "verdict": "PARTIAL",
+  "score": 33,
+  "caveat": "binarization is heuristic; a stricter regex pass might surface sub-primitives"
+}
+```

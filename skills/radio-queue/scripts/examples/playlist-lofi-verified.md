@@ -66,3 +66,35 @@ Both are great YouTube channels with stable IDs and huge audiences, but they don
 ## Verification history
 
 - 2026-08-05 — initial verification + queue trigger; all 6 IDs returned correct titles + ids via `--print title --print id --print duration`; durations measured at 113s / 175s / 185s / 299s / 1636s / 1647s respectively; daemon transitioned from the Jacob Collier set to this lo-fi set on rock1 end-to-end (queue.txt overwritten via base64 push).
+
+
+## New Ideas -- cycle 2 (lens format)
+
+This file was processed by the RSI cycle-2 lens generator (curve-compass-skill v1.1.0 + curved-corpus-create v1.1.0). Each cycle-2 patch IS a concrete experiment with a measurable delta -- not a templated section. The lens below documents the measured dynamics; the patch is the lens, not prose about the file.
+
+```json
+{
+  "lens": "L442",
+  "file": "skills/radio-queue/scripts/examples/playlist-lofi-verified.md",
+  "hypothesis": "skills/radio-queue/scripts/examples/playlist-lofi-verified.md covers all 9 primitives in the internal-big-picture basis",
+  "method": "9-D primitive binarization (purpose, examples, guidelines, constraints, verification, composition, changelog, references, anti-patterns) + chordal distance to ideal pole on Fibonacci lattice",
+  "parameters": {
+    "basis": "internal-big-picture",
+    "d": 9,
+    "seed": 20260812
+  },
+  "delta": {
+    "k": 5,
+    "missing_primitives": [
+      "guidelines",
+      "constraints",
+      "changelog",
+      "references"
+    ],
+    "chordal_resid": 0.0
+  },
+  "verdict": "PARTIAL",
+  "score": 28,
+  "caveat": "binarization is heuristic; a stricter regex pass might surface sub-primitives"
+}
+```

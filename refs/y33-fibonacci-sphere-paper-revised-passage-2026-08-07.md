@@ -201,3 +201,32 @@ Three things in this artifact's lineage were initially wrong or worth documentin
 
 3. **"Geodesic-only criterion diverges from cheapest-edit criterion."** Per `single-action-curve-rsi` Lemma 1, the geodesic-only criterion picks the primitive whose flip reduces chordal distance to the ideal pole the most. This is NOT the cheapest edit. The honest signal the atom exists to surface: a low-cost primitive flip might move the S^2 point AWAY from the ideal pole. Cycle 2+ re-runs the criterion and may pick a different primitive.
 
+
+
+## New Ideas -- cycle 2 (lens format)
+
+This file was processed by the RSI cycle-2 lens generator (curve-compass-skill v1.1.0 + curved-corpus-create v1.1.0). Each cycle-2 patch IS a concrete experiment with a measurable delta -- not a templated section. The lens below documents the measured dynamics; the patch is the lens, not prose about the file.
+
+```json
+{
+  "lens": "L333",
+  "file": "refs/y33-fibonacci-sphere-paper-revised-passage-2026-08-07.md",
+  "hypothesis": "refs/y33-fibonacci-sphere-paper-revised-passage-2026-08-07.md covers all 9 primitives in the internal-big-picture basis",
+  "method": "9-D primitive binarization (purpose, examples, guidelines, constraints, verification, composition, changelog, references, anti-patterns) + chordal distance to ideal pole on Fibonacci lattice",
+  "parameters": {
+    "basis": "internal-big-picture",
+    "d": 9,
+    "seed": 20260812
+  },
+  "delta": {
+    "k": 8,
+    "missing_primitives": [
+      "changelog"
+    ],
+    "chordal_resid": 0.0
+  },
+  "verdict": "PARTIAL",
+  "score": 44,
+  "caveat": "binarization is heuristic; a stricter regex pass might surface sub-primitives"
+}
+```

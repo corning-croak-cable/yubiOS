@@ -29,3 +29,36 @@ For least privilege pod security standards, the LP primitive applies as follows:
 
 Concrete implications for least privilege pod security standards: any change should be reviewed for impact on LP coverage; gaps in LP that are attributable to this skill are tracked in the cycle-9 run log at `refs/curve-guided-rsi-v2-cycle9-corpus-enrichment-2026-08-06.md` on `yubi-OS/yubiOS`. The 7 LP closure cells are: `browser-testing-with-devtools` (Chrome DevTools inherits Chrome sandbox), `code-review-and-quality` (review process enforces minimal-scope changes), `composefs-kernel-floors` (kernel mount options are LP at the FS layer), `frontend-ui-engineering` (RBAC-aware UI patterns), `observability-and-instrumentation` (scoped log collection), `shipping-and-launch` (deploy procedure scopes to least-necessary surfaces), `spec-driven-development` (requirements declare the smallest necessary scope). This skill is the corpus-additive anchor that ensures all 7 are well-served.
 - 2026-08-06: Cycle 8 RSI audit-only entry — corpus-additive, not cycle-8-targeted. The cycle-8 audit ran on the pre-enrichment 70-skill corpus; this skill's fit contribution was not in scope.
+
+
+## New Ideas -- cycle 2 (lens format)
+
+This file was processed by the RSI cycle-2 lens generator (curve-compass-skill v1.1.0 + curved-corpus-create v1.1.0). Each cycle-2 patch IS a concrete experiment with a measurable delta -- not a templated section. The lens below documents the measured dynamics; the patch is the lens, not prose about the file.
+
+```json
+{
+  "lens": "L422",
+  "file": "skills/least-privilege-pod-security-standards/SKILL.md",
+  "hypothesis": "skills/least-privilege-pod-security-standards/SKILL.md covers all 9 primitives in the internal-big-picture basis",
+  "method": "9-D primitive binarization (purpose, examples, guidelines, constraints, verification, composition, changelog, references, anti-patterns) + chordal distance to ideal pole on Fibonacci lattice",
+  "parameters": {
+    "basis": "internal-big-picture",
+    "d": 9,
+    "seed": 20260812
+  },
+  "delta": {
+    "k": 4,
+    "missing_primitives": [
+      "examples",
+      "constraints",
+      "verification",
+      "composition",
+      "anti-patterns"
+    ],
+    "chordal_resid": 0.0
+  },
+  "verdict": "PARTIAL",
+  "score": 22,
+  "caveat": "binarization is heuristic; a stricter regex pass might surface sub-primitives"
+}
+```

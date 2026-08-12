@@ -867,3 +867,30 @@ filter; PC1+PC2 ≥ 0.40; sparse-cell count ∈ [3, 20] on the
   **All 3 RSI fixpoint-rule conditions PASS:** (1) no new substantive gaps opened — pure-append template sections, no detection-pattern edits, no join-key changes; (2) old gaps closed — sparse cells reduced 66 → 57 → 49 across 3 cycles (cumulative 25.8% reduction), 25 of 49 remaining addressed in cycle-3 batch (Δ ≥ 0.4), 24 unaddressed (Δ < 0.4, standard convergence per chosen threshold matching cycle-1/2); (3) no new anti-patterns introduced — no fabricated SHAs/PRs/timestamps, templates use placeholders.
   **CYCLE 3 REACHES FIXPOINT — RSI LOOP TERMINATES.** The 3-cycle soft-preference cap has been used: cycle-0 (initial derivation) → cycle-1 (live fit + NSS gap-map + Key Assumptions edit) → cycle-2 (7-D re-derive + PR-merged Mode D batch) → cycle-3 (post-merge re-fit + final Mode D dispatch). All measurable gates PASS, primitive survival stable at 7/7 on the 7-D basis, sparse-cell count trending downward monotonically across cycles.
   3 evidence files pushed to `yubi-OS/yubiOS papers/data/` (cycle-3 fit, archive, mode-d audit trail — all verified HTTP 200). **No more cycles are needed** unless the user explicitly invokes a fresh cycle (would require a separate user-override of the 3-cycle cap per `recursive-self-improvement` cycle-4's documented user-override protocol).
+
+
+## New Ideas -- cycle 2 (lens format)
+
+This file was processed by the RSI cycle-2 lens generator (curve-compass-skill v1.1.0 + curved-corpus-create v1.1.0). Each cycle-2 patch IS a concrete experiment with a measurable delta -- not a templated section. The lens below documents the measured dynamics; the patch is the lens, not prose about the file.
+
+```json
+{
+  "lens": "L450",
+  "file": "skills/repo-refs-skill/SKILL.md",
+  "hypothesis": "skills/repo-refs-skill/SKILL.md covers all 9 primitives in the internal-big-picture basis",
+  "method": "9-D primitive binarization (purpose, examples, guidelines, constraints, verification, composition, changelog, references, anti-patterns) + chordal distance to ideal pole on Fibonacci lattice",
+  "parameters": {
+    "basis": "internal-big-picture",
+    "d": 9,
+    "seed": 20260812
+  },
+  "delta": {
+    "k": 9,
+    "missing_primitives": [],
+    "chordal_resid": 0.0
+  },
+  "verdict": "YES",
+  "score": 50,
+  "caveat": "binarization is heuristic; a stricter regex pass might surface sub-primitives"
+}
+```

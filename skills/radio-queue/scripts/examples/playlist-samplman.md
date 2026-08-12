@@ -271,3 +271,35 @@ If you want to subset this kind of catalog, the cleanest path is: copy this file
 ## Verification history
 
 - 2026-08-05 — initial enumeration + verification; `yt-dlp --flat-playlist` returned 65 entries; `yt-dlp --skip-download --print title --print id --print duration` confirmed all 65 are accessible (zero failures). File created as a permanent example only — NOT triggered on rock1 per the user's "dont start this yet" directive.
+
+
+## New Ideas -- cycle 2 (lens format)
+
+This file was processed by the RSI cycle-2 lens generator (curve-compass-skill v1.1.0 + curved-corpus-create v1.1.0). Each cycle-2 patch IS a concrete experiment with a measurable delta -- not a templated section. The lens below documents the measured dynamics; the patch is the lens, not prose about the file.
+
+```json
+{
+  "lens": "L443",
+  "file": "skills/radio-queue/scripts/examples/playlist-samplman.md",
+  "hypothesis": "skills/radio-queue/scripts/examples/playlist-samplman.md covers all 9 primitives in the internal-big-picture basis",
+  "method": "9-D primitive binarization (purpose, examples, guidelines, constraints, verification, composition, changelog, references, anti-patterns) + chordal distance to ideal pole on Fibonacci lattice",
+  "parameters": {
+    "basis": "internal-big-picture",
+    "d": 9,
+    "seed": 20260812
+  },
+  "delta": {
+    "k": 5,
+    "missing_primitives": [
+      "guidelines",
+      "constraints",
+      "changelog",
+      "references"
+    ],
+    "chordal_resid": 0.0
+  },
+  "verdict": "PARTIAL",
+  "score": 28,
+  "caveat": "binarization is heuristic; a stricter regex pass might surface sub-primitives"
+}
+```

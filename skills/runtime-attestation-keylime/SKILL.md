@@ -29,3 +29,35 @@ For runtime attestation keylime, the attestation primitive applies as follows: t
 
 Concrete implications for runtime attestation keylime: any change should be reviewed for impact on attestation coverage; gaps in attestation that are attributable to this skill are tracked in the cycle-9 run log at `refs/curve-guided-rsi-v2-cycle9-corpus-enrichment-2026-08-06.md` on `yubi-OS/yubiOS`. The 8 attestation closure cells are: `ci-cd-and-automation` (CI attestation generation), `composefs-kernel-floors` (signed catalog attestation), `incremental-implementation` (test-first discipline producing verification evidence), `performance-optimization` (measurement-based optimization evidence), `planning-and-task-breakdown` (acceptance criteria as attestation), `recursive-self-improvement` (gap-map audit trail), `shipping-and-launch` (production monitoring evidence), `the-cult` (follower check-in attestation). This skill is the corpus-additive anchor that ensures all 8 are well-served.
 - 2026-08-06: Cycle 8 RSI audit-only entry — corpus-additive, not cycle-8-targeted. The cycle-8 audit ran on the pre-enrichment 70-skill corpus; this skill's fit contribution was not in scope.
+
+
+## New Ideas -- cycle 2 (lens format)
+
+This file was processed by the RSI cycle-2 lens generator (curve-compass-skill v1.1.0 + curved-corpus-create v1.1.0). Each cycle-2 patch IS a concrete experiment with a measurable delta -- not a templated section. The lens below documents the measured dynamics; the patch is the lens, not prose about the file.
+
+```json
+{
+  "lens": "L455",
+  "file": "skills/runtime-attestation-keylime/SKILL.md",
+  "hypothesis": "skills/runtime-attestation-keylime/SKILL.md covers all 9 primitives in the internal-big-picture basis",
+  "method": "9-D primitive binarization (purpose, examples, guidelines, constraints, verification, composition, changelog, references, anti-patterns) + chordal distance to ideal pole on Fibonacci lattice",
+  "parameters": {
+    "basis": "internal-big-picture",
+    "d": 9,
+    "seed": 20260812
+  },
+  "delta": {
+    "k": 5,
+    "missing_primitives": [
+      "examples",
+      "constraints",
+      "composition",
+      "anti-patterns"
+    ],
+    "chordal_resid": 0.0
+  },
+  "verdict": "PARTIAL",
+  "score": 28,
+  "caveat": "binarization is heuristic; a stricter regex pass might surface sub-primitives"
+}
+```

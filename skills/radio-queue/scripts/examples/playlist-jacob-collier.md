@@ -59,3 +59,36 @@ curl -X POST "$BRIDGE/run" -d "$(python3 -c "import json; print(json.dumps({'com
 ## Verification history
 
 - 2026-08-05 — initial verification + queue trigger; all 6 IDs returned correct titles + ids via `--dump-single-json`; daemon transitioned from the upbeat playlist to this Jacob Collier set on rock1 end-to-end (queue.txt overwritten via base64 push).
+
+
+## New Ideas -- cycle 2 (lens format)
+
+This file was processed by the RSI cycle-2 lens generator (curve-compass-skill v1.1.0 + curved-corpus-create v1.1.0). Each cycle-2 patch IS a concrete experiment with a measurable delta -- not a templated section. The lens below documents the measured dynamics; the patch is the lens, not prose about the file.
+
+```json
+{
+  "lens": "L441",
+  "file": "skills/radio-queue/scripts/examples/playlist-jacob-collier.md",
+  "hypothesis": "skills/radio-queue/scripts/examples/playlist-jacob-collier.md covers all 9 primitives in the internal-big-picture basis",
+  "method": "9-D primitive binarization (purpose, examples, guidelines, constraints, verification, composition, changelog, references, anti-patterns) + chordal distance to ideal pole on Fibonacci lattice",
+  "parameters": {
+    "basis": "internal-big-picture",
+    "d": 9,
+    "seed": 20260812
+  },
+  "delta": {
+    "k": 4,
+    "missing_primitives": [
+      "guidelines",
+      "constraints",
+      "composition",
+      "changelog",
+      "references"
+    ],
+    "chordal_resid": 0.0
+  },
+  "verdict": "PARTIAL",
+  "score": 22,
+  "caveat": "binarization is heuristic; a stricter regex pass might surface sub-primitives"
+}
+```

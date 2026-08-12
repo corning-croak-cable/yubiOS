@@ -901,3 +901,30 @@ The closest cousin in the yubiOS repo is `drm-gpu-quota-secure-time` (per-cgroup
   - OQ4. What's the recovery story after SEVER? Fresh vfio-user socket + cold VM resume. A "clean room" vfio-user server with verified inputs is a downstream improvement.
 
 **Where the depth lives.** The ideation one-pager ([SOLO] V3 finalist, refs/adr-033-misbehavior-cutoff-policy-2026-07-28.md) and the prior-art search (refs/adr-033-prior-art-search-2026-07-28.md, 14 cited sources across the vfio-user / mdev / NVIDIA vGPU families) carry the long-form reasoning. This ADR is the decision anchor.
+
+
+## New Ideas -- cycle 2 (lens format)
+
+This file was processed by the RSI cycle-2 lens generator (curve-compass-skill v1.1.0 + curved-corpus-create v1.1.0). Each cycle-2 patch IS a concrete experiment with a measurable delta -- not a templated section. The lens below documents the measured dynamics; the patch is the lens, not prose about the file.
+
+```json
+{
+  "lens": "L170",
+  "file": "docs/ADR.md",
+  "hypothesis": "docs/ADR.md covers all 9 primitives in the internal-big-picture basis",
+  "method": "9-D primitive binarization (purpose, examples, guidelines, constraints, verification, composition, changelog, references, anti-patterns) + chordal distance to ideal pole on Fibonacci lattice",
+  "parameters": {
+    "basis": "internal-big-picture",
+    "d": 9,
+    "seed": 20260812
+  },
+  "delta": {
+    "k": 9,
+    "missing_primitives": [],
+    "chordal_resid": 0.0
+  },
+  "verdict": "YES",
+  "score": 50,
+  "caveat": "binarization is heuristic; a stricter regex pass might surface sub-primitives"
+}
+```

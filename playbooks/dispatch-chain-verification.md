@@ -88,3 +88,34 @@ Process playbook — backed by the recorded failure, not a green run.
 - Linear **OMN-150**. PRs **#150**, **#147** (`8b5b20b`), **#148** (`a49e95db`), **#145**. Run 30484718456.
 - `docs/CI_MAP.md` — group membership. `ci_test-ftpm-tpm0.yml`, `ci_test-fedora-bootc-arm64-pull.yml`, `ci_test-vgpu-vm.yml` are in **no** group; `group=all` silently misses them (Gap 9).
 - Playbooks: [digest-bump-recovery](digest-bump-recovery.md), [hw-device-and-allow-real-u2f](hw-device-and-allow-real-u2f.md), [sealed-uki-vm-debug](sealed-uki-vm-debug.md).
+
+
+## New Ideas -- cycle 2 (lens format)
+
+This file was processed by the RSI cycle-2 lens generator (curve-compass-skill v1.1.0 + curved-corpus-create v1.1.0). Each cycle-2 patch IS a concrete experiment with a measurable delta -- not a templated section. The lens below documents the measured dynamics; the patch is the lens, not prose about the file.
+
+```json
+{
+  "lens": "L204",
+  "file": "playbooks/dispatch-chain-verification.md",
+  "hypothesis": "playbooks/dispatch-chain-verification.md covers all 9 primitives in the internal-big-picture basis",
+  "method": "9-D primitive binarization (purpose, examples, guidelines, constraints, verification, composition, changelog, references, anti-patterns) + chordal distance to ideal pole on Fibonacci lattice",
+  "parameters": {
+    "basis": "internal-big-picture",
+    "d": 9,
+    "seed": 20260812
+  },
+  "delta": {
+    "k": 6,
+    "missing_primitives": [
+      "guidelines",
+      "constraints",
+      "composition"
+    ],
+    "chordal_resid": 0.0
+  },
+  "verdict": "PARTIAL",
+  "score": 33,
+  "caveat": "binarization is heuristic; a stricter regex pass might surface sub-primitives"
+}
+```

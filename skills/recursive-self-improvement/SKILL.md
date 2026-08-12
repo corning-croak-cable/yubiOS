@@ -482,3 +482,30 @@ Declarative policy relevance: schema-driven specification, config-as-code, and p
 This skill's bounded RSI loop is the per-cycle mechanism that drives both `curve-guided-rsi`'s Stage 4 and `single-action-curve-rsi`'s single-action cycle. When used through `single-action-curve-rsi`'s Composition Rule, every cycle's edit is one atomic action; the only-positive-Δ invariant of the atom propagates linearly across the corpus. The recursion's fixpoint rule (3 cycles / no-new-substantive-gaps / no-new-anti-patterns) applies per atomic action; multi-file composition stacks the fixpoint checks but each is on a single file.
 
 The stochastic RSI extensions introduced in cycle 5 compose with the Composition Rule by making the *prioritization signal* (which clusters to attack) and the *traversal order* (which corpus item next) stochastic. The atomic action itself remains deterministic — the curve-fit → primitive-flip → argmin Δ → verify-Δ-≥0 pipeline is unchanged. The extensions only modify WHAT and IN WHAT ORDER; the per-action Δ ≥ 0 invariant (Lemma 1) is preserved because the constraint set remains a subset of "all missing primitives" (Theorem 1 input condition).
+
+
+## New Ideas -- cycle 2 (lens format)
+
+This file was processed by the RSI cycle-2 lens generator (curve-compass-skill v1.1.0 + curved-corpus-create v1.1.0). Each cycle-2 patch IS a concrete experiment with a measurable delta -- not a templated section. The lens below documents the measured dynamics; the patch is the lens, not prose about the file.
+
+```json
+{
+  "lens": "L448",
+  "file": "skills/recursive-self-improvement/SKILL.md",
+  "hypothesis": "skills/recursive-self-improvement/SKILL.md covers all 9 primitives in the internal-big-picture basis",
+  "method": "9-D primitive binarization (purpose, examples, guidelines, constraints, verification, composition, changelog, references, anti-patterns) + chordal distance to ideal pole on Fibonacci lattice",
+  "parameters": {
+    "basis": "internal-big-picture",
+    "d": 9,
+    "seed": 20260812
+  },
+  "delta": {
+    "k": 9,
+    "missing_primitives": [],
+    "chordal_resid": 0.0
+  },
+  "verdict": "YES",
+  "score": 50,
+  "caveat": "binarization is heuristic; a stricter regex pass might surface sub-primitives"
+}
+```

@@ -105,3 +105,35 @@ sudo env "PATH=$PATH:/usr/sbin:/sbin" bcvk ephemeral exec "$VMID" -- \
 echo
 echo "Summary: 8/8 PASS (smoke test; real home enrollment requires YubiKey + --allow-real-u2f=1)"
 exit 0
+
+
+## New Ideas -- cycle 2 (lens format)
+
+This file was processed by the RSI cycle-2 lens generator (curve-compass-skill v1.1.0 + curved-corpus-create v1.1.0). Each cycle-2 patch IS a concrete experiment with a measurable delta -- not a templated section. The lens below documents the measured dynamics; the patch is the lens, not prose about the file.
+
+```json
+{
+  "lens": "L494",
+  "file": "tests/vm/test-homed-migrate.sh",
+  "hypothesis": "tests/vm/test-homed-migrate.sh covers all 9 primitives in the internal-big-picture basis",
+  "method": "9-D primitive binarization (purpose, examples, guidelines, constraints, verification, composition, changelog, references, anti-patterns) + chordal distance to ideal pole on Fibonacci lattice",
+  "parameters": {
+    "basis": "internal-big-picture",
+    "d": 9,
+    "seed": 20260812
+  },
+  "delta": {
+    "k": 5,
+    "missing_primitives": [
+      "examples",
+      "verification",
+      "changelog",
+      "anti-patterns"
+    ],
+    "chordal_resid": 0.0
+  },
+  "verdict": "PARTIAL",
+  "score": 28,
+  "caveat": "binarization is heuristic; a stricter regex pass might surface sub-primitives"
+}
+```
