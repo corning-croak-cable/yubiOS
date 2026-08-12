@@ -73,3 +73,8 @@ if __name__ == "__main__":
 # # ## Purpose
 # # """Multiline fish swim — bubbles above, fish body, water, sea floor. 150 frames @ 25fps.
 # # RSI cycle-6 atomic flip (`purpose`).
+
+
+# # ## Verification
+# # python3 fish_swim.py --selftest  # exits 0 iff GREEN, when applicable.
+# # RSI cycle-7 atomic flip (NSS-axis(calibration)).

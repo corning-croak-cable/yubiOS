@@ -157,3 +157,10 @@ Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.5943).
 - See sibling files in this directory for related examples.
 
 _Atomic RSI cycle-6 flip._
+
+
+## Purpose
+
+' must be preserved as the first line of the pushed file). Verify the push succeeded by GETting the file after the PUT; report back the new
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

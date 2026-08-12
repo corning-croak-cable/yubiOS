@@ -187,3 +187,11 @@ This skill manages cryptographic identity — FIDO2/CTAP2 YubiKey, softhsm/PKCS#
 - See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
 
 _Atomic RSI cycle-6 flip._
+
+
+## Examples
+
+- Reading `SKILL.md` (no args) shows the help text.
+- See sibling files in this directory for related examples.
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(inputs))._

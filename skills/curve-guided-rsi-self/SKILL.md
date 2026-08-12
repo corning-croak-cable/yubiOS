@@ -378,3 +378,10 @@ The whole-self output requirement (SELF.md Bias #11) is preserved as the structu
 - RSI cycle-6 lens pool: `lenses.json` at repo root
 
 _Atomic RSI cycle-6 flip._
+
+
+## Purpose
+
+name: curve-guided-rsi-self
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

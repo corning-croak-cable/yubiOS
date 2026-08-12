@@ -147,3 +147,8 @@ if __name__ == "__main__":
 # # ## Purpose
 # # """
 # # RSI cycle-6 atomic flip (`purpose`).
+
+
+# # ## Verification
+# # python3 play.py --selftest  # exits 0 iff GREEN, when applicable.
+# # RSI cycle-7 atomic flip (NSS-axis(calibration)).

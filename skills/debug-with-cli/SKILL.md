@@ -229,3 +229,10 @@ These were tried or evaluated before settling on the bridge pattern. Document wh
 - RSI cycle-6 lens pool: `lenses.json` at repo root
 
 _Atomic RSI cycle-6 flip._
+
+
+## Purpose
+
+name: debug-with-cli
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

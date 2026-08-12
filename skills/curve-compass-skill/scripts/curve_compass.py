@@ -822,3 +822,8 @@ if __name__ == "__main__":
 # # ## Examples
 # # python3 curve_compass.py --help
 # # RSI cycle-6 atomic flip (`examples`).
+
+
+# # ## Composition
+# # Sits next to sibling Python modules; see docs/ARCHITECTURE.md.
+# # RSI cycle-7 atomic flip (NSS-axis(adjacent_problems)).

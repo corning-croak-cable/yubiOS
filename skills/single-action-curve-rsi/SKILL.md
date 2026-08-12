@@ -288,3 +288,11 @@ This skill participates in the yubiOS root-of-trust chain — ROT/ROTPK, X.509 P
 ## Least-privilege coverage
 
 This skill applies least-privilege hardening: Linux capabilities (drop + ambient), ProtectSystem/ProtectHome, rootless execution, dynamic user, RBAC, PrivilegeBoundary. Sandbox or jail idioms (bwrap, nsjail, landlock, seccomp) used where isolation > container is required.
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows).
+- See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(assumption_set))._

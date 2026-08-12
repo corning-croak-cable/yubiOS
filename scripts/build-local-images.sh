@@ -396,3 +396,8 @@ fi
 # ## References
 # # yubi-OS/yubiOS repo; see docs/ARCHITECTURE.md.
 # # RSI cycle-6 atomic flip (`references`).
+
+
+# ## Composition
+# # Sits next to sibling files in this directory; see docs/ARCHITECTURE.md.
+# # RSI cycle-7 atomic flip (NSS-axis(adjacent_problems)).

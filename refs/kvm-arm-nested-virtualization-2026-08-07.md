@@ -272,3 +272,10 @@ Context: section appended per repo-refs-skill cycle-3 7-D Mode D batch (Δ=+0.59
 - Don't read pi_T as a property of the historical corpus (per `curve-compass-skill`).
 
 _Atomic RSI cycle-6 flip._
+
+
+## Purpose
+
+# KVM-on-ARM Nested Virtualization — Verification and Enablement
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

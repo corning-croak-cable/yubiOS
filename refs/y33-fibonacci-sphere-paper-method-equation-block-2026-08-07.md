@@ -222,3 +222,10 @@ Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.64
 **Related refs/ docs**: TBD.
 
 Context: section appended per repo-refs-skill cycle-3 7-D Mode D batch (Δ=+0.5900). TODO: refine per file context.
+
+
+## Purpose
+
+# Y_3^3 Spherical Harmonic + Fibonacci Sphere Sampling — Method Equation Block for learned-latent-curves-2026-08-06.tex
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

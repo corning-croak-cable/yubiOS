@@ -465,3 +465,7 @@ target "pq-tls-verify" {
 
 # Examples: see sibling HCL files in this directory.
 # RSI cycle-6 atomic flip.
+
+
+# Composition: sits next to sibling HCL files; see docs/ARCHITECTURE.md.
+# RSI cycle-7 atomic flip (NSS-axis(adjacent_problems)).

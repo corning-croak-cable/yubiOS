@@ -270,3 +270,10 @@ Full source lists are preserved in each stream's report (3 parallel subagent rep
 ## Continuous / adaptive coverage
 
 This document supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The document is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.
+
+
+## Purpose
+
+# Attested bootcâlibvirtâGPU cutover: prior art & novelty verdict
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

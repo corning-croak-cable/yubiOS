@@ -203,3 +203,11 @@ Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.43
 - See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
 
 _Atomic RSI cycle-6 flip._
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows).
+- See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(assumption_set))._

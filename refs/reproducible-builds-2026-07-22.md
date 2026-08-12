@@ -150,3 +150,10 @@ Context: section appended per repo-refs-skill cycle-3 7-D Mode D batch (Δ=+0.65
 - Don't read pi_T as a property of the historical corpus (per `curve-compass-skill`).
 
 _Atomic RSI cycle-6 flip._
+
+
+## Purpose
+
+# Reproducible build contract â 2026-07-22
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

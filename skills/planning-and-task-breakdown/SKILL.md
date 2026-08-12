@@ -280,3 +280,11 @@ The audit-trail entry: 2026-08-06 cycle 7 RSI — closed `trust chain` primitive
 ## Declarative policy coverage
 
 This skill integrates with the yubiOS declarative-policy substrate — OPA/Rego policy files, signing-config JSON, policy-as-code workflows. Policy gates are named at the integration point; policy evaluation is the gate, not an afterthought.
+
+
+## Anti-patterns
+
+- Don't claim structure without a null (per `curved-corpus-create` skill).
+- Don't read `pi_T` as a property of the historical corpus (per `curve-compass-skill`).
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(failure_modes))._

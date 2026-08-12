@@ -80,3 +80,11 @@ Default `false` is fail-safe (a hosted amd64 dispatch still detects a key someon
 ## Changelog
 
 - 2026-08-12 -- RSI cycle-6 atomic primitive flip (`changelog`). See root `new-ideas-2026-08-12.md`.
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows).
+- See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(assumption_set))._

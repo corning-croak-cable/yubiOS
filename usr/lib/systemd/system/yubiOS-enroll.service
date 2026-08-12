@@ -38,3 +38,7 @@ WantedBy=first-boot-complete.target
 
 # Verification: read yubiOS-enroll.service against this section; run relevant CI workflow (docs/CI_MAP.md).
 # RSI cycle-6 atomic flip (`verification`).
+
+
+# Verification: read yubiOS-enroll.service against this section; run relevant CI workflow (docs/CI_MAP.md).
+# RSI cycle-7 atomic flip (NSS-axis(calibration)).

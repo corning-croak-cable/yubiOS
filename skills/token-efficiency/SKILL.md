@@ -136,3 +136,10 @@ The audit-trail entry: 2026-08-06 cycle 7 RSI — closed `declarative policy` pr
 - See sibling files in this directory for related examples.
 
 _Atomic RSI cycle-6 flip._
+
+
+## Purpose
+
+name: token-efficiency
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

@@ -229,3 +229,10 @@ This skill supports the yubiOS continuous-monitoring layer — runtime detection
 - RSI cycle-6 lens pool: `lenses.json` at repo root
 
 _Atomic RSI cycle-6 flip._
+
+
+## Purpose
+
+name: idea-kill
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

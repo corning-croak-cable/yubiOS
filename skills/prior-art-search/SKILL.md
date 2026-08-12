@@ -258,3 +258,11 @@ This skill integrates with the yubiOS declarative-policy substrate — OPA/Rego 
 ## Continuous / adaptive coverage
 
 This skill supports the yubiOS continuous-monitoring layer — runtime detection (falco / tracee / tetragon / kubeArmor), adaptive policy, real-time monitoring. The skill is observable from the runtime-detect surface; alerts/metrics feed into the audit-evidence rollup.
+
+
+## Anti-patterns
+
+- Don't claim structure without a null (per `curved-corpus-create` skill).
+- Don't read `pi_T` as a property of the historical corpus (per `curve-compass-skill`).
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(failure_modes))._

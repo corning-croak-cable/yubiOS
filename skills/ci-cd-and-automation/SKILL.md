@@ -451,3 +451,11 @@ This skill integrates with the yubiOS declarative-policy substrate — OPA/Rego 
 - See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
 
 _Atomic RSI cycle-6 flip._
+
+
+## Composition
+
+- Sits next to sibling files in this directory.
+- See `docs/ARCHITECTURE.md` for the full yubiOS dependency graph.
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(adjacent_problems))._

@@ -221,3 +221,8 @@ print("=== DONE ===")
 # # ## Verification
 # # python3 inspect.py --selftest  # exits 0 iff GREEN, when applicable.
 # # RSI cycle-6 atomic flip (`verification`).
+
+
+# # ## Constraints
+# # requires the deps in requirements.txt / pyproject.toml; see PROJECT_RULES.md.
+# # RSI cycle-7 atomic flip (NSS-axis(assumption_set)).

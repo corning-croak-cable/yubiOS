@@ -38,3 +38,8 @@ echo "=== PASS: live /dev/tpm0 backed by ms-tpm-20-ref fTPM ($FTPM_UUID), PCR ex
 # ## Verification
 # # Run the relevant CI workflow on a draft branch (see docs/CI_MAP.md).
 # # RSI cycle-6 atomic flip (`verification`).
+
+
+# ## Anti-patterns
+# # Don't bypass PROJECT_RULES.md.
+# # RSI cycle-7 atomic flip (NSS-axis(failure_modes)).

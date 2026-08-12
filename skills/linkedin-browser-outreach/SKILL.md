@@ -111,3 +111,10 @@ This skill supports the yubiOS continuous-monitoring layer — runtime detection
 - See sibling files in this directory for related examples.
 
 _Atomic RSI cycle-6 flip._
+
+
+## Purpose
+
+name: linkedin-browser-outreach
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

@@ -242,3 +242,10 @@ The audit-trail entry: 2026-08-06 cycle 7 RSI — closed `least privilege` primi
 - RSI cycle-6 lens pool: `lenses.json` at repo root
 
 _Atomic RSI cycle-6 flip._
+
+
+## Purpose
+
+name: the-follower
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

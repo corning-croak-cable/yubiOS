@@ -225,3 +225,8 @@ echo "  systemd-cryptenroll --wipe-slot=password $LUKS_PART"
 # ## Examples
 # # ./test-luks-fido2.sh [args]
 # # RSI cycle-6 atomic flip (`examples`).
+
+
+# ## References
+# # yubi-OS/yubiOS repo; see docs/ARCHITECTURE.md.
+# # RSI cycle-7 atomic flip (NSS-axis(knowledge_sources)).

@@ -127,3 +127,10 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 - See sibling files in this directory for related examples.
 
 _Atomic RSI cycle-6 flip._
+
+
+## Purpose
+
+# yubiOS team, budget, and use of funds â Year 1 framework
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

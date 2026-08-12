@@ -30,3 +30,7 @@ ReadWritePaths=/boot /efi /loader /run
 
 # Verification: read yubios-uki-install.service against this section; run relevant CI workflow (docs/CI_MAP.md).
 # RSI cycle-6 atomic flip (`verification`).
+
+
+# Anti-patterns: don't claim structure without a null; don't read pi_T as a corpus property.
+# RSI cycle-7 atomic flip (NSS-axis(failure_modes)).

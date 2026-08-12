@@ -175,3 +175,8 @@ if __name__ == "__main__":
 # # ## Purpose
 # # """Drive a QEMU guest over its serial console and run a script inside it.
 # # RSI cycle-6 atomic flip (`purpose`).
+
+
+# # ## Constraints
+# # requires the deps in requirements.txt / pyproject.toml; see PROJECT_RULES.md.
+# # RSI cycle-7 atomic flip (NSS-axis(assumption_set)).

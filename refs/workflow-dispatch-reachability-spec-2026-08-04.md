@@ -254,3 +254,10 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 ## Segmentation coverage
 
 This document applies the yubiOS segmentation primitive — Linux namespaces, cgroups, sandbox, isolation boundary, trust boundary, jail idioms (nsjail, bwrap, firejail), landlock, seccomp. The boundary is named; the trust-domain transition is documented.
+
+
+## Purpose
+
+contract: "yubiOS workflow_dispatch reachability assertion script. Asserts every .github/workflows/*.yml file that defines a workflow_dispat
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

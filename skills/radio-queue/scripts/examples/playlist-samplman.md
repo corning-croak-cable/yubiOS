@@ -279,3 +279,11 @@ If you want to subset this kind of catalog, the cleanest path is: copy this file
 - See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
 
 _Atomic RSI cycle-6 flip._
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows).
+- See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(assumption_set))._

@@ -159,3 +159,10 @@ Quantitative anchors for the 8 stress tests. Verified via the commit-time signat
 - See sibling files in this directory for related examples.
 
 _Atomic RSI cycle-6 flip._
+
+
+## Purpose
+
+# yubiOS Adversarial Stress Test — Design Claims vs. Demonstrated Properties
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

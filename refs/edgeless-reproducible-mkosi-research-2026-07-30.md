@@ -357,3 +357,11 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 ## Changelog
 
 - 2026-08-12 -- RSI cycle-6 atomic primitive flip (`changelog`). See root `new-ideas-2026-08-12.md`.
+
+
+## Examples
+
+- Reading `edgeless-reproducible-mkosi-research-2026-07-30.md` (no args) shows the help text.
+- See sibling files in this directory for related examples.
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(mode))._

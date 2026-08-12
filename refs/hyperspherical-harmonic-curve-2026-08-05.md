@@ -129,3 +129,10 @@ Context: section appended per repo-refs-skill cycle-3 7-D Mode D batch (Δ=+0.46
 - See sibling files in this directory for related examples.
 
 _Atomic RSI cycle-6 flip._
+
+
+## Purpose
+
+# Hyperspherical Harmonic Curve [SOLO]
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

@@ -381,3 +381,11 @@ This skill integrates with the yubiOS declarative-policy substrate — OPA/Rego 
 - RSI cycle-6 lens pool: `lenses.json` at repo root
 
 _Atomic RSI cycle-6 flip._
+
+
+## Composition
+
+- Sits next to sibling files in this directory.
+- See `docs/ARCHITECTURE.md` for the full yubiOS dependency graph.
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(adjacent_problems))._

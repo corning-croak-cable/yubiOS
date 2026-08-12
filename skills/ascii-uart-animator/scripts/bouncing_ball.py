@@ -49,3 +49,8 @@ if __name__ == "__main__":
 # # ## Purpose
 # # """Bouncing ball — 9 frames, 10fps, no ANSI clear. Single ball 'o' arcing across '=' ground.
 # # RSI cycle-6 atomic flip (`purpose`).
+
+
+# # ## Anti-patterns
+# # Don't bypass PROJECT_RULES.md.
+# # RSI cycle-7 atomic flip (NSS-axis(failure_modes)).

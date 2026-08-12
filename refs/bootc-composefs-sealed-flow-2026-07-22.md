@@ -244,3 +244,10 @@ Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.83
 **One-line**: TBD per file context.
 
 Context: section appended per repo-refs-skill cycle-3 7-D Mode D batch (Δ=+0.6561). TODO: refine per file context.
+
+
+## Purpose
+
+# bootc composefs and sealed UKI flow â 2026-07-22
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

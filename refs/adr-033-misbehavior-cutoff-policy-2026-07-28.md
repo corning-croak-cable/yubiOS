@@ -142,3 +142,11 @@ This document manages cryptographic identity — FIDO2/CTAP2 YubiKey, softhsm/PK
 - See sibling files in this directory for related examples.
 
 _Atomic RSI cycle-6 flip._
+
+
+## Examples
+
+- Reading `adr-033-misbehavior-cutoff-policy-2026-07-28.md` (no args) shows the help text.
+- See sibling files in this directory for related examples.
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(mode))._

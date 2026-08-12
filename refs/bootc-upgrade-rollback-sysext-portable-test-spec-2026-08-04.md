@@ -1448,3 +1448,10 @@ The sealed-UKI VM lane (OMN-53, PR #155 GREEN at V83 on `sealed-uki-vm-lane-v2`)
 - RSI cycle-6 lens pool: `lenses.json` at repo root
 
 _Atomic RSI cycle-6 flip._
+
+
+## Purpose
+
+# Spec: bootc upgrade/rollback + sysext + portable-service VM test coverage
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

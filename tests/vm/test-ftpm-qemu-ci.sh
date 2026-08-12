@@ -249,3 +249,8 @@ log "PASS: Stage A firmware markers + in-guest verify-tpm0-pcr-extend.sh (live /
 # ## Examples
 # # ./test-ftpm-qemu-ci.sh [args]
 # # RSI cycle-6 atomic flip (`examples`).
+
+
+# ## Constraints
+# # requires root (for many scripts); see PROJECT_RULES.md for change-management.
+# # RSI cycle-7 atomic flip (NSS-axis(assumption_set)).

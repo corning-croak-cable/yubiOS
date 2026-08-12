@@ -185,3 +185,8 @@ log "PASS: enrollment surface + CTAP2 registration + OpenSSH ed25519-sk verified
 # ## Examples
 # # ./test-fido2-enrollment.sh [args]
 # # RSI cycle-6 atomic flip (`examples`).
+
+
+# ## Composition
+# # Sits next to sibling files in this directory; see docs/ARCHITECTURE.md.
+# # RSI cycle-7 atomic flip (NSS-axis(adjacent_problems)).

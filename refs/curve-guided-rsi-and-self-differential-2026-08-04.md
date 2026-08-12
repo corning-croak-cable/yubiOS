@@ -241,3 +241,11 @@ Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.8682).
 - Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
 
 _Atomic RSI cycle-6 flip._
+
+
+## Verification
+
+- Read `curve-guided-rsi-and-self-differential-2026-08-04.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(calibration))._

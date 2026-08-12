@@ -62,3 +62,8 @@ if __name__ == "__main__":
 # # ## Purpose
 # # r"""Walking stick figure — 4 cycling leg poses, walker moves right 2 px/frame. 120 frames @ 20fps.
 # # RSI cycle-6 atomic flip (`purpose`).
+
+
+# # ## Verification
+# # python3 walking_man.py --selftest  # exits 0 iff GREEN, when applicable.
+# # RSI cycle-7 atomic flip (NSS-axis(calibration)).

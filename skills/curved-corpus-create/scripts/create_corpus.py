@@ -822,3 +822,8 @@ if __name__ == "__main__":
 # # ## Examples
 # # python3 create_corpus.py --help
 # # RSI cycle-6 atomic flip (`examples`).
+
+
+# # ## Constraints
+# # requires the deps in requirements.txt / pyproject.toml; see PROJECT_RULES.md.
+# # RSI cycle-7 atomic flip (NSS-axis(assumption_set)).

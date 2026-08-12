@@ -393,3 +393,10 @@ Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.45
 - Don't read pi_T as a property of the historical corpus (per `curve-compass-skill`).
 
 _Atomic RSI cycle-6 flip._
+
+
+## Purpose
+
+# yubiOS Trust-Proof Playbook + Printable Checklist
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

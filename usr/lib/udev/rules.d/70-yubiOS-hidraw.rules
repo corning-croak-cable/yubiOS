@@ -24,3 +24,7 @@ ACTION=="add", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1050", \
 
 # Verification: read 70-yubiOS-hidraw.rules against this section; run relevant CI workflow (docs/CI_MAP.md).
 # RSI cycle-6 atomic flip (`verification`).
+
+
+# Verification: read 70-yubiOS-hidraw.rules against this section; run relevant CI workflow (docs/CI_MAP.md).
+# RSI cycle-7 atomic flip (NSS-axis(calibration)).

@@ -162,3 +162,11 @@ This document manages cryptographic identity — FIDO2/CTAP2 YubiKey, softhsm/PK
 - See sibling files in this directory for related examples.
 
 _Atomic RSI cycle-6 flip._
+
+
+## Verification
+
+- Read `entity-governance-legal-2026-07-25.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(calibration))._

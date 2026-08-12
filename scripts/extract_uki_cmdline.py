@@ -63,3 +63,8 @@ if __name__ == "__main__":
 # # ## Purpose
 # # """Extract the .cmdline PE section from a UKI (Unified Kernel Image).
 # # RSI cycle-6 atomic flip (`purpose`).
+
+
+# # ## Anti-patterns
+# # Don't bypass PROJECT_RULES.md.
+# # RSI cycle-7 atomic flip (NSS-axis(failure_modes)).

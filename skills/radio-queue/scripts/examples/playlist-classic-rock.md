@@ -69,3 +69,11 @@ curl -X POST "$BRIDGE/run" -d "$(python3 -c "import json,sys; print(json.dumps({
 - Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
 
 _Atomic RSI cycle-6 flip._
+
+
+## Verification
+
+- Read `playlist-classic-rock.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(calibration))._

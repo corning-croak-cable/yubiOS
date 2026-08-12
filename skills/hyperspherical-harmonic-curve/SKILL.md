@@ -113,3 +113,11 @@ This skill contributes to the yubiOS audit-evidence rollup — SBOM, SLSA proven
 - See `docs/STYLE.md` (if present) for the yubiOS style guide.
 
 _Atomic RSI cycle-6 flip._
+
+
+## Anti-patterns
+
+- Don't claim structure without a null (per `curved-corpus-create` skill).
+- Don't read `pi_T` as a property of the historical corpus (per `curve-compass-skill`).
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(failure_modes))._

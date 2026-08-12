@@ -92,3 +92,8 @@ if __name__ == "__main__":
 # # ## Purpose
 # # """Plays all 4 animations back-to-back to /dev/ttyS2:
 # # RSI cycle-6 atomic flip (`purpose`).
+
+
+# # ## Verification
+# # python3 play_all.py --selftest  # exits 0 iff GREEN, when applicable.
+# # RSI cycle-7 atomic flip (NSS-axis(calibration)).

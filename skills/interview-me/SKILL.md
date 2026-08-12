@@ -290,3 +290,11 @@ This skill supports the yubiOS continuous-monitoring layer — runtime detection
 - See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
 
 _Atomic RSI cycle-6 flip._
+
+
+## Composition
+
+- Sits next to sibling files in this directory.
+- See `docs/ARCHITECTURE.md` for the full yubiOS dependency graph.
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(adjacent_problems))._

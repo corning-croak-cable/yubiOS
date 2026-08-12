@@ -111,3 +111,8 @@ EOF
 # ## Examples
 # # ./real-u2f-guard.sh [args]
 # # RSI cycle-6 atomic flip (`examples`).
+
+
+# ## Anti-patterns
+# # Don't bypass PROJECT_RULES.md.
+# # RSI cycle-7 atomic flip (NSS-axis(failure_modes)).

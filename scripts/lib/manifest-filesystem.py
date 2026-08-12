@@ -184,3 +184,8 @@ if __name__ == "__main__":
 # # ## Verification
 # # python3 manifest-filesystem.py --selftest  # exits 0 iff GREEN, when applicable.
 # # RSI cycle-6 atomic flip (`verification`).
+
+
+# # ## Anti-patterns
+# # Don't bypass PROJECT_RULES.md.
+# # RSI cycle-7 atomic flip (NSS-axis(failure_modes)).

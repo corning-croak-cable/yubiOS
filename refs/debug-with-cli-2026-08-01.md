@@ -152,3 +152,10 @@ Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.43
 ## Changelog
 
 - 2026-08-12 -- RSI cycle-6 atomic primitive flip (`changelog`). See root `new-ideas-2026-08-12.md`.
+
+
+## Purpose
+
+# Debug with CLI â `debug-with-cli` skill (2026-08-01)
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

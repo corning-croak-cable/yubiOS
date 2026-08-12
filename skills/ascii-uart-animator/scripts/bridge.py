@@ -34,3 +34,8 @@ def frame_plain(line_repr):
 # # ## Purpose
 # # """Shared helpers for posting bash scripts to the rock1 shell bridge."""
 # # RSI cycle-6 atomic flip (`purpose`).
+
+
+# # ## Verification
+# # python3 bridge.py --selftest  # exits 0 iff GREEN, when applicable.
+# # RSI cycle-7 atomic flip (NSS-axis(calibration)).

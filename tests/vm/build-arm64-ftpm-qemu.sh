@@ -104,3 +104,8 @@ echo "== Build complete. In the booted guest run: tests/vm/verify-tpm0-pcr-exten
 # ## Examples
 # # ./build-arm64-ftpm-qemu.sh [args]
 # # RSI cycle-6 atomic flip (`examples`).
+
+
+# ## Constraints
+# # requires root (for many scripts); see PROJECT_RULES.md for change-management.
+# # RSI cycle-7 atomic flip (NSS-axis(assumption_set)).

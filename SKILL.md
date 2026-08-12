@@ -240,3 +240,10 @@ All scripts are pure bash + standard GNU userland (no Python deps on the device 
 ## Changelog
 
 - 2026-08-12 -- RSI cycle-6 atomic primitive flip (`changelog`). See root `new-ideas-2026-08-12.md`.
+
+
+## Purpose
+
+name: radio-queue
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

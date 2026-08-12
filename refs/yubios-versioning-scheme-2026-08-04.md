@@ -144,3 +144,10 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 - See sibling files in this directory for related examples.
 
 _Atomic RSI cycle-6 flip._
+
+
+## Purpose
+
+contract: "yubios versioning scheme â formal decision document for the de-facto scheme already in use as of v0.7.1 (first formal 'v'-prefi
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

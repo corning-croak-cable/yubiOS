@@ -96,3 +96,11 @@ This document upholds the yubiOS immutability layer — composefs repository, dm
 - Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
 
 _Atomic RSI cycle-6 flip._
+
+
+## Verification
+
+- Read `post-quantum-tls-adoption-2026-07-23.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(calibration))._

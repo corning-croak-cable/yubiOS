@@ -48,3 +48,8 @@ echo "  fido2-token -B get \$(fido2-token -L | awk 'NR==1{print \$1}')"
 # ## Examples
 # # ./enroll-largblob.sh [args]
 # # RSI cycle-6 atomic flip (`examples`).
+
+
+# ## Anti-patterns
+# # Don't bypass PROJECT_RULES.md.
+# # RSI cycle-7 atomic flip (NSS-axis(failure_modes)).

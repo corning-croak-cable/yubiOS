@@ -141,3 +141,8 @@ echo "install-swu2f-authenticator: passless ${PASSLESS_TAG} (${PASSLESS_COMMIT})
 # ## Examples
 # # ./install-swu2f-authenticator.sh [args]
 # # RSI cycle-6 atomic flip (`examples`).
+
+
+# ## Constraints
+# # requires root (for many scripts); see PROJECT_RULES.md for change-management.
+# # RSI cycle-7 atomic flip (NSS-axis(assumption_set)).

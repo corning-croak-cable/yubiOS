@@ -427,3 +427,10 @@ This skill supports the yubiOS continuous-monitoring layer — runtime detection
 
 This skill manages cryptographic identity — FIDO2/CTAP2 YubiKey, softhsm/PKCS#11/TPM, HSM-backed keys, key attestation. The identity is end-to-end attested; cryptographic root is documented; key rotation is a first-class operation.
 
+
+
+## Purpose
+
+name: internal-nonlex-tokens
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

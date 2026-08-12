@@ -184,3 +184,8 @@ log "PASS: virtio-gpu device model + guest DRM nodes + negative VFIO surface"
 # ## Examples
 # # ./test-vgpu-virtio-ci.sh [args]
 # # RSI cycle-6 atomic flip (`examples`).
+
+
+# ## Composition
+# # Sits next to sibling files in this directory; see docs/ARCHITECTURE.md.
+# # RSI cycle-7 atomic flip (NSS-axis(adjacent_problems)).

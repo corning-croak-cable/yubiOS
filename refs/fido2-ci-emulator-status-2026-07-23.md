@@ -92,3 +92,10 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 - See `docs/ARCHITECTURE.md` for the full yubiOS dependency graph.
 
 _Atomic RSI cycle-6 flip._
+
+
+## Purpose
+
+# FIDO2 Software Emulator for CI â Research Findings
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

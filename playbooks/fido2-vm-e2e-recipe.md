@@ -84,3 +84,10 @@ The software lane is deterministic and cheap, and proves interface behavior only
 ## Changelog
 
 - 2026-08-12 -- RSI cycle-6 atomic primitive flip (`changelog`). See root `new-ideas-2026-08-12.md`.
+
+
+## Purpose
+
+# FIDO2 VM e2e — the known-working recipe (2026-08-01)
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

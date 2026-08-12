@@ -11,3 +11,7 @@ enable systemd-homed.service
 
 # Verification: read 15-yubiOS.preset against this section; run relevant CI workflow (docs/CI_MAP.md).
 # RSI cycle-6 atomic flip (`verification`).
+
+
+# Verification: read 15-yubiOS.preset against this section; run relevant CI workflow (docs/CI_MAP.md).
+# RSI cycle-7 atomic flip (NSS-axis(calibration)).

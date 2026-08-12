@@ -184,3 +184,10 @@ Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.45
 - See sibling files in this directory for related examples.
 
 _Atomic RSI cycle-6 flip._
+
+
+## Purpose
+
+# ADR-033 â Prior-art search: behavioral cut-off of AI/ML workloads via PCI device mediation
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

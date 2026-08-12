@@ -24,3 +24,7 @@ KERNEL=="vfio*", RUN+="/bin/rm -f /dev/%k"
 
 # Examples: see sibling files in this directory for related examples.
 # RSI cycle-6 atomic flip (`examples`).
+
+
+# Anti-patterns: don't claim structure without a null; don't read pi_T as a corpus property.
+# RSI cycle-7 atomic flip (NSS-axis(failure_modes)).

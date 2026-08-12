@@ -193,3 +193,8 @@ log "PASS: vfio-user client/server handshake over an owner-only unix socket, no 
 # ## Examples
 # # ./test-vfio-user-host-ci.sh [args]
 # # RSI cycle-6 atomic flip (`examples`).
+
+
+# ## Composition
+# # Sits next to sibling files in this directory; see docs/ARCHITECTURE.md.
+# # RSI cycle-7 atomic flip (NSS-axis(adjacent_problems)).

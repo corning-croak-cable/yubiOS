@@ -206,3 +206,10 @@ Three things in this artifact's lineage were initially wrong or worth documentin
 ## Changelog
 
 - 2026-08-12 -- RSI cycle-6 atomic primitive flip (`changelog`). See root `new-ideas-2026-08-12.md`.
+
+
+## Purpose
+
+# YâÂ³ + Fibonacci Sphere â Revised Passage Patch for `learned-latent-curves-2026-08-06.tex`
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

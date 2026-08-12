@@ -157,3 +157,11 @@ This document upholds the yubiOS immutability layer — composefs repository, dm
 ## Changelog
 
 - 2026-08-12 -- RSI cycle-6 atomic primitive flip (`changelog`). See root `new-ideas-2026-08-12.md`.
+
+
+## Verification
+
+- Read `pilot-collateral-roi-baseline-2026-07-25.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(calibration))._

@@ -112,3 +112,7 @@ reason := "Build allowed." if allow
 
 # Verification: run opa test on this policy.
 # RSI cycle-6 atomic flip.
+
+
+# Composition: sits next to sibling .rego files; see docs/ARCHITECTURE.md.
+# RSI cycle-7 atomic flip (NSS-axis(adjacent_problems)).

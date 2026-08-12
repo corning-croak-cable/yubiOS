@@ -235,3 +235,8 @@ log "PASS: swtpm + swu2f CTAP2 + LUKS2 FIDO2 + homed FIDO2 verified"
 # ## Examples
 # # ./test-luks-fido2-ci.sh [args]
 # # RSI cycle-6 atomic flip (`examples`).
+
+
+# ## Composition
+# # Sits next to sibling files in this directory; see docs/ARCHITECTURE.md.
+# # RSI cycle-7 atomic flip (NSS-axis(adjacent_problems)).

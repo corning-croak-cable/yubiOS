@@ -198,3 +198,8 @@ if __name__ == "__main__":
 # # ## Purpose
 # # """Explain byte differences between two OCI image-layout directories."""
 # # RSI cycle-6 atomic flip (`purpose`).
+
+
+# # ## Verification
+# # python3 diagnose-oci-layout.py --selftest  # exits 0 iff GREEN, when applicable.
+# # RSI cycle-7 atomic flip (NSS-axis(calibration)).

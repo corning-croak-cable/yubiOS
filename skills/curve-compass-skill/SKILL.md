@@ -417,3 +417,11 @@ Sauna, wave 2. Built against `papers/is-this-x-2026-08-12.md`
 (sections 3-8, and section 7 in particular), the evidence bundle's
 `tests/T3-results.json`, and the `curved-corpus-create` and
 `guided-curve-ideate` SKILL.md exemplars.
+
+
+## Composition
+
+- Sits next to sibling files in this directory.
+- See `docs/ARCHITECTURE.md` for the full yubiOS dependency graph.
+
+_RSI cycle-7 atomic flip (gap-informed, NSS-axis(adjacent_problems))._

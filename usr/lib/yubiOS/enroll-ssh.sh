@@ -59,3 +59,8 @@ echo "GitHub: Settings -> SSH Keys -> New -> paste the public key above."
 # ## Examples
 # # ./enroll-ssh.sh [args]
 # # RSI cycle-6 atomic flip (`examples`).
+
+
+# ## Anti-patterns
+# # Don't bypass PROJECT_RULES.md.
+# # RSI cycle-7 atomic flip (NSS-axis(failure_modes)).
