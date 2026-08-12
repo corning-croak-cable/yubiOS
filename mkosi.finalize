@@ -8,3 +8,11 @@ set -euo pipefail
 # not stable across otherwise identical package transactions, and the runtime
 # linker uses /etc/ld.so.cache rather than this auxiliary cache.
 rm -f -- "$BUILDROOT/var/cache/ldconfig/aux-cache"
+
+
+## Verification
+
+- Read `mkosi.finalize` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

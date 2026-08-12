@@ -56,3 +56,8 @@ echo "=== PASS: PKCS#11 URI valid, systemd-sbsign works with libykcs11 ==="
 echo "Use this URI in mkosi:"
 echo "  SecureBootKey=pkcs11:manufacturer=piv_II;id=%9c;type=private"
 echo "  SecureBootKeySource=engine:pkcs11"
+
+
+# ## Examples
+# # ./validate-pkcs11-uri.sh [args]
+# # RSI cycle-6 atomic flip (`examples`).

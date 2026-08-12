@@ -65,3 +65,8 @@ echo "On next boot: touch YubiKey when prompted, enter FIDO2 PIN."
 echo ""
 echo "To remove passphrase slot (only after confirming FIDO2 works):"
 echo "  systemd-cryptenroll --wipe-slot=password $LUKS_PART"
+
+
+# ## Verification
+# # Run the relevant CI workflow on a draft branch (see docs/CI_MAP.md).
+# # RSI cycle-6 atomic flip (`verification`).

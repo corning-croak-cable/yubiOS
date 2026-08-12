@@ -75,3 +75,8 @@ echo "  4. Enroll Platform Key from file -> yubiOS-sb.cer"
 echo ""
 echo "Or with sbctl (if UEFI is in Setup Mode):"
 echo "  sbctl enroll-keys --microsoft"
+
+
+# ## Verification
+# # Run the relevant CI workflow on a draft branch (see docs/CI_MAP.md).
+# # RSI cycle-6 atomic flip (`verification`).

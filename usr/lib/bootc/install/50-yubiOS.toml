@@ -54,3 +54,7 @@ kargs = ["root=dissect", "mount.usr=dissect", "rw", "audit=0"]
 # run 30152891747). This file is the only usr/lib/bootc/install/*.toml in the
 # repo, so there is no other config to conflict with.
 type = "ext4"
+
+
+# Verification: read 50-yubiOS.toml against this section; run relevant CI workflow (docs/CI_MAP.md).
+# RSI cycle-6 atomic flip (`verification`).

@@ -87,3 +87,8 @@ if __name__ == "__main__":
     status, elapsed, resp = post_to_bridge(body, timeout=180)
     print(f"HTTP {status}  elapsed={elapsed:.2f}s")
     print("RESPONSE:", resp)
+
+
+# # ## Purpose
+# # """Plays all 4 animations back-to-back to /dev/ttyS2:
+# # RSI cycle-6 atomic flip (`purpose`).

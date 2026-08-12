@@ -273,3 +273,11 @@ Concrete pass/fail rules that an operator (or CI gate) can execute to verify the
 
 **Operator rule**: the artifact is PASS only when all 5 rule rows above report PASS. Each rule is a single command the operator (or CI gate) executes.
 
+
+
+## Examples
+
+- Reading `yubios-scamper-product-brief-investor-memo-2026-08-07.md` (no args) shows the help text.
+- See sibling files in this directory for related examples.
+
+_Atomic RSI cycle-6 flip._

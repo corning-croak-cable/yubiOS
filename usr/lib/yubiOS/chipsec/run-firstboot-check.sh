@@ -79,3 +79,8 @@ TIMESTAMP=$(date -u +%FT%TZ)
 EOF
 
 log "yubiOS first-boot firmware validation complete: $OVERALL"
+
+
+# ## Verification
+# # Run the relevant CI workflow on a draft branch (see docs/CI_MAP.md).
+# # RSI cycle-6 atomic flip (`verification`).

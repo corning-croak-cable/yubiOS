@@ -53,3 +53,11 @@ curl -X POST "$BRIDGE/run" -d "$(python3 -c "import json; print(json.dumps({'com
 ## Verification history
 
 - 2026-08-05 — initial verification + deployment; all 6 IDs returned correct titles + ids via `--dump-single-json`; daemon successfully downloaded + transcoded + played them on rock1 end-to-end.
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows).
+- See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
+
+_Atomic RSI cycle-6 flip._

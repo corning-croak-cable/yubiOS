@@ -258,3 +258,11 @@ holds on the synthetic corpus** — the atom's invariant is preserved.
 - 2026-08-06 (this PR): v0.1.0 — initial harness + 10-seed falsification sweep.
   Result: T1 100%, T2 40%, T3 100%, overall 40%. The harness correctly fires
   the falsification signal on the sparse-cell recovery rate.
+
+
+## Verification
+
+- Read `fractalrabbit-falsification-harness-2026-08-06.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

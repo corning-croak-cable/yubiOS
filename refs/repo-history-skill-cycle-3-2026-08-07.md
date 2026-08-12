@@ -90,3 +90,11 @@ All 16 isolated items have a missing primitive whose flip reduces geodesic dista
 - Skill upstream: `hyperspherical-harmonic-curve` SKILL.md §Lifecycle (re-fit cadence), §Möbius refinement strategy (frozen at identity)
 - RSI protocol: `recursive-self-improvement` SKILL.md (cycle cap, fixpoint rule, fresh-context subagent)
 - NSS sweep: `negative-skill-space` SKILL.md (12-axis gap map for cycle 4+)
+
+
+## Verification
+
+- Read `repo-history-skill-cycle-3-2026-08-07.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

@@ -9,3 +9,8 @@ if awk '$2 == "/" && $3 == "virtiofs" { found=1 } END { exit found ? 0 : 1 }' /p
 fi
 
 exit 0
+
+
+# ## Purpose
+# # set -euo pipefail
+# # RSI cycle-6 atomic flip (`purpose`).

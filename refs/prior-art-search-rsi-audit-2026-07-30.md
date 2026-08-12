@@ -149,3 +149,11 @@ This document manages cryptographic identity — FIDO2/CTAP2 YubiKey, softhsm/PK
 **Owner**: TBD
 
 Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.5943). TODO: refine per file context.
+
+
+## Examples
+
+- Reading `prior-art-search-rsi-audit-2026-07-30.md` (no args) shows the help text.
+- See sibling files in this directory for related examples.
+
+_Atomic RSI cycle-6 flip._

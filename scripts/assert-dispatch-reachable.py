@@ -253,3 +253,8 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+# # ## Examples
+# # python3 assert-dispatch-reachable.py --help
+# # RSI cycle-6 atomic flip (`examples`).

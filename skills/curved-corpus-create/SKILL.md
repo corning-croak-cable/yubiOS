@@ -426,3 +426,12 @@ parameters, delta, verdict, score, caveat all present; verdict in
 Sauna, wave 2. Built against `papers/playbooks/rsi-regime.md`, the
 `guided-curve-ideate` (cycle-34) and `single-action-atom` SKILL.md
 exemplars, the wave-1 big-picture memo, the wave-1 Hodge pivot memo.
+
+
+## References
+
+- yubiOS repo: `yubi-OS/yubiOS`
+- Architecture: `docs/ARCHITECTURE.md`
+- RSI cycle-6 lens pool: `lenses.json` at repo root
+
+_Atomic RSI cycle-6 flip._

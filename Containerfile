@@ -151,3 +151,11 @@ RUN set -- /usr/lib/modules/*/ && \
     lsinitrd "/usr/lib/modules/$kver/initramfs.img" > /tmp/yubiOS-initramfs-listing.txt && \
     { ! grep -q "/vfio\.ko" /tmp/yubiOS-initramfs-listing.txt; } && \
     rm -f /tmp/yubiOS-initramfs-listing.txt
+
+
+## Verification
+
+- Read `Containerfile` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

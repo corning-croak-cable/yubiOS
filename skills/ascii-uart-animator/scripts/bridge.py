@@ -29,3 +29,8 @@ def frame_ansi(line_repr):
 def frame_plain(line_repr):
     """printf line that writes one frame with no prefix (scrolls)."""
     return f"printf '%b\\n' {line_repr} > /dev/ttyS2"
+
+
+# # ## Purpose
+# # """Shared helpers for posting bash scripts to the rock1 shell bridge."""
+# # RSI cycle-6 atomic flip (`purpose`).

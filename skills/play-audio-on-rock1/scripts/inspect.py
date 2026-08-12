@@ -216,3 +216,8 @@ for cid, shortname in cards:
 
 print()
 print("=== DONE ===")
+
+
+# # ## Verification
+# # python3 inspect.py --selftest  # exits 0 iff GREEN, when applicable.
+# # RSI cycle-6 atomic flip (`verification`).

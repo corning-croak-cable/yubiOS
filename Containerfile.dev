@@ -127,3 +127,10 @@ RUN install -d /usr/lib/systemd/system/multi-user.target.wants && \
 
 LABEL yubiOS.image.kind="dev-test"
 LABEL yubiOS.image.warning="TEST-ONLY: ships the passless swu2f software FIDO2 authenticator AND serial/tty root autologin (local-access bypass of pam_u2f). Never use in production. See ADR-003, ADR-026."
+
+## Examples
+
+- Reading `Containerfile.dev` (no args) shows the help text.
+- See sibling files in this directory for related examples.
+
+_Atomic RSI cycle-6 flip._

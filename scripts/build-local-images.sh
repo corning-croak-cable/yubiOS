@@ -391,3 +391,8 @@ if [[ "${YUBIOS_LOCAL_DHI:-0}" == 1 ]]; then
 else
     run_on_host "$MODE"
 fi
+
+
+# ## References
+# # yubi-OS/yubiOS repo; see docs/ARCHITECTURE.md.
+# # RSI cycle-6 atomic flip (`references`).

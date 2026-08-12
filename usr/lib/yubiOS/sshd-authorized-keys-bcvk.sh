@@ -55,3 +55,8 @@ for credential in "${tmpfiles_candidates[@]}"; do
   key="$(printf '%s' "$encoded_key" | base64 --decode 2>/dev/null || true)"
   emit_key "$key" && exit 0
 done
+
+
+# ## Verification
+# # Run the relevant CI workflow on a draft branch (see docs/CI_MAP.md).
+# # RSI cycle-6 atomic flip (`verification`).

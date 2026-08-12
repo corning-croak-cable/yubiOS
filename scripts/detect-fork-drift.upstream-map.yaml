@@ -25,3 +25,7 @@ forks:
   - fork: mkosi
     upstream: systemd/mkosi
     upstream_branch: main
+
+
+# Verification: run the relevant CI workflow.
+# RSI cycle-6 atomic flip.

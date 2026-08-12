@@ -221,3 +221,8 @@ while true; do
   # immediately. If it's still running (very rare — download > playback),
   # Phase 1 will sleep briefly then swap when ready.
 done
+
+
+# ## Verification
+# # Run the relevant CI workflow on a draft branch (see docs/CI_MAP.md).
+# # RSI cycle-6 atomic flip (`verification`).

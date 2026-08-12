@@ -207,3 +207,11 @@ ReadWritePaths=/etc/crypttab
 ## Declarative policy coverage
 
 This document integrates with the yubiOS declarative-policy substrate — OPA/Rego policy files, signing-config JSON, policy-as-code workflows. Policy gates are named at the integration point; policy evaluation is the gate, not an afterthought.
+
+
+## Verification
+
+- Read `0pointer-poettering-systemd-vision-2026-07-23.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

@@ -64,3 +64,11 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 **Owner**: TBD
 
 Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.8670). TODO: refine per file context.
+
+
+## Examples
+
+- Reading `bcvk-swtpm-ci-2026-07-23.md` (no args) shows the help text.
+- See sibling files in this directory for related examples.
+
+_Atomic RSI cycle-6 flip._

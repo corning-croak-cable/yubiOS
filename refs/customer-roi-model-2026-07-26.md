@@ -111,3 +111,11 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 **Owner**: TBD
 
 Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.8670). TODO: refine per file context.
+
+
+## Verification
+
+- Read `customer-roi-model-2026-07-26.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

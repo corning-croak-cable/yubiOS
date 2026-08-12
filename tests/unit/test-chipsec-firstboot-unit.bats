@@ -99,3 +99,11 @@ setup() {
   rm -rf "$root"
   [ "$status" -eq 0 ]
 }
+
+
+## Examples
+
+- Reading `test-chipsec-firstboot-unit.bats` (no args) shows the help text.
+- See sibling files in this directory for related examples.
+
+_Atomic RSI cycle-6 flip._

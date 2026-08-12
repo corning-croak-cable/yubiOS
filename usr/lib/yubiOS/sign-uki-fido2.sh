@@ -34,3 +34,8 @@ systemd-sbsign sign \
 mv -f "$SIGNED" "$EFI"
 
 yubiOS_log "Signed: $EFI"
+
+
+# ## Verification
+# # Run the relevant CI workflow on a draft branch (see docs/CI_MAP.md).
+# # RSI cycle-6 atomic flip (`verification`).

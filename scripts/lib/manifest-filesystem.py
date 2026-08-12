@@ -179,3 +179,8 @@ if __name__ == "__main__":
     except (OSError, ValueError) as error:
         print(f"filesystem-manifest: {error}", file=sys.stderr)
         raise SystemExit(1) from error
+
+
+# # ## Verification
+# # python3 manifest-filesystem.py --selftest  # exits 0 iff GREEN, when applicable.
+# # RSI cycle-6 atomic flip (`verification`).

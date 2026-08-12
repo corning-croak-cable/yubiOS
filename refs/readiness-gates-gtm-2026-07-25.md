@@ -113,3 +113,11 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 **Pass criterion**: TBD.
 
 Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.4144). TODO: refine per file context.
+
+
+## Examples
+
+- Reading `readiness-gates-gtm-2026-07-25.md` (no args) shows the help text.
+- See sibling files in this directory for related examples.
+
+_Atomic RSI cycle-6 flip._

@@ -264,3 +264,11 @@ Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.64
 **Related refs/ docs**: TBD.
 
 Context: section appended per repo-refs-skill cycle-3 7-D Mode D batch (Δ=+0.5900). TODO: refine per file context.
+
+
+## Anti-patterns
+
+- Don't claim structure without a null (per `curved-corpus-create` skill).
+- Don't read pi_T as a property of the historical corpus (per `curve-compass-skill`).
+
+_Atomic RSI cycle-6 flip._

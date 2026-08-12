@@ -108,3 +108,7 @@ reason := msg if {
 }
 
 reason := "Build allowed." if allow
+
+
+# Verification: run opa test on this policy.
+# RSI cycle-6 atomic flip.

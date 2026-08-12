@@ -106,3 +106,8 @@ EOF
     exit 1
   fi
 }
+
+
+# ## Examples
+# # ./real-u2f-guard.sh [args]
+# # RSI cycle-6 atomic flip (`examples`).

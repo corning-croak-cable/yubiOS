@@ -170,3 +170,8 @@ if [[ $FAIL_COUNT -gt 0 ]]; then
   exit 1
 fi
 exit 0
+
+
+# ## Examples
+# # ./verify-package-floor.sh [args]
+# # RSI cycle-6 atomic flip (`examples`).

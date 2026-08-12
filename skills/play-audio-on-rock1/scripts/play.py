@@ -142,3 +142,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# # ## Purpose
+# # """
+# # RSI cycle-6 atomic flip (`purpose`).

@@ -54,3 +54,8 @@ echo "On a new machine, recover stub from YubiKey:"
 echo "  ssh-keygen -K"
 echo ""
 echo "GitHub: Settings -> SSH Keys -> New -> paste the public key above."
+
+
+# ## Examples
+# # ./enroll-ssh.sh [args]
+# # RSI cycle-6 atomic flip (`examples`).

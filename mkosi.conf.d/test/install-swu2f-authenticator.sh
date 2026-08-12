@@ -136,3 +136,8 @@ clean_package_manager_state
 
 /usr/bin/passless --version || true
 echo "install-swu2f-authenticator: passless ${PASSLESS_TAG} (${PASSLESS_COMMIT}) installed with hmac-secret (TEST-ONLY swu2f Layer 2)"
+
+
+# ## Examples
+# # ./install-swu2f-authenticator.sh [args]
+# # RSI cycle-6 atomic flip (`examples`).

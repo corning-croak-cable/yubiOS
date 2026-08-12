@@ -196,3 +196,8 @@ These constraints are research-level - Jenny's prior art is the authoritative so
 **Test outcomes**: TBD.
 
 Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.4816). TODO: refine per file context.
+
+
+## Changelog
+
+- 2026-08-12 -- RSI cycle-6 atomic primitive flip (`changelog`). See root `new-ideas-2026-08-12.md`.

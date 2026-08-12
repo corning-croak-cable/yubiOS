@@ -119,3 +119,11 @@ Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.6921).
 **One-line**: TBD per file context.
 
 Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.4199). TODO: refine per file context.
+
+
+## Verification
+
+- Read `arxiv-2607.09967-vs-learned-latent-curve-2026-08-04.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

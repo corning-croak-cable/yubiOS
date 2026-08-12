@@ -134,3 +134,8 @@ build_local_installer() {
         installer
     append_image_tag "yubios:${LOCAL_TAG}-installer"
 }
+
+
+# ## Verification
+# # Run the relevant CI workflow on a draft branch (see docs/CI_MAP.md).
+# # RSI cycle-6 atomic flip (`verification`).

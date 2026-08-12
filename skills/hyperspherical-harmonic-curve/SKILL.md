@@ -105,3 +105,11 @@ This skill integrates with the yubiOS declarative-policy substrate — OPA/Rego 
 ## Audit / evidence coverage
 
 This skill contributes to the yubiOS audit-evidence rollup — SBOM, SLSA provenance, attestation, verification records, secure logging, TPM attestation, evidence-pack export. The skill's output is auditable end-to-end (commit, run, artifact, policy).
+
+
+## Guidelines
+
+- Match the conventions in sibling files in this directory.
+- See `docs/STYLE.md` (if present) for the yubiOS style guide.
+
+_Atomic RSI cycle-6 flip._

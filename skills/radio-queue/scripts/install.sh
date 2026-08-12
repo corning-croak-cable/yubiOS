@@ -47,3 +47,8 @@ echo "=== install complete ==="
 echo "next: push scripts/queue_player.sh + scripts/queue.sh to /tmp/audio/queue/"
 echo "      then: nohup /tmp/audio/queue/queue_player.sh </dev/null >/dev/null 2>&1 &"
 echo "      then: echo '<youtube-url>' >> /tmp/audio/queue/queue.txt"
+
+
+# ## Examples
+# # ./install.sh [args]
+# # RSI cycle-6 atomic flip (`examples`).

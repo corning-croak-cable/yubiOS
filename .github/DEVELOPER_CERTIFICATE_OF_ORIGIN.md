@@ -49,3 +49,10 @@ By making a contribution to this project, I certify that:
 
 
 </body></html>
+
+
+## Purpose
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">
+
+_Atomic RSI cycle-6 flip (highest-priority missing primitive)._

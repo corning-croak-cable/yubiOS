@@ -124,3 +124,11 @@ The `curve-guided-rsi` v1 meta-skill is ready for ongoing use. The 5 remaining "
 **Owner**: TBD
 
 Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.8668). TODO: refine per file context.
+
+
+## Examples
+
+- Reading `curve-guided-rsi-v1-cycle4-all-skills-2026-08-04.md` (no args) shows the help text.
+- See sibling files in this directory for related examples.
+
+_Atomic RSI cycle-6 flip._

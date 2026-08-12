@@ -150,3 +150,8 @@ echo "FROM: $FROM_IMAGE ($FROM_VERSION)"
 echo "TO:   $TO_IMAGE ($TO_VERSION)"
 echo "BLS:  $TO_BLS"
 exit 0
+
+
+# ## Verification
+# # Run the relevant CI workflow on a draft branch (see docs/CI_MAP.md).
+# # RSI cycle-6 atomic flip (`verification`).

@@ -185,3 +185,11 @@ Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.6359).
 **Test outcomes**: TBD.
 
 Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.5250). TODO: refine per file context.
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows).
+- See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
+
+_Atomic RSI cycle-6 flip._

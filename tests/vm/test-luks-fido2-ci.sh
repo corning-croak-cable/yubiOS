@@ -230,3 +230,8 @@ g 'set -e
 echo "homed FIDO2 home OK"
 
 log "PASS: swtpm + swu2f CTAP2 + LUKS2 FIDO2 + homed FIDO2 verified"
+
+
+# ## Examples
+# # ./test-luks-fido2-ci.sh [args]
+# # RSI cycle-6 atomic flip (`examples`).

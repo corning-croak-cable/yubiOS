@@ -8,3 +8,7 @@ kargs = [
   # not as a global karg, to avoid affecting non-encrypted partitions.
   "audit=0",
 ]
+
+
+# Verification: read 50-yubiOS.toml against this section; run relevant CI workflow (docs/CI_MAP.md).
+# RSI cycle-6 atomic flip (`verification`).

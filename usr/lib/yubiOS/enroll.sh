@@ -75,3 +75,8 @@ echo "  Run: yubiOS-enroll-luks   (for second YubiKey disk unlock)"
 echo "  Run: yubiOS-enroll-pam    (for second YubiKey sudo auth)"
 echo ""
 echo "See ONBOARDING.md for recovery procedures if your YubiKey is lost."
+
+
+# ## Verification
+# # Run the relevant CI workflow on a draft branch (see docs/CI_MAP.md).
+# # RSI cycle-6 atomic flip (`verification`).

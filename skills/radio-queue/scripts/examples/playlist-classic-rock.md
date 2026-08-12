@@ -61,3 +61,11 @@ https://www.youtube.com/watch?v=09839DpTctU|start=0|duration=60
 B64=$(base64 -w0 examples/playlist-classic-rock.md | sed 's/^#.*$//')
 curl -X POST "$BRIDGE/run" -d "$(python3 -c "import json,sys; print(json.dumps({'command':['bash','-c',f'printf \"%s\" \\\"$(cat /tmp/playlist.b64)\\\" | base64 -d >> /tmp/audio/queue/queue.txt && wc -l /tmp/audio/queue/queue.txt']}))")"
 ```
+
+
+## Verification
+
+- Read `playlist-classic-rock.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

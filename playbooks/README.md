@@ -52,3 +52,8 @@ Hard rules: never cite a run ID, SHA, or PR you have not fetched this session. E
 Jenny adds to `playbooks/` as new failure modes emerge — a mode qualifies once it has fired twice. Agents draft; **Jenny merges**.
 
 **Not here?** Don't improvise a playbook mid-incident. Fix the incident, then file `playbook: <failure mode>` on team OMNI-AGENT with the run ID and root cause. Known uncovered ground: [`refs/testing-production-gaps-2026-08-01.md`](../refs/testing-production-gaps-2026-08-01.md).
+
+
+## Changelog
+
+- 2026-08-12 -- RSI cycle-6 atomic primitive flip (`changelog`). See root `new-ideas-2026-08-12.md`.

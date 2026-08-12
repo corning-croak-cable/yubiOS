@@ -43,3 +43,8 @@ echo "  1. Boot with rd.break karg (edit in UEFI boot menu)"
 echo "  2. mount -o remount,rw /sysroot"
 echo "  3. Edit /sysroot/etc/pam.d/sudo — comment out pam_u2f line"
 echo "  4. Reboot and re-enroll with a working YubiKey"
+
+
+# ## Examples
+# # ./enroll-pam.sh [args]
+# # RSI cycle-6 atomic flip (`examples`).

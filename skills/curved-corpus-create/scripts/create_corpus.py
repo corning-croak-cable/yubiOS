@@ -817,3 +817,8 @@ def main(argv=None):
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+# # ## Examples
+# # python3 create_corpus.py --help
+# # RSI cycle-6 atomic flip (`examples`).

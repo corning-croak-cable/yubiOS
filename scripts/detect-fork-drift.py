@@ -217,3 +217,8 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+# # ## Verification
+# # python3 detect-fork-drift.py --selftest  # exits 0 iff GREEN, when applicable.
+# # RSI cycle-6 atomic flip (`verification`).

@@ -66,3 +66,11 @@ pam_u2f_auth_line() { grep -E '^[[:space:]]*auth[[:space:]].*pam_u2f\.so' "$1" |
   run bash -c "printf '%s\n%s\n' '1.3.1' '$v' | sort -V | head -n1"
   [ "$output" = "1.3.1" ]
 }
+
+
+## Examples
+
+- Reading `test-pam-u2f-stack.bats` (no args) shows the help text.
+- See sibling files in this directory for related examples.
+
+_Atomic RSI cycle-6 flip._

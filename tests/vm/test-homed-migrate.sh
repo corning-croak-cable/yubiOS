@@ -105,3 +105,8 @@ sudo env "PATH=$PATH:/usr/sbin:/sbin" bcvk ephemeral exec "$VMID" -- \
 echo
 echo "Summary: 8/8 PASS (smoke test; real home enrollment requires YubiKey + --allow-real-u2f=1)"
 exit 0
+
+
+# ## Verification
+# # Run the relevant CI workflow on a draft branch (see docs/CI_MAP.md).
+# # RSI cycle-6 atomic flip (`verification`).

@@ -180,3 +180,8 @@ g 'head -c 32 /tmp/ci_sk_key.pub'
 echo "ed25519-sk keygen OK"
 
 log "PASS: enrollment surface + CTAP2 registration + OpenSSH ed25519-sk verified"
+
+
+# ## Examples
+# # ./test-fido2-enrollment.sh [args]
+# # RSI cycle-6 atomic flip (`examples`).

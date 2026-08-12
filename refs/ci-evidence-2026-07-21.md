@@ -68,3 +68,11 @@ Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.8429).
 **One-line**: TBD per file context.
 
 Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.4201). TODO: refine per file context.
+
+
+## Examples
+
+- Reading `ci-evidence-2026-07-21.md` (no args) shows the help text.
+- See sibling files in this directory for related examples.
+
+_Atomic RSI cycle-6 flip._

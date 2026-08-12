@@ -134,3 +134,11 @@ teardown() {
   [ "$status" -ne 0 ]
   [[ "$output" == *"ERROR"* ]]
 }
+
+
+## Verification
+
+- Read `test-lib.bats` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

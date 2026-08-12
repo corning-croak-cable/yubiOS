@@ -220,3 +220,8 @@ echo ""
 echo "=== PASS: LUKS2 FIDO2 enrollment complete ==="
 echo "Remove the passphrase slot after confirming FIDO2 works:"
 echo "  systemd-cryptenroll --wipe-slot=password $LUKS_PART"
+
+
+# ## Examples
+# # ./test-luks-fido2.sh [args]
+# # RSI cycle-6 atomic flip (`examples`).

@@ -38,3 +38,7 @@ ExecStart=/usr/bin/udevadm settle --timeout=10 || true
 
 [Install]
 WantedBy=multi-user.target
+
+
+# Examples: see sibling files in this directory for related examples.
+# RSI cycle-6 atomic flip (`examples`).

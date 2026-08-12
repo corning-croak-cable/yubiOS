@@ -85,3 +85,11 @@ The lane that **did** go green: PR #154 (`1c284b48826f` — "feat(ci): sealed UK
 - Canonical signing: `ci_mkosi-installer.yml`. OVMF artifacts: `ci_fork_edk2.yml`.
 - Playbooks: [dispatch-chain-verification](dispatch-chain-verification.md) (row 0 applies it), [fido2-vm-e2e-recipe](fido2-vm-e2e-recipe.md).
 - Gaps 1 and 12: no `tests/vm/test-secure-boot-tamper.sh`; negatives 2 and 3 are TODO-only. A `yaml.safe_load` pre-dispatch gate would have caught V37/V38 free.
+
+
+## Composition
+
+- Sits next to sibling files in this directory.
+- See `docs/ARCHITECTURE.md` for the full yubiOS dependency graph.
+
+_Atomic RSI cycle-6 flip._

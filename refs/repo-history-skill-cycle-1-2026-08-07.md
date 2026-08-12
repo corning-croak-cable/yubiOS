@@ -50,3 +50,11 @@ Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.4408).
 **Related refs/ docs**: TBD.
 
 Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.4739). TODO: refine per file context.
+
+
+## Verification
+
+- Read `repo-history-skill-cycle-1-2026-08-07.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

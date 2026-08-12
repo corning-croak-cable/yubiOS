@@ -57,3 +57,11 @@ Two corollaries from the same incident:
 - Tests: `tests/vm/test-vgpu-virtio-ci.sh`, `tests/vm/test-vfio-user-host-ci.sh`.
 - Playbooks: [dispatch-chain-verification](dispatch-chain-verification.md) — same incident is why "the test says FAIL" outranks "the file is shipped".
 - A proactive CI gate for this rule is unbuilt: Gap 8 in `refs/testing-production-gaps-2026-08-01.md`.
+
+
+## Constraints
+
+- Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows).
+- See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
+
+_Atomic RSI cycle-6 flip._

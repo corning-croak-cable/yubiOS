@@ -72,3 +72,11 @@ Cycle 4 ships under the explicit user override of the 3-cycle RSI cap.
 3. **(medium)** Regularized Möbius loss with cross-ratio-penalty term — would un-freeze φ_θ
 4. **(low)** Mode D batch on remaining cycle-4 actionable sparse cells (top-10 by Δ, excluding 3 structurally-hard Backlog/terminal-state items)
 5. **(low — confirmed corpus fact)** agent-skills has 0 real issues — note in PROJECT_RULES.md, not a corpus gap
+
+
+## Verification
+
+- Read `repo-history-skill-cycle-4-2026-08-07-changelog.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

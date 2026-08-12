@@ -678,3 +678,11 @@ PY
 
     [ "$status" -eq 0 ]
 }
+
+
+## Examples
+
+- Reading `test-reproducible-build.bats` (no args) shows the help text.
+- See sibling files in this directory for related examples.
+
+_Atomic RSI cycle-6 flip._

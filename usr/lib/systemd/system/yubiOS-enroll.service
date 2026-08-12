@@ -34,3 +34,7 @@ RestrictFileSystems=~@network
 
 [Install]
 WantedBy=first-boot-complete.target
+
+
+# Verification: read yubiOS-enroll.service against this section; run relevant CI workflow (docs/CI_MAP.md).
+# RSI cycle-6 atomic flip (`verification`).

@@ -7,3 +7,7 @@ enable pcscd.socket
 enable yubiOS-enroll.service
 # portable LUKS2 home directories (YubiKey FIDO2 unlock)
 enable systemd-homed.service
+
+
+# Verification: read 15-yubiOS.preset against this section; run relevant CI workflow (docs/CI_MAP.md).
+# RSI cycle-6 atomic flip (`verification`).

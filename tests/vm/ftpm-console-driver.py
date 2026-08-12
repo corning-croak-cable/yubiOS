@@ -170,3 +170,8 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+# # ## Purpose
+# # """Drive a QEMU guest over its serial console and run a script inside it.
+# # RSI cycle-6 atomic flip (`purpose`).

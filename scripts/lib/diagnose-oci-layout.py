@@ -193,3 +193,8 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
+# # ## Purpose
+# # """Explain byte differences between two OCI image-layout directories."""
+# # RSI cycle-6 atomic flip (`purpose`).

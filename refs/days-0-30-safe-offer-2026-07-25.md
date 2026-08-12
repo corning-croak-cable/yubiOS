@@ -112,3 +112,11 @@ Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.83
 **One-line**: TBD per file context.
 
 Context: section appended per repo-refs-skill cycle-3 7-D Mode D batch (Δ=+0.6561). TODO: refine per file context.
+
+
+## Verification
+
+- Read `days-0-30-safe-offer-2026-07-25.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._

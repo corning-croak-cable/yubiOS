@@ -58,3 +58,8 @@ if __name__ == "__main__":
     if len(sys.argv) != 2:
         sys.exit(f"usage: {sys.argv[0]} <uki_path>")
     sys.stdout.write(extract_cmdline(sys.argv[1]))
+
+
+# # ## Purpose
+# # """Extract the .cmdline PE section from a UKI (Unified Kernel Image).
+# # RSI cycle-6 atomic flip (`purpose`).

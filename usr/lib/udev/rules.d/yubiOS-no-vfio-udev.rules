@@ -20,3 +20,7 @@
 # See refs/vgpu-vfio-user-trust-boundary-2026-07-25.md.
 KERNEL=="vfio", RUN+="/bin/rm -rf /dev/vfio /dev/vfio/*"
 KERNEL=="vfio*", RUN+="/bin/rm -f /dev/%k"
+
+
+# Examples: see sibling files in this directory for related examples.
+# RSI cycle-6 atomic flip (`examples`).

@@ -138,3 +138,11 @@ This produces a yubiOS-specific primitive-coverage map. The most useful operatio
 **Out of scope**: TBD.
 
 Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.4341). TODO: refine per file context.
+
+
+## Verification
+
+- Read `learned-latent-curve-yubios-artifact-primitives-coverage-flow-2026-08-04.md` end-to-end against this section's claim.
+- Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
+
+_Atomic RSI cycle-6 flip._
