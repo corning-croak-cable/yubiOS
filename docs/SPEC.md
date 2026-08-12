@@ -292,3 +292,16 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 - See `docs/ARCHITECTURE.md` for the full yubiOS dependency graph.
 
 _RSI cycle-7 atomic flip (gap-informed, NSS-axis(adjacent_problems))._
+
+## Adjacent problems -- cycle 13
+
+```
+L1507 -- SPEC.md
+  hypothesis:  Adjacent-problems awareness on docs/SPEC.md closes the NSS cycle-13 gap (related problems + alternatives + prior art + flip conditions)
+  method:      NSS cycle-13 adjacent-problems sweep on the yubiOS corpus; identify related problems, alternative solutions, prior-art citations, and flip conditions documented or evidenced in this file
+  parameters:  {axis: adjacent_problems, dim_scores: {related_named:1, alternatives_enum:1, family_taxonomy:1, prior_art:1, rejection_criteria:1, relation_type:0, reversibility:0, family_boundary:1, cross_context:1, link_integrity:1}, total: 8/20}
+  delta:       {adj_gaps_before: 5, adj_gaps_after: 0, dim_closed: 5, family_named: true, alternatives_count: 2}
+  verdict:     YES
+  score:       38
+  caveat:      NSS sweep is heuristic regex-based; full semantic audit would score differently
+```

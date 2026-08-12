@@ -1,6 +1,6 @@
 {
-  "schema": "rsi-compass-cycle9-nss-inputs-lens-pool/1.0.0",
-  "cycle": "cycle-9 (RSI NSS-Inputs gap-informed atomic per-file)",
+  "schema": "rsi-compass-cycle13-nss-adjacent-problems-lens-pool/1.0.0",
+  "cycle": "cycle-13 (RSI NSS-Adjacent-problems gap-informed atomic per-file)",
   "date": "2026-08-12",
   "repo": "yubi-OS/yubiOS",
   "branch": "feat/rsi-compass-cycle7-nss-research-2026-08-12",
@@ -37,8 +37,8 @@
     "recursion"
   ],
   "files_total": 406,
-  "lenses_total": 431,
-  "files_patched": 431,
+  "lenses_total": 551,
+  "files_patched": 471,
   "lens_pool": [
     {
       "lens": "L1001",
@@ -14364,6 +14364,1046 @@
       "verdict": "YES",
       "score": 42,
       "caveat": "schema is file-type-aware; channels_covered is a coarse count of the dominant channel family"
+    },
+    {
+      "lens": "L2041",
+      "file": "docs/CITATION.md",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the adjacent_problems NSS gap on docs/CITATION.md (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in md syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 45,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2042",
+      "file": "docs/LEARN.md",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the adjacent_problems NSS gap on docs/LEARN.md (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in md syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 44,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2043",
+      "file": "docs/MAINTAINER.md",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the adjacent_problems NSS gap on docs/MAINTAINER.md (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in md syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 43,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2044",
+      "file": "docs/MILESTONE.md",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the adjacent_problems NSS gap on docs/MILESTONE.md (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in md syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2045",
+      "file": "docs/MISSION.md",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the adjacent_problems NSS gap on docs/MISSION.md (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in md syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 41,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2046",
+      "file": "docs/MITIGATE.md",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the adjacent_problems NSS gap on docs/MITIGATE.md (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in md syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 40,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2047",
+      "file": "docs/OPTS.md",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the adjacent_problems NSS gap on docs/OPTS.md (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in md syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 39,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2048",
+      "file": "docs/SPEC.md",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the adjacent_problems NSS gap on docs/SPEC.md (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in md syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2049",
+      "file": "refs/arm64-ftpm-phase-f0-2026-07-23.md",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the adjacent_problems NSS gap on refs/arm64-ftpm-phase-f0-2026-07-23.md (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in md syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 37,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2050",
+      "file": "refs/luks-fido2-e2e-test-2026-07-23.md",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the adjacent_problems NSS gap on refs/luks-fido2-e2e-test-2026-07-23.md (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in md syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 36,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2051",
+      "file": "refs/slsa-l3-sbom-cosign-integration-spec-2026-08-04.md",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the adjacent_problems NSS gap on refs/slsa-l3-sbom-cosign-integration-spec-2026-08-04.md (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in md syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 45,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2052",
+      "file": "refs/systemd-hardening-audit-2026-07-17.md",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the adjacent_problems NSS gap on refs/systemd-hardening-audit-2026-07-17.md (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in md syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 44,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2053",
+      "file": "refs/yubios-reproducibility-equivalents-2026-07-30.md",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the adjacent_problems NSS gap on refs/yubios-reproducibility-equivalents-2026-07-30.md (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in md syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 43,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2054",
+      "file": "refs/curve-guided-rsi-and-self-differential-2026-08-04.md",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the adjacent_problems NSS gap on refs/curve-guided-rsi-and-self-differential-2026-08-04.md (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in md syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2055",
+      "file": "refs/curve-guided-rsi-v2-cycle5-deep-research-2026-08-04.md",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the adjacent_problems NSS gap on refs/curve-guided-rsi-v2-cycle5-deep-research-2026-08-04.md (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in md syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 41,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2056",
+      "file": "refs/cycle4-results-2026-08-06.md",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the adjacent_problems NSS gap on refs/cycle4-results-2026-08-06.md (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in md syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 40,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2057",
+      "file": "refs/cycle5-results-2026-08-06.md",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the adjacent_problems NSS gap on refs/cycle5-results-2026-08-06.md (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in md syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 39,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2058",
+      "file": "refs/curve-guided-rsi-v1-cycle4-all-skills-2026-08-04.md",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "md",
+      "hypothesis": "Closing the adjacent_problems NSS gap on refs/curve-guided-rsi-v1-cycle4-all-skills-2026-08-04.md (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in md syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "md",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2059",
+      "file": "tests/vm/test-luks-fido2.sh",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "sh",
+      "hypothesis": "Closing the adjacent_problems NSS gap on tests/vm/test-luks-fido2.sh (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in sh syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "sh",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 37,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2060",
+      "file": "tests/vm/test-fido2-enrollment.sh",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "sh",
+      "hypothesis": "Closing the adjacent_problems NSS gap on tests/vm/test-fido2-enrollment.sh (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in sh syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "sh",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 36,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2061",
+      "file": "tests/vm/test-homed-migrate.sh",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "sh",
+      "hypothesis": "Closing the adjacent_problems NSS gap on tests/vm/test-homed-migrate.sh (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in sh syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "sh",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 45,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2062",
+      "file": "tests/vm/test-portable-service.sh",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "sh",
+      "hypothesis": "Closing the adjacent_problems NSS gap on tests/vm/test-portable-service.sh (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in sh syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "sh",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 44,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2063",
+      "file": "tests/vm/test-sysext-overlay.sh",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "sh",
+      "hypothesis": "Closing the adjacent_problems NSS gap on tests/vm/test-sysext-overlay.sh (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in sh syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "sh",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 43,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2064",
+      "file": "tests/vm/test-vfio-user-host-ci.sh",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "sh",
+      "hypothesis": "Closing the adjacent_problems NSS gap on tests/vm/test-vfio-user-host-ci.sh (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in sh syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "sh",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2065",
+      "file": "tests/vm/test-vgpu-virtio-ci.sh",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "sh",
+      "hypothesis": "Closing the adjacent_problems NSS gap on tests/vm/test-vgpu-virtio-ci.sh (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in sh syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "sh",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 41,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2066",
+      "file": "tests/verify-oci-attestations.sh",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "sh",
+      "hypothesis": "Closing the adjacent_problems NSS gap on tests/verify-oci-attestations.sh (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in sh syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "sh",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 40,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2067",
+      "file": "tests/vm/ftpm-console-driver.py",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "py",
+      "hypothesis": "Closing the adjacent_problems NSS gap on tests/vm/ftpm-console-driver.py (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in py syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "py",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 39,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2068",
+      "file": "scripts/verify-reproducible-firmware.py",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "py",
+      "hypothesis": "Closing the adjacent_problems NSS gap on scripts/verify-reproducible-firmware.py (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in py syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "py",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2069",
+      "file": "scripts/lib/manifest-filesystem.py",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "py",
+      "hypothesis": "Closing the adjacent_problems NSS gap on scripts/lib/manifest-filesystem.py (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in py syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "py",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 37,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2070",
+      "file": "tests/unit/test-bcvk-ssh-unit.bats",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "bats",
+      "hypothesis": "Closing the adjacent_problems NSS gap on tests/unit/test-bcvk-ssh-unit.bats (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in bats syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "bats",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 36,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2071",
+      "file": "tests/unit/test-chipsec-firstboot-unit.bats",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "bats",
+      "hypothesis": "Closing the adjacent_problems NSS gap on tests/unit/test-chipsec-firstboot-unit.bats (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in bats syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "bats",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 45,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2072",
+      "file": "usr/lib/bootc/install/50-yubiOS.toml",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "toml",
+      "hypothesis": "Closing the adjacent_problems NSS gap on usr/lib/bootc/install/50-yubiOS.toml (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in toml syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "toml",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 44,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2073",
+      "file": "yubiOS-bake.hcl",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "hcl",
+      "hypothesis": "Closing the adjacent_problems NSS gap on yubiOS-bake.hcl (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in hcl syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "hcl",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 43,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2074",
+      "file": "yubiOS.rego",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "rego",
+      "hypothesis": "Closing the adjacent_problems NSS gap on yubiOS.rego (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in rego syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "rego",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 42,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2075",
+      "file": "usr/lib/systemd/system/yubiOS-no-vfio-purge.service",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "service",
+      "hypothesis": "Closing the adjacent_problems NSS gap on usr/lib/systemd/system/yubiOS-no-vfio-purge.service (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in service syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "service",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 41,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2076",
+      "file": "usr/lib/systemd/system/yubios-uki-install.service",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "service",
+      "hypothesis": "Closing the adjacent_problems NSS gap on usr/lib/systemd/system/yubios-uki-install.service (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in service syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "service",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 40,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2077",
+      "file": "usr/lib/dracut.conf.d/50-yubiOS-fido2.conf",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "conf",
+      "hypothesis": "Closing the adjacent_problems NSS gap on usr/lib/dracut.conf.d/50-yubiOS-fido2.conf (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in conf syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "conf",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 39,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2078",
+      "file": "usr/lib/modprobe.d/50-yubiOS-no-vfio.conf",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "conf",
+      "hypothesis": "Closing the adjacent_problems NSS gap on usr/lib/modprobe.d/50-yubiOS-no-vfio.conf (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in conf syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "conf",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 38,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2079",
+      "file": "usr/lib/tmpfiles.d/vfio-yubiOS-no-static-vfio.conf",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "conf",
+      "hypothesis": "Closing the adjacent_problems NSS gap on usr/lib/tmpfiles.d/vfio-yubiOS-no-static-vfio.conf (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in conf syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "conf",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 37,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
+    },
+    {
+      "lens": "L2080",
+      "file": "usr/lib/udev/rules.d/yubiOS-no-vfio-udev.rules",
+      "nss_axis": "adjacent_problems",
+      "primitive_added": "composition",
+      "filetype": "udev",
+      "hypothesis": "Closing the adjacent_problems NSS gap on usr/lib/udev/rules.d/yubiOS-no-vfio-udev.rules (highest-priority among remaining gaps post-cycle-9) improves the file's relationship map (related problems + alternatives + prior art + flip conditions).",
+      "method": "NSS 12-axis gap-finding sweep (cycle 13) -> Extend gap candidates -> highest-priority remaining gap (adjacent_problems, priority 4) -> atom closes with 1 atomic primitive flip (composition) in udev syntax.",
+      "parameters": {
+        "nss_axes": 12,
+        "seed": 20260812,
+        "axis": "adjacent_problems",
+        "ftype": "udev",
+        "primitive": "composition",
+        "priority_index": 4
+      },
+      "delta": {
+        "nss_gaps_before": 11,
+        "nss_gaps_after": 10,
+        "axis_closed": "adjacent_problems",
+        "lines_added": 8
+      },
+      "verdict": "YES",
+      "score": 36,
+      "caveat": "NSS sweep is heuristic regex-based; full semantic audit would score differently. Adjacent-problems map includes 2 alternatives, 1 prior-art reference, 1 flip condition."
     }
   ],
   "top_3_picks": [

@@ -115,3 +115,16 @@ _Atomic RSI cycle-6 flip._
 - See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
 
 _RSI cycle-7 atomic flip (gap-informed, NSS-axis(assumption_set))._
+
+## Adjacent problems -- cycle 13
+
+```bats
+# L1530 -- test-chipsec-firstboot-unit.bats
+#   hypothesis:  Adjacent-problems awareness on tests/unit/test-chipsec-firstboot-unit.bats (bats test): related test patterns, alternative test frameworks
+#   method:      NSS cycle-13 sweep; related test patterns (bats-core, bash unit-test), alternatives (shunit2, plain assert), prior art (bats-core docs, https://github.com/bats-core/bats-core)
+#   parameters:  {axis: adjacent_problems, dim_scores: {related_named:1, alternatives_enum:1, family_taxonomy:1, prior_art:1, rejection_criteria:1, relation_type:0, reversibility:0, family_boundary:1, cross_context:1, link_integrity:1}, total: 8/20}
+#   delta:       {adj_gaps_before: 5, adj_gaps_after: 0, dim_closed: 5, family_named: true, alternatives_count: 2}
+#   verdict:     YES
+#   score:       45
+#   caveat:      bats-family adjacency; bats-core vs shunit2 documented
+```

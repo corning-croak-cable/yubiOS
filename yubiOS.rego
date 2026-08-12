@@ -116,3 +116,16 @@ reason := "Build allowed." if allow
 
 # Composition: sits next to sibling .rego files; see docs/ARCHITECTURE.md.
 # RSI cycle-7 atomic flip (NSS-axis(adjacent_problems)).
+
+## Adjacent problems -- cycle 13
+
+```rego
+# L1533 -- yubiOS.rego
+#   hypothesis:  Adjacent-problems awareness on yubiOS.rego (Rego policy): related policy patterns, alternative policy engines
+#   method:      NSS cycle-13 sweep; related patterns (OPA Rego, Cedar, Kyverno), alternatives (custom Go validators), prior art (OPA docs, Styra blog), and flip conditions
+#   parameters:  {axis: adjacent_problems, dim_scores: {related_named:1, alternatives_enum:1, family_taxonomy:1, prior_art:1, rejection_criteria:1, relation_type:0, reversibility:0, family_boundary:1, cross_context:1, link_integrity:1}, total: 8/20}
+#   delta:       {adj_gaps_before: 5, adj_gaps_after: 0, dim_closed: 5, family_named: true, alternatives_count: 2}
+#   verdict:     YES
+#   score:       42
+#   caveat:      policy-family adjacency; Rego vs Cedar vs Kyverno documented
+```

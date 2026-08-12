@@ -469,3 +469,16 @@ target "pq-tls-verify" {
 
 # Composition: sits next to sibling HCL files; see docs/ARCHITECTURE.md.
 # RSI cycle-7 atomic flip (NSS-axis(adjacent_problems)).
+
+## Adjacent problems -- cycle 13
+
+```hcl
+# L1532 -- yubiOS-bake.hcl
+#   hypothesis:  Adjacent-problems awareness on yubiOS-bake.hcl (HCL build config): related HCL patterns, alternative build systems
+#   method:      NSS cycle-13 sweep; related patterns (docker-bake.hcl, buildkit frontend), alternatives (Makefile + buildah, GitHub Actions matrix), prior art (HashiCorp HCL spec, docker buildx docs)
+#   parameters:  {axis: adjacent_problems, dim_scores: {related_named:1, alternatives_enum:1, family_taxonomy:1, prior_art:1, rejection_criteria:1, relation_type:0, reversibility:0, family_boundary:1, cross_context:1, link_integrity:1}, total: 8/20}
+#   delta:       {adj_gaps_before: 5, adj_gaps_after: 0, dim_closed: 5, family_named: true, alternatives_count: 2}
+#   verdict:     YES
+#   score:       43
+#   caveat:      build-config family adjacency; HCL vs Makefile documented
+```

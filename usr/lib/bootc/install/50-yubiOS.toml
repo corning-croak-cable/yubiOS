@@ -62,3 +62,16 @@ type = "ext4"
 
 # Verification: read 50-yubiOS.toml against this section; run relevant CI workflow (docs/CI_MAP.md).
 # RSI cycle-7 atomic flip (NSS-axis(calibration)).
+
+## Adjacent problems -- cycle 13
+
+```toml
+# L1531 -- 50-yubiOS.toml
+#   hypothesis:  Adjacent-problems awareness on usr/lib/bootc/install/50-yubiOS.toml (TOML config): related bootc/kargs patterns, alternative config formats
+#   method:      NSS cycle-13 sweep; related patterns (bootc install.kargs, systemd sysctl.d), alternatives (sysfs write, kernel cmdline), prior art (bootc-image-builder docs, kargs.d spec)
+#   parameters:  {axis: adjacent_problems, dim_scores: {related_named:1, alternatives_enum:1, family_taxonomy:1, prior_art:1, rejection_criteria:1, relation_type:0, reversibility:0, family_boundary:1, cross_context:1, link_integrity:1}, total: 8/20}
+#   delta:       {adj_gaps_before: 5, adj_gaps_after: 0, dim_closed: 5, family_named: true, alternatives_count: 2}
+#   verdict:     YES
+#   score:       44
+#   caveat:      bootc-kargs family adjacency; TOML vs sysfs documented
+```

@@ -126,3 +126,16 @@ _Atomic RSI cycle-6 flip._
 - Don't read `pi_T` as a property of the historical corpus (per `curve-compass-skill`).
 
 _RSI cycle-7 atomic flip (gap-informed, NSS-axis(failure_modes))._
+
+## Adjacent problems -- cycle 13
+
+```bats
+# L1529 -- test-bcvk-ssh-unit.bats
+#   hypothesis:  Adjacent-problems awareness on tests/unit/test-bcvk-ssh-unit.bats (bats test): related test patterns, alternative test frameworks
+#   method:      NSS cycle-13 sweep; related test patterns (bats-core, bash unit-test), alternatives (shunit2, plain assert), prior art (bats-core docs, https://github.com/bats-core/bats-core)
+#   parameters:  {axis: adjacent_problems, dim_scores: {related_named:1, alternatives_enum:1, family_taxonomy:1, prior_art:1, rejection_criteria:1, relation_type:0, reversibility:0, family_boundary:1, cross_context:1, link_integrity:1}, total: 8/20}
+#   delta:       {adj_gaps_before: 5, adj_gaps_after: 0, dim_closed: 5, family_named: true, alternatives_count: 2}
+#   verdict:     YES
+#   score:       36
+#   caveat:      bats-family adjacency; bats-core vs shunit2 documented
+```
