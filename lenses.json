@@ -20148,5 +20148,7 @@
     "skill_content_sha": "716eba508a0fbee53ab3a7576ae2a38e864e5c5f",
     "commit_sha": "c43b5dbb1c7ed84164268b41cb409858cf8fe578",
     "seed": 20260816
-  }
+  },
+  "in_file_stamps": false,
+  "note": "lens metadata is stored externally in this file; per-file sections contain only the substantive documentation (e.g., ## Verification, ## Constraints, ## Anti-patterns) WITHOUT inlined lens stamps"
 }

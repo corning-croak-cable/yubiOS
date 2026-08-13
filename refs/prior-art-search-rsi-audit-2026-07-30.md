@@ -156,14 +156,12 @@ Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.5943).
 - Reading `prior-art-search-rsi-audit-2026-07-30.md` (no args) shows the help text.
 - See sibling files in this directory for related examples.
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Purpose
 
 ' must be preserved as the first line of the pushed file). Verify the push succeeded by GETting the file after the PUT; report back the new
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._
 
 
 ## Audience
@@ -172,4 +170,3 @@ _RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._
 
 **Prerequisite:** yubiOS architecture and ADR corpus. **Out of scope:** skill author workflow.
 
-_RSI cycle-8 audience-aware atomic flip (gap-informed, NSS-axis(audience)). See root `new-ideas-2026-08-12.md` and the `nss-audience` skill for the audience taxonomy._

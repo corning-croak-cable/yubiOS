@@ -392,14 +392,12 @@ Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.45
 - Don't claim structure without a null (per `curved-corpus-create` skill).
 - Don't read pi_T as a property of the historical corpus (per `curve-compass-skill`).
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Purpose
 
 # yubiOS Trust-Proof Playbook + Printable Checklist
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._
 
 
 ## Audience
@@ -408,7 +406,6 @@ _RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._
 
 **Prerequisite:** yubiOS architecture and ADR corpus. **Out of scope:** skill author workflow.
 
-_RSI cycle-8 audience-aware atomic flip (gap-informed, NSS-axis(audience)). See root `new-ideas-2026-08-12.md` and the `nss-audience` skill for the audience taxonomy._
 
 
 ## Inputs
@@ -422,4 +419,3 @@ precedence:  this checklist > the RSI skill's built-in verification
 validation:  every box on the checklist must end with a verifiable evidence link (commit SHA, run URL, file path)
 failure:     a checklist item without evidence is a candidate for re-running the cycle
 
-_RSI cycle-9 atomic flip (NSS-axis(inputs))._

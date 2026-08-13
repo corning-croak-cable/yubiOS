@@ -119,7 +119,6 @@ Dynamic refs such as `github.sha`, `github.ref_name`, `target_ref`, and `ci_chai
 - Reading `PINNED.md` (no args) shows the help text.
 - See sibling files in this directory for related examples.
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Examples
@@ -127,7 +126,6 @@ _Atomic RSI cycle-6 flip._
 - Reading `PINNED.md` (no args) shows the help text.
 - See sibling files in this directory for related examples.
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(mode))._
 
 
 ## Mode -- cycle 11
@@ -195,4 +193,3 @@ precedence:  this file is the source of truth for pins; downstream consumers (Co
 validation:  every entry must be a valid sha256 digest (64 hex chars)
 failure:     a digest that fails to resolve on quay.io triggers fetch-fedora-bootc-manifest.yml
 
-_RSI cycle-9 atomic flip (NSS-axis(inputs))._

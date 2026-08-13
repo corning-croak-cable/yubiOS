@@ -368,4 +368,3 @@ Context: section appended per repo-refs-skill cycle-2 7-D Mode D batch (Δ=+0.47
 - Reading `negative-skill-space-2026-07-28.md` (no args) shows the help text.
 - See sibling files in this directory for related examples.
 
-_Atomic RSI cycle-6 flip._

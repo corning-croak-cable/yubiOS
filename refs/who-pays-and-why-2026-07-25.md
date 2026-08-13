@@ -120,7 +120,6 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 - Reading `who-pays-and-why-2026-07-25.md` (no args) shows the help text.
 - See sibling files in this directory for related examples.
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Examples
@@ -128,4 +127,3 @@ _Atomic RSI cycle-6 flip._
 - Reading `who-pays-and-why-2026-07-25.md` (no args) shows the help text.
 - See sibling files in this directory for related examples.
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(mode))._

@@ -274,7 +274,6 @@ if __name__ == "__main__":
 #   precedence:  CLI > env > config.yaml > built-in default
 #   validation:  config validated against schema v2; --workflow must match an existing workflow file
 #   failure:     exit code 2 on validation error; the offending name is logged, the value never
-# _RSI cycle-9 atomic flip (NSS-axis(inputs))._
 
 # Assumption set -- cycle 12
 # 

@@ -115,7 +115,6 @@ Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.8668).
 - Reading `yubios-reproducibility-equivalents-2026-07-30.md` (no args) shows the help text.
 - See sibling files in this directory for related examples.
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Constraints
@@ -123,7 +122,6 @@ _Atomic RSI cycle-6 flip._
 - Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows).
 - See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(assumption_set))._
 
 ## Adjacent problems -- cycle 13
 

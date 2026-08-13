@@ -291,7 +291,6 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 - Sits next to sibling files in this directory.
 - See `docs/ARCHITECTURE.md` for the full yubiOS dependency graph.
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(adjacent_problems))._
 
 ## Adjacent problems -- cycle 13
 

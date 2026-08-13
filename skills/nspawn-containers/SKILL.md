@@ -196,4 +196,3 @@ This skill supports the yubiOS continuous-monitoring layer — runtime detection
 
 name: nspawn-containers
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

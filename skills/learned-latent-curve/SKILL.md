@@ -120,4 +120,3 @@ This skill participates in the yubiOS root-of-trust chain — ROT/ROTPK, X.509 P
 - Architecture: `docs/ARCHITECTURE.md`
 - RSI cycle-6 lens pool: `lenses.json` at repo root
 
-_Atomic RSI cycle-6 flip._

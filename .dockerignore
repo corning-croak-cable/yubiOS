@@ -16,7 +16,6 @@
 - Read `.dockerignore` end-to-end against this section's claim.
 - Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Anti-patterns
@@ -24,7 +23,6 @@ _Atomic RSI cycle-6 flip._
 - Don't claim structure without a null (per `curved-corpus-create` skill).
 - Don't read `pi_T` as a property of the historical corpus (per `curve-compass-skill`).
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(failure_modes))._
 
 
 # Inputs
@@ -36,4 +34,3 @@ _RSI cycle-7 atomic flip (gap-informed, NSS-axis(failure_modes))._
 #   audit:      every entry should be justified by a Containerfile or .gitignore reference
 #   secret-handling: secrets are NEVER listed here -- they go through BuildKit --mount=type=secret
 #   lifecycle:  this file is read once per build; no hot-reload semantics
-# _RSI cycle-9 atomic flip (NSS-axis(inputs))._

@@ -548,7 +548,6 @@ This document applies the yubiOS segmentation primitive — Linux namespaces, cg
 - Match the conventions in sibling files in this directory.
 - See `docs/STYLE.md` (if present) for the yubiOS style guide.
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Anti-patterns
@@ -556,7 +555,6 @@ _Atomic RSI cycle-6 flip._
 - Don't claim structure without a null (per `curved-corpus-create` skill).
 - Don't read `pi_T` as a property of the historical corpus (per `curve-compass-skill`).
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(failure_modes))._
 
 
 ## Mode -- cycle 11
@@ -624,7 +622,6 @@ precedence:  this file > individual workflow files > general CI knowledge
 validation:  every workflow file must have a row in this map
 failure:     a workflow without a CI_MAP row breaks the dispatch-reachability check
 
-_RSI cycle-9 atomic flip (NSS-axis(inputs))._
 
 
 ## Failure modes -- cycle 14

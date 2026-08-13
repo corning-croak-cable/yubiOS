@@ -170,7 +170,6 @@ Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.4816).
 - Reading `curve-guided-rsi-v1-cycles-2-3-run-2026-08-04.md` (no args) shows the help text.
 - See sibling files in this directory for related examples.
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Constraints
@@ -178,4 +177,3 @@ _Atomic RSI cycle-6 flip._
 - Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows).
 - See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(assumption_set))._

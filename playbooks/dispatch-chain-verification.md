@@ -95,7 +95,6 @@ Process playbook — backed by the recorded failure, not a green run.
 - Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows).
 - See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Constraints
@@ -103,7 +102,6 @@ _Atomic RSI cycle-6 flip._
 - Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows).
 - See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(assumption_set))._
 
 
 ## Inputs
@@ -117,7 +115,6 @@ precedence:  PROJECT_RULES.md > this playbook > ad-hoc CI debugging
 validation:  every chain run must be cross-checked by GET /actions/runs/{id}
 failure:     reporting 'chain green' from the outer dispatcher alone misses inner failures
 
-_RSI cycle-9 atomic flip (NSS-axis(inputs))._
 
 
 ## Failure modes -- cycle 14

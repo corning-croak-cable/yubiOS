@@ -412,7 +412,6 @@ fi
 #   precedence:  CLI positional > env > built-in default
 #   validation:  podman pull resolves $YUBIOS_REGISTRY/$YUBIOS_TAG before build
 #   failure:     set -e; the failing podman command and its exit code are echoed
-# _RSI cycle-9 atomic flip (NSS-axis(inputs))._
 
 # Assumption set -- cycle 12
 # 

@@ -456,7 +456,6 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 - Sits next to sibling files in this directory.
 - See `docs/ARCHITECTURE.md` for the full yubiOS dependency graph.
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(adjacent_problems))._
 
 
 ## Inputs
@@ -470,7 +469,6 @@ precedence:  docs/SPEC.md > this file > general architecture background
 validation:  every module listed here must have a corresponding entry in docs/SPEC.md
 failure:     a module without a SPEC entry fails the spec-first development gate
 
-_RSI cycle-9 atomic flip (NSS-axis(inputs))._
 
 
 ## Failure modes -- cycle 14

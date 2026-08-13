@@ -87,7 +87,6 @@ Default `false` is fail-safe (a hosted amd64 dispatch still detects a key someon
 - Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows).
 - See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(assumption_set))._
 
 
 ## Inputs
@@ -101,7 +100,6 @@ precedence:  ALLOW_REAL_U2F input > the guard's default (refuse) > the in-guest 
 validation:  ci_test-vm.yml must be dispatched with allow_real_u2f: true; sudo env ALLOW_REAL_U2F=1 is explicit (sudo does not inherit env)
 failure:     the guard correctly refuses to run passless tests when a real key is detected -- this is safety, not a bug
 
-_RSI cycle-9 atomic flip (NSS-axis(inputs))._
 
 
 ## Failure modes -- cycle 14

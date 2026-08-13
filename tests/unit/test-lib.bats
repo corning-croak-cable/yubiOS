@@ -141,7 +141,6 @@ teardown() {
 - Read `test-lib.bats` end-to-end against this section's claim.
 - Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Constraints
@@ -149,4 +148,3 @@ _Atomic RSI cycle-6 flip._
 - Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows).
 - See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(assumption_set))._

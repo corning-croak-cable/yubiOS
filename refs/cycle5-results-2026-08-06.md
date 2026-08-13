@@ -130,7 +130,6 @@ Context: section appended per repo-refs-skill cycle-3 7-D Mode D batch (Δ=+0.67
 - Reading `cycle5-results-2026-08-06.md` (no args) shows the help text.
 - See sibling files in this directory for related examples.
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Constraints
@@ -138,7 +137,6 @@ _Atomic RSI cycle-6 flip._
 - Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows).
 - See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(assumption_set))._
 
 ## Adjacent problems -- cycle 13
 

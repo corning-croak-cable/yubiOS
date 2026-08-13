@@ -171,14 +171,12 @@ This skill supports the yubiOS continuous-monitoring layer — runtime detection
 - Reading `SKILL.md` (no args) shows the help text.
 - See sibling files in this directory for related examples.
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Purpose
 
 name: composefs-kernel-floors
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._
 
 ## Assumption set -- cycle 12
 ## 

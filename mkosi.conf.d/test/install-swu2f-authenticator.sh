@@ -157,7 +157,6 @@ echo "install-swu2f-authenticator: passless ${PASSLESS_TAG} (${PASSLESS_COMMIT})
 #   precedence:  DESTDIR > built-in /tmp default
 #   validation:  deb SHA256 verified against the pinned value before dpkg -i
 #   failure:     set -e; dpkg errors propagate to mkosi and abort the build
-# _RSI cycle-9 atomic flip (NSS-axis(inputs))._
 
 
 # Failure modes -- cycle 14

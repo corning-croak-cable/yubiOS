@@ -79,7 +79,6 @@ if __name__ == "__main__":
 #   precedence:  CLI > env > built-in default
 #   validation:  --uki must be a readable .efi with a .cmdline section
 #   failure:     exit 2 if --uki missing; exit 1 if the .cmdline section is empty
-# _RSI cycle-9 atomic flip (NSS-axis(inputs))._
 
 # Assumption set -- cycle 12
 # 

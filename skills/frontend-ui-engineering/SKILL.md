@@ -384,7 +384,6 @@ The audit-trail entry: 2026-08-06 cycle 7 RSI — closed `trust chain` primitive
 - Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows).
 - See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Constraints
@@ -392,4 +391,3 @@ _Atomic RSI cycle-6 flip._
 - Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows).
 - See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(assumption_set))._

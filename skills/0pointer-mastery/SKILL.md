@@ -317,14 +317,12 @@ The audit-trail entry: 2026-08-06 cycle 7 RSI — no movable primitive gap to cl
 - Architecture: `docs/ARCHITECTURE.md`
 - RSI cycle-6 lens pool: `lenses.json` at repo root
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Purpose
 
 name: 0pointer-mastery
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._
 
 
 ## Mode -- cycle 11
@@ -387,4 +385,3 @@ Cross-context invariance: this file is safe in TTY, pipe, `TERM=dumb`, CI withou
 
 **Prerequisite:** skill format spec (per using-agent-skills). **Out of scope:** operator-facing deployment HOWTOs.
 
-_RSI cycle-8 audience-aware atomic flip (gap-informed, NSS-axis(audience)). See root `new-ideas-2026-08-12.md` and the `nss-audience` skill for the audience taxonomy._

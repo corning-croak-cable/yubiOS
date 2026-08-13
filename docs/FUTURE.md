@@ -194,14 +194,12 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 - Reading `FUTURE.md` (no args) shows the help text.
 - See sibling files in this directory for related examples.
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Purpose
 
 # Future Work
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._
 
 
 ## Audience
@@ -210,4 +208,3 @@ _RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._
 
 **Prerequisite:** open questions + OMN backlog. **Out of scope:** current shipped ADRs.
 
-_RSI cycle-8 audience-aware atomic flip (gap-informed, NSS-axis(audience)). See root `new-ideas-2026-08-12.md` and the `nss-audience` skill for the audience taxonomy._

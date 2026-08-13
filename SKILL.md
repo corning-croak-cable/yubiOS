@@ -246,7 +246,6 @@ All scripts are pure bash + standard GNU userland (no Python deps on the device 
 
 name: radio-queue
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._
 
 
 ## Audience
@@ -255,7 +254,6 @@ _RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._
 
 **Prerequisite:** skill format spec (per using-agent-skills). **Out of scope:** operator-facing deployment HOWTOs.
 
-_RSI cycle-8 audience-aware atomic flip (gap-informed, NSS-axis(audience)). See root `new-ideas-2026-08-12.md` and the `nss-audience` skill for the audience taxonomy._
 
 
 ## Inputs
@@ -269,4 +267,3 @@ precedence:  PROJECT_RULES.md > this SKILL.md > general agent behavior
 validation:  every workflow edit in this space must go through conn_3h7rj41VF6hs
 failure:     using any other GitHub credential violates PROJECT_RULES.md
 
-_RSI cycle-9 atomic flip (NSS-axis(inputs))._

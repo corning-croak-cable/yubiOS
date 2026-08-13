@@ -298,7 +298,6 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 - Reading `OPTS.md` (no args) shows the help text.
 - See sibling files in this directory for related examples.
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Anti-patterns
@@ -306,7 +305,6 @@ _Atomic RSI cycle-6 flip._
 - Don't claim structure without a null (per `curved-corpus-create` skill).
 - Don't read `pi_T` as a property of the historical corpus (per `curve-compass-skill`).
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(failure_modes))._
 
 ## Adjacent problems -- cycle 13
 

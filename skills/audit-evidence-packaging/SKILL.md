@@ -188,7 +188,6 @@ The audit-trail entry: 2026-08-06 cycle 7 RSI — no movable primitive gap to cl
 - Don't claim structure without a null (per `curved-corpus-create` skill).
 - Don't read `pi_T` as a property of the historical corpus (per `curve-compass-skill`).
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(failure_modes))._
 
 ## Assumption set -- cycle 12
 ## 

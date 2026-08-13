@@ -297,7 +297,6 @@ The audit-trail entry: 2026-08-06 cycle 7 RSI — no movable primitive gap to cl
 - Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows).
 - See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Verification
@@ -305,4 +304,3 @@ _Atomic RSI cycle-6 flip._
 - Read `SKILL.md` end-to-end against this section's claim.
 - Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(calibration))._

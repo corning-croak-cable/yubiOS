@@ -270,7 +270,6 @@ This document applies the yubiOS segmentation primitive — Linux namespaces, cg
 - Don't claim structure without a null (per `curved-corpus-create` skill).
 - Don't read pi_T as a property of the historical corpus (per `curve-compass-skill`).
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Composition
@@ -278,4 +277,3 @@ _Atomic RSI cycle-6 flip._
 - Sits next to sibling files in this directory.
 - See `docs/ARCHITECTURE.md` for the full yubiOS dependency graph.
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(adjacent_problems))._

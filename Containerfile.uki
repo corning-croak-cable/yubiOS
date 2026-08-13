@@ -52,7 +52,6 @@ COPY uki/ /usr/lib/yubiOS/uki/
 - Read `Containerfile.uki` end-to-end against this section's claim.
 - Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Verification
@@ -60,7 +59,6 @@ _Atomic RSI cycle-6 flip._
 - Read `Containerfile.uki` end-to-end against this section's claim.
 - Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(calibration))._
 
 
 # Inputs
@@ -72,7 +70,6 @@ _RSI cycle-7 atomic flip (gap-informed, NSS-axis(calibration))._
 #   precedence:  --build-arg > ENV > built-in default
 #   validation:  KERNEL_VERSION must match a vmlinuz-* in the build root
 #   failure:     uki-build step exits 1 with the missing kernel version
-# _RSI cycle-9 atomic flip (NSS-axis(inputs))._
 
 
 # Failure modes -- cycle 14

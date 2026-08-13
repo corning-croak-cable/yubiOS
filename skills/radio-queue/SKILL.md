@@ -246,4 +246,3 @@ All scripts are pure bash + standard GNU userland (no Python deps on the device 
 
 name: radio-queue
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

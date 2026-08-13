@@ -88,7 +88,6 @@ This document manages cryptographic identity — FIDO2/CTAP2 YubiKey, softhsm/PK
 - Reading `rk3588-ddr-tpl-source-2026-07-29.md` (no args) shows the help text.
 - See sibling files in this directory for related examples.
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Anti-patterns
@@ -96,4 +95,3 @@ _Atomic RSI cycle-6 flip._
 - Don't claim structure without a null (per `curved-corpus-create` skill).
 - Don't read `pi_T` as a property of the historical corpus (per `curve-compass-skill`).
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(failure_modes))._

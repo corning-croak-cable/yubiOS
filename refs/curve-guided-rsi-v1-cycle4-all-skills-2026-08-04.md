@@ -131,7 +131,6 @@ Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.8668).
 - Reading `curve-guided-rsi-v1-cycle4-all-skills-2026-08-04.md` (no args) shows the help text.
 - See sibling files in this directory for related examples.
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Anti-patterns
@@ -139,7 +138,6 @@ _Atomic RSI cycle-6 flip._
 - Don't claim structure without a null (per `curved-corpus-create` skill).
 - Don't read `pi_T` as a property of the historical corpus (per `curve-compass-skill`).
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(failure_modes))._
 
 ## Adjacent problems -- cycle 13
 

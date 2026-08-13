@@ -69,7 +69,6 @@ This document manages cryptographic identity — FIDO2/CTAP2 YubiKey, softhsm/PK
 - Read `firmware-rk-workflow-2026-07-17.md` end-to-end against this section's claim.
 - Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Verification
@@ -77,4 +76,3 @@ _Atomic RSI cycle-6 flip._
 - Read `firmware-rk-workflow-2026-07-17.md` end-to-end against this section's claim.
 - Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(calibration))._

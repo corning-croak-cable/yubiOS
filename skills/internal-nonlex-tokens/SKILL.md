@@ -433,7 +433,6 @@ This skill manages cryptographic identity — FIDO2/CTAP2 YubiKey, softhsm/PKCS#
 
 name: internal-nonlex-tokens
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._
 
 ## Composition -- cycle 16
 

@@ -9,7 +9,6 @@ reproducibility.json
 - Read `.gitignore` end-to-end against this section's claim.
 - Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Verification
@@ -17,7 +16,6 @@ _Atomic RSI cycle-6 flip._
 - Read `.gitignore` end-to-end against this section's claim.
 - Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(calibration))._
 
 
 # Inputs
@@ -29,7 +27,6 @@ _RSI cycle-7 atomic flip (gap-informed, NSS-axis(calibration))._
 #   audit:      every entry should be a class of artifact that must never reach a commit
 #   secret-handling: secrets are NEVER listed here; secrets live in BuildKit --mount=type=secret or in CI Secrets
 #   lifecycle:  this file is read by every git operation; changes take effect immediately
-# _RSI cycle-9 atomic flip (NSS-axis(inputs))._
 
 # Composition -- cycle 16
 #

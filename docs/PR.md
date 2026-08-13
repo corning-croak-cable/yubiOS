@@ -553,14 +553,12 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 - Reading `PR.md` (no args) shows the help text.
 - See sibling files in this directory for related examples.
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Anti-patterns
 
 - Don't bypass PROJECT_RULES.md or self-archaeology cadence.
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(recursion))._
 
 
 ## Mode -- cycle 11

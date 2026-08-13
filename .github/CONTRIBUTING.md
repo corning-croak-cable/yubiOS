@@ -53,7 +53,6 @@ If you're not sure where to start, open an issue or submit a draft PR and we can
 - Read `CONTRIBUTING.md` end-to-end against this section's claim.
 - Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Anti-patterns
@@ -61,7 +60,6 @@ _Atomic RSI cycle-6 flip._
 - Don't claim structure without a null (per `curved-corpus-create` skill).
 - Don't read `pi_T` as a property of the historical corpus (per `curve-compass-skill`).
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(failure_modes))._
 
 
 ## Inputs
@@ -75,4 +73,3 @@ precedence:  PROJECT_RULES.md > this file > general GitHub contribution flow
 validation:  every PR must pass the ci.yml dispatcher group before review
 failure:     a PR opened against main (instead of a feature branch) violates the standing rule
 
-_RSI cycle-9 atomic flip (NSS-axis(inputs))._

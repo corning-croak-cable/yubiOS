@@ -238,7 +238,6 @@ if __name__ == "__main__":
 #   precedence:  CLI > env > built-in default
 #   validation:  upstream-map validated against schema; each fork entry must have name + upstream
 #   failure:     exit 1 with the offending fork name and the upstream's HEAD SHA
-# _RSI cycle-9 atomic flip (NSS-axis(inputs))._
 
 # Assumption set -- cycle 12
 # 

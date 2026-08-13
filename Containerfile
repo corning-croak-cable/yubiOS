@@ -158,7 +158,6 @@ RUN set -- /usr/lib/modules/*/ && \
 - Read `Containerfile` end-to-end against this section's claim.
 - Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Composition
@@ -166,7 +165,6 @@ _Atomic RSI cycle-6 flip._
 - Sits next to sibling files in this directory.
 - See `docs/ARCHITECTURE.md` for the full yubiOS dependency graph.
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(adjacent_problems))._
 
 
 # Inputs
@@ -178,7 +176,6 @@ _RSI cycle-7 atomic flip (gap-informed, NSS-axis(adjacent_problems))._
 #   precedence:  --build-arg > ENV in this file > built-in default
 #   validation:  mkosi rejects unknown settings; BASE_IMAGE_TAG must resolve to a quay.io digest
 #   failure:     build aborts with the offending argument name and the constraint that failed
-# _RSI cycle-9 atomic flip (NSS-axis(inputs))._
 
 
 # Failure modes -- cycle 14

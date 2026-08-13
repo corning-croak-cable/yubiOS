@@ -280,7 +280,6 @@ Concrete pass/fail rules that an operator (or CI gate) can execute to verify the
 - Reading `yubios-scamper-product-brief-investor-memo-2026-08-07.md` (no args) shows the help text.
 - See sibling files in this directory for related examples.
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Examples
@@ -288,4 +287,3 @@ _Atomic RSI cycle-6 flip._
 - Reading `yubios-scamper-product-brief-investor-memo-2026-08-07.md` (no args) shows the help text.
 - See sibling files in this directory for related examples.
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(mode))._

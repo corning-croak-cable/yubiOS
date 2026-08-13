@@ -47,7 +47,6 @@ sign-blob-test:
 - Reading `Makefile` (no args) shows the help text.
 - See sibling files in this directory for related examples.
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Anti-patterns
@@ -55,7 +54,6 @@ _Atomic RSI cycle-6 flip._
 - Don't claim structure without a null (per `curved-corpus-create` skill).
 - Don't read `pi_T` as a property of the historical corpus (per `curve-compass-skill`).
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(failure_modes))._
 
 
 # Inputs
@@ -67,7 +65,6 @@ _RSI cycle-7 atomic flip (gap-informed, NSS-axis(failure_modes))._
 #   precedence:  command-line VAR > env > make default
 #   validation:  make rejects unknown targets; each target validates its prereqs before running
 #   failure:     make exits non-zero with the failing recipe and the first error line
-# _RSI cycle-9 atomic flip (NSS-axis(inputs))._
 
 
 # Failure modes -- cycle 14

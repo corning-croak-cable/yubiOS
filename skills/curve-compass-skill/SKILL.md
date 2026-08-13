@@ -424,4 +424,3 @@ Sauna, wave 2. Built against `papers/is-this-x-2026-08-12.md`
 - Sits next to sibling files in this directory.
 - See `docs/ARCHITECTURE.md` for the full yubiOS dependency graph.
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(adjacent_problems))._

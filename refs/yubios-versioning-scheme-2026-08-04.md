@@ -143,14 +143,12 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 - Reading `yubios-versioning-scheme-2026-08-04.md` (no args) shows the help text.
 - See sibling files in this directory for related examples.
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Purpose
 
 contract: "yubios versioning scheme â formal decision document for the de-facto scheme already in use as of v0.7.1 (first formal 'v'-prefi
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._
 
 
 ## Mode -- cycle 11
@@ -213,7 +211,6 @@ Cross-context invariance: this file is safe in TTY, pipe, `TERM=dumb`, CI withou
 
 **Prerequisite:** yubiOS architecture and ADR corpus. **Out of scope:** skill author workflow.
 
-_RSI cycle-8 audience-aware atomic flip (gap-informed, NSS-axis(audience)). See root `new-ideas-2026-08-12.md` and the `nss-audience` skill for the audience taxonomy._
 
 
 ## Inputs
@@ -227,4 +224,3 @@ precedence:  this scheme > ad-hoc version strings
 validation:  every version in PINNED.md must follow the scheme in this note
 failure:     a version that violates the scheme breaks the docker.io/0mniteck/yubios:<tag> contract
 
-_RSI cycle-9 atomic flip (NSS-axis(inputs))._

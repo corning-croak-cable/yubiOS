@@ -64,7 +64,6 @@ Jenny adds to `playbooks/` as new failure modes emerge — a mode qualifies once
 - Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows).
 - See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(assumption_set))._
 
 
 ## Inputs
@@ -78,7 +77,6 @@ precedence:  PROJECT_RULES.md > this file > general playbook conventions
 validation:  every playbook must end in a verifiable check (exit code, log line, or API response)
 failure:     a playbook without a check is folklore, not a recipe
 
-_RSI cycle-9 atomic flip (NSS-axis(inputs))._
 
 
 ## Failure modes -- cycle 14

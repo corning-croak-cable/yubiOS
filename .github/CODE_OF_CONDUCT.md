@@ -133,7 +133,6 @@ https://www.contributor-covenant.org/translations.
 - Read `CODE_OF_CONDUCT.md` end-to-end against this section's claim.
 - Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Verification
@@ -141,7 +140,6 @@ _Atomic RSI cycle-6 flip._
 - Read `CODE_OF_CONDUCT.md` end-to-end against this section's claim.
 - Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(calibration))._
 
 
 ## Mode -- cycle 11
@@ -209,4 +207,3 @@ precedence:  this file > general GitHub community standards
 validation:  every report should go to the channel listed in .github/SECURITY.md
 failure:     a code-of-conduct report that bypasses the listed channel cannot be tracked
 
-_RSI cycle-9 atomic flip (NSS-axis(inputs))._

@@ -82,14 +82,12 @@ All three declare `permissions: { contents: write, actions: write }` at workflow
 - Read `github-token-vs-secrets.md` end-to-end against this section's claim.
 - Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Purpose
 
 # github.token vs secrets.X (2026-08-01)
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._
 
 
 ## Audience
@@ -98,7 +96,6 @@ _RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._
 
 **Prerequisite:** yubiOS in production with bootc lifecycle. **Out of scope:** skill author workflow (see skills/).
 
-_RSI cycle-8 audience-aware atomic flip (gap-informed, NSS-axis(audience)). See root `new-ideas-2026-08-12.md` and the `nss-audience` skill for the audience taxonomy._
 
 
 ## Failure modes -- cycle 14

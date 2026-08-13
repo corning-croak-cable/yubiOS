@@ -33,7 +33,6 @@ echo "install-chipsec: CHIPSEC 1.13.16 installed for yubiOS first-boot firmware 
 #   precedence:  DESTDIR > built-in /tmp default
 #   validation:  tarball SHA256 verified against the pinned value before extraction
 #   failure:     set -e; the failing curl/tar line and exit code are logged
-# _RSI cycle-9 atomic flip (NSS-axis(inputs))._
 
 
 # Failure modes -- cycle 14

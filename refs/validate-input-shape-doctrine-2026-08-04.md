@@ -922,7 +922,6 @@ Context: section appended per repo-refs-skill cycle-3 7-D Mode D batch (Δ=+0.55
 
 # Spec: Validate-Input-Shape Doctrine and CI Gate for yubiOS
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._
 
 
 ## Audience
@@ -931,7 +930,6 @@ _RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._
 
 **Prerequisite:** yubiOS architecture and ADR corpus. **Out of scope:** skill author workflow.
 
-_RSI cycle-8 audience-aware atomic flip (gap-informed, NSS-axis(audience)). See root `new-ideas-2026-08-12.md` and the `nss-audience` skill for the audience taxonomy._
 
 
 ## Inputs
@@ -945,4 +943,3 @@ precedence:  this note is the input-shape doctrine; downstream skills (nss-input
 validation:  every input shape in the corpus must trace back to this doctrine or to a deviation ADR
 failure:     an undocumented input shape is a candidate for the next NSS-inputs Extend gap
 
-_RSI cycle-9 atomic flip (NSS-axis(inputs))._

@@ -208,4 +208,3 @@ Context: section appended per repo-refs-skill cycle-1 Mode D batch (Δ=+0.4816).
 - Reading `refederated-identity-oidc-sigstore-privacy-2026-08-07.md` (no args) shows the help text.
 - See sibling files in this directory for related examples.
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(inputs))._

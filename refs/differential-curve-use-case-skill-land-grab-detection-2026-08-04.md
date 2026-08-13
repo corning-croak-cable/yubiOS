@@ -126,7 +126,6 @@ Context: section appended per repo-refs-skill cycle-3 7-D Mode D batch (Δ=+0.49
 - Reading `differential-curve-use-case-skill-land-grab-detection-2026-08-04.md` (no args) shows the help text.
 - See sibling files in this directory for related examples.
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Anti-patterns
@@ -134,7 +133,6 @@ _Atomic RSI cycle-6 flip._
 - Don't claim structure without a null (per `curved-corpus-create` skill).
 - Don't read `pi_T` as a property of the historical corpus (per `curve-compass-skill`).
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(failure_modes))._
 
 
 ## Failure modes -- cycle 14

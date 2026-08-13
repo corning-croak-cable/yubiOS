@@ -214,4 +214,3 @@ if __name__ == "__main__":
 #   precedence:  CLI > env > built-in default
 #   validation:  skopeo inspect resolves --image before diagnosis starts
 #   failure:     exit 2 on skopeo error; exit 1 with the offending OCI layer digest
-# _RSI cycle-9 atomic flip (NSS-axis(inputs))._

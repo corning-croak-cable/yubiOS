@@ -102,7 +102,6 @@ This document supports the yubiOS continuous-monitoring layer — runtime detect
 - Read `ONBOARDING.md` end-to-end against this section's claim.
 - Run the relevant CI workflow on a draft branch (see `docs/CI_MAP.md`).
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Constraints
@@ -110,7 +109,6 @@ _Atomic RSI cycle-6 flip._
 - Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows).
 - See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(assumption_set))._
 
 
 ## Inputs
@@ -124,4 +122,3 @@ precedence:  README.md > this file > general onboarding guidance
 validation:  every step in this file must end in a verifiable check (exit code, file presence, API call)
 failure:     a step without a check cannot be verified by a fresh-context reviewer
 
-_RSI cycle-9 atomic flip (NSS-axis(inputs))._

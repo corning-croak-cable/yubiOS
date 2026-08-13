@@ -275,7 +275,6 @@ if __name__ == "__main__":
 #   precedence:  CLI > env > built-in default
 #   validation:  allowlist validated against schema; workflow files parsed as YAML
 #   failure:     exit 0 if clean; exit 1 with the offending token reference if found
-# _RSI cycle-9 atomic flip (NSS-axis(inputs))._
 
 # Assumption set -- cycle 12
 # 

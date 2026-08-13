@@ -488,4 +488,3 @@ The stochastic RSI extensions introduced in cycle 5 compose with the Composition
 
 name: recursive-self-improvement
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._

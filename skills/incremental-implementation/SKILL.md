@@ -309,4 +309,3 @@ This skill integrates with the yubiOS declarative-policy substrate — OPA/Rego 
 - Reading `SKILL.md` (no args) shows the help text.
 - See sibling files in this directory for related examples.
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(inputs))._

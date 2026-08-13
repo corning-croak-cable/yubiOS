@@ -264,7 +264,6 @@ This skill applies least-privilege hardening: Linux capabilities (drop + ambient
 - Architecture: `docs/ARCHITECTURE.md`
 - RSI cycle-6 lens pool: `lenses.json` at repo root
 
-_Atomic RSI cycle-6 flip._
 
 
 ## Constraints
@@ -272,4 +271,3 @@ _Atomic RSI cycle-6 flip._
 - Out of scope: changes to `papers/` (historical info) or `.github/workflows/*.yml` (CI workflows).
 - See `PROJECT_RULES.md` for the yubiOS change-management doctrine.
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(assumption_set))._

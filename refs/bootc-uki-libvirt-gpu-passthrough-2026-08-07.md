@@ -385,7 +385,6 @@ Each step is **ordered** by impact x cost, descending. Steps 1-2 are immediate; 
 
 # bootc-UKI host + libvirt/QEMU GPU passthrough â host-level cutoff vs. libvfio-user vGPU budget
 
-_RSI cycle-7 atomic flip (gap-informed, NSS-axis(audience))._
 
 
 ## Mode -- cycle 11
@@ -448,4 +447,3 @@ Cross-context invariance: this file is safe in TTY, pipe, `TERM=dumb`, CI withou
 
 **Prerequisite:** yubiOS architecture and ADR corpus. **Out of scope:** skill author workflow.
 
-_RSI cycle-8 audience-aware atomic flip (gap-informed, NSS-axis(audience)). See root `new-ideas-2026-08-12.md` and the `nss-audience` skill for the audience taxonomy._
