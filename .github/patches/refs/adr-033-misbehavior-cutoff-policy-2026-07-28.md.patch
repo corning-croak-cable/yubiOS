@@ -1,0 +1,8 @@
+
+
+## Examples
+
+- Reading `adr-033-misbehavior-cutoff-policy-2026-07-28.md` (no args) shows the help text.
+- See sibling files in this directory for related examples.
+
+_RSI cycle-7 v2 atomic flip (gap-informed, NSS-axis(mode))._

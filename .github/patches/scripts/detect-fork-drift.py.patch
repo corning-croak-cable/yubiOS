@@ -1,0 +1,5 @@
+
+
+# # ## Verification
+# # python3 detect-fork-drift.py --selftest  # exits 0 iff GREEN, when applicable.
+# # RSI cycle-7 v2 atomic flip (NSS-axis(calibration)).

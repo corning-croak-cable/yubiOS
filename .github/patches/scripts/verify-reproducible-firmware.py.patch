@@ -1,0 +1,5 @@
+
+
+# # ## Verification
+# # python3 verify-reproducible-firmware.py --selftest  # exits 0 iff GREEN, when applicable.
+# # RSI cycle-7 v2 atomic flip (NSS-axis(calibration)).
