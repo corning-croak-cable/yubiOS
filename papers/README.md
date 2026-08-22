@@ -102,3 +102,23 @@ Riemannian Langevin on S²: dX = −∇_g Φ(X) dt + √(2T) dB_{S²}, stationar
 ## Load-bearing sources
 Part I: Leonhardt Science 312:1777 (2006); Schmiele et al. PRA 81:033837 (2010); Kalaba & Ueno JOSA 64:317 (1974); Tyc JOSA A 14:2850 (1997); Rao (1945); Čencov uniqueness; Efron Ann. Stat. 3:1189 (1975); Marchenko–Pastur (1967); Lyu & Mukherjee arXiv:2407.14942; Dasgupta & Gupta JL (2003); Zhang effective dimension (NeurIPS 2002 / NC 2005); Ambrosio–Gigli–Savaré OT; lensing SBI: arXiv:2501.08524, arXiv:2309.16063.
 Part II: Shoemake, SIGGRAPH 1985 (slerp); White, arXiv:1609.04468 (spherical latent interpolation); De Bortoli et al., Riemannian Score-Based Generative Modelling, NeurIPS 2022; Huang et al., Riemannian Diffusion Models, NeurIPS 2022; Scaling Riemannian Diffusion Models, NeurIPS 2023 (exact heat kernels on symmetric spaces); standard S² heat kernel via Legendre expansion; von Mises–Fisher family; Schrödinger bridge ↔ entropic OT (Léonard survey; De Bortoli et al. Diffusion Schrödinger Bridge, NeurIPS 2021).
+
+---
+
+## Machine-checked + CI-resolved status (2026-08-22)
+
+The identity/measurement boundary of the unified paper (§6) is now enforced structurally in CI: workflow [`lean-check.yml`](../.github/workflows/lean-check.yml) runs two jobs on every push touching `data/lean/**`.
+
+**Job 1 — `check` (identities).** [`data/lean/CurvedCorpus.lean`](data/lean/CurvedCorpus.lean) compiles on pinned core Lean 4.33.0, no mathlib, no `sorry`. Contents: the atom invariant Δ≥0, linear composition, cumulative monotonicity, the gate–rank identity (strengthened 2026-08-22 to the genuine two-fraction form `fracGe p q 2 5 ↔ fracGe 5 1 (2q) p`, each direction consuming one positivity hypothesis), the Φ-ladder telescope, heat-exponent monotonicity/additivity, MH flux symmetry, and **§8 (new): curveball trades preserve every row and column sum** — the sampler's move set provably never leaves the fixed-margin fibre.
+
+**Job 2 — `verify-measurements` (the five explicit non-claims).** The Lean file's scope block lists five things the proof does NOT establish; [`data/lean/verify_claims.py`](data/lean/verify_claims.py) resolves each as a seeded PASS/FAIL check against the shipped evidence bundle (`is-this-x-2026-08-12-Final.zip`), exiting nonzero on any FAIL. Results from run [32574882099](https://github.com/yubi-OS/yubiOS/actions/runs/32574882099) (commit `72a5cdd4`):
+
+| # | Non-claim | Resolution | Result |
+|---|---|---|---|
+| 1 | null ensemble scientifically adequate | fibre mechanics proved (Lean §8); uniformity χ² on an exhaustively enumerated 310-element fixed-margin fibre | support 310/310, outside=0, z=+0.53 — PASS |
+| 2 | Monte Carlo calibration converged | curveball V₂ mixing profile on the real 2286×9 matrix | flat 20N→100N (gap 0.0006 < tol 0.0019), 100N mean 0.7083 ≈ audit 0.7092 — PASS |
+| 3 | spherical heat-kernel implementation error-free | independent Euler–Maruyama reimplementation vs exp(−ℓ(ℓ+1)t), ℓ=1..3, t∈{0.05,0.2} | all 6 cells within tolerance (worst: ℓ=3,t=0.2: 0.0860 vs 0.0907) — PASS |
+| 4 | floating point matches the real-number model | 2,117 float64 spot-checks of the Lean identities + margin preservation over 500 trades | all hold — PASS |
+| 5 | the corpus-specific effect is genuine | full re-derivation from the bundle: real V₂ = 0.7235293731 (matches published to 1e-9); fresh 40-rep curveball null | ΔV₂ = +0.0146, z = +12.8 vs paper's +0.0144, z = +12.13 — **independent replication**, PASS |
+
+Scope note: PASS here means the seeded check reproduces the paper's numbers under its stated protocol — it does not elevate any measurement to a theorem. The five items remain measurements; they are now merely *executable* measurements that gate the same CI as the proof. Claim 1's statistical half (uniformity) is checked on a small exhaustive fibre per the paper's own validation protocol; adequacy of the fixed-margin ensemble as the scientific null for §F3 remains a modeling judgment, argued in the papers, not provable.
