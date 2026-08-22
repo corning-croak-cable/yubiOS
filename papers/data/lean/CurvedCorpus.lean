@@ -14,6 +14,7 @@
     5. phi_ladder_telescope   -- fold-ladder potential drops telescope
     6. heat_exponent_monotone / heat_exponent_additive -- ℓ(ℓ+1) heat-kernel exponent facts
     7. mh_flux_symm           -- Metropolis flux min-symmetry (detailed balance kernel)
+    8. trade_preserves_rowSum / trade_preserves_colSum -- curveball trades stay on the fixed-margin fibre
 
   Scope — what this file does NOT prove. The theorems below are
   identity-type statements over exact arithmetic (integers, fraction
@@ -33,6 +34,16 @@
   Those claims live on the measurement side of the identity/measurement
   boundary and are supported only by reproduction scripts and matched
   nulls, per the papers' own discipline.
+
+  Resolution status: the identity-type core of the first item -- the
+  curveball move set never leaves the fixed-margin fibre -- is proved in
+  section 8 below. Every remaining measurement-side item is executed as a
+  seeded PASS/FAIL check by verify_claims.py in this directory, which the
+  same CI workflow runs beside this file: sampler uniformity on an
+  exhaustively enumerated fibre (1), mixing convergence (2), the spherical
+  heat-kernel semigroup identity (3), float-vs-exact-model checks of the
+  theorems in this file (4), and reproduction of the corpus effect against
+  its curveball null (5).
 -/
 
 namespace CurvedCorpus
@@ -216,5 +227,199 @@ symmetric. With integer-scaled weights this is min-commutativity. -/
 /-- Detailed-balance flux symmetry: min(wa, wb) = min(wb, wa). -/
 theorem mh_flux_symm (wa wb : Int) : imin wa wb = imin wb wa :=
   imin_comm wa wb
+
+/-! ### 8. Curveball trades stay on the fixed-margin fibre
+
+Resolution boundary for the scope block above. The elementary move of the
+curveball null sampler is a 2x2 checkerboard trade: rows i /= j and columns
+a /= b, with the submatrix [[1,0],[0,1]] replaced by [[0,1],[1,0]] (or vice
+versa; both directions are instances of the delta below). The claim that
+the null ensemble is adequate splits into mechanics and statistics. The
+mechanics -- the move set never leaves the fixed-margin fibre -- is
+identity-type and proved here: a trade preserves every row sum and every
+column sum. The statistics -- uniformity on the fibre, mixing, and every
+other measurement-side item in the scope block -- are executed as seeded
+PASS/FAIL checks by verify_claims.py beside this file, run by the same CI
+workflow as this proof.
+
+A matrix is Nat -> Nat -> Int; sums run over explicit index lists via
+sumOver; countN counts occurrences. The preservation theorems hold for any
+enumeration in which the two traded columns (resp. rows) occur equally
+often -- in particular any duplicate-free enumeration containing both. -/
+
+def countN (a : Nat) : List Nat → Int
+  | [] => 0
+  | x :: xs => (if x = a then 1 else 0) + countN a xs
+
+def sumOver (f : Nat → Int) : List Nat → Int
+  | [] => 0
+  | x :: xs => f x + sumOver f xs
+
+/-- The plus-minus-1 delta a trade applies at corners (i,a), (i,b), (j,a), (j,b). -/
+def tradeDelta (i j a b r c : Nat) : Int :=
+  (if r = i ∧ c = a then -1 else 0) + (if r = i ∧ c = b then 1 else 0)
+    + (if r = j ∧ c = a then 1 else 0) + (if r = j ∧ c = b then -1 else 0)
+
+/-- The traded matrix. -/
+def trade (M : Nat → Nat → Int) (i j a b r c : Nat) : Int :=
+  M r c + tradeDelta i j a b r c
+
+theorem tradeDelta_row_other (i j a b r c : Nat) (h1 : r ≠ i) (h2 : r ≠ j) :
+    tradeDelta i j a b r c = 0 := by
+  have n1 : ¬(r = i ∧ c = a) := fun h => h1 h.1
+  have n2 : ¬(r = i ∧ c = b) := fun h => h1 h.1
+  have n3 : ¬(r = j ∧ c = a) := fun h => h2 h.1
+  have n4 : ¬(r = j ∧ c = b) := fun h => h2 h.1
+  simp [tradeDelta, n1, n2, n3, n4]
+
+theorem tradeDelta_row_i (i j a b c : Nat) (hij : i ≠ j) :
+    tradeDelta i j a b i c
+      = (if c = a then (-1 : Int) else 0) + (if c = b then (1 : Int) else 0) := by
+  have n3 : ¬(i = j ∧ c = a) := fun h => hij h.1
+  have n4 : ¬(i = j ∧ c = b) := fun h => hij h.1
+  simp [tradeDelta, n3, n4]
+
+theorem tradeDelta_row_j (i j a b c : Nat) (hij : i ≠ j) :
+    tradeDelta i j a b j c
+      = (if c = a then (1 : Int) else 0) + (if c = b then (-1 : Int) else 0) := by
+  have n1 : ¬(j = i ∧ c = a) := fun h => hij h.1.symm
+  have n2 : ¬(j = i ∧ c = b) := fun h => hij h.1.symm
+  simp [tradeDelta, n1, n2]
+
+theorem trade_rowSum_other (M : Nat → Nat → Int) (i j a b r : Nat)
+    (cols : List Nat) (h1 : r ≠ i) (h2 : r ≠ j) :
+    sumOver (fun c => trade M i j a b r c) cols
+      = sumOver (fun c => M r c) cols := by
+  induction cols with
+  | nil => rfl
+  | cons x xs ih =>
+      simp only [sumOver]
+      rw [show trade M i j a b r x = M r x by
+            unfold trade; rw [tradeDelta_row_other i j a b r x h1 h2]; omega]
+      omega
+
+theorem trade_rowSum_i (M : Nat → Nat → Int) (i j a b : Nat)
+    (cols : List Nat) (hij : i ≠ j) :
+    sumOver (fun c => trade M i j a b i c) cols
+      = sumOver (fun c => M i c) cols + countN b cols - countN a cols := by
+  induction cols with
+  | nil => simp [sumOver, countN]
+  | cons x xs ih =>
+      simp only [sumOver, countN]
+      rw [show trade M i j a b i x
+            = M i x + ((if x = a then (-1 : Int) else 0)
+                + (if x = b then (1 : Int) else 0)) by
+            unfold trade; rw [tradeDelta_row_i i j a b x hij]]
+      by_cases hxa : x = a <;> by_cases hxb : x = b <;> simp_all <;> omega
+
+theorem trade_rowSum_j (M : Nat → Nat → Int) (i j a b : Nat)
+    (cols : List Nat) (hij : i ≠ j) :
+    sumOver (fun c => trade M i j a b j c) cols
+      = sumOver (fun c => M j c) cols + countN a cols - countN b cols := by
+  induction cols with
+  | nil => simp [sumOver, countN]
+  | cons x xs ih =>
+      simp only [sumOver, countN]
+      rw [show trade M i j a b j x
+            = M j x + ((if x = a then (1 : Int) else 0)
+                + (if x = b then (-1 : Int) else 0)) by
+            unfold trade; rw [tradeDelta_row_j i j a b x hij]]
+      by_cases hxa : x = a <;> by_cases hxb : x = b <;> simp_all <;> omega
+
+theorem tradeDelta_col_other (i j a b r c : Nat) (h1 : c ≠ a) (h2 : c ≠ b) :
+    tradeDelta i j a b r c = 0 := by
+  have n1 : ¬(r = i ∧ c = a) := fun h => h1 h.2
+  have n2 : ¬(r = i ∧ c = b) := fun h => h2 h.2
+  have n3 : ¬(r = j ∧ c = a) := fun h => h1 h.2
+  have n4 : ¬(r = j ∧ c = b) := fun h => h2 h.2
+  simp [tradeDelta, n1, n2, n3, n4]
+
+theorem tradeDelta_col_a (i j a b r : Nat) (hab : a ≠ b) :
+    tradeDelta i j a b r a
+      = (if r = i then (-1 : Int) else 0) + (if r = j then (1 : Int) else 0) := by
+  have n2 : ¬(r = i ∧ a = b) := fun h => hab h.2
+  have n4 : ¬(r = j ∧ a = b) := fun h => hab h.2
+  simp [tradeDelta, n2, n4]
+
+theorem tradeDelta_col_b (i j a b r : Nat) (hab : a ≠ b) :
+    tradeDelta i j a b r b
+      = (if r = i then (1 : Int) else 0) + (if r = j then (-1 : Int) else 0) := by
+  have n1 : ¬(r = i ∧ b = a) := fun h => hab h.2.symm
+  have n3 : ¬(r = j ∧ b = a) := fun h => hab h.2.symm
+  simp [tradeDelta, n1, n3]
+
+theorem trade_colSum_other (M : Nat → Nat → Int) (i j a b c : Nat)
+    (rows : List Nat) (h1 : c ≠ a) (h2 : c ≠ b) :
+    sumOver (fun r => trade M i j a b r c) rows
+      = sumOver (fun r => M r c) rows := by
+  induction rows with
+  | nil => rfl
+  | cons x xs ih =>
+      simp only [sumOver]
+      rw [show trade M i j a b x c = M x c by
+            unfold trade; rw [tradeDelta_col_other i j a b x c h1 h2]; omega]
+      omega
+
+theorem trade_colSum_a (M : Nat → Nat → Int) (i j a b : Nat)
+    (rows : List Nat) (hab : a ≠ b) :
+    sumOver (fun r => trade M i j a b r a) rows
+      = sumOver (fun r => M r a) rows + countN j rows - countN i rows := by
+  induction rows with
+  | nil => simp [sumOver, countN]
+  | cons x xs ih =>
+      simp only [sumOver, countN]
+      rw [show trade M i j a b x a
+            = M x a + ((if x = i then (-1 : Int) else 0)
+                + (if x = j then (1 : Int) else 0)) by
+            unfold trade; rw [tradeDelta_col_a i j a b x hab]]
+      by_cases hxi : x = i <;> by_cases hxj : x = j <;> simp_all <;> omega
+
+theorem trade_colSum_b (M : Nat → Nat → Int) (i j a b : Nat)
+    (rows : List Nat) (hab : a ≠ b) :
+    sumOver (fun r => trade M i j a b r b) rows
+      = sumOver (fun r => M r b) rows + countN i rows - countN j rows := by
+  induction rows with
+  | nil => simp [sumOver, countN]
+  | cons x xs ih =>
+      simp only [sumOver, countN]
+      rw [show trade M i j a b x b
+            = M x b + ((if x = i then (1 : Int) else 0)
+                + (if x = j then (-1 : Int) else 0)) by
+            unfold trade; rw [tradeDelta_col_b i j a b x hab]]
+      by_cases hxi : x = i <;> by_cases hxj : x = j <;> simp_all <;> omega
+
+/-- A trade preserves every row sum, over any column enumeration counting
+    the two traded columns equally often (any duplicate-free enumeration). -/
+theorem trade_preserves_rowSum (M : Nat → Nat → Int) (i j a b r : Nat)
+    (cols : List Nat) (hij : i ≠ j)
+    (hbal : countN a cols = countN b cols) :
+    sumOver (fun c => trade M i j a b r c) cols
+      = sumOver (fun c => M r c) cols := by
+  by_cases hri : r = i
+  · have h := trade_rowSum_i M i j a b cols hij
+    rw [hri]
+    omega
+  · by_cases hrj : r = j
+    · have h := trade_rowSum_j M i j a b cols hij
+      rw [hrj]
+      omega
+    · exact trade_rowSum_other M i j a b r cols hri hrj
+
+/-- A trade preserves every column sum, over any row enumeration counting
+    the two traded rows equally often (any duplicate-free enumeration). -/
+theorem trade_preserves_colSum (M : Nat → Nat → Int) (i j a b c : Nat)
+    (rows : List Nat) (hab : a ≠ b)
+    (hbal : countN i rows = countN j rows) :
+    sumOver (fun r => trade M i j a b r c) rows
+      = sumOver (fun r => M r c) rows := by
+  by_cases hca : c = a
+  · have h := trade_colSum_a M i j a b rows hab
+    rw [hca]
+    omega
+  · by_cases hcb : c = b
+    · have h := trade_colSum_b M i j a b rows hab
+      rw [hcb]
+      omega
+    · exact trade_colSum_other M i j a b c rows hca hcb
 
 end CurvedCorpus

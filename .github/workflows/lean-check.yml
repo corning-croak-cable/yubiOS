@@ -37,3 +37,15 @@ jobs:
         run: |
           ! grep -n "sorry" papers/data/lean/CurvedCorpus.lean
           echo "NO_SORRY_OK"
+
+  verify-measurements:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Install numpy
+        run: python3 -m pip install --quiet numpy
+
+      - name: Resolve measurement-side claims
+        run: python3 papers/data/lean/verify_claims.py
