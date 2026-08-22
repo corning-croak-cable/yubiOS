@@ -215,33 +215,34 @@ def claim6(rng):
                 stack.append(nb)
     connected = len(seen) == K
     sym = all(cur in neighbors(nb) for cur in fibre[:40] for nb in neighbors(cur))
-    # Constant-margin medium anchor. Lyu-Mukherjee / MP is ASYMPTOTIC:
-    # at finite N the exact-margin constraint induces weak compositional
-    # correlations, so the fixed-margin null sits slightly above the
-    # destroyed-dependence baselines. The executable form of the asymptotic
-    # claim is that this constraint gap shrinks as N grows at fixed d.
+    # Constant-margin medium anchor -- F3's claim is that the medium has an
+    # ANALYTIC spectrum. At constant row margins (exactly k of d per row)
+    # the rows are exchangeable draws with pairwise column correlation
+    # rho = -1/(d-1), N-independent, so the correlation matrix is
+    # C = (1-rho) I + rho J with eigenvalues {0, d/(d-1) x (d-1 copies)}
+    # and the analytic top-2 share is V2 = 2/(d-1) x ... = 2*(d/(d-1))/d.
+    # (This is why the fixed-margin medium does NOT converge to the
+    # destroyed-dependence nulls at fixed d -- consistent with the paper's
+    # 98%-marginal-fixed finding.) The executable form: the curveball null
+    # V2 on a constant-margin matrix converges to the analytic value as N
+    # grows. Destroyed-dependence baselines are reported for contrast.
     d, k = 9, 4
-    gaps = {}
+    v2_analytic = 2.0 * (d / (d - 1.0)) / d
+    res = {}
     for N in [513, 2052]:
         Mc = np.zeros((N, d), dtype=np.int8)
         for i in range(N):
             Mc[i, (i + np.arange(k)) % d] = 1
         cb = float(np.mean([v2_corr(curveball(Mc, 40 * N, rng)) for _ in range(8)]))
-        cps = []
-        for _ in range(8):
-            Mp = Mc.copy()
-            for c in range(d):
-                Mp[:, c] = Mp[rng.permutation(N), c]
-            cps.append(v2_corr(Mp))
-        cp = float(np.mean(cps))
-        gaps[N] = (cb, cp, abs(cb - cp))
-    shrinks = gaps[2052][2] < gaps[513][2]
-    small = gaps[2052][2] < 0.015
-    okc = shrinks and small
+        res[N] = (cb, abs(cb - v2_analytic))
+    iid = float(np.mean([v2_corr((rng.random((2052, d)) < k / d).astype(np.int8)) for _ in range(8)]))
+    converges = res[2052][1] < res[513][1]
+    close = res[2052][1] < 0.025
+    okc = converges and close
     ok = connected and stayed and sym and okc
     report('CLAIM_6_F3_NULL_CANONICITY', ok,
-           'fibre graph: connected=%s (%d/%d reached) stays_on_fibre=%s symmetric=%s => with Lean sec.8 closure + sec.9 reversibility/stationarity, uniform is THE stationary law on this instance; constant-margin medium gap |curveball-colperm|: N=513: %.4f (cb=%.4f cp=%.4f), N=2052: %.4f (cb=%.4f cp=%.4f), shrinks=%s small=%s (Lyu-Mukherjee is asymptotic; gap must vanish with N)'
-           % (connected, len(seen), K, stayed, sym, gaps[513][2], gaps[513][0], gaps[513][1], gaps[2052][2], gaps[2052][0], gaps[2052][1], shrinks, small))
+           'fibre graph: connected=%s (%d/%d reached) stays_on_fibre=%s symmetric=%s => with Lean sec.8 closure + sec.9 reversibility/stationarity, uniform is THE stationary law on this instance; analytic constant-margin medium V2=%.4f (rho=-1/(d-1)): curveball N=513: %.4f (dist %.4f), N=2052: %.4f (dist %.4f), converges=%s close=%s; iid contrast=%.4f (fixed-margin medium is analytically distinct from destroyed-dependence nulls at fixed d)'
+           % (connected, len(seen), K, stayed, sym, v2_analytic, res[513][0], res[513][1], res[2052][0], res[2052][1], converges, close, iid))
 def main():
     M = load_real_matrix()
     claim1(np.random.default_rng(SEED + 1))
