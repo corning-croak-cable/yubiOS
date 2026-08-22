@@ -491,7 +491,8 @@ def nw_smooth_targets(points: np.ndarray, targets: np.ndarray, kappa: float = 50
 
 
 def run_admit_null(zip_path: str = REAL_CORPUS_ZIP, t: float = 0.005, reps: int = 6,
-                   n_null: int = 10, trades_per_row: int = 20, seed: int = 20260822) -> int:
+                   n_null: int = 10, trades_per_row: int = 20, seed: int = 20260822,
+                   kappas=(20.0, 50.0, 150.0)) -> int:
     """Tackle the two open items on the atomicity diagnostic A_l(t).
 
     (1) ADMISSION: the papers specify A_l's null (curveball draws, which share
@@ -534,7 +535,7 @@ def run_admit_null(zip_path: str = REAL_CORPUS_ZIP, t: float = 0.005, reps: int 
 
     pts, tg = matrix_to_sphere(matrix)
     smooth = {}
-    for kappa in (20.0, 50.0, 150.0):
+    for kappa in kappas:
         tg_s = nw_smooth_targets(pts, tg, kappa=kappa)
         E0s = fit_field(pts, tg_s).energy
         Ems = simulate_decay(pts, tg_s, t, reps=reps, seed=seed + 2, lam=1e-3)
@@ -590,11 +591,15 @@ def main(argv=None):
                          help="Also run the Leg-2/3 real-corpus atomicity + de-atomization self-test")
     parser.add_argument("--zip-path", default=REAL_CORPUS_ZIP, help="Path to the real-corpus zip")
     parser.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
+    parser.add_argument("--n-null", type=int, default=10, help="Number of curveball null draws for --admit-null")
+    parser.add_argument("--kappas", default="20,50,150", help="Comma-separated vMF kappa grid for --admit-null")
+    parser.add_argument("--seed", type=int, default=20260822, help="Base RNG seed for --admit-null")
     parser.add_argument("--admit-null", action="store_true",
                          help="Execute the A_l admission null + value-level de-atomization")
     args = parser.parse_args(argv)
     if args.admit_null:
-        sys.exit(run_admit_null(zip_path=args.zip_path))
+        sys.exit(run_admit_null(zip_path=args.zip_path, n_null=args.n_null, seed=args.seed,
+                                kappas=tuple(float(x) for x in args.kappas.split(','))))
 
     if not args.selftest and not args.real_corpus:
         parser.print_help()
