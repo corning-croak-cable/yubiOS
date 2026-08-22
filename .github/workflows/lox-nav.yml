@@ -1,0 +1,18 @@
+name: lox-nav
+on:
+  push:
+    branches: [lox-nav]
+  workflow_dispatch:
+jobs:
+  loxnav:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - name: Install numpy
+        run: python3 -m pip install --quiet numpy
+      - name: loxodromic navigation
+        run: |
+          python3 papers/scripts/gapD_loxodromic_navigation.py --out /tmp/lox.json
+          echo '=== LOX JSON ==='
+          cat /tmp/lox.json
