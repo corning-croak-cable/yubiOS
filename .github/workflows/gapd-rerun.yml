@@ -1,0 +1,28 @@
+name: gapd-python-rerun
+on:
+  push:
+    branches: [gapd-python-rerun]
+  workflow_dispatch:
+jobs:
+  gapd:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - name: Install numpy
+        run: python3 -m pip install --quiet numpy
+      - name: canonical run (paper seed 20260822)
+        run: |
+          python3 papers/scripts/gapD_lens_power.py --out /tmp/gapD-seed20260822.json --seed 20260822
+          echo '=== JSON seed 20260822 ==='
+          cat /tmp/gapD-seed20260822.json
+      - name: seed replication 777
+        run: |
+          python3 papers/scripts/gapD_lens_power.py --out /tmp/gapD-seed777.json --seed 777
+          echo '=== JSON seed 777 ==='
+          cat /tmp/gapD-seed777.json
+      - name: seed replication 12345
+        run: |
+          python3 papers/scripts/gapD_lens_power.py --out /tmp/gapD-seed12345.json --seed 12345
+          echo '=== JSON seed 12345 ==='
+          cat /tmp/gapD-seed12345.json
