@@ -79,6 +79,11 @@ def main():
     p.add_argument('--n-random', type=int, default=150)
     p.add_argument('--n-coord-rounds', type=int, default=20)
     p.add_argument('--zip-path', default=os.path.join(ROOT, dfc.REAL_CORPUS_ZIP))
+    p.add_argument('--control-index', type=int, default=None,
+                   help='Selection-null control: treat null draw i (0-based) as the '
+                        'target and the real corpus as one of the null draws. The '
+                        'optimizer then shows what delta_J pure margin-noise can '
+                        'achieve under identical selection pressure.')
     p.add_argument('--out', default=None)
     args = p.parse_args()
 
@@ -91,6 +96,12 @@ def main():
         Mn = dfc.curveball(matrix, args.trades_per_row * n_rows, rng)
         datasets.append(dfc.matrix_to_sphere(Mn))
 
+    control = args.control_index
+    if control is not None:
+        if not (0 <= control < args.n_null):
+            raise SystemExit('control-index out of range')
+        datasets[0], datasets[control + 1] = datasets[control + 1], datasets[0]
+
     obj = RealCorpusObjective(datasets)
     best_delta, best_j, best_info, identity_j, identity_info = gap.optimize(
         obj, rng, n_random=args.n_random, n_coord_rounds=args.n_coord_rounds)
@@ -100,6 +111,7 @@ def main():
 
     result = {
         'experiment': 'gapD_real_corpus_lens',
+        'mode': ('selection_null_control_draw_%d' % control) if control is not None else 'real_target',
         'status': 'executed',
         'seed': args.seed,
         'config': {
