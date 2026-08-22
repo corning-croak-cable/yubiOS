@@ -1,0 +1,84 @@
+{
+  "what": "Geometry of the optimized real-corpus Mobius lens (gapD_real_corpus_lens.py, seed 20260822)",
+  "normalized_params": {
+    "a": [
+      1.4387182838573922,
+      0.3249422862722426
+    ],
+    "b": [
+      -0.12200106950460131,
+      0.4315992410201212
+    ],
+    "c": [
+      -0.044164303189702485,
+      -0.5509251124321338
+    ],
+    "d": [
+      0.8293337324370341,
+      -0.15384069861860197
+    ],
+    "ad_minus_bc": 1
+  },
+  "trace": [
+    2.268052,
+    0.171102
+  ],
+  "trace_squared": [
+    5.114784,
+    0.776135
+  ],
+  "classification": "loxodromic (tr^2 complex, not in [0,4])",
+  "multiplier": {
+    "lambda": [
+      2.788587,
+      0.878951
+    ],
+    "abs": 2.923828,
+    "arg_deg": 17.495,
+    "translation_length": 1.072894
+  },
+  "fixed_points": {
+    "attracting": {
+      "w": [
+        -0.87089,
+        1.49246
+      ],
+      "sphere": [
+        -0.437,
+        0.7489,
+        0.4982
+      ],
+      "abs_phi_prime": 0.342
+    },
+    "repelling": {
+      "w": [
+        -0.08072,
+        -0.46264
+      ],
+      "sphere": [
+        -0.1323,
+        -0.7581,
+        -0.6386
+      ],
+      "abs_phi_prime": 2.9238
+    }
+  },
+  "pole_minus_d_over_c": {
+    "w": [
+      -0.15755,
+      -1.51798
+    ],
+    "sphere": [
+      -0.0947,
+      -0.912,
+      0.3992
+    ],
+    "note": "point of maximal magnification (sent to infinity / north pole)"
+  },
+  "anti_caustic": {
+    "design_cond": 997.85,
+    "guard_cap": 1000,
+    "guard_rejections": "155/471 evals",
+    "reading": "optimizer converged onto the anti-caustic boundary: maximal admissible magnification"
+  }
+}

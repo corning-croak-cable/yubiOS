@@ -105,7 +105,9 @@ Part II: Shoemake, SIGGRAPH 1985 (slerp); White, arXiv:1609.04468 (spherical lat
 
 ---
 
-## Machine-checked + CI-resolved status (2026-08-22)
+## **Unified paper v2 (2026-08-22): [`curved-corpus-unified-2026-08-22-v2.tex`](curved-corpus-unified-2026-08-22-v2.tex)** — supersedes the 08-13 tex: scope note updated for the executed $A_ℓ$ admission null (recorded negative, CI-enforced), plus a new Addendum §: the lens powered end-to-end (15-seed sweep, budget, amplitude, real-corpus run ΔJ=+126.1 with ~5× selection-null margin) and the geometry of the optimized chart — loxodromic spiral zoom (translation length 1.073, rotation 17.5°) converged onto the anti-caustic boundary (cond 997.8/1000); numbers in [`data/gapD/lens-geometry-2026-08-22.json`](data/gapD/lens-geometry-2026-08-22.json).
+
+Machine-checked + CI-resolved status (2026-08-22)
 
 The identity/measurement boundary of the unified paper (§6) is now enforced structurally in CI: workflow [`lean-check.yml`](../.github/workflows/lean-check.yml) runs two jobs on every push touching `data/lean/**`.
 
