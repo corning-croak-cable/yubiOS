@@ -455,6 +455,111 @@ def selftest_timing(n=1024, t=0.02, reps=8, seed=0):
     return {"t_closed_s": t_closed, "t_simulate_s": t_sim, "speedup": speedup, "n": n, "reps": reps}
 
 
+def curveball(M: np.ndarray, n_trades: int, rng: np.random.Generator) -> np.ndarray:
+    """Strona curveball trade null: preserves BOTH row and column sums exactly.
+    Copied from papers/data/lean/verify_claims.py for fidelity."""
+    M = M.copy()
+    n = M.shape[0]
+    for _ in range(n_trades):
+        r1, r2 = rng.integers(0, n, 2)
+        if r1 == r2:
+            continue
+        d1 = np.where((M[r1] == 1) & (M[r2] == 0))[0]
+        d2 = np.where((M[r1] == 0) & (M[r2] == 1))[0]
+        if len(d1) == 0 or len(d2) == 0:
+            continue
+        pool = np.concatenate([d1, d2])
+        rng.shuffle(pool)
+        M[r1, d1] = 0
+        M[r2, d2] = 0
+        M[r1, pool[:len(d1)]] = 1
+        M[r2, pool[len(d1):]] = 1
+    return M
+
+
+def nw_smooth_targets(points: np.ndarray, targets: np.ndarray, kappa: float = 50.0) -> np.ndarray:
+    """Value-level de-atomization: Nadaraya-Watson regression of the field over
+    the sphere with a vMF kernel. Positions stay put; each target is replaced
+    by the kernel-weighted average of ALL targets. This smooths the FIELD --
+    which the positional jitter of vmf_smooth_with_targets provably could not
+    (carried values stay atomic; see the README's honest negative). kappa sets
+    the angular bandwidth ~1/sqrt(kappa); kappa=50 matches the RMS diffusion
+    displacement (~0.14 rad) at t=0.005, the theory-motivated choice."""
+    G = points @ points.T
+    W = np.exp(kappa * (G - 1.0))
+    return (W @ targets) / W.sum(axis=1)
+
+
+def run_admit_null(zip_path: str = REAL_CORPUS_ZIP, t: float = 0.005, reps: int = 6,
+                   n_null: int = 10, trades_per_row: int = 20, seed: int = 20260822) -> int:
+    """Tackle the two open items on the atomicity diagnostic A_l(t).
+
+    (1) ADMISSION: the papers specify A_l's null (curveball draws, which share
+        the margins and hence the marginal-induced atom structure) but never
+        executed it. Executed here: A_1(t) on n_null fixed-margin draws ->
+        mean/sd -> z of the real corpus's A_1. Pre-registered reading:
+        |z| < 3  -> A_1 is marginal-dominated: valid as a DIAGNOSTIC of
+                    atomicity, NOT admissible as a corpus-specific map
+                    coordinate (consistent with the 98%-marginal-fixed story);
+        |z| >= 3 -> A_1 carries corpus-specific signal beyond the margins and
+                    is admissible under the membership condition.
+        Degenerate null (sd ~ 0) -> inadmissible by definition.
+
+    (2) DE-ATOMIZATION: value-level NW/vMF smoothing of the field (positions
+        unchanged), kappa grid {20, 50, 150}. Pre-registered success bar (the
+        original D5 bar the positional jitter failed): some kappa achieves
+        A_1_smoothed <= 0.5 * A_1_real.
+
+    Exit 0 iff the null is non-degenerate AND the halving bar is met."""
+    rng = np.random.default_rng(seed)
+    matrix = load_real_corpus_matrix(zip_path=zip_path)
+    n_rows = matrix.shape[0]
+
+    def a1_of_matrix(mat, sd):
+        pts, tg = matrix_to_sphere(mat)
+        E0 = fit_field(pts, tg).energy
+        Em = simulate_decay(pts, tg, t, reps=reps, seed=sd, lam=1e-3)
+        return float(atomicity(E0, Em, t)[1])
+
+    a1_real = a1_of_matrix(matrix, seed + 1)
+
+    null_vals = []
+    for i in range(n_null):
+        Mn = curveball(matrix, trades_per_row * n_rows, rng)
+        null_vals.append(a1_of_matrix(Mn, seed + 100 + i))
+    mu = float(np.mean(null_vals))
+    sd = float(np.std(null_vals, ddof=1))
+    degenerate = bool(sd <= 1e-6)
+    z = float((a1_real - mu) / sd) if not degenerate else float('nan')
+
+    pts, tg = matrix_to_sphere(matrix)
+    smooth = {}
+    for kappa in (20.0, 50.0, 150.0):
+        tg_s = nw_smooth_targets(pts, tg, kappa=kappa)
+        E0s = fit_field(pts, tg_s).energy
+        Ems = simulate_decay(pts, tg_s, t, reps=reps, seed=seed + 2, lam=1e-3)
+        smooth[kappa] = float(atomicity(E0s, Ems, t)[1])
+    best_kappa = min(smooth, key=lambda k: smooth[k])
+    halved = bool(smooth[best_kappa] <= 0.5 * a1_real)
+
+    verdict_1 = ('DEGENERATE null: A_1 inadmissible by definition' if degenerate else
+                 ('|z| >= 3: A_1 carries corpus-specific signal beyond margins; ADMISSIBLE'
+                  if abs(z) >= 3 else
+                  '|z| < 3: A_1 is marginal-dominated; valid diagnostic, NOT a map coordinate'))
+    out = {
+        'A1_real': a1_real,
+        'null': {'n': n_null, 'mean': mu, 'sd': sd, 'values': null_vals},
+        'z': z,
+        'admission_verdict': verdict_1,
+        'nw_smoothing': {str(k): v for k, v in smooth.items()},
+        'best_kappa': best_kappa,
+        'halving_bar': {'target': 0.5 * a1_real, 'achieved': smooth[best_kappa], 'met': halved},
+    }
+    print(json.dumps(out, indent=2))
+    ok = (not degenerate) and halved
+    print('ADMIT_NULL: ' + ('PASS' if ok else 'FAIL'))
+    return 0 if ok else 1
+
 def run_selftest(real_corpus: bool, zip_path: str = REAL_CORPUS_ZIP):
     report = {}
     ok_smooth, smooth_results = selftest_smooth_field()
@@ -485,7 +590,11 @@ def main(argv=None):
                          help="Also run the Leg-2/3 real-corpus atomicity + de-atomization self-test")
     parser.add_argument("--zip-path", default=REAL_CORPUS_ZIP, help="Path to the real-corpus zip")
     parser.add_argument("--json", action="store_true", help="Emit machine-readable JSON")
+    parser.add_argument("--admit-null", action="store_true",
+                         help="Execute the A_l admission null + value-level de-atomization")
     args = parser.parse_args(argv)
+    if args.admit_null:
+        sys.exit(run_admit_null(zip_path=args.zip_path))
 
     if not args.selftest and not args.real_corpus:
         parser.print_help()
