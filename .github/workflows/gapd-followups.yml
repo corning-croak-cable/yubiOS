@@ -1,0 +1,50 @@
+name: gapd-followups
+on:
+  push:
+    branches: [gapd-followups]
+  workflow_dispatch:
+jobs:
+  amplitude:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - name: Install numpy
+        run: python3 -m pip install --quiet numpy
+      - name: amplitude sweep 6 x 3 seeds
+        run: |
+          for s in 0.25 0.5 0.75 1.0 1.5 2.0; do
+            for seed in 20260822 5 10; do
+              echo "--- amp $s seed $seed ---"
+              python3 papers/scripts/gapD_lens_power.py --amplitude $s --seed $seed --out /tmp/amp_${s}_${seed}.json
+            done
+          done
+      - name: tabulate
+        run: python3 .github/gapd_tab2.py '/tmp/amp_*.json'
+  budget:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - name: Install numpy
+        run: python3 -m pip install --quiet numpy
+      - name: 6x budget on the 4 sub-bar seeds
+        run: |
+          for seed in 10 12345 777 6; do
+            echo "--- seed $seed big budget ---"
+            python3 papers/scripts/gapD_lens_power.py --seed $seed --n-random 2000 --n-coord-rounds 100 --out /tmp/bud_${seed}.json
+          done
+      - name: tabulate
+        run: python3 .github/gapd_tab2.py '/tmp/bud_*.json'
+  real-corpus:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - name: Install numpy
+        run: python3 -m pip install --quiet numpy
+      - name: real-corpus lens run
+        run: |
+          python3 papers/scripts/gapD_real_corpus_lens.py --seed 20260822 --out /tmp/real_lens.json
+          echo '=== REAL CORPUS LENS JSON ==='
+          cat /tmp/real_lens.json
