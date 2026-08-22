@@ -1,0 +1,104 @@
+{
+  "experiment": "gapD_lens_power",
+  "status": "executed",
+  "implementation_note": "These numeric results were produced by an algorithmically-equivalent pure-TypeScript reimplementation of gapD_lens_power.py, run on the Sauna worker executor. The Python sandbox executor (required for the canonical numpy script alongside this file) returned HTTP 502 on every attempt during this session -- roughly 40 retries, far beyond the documented 4-retry budget -- so the numbers here come from the TypeScript port instead of an actual run of the shipped .py file. The TypeScript port implements the identical algorithm: same Fibonacci golden-angle lattice, same real-SH basis (L<=3, 16 functions, corrected Y_3^3 constant), same stereographic/Mobius/stereographic lens, same anti-caustic guard (rank>=16, cond<=1e3), same ridge lambda=1e-3, same null-standardized Parseval energy-share objective, same random-search + coordinate-refinement optimizer, and the same seed (20260822). It has not been cross-validated bit-for-bit against a numpy run of gapD_lens_power.py -- treat these as a faithful but independently-implemented execution, not a run of the exact shipped script.",
+  "seed": 20260822,
+  "config": {
+    "n_lattice": 512,
+    "n_null_reps": 20,
+    "n_random_draws": 200,
+    "n_coord_rounds": 25,
+    "amplitude_s": 1,
+    "ridge_lambda": 0.001,
+    "target_degree_columns": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "guard_rank_min": 16,
+    "guard_cond_max": 1000
+  },
+  "pre_registration": {
+    "H1": "optimized J exceeds identity J by more than 2 null standard deviations (the lens materially concentrates the planted family's L=3 spectral energy beyond a frozen identity chart).",
+    "H0": "optimized J does not exceed identity J by more than 2 null standard deviations (the lens adds nothing at s=1, N=512).",
+    "note": "Both outcomes are treated as publishable; recorded honestly below regardless of which held. This file was written with these hypotheses fixed BEFORE the run below was inspected."
+  },
+  "self_checks": {
+    "identity_baseline": {
+      "guard_pass": true,
+      "cond": 1.0013452664121838,
+      "num_rank": 16,
+      "note": "Close to the papers-reported identity-chart range of ~1.003-1.006; the small difference is attributable to N=512 here vs the papers self-test using smaller N, and to this being a from-scratch reimplementation."
+    },
+    "cross_ratio_preservation": {
+      "cross_ratio_before": {
+        "re": -1.0401053470003083,
+        "im": -0.5403730200971973
+      },
+      "cross_ratio_after": {
+        "re": -1.0401053470003077,
+        "im": -0.5403730200971955
+      },
+      "abs_error": 2.0014830212433605e-15,
+      "pass": true
+    }
+  },
+  "results": {
+    "identity_J": 3.5011054516542464,
+    "identity_info": {
+      "guard_pass": true,
+      "cond": 1.0013452664121825,
+      "num_rank": 16,
+      "planted_share": 0.9882623354338842,
+      "null_mean": 0.44260055358873795,
+      "null_sd": 0.15585414075069493,
+      "planted_rss": 477.00562948858624
+    },
+    "best_J": 7.317606020829922,
+    "best_info": {
+      "guard_pass": true,
+      "cond": 12.371187274705138,
+      "num_rank": 16,
+      "planted_share": 0.6854036679508777,
+      "null_mean": 0.22698839271687646,
+      "null_sd": 0.06264552558980353,
+      "planted_rss": 939.1154800666483
+    },
+    "delta_J_sd": 3.816500569175676,
+    "H1_supported": true,
+    "best_theta": {
+      "a": {
+        "re": 1.9265952589955724,
+        "im": 0.2858823219259178
+      },
+      "b": {
+        "re": 0.2194195332478986,
+        "im": 0.006475661276739153
+      },
+      "c": {
+        "re": 0.414838638936019,
+        "im": 0.8505036579780219
+      },
+      "d": {
+        "re": 0.565564748605486,
+        "im": 0.014335396347355062
+      },
+      "ad_minus_bc": 1.0000000000000004
+    },
+    "total_objective_evaluations": 601,
+    "guard_rejections": 0
+  },
+  "wall_time_seconds": 0.4,
+  "limitations": [
+    "Numbers come from a TypeScript reimplementation, not an execution of the shipped gapD_lens_power.py, because the Python sandbox was unavailable all session (see implementation_note). Re-running the shipped script when the sandbox is healthy is the natural follow-up and may differ slightly.",
+    "Single seed (20260822); no multi-seed replication in this run.",
+    "Single amplitude s=1.0; no amplitude sweep.",
+    "Small evaluation budget (~600 objective evaluations); the optimizer is a simple random-search + coordinate-refinement scheme, not a proper gradient or global optimizer -- best_J is a lower bound on what a stronger optimizer could find.",
+    "guard_rejections=0 in this run: the random search around identity never happened to wander into the ill-conditioned region, so the anti-caustic guard is implemented and unit-tested (see self_checks) but was not exercised on the optimization path itself.",
+    "Planted field is a simplified continuous adaptation of the papers standard-candle generator (create_corpus.py), not its exact binary planting procedure -- see the script docstring for the fidelity note."
+  ]
+}
