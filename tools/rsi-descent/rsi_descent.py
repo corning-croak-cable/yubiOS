@@ -133,7 +133,6 @@ def main():
         all_deltas = [v for L in ladder.values() for v in L]
         assert all(d >= -1e-12 for d in all_deltas), "negative delta detected"
         n_full = int((M.sum(1) == 9).sum())
-        peaks = [k for k, vs in ladder.items() if vs and max(vs) > eps]
         out = {"selftest": True, "n_full_coverage": n_full, "cycles_to_fixpoint": len(traj), "cumulative_delta": cum, "trajectory": traj, "delta_ladder": {k: (max(vs) if vs else 0.0) for k, vs in ladder.items()}, "n_satisfied_invariance": len(all_deltas)}
         print(json.dumps(out, indent=2, default=float))
         return
