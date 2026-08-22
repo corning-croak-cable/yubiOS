@@ -72,5 +72,8 @@ jobs:
       - name: spectral-defocus selftest
         run: python3 tools/spectral-defocus/defocus.py --selftest
 
+      - name: spectral-defocus atomicity admission + de-atomization
+        run: python3 tools/spectral-defocus/defocus.py --admit-null
+
       - name: injective-mapping selftest
         run: python3 tools/injective-mapping/mapping.py --selftest
