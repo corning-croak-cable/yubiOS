@@ -1,0 +1,39 @@
+name: lean-check
+
+on:
+  push:
+    branches: ['main', 'lean-check-*']
+    paths:
+      - 'papers/data/lean/**'
+      - '.github/workflows/lean-check.yml'
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Why this check is being run'
+        required: false
+        default: 'manual lean check'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install elan (Lean 4.33.0, pinned)
+        run: |
+          curl -sSf https://elan.lean-lang.org/elan-init.sh | sh -s -- -y --default-toolchain leanprover/lean4:v4.33.0
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Lean version
+        run: lean --version
+
+      - name: Check CurvedCorpus.lean
+        run: |
+          lean papers/data/lean/CurvedCorpus.lean
+          echo "LEAN_OK: all theorems in papers/data/lean/CurvedCorpus.lean check with no sorry"
+
+      - name: Assert no sorry
+        run: |
+          ! grep -n "sorry" papers/data/lean/CurvedCorpus.lean
+          echo "NO_SORRY_OK"
