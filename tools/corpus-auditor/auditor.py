@@ -192,8 +192,7 @@ def format_human(result):
         "a naive normal reference (see the repo's papers/ for discussion). "
         "Treat 2 < |z| < 4 as inconclusive, not decisive, in either direction."
     )
-    return "
-".join(lines)
+    return "\n".join(lines)
 
 
 # ---------------------------------------------------------------------------
