@@ -15,6 +15,7 @@
     6. heat_exponent_monotone / heat_exponent_additive -- ℓ(ℓ+1) heat-kernel exponent facts
     7. mh_flux_symm           -- Metropolis flux min-symmetry (detailed balance kernel)
     8. trade_preserves_rowSum / trade_preserves_colSum -- curveball trades stay on the fixed-margin fibre
+    9. trade_reversible / uniform_inflow_constant -- F3 null canonicity mechanics (reversibility, uniform stationarity)
 
   Scope — what this file does NOT prove. The theorems below are
   identity-type statements over exact arithmetic (integers, fraction
@@ -43,7 +44,9 @@
   exhaustively enumerated fibre (1), mixing convergence (2), the spherical
   heat-kernel semigroup identity (3), float-vs-exact-model checks of the
   theorems in this file (4), and reproduction of the corpus effect against
-  its curveball null (5).
+  its curveball null (5), and F3 null canonicity -- exhaustive fibre-graph
+  irreducibility plus the constant-margin medium matched against
+  destroyed-dependence baselines (6), completing sections 8-9.
 -/
 
 namespace CurvedCorpus
@@ -421,5 +424,60 @@ theorem trade_preserves_colSum (M : Nat → Nat → Int) (i j a b c : Nat)
       rw [hcb]
       omega
     · exact trade_colSum_other M i j a b c rows hca hcb
+
+/-! ### 9. The F3 null is canonical: reversibility and uniform stationarity
+
+README section F3 reads null standardization as deflection against an
+unlensed background, with the fixed-margin ensemble as the medium. The
+canonicity of that medium decomposes:
+  (i)   the sampler's moves stay on the fixed-margin fibre (section 8);
+  (ii)  every trade is reversible -- the column-swapped trade undoes it
+        exactly -- so a uniform proposal has a symmetric kernel (here);
+  (iii) a symmetric kernel makes the uniform distribution stationary:
+        inflow to every state equals its constant outflow (here);
+  (iv)  irreducibility of the trade graph on the fibre, and the
+        constant-margin spectrum anchor (Lyu-Mukherjee / MP), are
+        executed exhaustively by verify_claims.py claim 6.
+With (i)-(iv) the unique stationary law of the curveball chain is uniform
+on the fibre -- the maximum-entropy distribution given the margins, which
+is what F3 requires of its vacuum. Outside machine reach and cited, not
+proved: uniqueness-from-irreducibility in general (finite Markov chain
+theory; checked exhaustively on the test instance) and the asymptotic
+Lyu-Mukherjee spectrum theorem. -/
+
+theorem sumOver_congr (f g : Nat → Int) (l : List Nat) (h : ∀ x, f x = g x) :
+    sumOver f l = sumOver g l := by
+  induction l with
+  | nil => rfl
+  | cons x xs ih => simp [sumOver, h x, ih]
+
+/-- (ii) Every trade is undone exactly by the trade with columns swapped:
+    the move set is reversible, so the uniform proposal kernel is
+    symmetric. Pointwise identity, no hypotheses needed. -/
+theorem trade_reversible (M : Nat → Nat → Int) (i j a b r c : Nat) :
+    trade (trade M i j a b) i j b a r c = M r c := by
+  unfold trade tradeDelta
+  by_cases h1 : r = i <;> by_cases h2 : r = j <;>
+    by_cases h3 : c = a <;> by_cases h4 : c = b <;>
+      simp_all <;> omega
+
+/-- (iii) Balance: for a symmetric kernel, total inflow to any state b
+    equals total outflow from b, along any state enumeration. -/
+theorem symm_kernel_balance (K : Nat → Nat → Int) (S : List Nat)
+    (hsym : ∀ x y, K x y = K y x) (b : Nat) :
+    sumOver (fun a => K a b) S = sumOver (fun a => K b a) S :=
+  sumOver_congr _ _ S (fun a => hsym a b)
+
+/-- (iii) Uniform stationarity: if a symmetric kernel has constant row
+    sums R over the enumeration S, then the inflow to every state is
+    that same R -- constant weights reproduce themselves, i.e. the
+    uniform distribution is stationary for the chain. -/
+theorem uniform_inflow_constant (K : Nat → Nat → Int) (S : List Nat) (R : Int)
+    (hsym : ∀ x y, K x y = K y x)
+    (hrow : ∀ a, sumOver (fun c => K a c) S = R) (b : Nat) :
+    sumOver (fun a => K a b) S = R := by
+  have h := symm_kernel_balance K S hsym b
+  rw [h]
+  exact hrow b
 
 end CurvedCorpus

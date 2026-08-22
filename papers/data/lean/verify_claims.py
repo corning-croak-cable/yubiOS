@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
-# verify_claims.py -- executable resolution of the five measurement-side
+# verify_claims.py -- executable resolution of the measurement-side
 # non-claims in CurvedCorpus.lean's scope block. numpy only, seeded.
-# CLAIM 1: sampler uniformity chi2 on an exhaustively enumerated fibre
-#          (mechanics proved in Lean section 8: trades preserve margins).
+# CLAIM 1: sampler uniformity chi2 on an exhaustively enumerated fibre.
 # CLAIM 2: curveball mixing convergence on the real 2286x9 matrix.
 # CLAIM 3: S2 heat-kernel semigroup identity E[Y_l(B_t)] = exp(-l(l+1)t) Y_l.
 # CLAIM 4: the Lean identities hold in float64 at machine precision.
 # CLAIM 5: real V2 reproduces the published value; curveball null gives
 #          dV2 ~ +0.0144 at z >> 3 (paper: 0.709180 +/- 0.001183, z=+12.13).
-# Exit 0 iff all PASS. Reference: results/A2-curveball-audit.json in
-# papers/is-this-x-2026-08-12-Final.zip (also the matrix source).
+# CLAIM 6: F3 null canonicity -- trade-graph irreducibility on the
+#          exhaustive fibre (with Lean sec. 8 fibre-closure, sec. 9
+#          reversibility + uniform stationarity, this makes uniform the
+#          unique stationary law on the instance), and the constant-margin
+#          medium matches destroyed-dependence baselines (Lyu-Mukherjee /
+#          Marchenko-Pastur regime).
+# Exit 0 iff all PASS.
 import json, math, sys, zipfile
 from itertools import combinations, product
 import numpy as np
@@ -58,7 +62,7 @@ def load_real_matrix():
     assert M.shape == (2286, 9), M.shape
     return M
 
-def claim1(rng):
+def build_fibre():
     cols_target = np.array([3, 3, 2, 2])
     pats = [np.array([1 if k in c else 0 for k in range(4)]) for c in combinations(range(4), 2)]
     fibre = []
@@ -66,6 +70,10 @@ def claim1(rng):
         Mx = np.array([pats[c] for c in combo], dtype=np.int8)
         if (Mx.sum(0) == cols_target).all():
             fibre.append(Mx.tobytes())
+    return fibre
+
+def claim1(rng):
+    fibre = build_fibre()
     K = len(fibre)
     fset = set(fibre)
     start = np.frombuffer(fibre[0], dtype=np.int8).reshape(5, 4).copy()
@@ -174,6 +182,58 @@ def claim5(M, rng):
            'realV2=%.10f (published match=%s) null=%.6f+/-%.6f dV2=%+.4f z=%+.1f (paper: 0.709180+/-0.001183 z=+12.13)'
            % (v2_real, ok1, mu, sd, dv2, z))
 
+def claim6(rng):
+    fibre = build_fibre()
+    K = len(fibre)
+    fset = set(fibre)
+    def neighbors(mb):
+        M = np.frombuffer(mb, dtype=np.int8).reshape(5, 4)
+        out = []
+        for r1 in range(5):
+            for r2 in range(r1 + 1, 5):
+                for c1 in range(4):
+                    for c2 in range(c1 + 1, 4):
+                        if M[r1, c1] == 1 and M[r2, c2] == 1 and M[r1, c2] == 0 and M[r2, c1] == 0:
+                            Mn = M.copy()
+                            Mn[r1, c1] = 0; Mn[r2, c2] = 0; Mn[r1, c2] = 1; Mn[r2, c1] = 1
+                            out.append(Mn.tobytes())
+                        elif M[r1, c2] == 1 and M[r2, c1] == 1 and M[r1, c1] == 0 and M[r2, c2] == 0:
+                            Mn = M.copy()
+                            Mn[r1, c2] = 0; Mn[r2, c1] = 0; Mn[r1, c1] = 1; Mn[r2, c2] = 1
+                            out.append(Mn.tobytes())
+        return out
+    seen = {fibre[0]}
+    stack = [fibre[0]]
+    stayed = True
+    while stack:
+        cur = stack.pop()
+        for nb in neighbors(cur):
+            if nb not in fset:
+                stayed = False
+            if nb not in seen:
+                seen.add(nb)
+                stack.append(nb)
+    connected = len(seen) == K
+    sym = all(cur in neighbors(nb) for cur in fibre[:40] for nb in neighbors(cur))
+    N, d, k = 513, 9, 4
+    Mc = np.zeros((N, d), dtype=np.int8)
+    for i in range(N):
+        Mc[i, (i + np.arange(k)) % d] = 1
+    cb = float(np.mean([v2_corr(curveball(Mc, 20 * N, rng)) for _ in range(10)]))
+    iid = float(np.mean([v2_corr((rng.random((N, d)) < k / d).astype(np.int8)) for _ in range(10)]))
+    cps = []
+    for _ in range(10):
+        Mp = Mc.copy()
+        for c in range(d):
+            Mp[:, c] = Mp[rng.permutation(N), c]
+        cps.append(v2_corr(Mp))
+    cp = float(np.mean(cps))
+    okc = abs(cb - iid) < 0.02 and abs(cb - cp) < 0.02
+    ok = connected and stayed and sym and okc
+    report('CLAIM_6_F3_NULL_CANONICITY', ok,
+           'fibre graph: connected=%s (%d/%d reached) stays_on_fibre=%s symmetric=%s; with Lean sec.8 closure + sec.9 reversibility/stationarity => uniform is THE stationary law on this instance; constant-margin medium: curveball=%.4f iid=%.4f colperm=%.4f (Lyu-Mukherjee/MP regime)'
+           % (connected, len(seen), K, stayed, sym, cb, iid, cp))
+
 def main():
     M = load_real_matrix()
     claim1(np.random.default_rng(SEED + 1))
@@ -181,6 +241,7 @@ def main():
     claim3(np.random.default_rng(SEED + 3))
     claim4(np.random.default_rng(SEED + 4))
     claim5(M, np.random.default_rng(SEED + 5))
+    claim6(np.random.default_rng(SEED + 6))
     if FAILURES:
         print('RESULT: FAIL (%s)' % ', '.join(FAILURES))
         sys.exit(1)
