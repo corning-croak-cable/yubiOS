@@ -119,17 +119,31 @@ theorem cumulative_monotone (deltas : List Int)
 
 /-! ### 4. The gate is a rank test (C2)
 
-V₂ = (λ₁+λ₂)/Σλ ≥ 0.40 with the threshold 0.40 = 2/5. Over the positive
-rationals this is the integer inequality 5(λ₁+λ₂) ≥ 2Σλ: a pure rank
-statement about how much spectrum the top two directions carry. We state it
-with numerator p = λ₁+λ₂ and denominator q = Σλ as positive integers scaled
-to a common grid. -/
+V₂ = (λ₁+λ₂)/Σλ ≥ 0.40 with the threshold 0.40 = 2/5, and the shipped
+estimator r̂ = 2/V₂ ≤ 5. With V₂ = p/q (p, q > 0), the gate is the fraction
+comparison p/q ≥ 2/5 and the rank test is 2q/p ≤ 5. Fraction comparison
+a/b ≥ c/d over positive denominators is encoded by cross-multiplication
+(fracGe). The equivalence gate ↔ rank is an identity, but the two sides
+cross-multiply over *different* denominators (q for the gate, p for the
+rank proxy), so each direction genuinely consumes one positivity
+hypothesis — that is the entire mathematical content: division by a
+positive number preserves order. No empirical fact enters. -/
 
-/-- C2 (gate rank identity): p/q ≥ 2/5 ↔ 5p ≥ 2q, for q > 0.
-    The gate never sees anything but this rank comparison. -/
-theorem gate_rank_identity (p q : Int) (_hq : 0 < q) :
-    (2 * q ≤ 5 * p) ↔ ¬ (5 * p < 2 * q) := by
-  omega
+/-- a/b ≥ c/d over positive denominators, encoded by cross-multiplication. -/
+def fracGe (a b c d : Int) : Prop := 0 < b ∧ 0 < d ∧ a * d ≥ c * b
+
+/-- C2 (gate rank identity): with V₂ = p/q (p, q > 0),
+    V₂ ≥ 2/5  ↔  r̂ = 2q/p ≤ 5 (stated as 5/1 ≥ 2q/p).
+    Forward uses 0 < p, backward uses 0 < q. -/
+theorem gate_rank_identity (p q : Int) (hp : 0 < p) (hq : 0 < q) :
+    fracGe p q 2 5 ↔ fracGe 5 1 (2 * q) p := by
+  constructor
+  · intro h
+    have h3 := h.2.2
+    exact ⟨by omega, hp, by omega⟩
+  · intro h
+    have h3 := h.2.2
+    exact ⟨hq, by omega, by omega⟩
 
 /-! ### 5. The fold ladder telescopes (Section 4 of the 2026-08-12 paper)
 
