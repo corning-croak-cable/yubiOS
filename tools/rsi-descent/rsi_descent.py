@@ -118,7 +118,7 @@ def run_descent(M, eps=1e-3, max_cycles=50, seed=20260822, assert_invariant=True
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("--input", required=True)
+    p.add_argument("--input", required=False, default=None)
     p.add_argument("--epsilon", type=float, default=1e-3)
     p.add_argument("--max-cycles", type=int, default=50)
     p.add_argument("--seed", type=int, default=20260822)
@@ -137,6 +137,8 @@ def main():
         out = {"selftest": True, "n_full_coverage": n_full, "cycles_to_fixpoint": len(traj), "cumulative_delta": cum, "trajectory": traj, "delta_ladder": {k: (max(vs) if vs else 0.0) for k, vs in ladder.items()}, "n_satisfied_invariance": len(all_deltas)}
         print(json.dumps(out, indent=2, default=float))
         return
+    if not args.input:
+        p.error("--input is required unless --selftest is given")
     M, slugs = load_input(args.input)
     M_out, traj, ladder, cum = run_descent(M, eps=args.epsilon, max_cycles=args.max_cycles, seed=args.seed)
     out = {"cycles_to_fixpoint": len(traj), "cumulative_delta": cum, "final_coverage": float(M_out.sum() / (M_out.shape[0]*M_out.shape[1])), "trajectory": traj, "delta_ladder": {k: (max(vs) if vs else 0.0) for k, vs in ladder.items()}}
