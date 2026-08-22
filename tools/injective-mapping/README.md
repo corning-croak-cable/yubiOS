@@ -154,3 +154,16 @@ Dependencies: `numpy` only. Reads the zip already committed at
   it reports the collision honestly and resolves *uniqueness of the row*,
   not *uniqueness of the measurement*, via identity.
 - No subjective/qualia coordinate is included, by design (see Epistemics).
+
+## Reality check (first canonical run, 2026-08-22)
+
+CI's first true execution of `--selftest` falsified an assumption this README
+originally made: **slug labels are not unique either** -- the real corpus has
+only 2169 distinct slugs across 2286 rows (117 duplicate labels, concentrated
+in `self`-corpus changelog rows). So even the identity *label* collides; the
+only injective key available without invention is the **row ordinal**. The
+ladder now ends at `coverage+corpus+cycle+slug+row_id = 2286/2286`, and the
+tool reports distinct slug labels separately instead of asserting on them.
+This sharpens the deliverable's point: identity, not measurement, is what
+makes the mapping 1-to-1 -- and in this corpus even identity labels needed
+the ordinal to disambiguate.
