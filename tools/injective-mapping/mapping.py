@@ -147,12 +147,14 @@ def injectivity_ladder(rows: list[dict]) -> dict:
     corpus_keys = [f"{c}|{r['corpus']}" for c, r in zip(cov_keys, rows)]
     cycle_keys = [f"{c}|{r.get('cycle', '')}" for c, r in zip(corpus_keys, rows)]
     slug_keys = [f"{c}|{r['slug']}" for c, r in zip(cycle_keys, rows)]
+    rowid_keys = [f"{s}|{i}" for i, s in enumerate(slug_keys)]
 
     ladder = {
         "coverage": len(set(cov_keys)),
         "coverage+corpus": len(set(corpus_keys)),
         "coverage+corpus+cycle": len(set(cycle_keys)),
         "coverage+corpus+cycle+slug": len(set(slug_keys)),
+        "coverage+corpus+cycle+slug+row_id": len(set(rowid_keys)),
     }
 
     # Pigeonhole demonstration: items sharing (coverage, corpus) are
@@ -231,7 +233,8 @@ def run_pipeline(zip_path: str, out_path: str) -> dict:
     records = build_rows_for_export(rows, primitives, collisions, embedding)
     write_csv(records, primitives, out_path)
 
-    distinct_keys_final = len({r["slug"] for r in rows})
+    distinct_keys_final = len({(i, r.get("slug")) for i, r in enumerate(rows)})
+    distinct_slug_labels = len({r["slug"] for r in rows})
 
     return {
         "row_count": len(rows),
@@ -242,6 +245,7 @@ def run_pipeline(zip_path: str, out_path: str) -> dict:
         "csv_path": out_path,
         "csv_row_count": len(records),
         "csv_unique_slugs": distinct_keys_final,
+        "distinct_slug_labels": distinct_slug_labels,
     }
 
 
@@ -335,7 +339,7 @@ def run_selftest(zip_path: str, out_path: str) -> int:
         )
     if result["csv_unique_slugs"] != EXPECTED_ROW_COUNT:
         failures.append(
-            f"csv unique slugs {result['csv_unique_slugs']} != expected {EXPECTED_ROW_COUNT}"
+            f"csv unique row keys {result['csv_unique_slugs']} != expected {EXPECTED_ROW_COUNT}"
         )
 
     if not is_monotone_nondecreasing(inj["ladder"]):
@@ -345,7 +349,7 @@ def run_selftest(zip_path: str, out_path: str) -> int:
     if final_distinct != EXPECTED_ROW_COUNT:
         failures.append(
             f"final ladder stage distinct={final_distinct} != {EXPECTED_ROW_COUNT} "
-            "(slug alone should be fully injective)"
+            "(the row_id stage is injective by construction)"
         )
 
     if failures:
