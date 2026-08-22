@@ -1,0 +1,140 @@
+{
+  "what": "Canonical Python rerun of papers/scripts/gapD_lens_power.py via CI (GitHub Actions, ubuntu, numpy only) - 15-seed sweep replacing the TS-port numbers from PR #216",
+  "date": "2026-08-22",
+  "ci_runs": {
+    "three_seed": "32598972487",
+    "fifteen_seed_sweep": "32599660158"
+  },
+  "protocol": "per-seed: identity baseline J vs optimized J, delta_J_sd = (best_J - identity_J)/null_sd, pre-registered H1 bar: delta_J_sd > 2; deterministic given seed, reproducible with --seed",
+  "rows": [
+    {
+      "seed": 10,
+      "identity_J": 5.1997,
+      "best_J": 5.603,
+      "delta_J_sd": 0.4033,
+      "H1": false,
+      "guard_rej": 1
+    },
+    {
+      "seed": 12345,
+      "identity_J": 2.9744,
+      "best_J": 4.1762,
+      "delta_J_sd": 1.2018,
+      "H1": false,
+      "guard_rej": 1
+    },
+    {
+      "seed": 777,
+      "identity_J": 3.5712,
+      "best_J": 4.9892,
+      "delta_J_sd": 1.418,
+      "H1": false,
+      "guard_rej": 0
+    },
+    {
+      "seed": 6,
+      "identity_J": 3.2548,
+      "best_J": 4.8206,
+      "delta_J_sd": 1.5658,
+      "H1": false,
+      "guard_rej": 2
+    },
+    {
+      "seed": 4,
+      "identity_J": 3.2674,
+      "best_J": 5.2723,
+      "delta_J_sd": 2.0049,
+      "H1": true,
+      "guard_rej": 0
+    },
+    {
+      "seed": 20260822,
+      "identity_J": 3.1526,
+      "best_J": 5.4396,
+      "delta_J_sd": 2.2869,
+      "H1": true,
+      "guard_rej": 0
+    },
+    {
+      "seed": 2,
+      "identity_J": 2.7931,
+      "best_J": 5.9988,
+      "delta_J_sd": 3.2058,
+      "H1": true,
+      "guard_rej": 2
+    },
+    {
+      "seed": 3,
+      "identity_J": 2.7123,
+      "best_J": 5.9336,
+      "delta_J_sd": 3.2213,
+      "H1": true,
+      "guard_rej": 0
+    },
+    {
+      "seed": 8,
+      "identity_J": 3.7399,
+      "best_J": 7.1322,
+      "delta_J_sd": 3.3922,
+      "H1": true,
+      "guard_rej": 0
+    },
+    {
+      "seed": 12,
+      "identity_J": 3.1779,
+      "best_J": 6.7042,
+      "delta_J_sd": 3.5263,
+      "H1": true,
+      "guard_rej": 0
+    },
+    {
+      "seed": 11,
+      "identity_J": 3.1053,
+      "best_J": 7.2292,
+      "delta_J_sd": 4.1239,
+      "H1": true,
+      "guard_rej": 0
+    },
+    {
+      "seed": 1,
+      "identity_J": 3.0514,
+      "best_J": 7.4271,
+      "delta_J_sd": 4.3757,
+      "H1": true,
+      "guard_rej": 1
+    },
+    {
+      "seed": 7,
+      "identity_J": 2.4119,
+      "best_J": 7.6086,
+      "delta_J_sd": 5.1967,
+      "H1": true,
+      "guard_rej": 1
+    },
+    {
+      "seed": 9,
+      "identity_J": 3.0212,
+      "best_J": 9.3379,
+      "delta_J_sd": 6.3168,
+      "H1": true,
+      "guard_rej": 0
+    },
+    {
+      "seed": 5,
+      "identity_J": 3.6914,
+      "best_J": 11.4238,
+      "delta_J_sd": 7.7324,
+      "H1": true,
+      "guard_rej": 0
+    }
+  ],
+  "summary": {
+    "delta_J_sd_min": 0.4033,
+    "delta_J_sd_max": 7.7324,
+    "median": 3.2213,
+    "mean": 3.3315,
+    "sd": 2.0051,
+    "H1_fraction": "11/15"
+  },
+  "interpretation": "The lens effect is real in the majority of seeds but seed-fragile at the script's small optimizer budget (~400-600 evals, random search + coordinate refinement; best_J is a lower bound). The TS port's +3.82 (PR #216) sits within the sweep range. identity_J itself varies 2.41-5.20; the worst seed (10) has the highest identity_J, i.e. least headroom. The paper seed 20260822 gives +2.29 (clears the bar); seeds 777/12345, picked for the first replication attempt, happen to be 2 of the 4 sub-bar seeds."
+}
