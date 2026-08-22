@@ -79,7 +79,7 @@ theorem corpus_sum_nonneg (deltas : List Int)
   induction deltas with
   | nil => exact Int.le_refl 0
   | cons d ds ih =>
-      have hd : 0 ≤ d := h d (List.mem_cons_self d ds)
+      have hd : 0 ≤ d := h d ((by simp : d ∈ d :: ds))
       have hds : 0 ≤ sumList ds := ih (fun x hx => h x (List.mem_cons_of_mem d hx))
       show 0 ≤ d + sumList ds
       omega
@@ -105,7 +105,7 @@ theorem cumulative_monotone (deltas : List Int)
       cases deltas with
       | nil => simp [prefixSum]
       | cons d ds =>
-          have hd : 0 ≤ d := h d (List.mem_cons_self d ds)
+          have hd : 0 ≤ d := h d ((by simp : d ∈ d :: ds))
           simp [prefixSum]
           omega
   | succ m ih =>
@@ -127,7 +127,7 @@ to a common grid. -/
 
 /-- C2 (gate rank identity): p/q ≥ 2/5 ↔ 5p ≥ 2q, for q > 0.
     The gate never sees anything but this rank comparison. -/
-theorem gate_rank_identity (p q : Int) (hq : 0 < q) :
+theorem gate_rank_identity (p q : Int) (_hq : 0 < q) :
     (2 * q ≤ 5 * p) ↔ ¬ (5 * p < 2 * q) := by
   omega
 
@@ -163,13 +163,9 @@ theorem heat_exponent_monotone (l l' : Nat) (h : l < l') :
     heatExp l < heatExp l' := by
   unfold heatExp
   have h1 : l + 1 ≤ l' := h
-  calc l * (l + 1) < (l + 1) * (l + 1) + (l + 1) := by
-        have := Nat.mul_lt_mul_of_lt_of_le (Nat.lt_succ_self l) (Nat.le_refl (l + 1)) (Nat.succ_pos l)
-        omega
-    _ = (l + 1) * (l + 2) := by ring
-    _ ≤ l' * (l' + 1) := by
-        have h2 : l + 2 ≤ l' + 1 := by omega
-        exact Nat.mul_le_mul h1 h2
+  have e1 : (l + 1) * (l + 1) = l * (l + 1) + (l + 1) := Nat.succ_mul l (l + 1)
+  have e2 : (l + 1) * (l + 1) ≤ l' * (l' + 1) := Nat.mul_le_mul h1 (by omega)
+  omega
 
 /-- Semigroup additivity in the exponent: running time s then t multiplies
     energies by exp(−2e(ℓ)s)·exp(−2e(ℓ)t) = exp(−2e(ℓ)(s+t)); at the level
