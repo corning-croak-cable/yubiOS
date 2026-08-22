@@ -11,18 +11,39 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Install numpy
         run: python3 -m pip install --quiet numpy
-      - name: canonical run (paper seed 20260822)
+      - name: 15-seed sweep
         run: |
-          python3 papers/scripts/gapD_lens_power.py --out /tmp/gapD-seed20260822.json --seed 20260822
-          echo '=== JSON seed 20260822 ==='
-          cat /tmp/gapD-seed20260822.json
-      - name: seed replication 777
+          for s in 20260822 777 12345 1 2 3 4 5 6 7 8 9 10 11 12; do
+            echo "--- seed $s ---"
+            python3 papers/scripts/gapD_lens_power.py --out /tmp/g_$s.json --seed $s
+          done
+      - name: tabulate range
         run: |
-          python3 papers/scripts/gapD_lens_power.py --out /tmp/gapD-seed777.json --seed 777
-          echo '=== JSON seed 777 ==='
-          cat /tmp/gapD-seed777.json
-      - name: seed replication 12345
-        run: |
-          python3 papers/scripts/gapD_lens_power.py --out /tmp/gapD-seed12345.json --seed 12345
-          echo '=== JSON seed 12345 ==='
-          cat /tmp/gapD-seed12345.json
+          python3 - <<'PYEOF'
+          import json, glob
+          def find(d, key):
+              if isinstance(d, dict):
+                  if key in d: return d[key]
+                  for v in d.values():
+                      r = find(v, key)
+                      if r is not None: return r
+              elif isinstance(d, list):
+                  for v in d:
+                      r = find(v, key)
+                      if r is not None: return r
+              return None
+          rows = []
+          for f in sorted(glob.glob('/tmp/g_*.json')):
+              d = json.load(open(f))
+              rows.append({'seed': find(d, 'seed'), 'identity_J': find(d, 'identity_J'), 'best_J': find(d, 'best_J'), 'delta_J_sd': find(d, 'delta_J_sd'), 'H1': find(d, 'H1_supported'), 'guard_rej': find(d, 'guard_rejections')})
+          rows.sort(key=lambda r: r['delta_J_sd'])
+          print('SWEEP_TABLE_BEGIN')
+          for r in rows:
+              print('SEED %8s identity_J=%.4f best_J=%s delta_J_sd=%+.4f H1=%s guard_rej=%s' % (r['seed'], r['identity_J'], ('%.4f' % r['best_J']) if r['best_J'] is not None else 'NA', r['delta_J_sd'], r['H1'], r['guard_rej']))
+          vals = [r['delta_J_sd'] for r in rows]
+          n_pass = sum(1 for r in rows if r['H1'])
+          import statistics
+          print('RANGE min=%+.4f max=%+.4f median=%+.4f mean=%+.4f sd=%.4f' % (min(vals), max(vals), statistics.median(vals), statistics.mean(vals), statistics.stdev(vals)))
+          print('H1_FRACTION %d/%d clear the 2-sigma bar' % (n_pass, len(rows)))
+          print('SWEEP_TABLE_END')
+PYEOF
