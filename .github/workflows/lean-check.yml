@@ -5,6 +5,7 @@ on:
     branches: ['main', 'lean-check-*']
     paths:
       - 'papers/data/lean/**'
+      - 'tools/**'
       - '.github/workflows/lean-check.yml'
   workflow_dispatch:
     inputs:
@@ -49,3 +50,27 @@ jobs:
 
       - name: Resolve measurement-side claims
         run: python3 papers/data/lean/verify_claims.py
+
+  verify-tools:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Install numpy
+        run: python3 -m pip install --quiet numpy
+
+      - name: corpus-auditor selftest
+        run: python3 tools/corpus-auditor/auditor.py --selftest
+
+      - name: rsi-descent selftest
+        run: python3 tools/rsi-descent/rsi_descent.py --selftest
+
+      - name: boltzmann-collapse selftest
+        run: python3 tools/boltzmann-collapse/collapse.py --selftest
+
+      - name: spectral-defocus selftest
+        run: python3 tools/spectral-defocus/defocus.py --selftest
+
+      - name: injective-mapping selftest
+        run: python3 tools/injective-mapping/mapping.py --selftest
