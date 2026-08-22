@@ -1,0 +1,68 @@
+{
+  "what": "Admission null + de-atomization for the atomicity diagnostic A_l(t) at t=0.005 (l=1), executed per the pre-registered protocol in tools/spectral-defocus/defocus.py run_admit_null()",
+  "date": "2026-08-22",
+  "protocol": {
+    "admission": "A_1(0.005) on n curveball draws (fixed row+column margins, trades=20*n_rows) -> z of real A_1; pre-registered reading: |z|<3 marginal-dominated (diagnostic only), |z|>=3 admissible coordinate, degenerate null inadmissible",
+    "de_atomization": "value-level Nadaraya-Watson vMF smoothing of targets, positions unchanged; bar: some kappa achieves A_1_smoothed <= 0.5*A_1_real",
+    "corpus": "papers/is-this-x-2026-08-12-Final.zip per_row_coverage_v3.json, 2286x9"
+  },
+  "runs": {
+    "initial_n10": {
+      "seed": 20260822,
+      "A1_real": 0.945044178781793,
+      "null_mean": 0.8577258912550905,
+      "null_sd": 0.03969826920957004,
+      "z": 2.199548979471699,
+      "note": "z inflated by small-n sd underestimate",
+      "ci_run": "32597036569"
+    },
+    "stability_n50_seedA": {
+      "seed": 20260822,
+      "n_null": 50,
+      "A1_real": 0.9450441787818006,
+      "null_mean": 0.8615617051649506,
+      "null_sd": 0.052559853297951306,
+      "z": 1.5883315568558487,
+      "nw_smoothing": {
+        "2": 0.4919947730037179,
+        "5": 0.7226091736788975,
+        "10": 0.8395947559876525,
+        "20": 0.9139988812229408,
+        "35": 0.9353900335546541,
+        "50": 0.9424888788207603,
+        "80": 0.9486466175658783,
+        "150": 0.950333802549066,
+        "300": 0.9504941971006284,
+        "1000": 0.9506734215611772
+      },
+      "halving_target": 0.4725220893909003,
+      "best": {
+        "kappa": 2,
+        "A1": 0.4919947730037179
+      },
+      "halving_met": false,
+      "ci_run": "32598178129"
+    },
+    "stability_n50_seedB": {
+      "seed": 777,
+      "n_null": 50,
+      "A1_real": 0.945121674112782,
+      "null_mean": 0.8616194069575376,
+      "null_sd": 0.0656174272778411,
+      "z": 1.2725623453914814,
+      "nw_smoothing": {
+        "20": 0.9056860241352307,
+        "50": 0.9380923714127395,
+        "150": 0.9451682728468578
+      },
+      "halving_target": 0.472560837056391,
+      "halving_met": false,
+      "ci_run": "32598178129"
+    }
+  },
+  "verdicts": {
+    "admission": "NEGATIVE: A_1 is marginal-dominated (z=+1.59/+1.27 at n=50, two seeds; the curveball null itself is atomic, mean A_1 ~ 0.86). Valid atomicity DIAGNOSTIC; NOT admissible as a corpus-specific map coordinate under the membership condition.",
+    "de_atomization": "NEGATIVE: halving bar unreachable. Smoothed A_1 is monotone decreasing in 1/kappa but even kappa=2 (~46 deg kernel, destroys essentially all angular structure) reaches only 0.492 vs bar 0.473. Cause: the all-ones atom (795 identical rows, ~35% of mass) is a point mass no kernel can spread.",
+    "ci_encoding": "lean-check.yml verify-tools runs --admit-null --n-null 50; the gate asserts the recorded negative REPRODUCES (non-degenerate null AND |z|<3 AND halving unmet). Drift in either direction fails CI."
+  }
+}

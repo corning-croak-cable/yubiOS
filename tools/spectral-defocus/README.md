@@ -138,3 +138,26 @@ python3 tools/spectral-defocus/defocus.py --selftest --real-corpus --json
 Run from the repo root (the real-corpus test reads
 `papers/is-this-x-2026-08-12-Final.zip` relative to the current directory;
 pass `--zip-path` to point elsewhere). Numpy is the only dependency.
+
+## Admission null + de-atomization (executed 2026-08-22)
+
+The unified paper specified but never executed the null for A_l(t). `--admit-null`
+now runs it (flags: `--n-null`, `--kappas`, `--seed`). Recorded verdict
+(`papers/data/atomicity/A1-admission-null.json`), stable across null size
+(n=10 vs 50), seed (20260822 vs 777), and bandwidth (kappa 2..1000):
+
+1. **Admission — NEGATIVE.** Real A_1(0.005) = 0.945 vs curveball-null
+   0.862 +/- 0.053 => z = +1.59 (seed B: +1.27). The fixed-margin null is
+   itself atomic (null mean ~0.86): most of the corpus's atomicity is
+   inherited from its margins. A_1 is a valid atomicity *diagnostic* but is
+   NOT admissible as a corpus-specific map coordinate.
+2. **De-atomization — NEGATIVE.** Value-level NW/vMF smoothing (positions
+   unchanged) is monotone in kappa but even kappa=2 (~46 deg kernel) reaches
+   only A_1 = 0.492 vs the pre-registered halving bar 0.473. The all-ones
+   atom (795 identical rows, ~35% of mass) is a point mass no kernel can
+   spread — the bar is unreachable without destroying the field.
+
+CI (`lean-check.yml`, verify-tools) runs `--admit-null --n-null 50` and the
+gate asserts this recorded negative *reproduces*: exit 0 iff the null is
+non-degenerate AND |z| < 3 AND the halving bar is NOT met. Drift in either
+direction (including an unexpected pass) fails CI and demands a fresh look.
