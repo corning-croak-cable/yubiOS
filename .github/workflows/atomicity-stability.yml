@@ -10,7 +10,5 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Install numpy
         run: pip install numpy
-      - name: admission null n=50, wide kappa grid, seed A
-        run: python3 tools/spectral-defocus/defocus.py --admit-null --n-null 50 --kappas 2,5,10,20,35,50,80,150,300,1000 --seed 20260822 || true
-      - name: admission null n=50, seed B (z stability)
-        run: python3 tools/spectral-defocus/defocus.py --admit-null --n-null 50 --kappas 20,50,150 --seed 777 || true
+      - name: gate test - expect exit 0 on the recorded negative
+        run: python3 tools/spectral-defocus/defocus.py --admit-null --n-null 50
