@@ -14,6 +14,25 @@
     5. phi_ladder_telescope   -- fold-ladder potential drops telescope
     6. heat_exponent_monotone / heat_exponent_additive -- ℓ(ℓ+1) heat-kernel exponent facts
     7. mh_flux_symm           -- Metropolis flux min-symmetry (detailed balance kernel)
+
+  Scope — what this file does NOT prove. The theorems below are
+  identity-type statements over exact arithmetic (integers, fraction
+  pairs). Machine-checking them certifies that the program's identities
+  carry no empirical content — nothing more. In particular this file does
+  not prove:
+    • that the selected null ensemble (fixed-margin / curveball) is
+      scientifically adequate for the corpus questions asked of it;
+    • that any Monte Carlo calibration (null tables, mixing, power
+      sweeps) has converged sufficiently;
+    • that any numerical spherical heat-kernel implementation is
+      error-free (G1's simulations are measurements, not theorems);
+    • that floating-point execution of the shipped Python matches the
+      real-number model formalized here;
+    • or that any observed corpus-specific effect (e.g. ΔV₂ = +0.0144,
+      z = +12.3) is genuine rather than an artifact.
+  Those claims live on the measurement side of the identity/measurement
+  boundary and are supported only by reproduction scripts and matched
+  nulls, per the papers' own discipline.
 -/
 
 namespace CurvedCorpus
