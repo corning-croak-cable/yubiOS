@@ -320,7 +320,10 @@ def run_corpus(zip_path, n_null, trades_per_row, seed):
         mu = float(col.mean())
         sd = float(col.std(ddof=1))
         degenerate = not (sd > 1e-12)
-        z = float("nan") if degenerate else (float(s_real[j - 1]) - mu) / sd
+        # None (JSON null), not NaN: RESULT_JSON must be strict JSON for the
+        # CI log parser. A degenerate null means the coordinate is structurally
+        # constant under the pipeline, so no z exists.
+        z = None if degenerate else (float(s_real[j - 1]) - mu) / sd
         admitted = (not degenerate) and z > ADMISSION_Z
         coords.append({
             "j": j, "n": int(NOLL[j - 1][1]), "m": int(NOLL[j - 1][2]),
@@ -332,7 +335,7 @@ def run_corpus(zip_path, n_null, trades_per_row, seed):
     e_mu = float(null_energy.mean())
     e_sd = float(null_energy.std(ddof=1))
     e_degen = not (e_sd > 1e-12)
-    e_z = float("nan") if e_degen else (e_real - e_mu) / e_sd
+    e_z = None if e_degen else (e_real - e_mu) / e_sd
     energy_coord = {
         "name": "total_non_piston_moment_energy", "real": e_real,
         "null_mean": e_mu, "null_sd": e_sd, "z": e_z,
