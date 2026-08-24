@@ -41,6 +41,16 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y podman qemu-system-x86 qemu-utils virtiofsd swtpm genisoimage
+          # KVM + FUSE setup (same recipe as ci_test-vm.yml): GH runners ship
+          # /dev/kvm root:kvm 0660, and /dev/fuse may be absent -- a missing
+          # /dev/fuse is the documented cause of virtiofsd's silent rc=2.
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules || true
+          sudo udevadm trigger --name-match=kvm || true
+          sudo modprobe fuse || true
+          [ -e /dev/fuse ] || sudo mknod /dev/fuse c 10 229 || true
+          sudo chmod 666 /dev/fuse || true
+          ls -la /dev/kvm /dev/fuse || true
           curl -fsSL https://github.com/yubi-OS/bcvk/releases/latest/download/bcvk -o /tmp/bcvk
           sudo install -m 0755 /tmp/bcvk /usr/local/bin/bcvk
       - name: Run test-sysext-overlay.sh
@@ -60,6 +70,16 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y podman qemu-system-x86 qemu-utils virtiofsd swtpm genisoimage
+          # KVM + FUSE setup (same recipe as ci_test-vm.yml): GH runners ship
+          # /dev/kvm root:kvm 0660, and /dev/fuse may be absent -- a missing
+          # /dev/fuse is the documented cause of virtiofsd's silent rc=2.
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules || true
+          sudo udevadm trigger --name-match=kvm || true
+          sudo modprobe fuse || true
+          [ -e /dev/fuse ] || sudo mknod /dev/fuse c 10 229 || true
+          sudo chmod 666 /dev/fuse || true
+          ls -la /dev/kvm /dev/fuse || true
           curl -fsSL https://github.com/yubi-OS/bcvk/releases/latest/download/bcvk -o /tmp/bcvk
           sudo install -m 0755 /tmp/bcvk /usr/local/bin/bcvk
       - name: Run test-portable-service.sh

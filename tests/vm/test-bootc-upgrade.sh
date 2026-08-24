@@ -71,7 +71,6 @@ echo "[3/12] Starting bcvk ephemeral VM with FROM image"
 VMID_A=$(sudo env "PATH=$PATH:/usr/sbin:/sbin" "ALLOW_REAL_U2F=$ALLOW_REAL_U2F" \
   bcvk ephemeral run \
     --label test-bootc-upgrade=from \
-    --port 2222 \
     --memory 4G \
     "$FROM_IMAGE")
 echo "  VMID_A=$VMID_A"
@@ -97,7 +96,6 @@ sudo env "PATH=$PATH:/usr/sbin:/sbin" bcvk ephemeral stop "$VMID_A"
 VMID_B=$(sudo env "PATH=$PATH:/usr/sbin:/sbin" "ALLOW_REAL_U2F=$ALLOW_REAL_U2F" \
   bcvk ephemeral run \
     --label test-bootc-upgrade=to \
-    --port 2223 \
     --memory 4G \
     "$TO_IMAGE")
 echo "  VMID_B=$VMID_B"
