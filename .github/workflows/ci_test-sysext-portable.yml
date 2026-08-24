@@ -4,7 +4,7 @@ on:
     paths:
       - 'tests/vm/test-sysext-overlay.sh'
       - 'tests/vm/test-portable-service.sh'
-      - 'scripts/ci_test-sysext-portable.yml'
+      - '.github/workflows/ci_test-sysext-portable.yml'
   schedule:
     # Weekly Monday 6 AM UTC drift scan
     - cron: '0 6 * * 1'
@@ -26,6 +26,10 @@ on:
         description: 'Optional binary path to verify exists post-sysext merge'
         required: false
         default: ''
+      run_vm_legs:
+        type: boolean
+        description: 'Run the full bcvk VM boot legs on the self-hosted arm64 rock1 runner (requires rock1 online). Default false: hosted amd64 verifies pulls + bcvk binary and loud-skips VM legs (ADR-023).'
+        default: false
 
 permissions:
   contents: read
@@ -33,14 +37,17 @@ permissions:
 jobs:
   test-sysext:
     name: sysext overlay test
-    runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    runs-on: ${{ inputs.run_vm_legs == true && fromJSON('["self-hosted","Linux","ARM64","KVM"]') || 'ubuntu-24.04' }}
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - name: Install bcvk + podman
+      - name: Install bcvk + podman + VM host deps
         run: |
+          set -euo pipefail
           sudo apt-get update
-          sudo apt-get install -y podman qemu-system-x86 qemu-utils virtiofsd swtpm genisoimage
+          ARCH="$(dpkg --print-architecture)"
+          QEMU_PKG="qemu-system-x86"; [ "$ARCH" = "arm64" ] && QEMU_PKG="qemu-system-arm"
+          sudo apt-get install -y podman "$QEMU_PKG" qemu-utils virtiofsd swtpm genisoimage
           # KVM + FUSE setup (same recipe as ci_test-vm.yml): GH runners ship
           # /dev/kvm root:kvm 0660, and /dev/fuse may be absent -- a missing
           # /dev/fuse is the documented cause of virtiofsd's silent rc=2.
@@ -50,26 +57,42 @@ jobs:
           sudo modprobe fuse || true
           [ -e /dev/fuse ] || sudo mknod /dev/fuse c 10 229 || true
           sudo chmod 666 /dev/fuse || true
-          ls -la /dev/kvm /dev/fuse || true
-          curl -fsSL https://github.com/yubi-OS/bcvk/releases/latest/download/bcvk -o /tmp/bcvk
+          # Arch-aware release binary + checksum verify (OMN-106/107 pattern).
+          curl -fsSL "https://github.com/yubi-OS/bcvk/releases/latest/download/bcvk-${ARCH}" -o /tmp/bcvk
+          curl -fsSL "https://github.com/yubi-OS/bcvk/releases/latest/download/SHA256SUMS" -o /tmp/SHA256SUMS
+          (cd /tmp && grep " bcvk-${ARCH}$" SHA256SUMS | sed "s| bcvk-${ARCH}$| bcvk|" | sha256sum --check --strict)
           sudo install -m 0755 /tmp/bcvk /usr/local/bin/bcvk
-      - name: Run test-sysext-overlay.sh
+          bcvk --help >/dev/null
+      - name: Verify base + sysext fixture images are pullable
+        run: |
+          sudo podman pull "${{ inputs.base_image || 'docker.io/0mniteck/yubios:dev' }}"
+          sudo podman pull "${{ inputs.sysext_image || 'docker.io/0mniteck/yubios-sysext-test:v1' }}"
+      - name: Run test-sysext-overlay.sh (VM boot legs)
+        if: ${{ inputs.run_vm_legs == true }}
         run: |
           bash tests/vm/test-sysext-overlay.sh \
             --base-image "${{ inputs.base_image || 'docker.io/0mniteck/yubios:dev' }}" \
             --sysext-image "${{ inputs.sysext_image || 'docker.io/0mniteck/yubios-sysext-test:v1' }}" \
             --overlay-bin "${{ inputs.overlay_bin || '' }}"
+      - name: Loud-skip VM boot legs (ADR-023 precedent)
+        if: ${{ inputs.run_vm_legs != true }}
+        run: |
+          echo "::warning::SKIP: sysext-overlay VM boot legs skipped -- amd64 hosted runners cannot run bcvk ephemeral VMs (open bcvk/virtiofsd diagnosis #9/#20/#25, same gate as ci_test-vm.yml per ADR-023). Dispatch with run_vm_legs=true to run them on the self-hosted arm64 rock1 runner."
+          echo "### sysext-overlay -- SKIP: VM boot legs (amd64 hosted; dispatch run_vm_legs=true for rock1)" >> "$GITHUB_STEP_SUMMARY"
 
   test-portable:
     name: portable service attach/detach test
-    runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    runs-on: ${{ inputs.run_vm_legs == true && fromJSON('["self-hosted","Linux","ARM64","KVM"]') || 'ubuntu-24.04' }}
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-      - name: Install bcvk + podman
+      - name: Install bcvk + podman + VM host deps
         run: |
+          set -euo pipefail
           sudo apt-get update
-          sudo apt-get install -y podman qemu-system-x86 qemu-utils virtiofsd swtpm genisoimage
+          ARCH="$(dpkg --print-architecture)"
+          QEMU_PKG="qemu-system-x86"; [ "$ARCH" = "arm64" ] && QEMU_PKG="qemu-system-arm"
+          sudo apt-get install -y podman "$QEMU_PKG" qemu-utils virtiofsd swtpm genisoimage
           # KVM + FUSE setup (same recipe as ci_test-vm.yml): GH runners ship
           # /dev/kvm root:kvm 0660, and /dev/fuse may be absent -- a missing
           # /dev/fuse is the documented cause of virtiofsd's silent rc=2.
@@ -79,11 +102,24 @@ jobs:
           sudo modprobe fuse || true
           [ -e /dev/fuse ] || sudo mknod /dev/fuse c 10 229 || true
           sudo chmod 666 /dev/fuse || true
-          ls -la /dev/kvm /dev/fuse || true
-          curl -fsSL https://github.com/yubi-OS/bcvk/releases/latest/download/bcvk -o /tmp/bcvk
+          # Arch-aware release binary + checksum verify (OMN-106/107 pattern).
+          curl -fsSL "https://github.com/yubi-OS/bcvk/releases/latest/download/bcvk-${ARCH}" -o /tmp/bcvk
+          curl -fsSL "https://github.com/yubi-OS/bcvk/releases/latest/download/SHA256SUMS" -o /tmp/SHA256SUMS
+          (cd /tmp && grep " bcvk-${ARCH}$" SHA256SUMS | sed "s| bcvk-${ARCH}$| bcvk|" | sha256sum --check --strict)
           sudo install -m 0755 /tmp/bcvk /usr/local/bin/bcvk
-      - name: Run test-portable-service.sh
+          bcvk --help >/dev/null
+      - name: Verify base + portable fixture images are pullable
+        run: |
+          sudo podman pull docker.io/0mniteck/yubios:dev
+          sudo podman pull "${{ inputs.service_image || 'docker.io/0mniteck/yubios-portable-svc-test:v1' }}"
+      - name: Run test-portable-service.sh (VM boot legs)
+        if: ${{ inputs.run_vm_legs == true }}
         run: |
           bash tests/vm/test-portable-service.sh \
             --service-image "${{ inputs.service_image || 'docker.io/0mniteck/yubios-portable-svc-test:v1' }}" \
             --attach-and-start
+      - name: Loud-skip VM boot legs (ADR-023 precedent)
+        if: ${{ inputs.run_vm_legs != true }}
+        run: |
+          echo "::warning::SKIP: portable-service VM boot legs skipped -- amd64 hosted runners cannot run bcvk ephemeral VMs (open bcvk/virtiofsd diagnosis #9/#20/#25, same gate as ci_test-vm.yml per ADR-023). Dispatch with run_vm_legs=true to run them on the self-hosted arm64 rock1 runner."
+          echo "### portable-service -- SKIP: VM boot legs (amd64 hosted; dispatch run_vm_legs=true for rock1)" >> "$GITHUB_STEP_SUMMARY"
