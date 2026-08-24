@@ -249,6 +249,18 @@ The optimized chart's loxodromic structure was used three ways (pre-registered; 
 
 \emph{Caveats.} The $+126.1$ is large partly because $J$ standardizes by a null SD the optimizer itself compresses; the selection-null factor ($\approx 5\times$) is the defensible effect size. PC3-as-field is a documented convention of the defocus deliverable, not dictated by the papers. The optimizer is small-budget random search: every $\Delta J$ here is a lower bound.
 
+\section{Addendum (August 24, 2026): corpus sonometry, and two gaps closed}
+\label{sec:sonometry}
+Three additions land after v2, machine-checked in \texttt{CurvedCorpus.lean} (sections~10--12) and executed in CI beside it (\texttt{verify\_claims.py} claims~7--8; instrument \texttt{tools/corpus-sonometer}).
+
+\textbf{(i) F3 canonicity, closed.} Uniqueness-from-irreducibility, previously cited as outside machine reach, is now proved in core Lean (\texttt{stationary\_unique\_uniform}, section~10) via the discrete maximum principle: on an irreducible fibre, every stationary weight vector of a nonnegative symmetric constant-row-sum kernel is constant, so the uniform distribution is \emph{the} stationary law of the curveball chain. Claim~6 continues to discharge irreducibility exhaustively on the test instance.
+
+\textbf{(ii) The Lyu--Mukherjee anchor, split.} The Marchenko--Pastur target moments are Narayana polynomials $m_k(\lambda)=\sum_r N(k,r)\,\lambda^r$ (sums over non-crossing partitions weighted by block count). Section~11 proves the rows through $k=8$ and their Catalan row-sum specialization $m_k(1)=C_k$ as exact kernel-checked identities, via the free-Poisson functional equation $M = 1 + zM(M+\lambda-1)$; claim~7 measures the curveball-sampled constant-margin ensemble's empirical spectral moments against them ($n{=}512$, $p{=}128$, $\lambda{=}0.25$; relative error $\le 0.5\%$ for $k\le4$). The weak-convergence limit statement itself remains cited, per the scope discipline.
+
+\textbf{(iii) The corpus level, in dBc.} Effects are now also reported on a decibel-style level scale referenced to the vacuum:
+$L \;=\; 20\log_{10}\!\left(\frac{|\Delta V_2|}{\sigma_{\mathrm{null}}}\right)\ \text{dBc},$
+so that $0$~dBc is the null ensemble's own RMS fluctuation --- the smallest detectable effect, the acoustician's $20\,\mu$Pa. The published $z=+12.13$ reads $+21.7$~dBc; CI measures $+24.3$~dBc at the 20N mixing window and $+17.4$~dBc at 40N, both far above the $+15.6$~dBc detectability floor ($z>6$). The level laws that make the scale meaningful --- cascade additivity (gains multiply, levels add; the discrete form of the heat-exponent additivity of Section~\ref{sec:defocus}), the pressure/power factor of two ($20\log_{10}$ versus $10\log_{10}$ is exact, not conventional), strict monotonicity and injectivity --- are proved as exact identities on integer powers in section~12; the real-valued $\log_{10}$ stays on the measurement side of the boundary.
+
 \section{Conclusion}
 \label{sec:conclusion}
 
