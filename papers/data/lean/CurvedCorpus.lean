@@ -25,6 +25,10 @@
     12. bpow_add / level_double / level_injective -- the decibel laws:
         exact level arithmetic behind the dBc corpus-level scale
         (claim 8, tools/corpus-sonometer)
+    13. zernikeR / zernikeR_gen_* / zernikeR_normalized -- Zernike radial
+        polynomials: exact integer coefficients from the binomial closed
+        form, normalization R_n^m(1) = 1, parity and degree structure
+        (slot 4, refs/zernike-fit-2026-08-24.md)
 
   Scope — what this file does NOT prove. The theorems below are
   identity-type statements over exact arithmetic (integers, fraction
@@ -843,5 +847,111 @@ theorem level_injective (b k l : Nat) (hb : 2 ≤ b)
     · have hgt : l < k := by omega
       have := bpow_mono b hb l k hgt
       omega
+
+/-! ### 13. Zernike radial polynomials: exact integer identities
+
+Slot 4 of the Zernike audit (refs/zernike-fit-2026-08-24.md). Zernike
+polynomials Z_n^m are the orthogonal basis on the unit disk used to
+expand an optical system's deviation from ideal (Zernike 1934, Physica
+1:689; Noll, JOSA 66:207, 1976). Their radial parts R_n^m carry an
+exact integer-coefficient closed form,
+
+  R_n^m(rho) = sum_k (-1)^k C(n-k, k) C(n-2k, (n-m)/2 - k) rho^(n-2k),
+
+summed over k = 0 .. (n-m)/2. That is identity-type and therefore
+kernel-checkable, exactly like section 11's Narayana rows. This section
+defines the generator zernikeR over the same little-endian Int
+coefficient lists used there (pAdd / pMul / evalOne are reused, not
+redefined) and proves by decide that it reproduces the hand-written
+low-order polynomials implemented downstream; that each is normalized
+(R_n^m(1) = 1, read off by evalOne, which sums coefficients and so
+evaluates at rho = 1); that the parity structure holds (a coefficient
+may be nonzero only at an index of the same parity as n); and that the
+degrees are as advertised.
+
+What is identity-type here: the integer coefficient structure, the
+normalization, the parity, the degrees -- all exact, all closed terms.
+What stays measurement-side: orthogonality on the real disk (a real
+integral, not an integer identity), any Zernike spectrum of the corpus
+point distribution, and any aberrated-lens Delta-J -- those live in
+tools/zernike-spectrum, face seeded nulls and the membership condition
+in CI, and are never elevated to theorems here. Note also the naming
+collision flagged in the unified paper's optical-language caveat: the
+Z_2^0 mode is called defocus in optics but is a deterministic quadratic
+rephasing, not the program's stochastic heat flow in t. -/
+
+/-- Binomial coefficients by the Pascal recurrence (no library use). -/
+def binom : Nat -> Nat -> Nat
+  | _, 0 => 1
+  | 0, _ + 1 => 0
+  | n + 1, k + 1 => binom n k + binom n (k + 1)
+
+/-- The k-th term's integer coefficient in the closed form for R_n^m. -/
+def zernikeCoeff (n m k : Nat) : Int :=
+  let c : Int := Int.ofNat (binom (n - k) k * binom (n - 2 * k) ((n - m) / 2 - k))
+  if k % 2 = 0 then c else -c
+
+/-- R_n^m as a little-endian Int coefficient list in rho, generated from
+    the binomial closed form: index j carries the coefficient of rho^j. -/
+def zernikeR (n m : Nat) : List Int :=
+  (List.range (n + 1)).map (fun j =>
+    if (n - j) % 2 = 0 then
+      (if (n - j) / 2 <= (n - m) / 2 then zernikeCoeff n m ((n - j) / 2) else 0)
+    else 0)
+
+/-- The low orders implemented downstream, written out by hand. -/
+def zernikeR11 : List Int := [0, 1]
+def zernikeR20 : List Int := [-1, 0, 2]
+def zernikeR22 : List Int := [0, 0, 1]
+def zernikeR31 : List Int := [0, -2, 0, 3]
+def zernikeR33 : List Int := [0, 0, 0, 1]
+def zernikeR40 : List Int := [1, 0, -6, 0, 6]
+def zernikeR42 : List Int := [0, 0, -3, 0, 4]
+def zernikeR44 : List Int := [0, 0, 0, 0, 1]
+
+/-- The closed form reproduces every hand-written low order exactly. -/
+theorem zernikeR_gen_11 : zernikeR 1 1 = zernikeR11 := by decide
+theorem zernikeR_gen_20 : zernikeR 2 0 = zernikeR20 := by decide
+theorem zernikeR_gen_22 : zernikeR 2 2 = zernikeR22 := by decide
+theorem zernikeR_gen_31 : zernikeR 3 1 = zernikeR31 := by decide
+theorem zernikeR_gen_33 : zernikeR 3 3 = zernikeR33 := by decide
+theorem zernikeR_gen_40 : zernikeR 4 0 = zernikeR40 := by decide
+theorem zernikeR_gen_42 : zernikeR 4 2 = zernikeR42 := by decide
+theorem zernikeR_gen_44 : zernikeR 4 4 = zernikeR44 := by decide
+
+/-- Normalization: R_n^m(1) = 1 for every listed order. evalOne sums the
+    coefficients, which is evaluation at rho = 1. -/
+theorem zernikeR_normalized :
+    [evalOne (zernikeR 1 1), evalOne (zernikeR 2 0), evalOne (zernikeR 2 2),
+     evalOne (zernikeR 3 1), evalOne (zernikeR 3 3), evalOne (zernikeR 4 0),
+     evalOne (zernikeR 4 2), evalOne (zernikeR 4 4)]
+      = [1, 1, 1, 1, 1, 1, 1, 1] := by decide
+
+/-- Parity check: every coefficient at an index of the wrong parity
+    (index parity /= n parity) must vanish. -/
+def parityClean (n : Nat) (p : List Int) : Bool :=
+  (List.range p.length).all (fun j =>
+    if j % 2 = n % 2 then true else p.getD j 0 == 0)
+
+theorem zernikeR_parity :
+    [parityClean 1 (zernikeR 1 1), parityClean 2 (zernikeR 2 0),
+     parityClean 2 (zernikeR 2 2), parityClean 3 (zernikeR 3 1),
+     parityClean 3 (zernikeR 3 3), parityClean 4 (zernikeR 4 0),
+     parityClean 4 (zernikeR 4 2), parityClean 4 (zernikeR 4 4)]
+      = [true, true, true, true, true, true, true, true] := by decide
+
+/-- Degrees: R_n^m has degree n, so the coefficient list has length n+1. -/
+theorem zernikeR_degrees :
+    [(zernikeR 1 1).length, (zernikeR 2 0).length, (zernikeR 2 2).length,
+     (zernikeR 3 1).length, (zernikeR 3 3).length, (zernikeR 4 0).length,
+     (zernikeR 4 2).length, (zernikeR 4 4).length]
+      = [2, 3, 3, 4, 4, 5, 5, 5] := by decide
+
+/-- The defocus mode in section 11's polynomial arithmetic: R_2^0 is
+    2*rho^2 - 1 built from pMul and pAdd, the same helpers the Narayana
+    skeleton uses. -/
+theorem zernikeR20_as_pAdd_pMul :
+    zernikeR 2 0 = pAdd [-1] (pMul [0, 1] [0, 2]) := by decide
+
 
 end CurvedCorpus
