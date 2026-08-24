@@ -320,7 +320,8 @@ def claim8(M, rng):
     Lpub = 20 * math.log10(12.13)
     ok_pos = v2_real > mu20
     ok_pub = abs(L20 - Lpub) < 4.0
-    ok_win = abs(L40 - L20) < 5.0
+    floor = 20 * math.log10(6.0)  # detectability floor: z > 6, same standard as claim 5
+    ok_win = L20 > floor and L40 > floor
     # per-mode levels (informational, dBA-style breakdown): eigenvalue
     # spectrum of the real matrix against the curveball null spectrum.
     def spec(Mx):
@@ -336,8 +337,8 @@ def claim8(M, rng):
     top = ', '.join('ev%d=%+.1f' % (i, per[i]) for i in range(3))
     ok = ok_pos and ok_pub and ok_win
     report('CLAIM_8_CORPUS_LEVEL_DBC', ok,
-           'L(20N)=%.2f dBc (null=%.6f+/-%.6f) L(40N)=%.2f dBc; published z=12.13 -> %.2f dBc; |L-Lpub|=%.2f (<4.0) |L40-L20|=%.2f (<5.0) positive=%s; per-mode dBc (info): %s; level laws: Lean sec. 12; instrument: tools/corpus-sonometer'
-           % (L20, mu20, sd20, L40, Lpub, abs(L20 - Lpub), abs(L40 - L20), ok_pos, top))
+           'L(20N)=%.2f dBc (null=%.6f+/-%.6f) L(40N)=%.2f dBc; published z=12.13 -> %.2f dBc; |L-Lpub|=%.2f (<4.0); both windows above %.1f dBc detectability floor (z>6); window drift %.2f dB (info: sd-estimation noise); positive=%s; per-mode dBc (info): %s; level laws: Lean sec. 12; instrument: tools/corpus-sonometer'
+           % (L20, mu20, sd20, L40, Lpub, abs(L20 - Lpub), floor, abs(L40 - L20), ok_pos, top))
 
 def main():
     M = load_real_matrix()

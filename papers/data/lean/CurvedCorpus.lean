@@ -784,7 +784,7 @@ def bpow (b : Nat) : Nat → Nat
 
 theorem bpow_pos (b : Nat) (hb : 0 < b) (k : Nat) : 0 < bpow b k := by
   induction k with
-  | zero => decide
+  | zero => exact Nat.le_refl 1
   | succ m ih =>
       show 0 < b * bpow b m
       exact Nat.mul_pos hb ih
