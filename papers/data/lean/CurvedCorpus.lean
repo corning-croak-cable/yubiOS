@@ -16,6 +16,9 @@
     7. mh_flux_symm           -- Metropolis flux min-symmetry (detailed balance kernel)
     8. trade_preserves_rowSum / trade_preserves_colSum -- curveball trades stay on the fixed-margin fibre
     9. trade_reversible / uniform_inflow_constant -- F3 null canonicity mechanics (reversibility, uniform stationarity)
+    10. stationary_unique_uniform -- Full theorem (F3 capstone): a stationary
+        weight vector of an irreducible symmetric kernel is constant, so
+        uniform is the unique stationary law on the fibre
 
   Scope — what this file does NOT prove. The theorems below are
   identity-type statements over exact arithmetic (integers, fraction
@@ -440,10 +443,10 @@ canonicity of that medium decomposes:
         executed exhaustively by verify_claims.py claim 6.
 With (i)-(iv) the unique stationary law of the curveball chain is uniform
 on the fibre -- the maximum-entropy distribution given the margins, which
-is what F3 requires of its vacuum. Outside machine reach and cited, not
-proved: uniqueness-from-irreducibility in general (finite Markov chain
-theory; checked exhaustively on the test instance) and the asymptotic
-Lyu-Mukherjee spectrum theorem. -/
+is what F3 requires of its vacuum. Uniqueness-from-irreducibility, previously
+cited here as outside machine reach, is now proved in full generality in
+section 10 (stationary_unique_uniform); the asymptotic Lyu-Mukherjee
+spectrum theorem remains cited, not proved. -/
 
 theorem sumOver_congr (f g : Nat → Int) (l : List Nat) (h : ∀ x, f x = g x) :
     sumOver f l = sumOver g l := by
@@ -479,5 +482,193 @@ theorem uniform_inflow_constant (K : Nat → Nat → Int) (S : List Nat) (R : In
   have h := symm_kernel_balance K S hsym b
   rw [h]
   exact hrow b
+
+
+/-! ### 10. Full theorem: uniform is the unique stationary law (F3 capstone)
+
+Closes the gap flagged at the end of section 9. What was previously
+"outside machine reach and cited, not proved" -- uniqueness-from-
+irreducibility for the finite chain -- is proved here, in core Lean,
+over the same integer-scaled kernels as sections 7-9.
+
+Setting: S enumerates the fibre; K is the integer-scaled transition
+kernel. The curveball chain's uniform-proposal Metropolis kernel has
+the three structural properties hypothesized below by construction:
+nonnegativity, symmetry (section 9(ii), from trade_reversible), and
+constant row sums (each state proposes the same total mass). A weight
+vector pi is stationary when kernel-weighted inflow reproduces it:
+sum_a pi(a)*K(a,b) = R*pi(b) for every b. Irreducibility -- every fibre
+state reaches every other through positive-kernel steps (ReachFrom) --
+is exactly what verify_claims.py claim 6 checks exhaustively on the
+test instance.
+
+The theorem: any stationary pi is constant across an irreducible fibre.
+Hence the uniform distribution is the unique stationary law (up to the
+overall scale a weight vector leaves free), which is what F3 requires
+of its vacuum. The proof is the discrete maximum principle: at a
+maximizer of pi, stationarity forces every positive-kernel neighbour
+to attain the same maximum, and irreducibility propagates the maximum
+everywhere. -/
+
+theorem sumOver_nonneg (f : Nat → Int) (l : List Nat)
+    (h : ∀ x ∈ l, 0 ≤ f x) : 0 ≤ sumOver f l := by
+  induction l with
+  | nil => exact Int.le_refl 0
+  | cons x xs ih =>
+      have hx : 0 ≤ f x := h x (by simp)
+      have hxs : 0 ≤ sumOver f xs := ih (fun y hy => h y (List.mem_cons_of_mem x hy))
+      show 0 ≤ f x + sumOver f xs
+      omega
+
+theorem sumOver_eq_zero_each (f : Nat → Int) (l : List Nat)
+    (hnn : ∀ x ∈ l, 0 ≤ f x) (hz : sumOver f l = 0) :
+    ∀ x ∈ l, f x = 0 := by
+  induction l with
+  | nil => intro x hx; cases hx
+  | cons y ys ih =>
+      have hy : 0 ≤ f y := hnn y (by simp)
+      have hys_nn : ∀ x ∈ ys, 0 ≤ f x := fun x hx => hnn x (List.mem_cons_of_mem y hx)
+      have hys : 0 ≤ sumOver f ys := sumOver_nonneg f ys hys_nn
+      have hz' : f y + sumOver f ys = 0 := hz
+      intro x hx
+      rcases List.mem_cons.mp hx with h | h
+      · rw [h]; omega
+      · exact ih hys_nn (by omega) x h
+
+theorem sumOver_sub (f g : Nat → Int) (l : List Nat) :
+    sumOver (fun x => f x - g x) l = sumOver f l - sumOver g l := by
+  induction l with
+  | nil => rfl
+  | cons x xs ih =>
+      simp only [sumOver]
+      omega
+
+theorem sumOver_mul_left (c : Int) (f : Nat → Int) (l : List Nat) :
+    sumOver (fun x => c * f x) l = c * sumOver f l := by
+  induction l with
+  | nil => simp [sumOver]
+  | cons x xs ih =>
+      simp only [sumOver]
+      rw [ih, Int.mul_add]
+
+/-- Discrete maximum principle at a maximizer: stationarity forces every
+    positive-kernel in-neighbour of the maximizer to attain the maximum.
+    The algebra: inflow at b equals R*pi(b), which also equals the sum of
+    pi(b)*K(a,b) (column sums equal row sums by symmetry); the difference
+    is a sum of nonnegative terms equal to zero, so each term vanishes. -/
+theorem stationary_max_principle
+    (K : Nat → Nat → Int) (π : Nat → Int) (S : List Nat) (R : Int)
+    (hnn : ∀ x y, 0 ≤ K x y)
+    (hsym : ∀ x y, K x y = K y x)
+    (hrow : ∀ a, sumOver (fun c => K a c) S = R)
+    (hstat : ∀ b, sumOver (fun a => π a * K a b) S = R * π b)
+    (b : Nat) (hmax : ∀ a ∈ S, π a ≤ π b) :
+    ∀ a ∈ S, 0 < K a b → π a = π b := by
+  have hcol : sumOver (fun a => K a b) S = R := by
+    rw [symm_kernel_balance K S hsym b]
+    exact hrow b
+  have hconst : sumOver (fun a => π b * K a b) S = R * π b := by
+    rw [sumOver_mul_left (π b) (fun a => K a b) S, hcol, Int.mul_comm]
+  have hsplit : sumOver (fun a => (π b - π a) * K a b) S
+      = sumOver (fun a => π b * K a b - π a * K a b) S :=
+    sumOver_congr _ _ S (fun a => Int.sub_mul (π b) (π a) (K a b))
+  have hdiff : sumOver (fun a => (π b - π a) * K a b) S = 0 := by
+    rw [hsplit, sumOver_sub (fun a => π b * K a b) (fun a => π a * K a b) S,
+        hconst, hstat b]
+    omega
+  have hterm_nn : ∀ a ∈ S, 0 ≤ (π b - π a) * K a b := by
+    intro a ha
+    have h1 : π a ≤ π b := hmax a ha
+    exact Int.mul_nonneg (by omega) (hnn a b)
+  have hzero := sumOver_eq_zero_each (fun a => (π b - π a) * K a b) S hterm_nn hdiff
+  intro a ha hK
+  have hz : (π b - π a) * K a b = 0 := hzero a ha
+  have h1 : π a ≤ π b := hmax a ha
+  by_cases h : π a = π b
+  · exact h
+  · exfalso
+    have hpos : 0 < (π b - π a) * K a b := Int.mul_pos (by omega) hK
+    omega
+
+/-- Reachability through positive-kernel steps whose targets lie in the
+    enumeration S: the irreducibility relation of the trade graph. -/
+inductive ReachFrom (K : Nat → Nat → Int) (S : List Nat) (b : Nat) : Nat → Prop
+  | refl : ReachFrom K S b b
+  | tail {y z : Nat} : ReachFrom K S b y → z ∈ S → 0 < K z y → ReachFrom K S b z
+
+/-- The maximum propagates along reachability: every state reachable from
+    a maximizer carries the maximal weight. -/
+theorem max_propagates
+    (K : Nat → Nat → Int) (π : Nat → Int) (S : List Nat) (R : Int)
+    (hnn : ∀ x y, 0 ≤ K x y)
+    (hsym : ∀ x y, K x y = K y x)
+    (hrow : ∀ a, sumOver (fun c => K a c) S = R)
+    (hstat : ∀ b, sumOver (fun a => π a * K a b) S = R * π b)
+    (b : Nat) (hmax : ∀ a ∈ S, π a ≤ π b) :
+    ∀ a, ReachFrom K S b a → π a = π b := by
+  intro a hr
+  induction hr with
+  | refl => rfl
+  | @tail y z hry hzS hKzy ih =>
+      have hmax' : ∀ w ∈ S, π w ≤ π y := by
+        intro w hw
+        rw [ih]
+        exact hmax w hw
+      have hzy : π z = π y :=
+        stationary_max_principle K π S R hnn hsym hrow hstat y hmax' z hzS hKzy
+      rw [hzy, ih]
+
+/-- A finite nonempty enumeration has a maximizer. -/
+theorem exists_max (π : Nat → Int) :
+    ∀ (S : List Nat), S ≠ [] → ∃ b, b ∈ S ∧ ∀ a ∈ S, π a ≤ π b := by
+  intro S
+  induction S with
+  | nil => intro h; exact absurd rfl h
+  | cons x xs ih =>
+      intro _
+      by_cases hxs : xs = []
+      · subst hxs
+        refine ⟨x, by simp, ?_⟩
+        intro a ha
+        have hax : a = x := by simpa using ha
+        rw [hax]
+        exact Int.le_refl _
+      · obtain ⟨b, hbmem, hbmax⟩ := ih hxs
+        by_cases hcmp : π b ≤ π x
+        · refine ⟨x, by simp, ?_⟩
+          intro a ha
+          rcases List.mem_cons.mp ha with h | h
+          · rw [h]; exact Int.le_refl _
+          · exact Int.le_trans (hbmax a h) hcmp
+        · refine ⟨b, List.mem_cons_of_mem x hbmem, ?_⟩
+          intro a ha
+          rcases List.mem_cons.mp ha with h | h
+          · rw [h]; omega
+          · exact hbmax a h
+
+/-- Full theorem (F3 capstone): on an irreducible fibre, every stationary
+    weight vector of a nonnegative symmetric constant-row-sum kernel is
+    constant -- the uniform distribution is the unique stationary law of
+    the curveball chain, the maximum-entropy vacuum F3 requires.
+    Previously cited, not proved; now closed. -/
+theorem stationary_unique_uniform
+    (K : Nat → Nat → Int) (π : Nat → Int) (S : List Nat) (R : Int)
+    (hnn : ∀ x y, 0 ≤ K x y)
+    (hsym : ∀ x y, K x y = K y x)
+    (hrow : ∀ a, sumOver (fun c => K a c) S = R)
+    (hstat : ∀ b, sumOver (fun a => π a * K a b) S = R * π b)
+    (hirr : ∀ x ∈ S, ∀ y ∈ S, ReachFrom K S x y) :
+    ∀ x ∈ S, ∀ y ∈ S, π x = π y := by
+  intro x hx y hy
+  have hne : S ≠ [] := by
+    intro h
+    rw [h] at hx
+    cases hx
+  obtain ⟨b, hbS, hbmax⟩ := exists_max π S hne
+  have hxb : π x = π b :=
+    max_propagates K π S R hnn hsym hrow hstat b hbmax x (hirr b hbS x hx)
+  have hyb : π y = π b :=
+    max_propagates K π S R hnn hsym hrow hstat b hbmax y (hirr b hbS y hy)
+  rw [hxb, hyb]
 
 end CurvedCorpus
