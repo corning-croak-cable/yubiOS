@@ -281,6 +281,8 @@ def analyse(C, L, name, seed, X, dim_key, recorded_V2, rng):
                cond_top2=float(sv[0] / sv[1]) if sv.size > 1 and sv[1] > 0 else None,
                ray_map=ray_desc, disk_rmax=rmax)
 
+    rec['gap_E'] = gap_e(C, M, dim_key, X, sc_full, rng)
+
     U, S, Vt = np.linalg.svd(M, full_matrices=False)
     W2 = Vt[:2].T
 
@@ -391,7 +393,6 @@ def analyse(C, L, name, seed, X, dim_key, recorded_V2, rng):
               'quadratic-in-kernel term dominant -> fold, vanishing quadratic with '
               'cubic dominant -> cusp; corank 2 -> umbilic by cubic discriminant sign.'))
 
-    rec['gap_E'] = gap_e(C, M, dim_key, X, sc_full, rng)
     return rec
 
 
