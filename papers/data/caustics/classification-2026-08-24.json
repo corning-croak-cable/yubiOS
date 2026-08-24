@@ -1,0 +1,2395 @@
+{
+ "schema": "f4-caustic-classification-v1",
+ "created": "2026-08-24",
+ "seed": 20260824,
+ "provenance": {
+  "route": "recorded",
+  "ladder_source": "papers/is-this-x-2026-08-12-Final.zip::results/ladder_VD.json",
+  "ladder_rows": 77,
+  "degenerate_rows": 14,
+  "designs": "reconstructed by importing the bundle scripts/common.py and scripts/ladder_correlations.py and re-running their own basis builders on the bundle corpora; recomputed V2 checked against recorded V2",
+  "synthetic": false
+ },
+ "disclaimer": "Classification fits are MEASUREMENTS, not theorems. The catastrophe labels are read off least-squares local normal forms of a finite sampled ray map and are contingent on the fit window, the Noll j<=11 truncation and the numerical-rank tolerance. Nothing here is elevated to an identity-type claim.",
+ "method": {
+  "ray_map": "disk (u,v) -> stereographic lift -> basis evaluation -> projection on the top-2 right singular subspace of the sampled design",
+  "zernike": "Noll j<=11 least squares on the sampled disk points, coefficients normalized to unit 2-norm per component",
+  "normal_form": "degree<=4 bivariate polynomial fit of the singular component in Jacobian-kernel-aligned local coordinates on a 25x25 grid",
+  "gap_E": "one-column perturbations: in-family add, in-family replace, generic add, generic replace, plus an eps sweep of one additively perturbed column"
+ },
+ "results": [
+  {
+   "corpus": "real_yubios_2286x9",
+   "dim_key": "2_pca",
+   "seed": 11,
+   "recorded_V2": 1,
+   "D": 2,
+   "N": 2286,
+   "recomputed_V2": 1,
+   "V2_match": true,
+   "numerical_rank": 2,
+   "singular_values_top5": [
+    115.01537384893881,
+    40.71065094048851
+   ],
+   "cond_top2": 2.825191226174942,
+   "ray_map": "identity_on_disk(D=2 PCA scores)",
+   "disk_rmax": 12.414042843489238,
+   "gap_E": {
+    "in_family_add": {
+     "rank": 3,
+     "V2": 0.6666666666666666,
+     "what": "PC3 (next column of the same PCA family)"
+    },
+    "in_family_replace": {
+     "rank": 2,
+     "V2": 1,
+     "what": "PC2 replaced by PC3 (in-family)"
+    },
+    "generic_add": {
+     "rank": 3,
+     "V2": 0.6728616661254053,
+     "what": "append one generic seeded N(0,1) column"
+    },
+    "generic_replace": {
+     "rank": 2,
+     "V2": 1,
+     "what": "replace last column with a generic seeded N(0,1) column"
+    },
+    "eps_sweep": {
+     "what": "one column additively perturbed by eps*scale*seeded noise",
+     "rows": [
+      {
+       "eps": 1e-8,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.000001,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.0001,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.001,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.01,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.1,
+       "rank": 2,
+       "V2": 1
+      }
+     ]
+    },
+    "base_V2": 1,
+    "verdict": "unfolds (fold-like)"
+   },
+   "zernike_fit_noll_le11": {
+    "component_1": {
+     "R2": 1,
+     "coefficients": {
+      "piston": -1.4219986909511498e-15,
+      "tilt_x": 1,
+      "tilt_y": 1.0921984770936928e-15,
+      "defocus": 1.4309253333469057e-15,
+      "astig_oblique": 1.1324781867945958e-15,
+      "astig_vertical": 1.17939548959452e-15,
+      "coma_y": 4.024477500038172e-16,
+      "coma_x": 1.3414925000127242e-16,
+      "trefoil_y": -2.8863049570586266e-16,
+      "trefoil_x": -3.918974704464255e-16,
+      "spherical": -1.5740178666815963e-15
+     },
+     "dominant": [
+      [
+       "tilt_x",
+       1
+      ],
+      [
+       "spherical",
+       1.5740178666815963e-15
+      ],
+      [
+       "defocus",
+       1.4309253333469057e-15
+      ]
+     ]
+    },
+    "component_2": {
+     "R2": 1,
+     "coefficients": {
+      "piston": 8.887491818444645e-18,
+      "tilt_x": -2.582373062524482e-16,
+      "tilt_y": 1,
+      "defocus": 1.5091790625143077e-16,
+      "astig_oblique": -2.851648642432227e-16,
+      "astig_vertical": -5.057147247443777e-16,
+      "coma_y": 3.5666582497082925e-16,
+      "coma_x": -1.6328479023592302e-16,
+      "trefoil_y": -6.382460614277631e-16,
+      "trefoil_x": 7.274278016019484e-17,
+      "spherical": -5.645447604220188e-17
+     },
+     "dominant": [
+      [
+       "tilt_y",
+       1
+      ],
+      [
+       "trefoil_y",
+       6.382460614277631e-16
+      ],
+      [
+       "astig_vertical",
+       5.057147247443777e-16
+      ]
+     ]
+    }
+   },
+   "illuminated_points": 2286,
+   "detJ_absmax": 1.0000000000000178,
+   "detJ_min_over_max_on_lit": 0.9999999999996423,
+   "detJ_sign_change_on_lit": false,
+   "catastrophe": {
+    "type": "none (regular ray map)",
+    "confidence": "high",
+    "note": "Jacobian determinant is bounded away from zero on every illuminated sample point: the ray map has no singular locus. The V2=1.0000 is a dimension identity of the basis (D=2), not a caustic of the map."
+   }
+  },
+  {
+   "corpus": "real_yubios_2286x9",
+   "dim_key": "384_variant2_l384_m3",
+   "seed": 11,
+   "recorded_V2": 1.0000000000000002,
+   "D": 384,
+   "N": 2286,
+   "recomputed_V2": 1.0000000000000002,
+   "V2_match": true,
+   "numerical_rank": 2,
+   "singular_values_top5": [
+    400.55380694737113,
+    91.15338167832364,
+    1.7623407650044842e-12,
+    5.719527988146461e-13,
+    1.970301481775785e-13
+   ],
+   "cond_top2": 4.3942835643872025,
+   "ray_map": "stereographic_lift -> fib_lobe_basis(variant2_l384_m3)",
+   "disk_rmax": 12.414042843489238,
+   "gap_E": {
+    "in_family_add": {
+     "rank": 2,
+     "V2": 1.0000000000000002,
+     "what": "one more phase-offset column of the same lobe family"
+    },
+    "in_family_replace": {
+     "rank": 2,
+     "V2": 1.0000000000000002,
+     "what": "column 0 replaced by another phase offset (in-family)"
+    },
+    "generic_add": {
+     "rank": 3,
+     "V2": 0.9974061390666966,
+     "what": "append one generic seeded N(0,1) column"
+    },
+    "generic_replace": {
+     "rank": 3,
+     "V2": 0.997399384220763,
+     "what": "replace last column with a generic seeded N(0,1) column"
+    },
+    "eps_sweep": {
+     "what": "one column additively perturbed by eps*scale*seeded noise",
+     "rows": [
+      {
+       "eps": 1e-8,
+       "rank": 3,
+       "V2": 1.0000000000000002
+      },
+      {
+       "eps": 0.000001,
+       "rank": 3,
+       "V2": 0.9999999999999963
+      },
+      {
+       "eps": 0.0001,
+       "rank": 3,
+       "V2": 0.9999999999617426
+      },
+      {
+       "eps": 0.001,
+       "rank": 3,
+       "V2": 0.9999999961743438
+      },
+      {
+       "eps": 0.01,
+       "rank": 3,
+       "V2": 0.9999996175600904
+      },
+      {
+       "eps": 0.1,
+       "rank": 3,
+       "V2": 0.9999623721228361
+      }
+     ],
+     "loglog_exponent": 1.997824015530532,
+     "loglog_R2": 0.9999992633360987
+    },
+    "base_V2": 1.0000000000000002,
+    "verdict": "persists (structural collapse)"
+   },
+   "zernike_fit_noll_le11": {
+    "component_1": {
+     "R2": 0.5855336653084846,
+     "coefficients": {
+      "piston": 0.15439727136158038,
+      "tilt_x": -0.39819781390333947,
+      "tilt_y": 0.6264274015711107,
+      "defocus": 0.11439178419868198,
+      "astig_oblique": 0.1131642800370312,
+      "astig_vertical": -0.055592356127679966,
+      "coma_y": 0.26657674703618134,
+      "coma_x": -0.19097316173612316,
+      "trefoil_y": -0.2964394805168503,
+      "trefoil_x": 0.44800101697700634,
+      "spherical": 0.009558354767764954
+     },
+     "dominant": [
+      [
+       "tilt_y",
+       0.6264274015711107
+      ],
+      [
+       "trefoil_x",
+       0.44800101697700634
+      ],
+      [
+       "tilt_x",
+       0.39819781390333947
+      ]
+     ]
+    },
+    "component_2": {
+     "R2": 0.04465598581944896,
+     "coefficients": {
+      "piston": -0.07058318352507982,
+      "tilt_x": 0.17506236615201828,
+      "tilt_y": 0.8211827933068155,
+      "defocus": -0.028892911677909784,
+      "astig_oblique": -0.15913369151300022,
+      "astig_vertical": 0.05325316875134907,
+      "coma_y": 0.3273816314595118,
+      "coma_x": 0.07019030209664037,
+      "trefoil_y": -0.2758732372983886,
+      "trefoil_x": -0.2695686545101193,
+      "spherical": 0.012532212825247194
+     },
+     "dominant": [
+      [
+       "tilt_y",
+       0.8211827933068155
+      ],
+      [
+       "coma_y",
+       0.3273816314595118
+      ],
+      [
+       "trefoil_y",
+       0.2758732372983886
+      ]
+     ]
+    }
+   },
+   "illuminated_points": 1420,
+   "detJ_absmax": 4474.171574950265,
+   "detJ_min_over_max_on_lit": 0.00007887228123183151,
+   "detJ_sign_change_on_lit": true,
+   "catastrophe": {
+    "type": "cusp (A3)",
+    "confidence": "medium",
+    "corank": 0,
+    "base_point_uv": [
+     0.8167442687151965,
+     -0.1867387259623252
+    ],
+    "base_point_radius": 0.8378201192697353,
+    "window": 0.24828085686978477,
+    "jacobian_singular_values": [
+     2.8133985258578043,
+     0.1254312588478194
+    ],
+    "local_poly_R2": 0.8188925789532848,
+    "normalized_local_coefficients": {
+     "10": 0.2598817268183312,
+     "11": 1.1449296767785795,
+     "12": 0.005980588255346259,
+     "13": -1.047238090879669,
+     "20": 0.00019173169454089195,
+     "21": -0.00008101207370102958,
+     "22": -0.0004341152427930072,
+     "30": -0.008427148584299467,
+     "31": -0.09548671915785069,
+     "40": -0.000008554066251530647,
+     "00": 0.000030378580110146185,
+     "01": 0.00008760629809661895,
+     "02": -0.0003750669525018753,
+     "03": -0.00019443097161782457,
+     "04": 0.0003610103506353645
+    },
+    "key_terms": {
+     "s2": 0.00019173169454089195,
+     "s3": -0.008427148584299467,
+     "s4": -0.000008554066251530647,
+     "t2": -0.0003750669525018753,
+     "st": 1.1449296767785795
+    },
+    "binary_cubic_discriminant": 7.124074440641555e-9,
+    "azimuthal_trefoil_weight": 0.44800101697700634,
+    "note": "degree-4 local normal form of the singular component of the ray map, in coordinates aligned with the Jacobian kernel; Whitney criterion: quadratic-in-kernel term dominant -> fold, vanishing quadratic with cubic dominant -> cusp; corank 2 -> umbilic by cubic discriminant sign."
+   }
+  },
+  {
+   "corpus": "gen_latent2class_2286x9",
+   "dim_key": "2_pca",
+   "seed": 21,
+   "recorded_V2": 1,
+   "D": 2,
+   "N": 2286,
+   "recomputed_V2": 1,
+   "V2_match": true,
+   "numerical_rank": 2,
+   "singular_values_top5": [
+    109.79507603536912,
+    34.96824256631407
+   ],
+   "cond_top2": 3.1398511328429737,
+   "ray_map": "identity_on_disk(D=2 PCA scores)",
+   "disk_rmax": 6.738258941190584,
+   "gap_E": {
+    "in_family_add": {
+     "rank": 3,
+     "V2": 0.6666666666666666,
+     "what": "PC3 (next column of the same PCA family)"
+    },
+    "in_family_replace": {
+     "rank": 2,
+     "V2": 1,
+     "what": "PC2 replaced by PC3 (in-family)"
+    },
+    "generic_add": {
+     "rank": 3,
+     "V2": 0.6719983385367405,
+     "what": "append one generic seeded N(0,1) column"
+    },
+    "generic_replace": {
+     "rank": 2,
+     "V2": 1,
+     "what": "replace last column with a generic seeded N(0,1) column"
+    },
+    "eps_sweep": {
+     "what": "one column additively perturbed by eps*scale*seeded noise",
+     "rows": [
+      {
+       "eps": 1e-8,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.000001,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.0001,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.001,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.01,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.1,
+       "rank": 2,
+       "V2": 1
+      }
+     ]
+    },
+    "base_V2": 1,
+    "verdict": "unfolds (fold-like)"
+   },
+   "zernike_fit_noll_le11": {
+    "component_1": {
+     "R2": 1,
+     "coefficients": {
+      "piston": 1.3962954241591688e-15,
+      "tilt_x": 1,
+      "tilt_y": -3.063582083189659e-16,
+      "defocus": -1.581735152866997e-15,
+      "astig_oblique": -8.70160289174878e-17,
+      "astig_vertical": -1.276921607783253e-16,
+      "coma_y": 1.3747502793472924e-16,
+      "coma_x": 2.553843215566506e-16,
+      "trefoil_y": -3.750957222863305e-16,
+      "trefoil_x": 5.539870332154409e-16,
+      "spherical": 2.504413992039412e-15
+     },
+     "dominant": [
+      [
+       "tilt_x",
+       1
+      ],
+      [
+       "spherical",
+       2.504413992039412e-15
+      ],
+      [
+       "defocus",
+       1.581735152866997e-15
+      ]
+     ]
+    },
+    "component_2": {
+     "R2": 1,
+     "coefficients": {
+      "piston": 2.550924332598487e-16,
+      "tilt_x": 1.8947869018719279e-16,
+      "tilt_y": -1,
+      "defocus": 2.725043390803581e-16,
+      "astig_oblique": 1.1468269727412943e-16,
+      "astig_vertical": 1.5371410470709914e-16,
+      "coma_y": -4.940976439063444e-16,
+      "coma_x": 3.8528084549357434e-17,
+      "trefoil_y": 8.75032615590667e-19,
+      "trefoil_x": -6.057116617588899e-16,
+      "spherical": -1.8806274888823958e-16
+     },
+     "dominant": [
+      [
+       "tilt_y",
+       1
+      ],
+      [
+       "trefoil_x",
+       6.057116617588899e-16
+      ],
+      [
+       "coma_y",
+       4.940976439063444e-16
+      ]
+     ]
+    }
+   },
+   "illuminated_points": 2286,
+   "detJ_absmax": 1.0000000000005382,
+   "detJ_min_over_max_on_lit": 0.9999999999993412,
+   "detJ_sign_change_on_lit": false,
+   "catastrophe": {
+    "type": "none (regular ray map)",
+    "confidence": "high",
+    "note": "Jacobian determinant is bounded away from zero on every illuminated sample point: the ray map has no singular locus. The V2=1.0000 is a dimension identity of the basis (D=2), not a caustic of the map."
+   }
+  },
+  {
+   "corpus": "gen_latent2class_2286x9",
+   "dim_key": "384_variant2_l384_m3",
+   "seed": 21,
+   "recorded_V2": 1,
+   "D": 384,
+   "N": 2286,
+   "recomputed_V2": 1.0000000000000009,
+   "V2_match": true,
+   "numerical_rank": 2,
+   "singular_values_top5": [
+    313.48056981477754,
+    152.88471111073233,
+    3.5071526825086227e-13,
+    2.324900539237025e-13,
+    1.5790140493213068e-13
+   ],
+   "cond_top2": 2.050437663369281,
+   "ray_map": "stereographic_lift -> fib_lobe_basis(variant2_l384_m3)",
+   "disk_rmax": 6.738258941190584,
+   "gap_E": {
+    "in_family_add": {
+     "rank": 2,
+     "V2": 1.0000000000000004,
+     "what": "one more phase-offset column of the same lobe family"
+    },
+    "in_family_replace": {
+     "rank": 2,
+     "V2": 1.0000000000000007,
+     "what": "column 0 replaced by another phase offset (in-family)"
+    },
+    "generic_add": {
+     "rank": 3,
+     "V2": 0.9974099827522498,
+     "what": "append one generic seeded N(0,1) column"
+    },
+    "generic_replace": {
+     "rank": 3,
+     "V2": 0.9974032379376389,
+     "what": "replace last column with a generic seeded N(0,1) column"
+    },
+    "eps_sweep": {
+     "what": "one column additively perturbed by eps*scale*seeded noise",
+     "rows": [
+      {
+       "eps": 1e-8,
+       "rank": 3,
+       "V2": 1.0000000000000004
+      },
+      {
+       "eps": 0.000001,
+       "rank": 3,
+       "V2": 0.9999999999999977
+      },
+      {
+       "eps": 0.0001,
+       "rank": 3,
+       "V2": 0.9999999999740473
+      },
+      {
+       "eps": 0.001,
+       "rank": 3,
+       "V2": 0.9999999974048376
+      },
+      {
+       "eps": 0.01,
+       "rank": 3,
+       "V2": 0.9999997405789819
+      },
+      {
+       "eps": 0.1,
+       "rank": 3,
+       "V2": 0.9999743794414573
+      }
+     ],
+     "loglog_exponent": 1.9983059537401962,
+     "loglog_R2": 0.9999995695081798
+    },
+    "base_V2": 1.0000000000000009,
+    "verdict": "persists (structural collapse)"
+   },
+   "zernike_fit_noll_le11": {
+    "component_1": {
+     "R2": 0.3435872433002921,
+     "coefficients": {
+      "piston": -0.43359533038879133,
+      "tilt_x": -0.43634010307968735,
+      "tilt_y": -0.4873818348546558,
+      "defocus": -0.4720807987452272,
+      "astig_oblique": -0.06181848662139772,
+      "astig_vertical": -0.057058274778897924,
+      "coma_y": -0.21746073163070515,
+      "coma_x": -0.21061861786319658,
+      "trefoil_y": 0.09233645459907035,
+      "trefoil_x": -0.14902072290576623,
+      "spherical": -0.17816096574465398
+     },
+     "dominant": [
+      [
+       "tilt_y",
+       0.4873818348546558
+      ],
+      [
+       "defocus",
+       0.4720807987452272
+      ],
+      [
+       "tilt_x",
+       0.43634010307968735
+      ]
+     ]
+    },
+    "component_2": {
+     "R2": 0.06731004497615412,
+     "coefficients": {
+      "piston": -0.16559000331434828,
+      "tilt_x": -0.20615807234519876,
+      "tilt_y": 0.6674278132594478,
+      "defocus": -0.20963681024511813,
+      "astig_oblique": -0.1522463956140696,
+      "astig_vertical": -0.002325801482269187,
+      "coma_y": 0.3768742990738164,
+      "coma_x": -0.1217978321805379,
+      "trefoil_y": -0.4996823229391811,
+      "trefoil_x": -0.020487751127693903,
+      "spherical": -0.10254670412448219
+     },
+     "dominant": [
+      [
+       "tilt_y",
+       0.6674278132594478
+      ],
+      [
+       "trefoil_y",
+       0.4996823229391811
+      ],
+      [
+       "coma_y",
+       0.3768742990738164
+      ]
+     ]
+    }
+   },
+   "illuminated_points": 1033,
+   "detJ_absmax": 4504.619278627137,
+   "detJ_min_over_max_on_lit": 0.000010247868386332679,
+   "detJ_sign_change_on_lit": true,
+   "catastrophe": {
+    "type": "cusp (A3)",
+    "confidence": "medium",
+    "corank": 0,
+    "base_point_uv": [
+     -0.23898027490305138,
+     1.1814367351378594
+    ],
+    "base_point_radius": 1.2053648123808587,
+    "window": 0.1347651788238117,
+    "jacobian_singular_values": [
+     1.044591237023434,
+     0.0441921623136037
+    ],
+    "local_poly_R2": 0.9770458180110301,
+    "normalized_local_coefficients": {
+     "10": -0.019245758765970074,
+     "11": -0.000337814711803979,
+     "12": 0.5074037745105807,
+     "13": 0.5894449336310883,
+     "20": -1.7806277474209004e-7,
+     "21": -0.000059510043153350086,
+     "22": -0.00008814107761180386,
+     "30": -0.040630566676347235,
+     "31": -0.09216896030148658,
+     "40": 0.000006402376665095769,
+     "00": -0.0000011101744530730976,
+     "01": 0.00001534753085943454,
+     "02": 0.000008928068385389304,
+     "03": -0.00001665277345876748,
+     "04": 6.822871090312525e-7
+    },
+    "key_terms": {
+     "s2": -1.7806277474209004e-7,
+     "s3": -0.040630566676347235,
+     "s4": 0.000006402376665095769,
+     "t2": 0.000008928068385389304,
+     "st": -0.000337814711803979
+    },
+    "binary_cubic_discriminant": 0.021231171691185796,
+    "azimuthal_trefoil_weight": 0.4996823229391811,
+    "note": "degree-4 local normal form of the singular component of the ray map, in coordinates aligned with the Jacobian kernel; Whitney criterion: quadratic-in-kernel term dominant -> fold, vanishing quadratic with cubic dominant -> cusp; corank 2 -> umbilic by cubic discriminant sign."
+   }
+  },
+  {
+   "corpus": "gen_latent1class_2286x9",
+   "dim_key": "2_pca",
+   "seed": 31,
+   "recorded_V2": 1,
+   "D": 2,
+   "N": 2286,
+   "recomputed_V2": 1,
+   "V2_match": true,
+   "numerical_rank": 2,
+   "singular_values_top5": [
+    50.09091094645421,
+    49.2265024861396
+   ],
+   "cond_top2": 1.017559818728905,
+   "ray_map": "identity_on_disk(D=2 PCA scores)",
+   "disk_rmax": 50.68042147398551,
+   "gap_E": {
+    "in_family_add": {
+     "rank": 3,
+     "V2": 0.6666666666666669,
+     "what": "PC3 (next column of the same PCA family)"
+    },
+    "in_family_replace": {
+     "rank": 2,
+     "V2": 1,
+     "what": "PC2 replaced by PC3 (in-family)"
+    },
+    "generic_add": {
+     "rank": 3,
+     "V2": 0.6766053645144865,
+     "what": "append one generic seeded N(0,1) column"
+    },
+    "generic_replace": {
+     "rank": 2,
+     "V2": 1,
+     "what": "replace last column with a generic seeded N(0,1) column"
+    },
+    "eps_sweep": {
+     "what": "one column additively perturbed by eps*scale*seeded noise",
+     "rows": [
+      {
+       "eps": 1e-8,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.000001,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.0001,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.001,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.01,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.1,
+       "rank": 2,
+       "V2": 1
+      }
+     ]
+    },
+    "base_V2": 1,
+    "verdict": "unfolds (fold-like)"
+   },
+   "zernike_fit_noll_le11": {
+    "component_1": {
+     "R2": 1,
+     "coefficients": {
+      "piston": -4.9269749654435934e-15,
+      "tilt_x": 1,
+      "tilt_y": 2.194605473887394e-15,
+      "defocus": -3.2246146435208626e-15,
+      "astig_oblique": 1.7798908952858022e-17,
+      "astig_vertical": 1.6511910920882135e-15,
+      "coma_y": 1.2880933494499097e-15,
+      "coma_x": 1.0109780285223356e-15,
+      "trefoil_y": 1.488262617827436e-16,
+      "trefoil_x": 2.083293835589905e-15,
+      "spherical": -9.814044567237409e-16
+     },
+     "dominant": [
+      [
+       "tilt_x",
+       1
+      ],
+      [
+       "piston",
+       4.9269749654435934e-15
+      ],
+      [
+       "defocus",
+       3.2246146435208626e-15
+      ]
+     ]
+    },
+    "component_2": {
+     "R2": 1,
+     "coefficients": {
+      "piston": 1.106055604487334e-15,
+      "tilt_x": 2.5264182111739355e-15,
+      "tilt_y": 1,
+      "defocus": 3.156225758736602e-16,
+      "astig_oblique": 1.1074913822263386e-15,
+      "astig_vertical": 2.511415089377059e-16,
+      "coma_y": 1.7270648245526045e-15,
+      "coma_x": 1.1461192397556246e-15,
+      "trefoil_y": 2.545961044176314e-15,
+      "trefoil_x": -1.5981924072364903e-15,
+      "spherical": -1.174043417467362e-16
+     },
+     "dominant": [
+      [
+       "tilt_y",
+       1
+      ],
+      [
+       "trefoil_y",
+       2.545961044176314e-15
+      ],
+      [
+       "tilt_x",
+       2.5264182111739355e-15
+      ]
+     ]
+    }
+   },
+   "illuminated_points": 2286,
+   "detJ_absmax": 1.0000000000001679,
+   "detJ_min_over_max_on_lit": 0.9999999999996494,
+   "detJ_sign_change_on_lit": false,
+   "catastrophe": {
+    "type": "none (regular ray map)",
+    "confidence": "high",
+    "note": "Jacobian determinant is bounded away from zero on every illuminated sample point: the ray map has no singular locus. The V2=1.0000 is a dimension identity of the basis (D=2), not a caustic of the map."
+   }
+  },
+  {
+   "corpus": "gen_latent1class_2286x9",
+   "dim_key": "384_variant2_l384_m3",
+   "seed": 31,
+   "recorded_V2": 1.0000000000000002,
+   "D": 384,
+   "N": 2286,
+   "recomputed_V2": 0.9999999999999999,
+   "V2_match": true,
+   "numerical_rank": 2,
+   "singular_values_top5": [
+    137.72348354325732,
+    103.63743760736166,
+    4.068320867535699e-14,
+    3.064755850575297e-14,
+    2.4745159686948936e-14
+   ],
+   "cond_top2": 1.3288970349212341,
+   "ray_map": "stereographic_lift -> fib_lobe_basis(variant2_l384_m3)",
+   "disk_rmax": 50.68042147398551,
+   "gap_E": {
+    "in_family_add": {
+     "rank": 2,
+     "V2": 1,
+     "what": "one more phase-offset column of the same lobe family"
+    },
+    "in_family_replace": {
+     "rank": 2,
+     "V2": 1.0000000000000004,
+     "what": "column 0 replaced by another phase offset (in-family)"
+    },
+    "generic_add": {
+     "rank": 3,
+     "V2": 0.9974029674826054,
+     "what": "append one generic seeded N(0,1) column"
+    },
+    "generic_replace": {
+     "rank": 3,
+     "V2": 0.9973962043788331,
+     "what": "replace last column with a generic seeded N(0,1) column"
+    },
+    "eps_sweep": {
+     "what": "one column additively perturbed by eps*scale*seeded noise",
+     "rows": [
+      {
+       "eps": 1e-8,
+       "rank": 3,
+       "V2": 1.0000000000000002
+      },
+      {
+       "eps": 0.000001,
+       "rank": 3,
+       "V2": 0.9999999999999977
+      },
+      {
+       "eps": 0.0001,
+       "rank": 3,
+       "V2": 0.9999999999741097
+      },
+      {
+       "eps": 0.001,
+       "rank": 3,
+       "V2": 0.9999999974108476
+      },
+      {
+       "eps": 0.01,
+       "rank": 3,
+       "V2": 0.9999997409691287
+      },
+      {
+       "eps": 0.1,
+       "rank": 3,
+       "V2": 0.9999742105520287
+      }
+     ],
+     "loglog_exponent": 1.9995109301680296,
+     "loglog_R2": 0.9999999404434693
+    },
+    "base_V2": 0.9999999999999999,
+    "verdict": "persists (structural collapse)"
+   },
+   "zernike_fit_noll_le11": {
+    "component_1": {
+     "R2": 0.0010812381681968297,
+     "coefficients": {
+      "piston": -0.5574661361731598,
+      "tilt_x": 0.21453857344575972,
+      "tilt_y": 0.12675257577366242,
+      "defocus": -0.4280407158178817,
+      "astig_oblique": -0.015123521681199464,
+      "astig_vertical": 0.063775527412141,
+      "coma_y": 0.054195889700426166,
+      "coma_x": 0.08799048138419797,
+      "trefoil_y": 0.3895125803790326,
+      "trefoil_x": 0.5202203877043327,
+      "spherical": -0.08120823557203473
+     },
+     "dominant": [
+      [
+       "piston",
+       0.5574661361731598
+      ],
+      [
+       "trefoil_x",
+       0.5202203877043327
+      ],
+      [
+       "defocus",
+       0.4280407158178817
+      ]
+     ]
+    },
+    "component_2": {
+     "R2": 0.00031355792239695646,
+     "coefficients": {
+      "piston": 0.07813415355756573,
+      "tilt_x": 0.1120190633019211,
+      "tilt_y": 0.8366960597224323,
+      "defocus": 0.04030282006915207,
+      "astig_oblique": 0.07216888180998583,
+      "astig_vertical": 0.05811504452490092,
+      "coma_y": 0.3383830099026257,
+      "coma_x": 0.05325636364369673,
+      "trefoil_y": -0.31543908249816405,
+      "trefoil_x": -0.2328491782040533,
+      "spherical": -0.004075257722037754
+     },
+     "dominant": [
+      [
+       "tilt_y",
+       0.8366960597224323
+      ],
+      [
+       "coma_y",
+       0.3383830099026257
+      ],
+      [
+       "trefoil_y",
+       0.31543908249816405
+      ]
+     ]
+    }
+   },
+   "illuminated_points": 695,
+   "detJ_absmax": 5188.281966925591,
+   "detJ_min_over_max_on_lit": 0.000009776346944398796,
+   "detJ_sign_change_on_lit": true,
+   "catastrophe": {
+    "type": "cusp (A3)",
+    "confidence": "medium",
+    "corank": 0,
+    "base_point_uv": [
+     -0.734560311252932,
+     0.9549244992802819
+    ],
+    "base_point_radius": 1.2047653921796149,
+    "window": 1.0136084294797103,
+    "jacobian_singular_values": [
+     1.0861440787551988,
+     0.046699554457051456
+    ],
+    "local_poly_R2": 0.3331323178241472,
+    "normalized_local_coefficients": {
+     "10": 0.29068143947406005,
+     "11": -0.5754435861251141,
+     "12": -0.2227642563205893,
+     "13": 0.5003167360401282,
+     "20": 0.003927926824572084,
+     "21": 0.0009558900739874085,
+     "22": -0.002131682092425149,
+     "30": -0.2867800888320013,
+     "31": 0.40736469464608177,
+     "40": -0.003768664914179428,
+     "00": -0.00022087375423876613,
+     "01": 0.00002387557731082339,
+     "02": -0.0018285848000802528,
+     "03": -0.00026774906518115286,
+     "04": 0.002441618160799915
+    },
+    "key_terms": {
+     "s2": 0.003927926824572084,
+     "s3": -0.2867800888320013,
+     "s4": -0.003768664914179428,
+     "t2": -0.0018285848000802528,
+     "st": -0.5754435861251141
+    },
+    "binary_cubic_discriminant": -0.01268117472840517,
+    "azimuthal_trefoil_weight": 0.5202203877043327,
+    "note": "degree-4 local normal form of the singular component of the ray map, in coordinates aligned with the Jacobian kernel; Whitney criterion: quadratic-in-kernel term dominant -> fold, vanishing quadratic with cubic dominant -> cusp; corank 2 -> umbilic by cubic discriminant sign."
+   }
+  },
+  {
+   "corpus": "gen_latent3class_2286x9",
+   "dim_key": "2_pca",
+   "seed": 41,
+   "recorded_V2": 1,
+   "D": 2,
+   "N": 2286,
+   "recomputed_V2": 1,
+   "V2_match": true,
+   "numerical_rank": 2,
+   "singular_values_top5": [
+    100.13020660928784,
+    37.994432982174835
+   ],
+   "cond_top2": 2.635391523180886,
+   "ray_map": "identity_on_disk(D=2 PCA scores)",
+   "disk_rmax": 9.88883739444606,
+   "gap_E": {
+    "in_family_add": {
+     "rank": 3,
+     "V2": 0.6666666666666666,
+     "what": "PC3 (next column of the same PCA family)"
+    },
+    "in_family_replace": {
+     "rank": 2,
+     "V2": 1,
+     "what": "PC2 replaced by PC3 (in-family)"
+    },
+    "generic_add": {
+     "rank": 3,
+     "V2": 0.6727262936575289,
+     "what": "append one generic seeded N(0,1) column"
+    },
+    "generic_replace": {
+     "rank": 2,
+     "V2": 1,
+     "what": "replace last column with a generic seeded N(0,1) column"
+    },
+    "eps_sweep": {
+     "what": "one column additively perturbed by eps*scale*seeded noise",
+     "rows": [
+      {
+       "eps": 1e-8,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.000001,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.0001,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.001,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.01,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.1,
+       "rank": 2,
+       "V2": 1
+      }
+     ]
+    },
+    "base_V2": 1,
+    "verdict": "unfolds (fold-like)"
+   },
+   "zernike_fit_noll_le11": {
+    "component_1": {
+     "R2": 1,
+     "coefficients": {
+      "piston": -1.4500976140691061e-15,
+      "tilt_x": 1,
+      "tilt_y": -5.509140113240109e-16,
+      "defocus": 0,
+      "astig_oblique": -5.192502701859807e-17,
+      "astig_vertical": 3.9855966684545546e-16,
+      "coma_y": -1.621779982388308e-16,
+      "coma_x": -7.297571364775945e-17,
+      "trefoil_y": -1.1244575107743703e-16,
+      "trefoil_x": 2.368202245780655e-16,
+      "spherical": -1.0777951554130627e-15
+     },
+     "dominant": [
+      [
+       "tilt_x",
+       1
+      ],
+      [
+       "piston",
+       1.4500976140691061e-15
+      ],
+      [
+       "spherical",
+       1.0777951554130627e-15
+      ]
+     ]
+    },
+    "component_2": {
+     "R2": 1,
+     "coefficients": {
+      "piston": -1.9455476322093823e-15,
+      "tilt_x": -1.2639183096925633e-15,
+      "tilt_y": -1,
+      "defocus": -1.181820631838834e-15,
+      "astig_oblique": -2.1466389723027922e-16,
+      "astig_vertical": 9.80897584010614e-16,
+      "coma_y": 1.8532814309807037e-16,
+      "coma_x": -4.501338490869005e-16,
+      "trefoil_y": -6.765171267883786e-17,
+      "trefoil_x": 1.074322169003288e-15,
+      "spherical": -2.067352849372222e-16
+     },
+     "dominant": [
+      [
+       "tilt_y",
+       1
+      ],
+      [
+       "piston",
+       1.9455476322093823e-15
+      ],
+      [
+       "tilt_x",
+       1.2639183096925633e-15
+      ]
+     ]
+    }
+   },
+   "illuminated_points": 2286,
+   "detJ_absmax": 1.0000000000002376,
+   "detJ_min_over_max_on_lit": 0.9999999999988775,
+   "detJ_sign_change_on_lit": false,
+   "catastrophe": {
+    "type": "none (regular ray map)",
+    "confidence": "high",
+    "note": "Jacobian determinant is bounded away from zero on every illuminated sample point: the ray map has no singular locus. The V2=1.0000 is a dimension identity of the basis (D=2), not a caustic of the map."
+   }
+  },
+  {
+   "corpus": "gen_latent3class_2286x9",
+   "dim_key": "384_variant2_l384_m3",
+   "seed": 41,
+   "recorded_V2": 1.0000000000000004,
+   "D": 384,
+   "N": 2286,
+   "recomputed_V2": 1.0000000000000004,
+   "V2_match": true,
+   "numerical_rank": 2,
+   "singular_values_top5": [
+    203.1007442588466,
+    87.63247817403065,
+    1.7028060261822346e-13,
+    7.900985541102238e-14,
+    6.285518054894038e-14
+   ],
+   "cond_top2": 2.317642368340945,
+   "ray_map": "stereographic_lift -> fib_lobe_basis(variant2_l384_m3)",
+   "disk_rmax": 9.88883739444606,
+   "gap_E": {
+    "in_family_add": {
+     "rank": 2,
+     "V2": 1.0000000000000007,
+     "what": "one more phase-offset column of the same lobe family"
+    },
+    "in_family_replace": {
+     "rank": 2,
+     "V2": 1.0000000000000004,
+     "what": "column 0 replaced by another phase offset (in-family)"
+    },
+    "generic_add": {
+     "rank": 3,
+     "V2": 0.9974061443489008,
+     "what": "append one generic seeded N(0,1) column"
+    },
+    "generic_replace": {
+     "rank": 3,
+     "V2": 0.997399389553861,
+     "what": "replace last column with a generic seeded N(0,1) column"
+    },
+    "eps_sweep": {
+     "what": "one column additively perturbed by eps*scale*seeded noise",
+     "rows": [
+      {
+       "eps": 1e-8,
+       "rank": 3,
+       "V2": 1.0000000000000004
+      },
+      {
+       "eps": 0.000001,
+       "rank": 3,
+       "V2": 0.9999999999999974
+      },
+      {
+       "eps": 0.0001,
+       "rank": 3,
+       "V2": 0.9999999999724177
+      },
+      {
+       "eps": 0.001,
+       "rank": 3,
+       "V2": 0.999999997241754
+      },
+      {
+       "eps": 0.01,
+       "rank": 3,
+       "V2": 0.9999997242100336
+      },
+      {
+       "eps": 0.1,
+       "rank": 3,
+       "V2": 0.9999727128893751
+      }
+     ],
+     "loglog_exponent": 1.9985928118266454,
+     "loglog_R2": 0.9999996814718424
+    },
+    "base_V2": 1.0000000000000004,
+    "verdict": "persists (structural collapse)"
+   },
+   "zernike_fit_noll_le11": {
+    "component_1": {
+     "R2": 0.1770440683981367,
+     "coefficients": {
+      "piston": 0.4626305476019623,
+      "tilt_x": 0.49122903324369743,
+      "tilt_y": 0.3966533791123558,
+      "defocus": 0.43353938390564956,
+      "astig_oblique": 0.0910598874659051,
+      "astig_vertical": 0.08330902440784704,
+      "coma_y": 0.20859153954567963,
+      "coma_x": 0.30568742433577567,
+      "trefoil_y": -0.1433988973569552,
+      "trefoil_x": -0.0507954832995296,
+      "spherical": 0.15506695153526223
+     },
+     "dominant": [
+      [
+       "tilt_x",
+       0.49122903324369743
+      ],
+      [
+       "piston",
+       0.4626305476019623
+      ],
+      [
+       "defocus",
+       0.43353938390564956
+      ]
+     ]
+    },
+    "component_2": {
+     "R2": 0.01338220544032176,
+     "coefficients": {
+      "piston": -0.3001874666098653,
+      "tilt_x": -0.29490763849173485,
+      "tilt_y": 0.6979974831105615,
+      "defocus": -0.2732706085238615,
+      "astig_oblique": 0.14091463767426451,
+      "astig_vertical": 0.035054469569457986,
+      "coma_y": 0.35471033546700065,
+      "coma_x": -0.16041726397433506,
+      "trefoil_y": -0.2726556388300209,
+      "trefoil_x": 0.0944248194548993,
+      "spherical": -0.0717191899508974
+     },
+     "dominant": [
+      [
+       "tilt_y",
+       0.6979974831105615
+      ],
+      [
+       "coma_y",
+       0.35471033546700065
+      ],
+      [
+       "piston",
+       0.3001874666098653
+      ]
+     ]
+    }
+   },
+   "illuminated_points": 914,
+   "detJ_absmax": 5204.669047621646,
+   "detJ_min_over_max_on_lit": 0.000005867790654674732,
+   "detJ_sign_change_on_lit": true,
+   "catastrophe": {
+    "type": "cusp (A3)",
+    "confidence": "medium",
+    "corank": 0,
+    "base_point_uv": [
+     0.2921228090869035,
+     -1.1731128810784655
+    ],
+    "base_point_radius": 1.208937371140888,
+    "window": 0.19777674788892122,
+    "jacobian_singular_values": [
+     0.8562335790701899,
+     0.03566773033063406
+    ],
+    "local_poly_R2": 0.9841983779441388,
+    "normalized_local_coefficients": {
+     "10": -0.00996536776626066,
+     "11": 0.04396966653302605,
+     "12": 0.5511845876560879,
+     "13": 0.6067632550377945,
+     "20": -0.0000068320513189984985,
+     "21": -0.00015098387352836405,
+     "22": -0.00020177028776866612,
+     "30": -0.060609622757593455,
+     "31": -0.13210588966274092,
+     "40": 0.00001253389810378377,
+     "00": 0.000005289289989086289,
+     "01": 0.000010082606152728963,
+     "02": -0.00006117690612337113,
+     "03": 0.00002107873488155489,
+     "04": 0.000115849588378478
+    },
+    "key_terms": {
+     "s2": -0.0000068320513189984985,
+     "s3": -0.060609622757593455,
+     "s4": 0.00001253389810378377,
+     "t2": -0.00006117690612337113,
+     "st": 0.04396966653302605
+    },
+    "binary_cubic_discriminant": 0.04059689907736514,
+    "azimuthal_trefoil_weight": 0.2726556388300209,
+    "note": "degree-4 local normal form of the singular component of the ray map, in coordinates aligned with the Jacobian kernel; Whitney criterion: quadratic-in-kernel term dominant -> fold, vanishing quadratic with cubic dominant -> cusp; corank 2 -> umbilic by cubic discriminant sign."
+   }
+  },
+  {
+   "corpus": "gen_curved_s1_2048x9",
+   "dim_key": "2_pca",
+   "seed": 51,
+   "recorded_V2": 1,
+   "D": 2,
+   "N": 2048,
+   "recomputed_V2": 1,
+   "V2_match": true,
+   "numerical_rank": 2,
+   "singular_values_top5": [
+    50.89780698513241,
+    48.93777031915941
+   ],
+   "cond_top2": 1.0400516135735272,
+   "ray_map": "identity_on_disk(D=2 PCA scores)",
+   "disk_rmax": 15.993156354771877,
+   "gap_E": {
+    "in_family_add": {
+     "rank": 3,
+     "V2": 0.6666666666666669,
+     "what": "PC3 (next column of the same PCA family)"
+    },
+    "in_family_replace": {
+     "rank": 2,
+     "V2": 1,
+     "what": "PC2 replaced by PC3 (in-family)"
+    },
+    "generic_add": {
+     "rank": 3,
+     "V2": 0.6698108144542583,
+     "what": "append one generic seeded N(0,1) column"
+    },
+    "generic_replace": {
+     "rank": 2,
+     "V2": 1,
+     "what": "replace last column with a generic seeded N(0,1) column"
+    },
+    "eps_sweep": {
+     "what": "one column additively perturbed by eps*scale*seeded noise",
+     "rows": [
+      {
+       "eps": 1e-8,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.000001,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.0001,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.001,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.01,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.1,
+       "rank": 2,
+       "V2": 1
+      }
+     ]
+    },
+    "base_V2": 1,
+    "verdict": "unfolds (fold-like)"
+   },
+   "zernike_fit_noll_le11": {
+    "component_1": {
+     "R2": 1,
+     "coefficients": {
+      "piston": 2.127137035924722e-15,
+      "tilt_x": 1,
+      "tilt_y": 3.5464243275289774e-15,
+      "defocus": 2.776745252775319e-15,
+      "astig_oblique": 1.6478247609438533e-15,
+      "astig_vertical": -2.2170575377627936e-16,
+      "coma_y": 1.0464858671396984e-15,
+      "coma_x": 4.876658850186654e-16,
+      "trefoil_y": -1.0508245315971597e-15,
+      "trefoil_x": -4.303955141801744e-15,
+      "spherical": 1.1106981011101275e-16
+     },
+     "dominant": [
+      [
+       "tilt_x",
+       1
+      ],
+      [
+       "trefoil_x",
+       4.303955141801744e-15
+      ],
+      [
+       "tilt_y",
+       3.5464243275289774e-15
+      ]
+     ]
+    },
+    "component_2": {
+     "R2": 1,
+     "coefficients": {
+      "piston": -1.1562138592482799e-15,
+      "tilt_x": -5.796455715168474e-16,
+      "tilt_y": -1,
+      "defocus": 1.9090123612830302e-16,
+      "astig_oblique": -4.900224916312041e-16,
+      "astig_vertical": 4.3206827270342194e-16,
+      "coma_y": -6.706016043695974e-16,
+      "coma_x": -8.133640025097229e-17,
+      "trefoil_y": 7.354883650798976e-17,
+      "trefoil_x": 7.646591043931109e-16,
+      "spherical": -2.598860010019398e-16
+     },
+     "dominant": [
+      [
+       "tilt_y",
+       1
+      ],
+      [
+       "piston",
+       1.1562138592482799e-15
+      ],
+      [
+       "trefoil_x",
+       7.646591043931109e-16
+      ]
+     ]
+    }
+   },
+   "illuminated_points": 2048,
+   "detJ_absmax": 1.0000000000003135,
+   "detJ_min_over_max_on_lit": 0.9999999999994447,
+   "detJ_sign_change_on_lit": false,
+   "catastrophe": {
+    "type": "none (regular ray map)",
+    "confidence": "high",
+    "note": "Jacobian determinant is bounded away from zero on every illuminated sample point: the ray map has no singular locus. The V2=1.0000 is a dimension identity of the basis (D=2), not a caustic of the map."
+   }
+  },
+  {
+   "corpus": "gen_curved_s1_2048x9",
+   "dim_key": "384_variant2_l384_m3",
+   "seed": 51,
+   "recorded_V2": 0.9999999999999999,
+   "D": 384,
+   "N": 2048,
+   "recomputed_V2": 1.0000000000000002,
+   "V2_match": true,
+   "numerical_rank": 2,
+   "singular_values_top5": [
+    109.0865985247171,
+    102.7306546942145,
+    3.435943646461594e-14,
+    2.325677391660029e-14,
+    2.2787680105928474e-14
+   ],
+   "cond_top2": 1.0618699827176372,
+   "ray_map": "stereographic_lift -> fib_lobe_basis(variant2_l384_m3)",
+   "disk_rmax": 15.993156354771877,
+   "gap_E": {
+    "in_family_add": {
+     "rank": 2,
+     "V2": 1,
+     "what": "one more phase-offset column of the same lobe family"
+    },
+    "in_family_replace": {
+     "rank": 2,
+     "V2": 1.0000000000000002,
+     "what": "column 0 replaced by another phase offset (in-family)"
+    },
+    "generic_add": {
+     "rank": 3,
+     "V2": 0.9974062521657094,
+     "what": "append one generic seeded N(0,1) column"
+    },
+    "generic_replace": {
+     "rank": 3,
+     "V2": 0.997399497666831,
+     "what": "replace last column with a generic seeded N(0,1) column"
+    },
+    "eps_sweep": {
+     "what": "one column additively perturbed by eps*scale*seeded noise",
+     "rows": [
+      {
+       "eps": 1e-8,
+       "rank": 3,
+       "V2": 1.0000000000000002
+      },
+      {
+       "eps": 0.000001,
+       "rank": 3,
+       "V2": 0.9999999999999978
+      },
+      {
+       "eps": 0.0001,
+       "rank": 3,
+       "V2": 0.9999999999740837
+      },
+      {
+       "eps": 0.001,
+       "rank": 3,
+       "V2": 0.9999999974081876
+      },
+      {
+       "eps": 0.01,
+       "rank": 3,
+       "V2": 0.9999997406643524
+      },
+      {
+       "eps": 0.1,
+       "rank": 3,
+       "V2": 0.9999741422018286
+      }
+     ],
+     "loglog_exponent": 1.9997315829434372,
+     "loglog_R2": 0.9999999710932398
+    },
+    "base_V2": 1.0000000000000002,
+    "verdict": "persists (structural collapse)"
+   },
+   "zernike_fit_noll_le11": {
+    "component_1": {
+     "R2": 0.0025371018646243026,
+     "coefficients": {
+      "piston": -0.3194406189273314,
+      "tilt_x": -0.7082468359987041,
+      "tilt_y": -0.03426682303763298,
+      "defocus": -0.41613404603209947,
+      "astig_oblique": -0.038696563560753516,
+      "astig_vertical": 0.038537422953943426,
+      "coma_y": -0.06469274737377133,
+      "coma_x": -0.3403580338473759,
+      "trefoil_y": 0.23488247876484808,
+      "trefoil_x": 0.04904762622916532,
+      "spherical": -0.2035082372117025
+     },
+     "dominant": [
+      [
+       "tilt_x",
+       0.7082468359987041
+      ],
+      [
+       "defocus",
+       0.41613404603209947
+      ],
+      [
+       "coma_x",
+       0.3403580338473759
+      ]
+     ]
+    },
+    "component_2": {
+     "R2": 0.002861089257937488,
+     "coefficients": {
+      "piston": -0.15031232652396134,
+      "tilt_x": -0.7928707089710079,
+      "tilt_y": 0.027145370490442976,
+      "defocus": -0.2442923686731653,
+      "astig_oblique": 0.05119061215786541,
+      "astig_vertical": 0.0790314627739008,
+      "coma_y": -0.040154437465070254,
+      "coma_x": -0.3893502766202636,
+      "trefoil_y": 0.2570063858329034,
+      "trefoil_x": -0.2039715317362177,
+      "spherical": -0.13644586863791294
+     },
+     "dominant": [
+      [
+       "tilt_x",
+       0.7928707089710079
+      ],
+      [
+       "coma_x",
+       0.3893502766202636
+      ],
+      [
+       "trefoil_y",
+       0.2570063858329034
+      ]
+     ]
+    }
+   },
+   "illuminated_points": 554,
+   "detJ_absmax": 5203.7967136234465,
+   "detJ_min_over_max_on_lit": 0.000007641189252141394,
+   "detJ_sign_change_on_lit": true,
+   "catastrophe": {
+    "type": "cusp (A3)",
+    "confidence": "medium",
+    "corank": 0,
+    "base_point_uv": [
+     -0.8919067749929148,
+     0.8127614457274255
+    ],
+    "base_point_radius": 1.206680928389604,
+    "window": 0.3198631270954375,
+    "jacobian_singular_values": [
+     0.9714318288720675,
+     0.04093256401186419
+    ],
+    "local_poly_R2": 0.7586013154449374,
+    "normalized_local_coefficients": {
+     "10": 0.08613156462991933,
+     "11": 0.5439585712308678,
+     "12": 0.38872559859469924,
+     "13": -0.20885901811834717,
+     "20": 0.000043048144980567304,
+     "21": -0.00001140021836212239,
+     "22": -0.00014332569021025925,
+     "30": -0.03668341736154698,
+     "31": 0.003267941498668671,
+     "40": 0.000019931676406397977,
+     "00": -0.000014559526980719493,
+     "01": 0.00007639397516778784,
+     "02": 0.0001248591892898627,
+     "03": -0.0001437473345613577,
+     "04": -0.00015472132157259798
+    },
+    "key_terms": {
+     "s2": 0.000043048144980567304,
+     "s3": -0.03668341736154698,
+     "s4": 0.000019931676406397977,
+     "t2": 0.0001248591892898627,
+     "st": 0.5439585712308678
+    },
+    "binary_cubic_discriminant": 0.008619044902728116,
+    "azimuthal_trefoil_weight": 0.2570063858329034,
+    "note": "degree-4 local normal form of the singular component of the ray map, in coordinates aligned with the Jacobian kernel; Whitney criterion: quadratic-in-kernel term dominant -> fold, vanishing quadratic with cubic dominant -> cusp; corank 2 -> umbilic by cubic discriminant sign."
+   }
+  },
+  {
+   "corpus": "gen_curved_s0_2048x9",
+   "dim_key": "2_pca",
+   "seed": 61,
+   "recorded_V2": 1,
+   "D": 2,
+   "N": 2048,
+   "recomputed_V2": 1,
+   "V2_match": true,
+   "numerical_rank": 2,
+   "singular_values_top5": [
+    48.069140923258544,
+    46.77417932025876
+   ],
+   "cond_top2": 1.0276853944167208,
+   "ray_map": "identity_on_disk(D=2 PCA scores)",
+   "disk_rmax": 23.02789712699709,
+   "gap_E": {
+    "in_family_add": {
+     "rank": 3,
+     "V2": 0.6666666666666667,
+     "what": "PC3 (next column of the same PCA family)"
+    },
+    "in_family_replace": {
+     "rank": 2,
+     "V2": 1,
+     "what": "PC2 replaced by PC3 (in-family)"
+    },
+    "generic_add": {
+     "rank": 3,
+     "V2": 0.6775617311568811,
+     "what": "append one generic seeded N(0,1) column"
+    },
+    "generic_replace": {
+     "rank": 2,
+     "V2": 1,
+     "what": "replace last column with a generic seeded N(0,1) column"
+    },
+    "eps_sweep": {
+     "what": "one column additively perturbed by eps*scale*seeded noise",
+     "rows": [
+      {
+       "eps": 1e-8,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.000001,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.0001,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.001,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.01,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.1,
+       "rank": 2,
+       "V2": 1
+      }
+     ]
+    },
+    "base_V2": 1,
+    "verdict": "unfolds (fold-like)"
+   },
+   "zernike_fit_noll_le11": {
+    "component_1": {
+     "R2": 1,
+     "coefficients": {
+      "piston": 9.849814661543613e-16,
+      "tilt_x": -1,
+      "tilt_y": -6.128961807806968e-16,
+      "defocus": 1.5427868464096204e-16,
+      "astig_oblique": -3.4772969155404335e-16,
+      "astig_vertical": 4.15829267196343e-17,
+      "coma_y": -2.410604447515032e-16,
+      "coma_x": 2.7480890701671366e-16,
+      "trefoil_y": -1.4885482463405323e-16,
+      "trefoil_x": -3.3085546042143814e-16,
+      "spherical": 3.085573692819241e-16
+     },
+     "dominant": [
+      [
+       "tilt_x",
+       1
+      ],
+      [
+       "piston",
+       9.849814661543613e-16
+      ],
+      [
+       "tilt_y",
+       6.128961807806968e-16
+      ]
+     ]
+    },
+    "component_2": {
+     "R2": 1,
+     "coefficients": {
+      "piston": 4.2213491406615496e-16,
+      "tilt_x": -2.7721951146422875e-17,
+      "tilt_y": 1,
+      "defocus": -4.486737527937355e-16,
+      "astig_oblique": -7.471084666808211e-16,
+      "astig_vertical": -2.2031488645684875e-16,
+      "coma_y": 3.563645520164313e-17,
+      "coma_x": 4.2902520785117274e-16,
+      "trefoil_y": -5.227292163776494e-17,
+      "trefoil_x": -2.6251341187084357e-16,
+      "spherical": 3.456204126624678e-16
+     },
+     "dominant": [
+      [
+       "tilt_y",
+       1
+      ],
+      [
+       "astig_oblique",
+       7.471084666808211e-16
+      ],
+      [
+       "defocus",
+       4.486737527937355e-16
+      ]
+     ]
+    }
+   },
+   "illuminated_points": 2048,
+   "detJ_absmax": 1.0000000000001887,
+   "detJ_min_over_max_on_lit": 0.9999999999995178,
+   "detJ_sign_change_on_lit": false,
+   "catastrophe": {
+    "type": "none (regular ray map)",
+    "confidence": "high",
+    "note": "Jacobian determinant is bounded away from zero on every illuminated sample point: the ray map has no singular locus. The V2=1.0000 is a dimension identity of the basis (D=2), not a caustic of the map."
+   }
+  },
+  {
+   "corpus": "gen_curved_s0_2048x9",
+   "dim_key": "384_variant2_l384_m3",
+   "seed": 61,
+   "recorded_V2": 1.0000000000000002,
+   "D": 384,
+   "N": 2048,
+   "recomputed_V2": 1.0000000000000002,
+   "V2_match": true,
+   "numerical_rank": 2,
+   "singular_values_top5": [
+    106.95888186267003,
+    96.143962496354,
+    7.061662901359623e-14,
+    2.703201245999042e-14,
+    2.4876324899213007e-14
+   ],
+   "cond_top2": 1.1124867239243041,
+   "ray_map": "stereographic_lift -> fib_lobe_basis(variant2_l384_m3)",
+   "disk_rmax": 23.02789712699709,
+   "gap_E": {
+    "in_family_add": {
+     "rank": 2,
+     "V2": 1.0000000000000004,
+     "what": "one more phase-offset column of the same lobe family"
+    },
+    "in_family_replace": {
+     "rank": 2,
+     "V2": 1.0000000000000002,
+     "what": "column 0 replaced by another phase offset (in-family)"
+    },
+    "generic_add": {
+     "rank": 3,
+     "V2": 0.9974034304748225,
+     "what": "append one generic seeded N(0,1) column"
+    },
+    "generic_replace": {
+     "rank": 3,
+     "V2": 0.9973966685992021,
+     "what": "replace last column with a generic seeded N(0,1) column"
+    },
+    "eps_sweep": {
+     "what": "one column additively perturbed by eps*scale*seeded noise",
+     "rows": [
+      {
+       "eps": 1e-8,
+       "rank": 3,
+       "V2": 1.0000000000000002
+      },
+      {
+       "eps": 0.000001,
+       "rank": 3,
+       "V2": 0.9999999999999973
+      },
+      {
+       "eps": 0.0001,
+       "rank": 3,
+       "V2": 0.9999999999740298
+      },
+      {
+       "eps": 0.001,
+       "rank": 3,
+       "V2": 0.9999999974030039
+      },
+      {
+       "eps": 0.01,
+       "rank": 3,
+       "V2": 0.9999997403407591
+      },
+      {
+       "eps": 0.1,
+       "rank": 3,
+       "V2": 0.9999743024412827
+      }
+     ],
+     "loglog_exponent": 1.9986180907651314,
+     "loglog_R2": 0.999999697625036
+    },
+    "base_V2": 1.0000000000000002,
+    "verdict": "persists (structural collapse)"
+   },
+   "zernike_fit_noll_le11": {
+    "component_1": {
+     "R2": 0.0049141360184986604,
+     "coefficients": {
+      "piston": 0.2999321274302497,
+      "tilt_x": -0.5297151778107501,
+      "tilt_y": 0.43701465920534777,
+      "defocus": 0.30679421280747493,
+      "astig_oblique": 0.06908694066068162,
+      "astig_vertical": -0.037789624479484064,
+      "coma_y": 0.18406895193216968,
+      "coma_x": -0.20543576070976927,
+      "trefoil_y": -0.04894456945450534,
+      "trefoil_x": 0.4980493540463331,
+      "spherical": 0.10771734346217005
+     },
+     "dominant": [
+      [
+       "tilt_x",
+       0.5297151778107501
+      ],
+      [
+       "trefoil_x",
+       0.4980493540463331
+      ],
+      [
+       "tilt_y",
+       0.43701465920534777
+      ]
+     ]
+    },
+    "component_2": {
+     "R2": 0.0028108457190254565,
+     "coefficients": {
+      "piston": 0.18642623430778324,
+      "tilt_x": -0.5582783731634613,
+      "tilt_y": 0.5232439573335678,
+      "defocus": 0.20540796970735323,
+      "astig_oblique": 0.04364024082089634,
+      "astig_vertical": -0.04754341739813243,
+      "coma_y": 0.22155478819309263,
+      "coma_x": -0.21199868987541867,
+      "trefoil_y": 0.0952846230208206,
+      "trefoil_x": 0.47318583789189783,
+      "spherical": 0.08009389434740266
+     },
+     "dominant": [
+      [
+       "tilt_x",
+       0.5582783731634613
+      ],
+      [
+       "tilt_y",
+       0.5232439573335678
+      ],
+      [
+       "trefoil_x",
+       0.47318583789189783
+      ]
+     ]
+    }
+   },
+   "illuminated_points": 549,
+   "detJ_absmax": 5203.827003256074,
+   "detJ_min_over_max_on_lit": 0.000007628097242736349,
+   "detJ_sign_change_on_lit": true,
+   "catastrophe": {
+    "type": "cusp (A3)",
+    "confidence": "medium",
+    "corank": 0,
+    "base_point_uv": [
+     -0.6359431652312577,
+     1.0255430246731094
+    ],
+    "base_point_radius": 1.2067154614324045,
+    "window": 0.4605579425399418,
+    "jacobian_singular_values": [
+     0.9704189261552849,
+     0.040905321758803494
+    ],
+    "local_poly_R2": 0.5414530341343841,
+    "normalized_local_coefficients": {
+     "10": 0.1836620281502836,
+     "11": 0.7761291662771798,
+     "12": 0.021080383406614795,
+     "13": -0.8241697241400606,
+     "20": -0.0004996616445388704,
+     "21": 0.00039258198545512557,
+     "22": 0.0015655345179117677,
+     "30": -0.0375816428161568,
+     "31": 0.052249757603560196,
+     "40": -0.00003407527131340412,
+     "00": -0.00003773678052893009,
+     "01": -0.0002653298466424205,
+     "02": 0.0008436195828164955,
+     "03": 0.00048424582963174276,
+     "04": -0.0010058088629570799
+    },
+    "key_terms": {
+     "s2": -0.0004996616445388704,
+     "s3": -0.0375816428161568,
+     "s4": -0.00003407527131340412,
+     "t2": 0.0008436195828164955,
+     "st": 0.7761291662771798
+    },
+    "binary_cubic_discriminant": 0.0000013966376221459431,
+    "azimuthal_trefoil_weight": 0.4980493540463331,
+    "note": "degree-4 local normal form of the singular component of the ray map, in coordinates aligned with the Jacobian kernel; Whitney criterion: quadratic-in-kernel term dominant -> fold, vanishing quadratic with cubic dominant -> cusp; corank 2 -> umbilic by cubic discriminant sign."
+   }
+  },
+  {
+   "corpus": "gen_gwtc_1000x9",
+   "dim_key": "2_pca",
+   "seed": 71,
+   "recorded_V2": 1,
+   "D": 2,
+   "N": 1000,
+   "recomputed_V2": 1,
+   "V2_match": true,
+   "numerical_rank": 2,
+   "singular_values_top5": [
+    67.50403135595575,
+    37.48663080195321
+   ],
+   "cond_top2": 1.8007494915344193,
+   "ray_map": "identity_on_disk(D=2 PCA scores)",
+   "disk_rmax": 17.152887406446187,
+   "gap_E": {
+    "in_family_add": {
+     "rank": 3,
+     "V2": 0.6666666666666667,
+     "what": "PC3 (next column of the same PCA family)"
+    },
+    "in_family_replace": {
+     "rank": 2,
+     "V2": 1,
+     "what": "PC2 replaced by PC3 (in-family)"
+    },
+    "generic_add": {
+     "rank": 3,
+     "V2": 0.682941069781218,
+     "what": "append one generic seeded N(0,1) column"
+    },
+    "generic_replace": {
+     "rank": 2,
+     "V2": 1,
+     "what": "replace last column with a generic seeded N(0,1) column"
+    },
+    "eps_sweep": {
+     "what": "one column additively perturbed by eps*scale*seeded noise",
+     "rows": [
+      {
+       "eps": 1e-8,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.000001,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.0001,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.001,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.01,
+       "rank": 2,
+       "V2": 1
+      },
+      {
+       "eps": 0.1,
+       "rank": 2,
+       "V2": 1
+      }
+     ]
+    },
+    "base_V2": 1,
+    "verdict": "unfolds (fold-like)"
+   },
+   "zernike_fit_noll_le11": {
+    "component_1": {
+     "R2": 1,
+     "coefficients": {
+      "piston": 9.952523044267789e-16,
+      "tilt_x": 1,
+      "tilt_y": -1.5431383376448193e-15,
+      "defocus": 6.213613360743041e-16,
+      "astig_oblique": 1.1864927074908423e-15,
+      "astig_vertical": 3.462794945830757e-16,
+      "coma_y": -3.163441177149126e-16,
+      "coma_x": -4.142408907162027e-16,
+      "trefoil_y": 2.0004113326090063e-16,
+      "trefoil_x": 1.6074083781844058e-15,
+      "spherical": 3.1068066803715204e-16
+     },
+     "dominant": [
+      [
+       "tilt_x",
+       1
+      ],
+      [
+       "trefoil_x",
+       1.6074083781844058e-15
+      ],
+      [
+       "tilt_y",
+       1.5431383376448193e-15
+      ]
+     ]
+    },
+    "component_2": {
+     "R2": 1,
+     "coefficients": {
+      "piston": -5.359050869990357e-16,
+      "tilt_x": -3.3737978794659537e-16,
+      "tilt_y": 1,
+      "defocus": -8.821581370836825e-16,
+      "astig_oblique": -1.5854591527504508e-15,
+      "astig_vertical": 7.42680479309244e-16,
+      "coma_y": -3.062711099105368e-16,
+      "coma_x": -1.777823854481399e-16,
+      "trefoil_y": -1.4279812230119556e-16,
+      "trefoil_x": 1.6264522017869564e-16,
+      "spherical": -4.2228096659802423e-16
+     },
+     "dominant": [
+      [
+       "tilt_y",
+       1
+      ],
+      [
+       "astig_oblique",
+       1.5854591527504508e-15
+      ],
+      [
+       "defocus",
+       8.821581370836825e-16
+      ]
+     ]
+    }
+   },
+   "illuminated_points": 1000,
+   "detJ_absmax": 1.0000000000000226,
+   "detJ_min_over_max_on_lit": 0.9999999999999353,
+   "detJ_sign_change_on_lit": false,
+   "catastrophe": {
+    "type": "none (regular ray map)",
+    "confidence": "high",
+    "note": "Jacobian determinant is bounded away from zero on every illuminated sample point: the ray map has no singular locus. The V2=1.0000 is a dimension identity of the basis (D=2), not a caustic of the map."
+   }
+  },
+  {
+   "corpus": "gen_gwtc_1000x9",
+   "dim_key": "384_variant2_l384_m3",
+   "seed": 71,
+   "recorded_V2": 1,
+   "D": 384,
+   "N": 1000,
+   "recomputed_V2": 1.0000000000000002,
+   "V2_match": true,
+   "numerical_rank": 2,
+   "singular_values_top5": [
+    98.99085058003986,
+    67.35495742962773,
+    2.5729167935614652e-14,
+    1.8270591439120194e-14,
+    1.7181585878228412e-14
+   ],
+   "cond_top2": 1.4696891566365433,
+   "ray_map": "stereographic_lift -> fib_lobe_basis(variant2_l384_m3)",
+   "disk_rmax": 17.152887406446187,
+   "gap_E": {
+    "in_family_add": {
+     "rank": 2,
+     "V2": 1.0000000000000002,
+     "what": "one more phase-offset column of the same lobe family"
+    },
+    "in_family_replace": {
+     "rank": 2,
+     "V2": 1.0000000000000002,
+     "what": "column 0 replaced by another phase offset (in-family)"
+    },
+    "generic_add": {
+     "rank": 3,
+     "V2": 0.9974054876601336,
+     "what": "append one generic seeded N(0,1) column"
+    },
+    "generic_replace": {
+     "rank": 3,
+     "V2": 0.9973987311777667,
+     "what": "replace last column with a generic seeded N(0,1) column"
+    },
+    "eps_sweep": {
+     "what": "one column additively perturbed by eps*scale*seeded noise",
+     "rows": [
+      {
+       "eps": 1e-8,
+       "rank": 3,
+       "V2": 1
+      },
+      {
+       "eps": 0.000001,
+       "rank": 3,
+       "V2": 0.9999999999999977
+      },
+      {
+       "eps": 0.0001,
+       "rank": 3,
+       "V2": 0.9999999999733613
+      },
+      {
+       "eps": 0.001,
+       "rank": 3,
+       "V2": 0.9999999973366415
+      },
+      {
+       "eps": 0.01,
+       "rank": 3,
+       "V2": 0.9999997341712473
+      },
+      {
+       "eps": 0.1,
+       "rank": 3,
+       "V2": 0.9999741468954926
+      }
+     ],
+     "loglog_exponent": 1.996017177193371,
+     "loglog_R2": 0.9999979133754702
+    },
+    "base_V2": 1.0000000000000002,
+    "verdict": "persists (structural collapse)"
+   },
+   "zernike_fit_noll_le11": {
+    "component_1": {
+     "R2": 0.06706005990123076,
+     "coefficients": {
+      "piston": -0.22852225509141147,
+      "tilt_x": -0.3437039451652743,
+      "tilt_y": -0.7826483694355696,
+      "defocus": -0.22147105740289974,
+      "astig_oblique": 0.04944705958507759,
+      "astig_vertical": 0.1331776847333453,
+      "coma_y": -0.29741669615531297,
+      "coma_x": -0.13117418348780374,
+      "trefoil_y": -0.11394977688954051,
+      "trefoil_x": 0.1553195364137852,
+      "spherical": -0.0714416022727668
+     },
+     "dominant": [
+      [
+       "tilt_y",
+       0.7826483694355696
+      ],
+      [
+       "tilt_x",
+       0.3437039451652743
+      ],
+      [
+       "coma_y",
+       0.29741669615531297
+      ]
+     ]
+    },
+    "component_2": {
+     "R2": 0.043108783651571,
+     "coefficients": {
+      "piston": 0.43740670928892617,
+      "tilt_x": -0.6108364211165342,
+      "tilt_y": 0.35885577223158843,
+      "defocus": 0.37289032454482646,
+      "astig_oblique": -0.05312226050665532,
+      "astig_vertical": -0.06927899452707735,
+      "coma_y": 0.13726590114350276,
+      "coma_x": -0.23062484029233749,
+      "trefoil_y": -0.2649655360888012,
+      "trefoil_x": -0.09439764245689346,
+      "spherical": 0.09466060144871266
+     },
+     "dominant": [
+      [
+       "tilt_x",
+       0.6108364211165342
+      ],
+      [
+       "piston",
+       0.43740670928892617
+      ],
+      [
+       "defocus",
+       0.37289032454482646
+      ]
+     ]
+    }
+   },
+   "illuminated_points": 290,
+   "detJ_absmax": 5205.778477997068,
+   "detJ_min_over_max_on_lit": 0.000008670185178254095,
+   "detJ_sign_change_on_lit": true,
+   "catastrophe": {
+    "type": "cusp (A3)",
+    "confidence": "medium",
+    "corank": 0,
+    "base_point_uv": [
+     -1.2027386757737217,
+     0.0825778579866441
+    ],
+    "base_point_radius": 1.2055701658682452,
+    "window": 0.34305774812892376,
+    "jacobian_singular_values": [
+     1.0340068072326216,
+     0.04365064435310845
+    ],
+    "local_poly_R2": 0.692568017041272,
+    "normalized_local_coefficients": {
+     "10": 0.11281499979276485,
+     "11": 0.6410121660769407,
+     "12": 0.2940204327083608,
+     "13": -0.42314324455196883,
+     "20": 0.00008829989911839028,
+     "21": -0.000047757007823860094,
+     "22": -0.0002939821776960063,
+     "30": -0.031080098353820015,
+     "31": 0.02926467894564487,
+     "40": 0.00002579452903087772,
+     "00": -0.00001886161917456175,
+     "01": 0.00012078282909645838,
+     "02": 0.00013015884883952616,
+     "03": -0.00022058249884166647,
+     "04": -0.00015629143028933
+    },
+    "key_terms": {
+     "s2": 0.00008829989911839028,
+     "s3": -0.031080098353820015,
+     "s4": 0.00002579452903087772,
+     "t2": 0.00013015884883952616,
+     "st": 0.6410121660769407
+    },
+    "binary_cubic_discriminant": 0.0031599086483597902,
+    "azimuthal_trefoil_weight": 0.2649655360888012,
+    "note": "degree-4 local normal form of the singular component of the ray map, in coordinates aligned with the Jacobian kernel; Whitney criterion: quadratic-in-kernel term dominant -> fold, vanishing quadratic with cubic dominant -> cusp; corank 2 -> umbilic by cubic discriminant sign."
+   }
+  }
+ ]
+}
