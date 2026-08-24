@@ -1,0 +1,590 @@
+{
+  "experiment": "gapD_zernike_lens",
+  "slot": "Zernike Slot 1 -- aberrated lens extension of Gap D",
+  "status": "executed",
+  "seed": 20260824,
+  "config": {
+    "n_rows": 2286,
+    "n_cols": 9,
+    "n_null_draws": 20,
+    "trades_per_row": 20,
+    "n_random_draws": 150,
+    "n_coord_rounds": 20,
+    "n_random_z": 120,
+    "n_coord_rounds_z": 14,
+    "n_controls": 5,
+    "n_admission_draws": 32,
+    "ridge_lambda": 0.001,
+    "target_degree_columns": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "guard_rank_min": 16,
+    "guard_cond_max": 1000,
+    "noll_indices": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      11
+    ],
+    "noll_names": [
+      "Z4_defocus",
+      "Z5_astig_oblique",
+      "Z6_astig_vertical",
+      "Z7_coma_y",
+      "Z8_coma_x",
+      "Z11_spherical"
+    ],
+    "aberration_convention": "displacement = grad W on unit-disk-normalized pre-lift PCA coords; W = sum c_j Z_j (Noll normalized); epsilon absorbed into c_j",
+    "optimizer": "Mobius-first (random search + coordinate refinement, gap.optimize scheme), then JOINT 14-dof refinement seeded at (mobius optimum, c=0)"
+  },
+  "pre_registration": {
+    "question": "Does Delta-J(Mobius+Zernike) exceed Delta-J(Mobius) by more than the selection-null control gap? If yes, the corpus signal is non-conformal.",
+    "H1": "aberration_gain on the real corpus exceeds the control aberration_gain distribution.",
+    "H0": "the aberration gain is indistinguishable from what pure margin-noise achieves under identical selection pressure.",
+    "admission": "any induced scalar coordinate must clear z > 3 against >= 30 curveball draws to be admissible.",
+    "note": "Both outcomes publishable; negatives recorded prominently."
+  },
+  "self_checks": {
+    "mobius_baseline_matches_defocus_pipeline": {
+      "max_abs_point_diff": 3.3306690738754696e-16,
+      "max_abs_target_diff": 0,
+      "pass": true
+    }
+  },
+  "results": {
+    "real": {
+      "identity_J": -2.0115946656951333,
+      "identity_info": {
+        "guard_pass": true,
+        "worst_cond": 156.59611199229573,
+        "target_share": 0.03136345424401215,
+        "null_mean": 0.09631503422213047,
+        "null_sd": 0.03228860221483707
+      },
+      "mobius_J": 11.167094741186077,
+      "mobius_info": {
+        "guard_pass": true,
+        "worst_cond": 200.40427650269262,
+        "target_share": 0.6554668403214124,
+        "null_mean": 0.1530063788890329,
+        "null_sd": 0.044994734358187446
+      },
+      "mobius_delta": [
+        0.31665031774258645,
+        0.23395076116624827,
+        -0.25162828332594456,
+        0.11515832727513542,
+        -0.12336811466754749,
+        0.3784179258436748,
+        -0.49769416506208786,
+        0.2758136831645727
+      ],
+      "delta_J_mobius": 13.17868940688121,
+      "aberrated_J": 20.626282191213463,
+      "aberrated_info": {
+        "guard_pass": true,
+        "worst_cond": 164.7413348915835,
+        "target_share": 0.6074925780851568,
+        "null_mean": 0.11104530755972195,
+        "null_sd": 0.02406867441854912
+      },
+      "aberrated_delta": [
+        0.3664181916036146,
+        0.1696742280773306,
+        -0.2018604094649164,
+        0.11515832727513542,
+        -0.17313598852857565,
+        0.3784179258436748,
+        -0.49769416506208786,
+        0.25874467230823206
+      ],
+      "zernike_coeffs": {
+        "Z4_defocus": 0,
+        "Z5_astig_oblique": 0,
+        "Z6_astig_vertical": 0.02927521991825184,
+        "Z7_coma_y": 0,
+        "Z8_coma_x": 0,
+        "Z11_spherical": 0
+      },
+      "zernike_coeff_vector": [
+        0,
+        0,
+        0.02927521991825184,
+        0,
+        0,
+        0
+      ],
+      "zernike_norm": 0.02927521991825184,
+      "delta_J_aberrated": 22.637876856908598,
+      "aberration_gain": 9.459187450027386,
+      "objective_evaluations": 983,
+      "guard_rejections": 122
+    },
+    "controls": [
+      {
+        "identity_J": -1.105056881225705,
+        "identity_info": {
+          "guard_pass": true,
+          "worst_cond": 156.59611199229573,
+          "target_share": 0.0570439467035559,
+          "null_mean": 0.0950310095991533,
+          "null_sd": 0.03437566295543355
+        },
+        "mobius_J": 9.113646139301032,
+        "mobius_info": {
+          "guard_pass": true,
+          "worst_cond": 996.3755040732847,
+          "target_share": 0.4370887299145372,
+          "null_mean": 0.050659549556699844,
+          "null_sd": 0.042401161341060624
+        },
+        "mobius_delta": [
+          -0.18605054506131793,
+          -0.37234174885970056,
+          -0.34713819212533215,
+          0.17329575395946423,
+          -0.36818911693751644,
+          -0.29791245555197365,
+          0.18925210862031958,
+          -0.5448804006496735
+        ],
+        "delta_J_mobius": 10.218703020526737,
+        "aberrated_J": 9.113646139301032,
+        "aberrated_info": {
+          "guard_pass": true,
+          "worst_cond": 996.3755040732847,
+          "target_share": 0.4370887299145372,
+          "null_mean": 0.050659549556699844,
+          "null_sd": 0.042401161341060624
+        },
+        "aberrated_delta": [
+          -0.18605054506131793,
+          -0.37234174885970056,
+          -0.34713819212533215,
+          0.17329575395946423,
+          -0.36818911693751644,
+          -0.29791245555197365,
+          0.18925210862031958,
+          -0.5448804006496735
+        ],
+        "zernike_coeffs": {
+          "Z4_defocus": 0,
+          "Z5_astig_oblique": 0,
+          "Z6_astig_vertical": 0,
+          "Z7_coma_y": 0,
+          "Z8_coma_x": 0,
+          "Z11_spherical": 0
+        },
+        "zernike_coeff_vector": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "zernike_norm": 0,
+        "delta_J_aberrated": 10.218703020526737,
+        "aberration_gain": 0,
+        "objective_evaluations": 984,
+        "guard_rejections": 436,
+        "control_index": 0
+      },
+      {
+        "identity_J": -0.9701609693703604,
+        "identity_info": {
+          "guard_pass": true,
+          "worst_cond": 156.59611199229573,
+          "target_share": 0.06124817384944655,
+          "null_mean": 0.09482079824185877,
+          "null_sd": 0.034605210323191034
+        },
+        "mobius_J": 2.2177522375259455,
+        "mobius_info": {
+          "guard_pass": true,
+          "worst_cond": 165.2140643051835,
+          "target_share": 0.26843389423844904,
+          "null_mean": 0.19763415243365998,
+          "null_sd": 0.031924098917276274
+        },
+        "mobius_delta": [
+          -0.08138704271865396,
+          -0.6811724790653637,
+          0.16603739259288938,
+          0.3516777040417276,
+          0.8353876425558129,
+          0.6117313831013858,
+          -0.0008781457993595226,
+          -0.08790824991396792
+        ],
+        "delta_J_mobius": 3.187913206896306,
+        "aberrated_J": 6.965338369427447,
+        "aberrated_info": {
+          "guard_pass": true,
+          "worst_cond": 998.651656691948,
+          "target_share": 0.20437552580529647,
+          "null_mean": 0.05974461137713462,
+          "null_sd": 0.020764377372243948
+        },
+        "aberrated_delta": [
+          -0.1958810762726383,
+          -0.49247247906536373,
+          0.18403739259288943,
+          0.12967770404172763,
+          0.8353876425558129,
+          0.8456893249763857,
+          -0.0008781457993595226,
+          -0.06736247541865542
+        ],
+        "zernike_coeffs": {
+          "Z4_defocus": -0.0035359970344715206,
+          "Z5_astig_oblique": -0.026882803048696474,
+          "Z6_astig_vertical": 0.027391906393339882,
+          "Z7_coma_y": 0.11715123710397635,
+          "Z8_coma_x": -0.09491986318602452,
+          "Z11_spherical": 0.1006555779986113
+        },
+        "zernike_coeff_vector": [
+          -0.0035359970344715206,
+          -0.026882803048696474,
+          0.027391906393339882,
+          0.11715123710397635,
+          -0.09491986318602452,
+          0.1006555779986113
+        ],
+        "zernike_norm": 0.18534088344217126,
+        "delta_J_aberrated": 7.935499338797808,
+        "aberration_gain": 4.747586131901501,
+        "objective_evaluations": 983,
+        "guard_rejections": 270,
+        "control_index": 1
+      },
+      {
+        "identity_J": 0.0006983133350615385,
+        "identity_info": {
+          "guard_pass": true,
+          "worst_cond": 156.59611199229573,
+          "target_share": 0.09324565303435377,
+          "null_mean": 0.0932209242826134,
+          "null_sd": 0.03541211444599841
+        },
+        "mobius_J": 6.147395854301416,
+        "mobius_info": {
+          "guard_pass": true,
+          "worst_cond": 585.3124345757285,
+          "target_share": 0.40030013775214124,
+          "null_mean": 0.054457293086007906,
+          "null_sd": 0.05625843086453306
+        },
+        "mobius_delta": [
+          0.0013608817403567147,
+          -0.3678616464306622,
+          -1.047691082328126,
+          -0.013606230183827676,
+          -0.24769187348471303,
+          -0.7962338952859602,
+          0.3316287982343148,
+          -0.44380902016300317
+        ],
+        "delta_J_mobius": 6.146697540966354,
+        "aberrated_J": 8.287876612136138,
+        "aberrated_info": {
+          "guard_pass": true,
+          "worst_cond": 990.140198135891,
+          "target_share": 0.3615748594229774,
+          "null_mean": 0.03730698759025554,
+          "null_sd": 0.03912556701892601
+        },
+        "aberrated_delta": [
+          0.0013608817403567147,
+          -0.3678616464306622,
+          -0.9657979460320447,
+          0.039173822063613514,
+          -0.18914143364820935,
+          -0.8819106681122872,
+          0.3316287982343148,
+          -0.44380902016300317
+        ],
+        "zernike_coeffs": {
+          "Z4_defocus": 0,
+          "Z5_astig_oblique": 0.022628970937499993,
+          "Z6_astig_vertical": 0,
+          "Z7_coma_y": 0,
+          "Z8_coma_x": 0,
+          "Z11_spherical": 0
+        },
+        "zernike_coeff_vector": [
+          0,
+          0.022628970937499993,
+          0,
+          0,
+          0,
+          0
+        ],
+        "zernike_norm": 0.022628970937499993,
+        "delta_J_aberrated": 8.287178298801077,
+        "aberration_gain": 2.1404807578347222,
+        "objective_evaluations": 983,
+        "guard_rejections": 228,
+        "control_index": 2
+      },
+      {
+        "identity_J": -0.543521227415923,
+        "identity_info": {
+          "guard_pass": true,
+          "worst_cond": 156.59611199229573,
+          "target_share": 0.07502563039233841,
+          "null_mean": 0.09413192541471418,
+          "null_sd": 0.03515280371516183
+        },
+        "mobius_J": 2.3357119399460955,
+        "mobius_info": {
+          "guard_pass": true,
+          "worst_cond": 998.2570142543703,
+          "target_share": 0.5952908609220264,
+          "null_mean": 0.1747176235721712,
+          "null_sd": 0.18006211731724137
+        },
+        "mobius_delta": [
+          0.16068467765817315,
+          0.27570020861536193,
+          -0.4056426904568217,
+          -0.13718538152540447,
+          -0.5299392970459454,
+          0.031060727255757443,
+          -0.376009474842175,
+          0.0970708976315025
+        ],
+        "delta_J_mobius": 2.8792331673620186,
+        "aberrated_J": 2.3357119399460955,
+        "aberrated_info": {
+          "guard_pass": true,
+          "worst_cond": 998.2570142543703,
+          "target_share": 0.5952908609220264,
+          "null_mean": 0.1747176235721712,
+          "null_sd": 0.18006211731724137
+        },
+        "aberrated_delta": [
+          0.16068467765817315,
+          0.27570020861536193,
+          -0.4056426904568217,
+          -0.13718538152540447,
+          -0.5299392970459454,
+          0.031060727255757443,
+          -0.376009474842175,
+          0.0970708976315025
+        ],
+        "zernike_coeffs": {
+          "Z4_defocus": 0,
+          "Z5_astig_oblique": 0,
+          "Z6_astig_vertical": 0,
+          "Z7_coma_y": 0,
+          "Z8_coma_x": 0,
+          "Z11_spherical": 0
+        },
+        "zernike_coeff_vector": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "zernike_norm": 0,
+        "delta_J_aberrated": 2.8792331673620186,
+        "aberration_gain": 0,
+        "objective_evaluations": 984,
+        "guard_rejections": 461,
+        "control_index": 3
+      },
+      {
+        "identity_J": 0.8702469329300301,
+        "identity_info": {
+          "guard_pass": true,
+          "worst_cond": 156.59611199229573,
+          "target_share": 0.12203019198345393,
+          "null_mean": 0.0917816973351584,
+          "null_sd": 0.034758519109572755
+        },
+        "mobius_J": 4.267264119603631,
+        "mobius_info": {
+          "guard_pass": true,
+          "worst_cond": 394.99503738223666,
+          "target_share": 0.4524938992171152,
+          "null_mean": 0.14661096770554544,
+          "null_sd": 0.0716812746851915
+        },
+        "mobius_delta": [
+          -0.514329572480549,
+          -0.14549040709050834,
+          -0.2812355044856283,
+          0.30344440558198027,
+          -0.22701580922800332,
+          0.43409487774991884,
+          -0.36319832656307327,
+          0.1592495342915444
+        ],
+        "delta_J_mobius": 3.397017186673601,
+        "aberrated_J": 5.237971272128561,
+        "aberrated_info": {
+          "guard_pass": true,
+          "worst_cond": 984.6096374995258,
+          "target_share": 0.3429552420538516,
+          "null_mean": 0.09861094266661677,
+          "null_sd": 0.04664865206256473
+        },
+        "aberrated_delta": [
+          -0.514329572480549,
+          -0.20181419861608255,
+          -0.2812355044856283,
+          0.365538584696617,
+          -0.22701580922800332,
+          0.43409487774991884,
+          -0.33957339804218656,
+          0.18704356784552875
+        ],
+        "zernike_coeffs": {
+          "Z4_defocus": 0,
+          "Z5_astig_oblique": -0.04334999999999999,
+          "Z6_astig_vertical": 0,
+          "Z7_coma_y": 0,
+          "Z8_coma_x": 0,
+          "Z11_spherical": 0
+        },
+        "zernike_coeff_vector": [
+          0,
+          -0.04334999999999999,
+          0,
+          0,
+          0,
+          0
+        ],
+        "zernike_norm": 0.04334999999999999,
+        "delta_J_aberrated": 4.367724339198531,
+        "aberration_gain": 0.9707071525249304,
+        "objective_evaluations": 983,
+        "guard_rejections": 234,
+        "control_index": 4
+      }
+    ],
+    "control_distribution": {
+      "delta_J_mobius": {
+        "values": [
+          10.218703020526737,
+          3.187913206896306,
+          6.146697540966354,
+          2.8792331673620186,
+          3.397017186673601
+        ],
+        "mean": 5.165912824485003,
+        "sd": 3.1129971709049222,
+        "min": 2.8792331673620186,
+        "max": 10.218703020526737
+      },
+      "delta_J_aberrated": {
+        "values": [
+          10.218703020526737,
+          7.935499338797808,
+          8.287178298801077,
+          2.8792331673620186,
+          4.367724339198531
+        ],
+        "mean": 6.737667632937234,
+        "sd": 3.019003942094015,
+        "min": 2.8792331673620186,
+        "max": 10.218703020526737
+      },
+      "aberration_gain": {
+        "values": [
+          0,
+          4.747586131901501,
+          2.1404807578347222,
+          0,
+          0.9707071525249304
+        ],
+        "mean": 1.5717548084522308,
+        "sd": 1.9818828447327357,
+        "min": 0,
+        "max": 4.747586131901501
+      },
+      "zernike_norm": {
+        "values": [
+          0,
+          0.18534088344217126,
+          0.022628970937499993,
+          0,
+          0.04334999999999999
+        ],
+        "mean": 0.05026397087593425,
+        "sd": 0.07763730105389241
+      }
+    },
+    "real_vs_control": {
+      "delta_J_mobius_z_vs_controls": 2.5739749002299797,
+      "delta_J_aberrated_z_vs_controls": 5.266707009644644,
+      "aberration_gain_z_vs_controls": 3.9797673523122934,
+      "real_gain_exceeds_all_controls": true
+    },
+    "admission": {
+      "protocol": "winning aberrated lens FROZEN; each curveball draw pushed through the identical lens; coordinate compared to the real corpus value. Bar: z > 3.",
+      "n_draws": 32,
+      "guard_flags": 0,
+      "L3_share_aberrated": {
+        "real": 0.6074925780851568,
+        "null_mean": 0.12349280617787042,
+        "null_sd": 0.030115614321509842,
+        "null_min": 0.07771296779128462,
+        "null_max": 0.21175650915854774,
+        "n_draws": 32,
+        "z": 16.071389636624257,
+        "PASS": true
+      },
+      "L3_share_mobius": {
+        "real": 0.6554668403214124,
+        "null_mean": 0.16643952804797352,
+        "null_sd": 0.057522130104862686,
+        "null_min": 0.04415229332873907,
+        "null_max": 0.3076959809542477,
+        "n_draws": 32,
+        "z": 8.501550818475316,
+        "PASS": true
+      },
+      "aberration_induced_share_gain": {
+        "real": -0.04797426223625567,
+        "null_mean": -0.04294672187010311,
+        "null_sd": 0.038324126786194665,
+        "null_min": -0.13703432749485459,
+        "null_max": 0.05078911616317405,
+        "n_draws": 32,
+        "z": -0.13118473368488107,
+        "PASS": false
+      }
+    }
+  },
+  "wall_time_seconds": 139.00463104248047,
+  "limitations": [
+    "Measurement-type result. Nothing here is a proof; no claim is elevated to a theorem.",
+    "Small optimizer budget; every reported J is a LOWER bound on what a stronger optimizer would find, for the real corpus and the controls alike.",
+    "The aberrated optimum is seeded at (Mobius optimum, c=0), so aberration_gain >= 0 by construction. The scientific content is therefore entirely in the comparison of the REAL gain against the CONTROL gain distribution, not in the gain being positive.",
+    "The membership condition is applied to the induced FROZEN-lens coordinates (L=3 share under the winning aberrated lens, and the aberration-induced share gain). A >= 30-draw null on ||c|| itself would require >= 30 full re-optimizations and is out of the runner budget; only the 5 selection-null control optimizations sample it.",
+    "PC3-as-field is the documented spectral-defocus convention, not dictated verbatim by the papers.",
+    "The corpus is atomic (176/2286 distinct rows); ridge shares on an atomic field inherit that structure.",
+    "Naming collision flagged per Slot 4: Zernike Z_4 'defocus' is a deterministic quadratic rephasing and is NOT the spherical heat-flow defocus in t used elsewhere in this program."
+  ],
+  "provenance": {
+    "workflow": ".github/workflows/zernike-lens.yml",
+    "run_id": 32729036834,
+    "run_url": "https://github.com/yubi-OS/yubiOS/actions/runs/32729036834",
+    "job_id": 97436819220,
+    "script": "papers/scripts/gapD_zernike_lens.py",
+    "parsed_from": "RESULT_JSON log line"
+  }
+}
