@@ -55,49 +55,32 @@ def has_workflow_dispatch(workflow_data: dict) -> bool:
 def parse_ci_yml_groups(ci_yml_data: dict) -> dict[str, list[str]]:
     """Extract the ci.yml group -> workflow-file mapping from the dispatcher.
 
-    Heuristic: scan all jobs[*].steps[*].run for the dispatch case statement
-    that lists workflow file paths per group, and parse out the file references.
+    Parses the `case "$GROUP" in ... esac` block inside jobs[*].steps[*].run.
+    Workflow filenames in the bash arrays are unquoted (WORKFLOWS=(a.yml b.yml)),
+    so match bare *.yml/*.yaml tokens per case arm. The previous version
+    required quoted filenames and therefore parsed zero groups (2026-08-24).
     """
     groups: dict[str, list[str]] = {}
-    yml_str = yaml.dump(ci_yml_data, default_flow_style=False)
-    # Find every `case "$GROUP" in ... esac` or `case "$group" in ... esac` block
-    case_blocks = re.findall(
-        r'case\s+"\$GROUP"\s+in(.*?)esac|case\s+"\$group"\s+in(.*?)esac',
-        yml_str,
-        re.DOTALL,
-    )
-    # Match workflow file references of the form *.yml inside heredocs or jq
-    file_ref_re = re.compile(r'[\'"]([\w\.\-/]+\.ya?ml)[\'"]')
+    file_ref_re = re.compile(r"([\w.\-]+\.ya?ml)\b")
+    case_re = re.compile(r'case\s+"\$(?:GROUP|group)"\s+in(.*?)\besac\b', re.DOTALL)
 
-    group_pattern = re.compile(r'([\w\-]+)\)\s*[\s\S]*?(?:;;|$)')
-
-    for block in case_blocks:
-        body = block[0] or block[1]
-        # Try to find group label(s)
-        for label_match in re.finditer(r'(\w[\w\-]*)\)\s*', body):
-            group_name = label_match.group(1)
-            files = file_ref_re.findall(body)
-            # Filter to plausible workflow filenames (avoid ".gitignore" etc.)
-            plausible = [f for f in files if not f.startswith('.') and '/' not in f]
-            if plausible:
-                groups.setdefault(group_name, []).extend(plausible)
-
-    # Also do a naive scan: walk jobs[*].steps[*] for `bash` blocks referencing
-    # workflow filenames; collect any files that appear after `case "$GROUP"`
-    # references as fallback.
-    for job_name, job in (ci_yml_data.get("jobs") or {}).items():
+    for job in (ci_yml_data.get("jobs") or {}).values():
         if not isinstance(job, dict):
             continue
         for step in job.get("steps", []):
             if not isinstance(step, dict):
                 continue
             run = str(step.get("run", ""))
-            if "case \"$GROUP\"" in run or "case \"$group\"" in run:
-                files = file_ref_re.findall(run)
-                plausible = [f for f in files if not f.startswith('.') and '/' not in f]
-                # Naive: associate with job name as the group
-                if plausible:
-                    groups.setdefault(job_name, []).extend(plausible)
+            m = case_re.search(run)
+            if not m:
+                continue
+            for arm in m.group(1).split(";;"):
+                label = re.search(r"(\w[\w\-]*)\)", arm)
+                if not label:
+                    continue
+                files = file_ref_re.findall(arm)
+                if files:
+                    groups.setdefault(label.group(1), []).extend(files)
 
     return groups
 

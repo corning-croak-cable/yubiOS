@@ -88,8 +88,8 @@ def read_pin(repo_root: Path, fork: str, pinned_path: str = "PINNED.md") -> str 
     text = pin_file.read_text()
     # Try multiple patterns (PINNED.md varies by repo format)
     patterns = [
-        rf"`?{re.escape(fork)}`?\s*[:=]\s*[`"]?([0-9a-f]{{40}})[`"]?",
-        rf"`?{re.escape(fork)}`?\s*[:=]\s*[`"]?([0-9a-f]{{7,40}})[`"]?",
+        rf'`?{re.escape(fork)}`?\s*[:=]\s*[`"]?([0-9a-f]{{40}})[`"]?',
+        rf'`?{re.escape(fork)}`?\s*[:=]\s*[`"]?([0-9a-f]{{7,40}})[`"]?',
     ]
     for pat in patterns:
         m = re.search(pat, text, re.MULTILINE)
