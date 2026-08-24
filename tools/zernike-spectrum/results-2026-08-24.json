@@ -1,0 +1,296 @@
+{
+  "tool": "tools/zernike-spectrum/zernike.py",
+  "slot": "refs/zernike-fit-2026-08-24.md slot 3 (disk-side twin of the Parseval shares)",
+  "kind": "measurement",
+  "seed": 20260822,
+  "config": {
+    "n_rows": 2286,
+    "n_cols": 9,
+    "n_null_draws": 30,
+    "trades_per_row": 20,
+    "noll_j_max": 15,
+    "radial_order_max": 4,
+    "admission_threshold_z": 3,
+    "disk_normalization": "z-score -> PCA top-2 -> RMS rescale -> deterministic sign fix -> divide by max radius (max rho = 1)",
+    "pca_sign_convention": "largest-|loading| entry of each top-2 right singular vector forced positive",
+    "moment_definition": "a_j = mean over corpus points of Z_j(rho, theta); shares s_j = a_j^2 / sum_{j>=2} a_j^2 (piston j=1 excluded)"
+  },
+  "disk_geometry": {
+    "rms_scale": 2.55181589415448,
+    "max_radius_before_unit_normalization": 1.4467375113555123,
+    "singular_values_top4": [
+      115.01537384893882,
+      40.71065094048849,
+      38.94263123766751,
+      33.72182263387361
+    ]
+  },
+  "real_spectrum": {
+    "a": [
+      1,
+      -6.123613330224704e-15,
+      -6.05911743448095e-16,
+      -0.07700073046920322,
+      2.2923240053502793e-17,
+      0.9097013834272626,
+      0.18794455194360818,
+      -0.6759434059817611,
+      0.23796017591078225,
+      -0.14294167190760648,
+      -0.3581314393339836,
+      -0.49535047238904706,
+      -0.16905523403816092,
+      0.550788500696772,
+      0.018880118446297122
+    ],
+    "shares": [
+      0,
+      1.7782823214348642e-29,
+      1.7410206856265262e-31,
+      0.0028117382034129803,
+      2.491937790365903e-34,
+      0.3924487063189598,
+      0.0167511517768469,
+      0.21667353205815232,
+      0.02685305825929083,
+      0.009689534345366471,
+      0.06082331518972459,
+      0.11636177956446644,
+      0.013553218317058285,
+      0.14386492396741668,
+      0.00016904199930467464
+    ],
+    "non_piston_energy": 2.1087000509485305,
+    "shares_by_radial_order_n": {
+      "n1": 1.7956925282911294e-29,
+      "n2": 0.39526044452237274,
+      "n3": 0.2699672764396565,
+      "n4": 0.3347722790379707
+    }
+  },
+  "admission": {
+    "coordinates": [
+      {
+        "j": 2,
+        "n": 1,
+        "m": 1,
+        "name": "tilt-x",
+        "real_share": 1.7782823214348642e-29,
+        "null_mean": 9.272899692429008e-30,
+        "null_sd": 1.67198347134163e-29,
+        "z": null,
+        "null_degenerate": true,
+        "admitted": false
+      },
+      {
+        "j": 3,
+        "n": 1,
+        "m": 1,
+        "name": "tilt-y",
+        "real_share": 1.7410206856265262e-31,
+        "null_mean": 1.4491795335525916e-32,
+        "null_sd": 1.7320926153422983e-32,
+        "z": null,
+        "null_degenerate": true,
+        "admitted": false
+      },
+      {
+        "j": 4,
+        "n": 2,
+        "m": 0,
+        "name": "defocus",
+        "real_share": 0.0028117382034129803,
+        "null_mean": 0.022063274134400766,
+        "null_sd": 0.0013559142447563265,
+        "z": -14.198195796997112,
+        "null_degenerate": false,
+        "admitted": false
+      },
+      {
+        "j": 5,
+        "n": 2,
+        "m": 2,
+        "name": "astig-oblique",
+        "real_share": 2.491937790365903e-34,
+        "null_mean": 2.9371224373591946e-31,
+        "null_sd": 4.77528044207192e-31,
+        "z": null,
+        "null_degenerate": true,
+        "admitted": false
+      },
+      {
+        "j": 6,
+        "n": 2,
+        "m": 2,
+        "name": "astig-vertical",
+        "real_share": 0.3924487063189598,
+        "null_mean": 0.3496996871864953,
+        "null_sd": 0.00855051644461703,
+        "z": 4.999583289425411,
+        "null_degenerate": false,
+        "admitted": true
+      },
+      {
+        "j": 7,
+        "n": 3,
+        "m": 1,
+        "name": "coma-y",
+        "real_share": 0.0167511517768469,
+        "null_mean": 0.020049767108826225,
+        "null_sd": 0.002080311967885393,
+        "z": -1.5856349350007914,
+        "null_degenerate": false,
+        "admitted": false
+      },
+      {
+        "j": 8,
+        "n": 3,
+        "m": 1,
+        "name": "coma-x",
+        "real_share": 0.21667353205815232,
+        "null_mean": 0.24770158958649213,
+        "null_sd": 0.010587006221952976,
+        "z": -2.930767856167,
+        "null_degenerate": false,
+        "admitted": false
+      },
+      {
+        "j": 9,
+        "n": 3,
+        "m": 3,
+        "name": "trefoil-y",
+        "real_share": 0.02685305825929083,
+        "null_mean": 0.021958649447324213,
+        "null_sd": 0.003408025881062371,
+        "z": 1.4361419140516922,
+        "null_degenerate": false,
+        "admitted": false
+      },
+      {
+        "j": 10,
+        "n": 3,
+        "m": 3,
+        "name": "trefoil-x",
+        "real_share": 0.009689534345366471,
+        "null_mean": 0.00018785033147534377,
+        "null_sd": 0.0001443451603746491,
+        "z": 65.82613500327567,
+        "null_degenerate": false,
+        "admitted": true
+      },
+      {
+        "j": 11,
+        "n": 4,
+        "m": 0,
+        "name": "spherical",
+        "real_share": 0.06082331518972459,
+        "null_mean": 0.014460448500357439,
+        "null_sd": 0.0015542779303786645,
+        "z": 29.829199645183085,
+        "null_degenerate": false,
+        "admitted": true
+      },
+      {
+        "j": 12,
+        "n": 4,
+        "m": 2,
+        "name": "2nd-astig-vertical",
+        "real_share": 0.11636177956446644,
+        "null_mean": 0.2008829693987075,
+        "null_sd": 0.0043276792229415524,
+        "z": -19.530373089156882,
+        "null_degenerate": false,
+        "admitted": false
+      },
+      {
+        "j": 13,
+        "n": 4,
+        "m": 2,
+        "name": "2nd-astig-oblique",
+        "real_share": 0.013553218317058285,
+        "null_mean": 0.05383057407930899,
+        "null_sd": 0.0064682827173193,
+        "z": -6.226900944574538,
+        "null_degenerate": false,
+        "admitted": false
+      },
+      {
+        "j": 14,
+        "n": 4,
+        "m": 4,
+        "name": "quadrafoil-x",
+        "real_share": 0.14386492396741668,
+        "null_mean": 0.05632618104566154,
+        "null_sd": 0.0013685682882414927,
+        "z": 63.96373763287753,
+        "null_degenerate": false,
+        "admitted": true
+      },
+      {
+        "j": 15,
+        "n": 4,
+        "m": 4,
+        "name": "quadrafoil-y",
+        "real_share": 0.00016904199930467464,
+        "null_mean": 0.012839009180950703,
+        "null_sd": 0.0009285552597378983,
+        "z": -13.644817633387115,
+        "null_degenerate": false,
+        "admitted": false
+      }
+    ],
+    "energy": {
+      "name": "total_non_piston_moment_energy",
+      "real": 2.1087000509485305,
+      "null_mean": 2.1055610291724327,
+      "null_sd": 0.031479257930083014,
+      "z": 0.0997171465435983,
+      "null_degenerate": false,
+      "admitted": false
+    },
+    "admitted_j": [
+      6,
+      10,
+      11,
+      14
+    ],
+    "any_admitted": true
+  },
+  "lift_footprint_comparison": {
+    "sphere_t0_shares_E0_E3": [
+      0.3457,
+      0.3352,
+      0.2752,
+      0.0439
+    ],
+    "sphere_t0_shares_renormalized_l1_l3": [
+      0.5123032248204188,
+      0.42060217025829133,
+      0.06709460492128994
+    ],
+    "disk_shares_by_n_n1_n4": [
+      1.7956925282911294e-29,
+      0.39526044452237274,
+      0.2699672764396565,
+      0.3347722790379707
+    ],
+    "note": "disk side excludes piston (n=0) by construction; the sphere side is quoted both raw (with E0) and renormalized over l=1..3 for a like-for-like read. n and l are different quantum numbers -- this is a footprint diagnostic, not an identification."
+  },
+  "provenance": {
+    "workflow": ".github/workflows/zernike-spectrum.yml",
+    "run_url": "https://github.com/yubi-OS/yubiOS/actions/runs/32729387795",
+    "run_id": 32729387795,
+    "job_id": 97437929202,
+    "head_sha": "08ca9eeb0a76c36faa1d508d808e1ca7589a5b92",
+    "selftest": "PASS (MC orthonormality on the disk; R_n^m(1)=1; planted 2-theta astigmatism -> j=6; exact R_2^0 / R_3^1 / R_4^0 coefficients)",
+    "date": "2026-08-24"
+  },
+  "caveats": [
+    "Measurement, not a proof: seeded Monte Carlo against a curveball (fixed-margin) null, per house rules.",
+    "j=2,3 (tilt) and j=5 (oblique astigmatism) are structurally zero for ANY matrix under this pipeline: PCA scores are mean-centred (kills the m=1 tilt moments) and PC1/PC2 are uncorrelated by construction (kills mean(u*v), i.e. the sin(2theta) moment). Their nulls are degenerate, so they are inadmissible by construction rather than by evidence.",
+    "Share coordinates are compositional (they sum to 1 over j>=2), so the 14 z-scores are not independent tests and no multiplicity correction is applied.",
+    "Several null share distributions are extremely tight (sd ~1e-4), so the corresponding z magnitudes are very large and hypersensitive to the repo's documented over-dispersion of finite-MC z. Treat the magnitudes as ordinal, not calibrated.",
+    "Disk radial order n and sphere degree l are different quantum numbers; the by-n vs by-l table is a lift-footprint diagnostic, not an identification.",
+    "The disk side excludes piston (a_1 = 1 identically); the sphere side is quoted both raw and renormalized over l=1..3 for a like-for-like read."
+  ]
+}
