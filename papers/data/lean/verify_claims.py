@@ -13,6 +13,10 @@
 #          unique stationary law on the instance), and the constant-margin
 #          medium matches destroyed-dependence baselines (Lyu-Mukherjee /
 #          Marchenko-Pastur regime).
+# CLAIM 7: Lyu-Mukherjee / MP moment anchor -- the Narayana/Catalan target
+#          moments proved exact in Lean sec. 11 are recomputed here and the
+#          constant-margin ensemble's empirical spectral moments match them
+#          (the k->infty weak-convergence statement remains cited).
 # Exit 0 iff all PASS.
 import json, math, sys, zipfile
 from itertools import combinations, product
@@ -243,6 +247,58 @@ def claim6(rng):
     report('CLAIM_6_F3_NULL_CANONICITY', ok,
            'fibre graph: connected=%s (%d/%d reached) stays_on_fibre=%s symmetric=%s => with Lean sec.8 closure + sec.9 reversibility/stationarity, uniform is THE stationary law on this instance; analytic constant-margin medium V2=%.4f (rho=-1/(d-1)): curveball N=513: %.4f (dist %.4f), N=2052: %.4f (dist %.4f), converges=%s close=%s; iid contrast=%.4f (fixed-margin medium is analytically distinct from destroyed-dependence nulls at fixed d)'
            % (connected, len(seen), K, stayed, sym, v2_analytic, res[513][0], res[513][1], res[2052][0], res[2052][1], converges, close, iid))
+def claim7(rng):
+    def padd(p, q):
+        m = max(len(p), len(q))
+        return [(p[i] if i < len(p) else 0) + (q[i] if i < len(q) else 0) for i in range(m)]
+    def pmul(p, q):
+        out = [0] * (len(p) + len(q) - 1)
+        for i, a in enumerate(p):
+            for j, b in enumerate(q):
+                out[i + j] += a * b
+        return out
+    # same functional equation as Lean sec. 11: M = 1 + z*M*(M + lam - 1)
+    rows = [[1]]
+    for k in range(1, 9):
+        acc = [0]
+        for i in range(k):
+            qq = [0, 1] if (k - 1 - i) == 0 else rows[k - 1 - i]
+            acc = padd(acc, pmul(rows[i], qq))
+        rows.append(acc)
+    lean_rows = {1: [0, 1], 2: [0, 1, 1], 3: [0, 1, 3, 1], 4: [0, 1, 6, 6, 1],
+                 5: [0, 1, 10, 20, 10, 1], 6: [0, 1, 15, 50, 50, 15, 1]}
+    ok_rows = all(rows[k][:len(v)] == v and len(rows[k]) == len(v) for k, v in lean_rows.items())
+    ok_cat = [sum(r) for r in rows] == [1, 1, 2, 5, 14, 42, 132, 429, 1430]
+    # constant-margin ensemble vs the exact MP target moments
+    n, p, krow = 512, 128, 32
+    lam, qdens = p / n, krow / p
+    exact = {k: float(sum(c * lam ** (r - 1) for r, c in enumerate(rows[k]) if r >= 1))
+             for k in range(1, 5)}
+    M0 = np.zeros((n, p), dtype=np.int8)
+    for i in range(n):
+        M0[i, (i + np.arange(krow)) % p] = 1
+    reps = 8
+    emp = {1: [], 2: [], 3: [], 4: []}
+    for _ in range(reps):
+        Ms = curveball(M0, 15 * n, rng)
+        Y = (Ms - qdens) / math.sqrt(qdens * (1 - qdens))
+        S = (Y.T @ Y) / n
+        Pw = np.eye(p)
+        for k in range(1, 5):
+            Pw = Pw @ S
+            emp[k].append(float(np.trace(Pw) / p))
+    tol = {1: 0.03, 2: 0.05, 3: 0.08, 4: 0.12}
+    oks, details = [], []
+    for k in range(1, 5):
+        mu = float(np.mean(emp[k]))
+        rel = abs(mu / exact[k] - 1)
+        oks.append(rel < tol[k])
+        details.append('m%d emp=%.4f exact=%.4f rel=%.3f' % (k, mu, exact[k], rel))
+    ok = ok_rows and ok_cat and all(oks)
+    report('CLAIM_7_MP_MOMENT_ANCHOR', ok,
+           'Narayana rows == Lean sec.11: %s; rowsum == Catalan: %s; constant-margin ensemble (n=%d p=%d k=%d lam=%.2f, curveball 15N x %d) spectral moments vs exact MP: %s (weak-convergence limit remains cited: Lyu-Mukherjee)'
+           % (ok_rows, ok_cat, n, p, krow, lam, reps, '; '.join(details)))
+
 def main():
     M = load_real_matrix()
     claim1(np.random.default_rng(SEED + 1))
@@ -251,6 +307,7 @@ def main():
     claim4(np.random.default_rng(SEED + 4))
     claim5(M, np.random.default_rng(SEED + 5))
     claim6(np.random.default_rng(SEED + 6))
+    claim7(np.random.default_rng(SEED + 7))
     if FAILURES:
         print('RESULT: FAIL (%s)' % ', '.join(FAILURES))
         sys.exit(1)

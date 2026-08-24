@@ -19,6 +19,9 @@
     10. stationary_unique_uniform -- Full theorem (F3 capstone): a stationary
         weight vector of an irreducible symmetric kernel is constant, so
         uniform is the unique stationary law on the fibre
+    11. mp / catalan / mp_rowsum_eq_catalan -- MP/Narayana moment skeleton
+        of the Lyu-Mukherjee anchor: Narayana rows and Catalan row sums as
+        exact kernel-checked identities (the limit itself stays cited)
 
   Scope — what this file does NOT prove. The theorems below are
   identity-type statements over exact arithmetic (integers, fraction
@@ -670,5 +673,88 @@ theorem stationary_unique_uniform
   have hyb : π y = π b :=
     max_propagates K π S R hnn hsym hrow hstat b hbmax y (hirr b hbS y hy)
   rw [hxb, hyb]
+
+
+/-! ### 11. The MP/Narayana moment skeleton of the Lyu-Mukherjee anchor
+
+The one remaining cited-not-proved item is the asymptotic Lyu-Mukherjee
+spectrum theorem: the bulk spectrum of the constant-margin ensemble
+converges (n -> infinity) to a Marchenko-Pastur law. The limit statement
+is measure-theoretic and stays outside this file's machine reach. What
+IS identity-type is the algebraic skeleton of its target: the k-th MP
+moment is the Narayana polynomial m_k(lam) = sum_r N(k,r) lam^r -- the
+sum over non-crossing partitions of [k] weighted by block count -- and
+its lam = 1 specialization is the k-th Catalan number. This section
+machine-checks that skeleton over exact integer polynomial arithmetic:
+polynomials are little-endian Int coefficient lists; mp k is defined by
+the free-Poisson functional equation M = 1 + z*M*(M + lam - 1) (the
+first-return decomposition of non-crossing partitions); catalan is
+defined by the Segner recurrence. The theorems pin the Narayana rows
+and the row-sum = Catalan identity through k = 8 as kernel-checked
+computations. verify_claims.py claim 7 consumes exactly these rows: it
+recomputes them in float, then measures the empirical spectral moments
+of the curveball-sampled constant-margin ensemble against them. The
+weak-convergence limit itself remains cited, per the scope block. -/
+
+def pAdd : List Int → List Int → List Int
+  | [], q => q
+  | p, [] => p
+  | a :: p, b :: q => (a + b) :: pAdd p q
+
+def pMul : List Int → List Int → List Int
+  | [], _ => []
+  | a :: p, q => pAdd (q.map (fun b => a * b)) (0 :: pMul p q)
+
+def evalOne : List Int → Int
+  | [] => 0
+  | a :: p => a + evalOne p
+
+/-- Segner recurrence step: C_n = sum over i < n of C_i * C_(n-1-i). -/
+def segnerNext (t : List Nat) : Nat :=
+  (List.range t.length).foldl
+    (fun acc i => acc + t.getD i 0 * t.getD (t.length - 1 - i) 0) 0
+
+def catTable : Nat → List Nat
+  | 0 => [1]
+  | n + 1 => let t := catTable n; t ++ [segnerNext t]
+
+def catalan (k : Nat) : Nat := (catTable k).getD k 0
+
+/-- q_0 = lam (the polynomial [0,1]); q_j = m_j for j >= 1. -/
+def qOf (ms : List (List Int)) (j : Nat) : List Int :=
+  if j = 0 then [0, 1] else ms.getD j []
+
+/-- m_k = sum over i of m_i * q_(k-1-i): coefficient extraction of the
+    functional equation M = 1 + z*M*(M + lam - 1). -/
+def mpNext (ms : List (List Int)) : List Int :=
+  (List.range ms.length).foldl
+    (fun acc i => pAdd acc (pMul (ms.getD i []) (qOf ms (ms.length - 1 - i)))) []
+
+def mpTable : Nat → List (List Int)
+  | 0 => [[1]]
+  | n + 1 => let t := mpTable n; t ++ [mpNext t]
+
+/-- The k-th moment polynomial of the free-Poisson / Marchenko-Pastur
+    target, as a little-endian coefficient list in lam. -/
+def mp (k : Nat) : List Int := (mpTable k).getD k []
+
+/-- Catalan numbers C_0..C_8 by the Segner recurrence. -/
+theorem catalan_first_nine :
+    (List.range 9).map catalan = [1, 1, 2, 5, 14, 42, 132, 429, 1430] := by
+  decide
+
+/-- Narayana rows: mp k lists N(k,r) as the coefficient of lam^r. -/
+theorem mp_row_one : mp 1 = [0, 1] := by decide
+theorem mp_row_two : mp 2 = [0, 1, 1] := by decide
+theorem mp_row_three : mp 3 = [0, 1, 3, 1] := by decide
+theorem mp_row_four : mp 4 = [0, 1, 6, 6, 1] := by decide
+theorem mp_row_five : mp 5 = [0, 1, 10, 20, 10, 1] := by decide
+theorem mp_row_six : mp 6 = [0, 1, 15, 50, 50, 15, 1] := by decide
+
+/-- Row sums specialize to Catalan: m_k(1) = C_k, through k = 8. -/
+theorem mp_rowsum_eq_catalan :
+    (List.range 9).map (fun k => evalOne (mp k))
+      = (List.range 9).map (fun k => (catalan k : Int)) := by
+  decide
 
 end CurvedCorpus
