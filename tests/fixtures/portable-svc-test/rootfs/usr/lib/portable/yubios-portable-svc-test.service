@@ -1,0 +1,9 @@
+[Unit]
+Description=yubiOS portable service test fixture (OMN-156)
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/yubios-portable-hello
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,4 @@
+ID=yubios-portable-svc-test
+NAME="yubiOS portable service test fixture"
+VERSION_ID=1
+PORTABLE_PREFIXES=yubios-portable-svc-test

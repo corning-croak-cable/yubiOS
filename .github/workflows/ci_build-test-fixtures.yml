@@ -1,0 +1,47 @@
+# Builds and pushes the tiny VM-test fixture images consumed by
+# ci_test-sysext-portable.yml (OMN-156 test surface):
+#   docker.io/0mniteck/yubios-sysext-test:<tag>
+#   docker.io/0mniteck/yubios-portable-svc-test:<tag>
+# Both are FROM scratch with a handful of text files (arch-independent),
+# so no bake/policy pipeline is involved: there are no external build
+# inputs to vet. Immutable-by-convention tags (:v1, :v2, ...) -- never
+# :latest (mutable-tag ban, refs/yubios-versioning-scheme-2026-08-04.md).
+name: ci_build-test-fixtures
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Fixture image tag to push (immutable by convention)'
+        required: false
+        default: 'v1'
+        type: string
+      push:
+        description: 'Push to Docker Hub (false = build only)'
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  build-fixtures:
+    name: Build + push test fixture images
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Build fixture images
+        run: |
+          sudo podman build -t docker.io/0mniteck/yubios-sysext-test:${{ inputs.tag || 'v1' }} tests/fixtures/sysext-test
+          sudo podman build -t docker.io/0mniteck/yubios-portable-svc-test:${{ inputs.tag || 'v1' }} tests/fixtures/portable-svc-test
+          sudo podman images | grep yubios-
+
+      - name: Push to Docker Hub
+        if: ${{ inputs.push != false }}
+        run: |
+          echo "${{ secrets.DOCKER }}" | sudo podman login -u 0mniteck42 --password-stdin docker.io
+          sudo podman push docker.io/0mniteck/yubios-sysext-test:${{ inputs.tag || 'v1' }}
+          sudo podman push docker.io/0mniteck/yubios-portable-svc-test:${{ inputs.tag || 'v1' }}

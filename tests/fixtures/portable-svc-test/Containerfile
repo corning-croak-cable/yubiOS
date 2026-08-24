@@ -1,0 +1,3 @@
+# Portable service test fixture (FROM scratch, text files only).
+FROM scratch
+COPY rootfs /

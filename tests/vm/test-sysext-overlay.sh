@@ -79,11 +79,12 @@ sudo env "PATH=$PATH:/usr/sbin:/sbin" bcvk ephemeral exec "$VMID" -- \
 
 echo "[6/8] Mounting sysext overlay into VM"
 # Build a tarball from the sysext image rootfs and extract into /run/systemd/sysext-overlay
-sudo podman save --format docker-archive "$SYSEXT_IMAGE" > /tmp/sysext-archive.tar
+sudo podman save --format docker-archive -o /tmp/sysext-archive.tar "$SYSEXT_IMAGE"
 mkdir -p /tmp/sysext-stage
 sudo tar -xf /tmp/sysext-archive.tar -C /tmp/sysext-stage
-sudo mkdir -p /tmp/sysext-overlay/$(basename "$SYSEXT_IMAGE" | sed 's/:.*//')
-sudo cp -r /tmp/sysext-stage/* /tmp/sysext-overlay/$(basename "$SYSEXT_IMAGE" | sed 's/:.*//')/
+SYSEXT_NAME="$(basename "$SYSEXT_IMAGE" | sed 's/:.*//')"
+sudo mkdir -p "/tmp/sysext-overlay/${SYSEXT_NAME}"
+sudo cp -r /tmp/sysext-stage/* "/tmp/sysext-overlay/${SYSEXT_NAME}/"
 
 echo "[7/8] Activating sysext via systemd-sysext (in-VM)"
 sudo env "PATH=$PATH:/usr/sbin:/sbin" bcvk ephemeral exec "$VMID" -- \

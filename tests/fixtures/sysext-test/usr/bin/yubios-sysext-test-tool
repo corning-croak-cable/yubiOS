@@ -1,0 +1,3 @@
+#!/bin/sh
+# yubios-sysext-test fixture tool (OMN-156). Proves a sysext overlay merged.
+echo "yubios-sysext-test-tool: overlay active"

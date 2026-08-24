@@ -46,6 +46,10 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+if [[ -n "$HW_DEVICE" ]]; then
+  echo "note: --hw-device=$HW_DEVICE accepted; the destructive hardware leg is not implemented in this script yet"
+fi
+
 if [[ -z "$FROM_IMAGE" || -z "$TO_IMAGE" ]]; then
   echo "error: --from-image and --to-image are required" >&2
   usage

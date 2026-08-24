@@ -40,14 +40,14 @@ jobs:
       - name: Install bcvk + podman
         run: |
           sudo apt-get update
-          sudo apt-get install -y podman
+          sudo apt-get install -y podman qemu-system-x86 qemu-utils virtiofsd swtpm genisoimage
           curl -fsSL https://github.com/yubi-OS/bcvk/releases/latest/download/bcvk -o /tmp/bcvk
           sudo install -m 0755 /tmp/bcvk /usr/local/bin/bcvk
       - name: Run test-sysext-overlay.sh
         run: |
           bash tests/vm/test-sysext-overlay.sh \
             --base-image "${{ inputs.base_image || 'docker.io/0mniteck/yubios:dev' }}" \
-            --sysext-image "${{ inputs.sysext_image || 'docker.io/0mniteck/yubios-sysext-test:latest' }}" \
+            --sysext-image "${{ inputs.sysext_image || 'docker.io/0mniteck/yubios-sysext-test:v1' }}" \
             --overlay-bin "${{ inputs.overlay_bin || '' }}"
 
   test-portable:
@@ -59,11 +59,11 @@ jobs:
       - name: Install bcvk + podman
         run: |
           sudo apt-get update
-          sudo apt-get install -y podman
+          sudo apt-get install -y podman qemu-system-x86 qemu-utils virtiofsd swtpm genisoimage
           curl -fsSL https://github.com/yubi-OS/bcvk/releases/latest/download/bcvk -o /tmp/bcvk
           sudo install -m 0755 /tmp/bcvk /usr/local/bin/bcvk
       - name: Run test-portable-service.sh
         run: |
           bash tests/vm/test-portable-service.sh \
-            --service-image "${{ inputs.service_image || 'docker.io/0mniteck/yubios-portable-svc-test:latest' }}" \
+            --service-image "${{ inputs.service_image || 'docker.io/0mniteck/yubios-portable-svc-test:v1' }}" \
             --attach-and-start

@@ -1,0 +1,4 @@
+# Sysext overlay test fixture (FROM scratch, text files only).
+FROM scratch
+LABEL io.systemd.sysext.root="/usr"
+COPY usr /usr

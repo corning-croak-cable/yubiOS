@@ -1,0 +1,2 @@
+#!/bin/sh
+echo "yubios-portable-svc-test: hello"
