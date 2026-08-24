@@ -253,10 +253,13 @@ def selftest(seed=DEFAULT_SEED, n_quad=400000):
             failures)
 
     # (c) planted 2-theta astigmatism lobe -> dominant j must be 6 (cos 2theta).
+    # The radial law is the uniform-disk one (rho = sqrt(U)) so that the planted
+    # structure is purely angular; a radially concentrated annulus would also
+    # excite the higher radial orders (n=4) and is not the pattern under test.
     rng_c = np.random.default_rng(seed + 1)
     npt = 20000
     th_c = rng_c.normal(0.0, 0.25, npt) + math.pi * rng_c.integers(0, 2, npt)
-    rho_c = 0.5 + 0.4 * rng_c.random(npt)
+    rho_c = np.sqrt(rng_c.random(npt))
     uv_c = np.stack([rho_c * np.cos(th_c), rho_c * np.sin(th_c)], axis=1)
     a_c, s_c, _e_c = zernike_spectrum(uv_c)
     jdom = int(np.argmax(s_c)) + 1
