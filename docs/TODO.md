@@ -1,7 +1,8 @@
 # yubiOS TODO
 
-Last reviewed: 2026-08-01
+Last reviewed: 2026-08-24
 Status: active task list
+Latest CI-infra evidence (2026-08-24): all 7 failing infra workflows on main green again (SHA pins 5a50b96c, reachability parser + drift script + ci.yml groups 66f47bf7); bcvk fork release [v0.18.0-yubios.1](https://github.com/yubi-OS/bcvk/releases/tag/v0.18.0-yubios.1) cut at pinned source 34fb0b6b with amd64+arm64 binaries + SHA256SUMS (OMN-105/106 Done); lifecycle/sysext lanes green in ADR-023 gated mode with fixture images yubios-sysext-test:v1 / yubios-portable-svc-test:v1 (e587593f); vgpu lint gate fixed (ebf9223a); BLOCKERS.md adds B-ROCK1-OFFLINE (both self-hosted runners offline, all VM-boot verification queued).
 Latest requested-run evidence review: [refs/ci-evidence-2026-07-21.md](../refs/ci-evidence-2026-07-21.md), covering the complete logs of runs 29869480442, 29869503301, 29869527608, 29872130447, 29872433355, 29872832727, 29876111887, and 29876466349.
 Latest upstream progress review: [refs/systemd-upstream-progress-2026-07-21.md](../refs/systemd-upstream-progress-2026-07-21.md).
 Latest targeted audit: [refs/systemd-v262-audit-2026-07-14.md](../refs/systemd-v262-audit-2026-07-14.md).
