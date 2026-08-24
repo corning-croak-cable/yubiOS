@@ -1,0 +1,25 @@
+name: zernike-spectrum
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  zernike:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install numpy
+        run: pip install numpy
+      - name: Selftest
+        run: python tools/zernike-spectrum/zernike.py --selftest
+      - name: Corpus spectrum + admission test
+        run: python tools/zernike-spectrum/zernike.py --corpus --n-null 30 --trades-per-row 20
