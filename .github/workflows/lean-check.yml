@@ -77,3 +77,6 @@ jobs:
 
       - name: injective-mapping selftest
         run: python3 tools/injective-mapping/mapping.py --selftest
+
+      - name: corpus-sonometer selftest
+        run: python3 tools/corpus-sonometer/sonometer.py --selftest

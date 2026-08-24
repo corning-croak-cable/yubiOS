@@ -17,6 +17,9 @@
 #          moments proved exact in Lean sec. 11 are recomputed here and the
 #          constant-margin ensemble's empirical spectral moments match them
 #          (the k->infty weak-convergence statement remains cited).
+# CLAIM 8: corpus level in dBc -- the effect reported as a decibel-style
+#          log level against the curveball vacuum's RMS fluctuation
+#          (published z=+12.13 -> +21.68 dBc); level laws are Lean sec. 12.
 # Exit 0 iff all PASS.
 import json, math, sys, zipfile
 from itertools import combinations, product
@@ -299,6 +302,43 @@ def claim7(rng):
            'Narayana rows == Lean sec.11: %s; rowsum == Catalan: %s; constant-margin ensemble (n=%d p=%d k=%d lam=%.2f, curveball 15N x %d) spectral moments vs exact MP: %s (weak-convergence limit remains cited: Lyu-Mukherjee)'
            % (ok_rows, ok_cat, n, p, krow, lam, reps, '; '.join(details)))
 
+def claim8(M, rng):
+    # corpus sonometry: report the corpus effect as a LEVEL in dBc,
+    # L = 20*log10(|dV2| / sigma_null), referenced to the curveball
+    # vacuum's own RMS fluctuation (its "20 microPascal"). The published
+    # effect z = +12.13 corresponds to 20*log10(12.13) = +21.68 dBc.
+    # Identity-side level laws (cascade additivity, the pressure/power
+    # factor 2, injectivity) are Lean sec. 12; this is the measurement.
+    v2_real = v2_corr(M)
+    N = M.shape[0]
+    def level(window, draws):
+        vals = [v2_corr(curveball(M, window * N, rng)) for _ in range(draws)]
+        mu, sd = float(np.mean(vals)), float(np.std(vals, ddof=1))
+        return 20 * math.log10(abs(v2_real - mu) / sd), mu, sd
+    L20, mu20, sd20 = level(20, 20)
+    L40, mu40, sd40 = level(40, 10)
+    Lpub = 20 * math.log10(12.13)
+    ok_pos = v2_real > mu20
+    ok_pub = abs(L20 - Lpub) < 4.0
+    ok_win = abs(L40 - L20) < 5.0
+    # per-mode levels (informational, dBA-style breakdown): eigenvalue
+    # spectrum of the real matrix against the curveball null spectrum.
+    def spec(Mx):
+        X = np.asarray(Mx, float)
+        sd_ = X.std(0)
+        C = np.corrcoef(X[:, sd_ > 1e-12], rowvar=False)
+        return np.sort(np.linalg.eigvalsh(0.5 * (C + C.T)))[::-1]
+    sr = spec(M)
+    null_specs = np.array([spec(curveball(M, 20 * N, rng)) for _ in range(12)])
+    mus, sds = null_specs.mean(0), null_specs.std(0, ddof=1)
+    per = [20 * math.log10(max(abs(float(sr[i]) - float(mus[i])), 1e-12) / max(float(sds[i]), 1e-12))
+           for i in range(len(sr))]
+    top = ', '.join('ev%d=%+.1f' % (i, per[i]) for i in range(3))
+    ok = ok_pos and ok_pub and ok_win
+    report('CLAIM_8_CORPUS_LEVEL_DBC', ok,
+           'L(20N)=%.2f dBc (null=%.6f+/-%.6f) L(40N)=%.2f dBc; published z=12.13 -> %.2f dBc; |L-Lpub|=%.2f (<4.0) |L40-L20|=%.2f (<5.0) positive=%s; per-mode dBc (info): %s; level laws: Lean sec. 12; instrument: tools/corpus-sonometer'
+           % (L20, mu20, sd20, L40, Lpub, abs(L20 - Lpub), abs(L40 - L20), ok_pos, top))
+
 def main():
     M = load_real_matrix()
     claim1(np.random.default_rng(SEED + 1))
@@ -308,6 +348,7 @@ def main():
     claim5(M, np.random.default_rng(SEED + 5))
     claim6(np.random.default_rng(SEED + 6))
     claim7(np.random.default_rng(SEED + 7))
+    claim8(M, np.random.default_rng(SEED + 8))
     if FAILURES:
         print('RESULT: FAIL (%s)' % ', '.join(FAILURES))
         sys.exit(1)

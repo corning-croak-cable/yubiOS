@@ -22,6 +22,9 @@
     11. mp / catalan / mp_rowsum_eq_catalan -- MP/Narayana moment skeleton
         of the Lyu-Mukherjee anchor: Narayana rows and Catalan row sums as
         exact kernel-checked identities (the limit itself stays cited)
+    12. bpow_add / level_double / level_injective -- the decibel laws:
+        exact level arithmetic behind the dBc corpus-level scale
+        (claim 8, tools/corpus-sonometer)
 
   Scope — what this file does NOT prove. The theorems below are
   identity-type statements over exact arithmetic (integers, fraction
@@ -756,5 +759,89 @@ theorem mp_rowsum_eq_catalan :
     (List.range 9).map (fun k => evalOne (mp k))
       = (List.range 9).map (fun k => (catalan k : Int)) := by
   decide
+
+
+/-! ### 12. The decibel laws: exact level arithmetic (corpus sonometry)
+
+The corpus level of an effect against the curveball vacuum is reported
+in dBc: L = 20*log10(|effect| / sigma_null), referenced so 0 dBc is the
+null's own RMS fluctuation -- the smallest detectable effect, the
+acoustician's 20 microPascal (verify_claims.py claim 8; the instrument
+is tools/corpus-sonometer). The real-valued log10 is measurement-side;
+what is identity-type is the law structure that makes a level scale
+meaningful, and on integer powers of a fixed base it is exact:
+  - cascaded gains multiply while their levels add (bpow_add -- the
+    reason decibels add, and the discrete form of section 6's
+    heat_exponent_additive);
+  - squaring a ratio doubles its level (level_double -- why pressure
+    quantities take 20*log10 where power quantities take 10*log10);
+  - levels are strictly ordered and injective (bpow_mono,
+    level_injective -- a dB reading is well defined). -/
+
+def bpow (b : Nat) : Nat → Nat
+  | 0 => 1
+  | k + 1 => b * bpow b k
+
+theorem bpow_pos (b : Nat) (hb : 0 < b) (k : Nat) : 0 < bpow b k := by
+  induction k with
+  | zero => decide
+  | succ m ih =>
+      show 0 < b * bpow b m
+      exact Nat.mul_pos hb ih
+
+/-- Cascade law: gains multiply, levels add. bpow b (s + t) is the gain
+    of s + t cascaded stages; its level (exponent) is the sum. -/
+theorem bpow_add (b s t : Nat) :
+    bpow b (s + t) = bpow b s * bpow b t := by
+  induction s with
+  | zero => simp [bpow]
+  | succ m ih =>
+      have e1 : m + 1 + t = (m + t) + 1 := by omega
+      rw [e1]
+      show b * bpow b (m + t) = b * bpow b m * bpow b t
+      rw [ih, Nat.mul_assoc]
+
+/-- The pressure/power factor of two: squaring a ratio doubles its
+    level. This is why sound pressure takes 20*log10 while power takes
+    10*log10 -- the factor 2 is exact, not empirical. -/
+theorem level_double (b k : Nat) :
+    bpow b (2 * k) = bpow b k * bpow b k := by
+  have e : 2 * k = k + k := by omega
+  rw [e, bpow_add]
+
+theorem bpow_lt_succ (b k : Nat) (hb : 2 ≤ b) :
+    bpow b k < bpow b (k + 1) := by
+  have hp : 0 < bpow b k := bpow_pos b (by omega) k
+  have h2 : 2 * bpow b k ≤ b * bpow b k :=
+    Nat.mul_le_mul hb (Nat.le_refl (bpow b k))
+  have e : bpow b (k + 1) = b * bpow b k := rfl
+  omega
+
+/-- Levels are strictly ordered: a higher level is strictly louder. -/
+theorem bpow_mono (b : Nat) (hb : 2 ≤ b) :
+    ∀ k l, k < l → bpow b k < bpow b l := by
+  intro k l
+  induction l with
+  | zero => intro h; exact absurd h (Nat.not_lt_zero k)
+  | succ m ih =>
+      intro h
+      by_cases hkm : k = m
+      · rw [hkm]
+        exact bpow_lt_succ b m hb
+      · have hkm' : k < m := by omega
+        exact Nat.lt_trans (ih hkm') (bpow_lt_succ b m hb)
+
+/-- A dB reading is well defined: equal gains have equal levels. -/
+theorem level_injective (b k l : Nat) (hb : 2 ≤ b)
+    (h : bpow b k = bpow b l) : k = l := by
+  by_cases hkl : k = l
+  · exact hkl
+  · exfalso
+    rcases Nat.lt_or_ge k l with hlt | hge
+    · have := bpow_mono b hb k l hlt
+      omega
+    · have hgt : l < k := by omega
+      have := bpow_mono b hb l k hgt
+      omega
 
 end CurvedCorpus
