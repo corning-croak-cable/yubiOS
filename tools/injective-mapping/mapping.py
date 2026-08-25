@@ -2,8 +2,8 @@
 """Deliverable D6: injective skill -> row mapping and spreadsheet export.
 
 Loads the per-item coverage corpus shipped in
-\`papers/is-this-x-2026-08-12-Final.zip\` (member
-\`is-this-x-2026-08-12/data/real/per_row_coverage_v3.json\`), reports the
+`papers/is-this-x-2026-08-12-Final.zip` (member
+`is-this-x-2026-08-12/data/real/per_row_coverage_v3.json`), reports the
 collision structure of the raw 9-bit coverage vectors, builds a set of
 honest measurement coordinates for every item (all derived from the
 coverage vector itself, with clear provenance), demonstrates that those
@@ -98,7 +98,7 @@ def s2_embedding(X: np.ndarray) -> dict:
 
     Every coordinate here is a deterministic function of the coverage
     vector; nothing is invented. The "ideal pole" is the same pipeline
-    applied to the all-ones vector (full coverage), so \`gap\` measures
+    applied to the all-ones vector (full coverage), so `gap` measures
     chordal distance on the sphere from an item's lift to the lift of
     "covers everything".
     """
