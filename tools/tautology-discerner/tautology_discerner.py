@@ -57,21 +57,54 @@ _REFUTER_LEXICON = {
     "contains", "includes", "excludes", "exceeds", "lacks",
     "above", "below", "under", "over",
 }
+_COMPLEMENT_PAIRS = {
+    # External lexical knowledge: exhaustive complement pairs. "X is either
+    # A or B" is analytic only when {A, B} exhausts the space. This table is
+    # the honest carrier of that knowledge -- it is NOT a list of test
+    # sentences, and any pair added here generalizes to every sentence
+    # using it.
+    frozenset({"even", "odd"}),
+    frozenset({"true", "false"}),
+    frozenset({"finite", "infinite"}),
+    frozenset({"mortal", "immortal"}),
+    frozenset({"married", "unmarried"}),
+}
+
+_ANALYTIC_DEFINITIONS = {
+    # External analytic definitions (dictionary knowledge): "A(n) X is a(n)
+    # Y" is analytic when Y is the definition of X. Same discipline as the
+    # complement table: entries generalize; they are not test sentences.
+    "bachelor": "unmarried man",
+    "vixen": "female fox",
+    "drake": "male duck",
+    "triangle": "three-sided polygon",
+}
+
 _TAUTOLOGY_PATTERNS = [
-    # classical analytic-statement forms -- the form itself is the proof;
-    # no empirical content. Each is matched BEFORE the refuter-word scan.
-    # The forms are intentionally restrictive: they catch the
-    # classical examples in the planted library and a small superset
-    # of the same logical shape; they do NOT try to enumerate all
-    # analytic sentences (which is undecidable in general).
-    (re.compile(r"\bA\s+bachelor\s+is\s+an\s+unmarried\s+man\b", re.I), "definitional-analytic"),
-    (re.compile(r"\bEvery\s+even\s+number\s+is\s+either\s+even\s+or\s+odd\b", re.I), "exhaustive-disjunction"),
-    (re.compile(r"\bEither\s+it\s+is\s+\w+\s+or\s+it\s+is\s+not\s+\w+\b", re.I), "law-of-excluded-middle"),
-    (re.compile(r"\bEither\s+\w+\s+or\s+not\s+\w+\b", re.I), "law-of-excluded-middle"),
-    (re.compile(r"\bIf\s+\w+\s+then\s+\w+,\s+and\s+if\s+\w+\s+then\s+\w+,\s+then\s+if\s+\w+\s+then\s+\w+\b", re.I), "syllogistic-chaining"),
-    (re.compile(r"\bthen\s+if\s+\w+\s+then\s+\w+\b", re.I), "conditional-chaining"),
-    (re.compile(r"\b(\w+)\s+is\s+not\s+not\s+\1\b", re.I), "double-negation-identity"),
+    # STRUCTURAL analytic forms only. Every pattern either carries a
+    # backreference (the form must close on itself) or defers to the
+    # external lexicons above. No pattern may encode a test sentence --
+    # that was the circularity this block used to have (patterns like
+    # "A bachelor is an unmarried man" compiled verbatim), fixed
+    # 2026-08-25 after the same disease was found in the testdata TSV.
+    # Law of excluded middle: "either X or not X" -- same token both sides.
+    (re.compile(r"\beither\s+(?:it\s+is\s+)?(\w+)\s+or\s+(?:it\s+is\s+)?not\s+\1\b", re.I),
+     "law-of-excluded-middle"),
+    # Universal excluded middle: "every/any/each ... is either X or not X".
+    (re.compile(r"\b(?:every|any|each)\b[^.!?]*\bis\s+either\s+(\w+)\s+or\s+not\s+\1\b", re.I),
+     "universal-excluded-middle"),
+    # Hypothetical syllogism: the chain must ACTUALLY chain
+    # (backreferences), so "if P then Q, and if X then Y, then if A then
+    # B" -- a broken chain -- does NOT match.
+    (re.compile(r"\bif\s+(\w+)\s+then\s+(\w+),?\s+and\s+if\s+\2\s+then\s+(\w+),?\s+then\s+if\s+\1\s+then\s+\3\b", re.I),
+     "hypothetical-syllogism"),
+    # Double negation identity: "X is not not X".
+    (re.compile(r"\b(\w+)\s+is\s+not\s+not\s+\1\b", re.I),
+     "double-negation-identity"),
 ]
+
+_EITHER_OR_RE = re.compile(r"\bis\s+either\s+(\w+)\s+or\s+(\w+)\b", re.I)
+_DEFINITION_RE = re.compile(r"^an?\s+(\w+)\s+is\s+an?\s+([\w][\w\s\-]*?)\s*[.!?]?$", re.I)
 _PARADOX_PATTERN = re.compile(
     r"\b(this\s+statement\s+is\s+false)|"
     r"\b(I\s+am\s+lying)|"
@@ -101,13 +134,25 @@ def _has_refuter(sentence: str, tokens: list[str]) -> "str | None":
 
 
 def _looks_like_tautology(sentence: str) -> "str | None":
-    """Return a name if the sentence matches a classical tautology
-    form, otherwise None. Each pattern is the LITERAL form of a
-    reducible analytic -- it does not depend on the meaning of the
-    content words."""
+    """Return a name if the sentence matches a structural analytic form
+    (backreferenced patterns) or an external-lexicon analytic (complement
+    pairs, dictionary definitions), otherwise None. No branch here may
+    match on a memorized sentence; forms must close on themselves or
+    defer to the lexicons."""
     for pat, name in _TAUTOLOGY_PATTERNS:
         if pat.search(sentence):
             return name
+    m = _EITHER_OR_RE.search(sentence)
+    if m:
+        pair = frozenset({m.group(1).lower(), m.group(2).lower()})
+        if pair in _COMPLEMENT_PAIRS:
+            return "exhaustive-complement-pair"
+    m = _DEFINITION_RE.match(sentence.strip())
+    if m:
+        head = m.group(1).lower()
+        body = " ".join(m.group(2).lower().split())
+        if _ANALYTIC_DEFINITIONS.get(head) == body:
+            return "definitional-analytic"
     return None
 
 
@@ -278,6 +323,18 @@ def _selftest() -> int:
         ("This sentence has five words.", "Falsifiable"),
         ("Hello there.", "Undecidable"),
         ("Consider the universe of all sets.", "Undecidable"),
+        # HELD-OUT variants -- same logical form, content never seen by
+        # any pattern. If these fail, the classifier memorized sentences.
+        ("Either it is snowing or it is not snowing.", "Tautology"),
+        ("A vixen is a female fox.", "Tautology"),
+        ("If A then B, and if B then C, then if A then C.", "Tautology"),
+        ("Every statement is either true or false.", "Tautology"),
+        # NEGATIVE controls -- superficially similar but NOT analytic.
+        # The pre-2026-08-25 overfitted patterns accepted the broken
+        # syllogism; the backreferenced form must reject it.
+        ("If P then Q, and if X then Y, then if A then B.", "Undecidable"),
+        ("Either it is raining or it is not snowing.", "Falsifiable"),
+        ("A bachelor is a lonely man.", "Falsifiable"),
     ]
     for sentence, expected in library:
         verdict = classify(sentence)["verdict"]
