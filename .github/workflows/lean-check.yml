@@ -80,3 +80,8 @@ jobs:
 
       - name: corpus-sonometer selftest
         run: python3 tools/corpus-sonometer/sonometer.py --selftest
+      - name: tautology-discerner selftest
+        run: python3 tools/tautology-discerner/tautology_discerner.py --selftest
+
+      - name: spectral-decomposer selftest
+        run: python3 tools/spectral-decomposer/spectral_decomposer.py --selftest
