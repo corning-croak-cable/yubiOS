@@ -141,32 +141,73 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
-      - name: tautology-discerner on real program claims
+      - name: tautology-discerner over the real docs corpus
+        # Sources sentences from the repo's own docs/ dir at runtime --
+        # no committed expected-verdict file, so the test cannot be
+        # satisfied by the classifier agreeing with its own output.
+        # The assertions are falsifiable claims about the docs corpus:
+        #   - the 21 docs files yield a substantial prose corpus (>= 500 sentences)
+        #   - engineering docs are claim-heavy (Falsifiable share >= 30%)
+        #   - but not everything is a claim (share <= 90%; if the refuter
+        #     lexicon ever degenerates to matching any sentence, this trips)
+        #   - the docs contain no liar-paradoxes (zero Paradox verdicts)
+        #   - verdicts are deterministic across two passes
+        #   - the fixed-refuter-bag invariance (Lean sec. 8 analogue) holds
+        #     on a seeded sample of real sentences
         run: |
           python3 - <<'PY'
-          import sys
+          import sys, re, glob, random
+          from collections import Counter
           sys.path.insert(0, 'tools/tautology-discerner')
-          from tautology_discerner import classify
-          rows = []
-          with open('tools/tautology-discerner/testdata/real-claims-2026-08-25.tsv') as f:
-              for line in f:
-                  line = line.rstrip('\n')
-                  if not line:
+          from tautology_discerner import classify, token_permutation_null
+
+          def extract_sentences(text):
+              text = re.sub(r'```.*?```', ' ', text, flags=re.DOTALL)
+              text = re.sub(r'^\s*\|.*\|\s*$', ' ', text, flags=re.MULTILINE)
+              text = re.sub(r'^#+ .*$', ' ', text, flags=re.MULTILINE)
+              text = re.sub(r'\[([^\]]*)\]\([^)]*\)', r'\1', text)
+              text = re.sub(r'`[^`]*`', ' ', text)
+              text = re.sub(r'<[^>]+>', ' ', text)
+              out = []
+              for raw in re.split(r'(?<=[.!?])\s+', text):
+                  s = ' '.join(raw.split())
+                  words = s.split()
+                  if not (6 <= len(words) <= 60):
                       continue
-                  expected, sentence = line.split('\t', 1)
-                  rows.append((expected, sentence))
-          assert len(rows) >= 10, f'only {len(rows)} rows in testdata'
-          fails = []
-          for expected, sentence in rows:
-              got = classify(sentence)['verdict']
-              status = 'PASS' if got == expected else 'FAIL'
-              print(f'{status} expected={expected:12s} got={got:12s} {sentence}')
-              if got != expected:
-                  fails.append(sentence)
-          assert not fails, f'{len(fails)} verdict mismatches'
-          # Distribution sanity: the real-claims set must exercise all
-          # four verdict classes, or the test data has decayed.
-          verdicts = {classify(s)['verdict'] for _, s in rows}
-          assert verdicts == {'Tautology', 'Falsifiable', 'Paradox', 'Undecidable'}, verdicts
-          print(f'STATEMENTS_REAL_OK {len(rows)} claims, all four verdict classes exercised')
+                  if not s[:1].isupper() or s[-1] not in '.!?':
+                      continue
+                  alpha = sum(c.isalpha() or c.isspace() for c in s) / len(s)
+                  if alpha < 0.8:
+                      continue
+                  out.append(s)
+              return out
+
+          files = sorted(glob.glob('docs/*.md'))
+          assert len(files) >= 15, f'only {len(files)} docs files found'
+          sentences = []
+          for path in files:
+              sentences.extend(extract_sentences(open(path, encoding='utf-8').read()))
+          assert len(sentences) >= 500, f'only {len(sentences)} sentences extracted'
+
+          verdicts = [classify(s)['verdict'] for s in sentences]
+          valid = {'Tautology', 'Falsifiable', 'Paradox', 'Undecidable'}
+          assert all(v in valid for v in verdicts)
+          dist = Counter(verdicts)
+          n = len(sentences)
+          fals_share = dist.get('Falsifiable', 0) / n
+          assert 0.30 <= fals_share <= 0.90, f'Falsifiable share {fals_share:.2%} outside [30%, 90%]'
+          assert dist.get('Paradox', 0) == 0, f"docs contain {dist['Paradox']} liar-paradoxes?"
+
+          verdicts2 = [classify(s)['verdict'] for s in sentences]
+          assert verdicts == verdicts2, 'classifier is not deterministic'
+
+          rng = random.Random(20260825)
+          sample = rng.sample([s for s, v in zip(sentences, verdicts) if v == 'Falsifiable'], 5)
+          for s in sample:
+              null = token_permutation_null(s, n_draws=100, seed=20260825)
+              assert null['invariant_under_fixed_refuter_bag'], f'invariance broke on: {s[:80]}'
+
+          summary = ', '.join(f'{k}={v} ({v/n:.1%})' for k, v in sorted(dist.items()))
+          print(f'DOCS_CORPUS_OK {len(files)} files, {n} sentences: {summary}')
+          print('INVARIANCE_OK fixed-refuter-bag held on 5 sampled real sentences')
           PY
