@@ -1,0 +1,172 @@
+name: lean-run
+
+# Real-data companion to lean-check.yml. Where lean-check proves the
+# identities (Lean, no sorry) and runs each tool's --selftest on planted
+# synthetic matrices, lean-run applies the ACTUAL evidence bundle
+# (papers/is-this-x-2026-08-12-Final.zip, the 2286x9 corpus) and real
+# statement data, and asserts the published numbers reproduce:
+#   v2_real = 0.7235293731 (1e-6), z > 6 (published +12.13),
+#   corpus level > +15.6 dBc floor, Delta >= 0 on real descent,
+#   Zernike admission non-empty, injectivity 2286/2286.
+# Every command here was verified locally against the shipped bundle
+# before this workflow landed (input-shape doctrine).
+
+on:
+  push:
+    branches: ['main', 'lean-check-*']
+    paths:
+      - 'papers/data/lean/**'
+      - 'tools/**'
+      - '.github/workflows/lean-run.yml'
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Why this run is being fired'
+        required: false
+        default: 'manual real-data run'
+
+jobs:
+  run-real-corpus:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: Install numpy
+        run: python3 -m pip install --quiet numpy
+
+      - name: Extract real corpus from evidence bundle
+        run: |
+          python3 - <<'PY'
+          import zipfile, json
+          z = zipfile.ZipFile('papers/is-this-x-2026-08-12-Final.zip')
+          with z.open('is-this-x-2026-08-12/data/real/per_row_coverage_v3.json') as f:
+              j = json.load(f)
+          assert len(j['rows']) == 2286 and len(j['rows'][0]['covered']) == 9
+          open('/tmp/per_row_coverage_v3.json', 'w').write(json.dumps(j))
+          print('EXTRACT_OK 2286x9')
+          PY
+
+      - name: corpus-auditor on real matrix (reproduce published effect)
+        run: |
+          python3 tools/corpus-auditor/auditor.py --input /tmp/per_row_coverage_v3.json --nsamp 20 --json > /tmp/audit.json
+          python3 - <<'PY'
+          import json
+          j = json.load(open('/tmp/audit.json'))
+          assert abs(j['v2_real'] - 0.7235293731) < 1e-6, j['v2_real']
+          assert j['z'] > 6.0, j['z']
+          assert j['verdict'] == 'SIGNAL', j['verdict']
+          print(f"AUDITOR_REAL_OK v2={j['v2_real']:.10f} z=+{j['z']:.2f} verdict={j['verdict']}")
+          PY
+
+      - name: rsi-descent on real bundle (Lean Delta invariant on real data)
+        run: |
+          python3 tools/rsi-descent/rsi_descent.py --input papers/is-this-x-2026-08-12-Final.zip --max-cycles 1 > /tmp/descent.json
+          python3 - <<'PY'
+          import json
+          j = json.load(open('/tmp/descent.json'))
+          assert j['cumulative_delta'] >= 0.0, j['cumulative_delta']
+          assert 0.0 < j['final_coverage'] <= 1.0
+          print(f"DESCENT_REAL_OK cum_delta=+{j['cumulative_delta']:.4f} coverage={j['final_coverage']:.4f}")
+          PY
+
+      - name: spectral-defocus real-corpus leg
+        run: |
+          python3 tools/spectral-defocus/defocus.py --real-corpus --zip-path papers/is-this-x-2026-08-12-Final.zip --json > /tmp/defocus.json
+          python3 - <<'PY'
+          import json
+          j = json.load(open('/tmp/defocus.json'))
+          assert j['overall_passed'] is True, j
+          print('DEFOCUS_REAL_OK overall_passed=true')
+          PY
+
+      - name: zernike-spectrum corpus admission (non-degenerate coordinates exist)
+        run: |
+          python3 tools/zernike-spectrum/zernike.py --corpus --zip-path papers/is-this-x-2026-08-12-Final.zip --n-null 10 --out /tmp/zernike.json > /tmp/zernike.log
+          python3 - <<'PY'
+          import json
+          j = json.load(open('/tmp/zernike.json'))
+          adm = j['admission']
+          assert adm['any_admitted'] is True, adm['admitted_j']
+          print(f"ZERNIKE_REAL_OK admitted_j={adm['admitted_j']}")
+          PY
+
+      - name: injective-mapping full-ladder injectivity on real corpus
+        run: |
+          python3 tools/injective-mapping/mapping.py --zip papers/is-this-x-2026-08-12-Final.zip --out /tmp/skill-map.csv --json > /tmp/mapping.json
+          python3 - <<'PY'
+          import json
+          j = json.load(open('/tmp/mapping.json'))
+          assert j['csv_row_count'] == 2286, j['csv_row_count']
+          assert j['csv_unique_slugs'] == 2286, j['csv_unique_slugs']
+          print('MAPPING_REAL_OK 2286/2286 unique keyed rows')
+          PY
+
+      - name: corpus-sonometer level of the real corpus (above detectability floor)
+        run: |
+          python3 - <<'PY'
+          import sys, json, zipfile
+          import numpy as np
+          sys.path.insert(0, 'tools/corpus-sonometer')
+          from sonometer import corpus_level
+          with zipfile.ZipFile('papers/is-this-x-2026-08-12-Final.zip') as z:
+              with z.open('is-this-x-2026-08-12/data/real/per_row_coverage_v3.json') as f:
+                  j = json.load(f)
+          M = np.array([r['covered'] for r in j['rows']], dtype=np.int8)
+          rng = np.random.default_rng(20260822)
+          L, mu, sd = corpus_level(M, draws=12, window=10, rng=rng)
+          assert L > 15.6, f'{L:.2f} dBc is below the +15.6 dBc floor'
+          print(f'SONOMETER_REAL_OK L=+{L:.2f} dBc (floor +15.6, published +21.68)')
+          PY
+
+      - name: spectral-decomposer lens candidates from the real corpus
+        run: |
+          python3 tools/spectral-decomposer/spectral_decomposer.py --input papers/is-this-x-2026-08-12-Final.zip --top-k 2 --json > /tmp/decomposer.json
+          python3 - <<'PY'
+          import json
+          j = json.load(open('/tmp/decomposer.json'))
+          assert j['corpus']['n'] == 2286 and j['corpus']['d'] == 9
+          cands = j['candidates']
+          assert len(cands) >= 1, 'no candidates generated'
+          for c in cands:
+              assert c['verdict'] in {'YES', 'PARTIAL', 'NO'}, c['verdict']
+              for k in ('L_real_dBc', 'L_control_dBc', 'delta_dBc'):
+                  assert k in c['delta'], k
+          print(f"DECOMPOSER_REAL_OK {len(cands)} candidates, verdicts={[c['verdict'] for c in cands]}")
+          PY
+
+  run-real-statements:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+
+      - name: tautology-discerner on real program claims
+        run: |
+          python3 - <<'PY'
+          import sys
+          sys.path.insert(0, 'tools/tautology-discerner')
+          from tautology_discerner import classify
+          rows = []
+          with open('tools/tautology-discerner/testdata/real-claims-2026-08-25.tsv') as f:
+              for line in f:
+                  line = line.rstrip('\n')
+                  if not line:
+                      continue
+                  expected, sentence = line.split('\t', 1)
+                  rows.append((expected, sentence))
+          assert len(rows) >= 10, f'only {len(rows)} rows in testdata'
+          fails = []
+          for expected, sentence in rows:
+              got = classify(sentence)['verdict']
+              status = 'PASS' if got == expected else 'FAIL'
+              print(f'{status} expected={expected:12s} got={got:12s} {sentence}')
+              if got != expected:
+                  fails.append(sentence)
+          assert not fails, f'{len(fails)} verdict mismatches'
+          # Distribution sanity: the real-claims set must exercise all
+          # four verdict classes, or the test data has decayed.
+          verdicts = {classify(s)['verdict'] for _, s in rows}
+          assert verdicts == {'Tautology', 'Falsifiable', 'Paradox', 'Undecidable'}, verdicts
+          print(f'STATEMENTS_REAL_OK {len(rows)} claims, all four verdict classes exercised')
+          PY
