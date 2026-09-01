@@ -438,10 +438,99 @@ def stage5_two_pop(M, null_mats, rng):
           f"margin acc={acc_margin:.3f} balance={balance:.2f}")
 
 
+# ============================================================ Stage 5b
+# Margin-clean two-population rule (follow-up to stage 5's margin trap):
+# project the coverage direction out of the z-scored matrix BEFORE the
+# PCA -> stereographic embedding, so cluster assignment cannot ride on k.
+
+def residual_embed(M):
+    """z-score columns, regress each column on centered k, keep residuals,
+    then the paper's PCA top-2 -> RMS rescale -> stereographic lift."""
+    X = M.astype(float)
+    mu, sig = X.mean(0), X.std(0)
+    Z = (X - mu) / np.where(sig > 1e-12, sig, 1.0)
+    kc = X.sum(1) - X.sum(1).mean()
+    denom = float(kc @ kc)
+    if denom > 1e-12:
+        beta = (Z.T @ kc) / denom          # per-column slope on k
+        Z = Z - np.outer(kc, beta)
+    u_full, s_full, _ = np.linalg.svd(Z, full_matrices=False)
+    uv = (u_full * s_full)[:, :2]
+    rms = math.sqrt(np.mean(np.sum(uv ** 2, axis=1)))
+    uv = uv / rms if rms > 1e-12 else uv
+    u, v = uv[:, 0], uv[:, 1]
+    den = 1.0 + u * u + v * v
+    return np.stack([2 * u / den, 2 * v / den, (u * u + v * v - 1.0) / den], axis=1)
+
+
+def two_pop_stat_clean(M, rng):
+    pts = residual_embed(M)
+    k = M.sum(axis=1).astype(int)
+    mask = k < D
+    P = pts[mask]
+    lab, _ = spherical_2means(P, rng)
+    r_all = float(np.linalg.norm(P.mean(axis=0)))
+    parts = []
+    for j in (0, 1):
+        sel = P[lab == j]
+        parts.append((len(sel) / len(P)) * float(np.linalg.norm(sel.mean(axis=0))))
+    return sum(parts) - r_all, lab, k[mask]
+
+
+def stage5b_margin_clean(M, null_mats, rng):
+    G_real, lab, kmask = two_pop_stat_clean(M, rng)
+    acc = 0
+    for kk in np.unique(kmask):
+        sub = lab[kmask == kk]
+        acc += max((sub == 0).sum(), (sub == 1).sum())
+    acc_margin = float(acc / len(lab))
+    balance = float((lab == 0).mean())
+    null_G = np.array([two_pop_stat_clean(Mn, rng)[0] for Mn in null_mats])
+    mu, sd = float(null_G.mean()), float(null_G.std(ddof=1))
+    z = (G_real - mu) / sd if sd > 0 else float("inf")
+    dbc = 20.0 * math.log10(abs(G_real - mu) / sd) if sd > 0 and G_real != mu else None
+    leaky = acc_margin > 0.85
+    admitted = (z > 6.0) and not leaky
+    RESULTS["stage5b_margin_clean_two_pop"] = {
+        "rule": "project centered-k out of z-scored columns before PCA/stereographic embed",
+        "rows_k_lt_9": int(len(lab)),
+        "cluster_balance": balance,
+        "margin_only_classifier_accuracy": acc_margin,
+        "margin_leakage_flag(acc>0.85)": bool(leaky),
+        "G_real": G_real,
+        "null_n": len(null_G), "null_G_mean": mu, "null_G_sd": sd,
+        "z": float(z), "dBc": dbc,
+        "verdict": (("margin-clean two-population statistic deflects (z=%.2f, acc=%.2f): "
+                     "NOT-EXCLUDED -- the diatomic two-sublattice extension earns a "
+                     "matched-parameter ablation" % (z, acc_margin)) if admitted else
+                    ("recorded outcome: z=%.2f, margin-classifier acc=%.2f -- %s. Two-"
+                     "population extension %s." %
+                     (z, acc_margin,
+                      "assignment STILL leaks margin information (k enters nonlinearly)" if leaky
+                      else "clean assignment, no deflection above the z>6 floor",
+                      "stays not-tested (a nonlinear-k-clean rule would be next)" if leaky
+                      else "EXCLUDED at this truncation and budget: pattern structure beyond "
+                           "fixed margins does not support two sublattices"))),
+    }
+    print(f"[stage5b] G_real={G_real:.4f} | null {mu:.4f}+-{sd:.4f} z={z:.2f} | "
+          f"margin acc={acc_margin:.3f} balance={balance:.2f}")
+
+
 # ============================================================ main
 
 def main():
+    only_5b = "--only-5b" in sys.argv[1:]
     rng = np.random.default_rng(20260901)
+    if only_5b:
+        M = defocus.load_real_corpus_matrix().astype(np.int8)
+        print("[setup] sampling curveball nulls (40 draws, 20N trades)...")
+        null_mats = [curveball(M, 20 * M.shape[0], rng) for _ in range(40)]
+        stage5b_margin_clean(M, null_mats, rng)
+        print("PHONON_FOLLOWUPS_JSON_BEGIN")
+        print(json.dumps(RESULTS, indent=1, sort_keys=True))
+        print("PHONON_FOLLOWUPS_JSON_END")
+        print("RESULT: STAGE 5B EXECUTED")
+        return
     stage1_omega_audit()
 
     M = defocus.load_real_corpus_matrix().astype(np.int8)
@@ -460,6 +549,7 @@ def main():
     stage4_gaunt(M, null_fits, fit_real, G, (ortho_err, max_forb, max_allow))
 
     stage5_two_pop(M, null_mats, rng)
+    stage5b_margin_clean(M, null_mats, rng)
 
     print("PHONON_FOLLOWUPS_JSON_BEGIN")
     print(json.dumps(RESULTS, indent=1, sort_keys=True))

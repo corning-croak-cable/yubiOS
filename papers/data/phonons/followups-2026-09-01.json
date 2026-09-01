@@ -134,5 +134,19 @@
   "rows_k_lt_9": 1491,
   "verdict": "recorded outcome: z=-4.87, margin-classifier acc=0.99 -- assignment leaks margin information. The two-population extension stays not-tested pending a margin-clean assignment rule.",
   "z": -4.874436007545528
+ },
+ "stage5b_margin_clean_two_pop": {
+  "G_real": 0.4903663314001129,
+  "cluster_balance": 0.4755197853789403,
+  "dBc": 18.03204828083512,
+  "margin_leakage_flag(acc>0.85)": false,
+  "margin_only_classifier_accuracy": 0.7209926224010731,
+  "null_G_mean": 0.5343642181752364,
+  "null_G_sd": 0.005518606189742461,
+  "null_n": 40,
+  "rows_k_lt_9": 1491,
+  "rule": "project centered-k out of z-scored columns before PCA/stereographic embed",
+  "verdict": "recorded outcome: z=-7.97, margin-classifier acc=0.72 -- clean assignment, no deflection above the z>6 floor. Two-population extension EXCLUDED at this truncation and budget: pattern structure beyond fixed margins does not support two sublattices.",
+  "z": -7.972644769779591
  }
 }
