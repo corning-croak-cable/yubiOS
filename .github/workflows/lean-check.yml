@@ -85,3 +85,6 @@ jobs:
 
       - name: spectral-decomposer selftest
         run: python3 tools/spectral-decomposer/spectral_decomposer.py --selftest
+
+      - name: phonon-dispersion selftest
+        run: python3 tools/phonon-dispersion/phonon.py --selftest
