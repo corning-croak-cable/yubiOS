@@ -239,13 +239,23 @@ def embed_and_fit(M):
     return pts, tgt, fit
 
 
-def gaunt_tensor(n_quad=8000):
-    P = defocus.fibonacci_lattice(n_quad)
+def gaunt_tensor(n_z=24, n_phi=48):
+    """Exact spherical quadrature for the real-SH triple products: Gauss-
+    Legendre in z = cos(theta) (exact for polynomial degree <= 2*n_z-1 = 47)
+    times a uniform phi grid (exact for trigonometric degree <= n_phi-1 = 47).
+    Triple products of l <= 3 harmonics have degree <= 9, so the tensor is
+    exact to machine precision -- unlike the equal-weight Fibonacci lattice,
+    whose O(1/N) error floors near 1e-4."""
+    zs, wz = np.polynomial.legendre.leggauss(n_z)
+    phis = 2.0 * math.pi * np.arange(n_phi) / n_phi
+    Z, PH = np.meshgrid(zs, phis, indexing="ij")
+    R = np.sqrt(np.clip(1.0 - Z ** 2, 0.0, None))
+    P = np.stack([(R * np.cos(PH)).ravel(), (R * np.sin(PH)).ravel(), Z.ravel()], axis=1)
+    W = (np.tile(wz[:, None], (1, n_phi)) * (2.0 * math.pi / n_phi)).ravel()
     Phi = defocus.design_matrix(P)             # (N,16)
-    wq = 4.0 * math.pi / n_quad
-    ortho = wq * (Phi.T @ Phi)
+    ortho = (Phi * W[:, None]).T @ Phi
     ortho_err = float(np.max(np.abs(ortho - np.eye(defocus.N_BASIS))))
-    G = wq * np.einsum("ni,nj,nk->ijk", Phi, Phi, Phi)
+    G = np.einsum("n,ni,nj,nk->ijk", W, Phi, Phi, Phi)
     # sparsity check against triangle+parity on degrees
     deg = defocus.DEGREES
     max_forbidden, max_allowed = 0.0, 0.0
@@ -323,7 +333,8 @@ def stage4_gaunt(M, null_fits, fit_real, G, gq):
     dbc = 20.0 * math.log10(abs(best_S - mu) / sd) if sd > 0 and best_S != mu else None
     admitted = z > 6.0  # +15.6 dBc floor
     RESULTS["stage4_gaunt"] = {
-        "gaunt_quadrature": {"n_quad": 8000, "orthonormality_max_err": ortho_err,
+        "gaunt_quadrature": {"grid": "GL(24) x uniform(48), exact for deg<=9",
+                             "orthonormality_max_err": ortho_err,
                              "max_|G|_forbidden_triads": max_forb,
                              "max_|G|_allowed_triads": max_allow},
         "kappa_grid": kappas,
@@ -346,8 +357,8 @@ def stage4_gaunt(M, null_fits, fit_real, G, gq):
                      "in favour of Gaunt sparsity stands regardless (it is parsimony-side, "
                      "not data-side)." % z)),
     }
-    assert ortho_err < 0.02, "quadrature orthonormality sanity"
-    assert max_forb < 1e-6, "Gaunt sparsity: forbidden triads must vanish"
+    assert ortho_err < 1e-10, "quadrature orthonormality must be exact"
+    assert max_forb < 1e-10, "Gaunt sparsity: forbidden triads must vanish exactly"
     print(f"[stage4] ortho_err={ortho_err:.2e} forbidden|G|max={max_forb:.2e} | "
           f"S_real={best_S:.4f}@k={best_k} TG={best_TG:.2e} | null {mu:.4f}+-{sd:.4f} z={z:.2f}")
 
@@ -376,8 +387,6 @@ def spherical_2means(pts, rng, iters=25, restarts=5):
 
 
 def two_pop_stat(M, rng):
-    pts, _, _ = (*embed_and_fit(M),)[0:3] if False else (None, None, None)
-    # (explicit for clarity)
     pts, tgt = defocus.matrix_to_sphere(M.astype(float))
     k = M.sum(axis=1).astype(int)
     mask = k < D
@@ -446,7 +455,7 @@ def main():
     null_mats = [curveball(M, 20 * M.shape[0], rng) for _ in range(40)]
     null_fits = [embed_and_fit(Mn)[2] for Mn in null_mats]
 
-    print("[setup] building Gaunt tensor (N=8000 quadrature)...")
+    print("[setup] building Gaunt tensor (exact GL x uniform quadrature)...")
     G, ortho_err, max_forb, max_allow = gaunt_tensor()
     stage4_gaunt(M, null_fits, fit_real, G, (ortho_err, max_forb, max_allow))
 
