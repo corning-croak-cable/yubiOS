@@ -1120,5 +1120,166 @@ theorem heat_exp_dominates_hamming (l : Nat) (h : 1 ≤ l) : l < heatExp l := by
 /-- At l = 0 the two spectra agree exactly: the shared zero mode. -/
 theorem heat_exp_zero_mode : heatExp 0 = 0 := by decide
 
+/-! ### 15. Harness algebra: the envharness contracts, kernel-checked
+
+google-research/envharness (arXiv:2608.19880) builds agent evaluation on a
+wrapper algebra: EnvHarness IS-A ActionableEnv wrapping an inner
+ActionableEnv, so harnesses stack arbitrarily; the Rules harness applies
+A/T/O hooks per step, where a Blocked action must leave the environment
+unchanged and emit zero reward; BudgetPolicy decides when the mutation
+search loop halts; DifficultyZone scores a success-rate window against a
+target band. Audit: refs/envharness-lean-replacement-audit-2026-09-01.md.
+
+Every one of those load-bearing contracts is stated in prose or implied
+by construction in the Python source, and none is machine-checked there.
+This section checks the identity-type layer, in the same discipline as
+sections 1-14: the algebra is proved, the execution stays outside.
+
+  - hcomp_* -- the stacking algebra (core/envharness.py): the identity
+    harness is a two-sided neutral element and composition is
+    associative, on both the action path (outer filters first; Blocked
+    short-circuits) and the observation path (inner transforms first).
+    These are the laws that make "harnesses stack arbitrarily" true.
+  - blocked_is_noop -- the Blocked contract (harnesses/rules.py step):
+    a rejected action is a state no-op with zero reward. In rules.py
+    this holds by construction of one code path; here it is a theorem
+    over every environment transition function.
+  - *_halts -- termination of all three BudgetPolicy implementations
+    (orchestration/budget.py): each stops at its cap, and ACCEPT stops
+    the capped policies immediately. The search loop provably cannot
+    run away.
+  - dz_band_iff -- the DifficultyZone band test in exact integer
+    arithmetic (orchestration/objectives.py): sr in [lo, hi] iff the
+    doubled center-distance is within the band width. The float
+    formula max(0, 1 - |sr-c|/h) is measurement-side; the band
+    membership it encodes is exact.
+  - weights_round_gap -- a genuine gap the formalization surfaces:
+    _weights_from_failure_axes emits round(v/s, 3) weights, and fixed-
+    precision weights need not sum to unity. Concrete kernel-checked
+    instance: axis counts (0,0,0,0,1) give exact inverse weights
+    (2,2,2,2,1)/9, whose per-mille floors sum to 999, not 1000. The
+    exact numerators sum to the common denominator; every fixed-
+    precision emission needs a remainder-distribution rule.
+
+What is NOT claimed: no theorem here executes an environment, compiles
+LLM-emitted hook code (core/code_loader.py -- an exec of model-written
+Python, a trust surface this program would gate, not prove), or elevates
+any benchmark score. The statistics layer is covered elsewhere: an
+envharness ObjectiveSignal built on raw window means has no matched
+null; sections 8-12 (fibre preservation, reversibility, uniqueness,
+MP moments, level laws) are the drop-in replacement for that layer,
+executed by verify_claims.py and the curveball instruments. -/
+
+/-- A harness at the algebra level: an action filter (none = Blocked)
+    and an observation transform. rules.py's modify_transition folds
+    into fO for this model's purposes (both are post-step transforms). -/
+structure HarnessM where
+  fA : Int → Option Int
+  fO : Int → Int
+
+/-- The all-defaults EnvHarness: pass-through on both paths. -/
+def idHarness : HarnessM := ⟨fun a => some a, fun o => o⟩
+
+/-- Stack `outer` over `inner`: the agent's action meets the outer
+    filter first (a Block short-circuits the whole stack); the raw
+    observation meets the inner transform first. -/
+def hcomp (outer inner : HarnessM) : HarnessM :=
+  ⟨fun a => match outer.fA a with
+    | none => none
+    | some a' => inner.fA a',
+   fun o => outer.fO (inner.fO o)⟩
+
+theorem hcomp_id_left_A (h : HarnessM) (a : Int) :
+    (hcomp idHarness h).fA a = h.fA a := rfl
+
+theorem hcomp_id_right_A (h : HarnessM) (a : Int) :
+    (hcomp h idHarness).fA a = h.fA a := by
+  cases hfa : h.fA a <;> simp [hcomp, hfa]
+
+theorem hcomp_id_left_O (h : HarnessM) (o : Int) :
+    (hcomp idHarness h).fO o = h.fO o := rfl
+
+theorem hcomp_id_right_O (h : HarnessM) (o : Int) :
+    (hcomp h idHarness).fO o = h.fO o := rfl
+
+/-- Stacking is associative on the action path. -/
+theorem hcomp_assoc_A (f g h : HarnessM) (a : Int) :
+    (hcomp (hcomp f g) h).fA a = (hcomp f (hcomp g h)).fA a := by
+  cases hf : f.fA a with
+  | none => simp [hcomp, hf]
+  | some a' => cases hg : g.fA a' <;> simp [hcomp, hf, hg]
+
+/-- Stacking is associative on the observation path. -/
+theorem hcomp_assoc_O (f g h : HarnessM) (o : Int) :
+    (hcomp (hcomp f g) h).fO o = (hcomp f (hcomp g h)).fO o := rfl
+
+/-- One Rules.step at the algebra level: envStep is the inner
+    environment's transition (state, action) -> (state', reward). -/
+def stepH (h : HarnessM) (envStep : Int → Int → Int × Int)
+    (s a : Int) : Int × Int :=
+  match h.fA a with
+  | none => (s, 0)
+  | some a' => envStep s a'
+
+/-- The Blocked contract: a rejected action leaves the state unchanged
+    and emits zero reward, for EVERY environment transition. -/
+theorem blocked_is_noop (h : HarnessM) (envStep : Int → Int → Int × Int)
+    (s a : Int) (hb : h.fA a = none) :
+    stepH h envStep s a = (s, 0) := by
+  simp [stepH, hb]
+
+/-- A pass-through harness never alters the environment's transition. -/
+theorem passthrough_step (envStep : Int → Int → Int × Int) (s a : Int) :
+    stepH idHarness envStep s a = envStep s a := rfl
+
+/-- BudgetPolicy stop rules (orchestration/budget.py). -/
+def fixedStop (k attempts : Nat) : Bool := decide (k ≤ attempts)
+
+def cappedStop (maxK attempts : Nat) (accepted : Bool) : Bool :=
+  accepted || decide (maxK ≤ attempts)
+
+def objStop (maxK attempts : Nat) (accepted scoreOK : Bool) : Bool :=
+  decide (maxK ≤ attempts) || accepted || scoreOK
+
+/-- FixedBudget halts at its cap. -/
+theorem fixed_halts (k a : Nat) (h : k ≤ a) : fixedStop k a = true := by
+  simpa [fixedStop] using h
+
+/-- CappedAdaptive halts at its cap regardless of the LLM's decision. -/
+theorem capped_halts (maxK a : Nat) (acc : Bool) (h : maxK ≤ a) :
+    cappedStop maxK a acc = true := by
+  cases acc with
+  | true => rfl
+  | false => simpa [cappedStop] using h
+
+/-- CappedAdaptive halts immediately on ACCEPT. -/
+theorem capped_accept_halts (maxK a : Nat) :
+    cappedStop maxK a true = true := rfl
+
+/-- ObjectiveDriven halts at its cap regardless of decision and score. -/
+theorem obj_halts (maxK a : Nat) (acc ok : Bool) (h : maxK ≤ a) :
+    objStop maxK a acc ok = true := by
+  have hd : decide (maxK ≤ a) = true := by simpa using h
+  simp [objStop, hd]
+
+/-- DifficultyZone band membership in exact integer arithmetic (all
+    quantities in any common fixed-point scale): sr lies in [lo, hi]
+    iff the doubled center-distance 2*sr - (lo+hi) is within the band
+    width hi - lo on both sides. -/
+theorem dz_band_iff (lo hi sr : Int) :
+    (lo ≤ sr ∧ sr ≤ hi) ↔
+    (-(hi - lo) ≤ 2 * sr - (lo + hi) ∧ 2 * sr - (lo + hi) ≤ hi - lo) := by
+  omega
+
+/-- The rounding-normalization gap in _weights_from_failure_axes:
+    fixed-precision weights need not sum to unity. Axis counts
+    (0,0,0,0,1) give exact inverse weights (2,2,2,2,1)/9; the per-mille
+    floors sum to 999, not 1000. -/
+theorem weights_round_gap : 4 * (2000 / 9) + 1000 / 9 = 999 := by decide
+
+/-- The exact-arithmetic weights are exactly normalized: the numerators
+    sum to the common denominator. -/
+theorem weights_exact_sum : 2 + 2 + 2 + 2 + 1 = 9 := by decide
+
 
 end CurvedCorpus
