@@ -1,0 +1,138 @@
+{
+ "stage1_omega_audit": {
+  "admitted_set_all_invariant": true,
+  "invariant": {
+   "atomicity_A_l": false,
+   "gapD_J_L3_share": true,
+   "high_degree_mass(l=3)": true,
+   "low_l_mass_rho(l<=2)": true,
+   "parseval_share_per_degree": true,
+   "total_energy_E_tot": false
+  },
+  "max_change_under_omega_rescale": {
+   "atomicity_A_l": 0.2591817793182821,
+   "gapD_J_L3_share": 2.7755575615628914e-17,
+   "high_degree_mass(l=3)": 2.7755575615628914e-17,
+   "low_l_mass_rho(l<=2)": 0.0,
+   "parseval_share_per_degree": 2.7755575615628914e-17,
+   "total_energy_E_tot": 0.2591817793182821
+  },
+  "omega_sensitive_observables": [
+   "atomicity_A_l",
+   "total_energy_E_tot"
+  ],
+  "verdict": "omega VOID (unidentifiable): every admitted spectrum statistic is a ratio/share and invariant under E -> e^{-omega t}E. The only omega-sensitive observables are atomicity A_l (admission FAILED 2026-08-22, z=+1.59 < 3) and unnormalized total energy (not admitted). Resurrecting omega requires first admitting an unnormalized observable behind its own curveball null."
+ },
+ "stage2_fd_residual": {
+  "compass_side": {
+   "eps_linear_fit": -0.101320606060606,
+   "phi_ladder_source": "loaded from /home/runner/work/yubiOS/yubiOS/tools/boltzmann-collapse/../../papers/is-this-x-2026-08-12-Final.zip!is-this",
+   "phi_minus_linear_residual": [
+    -0.07187272727272642,
+    0.0052478787878795785,
+    0.038768484848485496,
+    0.04118909090909151,
+    0.026709696969697605,
+    0.007430303030303564,
+    -0.008749090909090373,
+    -0.017228484848484493,
+    -0.016207878787878327,
+    -0.005287272727272363
+   ],
+   "tv_distance_piT_measured_vs_FD_binomial_by_T": {
+    "0.02": 0.036411136728335,
+    "0.0368": 0.07435783338206801,
+    "0.038304": 0.07206956707603526,
+    "0.041143": 0.0670807781022231,
+    "0.05": 0.05253041395729474,
+    "0.1": 0.04204481267612868
+   },
+   "verdict": "designed-chain descriptive readout: the TV(T) profile measures interaction beyond the ideal two-state (FD) gas on the compass. No corpus claim; no admission possible (see corpus_side)."
+  },
+  "corpus_side": {
+   "curveball_preserves_k_histogram_exactly": true,
+   "k_histogram": [
+    204,
+    317,
+    227,
+    124,
+    92,
+    110,
+    103,
+    127,
+    187,
+    795
+   ],
+   "verdict": "FD-residual on the corpus k-histogram: EXCLUDED BY CONSTRUCTION -- margin-determined, deflection == 0, dBc -> -inf. Recorded, not fitted."
+  }
+ },
+ "stage3_units": {
+  "T": 0.05,
+  "conversion_c_defocus_per_sweep_CONVENTION": 0.32768085082290227,
+  "detailed_balance_max_flux_err": 4.163336342344337e-17,
+  "fcs_gate_pass": false,
+  "fcs_gate_ratio_tauT_over_tauD": 7.190628590457767,
+  "fcs_gate_requires": "<< 1 (we use < 0.1)",
+  "kernel_spectral_gap_per_step": 0.1456359336990677,
+  "l_star": 1,
+  "tau_int_published_sweeps": 5.486,
+  "tau_l_star_defocus_units": 0.25,
+  "tau_rel_steps": 6.866437249383335,
+  "tau_rel_sweeps": 0.7629374721537039,
+  "verdict": "FCS gate FAILS: the coverage-coordinate relaxation and the defocus relaxation are the same order under the ell*-matching convention -- the two-channel FCS factorization moves not-tested -> NOT-IDENTIFIABLE at T=0.05. The tie is a stated convention (relaxation matching), not a theorem."
+ },
+ "stage4_gaunt": {
+  "E_tot_monotone_real": true,
+  "S_real_selected": 0.0,
+  "dBc": -7.440478368641331,
+  "detectability_floor_dBc": 15.6,
+  "gaunt_quadrature": {
+   "grid": "GL(24) x uniform(48), exact for deg<=9",
+   "max_|G|_allowed_triads": 0.2820947917738811,
+   "max_|G|_forbidden_triads": 8.578207588705311e-16,
+   "orthonormality_max_err": 6.217248937900877e-15
+  },
+  "kappa_grid": [
+   0.5,
+   1.0,
+   2.0
+  ],
+  "null_S_mean": 0.0005591512964019552,
+  "null_S_sd": 0.0013169013855071653,
+  "null_n": 40,
+  "per_kappa_real": {
+   "0.5": {
+    "E_tot_monotone": true,
+    "S_low_share_gain": 0.0,
+    "TG_transient_growth": 0.14649571348763368
+   },
+   "1.0": {
+    "E_tot_monotone": true,
+    "S_low_share_gain": 0.0,
+    "TG_transient_growth": 0.3304972845926444
+   },
+   "2.0": {
+    "E_tot_monotone": false,
+    "S_low_share_gain": 0.0,
+    "TG_transient_growth": 0.8780116194463032
+   }
+  },
+  "selected_kappa": 0.5,
+  "transient_growth_real_at_selected": 0.14649571348763368,
+  "verdict": "kappa does NOT clear the floor (z=-0.42 <= 6): recorded NEGATIVE -- the Gaunt-coupled low-share gain is not corpus-specific at L=3 with this budget. The structural exclusion of the generic k_ISC matrix in favour of Gaunt sparsity stands regardless (it is parsimony-side, not data-side).",
+  "z_matched_selection": -0.42459617899681584
+ },
+ "stage5_two_pop": {
+  "G_real": 0.42364550205499607,
+  "cluster_balance": 0.34004024144869216,
+  "dBc": 13.758487465386564,
+  "margin_leakage_flag(acc>0.85)": true,
+  "margin_only_classifier_accuracy": 0.9865861837692823,
+  "null_G_mean": 0.43595278914279617,
+  "null_G_sd": 0.002524863813731203,
+  "null_n": 40,
+  "rows_k_lt_9": 1491,
+  "verdict": "recorded outcome: z=-4.87, margin-classifier acc=0.99 -- assignment leaks margin information. The two-population extension stays not-tested pending a margin-clean assignment rule.",
+  "z": -4.874436007545528
+ }
+}

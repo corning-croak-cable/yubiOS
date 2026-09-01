@@ -188,3 +188,56 @@ at zero cost and hands back a parameter-free residual readout of the Φ ladder.
 5. Reconcile compass sweep-step units with defocus time units (carried over
    from the photophysics bridge — still the cheap prerequisite to every
    FCS-flavoured claim).
+
+---
+
+## 6. Results (2026-09-01, executed on CI)
+
+All five follow-ups executed by [`papers/scripts/phonon_followups.py`](../papers/scripts/phonon_followups.py)
+(workflow `phonon-followups.yml`, run [33562751184](https://github.com/yubi-OS/yubiOS/actions/runs/33562751184),
+green; full numbers in [`papers/data/phonons/followups-2026-09-01.json`](../papers/data/phonons/followups-2026-09-01.json)).
+Four of five land as disciplined negatives; the discipline is the result.
+
+1. **Pennes-omega audit: VOID confirmed.** Every admitted spectrum statistic
+   (Parseval shares, low-l mass, high-degree mass, gapD J) is exactly invariant
+   under `E -> e^{-omega t}E`. The only omega-sensitive observables are
+   atomicity A_l (whose admission already FAILED 2026-08-22, z=+1.59) and
+   unnormalized total energy (not admitted). Item 6 of the ranked table closes:
+   omega stays void until an unnormalized observable is admitted behind its
+   own null.
+2. **FD-residual: corpus-side EXCLUDED BY CONSTRUCTION, verified** -- 5
+   curveball draws reproduce the k-histogram exactly (margin-determined,
+   deflection == 0). Compass-side (designed-chain descriptive): linear-Phi fit
+   eps = -0.1013; TV(pi_T measured vs FD/Binomial) = 0.0525 at T = 0.05,
+   peaking near T_x. The FD/Binomial identity itself verified to 1e-10 inside
+   the run.
+3. **Unit reconciliation: done, and the FCS gate FAILS.** Collapsed shell-kernel
+   at T = 0.05: detailed balance exact, spectral gap 0.1456/step,
+   tau_rel = 0.763 sweeps. Under the ell*-matching convention (ell* = 2) the
+   gate ratio tau_T/tau_D = tau_int/tau_rel = 7.19 >> 1. The two-channel FCS
+   factorization moves from not-tested to **NOT-IDENTIFIABLE at T = 0.05**:
+   the dark-state coordinate relaxes 7x SLOWER than the chain's own spectral
+   relaxation, the opposite of what the triplet factorization needs. Every
+   FCS-flavoured claim in the photophysics bridge inherits this.
+4. **Gaunt-coupled defocus: recorded NEGATIVE at L = 3.** Exact Gaunt tensor
+   (GL(24) x uniform(48) quadrature; orthonormality 6e-15; forbidden triads
+   9e-16 -- the triangle+parity sparsity holds to machine precision). Matched
+   kappa-selection over {0.5, 1, 2} against 40 curveball draws (20N trades):
+   S_real = 0.000, z = -0.42, far below the +15.6 dBc floor. The coupling's
+   transient growth is mechanically real (max E_tot 14.6% above the diagonal
+   flow -- the non-normal prediction the diagonal model forbids) but it is
+   NOT corpus-specific. The parsimony-side exclusion of the generic k_ISC
+   matrix in favour of Gaunt structure stands; the data-side extension does
+   not earn an ablation at this truncation and budget.
+5. **Two-population split: stays NOT-TESTED -- the margin trap fired.** The
+   margin-only-classifier baseline predicts the spherical 2-means assignment
+   from k alone at 98.7% accuracy: the S^2 embedding's cluster structure IS
+   margin information (PC1 tracks coverage), so the statistic never had a
+   clean null (z = -4.87, moot). A margin-clean assignment rule (residual
+   pattern after projecting out k) is the prerequisite, exactly as warning 2
+   predicted.
+
+Net: the phonon bridge's two identities (sum rule, FD/Binomial) survive
+execution; the three extensions (omega, kappa, two-population) are now
+recorded negatives or blocked-by-construction rather than open proposals.
+No new parameter enters the program.
