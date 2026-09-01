@@ -241,3 +241,29 @@ Net: the phonon bridge's two identities (sum rule, FD/Binomial) survive
 execution; the three extensions (omega, kappa, two-population) are now
 recorded negatives or blocked-by-construction rather than open proposals.
 No new parameter enters the program.
+
+### 6.1 Stage 5b (2026-09-01, same day): the margin-clean rule -- two-population EXCLUDED, with a significant anti-signal
+
+Run [33563556110](https://github.com/yubi-OS/yubiOS/actions/runs/33563556110): projecting
+centered-k out of the z-scored columns before the PCA/stereographic embed drops the
+margin-only-classifier accuracy from 98.7% to 72.1% -- the assignment is margin-clean.
+On the clean statistic the real corpus sits at G = 0.4904 vs null 0.5344 +/- 0.0055:
+**z = -7.97** (|z| corresponds to +18.0 dBc, above the +15.6 dBc floor in magnitude,
+negative in sign). The real corpus is significantly LESS two-population-clustered than
+its own fixed-margin medium.
+
+Verdicts:
+- Two-sublattice (diatomic gap) extension: **EXCLUDED** -- there is no pattern-defined
+  two-population structure beyond fixed margins to hang a second branch on.
+- The anti-signal itself: **not-excluded as a new one-population homogeneity readout** --
+  the corpus's k<9 pattern structure is more homogeneous than margins predict, which
+  independently corroborates the bridge's "one scalar field, one branch, no optical
+  mode" verdict (items 5/8 of the ranked table) with a deflection rather than an
+  absence. If this readout is ever wanted as an admitted statistic it needs
+  pre-registration and its own matched-parameter accounting; it is recorded here as
+  a finding of the exclusion test, not admitted.
+
+This closes the last open verdict of the phonon bridge: all three proposed extensions
+(omega, kappa, two-population) are now excluded/void on the recorded evidence, both
+identities stand, and the exclusion machinery itself produced one new corroborating
+deflection.
