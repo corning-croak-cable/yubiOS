@@ -1016,7 +1016,7 @@ theorem sumOver_zero_fn (S : List Nat) : sumOver (fun _ => (0 : Int)) S = 0 := b
   | nil => rfl
   | cons x xs ih =>
       show (0 : Int) + sumOver (fun _ => (0 : Int)) xs = 0
-      rw [ih]
+      rw [ih, Int.add_zero]
 
 /-- Acoustic sum rule = Markov mass conservation: a weighted Laplacian
     row w_j * (u_i - u_j) applied to a constant field u = c vanishes,
@@ -1060,9 +1060,14 @@ theorem gap_open_of_ne (a b : Int) (h : a ≠ b) : 0 < (a - b) * (a - b) := by
 theorem gap_closes_iff (a b : Int) : (a - b) * (a - b) = 0 ↔ a = b := by
   constructor
   · intro h
-    by_contra hne
-    have hpos := gap_open_of_ne a b hne
-    omega
+    rcases Int.lt_trichotomy a b with hlt | heq | hgt
+    · have hne : a ≠ b := by omega
+      have hpos := gap_open_of_ne a b hne
+      omega
+    · exact heq
+    · have hne : a ≠ b := by omega
+      have hpos := gap_open_of_ne a b hne
+      omega
   · intro h
     rw [h, Int.sub_self, Int.mul_zero]
 
