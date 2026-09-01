@@ -953,5 +953,172 @@ theorem zernikeR_degrees :
 theorem zernikeR20_as_pAdd_pMul :
     zernikeR 2 0 = pAdd [-1] (pMul [0, 1] [0, 2]) := by decide
 
+/-! ### 14. Phonon identities: sum rule, diatomic gap, Gaunt selection rules
+
+The acoustic/optical phonon reading of the program
+(refs/acoustic-optical-phonons-bridge-2026-09-01.md; instrument
+tools/phonon-dispersion). Verdicts live in the refs doc; what lands here
+is only the identity-type algebra behind them, in the file's exclusion
+discipline:
+
+  - acoustic_sum_rule -- the acoustic sum rule IS the Markov mass-
+    conservation constraint: a graph-Laplacian row applied to a constant
+    field vanishes term by term, which is why the l = 0 mode has
+    eigenvalue 0 and the forward defocus terminates at uniform. This is
+    the one phonon/program identity with no free parameter (the mapping
+    report's item 1a). The Goldstone reading of the same fact is
+    EXCLUDED (no spontaneous symmetry breaking, no gapless continuum on
+    a compact S^2); only the constraint-structure identity is admitted.
+  - diatomic_disc / gap_closes_iff / gap_open_of_ne -- the zone-boundary
+    algebra of the 1-D diatomic chain: the dispersion discriminant at
+    the zone edge collapses to a perfect square, (a+b)^2 - 4ab = (a-b)^2
+    (a, b standing for the inverse masses 1/m1, 1/m2 in any common
+    units), so the two branches split by exactly |a - b| there; the band
+    gap is open iff the masses differ and closes iff they are equal.
+    Two populations per cell is what an optical branch costs -- the
+    program's single scalar field on S^2 has no optical branch, and the
+    delayed/prompt low-l/high-l split is a cut on ONE branch, not a
+    second branch.
+  - klemens_condition -- the energy side of the Klemens channel
+    (optical -> 2 acoustic, Phys. Rev. 148, 845) on the diatomic chain:
+    with u, v the inverse masses (u = 1/m_light >= v = 1/m_heavy), the
+    zone-center optical quantum fits two zone-boundary acoustic quanta
+    iff 2C(u+v) <= 4(2Cv), i.e. iff u <= 3v -- the mass ratio must not
+    exceed 3. The C cancels; the threshold is exact integer arithmetic.
+  - gaunt counts -- the momentum-conservation side of Klemens on S^2:
+    cubic anharmonicity couples degrees only through Gaunt coefficients,
+    which vanish unless the triangle rule |l1-l2| <= l3 <= l1+l2 and
+    even parity l1+l2+l3 hold (the rotational analogue of
+    q1 + q2 + q3 = 0). This is the structure that replaces the generic
+    off-diagonal k_ISC matrix (O(L^2) free entries) with ONE amplitude:
+    the sparsity pattern is derived, not fitted. The counts at the
+    program's truncation L = 3 are kernel-checked below: of 64 triads,
+    34 pass the triangle rule and 23 survive parity -- 41/64 forbidden,
+    so the selection-rule structure is NOT vacuous at L = 3 (parity does
+    the heavier culling: 30 of 64 by triangle, a further 11 by parity).
+  - heat_exp_dominates_hamming -- the level-penalty comparison between
+    the two harmonic homes of a {0,1}^d corpus: on the Hamming graph
+    H(d,2) the Laplacian eigenvalue is linear in the level (2j at
+    Hamming weight j); on S^2 it is quadratic (2l(l+1) at degree l).
+    Beyond the shared zero mode the sphere penalizes level strictly
+    faster: l < l(l+1) for every l >= 1, with equality only at l = 0.
+
+What stays measurement-side, never elevated here: any fitted branch
+structure on the real corpus, the Fermi-Dirac/Binomial identity for the
+compass stationary law at linear Phi (real-valued; checked numerically
+by tools/phonon-dispersion --selftest), any Gaunt-coupled defocus fit
+and its curveball admission null, and every statement about pi_T or T_x
+(designed-chain wall). -/
+
+/-- sumOver of the zero function vanishes. -/
+theorem sumOver_zero_fn (S : List Nat) : sumOver (fun _ => (0 : Int)) S = 0 := by
+  induction S with
+  | nil => rfl
+  | cons x xs ih =>
+      show (0 : Int) + sumOver (fun _ => (0 : Int)) xs = 0
+      rw [ih, Int.add_zero]
+
+/-- Acoustic sum rule = Markov mass conservation: a weighted Laplacian
+    row w_j * (u_i - u_j) applied to a constant field u = c vanishes,
+    for any weights and any neighbor enumeration. The l = 0 zero mode
+    of the defocus operator is this constraint, not a Goldstone mode. -/
+theorem acoustic_sum_rule (w : Nat → Int) (c : Int) (S : List Nat) :
+    sumOver (fun j => w j * (c - c)) S = 0 := by
+  have h : ∀ x, w x * (c - c) = (fun _ => (0 : Int)) x := by
+    intro x
+    show w x * (c - c) = 0
+    rw [Int.sub_self, Int.mul_zero]
+  rw [sumOver_congr (fun j => w j * (c - c)) (fun _ => (0 : Int)) S h,
+      sumOver_zero_fn]
+
+/-- Zone-boundary discriminant of the 1-D diatomic chain: with a, b the
+    inverse masses, (a+b)^2 - 4ab collapses to the perfect square
+    (a-b)^2 -- the algebra that opens the band gap. -/
+theorem diatomic_disc (a b : Int) :
+    (a + b) * (a + b) - 4 * (a * b) = (a - b) * (a - b) := by
+  have h1 : (a + b) * (a + b) = a * a + a * b + (a * b + b * b) := by
+    rw [Int.add_mul, Int.mul_add, Int.mul_add, Int.mul_comm b a]
+  have h2 : (a - b) * (a - b) = a * a - a * b - (a * b - b * b) := by
+    rw [Int.sub_mul, Int.mul_sub, Int.mul_sub, Int.mul_comm b a]
+  rw [h1, h2]
+  generalize a * a = x
+  generalize a * b = y
+  generalize b * b = z
+  omega
+
+/-- Mass contrast opens a strictly positive squared gap. -/
+theorem gap_open_of_ne (a b : Int) (h : a ≠ b) : 0 < (a - b) * (a - b) := by
+  have hd : a - b ≠ 0 := by omega
+  rcases Int.lt_trichotomy (a - b) 0 with hneg | hzero | hpos
+  · have hpos' : 0 < -(a - b) := by omega
+    have hmul := Int.mul_pos hpos' hpos'
+    rwa [Int.neg_mul_neg] at hmul
+  · exact absurd hzero hd
+  · exact Int.mul_pos hpos hpos
+
+/-- The band gap closes iff the two masses are equal. -/
+theorem gap_closes_iff (a b : Int) : (a - b) * (a - b) = 0 ↔ a = b := by
+  constructor
+  · intro h
+    rcases Int.lt_trichotomy a b with hlt | heq | hgt
+    · have hne : a ≠ b := by omega
+      have hpos := gap_open_of_ne a b hne
+      omega
+    · exact heq
+    · have hne : a ≠ b := by omega
+      have hpos := gap_open_of_ne a b hne
+      omega
+  · intro h
+    rw [h, Int.sub_self, Int.mul_zero]
+
+/-- Klemens energy condition on the diatomic chain: with u >= v > 0 the
+    inverse masses, the zone-center optical quantum 2C(u+v) fits two
+    zone-boundary acoustic quanta 2 * sqrt(2Cv) -- squared: <= 4(2Cv) --
+    iff the mass ratio u/v is at most 3. C cancels exactly. -/
+theorem klemens_condition (u v : Nat) : u + v ≤ 4 * v ↔ u ≤ 3 * v := by
+  omega
+
+/-- Zonal Gaunt admissibility: triangle rule + even parity. The Gaunt
+    coefficient of (l1, l2, l3) vanishes unless this holds -- the S^2
+    analogue of phonon momentum conservation q1 + q2 + q3 = 0. -/
+def gauntTriangle (l1 l2 l3 : Nat) : Bool :=
+  decide (l3 ≤ l1 + l2) && decide (l1 ≤ l2 + l3) && decide (l2 ≤ l1 + l3)
+
+def gauntAllowed (l1 l2 l3 : Nat) : Bool :=
+  gauntTriangle l1 l2 l3 && ((l1 + l2 + l3) % 2 == 0)
+
+/-- Count triads (l1, l2, l3) with all l_i <= L passing a predicate. -/
+def triadCount (p : Nat → Nat → Nat → Bool) (L : Nat) : Nat :=
+  ((List.range (L + 1)).map (fun l1 =>
+    ((List.range (L + 1)).map (fun l2 =>
+      ((List.range (L + 1)).filter (fun l3 => p l1 l2 l3)).length)).foldl
+        (· + ·) 0)).foldl (· + ·) 0
+
+/-- At the program's truncation L = 3: 64 triads, 34 pass the triangle
+    rule, 23 survive parity as well -- 41/64 forbidden. The selection
+    structure is not vacuous at L = 3, and parity does the heavier
+    culling. Kernel-checked enumeration; cross-checked against the exact
+    Wigner 3j(0,0,0) zero pattern and the Simpson triple-Legendre
+    integral in tools/phonon-dispersion --selftest. -/
+theorem gaunt_triangle_count_L3 : triadCount gauntTriangle 3 = 34 := by decide
+
+theorem gaunt_allowed_count_L3 : triadCount gauntAllowed 3 = 23 := by decide
+
+theorem gaunt_forbidden_L3 :
+    4 * 4 * 4 - triadCount gauntAllowed 3 = 41 := by decide
+
+/-- Level penalty: beyond the shared zero mode, the S^2 eigenvalue
+    l(l+1) dominates the Hamming level l strictly, for every l >= 1.
+    (Multiplying both by 2 gives the energy-decay rates 2l(l+1) vs 2l.) -/
+theorem heat_exp_dominates_hamming (l : Nat) (h : 1 ≤ l) : l < heatExp l := by
+  show l < l * (l + 1)
+  have hp : 0 < l * l := Nat.mul_pos h h
+  calc l = 0 + l := (Nat.zero_add l).symm
+    _ < l * l + l := Nat.add_lt_add_right hp l
+    _ = l * (l + 1) := by rw [Nat.mul_add, Nat.mul_one]
+
+/-- At l = 0 the two spectra agree exactly: the shared zero mode. -/
+theorem heat_exp_zero_mode : heatExp 0 = 0 := by decide
+
 
 end CurvedCorpus
