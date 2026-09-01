@@ -1194,7 +1194,7 @@ theorem hcomp_id_left_A (h : HarnessM) (a : Int) :
 
 theorem hcomp_id_right_A (h : HarnessM) (a : Int) :
     (hcomp h idHarness).fA a = h.fA a := by
-  cases hfa : h.fA a <;> simp [hcomp, hfa]
+  cases hfa : h.fA a <;> simp [hcomp, idHarness, hfa]
 
 theorem hcomp_id_left_O (h : HarnessM) (o : Int) :
     (hcomp idHarness h).fO o = h.fO o := rfl
