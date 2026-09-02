@@ -17,8 +17,13 @@ L4d -- fido2-secure-boot
   parameters:  {axis: adjacent_problems, total: 18/20}
   delta:       {adj_gaps_before: 5, adj_gaps_after: 1, dim_closed: 4, family_named: true,
                 alternatives_count: 4}
-  verdict:     YES
+  verdict:     YES (measured 2026-09-02, FIT #11 vs FIT #10, same basis)
   score:       44
+  measured:    {pole_shift_geodesic: 0.2807 rad (predicted 0.1892), occupied: 24 -> 25 (+1, as
+               predicted), isolated: 8 -> 8 (predicted +1; five co-located docs are not
+               isolated from each other), holdout_r2: 0.9986 -> 0.9977 (-0.0009, predicted
+               -0.0024), holes_on_curve: 15 -> 14, cell_hit: z0/phi3 at [0.4169, -0.2122,
+               -0.8838] for all five files, PR #227}
   caveat:      hardware-leg evidence is the rock1 run 30697269619 (Issue #20 closed
                2026-08-01); ARM64 Path A on a burned RK3588 is still Backlog (OMN-141)
 ```
