@@ -1,37 +1,3 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>point-map · Steady Orbit SOS</title>
-<style>
-:root{--bg:#0B1026;--fg:#d6dde6;--dim:#7d8894;--ok:#3cf7a5;--bad:#ff5d6c;--acc:#DB46F5;--line:#1e2440}
-body{margin:0;background:var(--bg);color:var(--fg);font:13px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace}
-header{padding:12px 18px;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:center;flex-wrap:wrap}
-h1{font-size:15px;margin:0;color:#fff}h1 span{color:var(--acc)}
-main{display:grid;grid-template-columns:520px 1fr}@media(max-width:1000px){main{grid-template-columns:1fr}}
-#left{padding:14px 18px;border-right:1px solid var(--line)}#right{padding:14px 18px;display:grid;grid-template-columns:1fr 1fr;gap:14px;align-content:start}@media(max-width:1300px){#right{grid-template-columns:1fr}}
-canvas{background:#05080f;border:1px solid var(--line);border-radius:6px;display:block;max-width:100%}
-.card{border:1px solid var(--line);border-radius:6px;padding:10px 12px}.card h2{font-size:12px;margin:0 0 6px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em}
-table{border-collapse:collapse;width:100%}td,th{padding:2px 6px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--dim);font-weight:normal}
-.ok{color:var(--ok)}.bad{color:var(--bad)}.dim{color:var(--dim)}.wall{border-left:3px solid var(--acc);padding:6px 10px;color:var(--dim);margin-top:8px}
-button,select,input,textarea{background:#10162b;color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:4px 8px;font:inherit}button{cursor:pointer}button.primary{border-color:var(--acc);color:#fff}
-.kv{display:grid;grid-template-columns:auto 1fr;gap:2px 10px}textarea{width:100%;min-height:90px;margin-top:8px;box-sizing:border-box}
-</style></head><body>
-<header><h1>point-map <span>/</span> proof-carrying map for unlabeled latent space</h1>
-<select id="src"><option value="synthetic">synthetic cloud (client)</option><option value="vectors">paste vectors JSON (client)</option><option value="texts">texts → server embed + map (/api/map)</option></select>
-<label>N <input id="N" type="number" value="240" style="width:64px"></label><label>D <input id="D" type="number" value="32" style="width:64px"></label><label>d <input id="d" type="number" value="9" style="width:48px"></label><label>seed <input id="seed" type="number" value="20260906" style="width:96px"></label><label>T <input id="T" type="number" step="0.005" value="0.05" style="width:64px"></label><label>K <input id="K" type="number" value="100" style="width:64px"></label>
-<button id="run" class="primary">run</button><span id="status" class="dim"></span><span class="dim" style="margin-left:auto">tools/point-map · yubi-OS/yubiOS</span></header>
-<main><div id="left"><canvas id="sphere" width="484" height="484"></canvas>
-<textarea id="input" placeholder="vectors: [[...],[...]]  ·  texts: one item per line" style="display:none"></textarea>
-<div class="wall" id="rule"></div>
-<div class="wall">Wall: every compass/null number is a property of a <b>designed</b> chain on a <b>measured</b> ladder under a <b>stated</b> binarization rule, not of the cloud itself. Identity certificates must all pass (a red one is a code defect). Measurement certificates may fail; a failure is a finding. Exclusion-only language. Spec: yubi-OS/yubiOS <code>refs/point-to-point-latent-map-2026-09-06.md</code>.</div></div>
-<div id="right">
-<div class="card"><h2>identity layer (D6)</h2><div id="ident" class="kv"></div></div>
-<div class="card"><h2>placement + Φ ladder</h2><div id="place" class="kv"></div></div>
-<div class="card"><h2>null: curveball fibre (Lean §8–10)</h2><div id="null" class="kv"></div></div>
-<div class="card"><h2>compass: Metropolis on F_T (Lean §7)</h2><div id="compass" class="kv"></div></div>
-<div class="card"><h2>bridges + defocus (Lean §6)</h2><div id="bridge" class="kv"></div></div>
-<div class="card"><h2>result</h2><div id="meta" class="kv"></div><button id="dl" style="margin-top:8px">download MapResult.json</button></div>
-<div class="card" style="grid-column:1/-1"><h2>certificates</h2><table id="certs"><thead><tr><th>class</th><th>theorem / check</th><th>ok</th><th>detail</th></tr></thead><tbody></tbody></table></div>
-</div></main>
-<script>
 // pointmap.js — proof-carrying point map for unlabeled latent space.
 // Shared verbatim between the steady-orbit-sos Worker bundle and the /map/ browser page.
 // Zero deps. Geometry matches sos-agent fit.ts (PCA2 → stereographic lift → S²).
@@ -153,32 +119,3 @@ var PM = (function () {
   function reduce(X, k, seed) { const p = pcaTop(X, k, mulberry32(seed ?? 1)); return { scores: p.scores.map(r => r.map(x => +x.toFixed(6))), explained: p.values.slice(0, k).map(x => +x.toFixed(6)) }; }
   return { runMap, synth, mulberry32, slerp, hashVec, hashStr, reduce };
 })();
-
-const $=id=>document.getElementById(id);let last=null;
-$("src").onchange=()=>{$("input").style.display=$("src").value==="synthetic"?"none":"block"};
-function kv(id,o){$(id).innerHTML=Object.entries(o).map(([k,v])=>`<span class="dim">${k}</span><span>${v}</span>`).join("")}
-function render(R){last=R;$("rule").innerHTML=`<b>rule</b> ${R.rule.rule}: ${R.rule.note} (d=${R.d}). rule_hash=<b>${R.rule_hash}</b>. Two maps are comparable only if rule_hash matches (C1).`;
- kv("ident",{"items (N) / latent dim (D)":`${R.n} / ${R.D}`,"keys":`ordinal ${R.n}/${R.n} injective; ${new Set(R.keys.map(k=>k.hash)).size} distinct content hashes`,"measurement classes":`${R.classes.count} distinct ${R.d}-bit vectors (largest ${R.classes.largest})`,"pairs unresolvable by measurement":R.classes.unresolvable_pairs});
- kv("place",{"PC1+PC2 (share)":R.pc12,"V₂ ⇒ r̂=2/V₂ (rank identity)":`${R.v2} ⇒ ${(2/R.v2).toFixed(2)}`,"Φ(k)":R.ladder.Phi.join(" "),"Hamming shells":R.shells.join(" "),"pole":R.pole.join(", ")});
- kv("null",{"K / trades per draw":`${R.null.K} / ${R.null.trades_per_draw}`,"V₂ real":R.v2,"E₀ ± SD₀":`${R.null.E0} ± ${R.null.SD0}`,"ΔV₂z":R.null.z??"void","verdict":R.null.verdict,"stationary law":R.null.stationary_law});
- kv("compass",{"T":R.compass.T,"⟨k⟩ analytic / empirical":`${R.compass.kmean_analytic} / ${R.compass.kmean_empirical}`,"π_T(k)":R.compass.pi.join(" "),"acceptance":R.compass.acceptance,"T×":R.compass.Tx??"none (Φ non-monotone at T→0)","steps":`${R.compass.steps} (single chain)`});
- kv("bridge",{"Parseval E_ℓ (ℓ=0..3)":R.spectra.S2_parseval.join(" "),"defocus t=0.05":R.spectra.decay[0].E.join(" "),"defocus t=0.2":R.spectra.decay[1].E.join(" "),"bridge":`item ${R.bridge.i} → pole, ${R.bridge.rungs.length} rungs`});
- kv("meta",{"version":R.version,"seed":R.seed,"identity failures":R.summary.identity_failures,"measurement red":R.summary.measurement_red,"source":R.source||"client"});
- $("certs").querySelector("tbody").innerHTML=R.certificates.map(c=>`<tr><td class="dim">${c.class}</td><td>${c.theorem}</td><td class="${c.ok?"ok":"bad"}">${c.ok?"PASS":"FAIL"}</td><td class="dim">${c.detail}</td></tr>`).join("");
- draw(R);$("status").textContent=`done · ${R.summary.identity_failures} identity failures · ${R.summary.measurement_red} measurement red`}
-function draw(R){const cv=$("sphere"),g=cv.getContext("2d"),W=cv.width,Rr=W/2-18,cx=W/2,cy=W/2;g.clearRect(0,0,W,W);
- const rot=([x,y,z])=>{const a=0.61,b=-0.44;const x1=x*Math.cos(a)+z*Math.sin(a),z1=-x*Math.sin(a)+z*Math.cos(a);return[x1,y*Math.cos(b)-z1*Math.sin(b),y*Math.sin(b)+z1*Math.cos(b)]};const S=p=>{const[x,y,z]=rot(p);return[cx+x*Rr,cy-y*Rr,z]};
- g.strokeStyle="#1e2440";g.lineWidth=1;g.beginPath();g.arc(cx,cy,Rr,0,2*Math.PI);g.stroke();
- for(let lat=-60;lat<=60;lat+=30){g.beginPath();for(let a=0;a<=360;a+=4){const th=lat*Math.PI/180,ph=a*Math.PI/180;const[px,py,pz]=S([Math.cos(th)*Math.cos(ph),Math.cos(th)*Math.sin(ph),Math.sin(th)]);if(pz<0){g.moveTo(px,py);continue}a===0?g.moveTo(px,py):g.lineTo(px,py)}g.stroke()}
- for(const a of R.atoms){if(a.flip<0)continue;const[x1,y1,z1]=S(R.pts[a.i]),[x2,y2,z2]=S(a.to);if(z1<0&&z2<0)continue;g.strokeStyle="rgba(60,247,165,0.22)";g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke()}
- R.pts.forEach((p,i)=>{const[x,y,z]=S(p);const h=200+120*(R.k[i]/R.d);g.fillStyle=z<0?`hsla(${h},70%,55%,0.18)`:`hsla(${h},80%,60%,0.9)`;g.beginPath();g.arc(x,y,z<0?1.6:2.6,0,2*Math.PI);g.fill()});
- g.strokeStyle="#DB46F5";g.lineWidth=2;g.beginPath();R.bridge.rungs.forEach((q,i)=>{const[x,y]=S(q);i?g.lineTo(x,y):g.moveTo(x,y)});g.stroke();R.bridge.rungs.forEach(q=>{const[x,y]=S(q);g.fillStyle="#DB46F5";g.beginPath();g.arc(x,y,2.5,0,2*Math.PI);g.fill()});
- const[px,py]=S(R.pole);g.strokeStyle="#fff";g.lineWidth=1.5;g.beginPath();g.arc(px,py,6,0,2*Math.PI);g.stroke();g.fillStyle="#fff";g.font="11px monospace";g.fillText("p* (all-ones pole)",px+9,py-6);
- g.fillStyle="#7d8894";g.fillText("points: k-shell hue · green: atom edges (Δ≥0) · violet: slerp bridge",12,W-10)}
-async function run(){const opts={d:+$("d").value,seed:+$("seed").value,T:+$("T").value,K:+$("K").value};$("status").textContent="running…";try{
- if($("src").value==="synthetic"){render(PM.runMap(PM.synth(+$("N").value,+$("D").value,opts.seed),opts))}
- else if($("src").value==="vectors"){const X=JSON.parse($("input").value);render(PM.runMap(X,opts))}
- else{const texts=$("input").value.split("\n").map(s=>s.trim()).filter(Boolean);const r=await fetch("/api/map",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({texts,...opts})});const j=await r.json();if(!r.ok)throw new Error(j.error||r.status);render(j.map)}
-}catch(e){$("status").textContent="error: "+e.message}}
-$("run").onclick=run;$("dl").onclick=()=>{if(!last)return;const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(last,null,1)],{type:"application/json"}));a.download=`MapResult-${last.rule_hash}.json`;a.click()};run();
-</script></body></html>
