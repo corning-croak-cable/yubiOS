@@ -125,7 +125,7 @@ curl -X POST "$BRIDGE/run" -d '{"command":["bash","-c","yt-dlp --no-check-certif
 yt-dlp --no-check-certificates --skip-download --dump-single-json 'https://www.youtube.com/watch?v=VIDEO_ID'
 ```
 
-A verified URL returns a JSON blob containing `"title"` + `"id"` fields. An unverified one returns the `Video unavailable` error. The shipped `examples/playlist-upbeat-verified.md` is fully verified; `examples/playlist-classic-rock.md` had one wrong ID (Don't Stop Me Now — `HgzGwKwLmgQ` instead of `HgzGwKwLmgM`) — fixed 2026-08-05 with a comment annotation. For new playlists, run each URL through the probe first; only queue the ones that resolve.
+A verified URL returns a JSON blob containing `"title"` + `"id"` fields. An unverified one returns the `Video unavailable` error. The shipped `scripts/examples/playlist-upbeat-verified.md` is fully verified; `scripts/examples/playlist-classic-rock.md` had one wrong ID (Don't Stop Me Now — `HgzGwKwLmgQ` instead of `HgzGwKwLmgM`) — fixed 2026-08-05 with a comment annotation. For new playlists, run each URL through the probe first; only queue the ones that resolve.
 
 Why this matters: the daemon's "errors don't kill the daemon" anti-pattern is good for resilience but doesn't keep the queue log clean. A bad URL consumes a slot (consumed = removed from queue.txt), pollutes queue.log with the failure, and forces the next URL through a cold download. Pre-verification saves ~30-60s per bad URL.
 
@@ -197,11 +197,11 @@ sudo -n rm -f /tmp/audio/queue/current.* /tmp/audio/queue/next.* \
 - `scripts/install.sh` — installs ffmpeg + yt-dlp on rock1, creates `/tmp/audio/queue/`
 - `scripts/queue_player.sh` — the daemon (foreground + spawned prequeue worker)
 - `scripts/queue.sh` — CLI helper (`add` / `list` / `clear` / `status` / `skip` / `stop`)
-- `examples/playlist-classic-rock.md` — sample classic-rock URLs to seed a new queue (Don't Stop Me Now ID was wrong, fixed 2026-08-05 — `HgzGwKwLmgQ` → `HgzGwKwLmgM`)
-- `examples/playlist-upbeat-verified.md` — 6 upbeat YouTube IDs verified via yt-dlp 2026-08-05 (Don't Stop Me Now / Walking on Sunshine / Happy / September / I Gotta Feeling / Uptown Funk). New default for "queue something upbeat" requests.
-- `examples/playlist-jacob-collier.md` — 6 verified Jacob Collier IDs (Don't You Worry 'Bout a Thing / Hideaway / Little Blue / In The Real Early Morning / Dancing Queen / Fix You). Curator-selected to span studio solo + orchestral live + high-profile collabs.
-- `examples/playlist-lofi-verified.md` — 6 verified lo-fi / chillhop IDs (Nujabes - Feather / Idealism - Both Of Us / Wyl & Wun Two - Kübla / Tom Misch - It Runs Through Me / Idealism - Amaranthine / Ensemble ☁️ Dreamy Lofi Hiphop). Curator's pick for chill study/work background; Lofi Girl 24/7 livestream IDs explicitly excluded (live stream recordings not downloadable).
-- `examples/playlist-samplman.md` — full-channel dump archetype: ALL 65 uploads from the SAMPLMAN - Topic YouTube channel (UCcxS3mHY3ITjmLv5M00lCpQ), yt-dlp verified 2026-08-05. Total runtime ~1h 53min. Two numbered series (ITS A BEAUTIFUL DAY FOR A DAY × 15, SEETHROUGH × 11) plus ~39 standalone cuts. Distinct from the other examples which are hand-picked; this is the "play me everything by X" template. Not triggered on rock1 per user directive.
+- `scripts/examples/playlist-classic-rock.md` — sample classic-rock URLs to seed a new queue (Don't Stop Me Now ID was wrong, fixed 2026-08-05 — `HgzGwKwLmgQ` → `HgzGwKwLmgM`)
+- `scripts/examples/playlist-upbeat-verified.md` — 6 upbeat YouTube IDs verified via yt-dlp 2026-08-05 (Don't Stop Me Now / Walking on Sunshine / Happy / September / I Gotta Feeling / Uptown Funk). New default for "queue something upbeat" requests.
+- `scripts/examples/playlist-jacob-collier.md` — 6 verified Jacob Collier IDs (Don't You Worry 'Bout a Thing / Hideaway / Little Blue / In The Real Early Morning / Dancing Queen / Fix You). Curator-selected to span studio solo + orchestral live + high-profile collabs.
+- `scripts/examples/playlist-lofi-verified.md` — 6 verified lo-fi / chillhop IDs (Nujabes - Feather / Idealism - Both Of Us / Wyl & Wun Two - Kübla / Tom Misch - It Runs Through Me / Idealism - Amaranthine / Ensemble ☁️ Dreamy Lofi Hiphop). Curator's pick for chill study/work background; Lofi Girl 24/7 livestream IDs explicitly excluded (live stream recordings not downloadable).
+- `scripts/examples/playlist-samplman.md` — full-channel dump archetype: ALL 65 uploads from the SAMPLMAN - Topic YouTube channel (UCcxS3mHY3ITjmLv5M00lCpQ), yt-dlp verified 2026-08-05. Total runtime ~1h 53min. Two numbered series (ITS A BEAUTIFUL DAY FOR A DAY × 15, SEETHROUGH × 11) plus ~39 standalone cuts. Distinct from the other examples which are hand-picked; this is the "play me everything by X" template. Not triggered on rock1 per user directive.
 
 All scripts are pure bash + standard GNU userland (no Python deps on the device beyond the parent's `play2.py` + `set_mixer.py`).
 
