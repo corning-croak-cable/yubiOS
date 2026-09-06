@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>point-map: proof-carrying map for unlabeled latents</title>
+<style>
+:root{--bg:#0a0e12;--fg:#d6dde6;--dim:#7d8894;--ok:#3cf7a5;--bad:#ff5d6c;--acc:#db46f5;--line:#1e2833}
+body{margin:0;background:var(--bg);color:var(--fg);font:13px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace}
+header{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;gap:18px;align-items:baseline;flex-wrap:wrap}
+h1{font-size:15px;margin:0;color:#fff}h1 span{color:var(--acc)}
+main{display:grid;grid-template-columns:520px 1fr;gap:0}
+#left{padding:14px 18px;border-right:1px solid var(--line)}
+#right{padding:14px 18px;display:grid;grid-template-columns:1fr 1fr;gap:14px;align-content:start}
+canvas{background:#05080b;border:1px solid var(--line);border-radius:6px;display:block}
+.card{border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+.card h2{font-size:12px;margin:0 0 6px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em}
+table{border-collapse:collapse;width:100%}td,th{padding:2px 6px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--dim);font-weight:normal}.ok{color:var(--ok)}.bad{color:var(--bad)}.dim{color:var(--dim)}
+.wall{border-left:3px solid var(--acc);padding:6px 10px;color:var(--dim);margin-top:8px}
+button,select,input{background:#10161d;color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:4px 8px;font:inherit}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:2px 10px}
+</style></head><body>
+<header><h1>point-map <span>/</span> proof-carrying map for unlabeled latent space</h1>
+<label>N <input id="N" type="number" value="240" style="width:64px"></label>
+<label>D <input id="D" type="number" value="32" style="width:64px"></label>
+<label>d <input id="d" type="number" value="9" style="width:48px"></label>
+<label>seed <input id="seed" type="number" value="20260906" style="width:96px"></label>
+<label>T <input id="T" type="number" step="0.005" value="0.05" style="width:64px"></label>
+<button id="run">run</button><span id="status" class="dim"></span></header>
+<main>
+<div id="left"><canvas id="sphere" width="484" height="484"></canvas>
+<div class="wall" id="rule"></div>
+<div class="wall">Wall: every compass/null number below is a property of a <b>designed</b> chain on a <b>measured</b> ladder, and of a <b>stated</b> binarization rule. None is a property of the latent cloud itself. Identity certificates must all pass (a red one is a code defect). Measurement certificates may fail; a failure is a finding. Exclusion-only language.</div></div>
+<div id="right">
+<div class="card"><h2>identity layer (D6)</h2><div id="ident" class="kv"></div></div>
+<div class="card"><h2>placement + Φ ladder</h2><div id="place" class="kv"></div></div>
+<div class="card"><h2>null: curveball fibre (Lean §8–10)</h2><div id="null" class="kv"></div></div>
+<div class="card"><h2>compass: Metropolis on F_T (Lean §7)</h2><div id="compass" class="kv"></div></div>
+<div class="card"><h2>bridges + defocus (Lean §6)</h2><div id="bridge" class="kv"></div></div>
+<div class="card" style="grid-column:1/-1"><h2>certificates</h2><table id="certs"><thead><tr><th>class</th><th>theorem / check</th><th>ok</th><th>detail</th></tr></thead><tbody></tbody></table></div>
+</div></main>
+<script type="module">
+// ---------- pointmap.ts (inlined). Zero deps. Same conventions as sos-agent/fit.ts ----------
+export function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function gauss(r){let u=0,v=0;while(u===0)u=r();while(v===0)v=r();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+function fnv1a64(f32){let h=0xcbf29ce484222325n;const b=new Uint8Array(new Float32Array(f32).buffer);for(const x of b){h^=BigInt(x);h=(h*0x100000001b3n)&0xffffffffffffffffn}return h.toString(16).padStart(16,"0")}
+function jacobiEig(A){const n=A.length;const V=Array.from({length:n},(_,i)=>Array.from({length:n},(_,j)=>i===j?1:0));const M=A.map(r=>r.slice());
+ for(let sweep=0;sweep<80;sweep++){let off=0;for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)off+=M[i][j]**2;if(off<1e-14)break;
+  for(let p=0;p<n;p++)for(let q=p+1;q<n;q++){if(Math.abs(M[p][q])<1e-15)continue;const th=(M[q][q]-M[p][p])/(2*M[p][q]);const t=Math.sign(th||1)/(Math.abs(th)+Math.sqrt(th*th+1));const c=1/Math.sqrt(t*t+1),s=t*c;
+   for(let k=0;k<n;k++){const mkp=M[k][p],mkq=M[k][q];M[k][p]=c*mkp-s*mkq;M[k][q]=s*mkp+c*mkq}
+   for(let k=0;k<n;k++){const mpk=M[p][k],mqk=M[q][k];M[p][k]=c*mpk-s*mqk;M[q][k]=s*mpk+c*mqk}
+   for(let k=0;k<n;k++){const vkp=V[k][p],vkq=V[k][q];V[k][p]=c*vkp-s*vkq;V[k][q]=s*vkp+c*vkq}}}
+ const idx=M.map((_,i)=>i).sort((a,b)=>M[b][b]-M[a][a]);return{values:idx.map(i=>M[i][i]),vectors:idx.map(i=>V.map(r=>r[i]))}}
+function cov(X){const n=X.length,d=X[0].length,mu=Array(d).fill(0);for(const r of X)for(let j=0;j<d;j++)mu[j]+=r[j]/n;
+ const C=Array.from({length:d},()=>Array(d).fill(0));for(const r of X)for(let i=0;i<d;i++)for(let j=0;j<d;j++)C[i][j]+=((r[i]-mu[i])*(r[j]-mu[j]))/Math.max(1,n-1);return{C,mu}}
+function pcaTop(X,k){const{C,mu}=cov(X);const{values,vectors}=jacobiEig(C);const proj=r=>vectors.slice(0,k).map(v=>v.reduce((s,vj,j)=>s+vj*(r[j]-mu[j]),0));return{scores:X.map(proj),proj,values,axes:vectors.slice(0,k),mu}}
+// ---- §2.2 binarization rule R0: top-d PCA axes, per-column median ----
+export function binarizeR0(X,d){const p=pcaTop(X,d);const med=Array.from({length:d},(_,j)=>{const c=p.scores.map(r=>r[j]).sort((a,b)=>a-b);return c[Math.floor(c.length/2)]});
+ const bits=p.scores.map(r=>r.map((x,j)=>x>med[j]?1:0));const rule={rule:"R0",d,axes:p.axes.map(a=>a.map(x=>+x.toFixed(6))),medians:med.map(x=>+x.toFixed(6))};
+ return{bits,rule,rule_hash:fnv1a64(JSON.stringify(rule).split("").map(c=>c.charCodeAt(0)))}}
+// ---- §3 placement (identical to fit.ts / D6) ----
+function zscore(B){const n=B.length,d=B[0].length;const mu=Array(d).fill(0),sd=Array(d).fill(0);for(const r of B)for(let j=0;j<d;j++)mu[j]+=r[j]/n;for(const r of B)for(let j=0;j<d;j++)sd[j]+=(r[j]-mu[j])**2/n;
+ return{Z:B.map(r=>r.map((x,j)=>(x-mu[j])/(Math.sqrt(sd[j])||1))),z:r=>r.map((x,j)=>(x-mu[j])/(Math.sqrt(sd[j])||1))}}
+export function lift(u0,v0,s){const u=u0*s,v=v0*s,den=1+u*u+v*v;return[2*u/den,2*v/den,(u*u+v*v-1)/den]}
+const chord=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]);const geo=(a,b)=>Math.acos(Math.max(-1,Math.min(1,a[0]*b[0]+a[1]*b[1]+a[2]*b[2])));
+export function place(B){const{Z,z}=zscore(B);const p=pcaTop(Z,2);let maxR=1e-9;for(const[u,v]of p.scores)maxR=Math.max(maxR,Math.hypot(u,v));const s=0.9/maxR;
+ const pts=p.scores.map(([u,v])=>lift(u,v,s));const pole=lift(...p.proj(z(Array(B[0].length).fill(1))),s);const toS2=bits=>lift(...p.proj(z(bits)),s);
+ const gaps=pts.map(q=>chord(q,pole));const pc12=(Math.max(0,p.values[0])+Math.max(0,p.values[1]))/(p.values.reduce((a,b)=>a+Math.max(0,b),0)||1);return{pts,pole,gaps,toS2,pc12}}
+// ---- V2 on the correlation matrix (C1: a share; never compare across d) ----
+export function V2(B){const{Z}=zscore(B);const{C}=cov(Z);const ev=jacobiEig(C).values;return(Math.max(0,ev[0])+Math.max(0,ev[1]))/B[0].length}
+// ---- §4.3 curveball trades with per-trade margin certificate (Lean §8) ----
+export function curveballDraw(B,trades,r,cert){const M=B.map(x=>x.slice());const n=M.length,d=M[0].length;const rs=M.map(x=>x.reduce((a,b)=>a+b,0)),cs=Array.from({length:d},(_,j)=>M.reduce((a,x)=>a+x[j],0));
+ let done=0,tries=0;while(done<trades&&tries<trades*40){tries++;const i=Math.floor(r()*n),j=Math.floor(r()*n),a=Math.floor(r()*d),b=Math.floor(r()*d);if(i===j||a===b)continue;
+  if(M[i][a]===1&&M[i][b]===0&&M[j][a]===0&&M[j][b]===1){M[i][a]=0;M[i][b]=1;M[j][a]=1;M[j][b]=0;done++}}
+ const rs2=M.map(x=>x.reduce((a,b)=>a+b,0)),cs2=Array.from({length:d},(_,j)=>M.reduce((a,x)=>a+x[j],0));
+ cert.rows&&0;cert.rowOk=cert.rowOk&&rs.every((v,i)=>v===rs2[i]);cert.colOk=cert.colOk&&cs.every((v,j)=>v===cs2[j]);cert.trades+=done;return M}
+// ---- §4.1 atom edges (Lean §1–3) ----
+export function atomEdges(B,P){const d=B[0].length;return B.map((bits,i)=>{const dpre=P.gaps[i];let best={bits,dist:dpre,flip:-1};
+ for(let j=0;j<d;j++)if(bits[j]===0){const nb=bits.slice();nb[j]=1;const q=P.toS2(nb);const dist=chord(q,P.pole);if(dist<best.dist)best={bits:nb,dist,flip:j}}
+ const delta=dpre-best.dist;const dk=best.flip<0?0:1;return{i,flip:best.flip,delta,dk,to:best.flip<0?P.pts[i]:P.toS2(best.bits)}})}
+// ---- §4.2 compass: Metropolis on F_T(k)=Φ(k) − T log C(d,k) (Lean §7) ----
+const logC=(n,k)=>{let s=0;for(let i=1;i<=k;i++)s+=Math.log(n-k+i)-Math.log(i);return s}
+export function compass(Phi,d,T,steps,r){const F=k=>Phi[k]-T*logC(d,k);let k=Math.floor(d/2);const occ=Array(d+1).fill(0);const up=Array(d).fill(0),dn=Array(d).fill(0);let acc=0,maxdk=0;
+ for(let s=0;s<steps;s++){const dir=r()<0.5?1:-1;const k2=k+dir;if(k2<0||k2>d){occ[k]++;continue}const alpha=Math.min(1,Math.exp(-(F(k2)-F(k))/T));
+  if(r()<alpha){if(dir>0)up[k]++;else dn[k2]++;maxdk=Math.max(maxdk,Math.abs(k2-k));k=k2;acc++}occ[k]++}
+ const w=Array.from({length:d+1},(_,k)=>Math.exp(-F(k)/T));const Zs=w.reduce((a,b)=>a+b,0);const pi=w.map(x=>x/Zs);
+ const flux=up.map((u,k)=>{const dd=dn[k],J=u-dd,sd=Math.sqrt(u+dd)||1;return{k,up:u,down:dd,z:J/sd}});
+ return{pi,occ:occ.map(x=>x/steps),kmean:pi.reduce((s,p,k)=>s+p*k,0),acceptance:acc/steps,maxdk,flux,maxFluxZ:Math.max(...flux.map(f=>Math.abs(f.z)))}}
+export function crossover(Phi,d){const arg=T=>{let b=0,bv=-1e9;for(let k=0;k<=d;k++){const v=-(Phi[k]-T*logC(d,k))/T;if(v>bv){bv=v;b=k}}return b};let lo=1e-4,hi=5;if(arg(lo)!==d)return null;for(let i=0;i<60;i++){const m=(lo+hi)/2;if(arg(m)===d)lo=m;else hi=m}return(lo+hi)/2}
+// ---- §4.4 slerp bridges + closed-form defocus (Lean §6) ----
+export function slerp(p,q,t){const c=Math.max(-1,Math.min(1,p[0]*q[0]+p[1]*q[1]+p[2]*q[2]));const O=Math.acos(c);if(O<1e-9)return p;const a=Math.sin((1-t)*O)/Math.sin(O),b=Math.sin(t*O)/Math.sin(O);return[a*p[0]+b*q[0],a*p[1]+b*q[1],a*p[2]+b*q[2]]}
+function sh([x,y,z]){return[0.28209479,0.48860251*y,0.48860251*z,0.48860251*x,1.09254843*x*y,1.09254843*y*z,0.31539157*(3*z*z-1),1.09254843*x*z,0.54627422*(x*x-y*y),0.59004359*y*(3*x*x-y*y),2.89061144*x*y*z,0.45704580*y*(5*z*z-1),0.37317633*z*(5*z*z-3),0.45704580*x*(5*z*z-1),1.44530572*z*(x*x-y*y),0.59004359*x*(x*x-3*y*y)]}
+export function parsevalShares(pts){const m=Array(16).fill(0);for(const p of pts){const b=sh(p);for(let i=0;i<16;i++)m[i]+=b[i]/pts.length}const E=[m[0]**2,0,0,0];for(let i=1;i<4;i++)E[1]+=m[i]**2;for(let i=4;i<9;i++)E[2]+=m[i]**2;for(let i=9;i<16;i++)E[3]+=m[i]**2;const tot=E.reduce((a,b)=>a+b,0)||1;return E.map(e=>e/tot)}
+const heatExp=l=>l*(l+1);
+// ---------- demo driver ----------
+const $=id=>document.getElementById(id);const certs=[];const cert=(cls,theorem,ok,detail)=>certs.push({cls,theorem,ok,detail});
+function synth(N,D,r){const X=[];const centers=[0,1,2].map(()=>Array.from({length:D},()=>gauss(r)*2));for(let i=0;i<N;i++){const c=centers[i%3];X.push(c.map((m,j)=>m+gauss(r)*(j<6?0.6:1.4)))}return X}
+function run(){certs.length=0;const N=+$("N").value,D=+$("D").value,d=Math.min(24,+$("d").value),seed=+$("seed").value,T=+$("T").value;const r=mulberry32(seed);$("status").textContent="running…";
+ const X=synth(N,D,r);
+ // identity
+ const keys=X.map((v,i)=>({ordinal:i,hash:fnv1a64(v)}));const{bits,rule,rule_hash}=binarizeR0(X,d);
+ const cls=new Map();bits.forEach(b=>{const k=b.join("");cls.set(k,(cls.get(k)||0)+1)});const largest=Math.max(...cls.values());
+ $("rule").innerHTML=`<b>rule</b> R0: top-${d} PCA axes of the centered cloud, bit_j = [score_j &gt; median_j]. rule_hash=<b>${rule_hash}</b>. Two maps are comparable only if rule_hash matches (C1: never compare V₂ across d).`;
+ kv("ident",{"items (N)":N,"latent dim (D)":D,"keys injective":`${new Set(keys.map(k=>k.hash)).size}/${N} distinct hashes, ${N}/${N} ordinals`,"measurement classes":`${cls.size} distinct ${d}-bit vectors (largest class ${largest})`,"pairs unresolvable by measurement":[...cls.values()].reduce((s,c)=>s+c*(c-1)/2,0)});
+ cert("identity","keyed-row injectivity (D6)",new Set(keys.map(k=>k.ordinal)).size===N,`ordinal is the injective key; hashes ${new Set(keys.map(k=>k.hash)).size}/${N}`);
+ // placement + ladder
+ const P=place(bits);const ks=bits.map(b=>b.reduce((a,x)=>a+x,0));const Phi=Array.from({length:d+1},(_,k)=>{const g=P.gaps.filter((_,i)=>ks[i]===k);return g.length?g.reduce((a,b)=>a+b,0)/g.length:NaN});
+ // fill empty shells by linear interpolation so the ladder is total (stated)
+ for(let k=0;k<=d;k++)if(Number.isNaN(Phi[k])){let lo=k-1,hi=k+1;while(lo>=0&&Number.isNaN(Phi[lo]))lo--;while(hi<=d&&Number.isNaN(Phi[hi]))hi++;Phi[k]=lo<0?Phi[hi]:hi>d?Phi[lo]:Phi[lo]+(Phi[hi]-Phi[lo])*(k-lo)/(hi-lo)}
+ const drops=Phi.slice(0,d).map((p,k)=>p-Phi[k+1]);const tele=Math.abs(drops.reduce((a,b)=>a+b,0)-(Phi[0]-Phi[d]))<1e-9;
+ cert("identity","phi_ladder_telescope (§5)",tele,`Σdrops=${drops.reduce((a,b)=>a+b,0).toFixed(6)} vs Φ(0)−Φ(d)=${(Phi[0]-Phi[d]).toFixed(6)}`);
+ const shellCounts=Array.from({length:d+1},(_,k)=>ks.filter(x=>x===k).length);
+ kv("place",{"PC1+PC2 (share)":P.pc12.toFixed(4),"gate r̂=2/V₂ (identity, §4)":`V₂=${V2(bits).toFixed(4)} ⇒ r̂=${(2/V2(bits)).toFixed(2)} ${2/V2(bits)<=5?"≤5":">5"} (rank test, not evidence)`,"Φ(k) ladder":Phi.map(x=>x.toFixed(3)).join(" "),"Hamming shells H(d,2)":shellCounts.join(" "),"pole":P.pole.map(x=>x.toFixed(3)).join(", ")});
+ // atoms
+ const A=atomEdges(bits,P);const allDelta=A.every(a=>a.delta>=-1e-12);const quant=A.every(a=>a.dk<=1);let run_=0,mono=true;const sorted=A.map(a=>a.delta).sort((a,b)=>b-a);for(const dl of sorted){const nx=run_+dl;if(nx<run_-1e-12)mono=false;run_=nx}
+ cert("identity","atom_delta_nonneg (§1)",allDelta,`${A.filter(a=>a.flip>=0).length}/${N} items have a strictly improving flip; min Δ=${Math.min(...A.map(a=>a.delta)).toExponential(2)}`);
+ cert("identity","quantization max|dk|=1 (compass)",quant,`max dk=${Math.max(...A.map(a=>a.dk))}`);
+ cert("identity","corpus_sum_nonneg + cumulative_monotone (§2–3)",mono&&run_>=0,`ΣΔ=${run_.toFixed(4)}, prefix sums monotone=${mono}`);
+ // null
+ const K=100,trades=5*N*d;const c8={rowOk:true,colOk:true,trades:0};const v2real=V2(bits);const nulls=[];const rn=mulberry32(seed^0x9e3779b9);for(let k=0;k<K;k++)nulls.push(V2(curveballDraw(bits,trades,rn,c8)));
+ const E0=nulls.reduce((a,b)=>a+b,0)/K,SD0=Math.sqrt(nulls.reduce((a,b)=>a+(b-E0)**2,0)/(K-1));const admissible=SD0>=1e-3;const z=(v2real-E0)/SD0;
+ cert("identity","trade_preserves_rowSum (§8)",c8.rowOk,`${c8.trades} trades over ${K} draws`);cert("identity","trade_preserves_colSum (§8)",c8.colOk,`${c8.trades} trades over ${K} draws`);
+ cert("measurement","membership: SD₀[V₂] ≥ 1e-3",admissible,`SD₀=${SD0.toExponential(3)}`);
+ cert("measurement","ΔV₂z vs fixed-margin null (exclusion-only)",Math.abs(z)>=3,admissible?`ΔV₂=${(v2real-E0).toFixed(4)}, z=${z.toFixed(2)} → ${Math.abs(z)>=3?(z>0?"NULL EXCLUDED":"NULL EXCLUDED, INVERTED"):"NOT EXCLUDED"}`:"void (inadmissible coordinate)");
+ kv("null",{"draws K / trades per draw":`${K} / ${trades}`,"V₂ real":v2real.toFixed(5),"E₀[V₂] ± SD₀":`${E0.toFixed(5)} ± ${SD0.toFixed(5)}`,"ΔV₂z":admissible?z.toFixed(2):"void","verdict":admissible?(Math.abs(z)>=3?(z>0?"excluded":"excluded (inverted)"):"not-excluded"):"not-tested (degenerate null)","stationary law":"uniform on the fibre (Lean §10; irreducibility not checked at this N·d)"});
+ // compass
+ const C=compass(Phi,d,T,60000,mulberry32(seed+7));const Tx=crossover(Phi,d);
+ cert("identity","mh_flux_symm / detailed balance (§7)",C.maxFluxZ<=3,`max |z(J)| over rungs = ${C.maxFluxZ.toFixed(2)}`);cert("identity","quantization on accepted moves",C.maxdk===1,`max|dk|=${C.maxdk}`);
+ kv("compass",{"T":T,"⟨k⟩ analytic":C.kmean.toFixed(4),"⟨k⟩ empirical":C.occ.reduce((s,p,k)=>s+p*k,0).toFixed(4),"π_T(k)":C.pi.map(x=>x.toFixed(3)).join(" "),"acceptance":C.acceptance.toFixed(3),"T× (argmax π_T leaves k=d)":Tx===null?"none (Φ non-monotone at T→0)":Tx.toFixed(6),"steps":"60000 (single chain; report ESS before quoting)"});
+ // bridges + defocus
+ const worst=A.reduce((b,a)=>a.delta>b.delta?a:b,A[0]);const rungs=[0,0.1,0.25,0.5,0.75,1].map(t=>slerp(P.pts[worst.i],P.pole,t));let monoG=true;for(let i=1;i<rungs.length;i++)if(geo(rungs[i],P.pole)>geo(rungs[i-1],P.pole)+1e-9)monoG=false;
+ cert("identity","slerp bridge: geodesic to target non-increasing",monoG,`item ${worst.i} → pole, 6 rungs`);
+ const E=parsevalShares(P.pts);const decay=[0.05,0.2,1].map(t=>({t,E:E.map((e,l)=>e*Math.exp(-2*heatExp(l)*t))}));const hm=[0,1,2,3].every((l,i,a)=>i===0||heatExp(a[i-1])<heatExp(l));
+ cert("identity","heat_exponent_monotone (§6)",hm,`ℓ(ℓ+1) = ${[0,1,2,3].map(heatExp).join(",")}`);cert("identity","heat_exp_dominates_hamming (§14)",[1,2,3].every(l=>l<heatExp(l)),"sphere penalty strictly harsher than H(d,2) for ℓ≥1");
+ kv("bridge",{"Parseval shares E_ℓ (ℓ=0..3)":E.map(x=>x.toFixed(3)).join(" "),"defocus t=0.05":decay[0].E.map(x=>x.toExponential(2)).join(" "),"defocus t=0.2":decay[1].E.map(x=>x.toExponential(2)).join(" "),"bridge drawn":`item ${worst.i} → pole (largest atom Δ=${worst.delta.toFixed(4)})`});
+ draw(P,A,ks,d,rungs);renderCerts();$("status").textContent=`done · ${certs.filter(c=>c.cls==="identity"&&!c.ok).length} identity failures · ${certs.filter(c=>c.cls==="measurement"&&!c.ok).length} measurement red`;}
+function kv(id,o){$(id).innerHTML=Object.entries(o).map(([k,v])=>`<span class="dim">${k}</span><span>${v}</span>`).join("")}
+function renderCerts(){$("certs").querySelector("tbody").innerHTML=certs.map(c=>`<tr><td class="dim">${c.cls}</td><td>${c.theorem}</td><td class="${c.ok?"ok":"bad"}">${c.ok?"PASS":"FAIL"}</td><td class="dim">${c.detail}</td></tr>`).join("")}
+function draw(P,A,ks,d,rungs){const cv=$("sphere"),g=cv.getContext("2d"),W=cv.width,R=W/2-18,cx=W/2,cy=W/2;g.clearRect(0,0,W,W);
+ // orthographic view rotated so pole is visible; rotate about y by 35°, x by -25°
+ const rot=([x,y,z])=>{const a=0.61,b=-0.44;let x1=x*Math.cos(a)+z*Math.sin(a),z1=-x*Math.sin(a)+z*Math.cos(a);let y2=y*Math.cos(b)-z1*Math.sin(b),z2=y*Math.sin(b)+z1*Math.cos(b);return[x1,y2,z2]};
+ const S=p=>{const[x,y,z]=rot(p);return[cx+x*R,cy-y*R,z]};
+ g.strokeStyle="#1e2833";g.lineWidth=1;g.beginPath();g.arc(cx,cy,R,0,2*Math.PI);g.stroke();
+ for(let lat=-60;lat<=60;lat+=30){g.beginPath();for(let a=0;a<=360;a+=4){const th=lat*Math.PI/180,ph=a*Math.PI/180;const[px,py,pz]=S([Math.cos(th)*Math.cos(ph),Math.cos(th)*Math.sin(ph),Math.sin(th)]);if(pz<0){g.moveTo(px,py);continue}a===0?g.moveTo(px,py):g.lineTo(px,py)}g.stroke()}
+ // atom edges
+ g.lineWidth=1;for(const a of A){if(a.flip<0)continue;const[x1,y1,z1]=S(P.pts[a.i]),[x2,y2,z2]=S(a.to);if(z1<0&&z2<0)continue;g.strokeStyle="rgba(60,247,165,0.22)";g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke()}
+ // points by k
+ P.pts.forEach((p,i)=>{const[x,y,z]=S(p);const h=200+120*(ks[i]/d);g.fillStyle=z<0?`hsla(${h},70%,55%,0.18)`:`hsla(${h},80%,60%,0.9)`;g.beginPath();g.arc(x,y,z<0?1.6:2.6,0,2*Math.PI);g.fill()});
+ // slerp bridge
+ g.strokeStyle="#db46f5";g.lineWidth=2;g.beginPath();rungs.forEach((q,i)=>{const[x,y]=S(q);i?g.lineTo(x,y):g.moveTo(x,y)});g.stroke();rungs.forEach(q=>{const[x,y]=S(q);g.fillStyle="#db46f5";g.beginPath();g.arc(x,y,2.5,0,2*Math.PI);g.fill()});
+ // pole
+ const[px,py]=S(P.pole);g.strokeStyle="#fff";g.lineWidth=1.5;g.beginPath();g.arc(px,py,6,0,2*Math.PI);g.stroke();g.fillStyle="#fff";g.font="11px monospace";g.fillText("p* (all-ones pole)",px+9,py-6);
+ g.fillStyle="#7d8894";g.fillText("points: k-shell hue · green: atom edges (Δ≥0) · violet: slerp bridge",12,W-10)}
+$("run").onclick=run;run();
+</script></body></html>
