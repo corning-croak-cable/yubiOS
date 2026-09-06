@@ -17,8 +17,8 @@ button,select,input,textarea{background:#10162b;color:var(--fg);border:1px solid
 <header><h1>point-map <span>/</span> proof-carrying map for unlabeled latent space</h1>
 <select id="src"><option value="synthetic">synthetic cloud (client)</option><option value="vectors">paste vectors JSON (client)</option><option value="texts">texts → server embed + map (/api/map)</option></select>
 <label>N <input id="N" type="number" value="240" style="width:64px"></label><label>D <input id="D" type="number" value="32" style="width:64px"></label><label>d <input id="d" type="number" value="9" style="width:48px"></label><label>seed <input id="seed" type="number" value="20260906" style="width:96px"></label><label>T <input id="T" type="number" step="0.005" value="0.05" style="width:64px"></label><label>K <input id="K" type="number" value="100" style="width:64px"></label>
-<button id="run" class="primary">run</button><span id="status" class="dim"></span><span class="dim" style="margin-left:auto">tools/point-map · yubi-OS/yubiOS</span></header>
-<main><div id="left"><canvas id="sphere" width="484" height="484"></canvas>
+<button id="run" class="primary">run</button><label><input id="labels" type="checkbox" checked> labels</label><button id="spin">auto-rotate</button><button id="reset">reset view</button><span id="status" class="dim"></span><span class="dim" style="margin-left:auto">tools/point-map · yubi-OS/yubiOS</span></header>
+<main><div id="left"><canvas id="sphere" width="484" height="484" style="cursor:grab;touch-action:none"></canvas><div id="tip" class="dim" style="min-height:18px;margin-top:4px"></div>
 <textarea id="input" placeholder="vectors: [[...],[...]]  ·  texts: one item per line" style="display:none"></textarea>
 <div class="wall" id="rule"></div>
 <div class="wall">Wall: every compass/null number is a property of a <b>designed</b> chain on a <b>measured</b> ladder under a <b>stated</b> binarization rule, not of the cloud itself. Identity certificates must all pass (a red one is a code defect). Measurement certificates may fail; a failure is a finding. Exclusion-only language. Spec: yubi-OS/yubiOS <code>refs/point-to-point-latent-map-2026-09-06.md</code>.</div></div>
@@ -166,15 +166,29 @@ function render(R){last=R;$("rule").innerHTML=`<b>rule</b> ${R.rule.rule}: ${R.r
  kv("meta",{"version":R.version,"seed":R.seed,"identity failures":R.summary.identity_failures,"measurement red":R.summary.measurement_red,"source":R.source||"client"});
  $("certs").querySelector("tbody").innerHTML=R.certificates.map(c=>`<tr><td class="dim">${c.class}</td><td>${c.theorem}</td><td class="${c.ok?"ok":"bad"}">${c.ok?"PASS":"FAIL"}</td><td class="dim">${c.detail}</td></tr>`).join("");
  draw(R);$("status").textContent=`done · ${R.summary.identity_failures} identity failures · ${R.summary.measurement_red} measurement red`}
-function draw(R){const cv=$("sphere"),g=cv.getContext("2d"),W=cv.width,Rr=W/2-18,cx=W/2,cy=W/2;g.clearRect(0,0,W,W);
- const rot=([x,y,z])=>{const a=0.61,b=-0.44;const x1=x*Math.cos(a)+z*Math.sin(a),z1=-x*Math.sin(a)+z*Math.cos(a);return[x1,y*Math.cos(b)-z1*Math.sin(b),y*Math.sin(b)+z1*Math.cos(b)]};const S=p=>{const[x,y,z]=rot(p);return[cx+x*Rr,cy-y*Rr,z]};
+const view={yaw:0.61,pitch:-0.44,zoom:1};let dragging=null,spin=false,hover=-1,screen=[];
+function rot([x,y,z]){const a=view.yaw,b=view.pitch;const x1=x*Math.cos(a)+z*Math.sin(a),z1=-x*Math.sin(a)+z*Math.cos(a);return[x1,y*Math.cos(b)-z1*Math.sin(b),y*Math.sin(b)+z1*Math.cos(b)]}
+function labelOf(R,i){const k=R.keys[i];const l=k&&k.label?String(k.label):null;return l?l.replace(/^skills\//,"").replace(/\/SKILL\.md$/,"").replace(/^refs\//,"r/"):"#"+i}
+function draw(R){if(!R)return;const cv=$("sphere"),g=cv.getContext("2d"),W=cv.width,Rr=(W/2-18)*view.zoom,cx=W/2,cy=W/2;g.clearRect(0,0,W,W);
+ const S=p=>{const[x,y,z]=rot(p);return[cx+x*Rr,cy-y*Rr,z]};screen=[];
  g.strokeStyle="#1e2440";g.lineWidth=1;g.beginPath();g.arc(cx,cy,Rr,0,2*Math.PI);g.stroke();
  for(let lat=-60;lat<=60;lat+=30){g.beginPath();for(let a=0;a<=360;a+=4){const th=lat*Math.PI/180,ph=a*Math.PI/180;const[px,py,pz]=S([Math.cos(th)*Math.cos(ph),Math.cos(th)*Math.sin(ph),Math.sin(th)]);if(pz<0){g.moveTo(px,py);continue}a===0?g.moveTo(px,py):g.lineTo(px,py)}g.stroke()}
  for(const a of R.atoms){if(a.flip<0)continue;const[x1,y1,z1]=S(R.pts[a.i]),[x2,y2,z2]=S(a.to);if(z1<0&&z2<0)continue;g.strokeStyle="rgba(60,247,165,0.22)";g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke()}
- R.pts.forEach((p,i)=>{const[x,y,z]=S(p);const h=200+120*(R.k[i]/R.d);g.fillStyle=z<0?`hsla(${h},70%,55%,0.18)`:`hsla(${h},80%,60%,0.9)`;g.beginPath();g.arc(x,y,z<0?1.6:2.6,0,2*Math.PI);g.fill()});
+ const front=[];R.pts.forEach((p,i)=>{const[x,y,z]=S(p);screen.push([x,y,z,i]);const h=200+120*(R.k[i]/R.d);g.fillStyle=z<0?`hsla(${h},70%,55%,0.18)`:`hsla(${h},80%,60%,0.9)`;g.beginPath();g.arc(x,y,z<0?1.6:(i===hover?4.5:2.6),0,2*Math.PI);g.fill();if(z>=0)front.push([x,y,z,i])});
+ if($("labels").checked){g.font="9px monospace";const taken=[];front.sort((a,b)=>b[2]-a[2]);for(const[x,y,z,i]of front){const lx=x+5,ly=y+3;if(taken.some(([tx,ty])=>Math.abs(tx-lx)<58&&Math.abs(ty-ly)<9))continue;taken.push([lx,ly]);g.fillStyle=`rgba(214,221,230,${0.35+0.55*z})`;g.fillText(labelOf(R,i).slice(0,14),lx,ly)}}
  g.strokeStyle="#DB46F5";g.lineWidth=2;g.beginPath();R.bridge.rungs.forEach((q,i)=>{const[x,y]=S(q);i?g.lineTo(x,y):g.moveTo(x,y)});g.stroke();R.bridge.rungs.forEach(q=>{const[x,y]=S(q);g.fillStyle="#DB46F5";g.beginPath();g.arc(x,y,2.5,0,2*Math.PI);g.fill()});
  const[px,py]=S(R.pole);g.strokeStyle="#fff";g.lineWidth=1.5;g.beginPath();g.arc(px,py,6,0,2*Math.PI);g.stroke();g.fillStyle="#fff";g.font="11px monospace";g.fillText("p* (all-ones pole)",px+9,py-6);
- g.fillStyle="#7d8894";g.fillText("points: k-shell hue · green: atom edges (Δ≥0) · violet: slerp bridge",12,W-10)}
+ if(hover>=0){const[x,y]=S(R.pts[hover]);g.fillStyle="#fff";g.font="11px monospace";g.fillText(labelOf(R,hover),x+8,y-8)}
+ g.fillStyle="#7d8894";g.font="11px monospace";g.fillText("drag to rotate · wheel to zoom · hover a point · hue = k-shell · green = atom Δ≥0 · violet = slerp",12,W-10)}
+(function(){const cv=$("sphere");const pos=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*cv.width/r.width,(e.clientY-r.top)*cv.height/r.height]};
+ cv.addEventListener("pointerdown",e=>{dragging=pos(e);cv.style.cursor="grabbing";cv.setPointerCapture(e.pointerId)});
+ cv.addEventListener("pointerup",e=>{dragging=null;cv.style.cursor="grab"});cv.addEventListener("pointerleave",()=>{dragging=null;hover=-1;$("tip").textContent="";draw(last)});
+ cv.addEventListener("pointermove",e=>{const[x,y]=pos(e);if(dragging){view.yaw+=(x-dragging[0])*0.01;view.pitch=Math.max(-1.5,Math.min(1.5,view.pitch-(y-dragging[1])*0.01));dragging=[x,y];draw(last);return}
+  let best=-1,bd=64;for(const[sx,sy,sz,i]of screen){if(sz<0)continue;const d=(sx-x)**2+(sy-y)**2;if(d<bd){bd=d;best=i}}
+  if(best!==hover){hover=best;if(last&&best>=0){const a=last.atoms[best];$("tip").textContent=`#${best} ${labelOf(last,best)} · k=${last.k[best]} · gap=${last.gaps[best]} · atom Δ=${a?a.delta:"-"}${a&&a.flip>=0?" (flip bit "+a.flip+")":""} · hash ${last.keys[best].hash}`}else $("tip").textContent="";draw(last)}});
+ cv.addEventListener("wheel",e=>{e.preventDefault();view.zoom=Math.max(0.5,Math.min(3,view.zoom*(e.deltaY<0?1.1:0.9)));draw(last)},{passive:false});
+ $("labels").onchange=()=>draw(last);$("reset").onclick=()=>{view.yaw=0.61;view.pitch=-0.44;view.zoom=1;draw(last)};
+ $("spin").onclick=()=>{spin=!spin;$("spin").textContent=spin?"stop":"auto-rotate";(function tick(){if(!spin)return;view.yaw+=0.008;draw(last);requestAnimationFrame(tick)})()};})();
 async function run(){const opts={d:+$("d").value,seed:+$("seed").value,T:+$("T").value,K:+$("K").value};$("status").textContent="running…";try{
  if($("src").value==="synthetic"){render(PM.runMap(PM.synth(+$("N").value,+$("D").value,opts.seed),opts))}
  else if($("src").value==="vectors"){const X=JSON.parse($("input").value);render(PM.runMap(X,opts))}
