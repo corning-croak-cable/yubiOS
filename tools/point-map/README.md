@@ -11,3 +11,10 @@ compass Metropolis on F_T (Lean §7) → slerp bridge + closed-form defocus (Lea
 
 Certificates are split into `identity` (must all pass; a red one is a code defect) and
 `measurement` (may fail; a failure is a finding). Exclusion-only language throughout.
+
+## Ingestion modes (texts source)
+
+- **Pasted lines**: one item per line (≥ 10 items).
+- **Upload SKILL.md files**: each file = one item, labeled by its frontmatter `name:` (falls back to filename).
+- **Upload a folder** (`webkitdirectory`): one digest item per immediate subfolder — all `.md`/`.txt` files in that subtree concatenated (SKILL.md first, then README, then alphabetical; ~2000-char cap, bge's context limit), labeled by the subfolder name or the SKILL.md frontmatter `name:`.
+- **Repo path**: `owner/repo` or full URL, optional `/subdir` — `POST /api/repo-items` pulls the repo tarball server-side (codeload, in-memory, per the sos-agent egress-IP fix), filters text files to the subdir, one item per file (max 400), labeled by repo path. Folder + file + line + repo items can be mixed in one map.
