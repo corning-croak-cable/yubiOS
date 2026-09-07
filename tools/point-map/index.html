@@ -17,9 +17,9 @@ button,select,input,textarea{background:#10162b;color:var(--fg);border:1px solid
 <header><h1>point-map <span>/</span> proof-carrying map for unlabeled latent space</h1>
 <select id="src"><option value="synthetic">synthetic cloud (client)</option><option value="vectors">paste vectors JSON (client)</option><option value="texts">texts → server embed + map (/api/map)</option></select>
 <label>N <input id="N" type="number" value="240" style="width:64px"></label><label>D <input id="D" type="number" value="32" style="width:64px"></label><label>d <input id="d" type="number" value="9" style="width:48px"></label><label>seed <input id="seed" type="number" value="20260906" style="width:96px"></label><label>T <input id="T" type="number" step="0.005" value="0.05" style="width:64px"></label><label>K <input id="K" type="number" value="100" style="width:64px"></label>
-<button id="run" class="primary">run</button><label><input id="labels" type="checkbox" checked> labels</label><button id="spin">auto-rotate</button><button id="reset">reset view</button><span id="status" class="dim"></span><span class="dim" style="margin-left:auto">tools/point-map · yubi-OS/yubiOS</span></header>
+<button id="run" class="primary">run</button><label id="filelabel" style="display:none"><input id="files" type="file" multiple accept=".md,.txt,.markdown">upload SKILL.md files</label><span id="fileinfo" class="dim" style="display:none"></span><label><input id="labels" type="checkbox" checked> labels</label><button id="spin">auto-rotate</button><button id="reset">reset view</button><span id="status" class="dim"></span><span class="dim" style="margin-left:auto">tools/point-map · yubi-OS/yubiOS</span></header>
 <main><div id="left"><canvas id="sphere" width="484" height="484" style="cursor:grab;touch-action:none"></canvas><div id="tip" class="dim" style="min-height:18px;margin-top:4px"></div>
-<textarea id="input" placeholder="vectors: [[...],[...]]  ·  texts: one item per line" style="display:none"></textarea>
+<textarea id="input" placeholder="texts: one item per line — or upload SKILL.md files (each file = one item, first 2000 chars)" style="display:none"></textarea>
 <div class="wall" id="rule"></div>
 <div class="wall">Wall: every compass/null number is a property of a <b>designed</b> chain on a <b>measured</b> ladder under a <b>stated</b> binarization rule, not of the cloud itself. Identity certificates must all pass (a red one is a code defect). Measurement certificates may fail; a failure is a finding. Exclusion-only language. Spec: yubi-OS/yubiOS <code>refs/point-to-point-latent-map-2026-09-06.md</code>.</div></div>
 <div id="right">
@@ -155,7 +155,7 @@ var PM = (function () {
 })();
 
 const $=id=>document.getElementById(id);let last=null;
-$("src").onchange=()=>{$("input").style.display=$("src").value==="synthetic"?"none":"block"};
+$("src").onchange=()=>{$("input").style.display=$("src").value==="synthetic"?"none":"block";$("filelabel").style.display=$("src").value==="texts"?"inline-flex":"none";$("fileinfo").style.display="none";$("files").value=""};
 function kv(id,o){$(id).innerHTML=Object.entries(o).map(([k,v])=>`<span class="dim">${k}</span><span>${v}</span>`).join("")}
 function render(R){last=R;$("rule").innerHTML=`<b>rule</b> ${R.rule.rule}: ${R.rule.note} (d=${R.d}). rule_hash=<b>${R.rule_hash}</b>. Two maps are comparable only if rule_hash matches (C1).`;
  kv("ident",{"items (N) / latent dim (D)":`${R.n} / ${R.D}`,"keys":`ordinal ${R.n}/${R.n} injective; ${new Set(R.keys.map(k=>k.hash)).size} distinct content hashes`,"measurement classes":`${R.classes.count} distinct ${R.d}-bit vectors (largest ${R.classes.largest})`,"pairs unresolvable by measurement":R.classes.unresolvable_pairs});
@@ -194,7 +194,11 @@ async function maybeReduce(X,opts){if(X.length&&X[0].length>40){$("status").text
 async function run(){const opts={d:+$("d").value,seed:+$("seed").value,T:+$("T").value,K:+$("K").value};$("status").textContent="running…";try{
  if($("src").value==="synthetic"){render(PM.runMap(PM.synth(+$("N").value,+$("D").value,opts.seed),opts))}
  else if($("src").value==="vectors"){const X=JSON.parse($("input").value);const{scores,note}=await maybeReduce(X,opts);const j=await postJSON("/api/map",{vectors:scores,...opts});j.map.source=(j.map.source||"vectors")+(note?` · ${note}`:"");render(j.map)}
- else{const texts=$("input").value.split("\n").map(s=>s.trim()).filter(Boolean);if(texts.length<10)throw new Error("need at least 10 lines (one item per line)");$("status").textContent=`embedding ${texts.length} texts…`;const e=await postJSON("/api/embed",{texts});const{scores,note}=await maybeReduce(e.vectors,opts);$("status").textContent="mapping…";const j=await postJSON("/api/map",{vectors:scores,labels:texts.map(t=>t.slice(0,80)),...opts});j.map.source=(j.map.source||"texts")+(note?` · ${note}`:"");render(j.map)}
+ else{const items=$("input").value.split("\n").map(s=>s.trim()).filter(Boolean).map(s=>({text:s,label:s.slice(0,80)}));
+ for(const f of $("files").files){const txt=(await f.text()).slice(0,2000).trim();if(txt.length<50)continue;const nm=txt.match(/^name:\s*(.+)$/m);const label=nm?nm[1].trim().slice(0,80):f.name.replace(/\.(md|markdown|txt)$/i,"");items.push({text:txt,label})}
+ if(items.length<10)throw new Error(`need at least 10 items — have ${items.length} (${$("files").files.length} file(s) + pasted lines)`);if(items.length>400)throw new Error("max 400 items per map");
+ $("status").textContent=`embedding ${items.length} items…`;const e=await postJSON("/api/embed",{texts:items.map(i=>i.text)});const{scores,note}=await maybeReduce(e.vectors,opts);$("status").textContent="mapping…";const j=await postJSON("/api/map",{vectors:scores,labels:items.map(i=>i.label),...opts});j.map.source=(j.map.source||"texts")+(note?` · ${note}`:"");render(j.map)}
 }catch(e){$("status").textContent="error: "+e.message}}
+$("files").onchange=()=>{const n=$("files").files.length;if(n){$("fileinfo").textContent=`${n} file(s) loaded`;$("fileinfo").style.display="inline"}};
 $("run").onclick=run;$("dl").onclick=()=>{if(!last)return;const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(last,null,1)],{type:"application/json"}));a.download=`MapResult-${last.rule_hash}.json`;a.click()};run();
 </script></body></html>
