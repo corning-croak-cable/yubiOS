@@ -18,3 +18,6 @@ Certificates are split into `identity` (must all pass; a red one is a code defec
 - **Upload SKILL.md files**: each file = one item, labeled by its frontmatter `name:` (falls back to filename).
 - **Upload a folder** (`webkitdirectory`): one digest item per immediate subfolder — all `.md`/`.txt` files in that subtree concatenated (SKILL.md first, then README, then alphabetical; ~2000-char cap, bge's context limit), labeled by the subfolder name or the SKILL.md frontmatter `name:`.
 - **Repo path**: `owner/repo` or full URL, optional `/subdir` — `POST /api/repo-items` pulls the repo tarball server-side (codeload, in-memory, per the sos-agent egress-IP fix), filters text files to the subdir, one item per file (max 400), labeled by repo path. Folder + file + line + repo items can be mixed in one map.
+
+- **Grouping rule**: the picked folder's own name is stripped; digests group by the next path segment, so picking `skills/` yields one digest per skill subfolder. Files directly in the picked root become one "(files at <root>)" digest.
+- **Server-budget fallback**: if the Worker dies mid-map (Cloudflare 1102/503), the page automatically re-runs the identical pipeline client-side and marks the result `mapped client-side (server budget)`. Same code, same certificates; only the D1 row is missing.
