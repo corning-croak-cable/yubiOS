@@ -21,3 +21,13 @@ Certificates are split into `identity` (must all pass; a red one is a code defec
 
 - **Grouping rule**: the picked folder's own name is stripped; digests group by the next path segment, so picking `skills/` yields one digest per skill subfolder. Files directly in the picked root become one "(files at <root>)" digest.
 - **Server-budget fallback**: if the Worker dies mid-map (Cloudflare 1102/503), the page automatically re-runs the identical pipeline client-side and marks the result `mapped client-side (server budget)`. Same code, same certificates; only the D1 row is missing.
+
+## NSS ladder (`map.nss`)
+
+12 azimuthal sectors → NSS axes (Audience … Recursion). Candidate atomic actions (add / change / remove) are each refit and measured (`pole_shift_geodesic`, `occupied_sectors_delta`, `isolated_delta`, `pc12_delta`), scored and ranked L1–L5 with a plain-English `recommendation`. Request field `ideal` (1–5) picks the target rung; the page shows the ladder under the Wall with a radio per rung.
+
+## Other endpoints
+
+- `POST /api/embed {texts, source}` — bge-base-en-v1.5, stored in Vectorize `sos-embeddings`.
+- `POST /api/vector/search {text, topK}` — cosine search over everything embedded.
+- `POST /api/repo-items {repo, subdir}` — tarball → items (max 400).

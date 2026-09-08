@@ -104,6 +104,47 @@ var PM = (function () {
     const E = parsevalShares(P.pts); const decay = [0.05, 0.2, 1].map(t => ({ t, E: E.map((e, l) => e * Math.exp(-2 * heatExp(l) * t)) }));
     cert("identity", "heat_exponent_monotone (Lean §6)", [0, 1, 2, 3].every((l, i, a) => i === 0 || heatExp(a[i - 1]) < heatExp(l)), `ℓ(ℓ+1) = ${[0, 1, 2, 3].map(heatExp).join(",")}`);
     cert("identity", "heat_exp_dominates_hamming (Lean §14)", [1, 2, 3].every(l => l < heatExp(l)), "sphere penalty strictly harsher than H(d,2) for ℓ≥1");
+    // ---- NSS ladder (L1..L5): 12 azimuthal sectors -> 12 NSS axes (same sectoring as sos-agent). Candidate ATOMIC actions
+    //      (add one item / remove one item / change one bit) are inserted, the sphere is REFIT, and the effect on the pole,
+    //      sector occupancy and isolation is MEASURED. Rungs are ranked by measured movement; one rung is the selected ideal.
+    //      Direction is free: shift the pole or fill a gap. Nothing here is "toward the ideal pole" by fiat.
+    const NSS_AXES = ["Audience", "Inputs", "Outputs", "Mode", "Assumption set", "Adjacent problems", "Failure modes", "Lifecycle", "Composition", "Knowledge sources", "Calibration", "Recursion"];
+    const sectorOf = ([x, y]) => Math.min(11, Math.floor(((Math.atan2(y, x) + Math.PI) / (2 * Math.PI)) * 12));
+    const sectorCounts = Array(12).fill(0); P.pts.forEach(p => sectorCounts[sectorOf(p)]++);
+    const isolatedCount = (pts, rr = 0.095) => pts.filter((p, i) => !pts.some((q, j) => j !== i && chord(p, q) < rr)).length;
+    const baseOcc = sectorCounts.filter(c => c > 0).length, baseIso = isolatedCount(P.pts);
+    const measure = (B2) => { const P2 = place(B2); const sc = Array(12).fill(0); P2.pts.forEach(p => sc[sectorOf(p)]++); return { pole_shift_geodesic: +geo(P.pole, P2.pole).toFixed(4), occupied_sectors_delta: sc.filter(c => c > 0).length - baseOcc, isolated_delta: isolatedCount(P2.pts) - baseIso, pc12_delta: +(P2.pc12 - P.pc12).toFixed(4) }; };
+    const scoreOf = (m) => +(m.occupied_sectors_delta * 1.0 - 0.5 * m.isolated_delta + m.pole_shift_geodesic).toFixed(4);
+    const bitName = (j) => `bit ${j} (PCA axis ${j} ${threshold === "zero" ? "> 0" : "> median"})`;
+    const nameOf = (i) => keys[i].label ? `#${i} "${String(keys[i].label).slice(0, 40)}"` : `#${i}`;
+    const meanZ = P.pts.reduce((a, p) => a + p[2], 0) / N;
+    const cands = [];
+    // add: one item whose pattern lands in an empty (or thinnest) sector
+    const patterns = []; if (d <= 12) { for (let m = 0; m < (1 << d); m++) patterns.push(Array.from({ length: d }, (_, j) => (m >> j) & 1)); } else { const rp = mulberry32(seed + 99); for (let m = 0; m < 2000; m++) patterns.push(Array.from({ length: d }, () => rp() < 0.5 ? 1 : 0)); }
+    const patPts = patterns.map(b => P.toS2(b));
+    const thin = sectorCounts.map((c, sIdx) => ({ sIdx, c })).sort((a, b) => a.c - b.c).slice(0, 4);
+    for (const { sIdx, c } of thin) { const phi = -Math.PI + ((sIdx + 0.5) / 12) * 2 * Math.PI; const rr = Math.sqrt(Math.max(0, 1 - meanZ * meanZ)); const center = [rr * Math.cos(phi), rr * Math.sin(phi), meanZ];
+      let bi = 0, bd = 1e9; patPts.forEach((q, i) => { const dd = geo(q, center); if (dd < bd) { bd = dd; bi = i; } }); const pat = patterns[bi]; const fill = 3;
+      const m = measure(bits.concat(Array.from({ length: fill }, () => pat.slice()))); const on = pat.map((v, j) => v ? j : -1).filter(j => j >= 0), off = pat.map((v, j) => v ? -1 : j).filter(j => j >= 0);
+      cands.push({ action: "add", axis: NSS_AXES[sIdx], sector: sIdx, sector_count: c, pattern: pat, fill_size: fill, delta: m, score: scoreOf(m),
+        hypothesis: `an item covering ${on.length ? on.map(bitName).join(", ") : "no bits"} and not ${off.length ? "bits " + off.join(",") : "any other bit"} lands in the ${c === 0 ? "empty" : "thin (" + c + " item" + (c === 1 ? "" : "s") + ")"} '${NSS_AXES[sIdx]}' sector`,
+        method: `insert ${fill} co-located synthetic copies of the pattern, refit PCA2 + stereographic lift, remeasure pole / sectors / isolation`,
+        recommendation: `Add ${fill} item${fill > 1 ? "s" : ""} that ${on.length ? "cover " + on.map(bitName).join(" and ") : "cover none of the bits"}${off.length ? " but not bit" + (off.length > 1 ? "s " : " ") + off.join(", ") : ""}. That pattern lands in the ${c === 0 ? "empty" : "thinly occupied"} '${NSS_AXES[sIdx]}' sector. Measured after refit: pole shifts ${m.pole_shift_geodesic} rad, occupied sectors ${m.occupied_sectors_delta >= 0 ? "+" : ""}${m.occupied_sectors_delta}, isolated points ${m.isolated_delta >= 0 ? "+" : ""}${m.isolated_delta}.` }); }
+    // change: the strongest single-action atoms (flip one bit on one item)
+    const topAtoms = A.filter(a => a.flip >= 0).sort((a, b) => b.delta - a.delta).slice(0, 3);
+    for (const a of topAtoms) { const B2 = bits.map(r => r.slice()); B2[a.i][a.flip] = 1; const m = measure(B2);
+      cands.push({ action: "change", axis: NSS_AXES[sectorOf(P.pts[a.i])], item: a.i, label: keys[a.i].label ?? null, flip_bit: a.flip, atom_delta: +a.delta.toFixed(4), delta: m, score: scoreOf(m),
+        hypothesis: `turning ${bitName(a.flip)} on for item ${nameOf(a.i)} is its geodesic single-action atom (Δ=${a.delta.toFixed(3)} toward the pole)`,
+        method: `flip the bit, refit, remeasure`, recommendation: `Change item ${nameOf(a.i)}: turn on ${bitName(a.flip)} (its single-action atom, Δ=${a.delta.toFixed(3)}, Lean §1). Measured after refit: pole shifts ${m.pole_shift_geodesic} rad, occupied sectors ${m.occupied_sectors_delta >= 0 ? "+" : ""}${m.occupied_sectors_delta}, isolated points ${m.isolated_delta >= 0 ? "+" : ""}${m.isolated_delta}.` }); }
+    // remove: the most isolated item and the item farthest from the pole
+    const nn = P.pts.map((p, i) => Math.min(...P.pts.map((q, j) => j === i ? Infinity : chord(p, q)))); const isoI = nn.indexOf(Math.max(...nn)); const farI = P.gaps.indexOf(Math.max(...P.gaps));
+    for (const [i, why] of [[isoI, `the most isolated point (nearest neighbour ${nn[isoI].toFixed(3)} away)`], [farI, `the point farthest from the all-ones pole (gap ${P.gaps[farI].toFixed(3)})`]]) { if (i < 0 || N <= 10) continue; const B2 = bits.filter((_, k) => k !== i); const m = measure(B2);
+      cands.push({ action: "remove", axis: NSS_AXES[sectorOf(P.pts[i])], item: i, label: keys[i].label ?? null, delta: m, score: scoreOf(m), hypothesis: `item ${nameOf(i)} is ${why}; removing it changes the fit`, method: `drop the row, refit, remeasure`,
+        recommendation: `Remove item ${nameOf(i)}, ${why}, in the '${NSS_AXES[sectorOf(P.pts[i])]}' sector. Measured after refit: pole shifts ${m.pole_shift_geodesic} rad, occupied sectors ${m.occupied_sectors_delta >= 0 ? "+" : ""}${m.occupied_sectors_delta}, isolated points ${m.isolated_delta >= 0 ? "+" : ""}${m.isolated_delta}.` }); }
+    const seen = new Set(); const ladder = cands.sort((a, b) => b.score - a.score).filter(c => { const k = c.action + ":" + (c.item ?? c.sector); if (seen.has(k)) return false; seen.add(k); return true; }).slice(0, 5)
+      .map((c, r) => ({ rung: "L" + (r + 1), ...c, verdict: (Math.abs(c.delta.pole_shift_geodesic) > 0.02 || c.delta.occupied_sectors_delta !== 0 || c.delta.isolated_delta !== 0) ? "moves" : "no measurable move", caveat: "measured on this cloud under this rule; a re-embed with new text will land near, not on, the synthetic pattern" }));
+    const idealReq = Number(opts.ideal); const idealIdx = Number.isInteger(idealReq) && idealReq >= 1 && idealReq <= ladder.length ? idealReq - 1 : 0;
+    const nss = { axes: NSS_AXES, sector_counts: sectorCounts, empty_sectors: sectorCounts.map((c, i) => c === 0 ? NSS_AXES[i] : null).filter(Boolean), base: { occupied_sectors: baseOcc, isolated: baseIso }, ladder, ideal: ladder.length ? ladder[idealIdx].rung : null, recommendation: ladder.length ? ladder[idealIdx].recommendation : "no candidate actions (cloud too small)" };
     const shells = Array.from({ length: d + 1 }, (_, k) => ks.filter(x => x === k).length);
     return { version: "pointmap/0.1", rule_hash, rule: { rule: rule.rule, d, threshold, note: threshold === "zero" ? "top-d PCA axes of the centered cloud; bit_j = [score_j > 0] (sign rule; column margins float)" : "top-d PCA axes of the centered cloud; bit_j = [score_j > median_j] (column margins fixed at ceil(N/2))" }, seed, n: N, D, d, keys,
       classes: { count: cls.size, largest, unresolvable_pairs: [...cls.values()].reduce((s, c) => s + c * (c - 1) / 2, 0) },
@@ -113,6 +154,7 @@ var PM = (function () {
       null: { kind: "curveball fixed-margin (Lean §8–10)", K, trades_per_draw: trades, E0: +E0.toFixed(5), SD0: +SD0.toFixed(6), z: admissible ? +z.toFixed(2) : null, admissible, verdict, stationary_law: "uniform on the fibre (Lean §10); irreducibility not checked at this N·d" },
       compass: { ...C, kmean_analytic: +C.kmean_analytic.toFixed(4), kmean_empirical: +C.kmean_empirical.toFixed(4), acceptance: +C.acceptance.toFixed(3), maxFluxZ: +C.maxFluxZ.toFixed(2), Tx: Tx === null ? null : +Tx.toFixed(6), wall: "property of a designed chain on a measured ladder, not of the cloud" },
       bridge: { i: worst.i, ts, rungs: rungs.map(p => p.map(x => +x.toFixed(5))) },
+      nss,
       spectra: { S2_parseval: E.map(x => +x.toFixed(4)), decay: decay.map(o => ({ t: o.t, E: o.E.map(x => +x.toExponential(2)) })) },
       certificates: certs, summary: { identity_failures: certs.filter(c => c.class === "identity" && !c.ok).length, measurement_red: certs.filter(c => c.class === "measurement" && !c.ok).length } }; }
   // stated preprocessing for big-D clouds: top-k PCA scores (same sign convention), so servers with tight CPU budgets see k-D input

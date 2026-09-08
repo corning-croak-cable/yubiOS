@@ -128,3 +128,15 @@ Pre-registered outcome for the null degeneracy bet (framing log): on a 240×32 G
 - Is per-column median the right R0 for signed embeddings, or does `Rabs` give a more natural fibre? Test: run both on the same cloud, compare `SD₀` and `ΔV₂z`; pick the one with the healthier null, record the loser as a negative.
 - Should bridge edges between two *items* (not item→pole) require their own admission null? Probably yes (uniform-on-S² rotation null); defer to v2 with V6.
 - Does the Worker need the identity certificates at all, or only the browser? Keep both; a red identity cert in production is exactly the float-vs-exact signal the Lean scope block says we cannot prove away.
+
+## 11. Addendum 2026-09-08: NSS ladder + server endpoints
+
+**`map.nss` (in every MapResult).** The S² placement is cut into 12 azimuthal sectors (30° each, by φ), one per negative-skill-space axis in canonical order: Audience, Inputs, Outputs, Mode, Assumption set, Adjacent problems, Failure modes, Lifecycle, Composition, Knowledge sources, Calibration, Recursion. Sector counts and empty sectors are reported. Then three candidate atomic actions are generated and each is *refit and measured*, never asserted:
+
+- **add** — a bit pattern that lands in the thinnest sector (3 co-located copies, so the refit sees a real mass shift);
+- **change** — flip the single-action atom bit (Lean §1) on one of the top-3 atoms;
+- **remove** — drop the most isolated point / the point farthest from the all-ones pole.
+
+Each candidate records `delta = {pole_shift_geodesic, occupied_sectors_delta, isolated_delta, pc12_delta}`, a `score`, and `verdict` ("moves" iff |pole shift| > 0.02 rad or any sector/isolation count changes). Candidates are ranked into `ladder` L1–L5 with `hypothesis / method / delta / verdict / score / caveat / recommendation`; the recommendation is plain English ("Add 3 items that cover bit 2 and bit 7 but not bits 0, 1, 4 … pole shifts 0.033 rad, isolated −8"). `ideal` selects the rung the caller wants to treat as the target (request field `ideal`, 1–5, default 1); `recommendation` echoes that rung's text. The wall still holds: every number is a property of the refit under the same `rule_hash`; a re-embed of new text lands *near*, not on, the synthetic pattern (stated in `caveat`).
+
+**Server endpoints (steady-orbit-sos Worker).** `POST /api/map {vectors | texts, d, seed, T, K≤40, threshold, ideal, labels}` → `{id, map}`; `GET /api/maps`, `GET|DELETE /api/maps/:id`; `POST /api/embed {texts, source}` → bge-base-en-v1.5 768-D vectors, every embedding also stored in Vectorize `sos-embeddings` (id `e<FNV>`, metadata label/text/source/created); `POST /api/repo-items {repo, subdir}` → one item per text file from the repo tarball (codeload, max 400); `POST /api/vector/search {text, topK}` → cosine neighbours over everything ever embedded. The Sauna `sos-agent` app mirrors `/api/map(s)` for vectors only (no Vectorize there). The `/map/` page renders the ladder under the Wall with a radio per rung; picking a rung re-reads `last.nss.ladder[i].recommendation` client-side and sends `ideal` on the next run.
