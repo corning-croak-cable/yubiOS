@@ -224,7 +224,7 @@ function render(R){last=R;renderNSS(R);$("rule").innerHTML=`<b>rule</b> ${R.rule
  kv("meta",{"version":R.version,"seed":R.seed,"identity failures":R.summary.identity_failures,"measurement red":R.summary.measurement_red,"source":R.source||"client"});
  $("certs").querySelector("tbody").innerHTML=R.certificates.map(c=>`<tr><td class="dim">${c.class}</td><td>${c.theorem}</td><td class="${c.ok?"ok":"bad"}">${c.ok?"PASS":"FAIL"}</td><td class="dim">${c.detail}</td></tr>`).join("");
  draw(R);$("status").textContent=`done · ${R.summary.identity_failures} identity failures · ${R.summary.measurement_red} measurement red`}
-const view={yaw:0.61,pitch:-0.44,zoom:1};let dragging=null,spin=false,hover=-1,screen=[];
+const view={yaw:0.61,pitch:-0.44,zoom:1};let dragging=null,spin=!matchMedia("(prefers-reduced-motion: reduce)").matches,hover=-1,screen=[];
 function rot([x,y,z]){const a=view.yaw,b=view.pitch;const x1=x*Math.cos(a)+z*Math.sin(a),z1=-x*Math.sin(a)+z*Math.cos(a);return[x1,y*Math.cos(b)-z1*Math.sin(b),y*Math.sin(b)+z1*Math.cos(b)]}
 function labelOf(R,i){const k=R.keys[i];const l=k&&k.label?String(k.label):null;return l?l.replace(/^skills\//,"").replace(/\/SKILL\.md$/,"").replace(/^refs\//,"r/"):"#"+i}
 function draw(R){if(!R)return;const cv=$("sphere"),g=cv.getContext("2d"),W=cv.width,Rr=(W/2-18)*view.zoom,cx=W/2,cy=W/2;g.clearRect(0,0,W,W);
@@ -246,7 +246,7 @@ function draw(R){if(!R)return;const cv=$("sphere"),g=cv.getContext("2d"),W=cv.wi
   if(best!==hover){hover=best;if(last&&best>=0){const a=last.atoms[best];$("tip").textContent=`#${best} ${labelOf(last,best)} · k=${last.k[best]} · gap=${last.gaps[best]} · atom Δ=${a?a.delta:"-"}${a&&a.flip>=0?" (flip bit "+a.flip+")":""} · hash ${last.keys[best].hash}`}else $("tip").textContent="";draw(last)}});
  cv.addEventListener("wheel",e=>{e.preventDefault();view.zoom=Math.max(0.5,Math.min(3,view.zoom*(e.deltaY<0?1.1:0.9)));draw(last)},{passive:false});
  $("labels").onchange=()=>draw(last);$("reset").onclick=()=>{view.yaw=0.61;view.pitch=-0.44;view.zoom=1;draw(last)};
- $("spin").onclick=()=>{spin=!spin;$("spin").textContent=spin?"stop":"auto-rotate";(function tick(){if(!spin)return;view.yaw+=0.008;draw(last);requestAnimationFrame(tick)})()};})();
+ const tick=()=>{if(!spin)return;view.yaw+=0.008;draw(last);requestAnimationFrame(tick)};$("spin").textContent=spin?"stop":"auto-rotate";tick();$("spin").onclick=()=>{spin=!spin;$("spin").textContent=spin?"stop":"auto-rotate";tick()};})();
 async function postJSON(u,body,tries=3){let r,txt;for(let a=1;a<=tries;a++){r=await fetch(u,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});txt=await r.text();
  if(!(r.status===502||r.status===503)||a===tries)break;$("status").textContent=`server hiccup (HTTP ${r.status}) — retry ${a}/${tries-1}…`;await new Promise(res=>setTimeout(res,1500*a))}
  try{return JSON.parse(txt)}catch(e){throw new Error(`HTTP ${r.status} — the free-plan Worker hit its CPU budget. Retry, use fewer items, or add Workers Paid ($5/mo) for a 30s CPU limit.`)}}
