@@ -19,7 +19,7 @@ html{scrollbar-color:#DB46F5 #0a0e12;scrollbar-width:thin}
 ::-webkit-scrollbar-track{background:#0a0e12}
 ::-webkit-scrollbar-thumb{background:#DB46F5;border-radius:6px;border:2px solid #0a0e12}
 ::-webkit-scrollbar-thumb:hover{background:#ec7ef9}
-.kv{display:grid;grid-template-columns:auto 1fr;gap:2px 10px}textarea{width:100%;min-height:90px;margin-top:8px;box-sizing:border-box}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:2px 10px}.gi{display:inline-flex;width:13px;height:13px;border:1px solid var(--dim);border-radius:50%;font-size:9px;line-height:1;align-items:center;justify-content:center;cursor:help;color:var(--dim);margin-left:5px;flex:none;user-select:none}#gtip{position:fixed;z-index:99;max-width:340px;background:#141a24;border:1px solid var(--acc);color:var(--fg);font-size:12px;line-height:1.45;padding:8px 10px;border-radius:6px;display:none;pointer-events:none}textarea{width:100%;min-height:90px;margin-top:8px;box-sizing:border-box}
 </style></head><body>
 <header><h1>SOS AGENT <span class="dim">/ latent space map · v0.5</span></h1>
 <select id="src"><option value="synthetic">synthetic cloud (client)</option><option value="vectors">paste vectors JSON (client)</option><option value="texts">texts → server embed + map (/api/map)</option></select>
@@ -30,13 +30,13 @@ html{scrollbar-color:#DB46F5 #0a0e12;scrollbar-width:thin}
 <div class="wall" id="rule"></div>
 <div class="wall">Wall: every compass/null number is a property of a <b>designed</b> chain on a <b>measured</b> ladder under a <b>stated</b> binarization rule, not of the cloud itself. Identity certificates must all pass (a red one is a code defect). Measurement certificates may fail; a failure is a finding. Exclusion-only language. Spec: yubi-OS/yubiOS <code>refs/point-to-point-latent-map-2026-09-06.md</code>.</div><div class="wall" id="nssbox" style="display:none"><b>NSS ladder</b> <span class="dim">(12 azimuthal sectors → negative-skill-space axes; each rung is one atomic action, refit and measured. Pick the ideal rung.)</span><table id="nsstab" style="width:100%;margin-top:6px;font-size:80%"><thead><tr><th>ideal</th><th>rung</th><th>action</th><th>axis</th><th>score</th><th>verdict</th><th>pole Δ (rad)</th><th>occ Δ</th><th>iso Δ</th></tr></thead><tbody></tbody></table><div id="nssrec" style="margin-top:6px;color:var(--fg)"></div><div id="nsspromptbox" style="margin-top:8px"><div class="dim" style="display:flex;align-items:center;gap:8px"><b>wayfinder prompt</b> <span>(copy this to your agent; it names the literal file(s) to change/add/remove, the exemplars to model on, and the rerun check)</span><button id="copyprompt" style="margin-left:auto">copy</button></div><pre id="nssprompt" style="white-space:pre-wrap;margin:4px 0 0;padding:6px 8px;border:1px solid #1e2440;border-radius:6px;font-size:85%;color:var(--fg)"></pre></div></div></div>
 <div id="right">
-<div class="card"><h2>identity layer (D6)</h2><div id="ident" class="kv"></div></div>
-<div class="card"><h2>placement + Φ ladder</h2><div id="place" class="kv"></div></div>
-<div class="card"><h2>null: curveball fibre (Lean §8–10)</h2><div id="null" class="kv"></div></div>
-<div class="card"><h2>compass: Metropolis on F_T (Lean §7)</h2><div id="compass" class="kv"></div></div>
-<div class="card"><h2>bridges + defocus (Lean §6)</h2><div id="bridge" class="kv"></div></div>
-<div class="card"><h2>result</h2><div id="meta" class="kv"></div><button id="dl" style="margin-top:8px">download MapResult.json</button></div>
-<div class="card" style="grid-column:1/-1"><h2>certificates</h2><table id="certs"><thead><tr><th>class</th><th>theorem / check</th><th>ok</th><th>detail</th></tr></thead><tbody></tbody></table></div>
+<div class="card"><h2>identity layer (D6)<span class="gi" data-tip="Identity is by ordinal + content hash (D6): injective, self-verifying. A red identity certificate is a code defect, not a finding.">i</span></h2><div id="ident" class="kv"></div></div>
+<div class="card"><h2>placement + Φ ladder<span class="gi" data-tip="Each item becomes a point on S²: top-d PCA scores → stereographic lift. Φ(k) is the measured free-energy ladder the compass walks.">i</span></h2><div id="place" class="kv"></div></div>
+<div class="card"><h2>null: curveball fibre (Lean §8–10)<span class="gi" data-tip="Curveball fixed-margin null: K resampled clouds holding the column margins fixed — the real V₂ is compared against this band.">i</span></h2><div id="null" class="kv"></div></div>
+<div class="card"><h2>compass: Metropolis on F_T (Lean §7)<span class="gi" data-tip="Metropolis chain on the Φ-ladder at temperature T. Identity checks: detailed balance (mh flux symmetry) and quantization (|dk| ≤ 1).">i</span></h2><div id="compass" class="kv"></div></div>
+<div class="card"><h2>bridges + defocus (Lean §6)<span class="gi" data-tip="Slerp bridges: the geodesic ladder of single-action atoms from the farthest item to the pole; defocus is the closed-form G1 movement check.">i</span></h2><div id="bridge" class="kv"></div></div>
+<div class="card"><h2>result<span class="gi" data-tip="The full MapResult — rule, keys, points, ladder, nss with the wayfinder prompt. Maps with the same rule_hash are comparable.">i</span></h2><div id="meta" class="kv"></div><button id="dl" style="margin-top:8px">download MapResult.json</button></div>
+<div class="card" style="grid-column:1/-1"><h2>certificates<span class="gi" data-tip="Two classes, never mixed: identity certificates must all pass (red = code defect, stop). Measurement certificates may fail — a failure is a finding.">i</span></h2><table id="certs"><thead><tr><th>class</th><th>theorem / check</th><th>ok</th><th>detail</th></tr></thead><tbody></tbody></table></div>
 </div></main>
 <script>
 // pointmap.js — proof-carrying point map for unlabeled latent space.
@@ -214,7 +214,30 @@ var PM = (function () {
 const $=id=>document.getElementById(id);let last=null;
 $("src").onchange=()=>{$("input").style.display=$("src").value==="synthetic"?"none":"block";const tx=$("src").value==="texts";$("uploadbox").style.display=tx?"flex":"none";$("fileinfo").style.display="none";$("dirinfo").style.display="none";$("repoinfo").style.display="none";$("files").value="";$("dirs").value=""};
 let idealRung=1;function renderNSS(R){const N=R.nss;const box=$("nssbox");if(!N||!N.ladder||!N.ladder.length){box.style.display="none";return}box.style.display="";const cur=N.ideal||"L1";idealRung=+cur.slice(1)||1;$("nsstab").querySelector("tbody").innerHTML=N.ladder.map((r,i)=>`<tr><td><input type="radio" name="ideal" value="${i+1}" ${r.rung===cur?"checked":""}></td><td><b>${r.rung}</b></td><td>${r.action||""}${r.item!==undefined?` #${r.item}`:""}</td><td>${r.axis||""}</td><td>${r.score}</td><td class="${r.verdict==="moves"?"ok":"dim"}">${r.verdict}</td><td>${r.delta.pole_shift_geodesic}</td><td>${r.delta.occupied_sectors_delta}</td><td>${r.delta.isolated_delta}</td></tr>`).join("");$("nssrec").innerHTML=`<b>${cur}</b> · ${N.ladder[idealRung-1].recommendation}${N.empty_sectors.length?` <span class="dim">Empty sectors: ${N.empty_sectors.join(", ")}.</span>`:""}`;$("nssprompt").textContent=N.ladder[idealRung-1].prompt||"";$("nsstab").querySelectorAll("input[name=ideal]").forEach(el=>el.onchange=()=>{idealRung=+el.value;const L=last.nss.ladder[idealRung-1];last.nss.ideal=L.rung;last.nss.recommendation=L.recommendation;last.nss.prompt=L.prompt;$("nssrec").innerHTML=`<b>${L.rung}</b> · ${L.recommendation}`;$("nssprompt").textContent=L.prompt||""});$("copyprompt").onclick=()=>{navigator.clipboard.writeText($("nssprompt").textContent).then(()=>{$("copyprompt").textContent="copied";setTimeout(()=>$("copyprompt").textContent="copy",1200)})}}
-function kv(id,o){$(id).innerHTML=Object.entries(o).map(([k,v])=>`<span class="dim">${k}</span><span>${v}</span>`).join("")}
+
+const GLOSSARY={
+"pole":"\u03c1* = 1\u1d48, the all-ones pole: the top of the Boolean lattice \u2014 every one of the corpus's own d axes fully on. gap[i] is the geodesic distance to it \u2014 how many of the corpus's own dimensions item i is absent on. A reference direction of the designed rule, not a goal; it moves with rule_hash.",
+"rule_hash":"Fingerprint of the binarization rule (top-d PCA axes + thresholds). Two maps are comparable only if it matches (C1).",
+"\u0394V\u2082z":"The real cloud's V\u2082 minus the null mean, in standard deviations. Exclusion-only: the null is excluded or not, never confirmed.",
+"V\u2082":"Variance share of the first two principal components. The rank identity r\u0302 = 2/V\u2082 is the effective rank the sphere geometry sees.",
+"measurement classes":"Distinct d-bit vectors in the cloud and the size of the largest \u2014 how much of the item space the rule actually distinguishes.",
+"keys":"Identity layer (D6): the ordinal is the injective key; content hashes distinguish items byte-for-byte.",
+"pairs unresolvable":"Items whose bit vectors are identical under the rule \u2014 the map cannot tell them apart by measurement; only names/hashes do.",
+"\u03a6(k)":"Measured free-energy ladder over Hamming shells k. The compass is a designed chain on this measured ladder.",
+"Hamming shells":"How many items sit at each Hamming weight k (number of bits on under the rule).",
+"K / trades":"K curveball null draws, each trading a fixed number of column margins; E\u2080 \u00b1 SD\u2080 is the null's V\u2082 band.",
+"E\u2080":"Mean and spread of the null's V\u2082 over K draws \u2014 the band the real cloud's V\u2082 is compared against.",
+"verdict":"Exclusion-only language: a null is excluded or not excluded (\u03b1 = 0.01), never \u201cconfirmed\u201d.",
+"stationary law":"Empirical distribution of the compass chain's Hamming weight \u2014 compared against the analytic \u03c0_T(k).",
+"\u03c0_T(k)":"Boltzmann distribution over Hamming shells at temperature T \u2014 the analytic occupancy prediction the chain is checked against.",
+"acceptance":"Metropolis acceptance rate of the compass chain at T. Near the analytic prediction when detailed balance holds (identity cert).",
+"T\u00d7":"Temperature where the \u03a6-ladder stops being monotone (compass crossover). \u201cnone\u201d = \u03a6 monotone at T\u21920.",
+"steps":"Single Metropolis chain length (60k), no restarts \u2014 one chain, so no burn-in ambiguity.",
+"atoms":"Single-action atoms (Lean \u00a71): the one bit whose flip moves each item geodesically closest to the pole. \u0394 = geodesic gain."
+};
+const gi=(k)=>{const lk=k.toLowerCase();for(const g in GLOSSARY)if(lk.includes(g))return` <span class="gi" data-tip="${GLOSSARY[g].replace(/"/g,"&quot;")}">i</span>`;return""};
+
+function kv(id,o){$(id).innerHTML=Object.entries(o).map(([k,v])=>`<span class="dim">${k}${gi(k)}</span><span>${v}</span>`).join("")}
 function render(R){last=R;renderNSS(R);$("rule").innerHTML=`<b>rule</b> ${R.rule.rule}: ${R.rule.note} (d=${R.d}). rule_hash=<b>${R.rule_hash}</b>. Two maps are comparable only if rule_hash matches (C1).`;
  kv("ident",{"items (N) / latent dim (D)":`${R.n} / ${R.D}`,"keys":`ordinal ${R.n}/${R.n} injective; ${new Set(R.keys.map(k=>k.hash)).size} distinct content hashes`,"measurement classes":`${R.classes.count} distinct ${R.d}-bit vectors (largest ${R.classes.largest})`,"pairs unresolvable by measurement":R.classes.unresolvable_pairs});
  kv("place",{"PC1+PC2 (share)":R.pc12,"V₂ ⇒ r̂=2/V₂ (rank identity)":`${R.v2} ⇒ ${(2/R.v2).toFixed(2)}`,"Φ(k)":R.ladder.Phi.join(" "),"Hamming shells":R.shells.join(" "),"pole":R.pole.join(", ")});
@@ -224,7 +247,7 @@ function render(R){last=R;renderNSS(R);$("rule").innerHTML=`<b>rule</b> ${R.rule
  kv("meta",{"version":R.version,"seed":R.seed,"identity failures":R.summary.identity_failures,"measurement red":R.summary.measurement_red,"source":R.source||"client"});
  $("certs").querySelector("tbody").innerHTML=R.certificates.map(c=>`<tr><td class="dim">${c.class}</td><td>${c.theorem}</td><td class="${c.ok?"ok":"bad"}">${c.ok?"PASS":"FAIL"}</td><td class="dim">${c.detail}</td></tr>`).join("");
  draw(R);$("status").textContent=`done · ${R.summary.identity_failures} identity failures · ${R.summary.measurement_red} measurement red`}
-const view={yaw:0.61,pitch:-0.44,zoom:1};let dragging=null,spin=!matchMedia("(prefers-reduced-motion: reduce)").matches,hover=-1,screen=[];
+const view={yaw:0.61,pitch:-0.44,zoom:1};let dragging=null,spin=!matchMedia("(prefers-reduced-motion: reduce)").matches,hover=-1,screen=[],poleXY=null;
 function rot([x,y,z]){const a=view.yaw,b=view.pitch;const x1=x*Math.cos(a)+z*Math.sin(a),z1=-x*Math.sin(a)+z*Math.cos(a);return[x1,y*Math.cos(b)-z1*Math.sin(b),y*Math.sin(b)+z1*Math.cos(b)]}
 function labelOf(R,i){const k=R.keys[i];const l=k&&k.label?String(k.label):null;return l?l.replace(/^skills\//,"").replace(/\/SKILL\.md$/,"").replace(/^refs\//,"r/"):"#"+i}
 function draw(R){if(!R)return;const cv=$("sphere"),g=cv.getContext("2d"),W=cv.width,Rr=(W/2-18)*view.zoom,cx=W/2,cy=W/2;g.clearRect(0,0,W,W);
@@ -235,14 +258,14 @@ function draw(R){if(!R)return;const cv=$("sphere"),g=cv.getContext("2d"),W=cv.wi
  const front=[];R.pts.forEach((p,i)=>{const[x,y,z]=S(p);screen.push([x,y,z,i]);const h=200+120*(R.k[i]/R.d);g.fillStyle=z<0?`hsla(${h},70%,55%,0.18)`:`hsla(${h},80%,60%,0.9)`;g.beginPath();g.arc(x,y,z<0?1.6:(i===hover?4.5:2.6),0,2*Math.PI);g.fill();if(z>=0)front.push([x,y,z,i])});
  if($("labels").checked){g.font="9px monospace";const taken=[];front.sort((a,b)=>b[2]-a[2]);for(const[x,y,z,i]of front){const lx=x+5,ly=y+3;if(taken.some(([tx,ty])=>Math.abs(tx-lx)<58&&Math.abs(ty-ly)<9))continue;taken.push([lx,ly]);g.fillStyle=`rgba(214,221,230,${0.35+0.55*z})`;g.fillText(labelOf(R,i).slice(0,14),lx,ly)}}
  g.strokeStyle="#DB46F5";g.lineWidth=2;g.beginPath();R.bridge.rungs.forEach((q,i)=>{const[x,y]=S(q);i?g.lineTo(x,y):g.moveTo(x,y)});g.stroke();R.bridge.rungs.forEach(q=>{const[x,y]=S(q);g.fillStyle="#DB46F5";g.beginPath();g.arc(x,y,2.5,0,2*Math.PI);g.fill()});
- const[px,py]=S(R.pole);g.strokeStyle="#fff";g.lineWidth=1.5;g.beginPath();g.arc(px,py,6,0,2*Math.PI);g.stroke();g.fillStyle="#fff";g.font="11px monospace";g.fillText("p* (all-ones pole)",px+9,py-6);
+ const[px,py]=S(R.pole);poleXY=[px,py];g.strokeStyle="#fff";g.lineWidth=1.5;g.beginPath();g.arc(px,py,6,0,2*Math.PI);g.stroke();g.fillStyle="#fff";g.font="11px monospace";g.fillText("p* (all-ones pole)",px+9,py-6);
  if(hover>=0){const[x,y]=S(R.pts[hover]);g.fillStyle="#fff";g.font="11px monospace";g.fillText(labelOf(R,hover),x+8,y-8)}
  g.fillStyle="#7d8894";g.font="11px monospace";g.fillText("drag to rotate · wheel to zoom · hover a point · hue = k-shell · green = atom Δ≥0 · violet = slerp",12,W-10)}
 (function(){const cv=$("sphere");const pos=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*cv.width/r.width,(e.clientY-r.top)*cv.height/r.height]};
  cv.addEventListener("pointerdown",e=>{dragging=pos(e);cv.style.cursor="grabbing";cv.setPointerCapture(e.pointerId)});
  cv.addEventListener("pointerup",e=>{dragging=null;cv.style.cursor="grab"});cv.addEventListener("pointerleave",()=>{dragging=null;hover=-1;$("tip").textContent="";draw(last)});
  cv.addEventListener("pointermove",e=>{const[x,y]=pos(e);if(dragging){view.yaw+=(x-dragging[0])*0.01;view.pitch=Math.max(-1.5,Math.min(1.5,view.pitch-(y-dragging[1])*0.01));dragging=[x,y];draw(last);return}
-  let best=-1,bd=64;for(const[sx,sy,sz,i]of screen){if(sz<0)continue;const d=(sx-x)**2+(sy-y)**2;if(d<bd){bd=d;best=i}}
+  if(poleXY&&(poleXY[0]-x)**2+(poleXY[1]-y)**2<900){if(hover!==-1){hover=-1;draw(last)}$("tip").textContent="ρ* all-ones pole — 1ᴽ: every one of the corpus’s own d axes fully on. gap[i] = geodesic distance to it = how many of the corpus’s own dimensions item i is absent on. A reference direction of the designed rule, not a goal.";return}let best=-1,bd=64;for(const[sx,sy,sz,i]of screen){if(sz<0)continue;const d=(sx-x)**2+(sy-y)**2;if(d<bd){bd=d;best=i}}
   if(best!==hover){hover=best;if(last&&best>=0){const a=last.atoms[best];$("tip").textContent=`#${best} ${labelOf(last,best)} · k=${last.k[best]} · gap=${last.gaps[best]} · atom Δ=${a?a.delta:"-"}${a&&a.flip>=0?" (flip bit "+a.flip+")":""} · hash ${last.keys[best].hash}`}else $("tip").textContent="";draw(last)}});
  cv.addEventListener("wheel",e=>{e.preventDefault();view.zoom=Math.max(0.5,Math.min(3,view.zoom*(e.deltaY<0?1.1:0.9)));draw(last)},{passive:false});
  $("labels").onchange=()=>draw(last);$("reset").onclick=()=>{view.yaw=0.61;view.pitch=-0.44;view.zoom=1;draw(last)};
@@ -267,4 +290,4 @@ $("fetchrepo").onclick=async()=>{const repo=$("repo").value.trim();if(!repo)retu
  try{const parts=repo.replace(/^https?:\/\/github\.com\//,"").replace(/\.git$/,"").split("/").filter(Boolean);const sub=parts.length>2?parts.slice(2).join("/"):"";const j=await postJSON("/api/repo-items",{repo:parts.slice(0,2).join("/"),subdir:sub});repoItems=j.items;$("repoinfo").textContent=`${j.n} items from ${j.repo}${j.subdir?"/"+j.subdir:""}`;}catch(e){repoItems=[];$("repoinfo").textContent="error: "+e.message}};
 $("files").onchange=()=>{const n=$("files").files.length;if(n){$("fileinfo").textContent=`${n} file(s) loaded`;$("fileinfo").style.display="inline"}};
 $("run").onclick=run;$("dl").onclick=()=>{if(!last)return;const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(last,null,1)],{type:"application/json"}));a.download=`MapResult-${last.rule_hash}.json`;a.click()};setTimeout(run,90);
-</script></body></html>
+</script><script>const gt=document.createElement("div");gt.id="gtip";document.body.appendChild(gt);document.addEventListener("mouseover",e=>{const g=e.target.closest(".gi");if(g){gt.textContent=g.dataset.tip;gt.style.display="block";const r=g.getBoundingClientRect();let x=r.left+14,y=r.top-10;if(x+350>innerWidth)x=r.left-354;gt.style.left=Math.max(4,x)+"px";gt.style.top=Math.max(4,y)+"px"}else gt.style.display="none"});</script></body></html>
