@@ -14,7 +14,7 @@ Spec (the math and the certificates): `yubi-OS/yubiOS refs/point-to-point-latent
 
 ## 1. Endpoints
 
-Base: `https://steady-orbit-sos.shant-b57.workers.dev` (the Sauna mirror at `https://sos-agent-lowr22fg.sauna.new` serves `/api/map`, `/api/maps`, `/api/maps/:id` for vectors only, no embedding).
+Base: `https://steady-orbit.systems-a.workers.dev` (the Sauna mirror at `https://sos-agent-lowr22fg.sauna.new` serves `/api/map`, `/api/maps`, `/api/maps/:id` for vectors only, no embedding).
 
 | Method | Path | Body | Returns |
 | --- | --- | --- | --- |
