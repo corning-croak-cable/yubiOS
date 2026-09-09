@@ -3,13 +3,6 @@
 Status: completed for `feat/systemd-v262-audit`.
 Scope: close the TODO.md audit for `/run/boot-loader-entries/`, the experimental `systemd-sysupdated` D-Bus API, and `updatectl` assumptions before adopting systemd v262 packages or docs.
 
-## Audience and decision context
-
-- Operator (image/platform maintainer): deciding whether adopting systemd v262 packages breaks the current update flow — read "Upstream check" then "Result".
-- Docs owner (developer): deciding whether SPEC/ADR/ARCHITECTURE should keep describing UAPI.1 Boot Loader Specification and `systemd-sysupdate` rather than the removed interfaces — read "Repo audit" then "Result".
-- Maintainer (future-update UX owner): deciding unit/timer naming and client choice (Varlink vs `updatectl`) for new host-update flows — read "Follow-up guardrails".
-- Reader path: every result claim above is grounded in the upstream sources listed under "Sources" — cite those, not this summary, when the decision hinges on the exact removal language.
-
 ## Upstream check
 
 - `systemd` `NEWS` currently contains `CHANGES WITH 262`, including `systemd-sysupdate` unit changes: `systemd-sysupdate.service` and `systemd-sysupdate.timer` are renamed to `systemd-sysupdate-update.service` and `systemd-sysupdate-update.timer`, with compatibility symlinks, and a new `systemd-sysupdate@.service` for Varlink activation.
