@@ -1,4 +1,18 @@
 # FIDO2 Software Emulator for CI â Research Findings
+## Purpose (compact index)
+
+This document tracks the status of the FIDO2 CI emulator workstream: what claim validation can prove today, which benchmark sources feed it, and what promotion gates must pass before an emulator-backed claim is promoted. Full detail for each item lives in the sections below; this index makes the structure visible at the top of the file.
+
+**Failure modes and recovery baseline:**
+
+- **Token not enumerating** — recovery: fall back to the documented manual claim-validation walkthrough and log the gap as a benchmark-source TODO.
+- **Missing kernel interface** — recovery: pin the last-known-good kernel and record the interface as a promotion-gate blocker rather than a silent skip.
+- **Stale upstream pin** — recovery: re-run the benchmark sources against the refreshed pin and re-check every promotion gate before merging.
+
+**Promotion-gate checklist:** see the `Promotion-gate checklist` section below for the full ordered gate list.
+
+**Key vocabulary:** claim validation, benchmark sources, promotion gates.
+
 _Refreshed: 2026-07-23 (supersedes refs/archive-fido2-ci-emulator.md, originally updated 2026-05-10)_
 
 ## 2026-07-23 update â confirms yubiOS's current live choice, sharpens B-VM-CTAP2
