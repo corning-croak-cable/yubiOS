@@ -5,6 +5,13 @@
 **Source paper:** `papers/learned-latent-curves-2026-08-05.tex` / `.pdf`
 **Source fitness-test:** `session/hyperspherical-harmonic-curve-v1-fitness-test.json`
 
+## Adjacent problems
+
+- **Related problem family — flat-corpus curve fitting:** `curve-guided-rsi` fits a flat 2-D Fourier surface to the same binary primitive-coverage matrix; this run re-poses that fit on an S² manifold and measures sphere-vs-flat on the identical splits.
+- **Alternative solutions considered:** the flat k=2 tensor-product Fourier surface (the comparison arm above) and the later Fibonacci-sampling + Y₃³ angular-probe variants operationalized in `rsi-phi-skill`, which refine rather than replace this fit.
+- **Shared input — primitive coverage:** the binary 9-D matrix over the yubiOS primitive framework is the corpus representation for this run, the flat baseline, and the RSI cycles that close its sparse cells.
+- **Prior-art cross-references:** `papers/learned-latent-curves-2026-08-05.tex` (source method), `refs/cycle5-results-2026-08-06.md` (successor full-corpus run), `refs/papers-8-6-iteration-2026-08-07.md` (sampling-scheme operationalization).
+
 ## Headline result
 
 The hyperspherical-harmonic-curve variant was fitted against a capacity-matched flat Fourier baseline on the yubiOS skill corpus. On both splits the variant achieved a higher holdout $R^2$ than the baseline at fewer parameters â the matched-parameter ablation result.
